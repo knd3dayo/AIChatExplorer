@@ -2,6 +2,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.AutoProcess {
     public class PromptAutoProcessItem : SystemAutoProcessItem {
@@ -37,7 +38,7 @@ namespace PythonAILib.Model.AutoProcess {
                 ChatMode = Mode
             };
 
-            ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });
+            ChatResult? result = ChatUtil.ExecuteChat(chatRequest, chatRequestContent, (message) => { });
             if (result == null) {
                 return;
             }

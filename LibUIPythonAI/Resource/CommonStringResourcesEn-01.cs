@@ -252,6 +252,9 @@ namespace QAChat.Resource {
         // NumberOfTokensToSplitRequest
         public override string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 
+        // DataGridIsNotFound
+        public override string DataGridIsNotFound { get; } = "DataGrid is not found";
+
         // List of Auto Process Rules
         public override string ListAutoProcessRule { get; } = "List of Auto Process Rules";
         // List of Python Scripts
@@ -761,6 +764,9 @@ namespace QAChat.Resource {
         public override string Merged { get; } = "Merged";
         public override string ErrorOccurredAndMessage { get; } = "Error occurred.\nMessage";
         public override string StackTrace { get; } = "Stack trace";
+
+        // チャット結果を保存しました
+        public override string SavedChatResult { get; } = "Chat result saved";
 
         // --- ClipboardItemViewModel ---
         // OpenFolder

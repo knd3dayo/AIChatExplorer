@@ -36,7 +36,7 @@
             CanUserResizeColumns="True"
             CanUserResizeRows="False"
             CanUserSortColumns="True"
-            ItemsSource="{Binding SelectedFolder.Items, UpdateSourceTrigger=PropertyChanged}"
+            ItemsSource="{Binding Items}"
             RowHeaderWidth="0"
             SelectionMode="Extended"
             SelectionUnit="FullRow"
@@ -64,10 +64,10 @@
                     Modifiers="Control" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <!--  IsPinned  -->
+                <!--  IsSelected  -->
                 <DataGridCheckBoxColumn
                     Width="100"
-                    Binding="{Binding IsPinned}"
+                    Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
                     Header="{x:Static res:ViewStringResources.MergeTarget}" />
                 <!--  CreatedAt, UpdatedAt  -->
                 <DataGridTextColumn
@@ -110,11 +110,6 @@
                     Header="{x:Static res:ViewStringResources.SourceTitle}"
                     IsReadOnly="True" />
             </DataGrid.Columns>
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="ContextMenu" Value="{StaticResource GridRowContextMenu}" />
-                </Style>
-            </DataGrid.RowStyle>
         </DataGrid>
     </Grid>
 </UserControl>

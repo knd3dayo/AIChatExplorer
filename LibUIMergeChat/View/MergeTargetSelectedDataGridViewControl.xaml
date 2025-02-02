@@ -1,0 +1,120 @@
+<UserControl
+    x:Class="MergeChat.View.MergeTargetSelectedDataGridViewControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonModel="clr-namespace:QAChat.Resource;assembly=LibUIPythonAI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=LibUICommon"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:MergeChat.View"
+    xmlns:viewModel="clr-namespace:MergeChat.ViewModel"
+    x:Name="Root"
+    d:DataContext="{d:DesignInstance Type=viewModel:MergeTargetDataGridViewControlViewModel}"
+    mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <Style x:Key="SingleLineTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="Height" Value="15" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <DataGrid
+            x:Name="MergeTargetSelectedDataGrid"
+            Grid.Row="0"
+            HorizontalAlignment="Stretch"
+            AutoGenerateColumns="False"
+            BorderThickness="1"
+            CanUserAddRows="True"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="True"
+            CanUserResizeRows="False"
+            CanUserSortColumns="True"
+            ItemsSource="{Binding CheckedItems}"
+            RowHeaderWidth="0"
+            SelectionMode="Extended"
+            SelectionUnit="FullRow"
+            VerticalScrollBarVisibility="Auto"
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            VirtualizingStackPanel.IsVirtualizing="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.InputBindings>
+                <!--  Open selected item window by double-clicking  -->
+                <MouseBinding
+                    Command="{Binding OpenSelectedItemCommand}"
+                    CommandParameter="{Binding}"
+                    MouseAction="LeftDoubleClick" />
+                <!--  Delete selected item  -->
+                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, Mode=OneTime}" />
+                <!--  Delete displayed item  -->
+                <KeyBinding
+                    Key="Delete"
+                    Command="{Binding DeleteDisplayedItemCommand, Mode=OneTime}"
+                    CommandParameter="{Binding}"
+                    Modifiers="Control" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <!--  IsPinned  -->
+                <DataGridCheckBoxColumn
+                    Width="100"
+                    Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                    Header="{x:Static res:ViewStringResources.MergeTarget}" />
+                <!--  CreatedAt, UpdatedAt  -->
+                <DataGridTextColumn
+                    Width="150"
+                    MaxWidth="300"
+                    Binding="{Binding CreatedAtString}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.CreateDate}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="150"
+                    MaxWidth="300"
+                    Binding="{Binding UpdatedAtString}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.UpdateDate}"
+                    IsReadOnly="True" />
+                <!--  ContentType  -->
+                <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding ContentTypeString}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.Type}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding TagsText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.Tag}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding DescriptionText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.Title}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding SourceApplicationTitleText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="{x:Static res:ViewStringResources.SourceTitle}"
+                    IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

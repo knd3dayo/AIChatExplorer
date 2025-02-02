@@ -170,14 +170,19 @@ namespace MergeChat.View {
         // CreateDate
         public static string CreateDate => CommonStringResources.Instance.CreateDate;
 
-        // MergeTargetItem
-        public static string MergeTargetItem => MergeChatStringResources.Instance.MergeTargetItem;
+        // MergeTargetItemSelection
+        public static string MergeTargetItemSelection => MergeChatStringResources.Instance.MergeTargetItemSelection;
 
-        // MergeTargetData
-        public static string MergeTargetData => MergeChatStringResources.Instance.MergeTargetData;
+        // MergeTargetDataSelection
+        public static string MergeTargetDataSelection => MergeChatStringResources.Instance.MergeTargetDataSelection;
 
+        // 事前処理用プロンプト マージ前に各アイテムに対して事前処理を行うためのプロンプト
+        public static string PreProcessingPromptHint => MergeChatStringResources.Instance.PreProcessingPromptHint;
 
+        // 事後処理用プロンプト マージ後のアイテムに対して事後処理を行うためのプロンプト
+        public static string PostProcessingPromptHint => MergeChatStringResources.Instance.PostProcessingPromptHint;
 
-
+        // OutputFolderSelection
+        public static string OutputFolderSelection => MergeChatStringResources.Instance.OutputFolderSelection;
     }
 }

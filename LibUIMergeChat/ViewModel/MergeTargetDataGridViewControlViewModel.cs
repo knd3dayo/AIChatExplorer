@@ -2,17 +2,33 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibGit2Sharp;
+using PythonAILib.Model.Content;
+using QAChat.Model;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public class MergeTargetDataGridViewControlViewModel : ObservableObject {
+    public class MergeTargetDataGridViewControlViewModel : QAChatViewModelBase {
 
-        public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
+        public MergeTargetDataGridViewControlViewModel(Action<bool> updateIndeterminateAction) {
+            UpdateIndeterminateAction = updateIndeterminateAction;
+        }
+        public Action<bool> UpdateIndeterminateAction { get; set; } 
 
-        public ObservableCollection<ContentItemViewModel> Items { get; } = [];
+
+        private ObservableCollection<ContentItemViewModel> _items = [];
+        public ObservableCollection<ContentItemViewModel> Items {
+            get {
+                return _items;
+            }
+            set {
+                _items = value;
+                OnPropertyChanged(nameof(Items));
+            }
+        }
 
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ContentItemViewModel> _selectedItems = [];
@@ -38,16 +54,46 @@ namespace MergeChat.ViewModel {
             }
         }
 
-        private ContentFolderViewModel? _selectedFolder;
-        public ContentFolderViewModel? SelectedFolder {
+        // CheckedItems
+        private ObservableCollection<ContentItemViewModel> _checkedItems = [];
+        public ObservableCollection<ContentItemViewModel> CheckedItems {
             get {
-                return _selectedFolder;
-            }
-            set {
-                _selectedFolder = value;
-                OnPropertyChanged(nameof(SelectedFolder));
+                _checkedItems.Clear();
+                foreach (ContentItemViewModel item in Items) {
+                    if (item.IsChecked) {
+                        _checkedItems.Add(item);
+                    }
+                }
+                return _checkedItems;
             }
         }
+        // UpdateCheckedItems
+        public void UpdateCheckedItems() {
+            OnPropertyChanged(nameof(CheckedItems));
+
+        }
+        public DataGrid? MergeTargetSelectedDataGrid {
+            get {
+                return ThisUserControl?.FindName("MergeTargetSelectedDataGrid") as DataGrid;
+            }
+        }
+
+        // MergeTargetSelectedDataGridのItemのうちIsCheckedがTrueのものを取得する。
+        public ObservableCollection<ContentItemViewModel> CheckedItemsInMergeTargetSelectedDataGrid {
+            get {
+                ObservableCollection<ContentItemViewModel> checkedItems = [];
+                if (MergeTargetSelectedDataGrid == null) {
+                    return checkedItems;
+                }
+                foreach (ContentItemViewModel item in MergeTargetSelectedDataGrid.Items) {
+                    if (item.IsChecked) {
+                        checkedItems.Add(item);
+                    }
+                }
+                return checkedItems;
+            }
+        }
+
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
@@ -59,16 +105,13 @@ namespace MergeChat.ViewModel {
                 int lastSelectedIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                ContentItemViewModel? ContentItemViewModel = (ContentItemViewModel)dataGrid.SelectedItem;
-                if (ContentItemViewModel == null) {
-                    return;
-                }
 
                 // SelectedItemsをMainWindowViewModelにセット
                 SelectedItems.Clear();
                 foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
                     SelectedItems.Add(item);
                 }
+
                 // SelectedTabIndexを更新する処理
                 if (SelectedItem != null) {
                     SelectedItem.SelectedTabIndex = lastSelectedIndex;
@@ -96,6 +139,12 @@ namespace MergeChat.ViewModel {
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             Items.Clear();
+        });
+
+
+        public SimpleDelegateCommand<ContentItemViewModel> OpenSelectedItemCommand => new((item) => {
+            // ★TODO 実装
+
         });
 
         #endregion

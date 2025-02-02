@@ -152,6 +152,9 @@ namespace QAChat.Resource {
         // リクエストを分割するトークン数
         public virtual string NumberOfTokensToSplitRequest { get; } = "リクエストを分割するトークン数";
 
+        // DataGridIsNotFound
+        public virtual string DataGridIsNotFound { get; } = "DataGridが見つかりません";
+
         // 貼り付け
         public virtual string Paste { get; } = "貼り付け";
         // 開く

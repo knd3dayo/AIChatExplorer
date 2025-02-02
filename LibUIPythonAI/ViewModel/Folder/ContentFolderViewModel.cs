@@ -24,6 +24,9 @@ namespace QAChat.ViewModel.Folder {
         // RootFolderのViewModelを取得する
         public abstract ContentFolderViewModel GetRootFolderViewModel();
 
+        // フォルダを読み込む
+        public abstract void LoadFolder(Action afterUpdate);
+
 
         // フォルダー保存コマンド
         public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
@@ -105,7 +108,9 @@ namespace QAChat.ViewModel.Folder {
             }
         }
 
-        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => { });
+        public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+            LoadFolder(() => { });
+        });
 
 
         public virtual void UpdateIndeterminate(bool isIndeterminate) { }

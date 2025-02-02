@@ -27,7 +27,7 @@ namespace PythonAILib.Utils.Python {
             chatRequestContext.ChatMode = promptText.ChatMode;
             chatRequestContext.SplitMode = promptText.SplitMode;
 
-            ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -38,7 +38,7 @@ namespace PythonAILib.Utils.Python {
         public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , ChatRequestContext chatRequestContext, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
-                ChatRequest chatController = new() {
+                ChatRequest chatRequest = new() {
                     ContentText = resultString,
                 };
 
@@ -46,7 +46,7 @@ namespace PythonAILib.Utils.Python {
                 chatRequestContext.PromptTemplateText = prompt;
 
 
-                ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
+                ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
                 if (result != null) {
                     resultString = result.Output;
                 }
@@ -58,7 +58,7 @@ namespace PythonAILib.Utils.Python {
         public static List<string> CreateListChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
 
             string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
-            ChatRequest chatController = new() {
+            ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
                 JsonMode = true
@@ -67,7 +67,7 @@ namespace PythonAILib.Utils.Python {
             chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
@@ -79,7 +79,7 @@ namespace PythonAILib.Utils.Python {
         }
         // CHatを実行してDictionary<string, object>の結果を取得する
         public static Dictionary<string, dynamic?> CreateDictionaryChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
-            ChatRequest chatController = new() {
+            ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
                 JsonMode = true
@@ -88,7 +88,7 @@ namespace PythonAILib.Utils.Python {
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 return JsonUtil.ParseJson(result.Output);
             }
@@ -98,7 +98,7 @@ namespace PythonAILib.Utils.Python {
 
         // Chatを実行して複雑な結果を取得する
         public static Dictionary<string, dynamic?> CreateTableChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
-            ChatRequest chatController = new() {
+            ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
                 JsonMode = true
@@ -107,7 +107,7 @@ namespace PythonAILib.Utils.Python {
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
                 return JsonUtil.ParseJson(result.Output);
@@ -117,17 +117,17 @@ namespace PythonAILib.Utils.Python {
 
         // 画像からテキストを抽出する
         public static string ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
-            ChatRequest chatController = new();
+            ChatRequest chatRequest = new();
             // Normal Chatを実行
             chatRequestContext.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatRequestContext.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
-            chatController.ContentText = "";
-            chatController.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
-            if (chatController.ImageURLs.Count == 0) {
+            chatRequest.ContentText = "";
+            chatRequest.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
+            if (chatRequest.ImageURLs.Count == 0) {
                 return "";
             }
 
-            ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -193,6 +193,67 @@ namespace PythonAILib.Utils.Python {
             string base64String = Convert.ToBase64String(imageBytes);
             string result = CreateImageURL(base64String);
             return result;
+        }
+
+
+        public static void PrepareNormalRequest(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+            // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
+            ChatMessage lastUserRoleMessage;
+            if (chatRequest.ChatHistory.Count == 0 || chatRequest.ChatHistory.Last().Role == ChatMessage.AssistantRole) {
+                lastUserRoleMessage = new ChatMessage(ChatMessage.UserRole, "");
+                chatRequest.ChatHistory.Add(lastUserRoleMessage);
+            } else {
+                lastUserRoleMessage = chatRequest.ChatHistory.Last();
+            }
+
+            // PromptTextを作成
+            string promptText = chatRequest.ContentText;
+
+            // 最後のユーザー発言のContentにPromptTextを追加
+            lastUserRoleMessage.Content = promptText;
+            // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加
+            if (chatRequest.ImageURLs.Count > 0) {
+                lastUserRoleMessage.ImageURLs = chatRequest.ImageURLs;
+            }
+        }
+
+        // Chatを実行する
+        public static ChatResult? ExecuteChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+            // 通常のOpenAI Chatを実行する
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+
+                // リクエストメッセージを最新化
+                PrepareNormalRequest(chatRequestContext, chatRequest);
+                // 通常のChatを実行する。
+                ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, chatRequest);
+                if (result == null) {
+                    return null;
+                }
+                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+                chatRequest.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
+                return result;
+            }
+            // AutoGenGroupChatを実行する
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+                // AutoGenGroupChatを実行する
+                return ExecuteAutoGenGroupChat(chatRequest, chatRequestContext, iterateAction);
+            }
+            return null;
+        }
+
+        // AutoGenGroupChatを実行する
+        public static ChatResult? ExecuteAutoGenGroupChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+            // リクエストメッセージを最新化
+            PrepareNormalRequest(chatRequestContext, chatRequest);
+            // 結果
+            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
+            chatRequest.ChatHistory.Add(result);
+
+            // AutoGenGroupChatを実行する
+            return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
+                result.Content += message + "\n";
+                iterateAction(message);
+            });
         }
 
 

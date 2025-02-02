@@ -19,6 +19,8 @@ namespace QAChat.Resource {
 
         public Window? ThisWindow { get; set; }
 
+        public UserControl? ThisUserControl { get; set; }
+
         // Loaded時の処理
         public virtual SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
             if (routedEventArgs.Source is Window) {
@@ -31,6 +33,8 @@ namespace QAChat.Resource {
             }
             if (routedEventArgs.Source is UserControl) {
                 UserControl userControl = (UserControl)routedEventArgs.Source;
+                ThisUserControl = userControl;
+
                 Window window = Window.GetWindow(userControl);
                 ThisWindow = window;
                 Tools.ActiveWindow = ThisWindow;
@@ -54,6 +58,8 @@ namespace QAChat.Resource {
             if (parameter is Window window) {
                 // ウィンドウを閉じる
                 window.Close();
+            }else if (ThisWindow != null) {
+                ThisWindow.Close();
             }
         });
 

@@ -86,29 +86,8 @@ namespace PythonAILib.Model.Chat {
             return lastAssistantChatItem;
         }
 
-        public static void PrepareNormalRequest(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
-            // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
-            ChatMessage lastUserRoleMessage;
-            if (chatRequest.ChatHistory.Count == 0 || chatRequest.ChatHistory.Last().Role == ChatMessage.AssistantRole) {
-                lastUserRoleMessage = new ChatMessage(ChatMessage.UserRole, "");
-                chatRequest.ChatHistory.Add(lastUserRoleMessage);
-            } else {
-                lastUserRoleMessage = chatRequest.ChatHistory.Last();
-            }
-
-            // PromptTextを作成
-            string promptText = chatRequest.ContentText;
-
-            // 最後のユーザー発言のContentにPromptTextを追加
-            lastUserRoleMessage.Content = promptText;
-            // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加
-            if (chatRequest.ImageURLs.Count > 0) {
-                lastUserRoleMessage.ImageURLs = chatRequest.ImageURLs;
-            }
-        }
-
         public string GetMessages(ChatRequestContext chatRequestContext) {
-            PrepareNormalRequest(chatRequestContext, this);
+            ChatUtil.PrepareNormalRequest(chatRequestContext, this);
             // ChatHistoryのContentの文字列を連結して返す
             return string.Join("", ChatHistory.Select(x => x.Content));
         }
@@ -146,43 +125,5 @@ namespace PythonAILib.Model.Chat {
             return requests.Select(x => x.ToDict()).ToList();
         }
 
-        // Chatを実行する
-        public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // 通常のOpenAI Chatを実行する
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
-
-                // リクエストメッセージを最新化
-                PrepareNormalRequest(chatRequestContext, this);
-                // 通常のChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, this);
-                if (result == null) {
-                    return null;
-                }
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
-                return result;
-            }
-            // AutoGenGroupChatを実行する
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
-                // AutoGenGroupChatを実行する
-                return ExecuteAutoGenGroupChat(chatRequestContext, iterateAction);
-            }
-            return null;
-        }
-
-        // AutoGenGroupChatを実行する
-        public ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // リクエストメッセージを最新化
-            PrepareNormalRequest(chatRequestContext, this);
-            // 結果
-            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
-            ChatHistory.Add(result);
-
-            // AutoGenGroupChatを実行する
-            return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, this, (message) => {
-                result.Content += message + "\n";
-                iterateAction(message);
-            });
-        }
     }
 }

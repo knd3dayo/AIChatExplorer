@@ -214,7 +214,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     item.TopK = VectorDBSearchResultMax;
                 }
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
@@ -226,7 +226,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     item.TopK = VectorDBSearchResultMax;
                 }
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
             }
         }
@@ -254,7 +254,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 item.TopK = VectorDBSearchResultMax;
             }
             ChatRequestContext chatRequestContext = CreateChatRequestContext();
-            ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+            ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
         });
         // チャットを送信するコマンド
@@ -282,7 +282,7 @@ namespace QAChat.ViewModel.QAChatMain {
                         return;
                     }
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
+                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();
@@ -389,7 +389,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 // リクエストのメッセージをアップデート
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
 
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
                 // タブが変更されたときの処理

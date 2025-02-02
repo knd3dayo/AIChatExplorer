@@ -151,7 +151,7 @@
                             Header="{x:Static res:ViewStringResources.ImageChat}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenMergeChatWindow, Mode=OneTime}"
+                            Command="{Binding OpenFolderMergeChatWindow, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.MergeChat}" />
                         <MenuItem

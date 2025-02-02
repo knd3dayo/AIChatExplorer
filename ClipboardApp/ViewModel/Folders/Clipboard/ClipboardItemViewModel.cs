@@ -126,6 +126,7 @@ namespace ClipboardApp.ViewModel.Content {
                 OnPropertyChanged(nameof(IsPinned));
             }
         }
+
         // ContentType
         public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
 

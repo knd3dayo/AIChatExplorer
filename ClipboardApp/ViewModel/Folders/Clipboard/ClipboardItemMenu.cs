@@ -141,6 +141,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             };
             menuItems.Add(deleteMnuItem);
 
+
             // プロンプトメニュー
             MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
             menuItems.Add(promptMenuItem);
@@ -171,6 +172,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             };
             menuItems.Add(extractTextMenuItem);
 
+            // マージチャット
+            MenuItem mergeChatMenuItem = new() {
+                Header = StringResources.MergeChat,
+                Command = MainWindowViewModel.Instance.OpenSelectedItemsMergeChatWindow,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(mergeChatMenuItem);
 
             return menuItems;
         }

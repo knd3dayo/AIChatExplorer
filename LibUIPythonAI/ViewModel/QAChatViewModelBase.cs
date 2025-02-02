@@ -37,6 +37,9 @@ namespace QAChat.Model {
                 OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
-
+        public void UpdateIndeterminate(bool visible) {
+            IsIndeterminate = visible;
+            OnPropertyChanged(nameof(IsIndeterminate));
+        }
     }
 }

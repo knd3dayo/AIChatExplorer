@@ -1,24 +1,53 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using PythonAILibUI.ViewModel.Folder;
 using QAChat.Model;
 using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public  class MergeTargetPanelViewModel : QAChatViewModelBase{
+    public class MergeTargetPanelViewModel : QAChatViewModelBase {
 
+        private bool _initialized = false;
 
-        public MergeTargetPanelViewModel(MergeTargetDataGridViewControlViewModel dataGridView, MergeTargetTreeViewControlViewModel treeView) {
-            MergeTargetDataGridViewControlViewModel = dataGridView;
-            MergeTargetTreeViewControlViewModel = treeView;
+        public MergeTargetPanelViewModel(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems, Action<bool> updateIndeterminate) {
+            SelectedItems = selectedItems;
+
+            MergeTargetDataGridViewControlViewModel = new(updateIndeterminate);
+            Action<ContentFolderViewModel> selectFolderAction = (folder) => {
+                MergeTargetDataGridViewControlViewModel.Items = folder.Items;
+                FolderSelectionChanged();
+            };
+            MergeTargetTreeViewControlViewModel = new(selectFolderAction, updateIndeterminate) {
+                // アイテムの選択処理
+                // TreeViewのFolderを設定する
+                SelectedFolder = folderViewModel
+            };
+        }
+        public ObservableCollection<ContentItemViewModel> SelectedItems { get; set; } = [];
+
+        private void FolderSelectionChanged() {
+            if (SelectedItems.Count == 0 || _initialized) {
+                // SelectedItemsがない場合は、SelectedFolderのItemsのIsCheckedを設定する
+                foreach (ContentItemViewModel item in MergeTargetDataGridViewControlViewModel.Items) {
+                    item.IsChecked = true;
+                }
+            } else {
+                // SelectedItemsがある場合はSelectedItemsとマッチするアイテムのIsCheckedを設定する
+                var selectedItemIds = new HashSet<string>(SelectedItems.Select(item => item.ContentItem.Id.ToString()));
+                foreach (ContentItemViewModel item in MergeTargetDataGridViewControlViewModel.Items) {
+                    var id = item.ContentItem.Id.ToString();
+                    item.IsChecked = selectedItemIds.Contains(id);
+                }
+            }
+            UpdateCheckedItems();
+            _initialized = true;
+
         }
 
+        public void UpdateCheckedItems() {
+            MergeTargetDataGridViewControlViewModel.UpdateCheckedItems();
+        }
         public MergeTargetDataGridViewControlViewModel MergeTargetDataGridViewControlViewModel { get; set; }
 
         public MergeTargetTreeViewControlViewModel MergeTargetTreeViewControlViewModel { get; set; }

@@ -35,13 +35,26 @@ namespace MergeChat.Resources {
         // MergeTarget
         public virtual string MergeTarget { get; set; } = "マージ対象";
 
-        // MergeTargetItem
-        public virtual string MergeTargetItem { get; set; } = "マージ対象アイテム";
+        // MergeTargetItemSelection
+        public virtual string MergeTargetItemSelection { get; set; } = "マージ対象アイテム選択";
 
-        // MergeTargetData
-        public virtual string MergeTargetData { get; set; } = "マージ対象データ";
+        // MergeTargetDataSelection
+        public virtual string MergeTargetDataSelection { get; set; } = "マージ対象データ";
 
+        // 事前処理用プロンプト マージ前に各アイテムに対して事前処理を行うためのプロンプト。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+        public virtual string PreProcessingPromptHint { get; set; } = """
+            事前処理用プロンプト マージ前に各アイテムに対して事前処理を行うためのプロンプト。
+            ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+            """;
 
+        // 事後処理用プロンプト マージ後のアイテムに対して事後処理を行うためのプロンプト。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+        public virtual string PostProcessingPromptHint { get; set; } = """
+            事後処理用プロンプト マージ後のアイテムに対して事後処理を行うためのプロンプト
+            ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+            """;
+
+        // OutputFolderSelection
+        public virtual string OutputFolderSelection { get; set; } = "出力フォルダ選択";
 
     }
 }

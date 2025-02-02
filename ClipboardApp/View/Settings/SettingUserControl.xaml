@@ -284,7 +284,7 @@
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIBaseURL}"
-                                Text="{Binding OpenAICompletionBaseURL}" />
+                                Text="{Binding OpenAIBaseURL}" />
                         </Grid>
 
                         <!--  Spacy設定  -->

@@ -11,9 +11,15 @@ using WpfAppCommon.Utils;
 namespace MergeChat.ViewModel {
     public class MergeTargetTreeViewControlViewModel : ObservableObject {
 
-        public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
+        public MergeTargetTreeViewControlViewModel(Action<ContentFolderViewModel> selectFolderAction, Action<bool> updateIndeterminateAction) {
+            SelectFolderAction = selectFolderAction;
+            UpdateIndeterminateAction = updateIndeterminateAction;
+        }
 
-        public Action<ContentFolderViewModel> SelectedFolderChangedAction { get; set; } = (selectedFolder) => { };
+        public Action<bool> UpdateIndeterminateAction { get; set; }
+
+        public Action<ContentFolderViewModel> SelectFolderAction { get; set; } = (folder) => { };
+
 
         // 選択中のフォルダ
         private ContentFolderViewModel? _selectedFolder;
@@ -27,6 +33,10 @@ namespace MergeChat.ViewModel {
                     _selectedFolder = null;
                 } else {
                     _selectedFolder = value;
+                    // Load
+                    _selectedFolder.LoadFolder( afterUpdate: () => {
+                        SelectFolderAction(_selectedFolder);
+                    });
                 }
                 OnPropertyChanged(nameof(SelectedFolder));
             }
@@ -40,11 +50,6 @@ namespace MergeChat.ViewModel {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
             ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
             SelectedFolder = clipboardItemFolderViewModel;
-            if (SelectedFolder != null) {
-                // Load
-                SelectedFolder.LoadFolderCommand.Execute();
-                SelectedFolderChangedAction(SelectedFolder);
-            }
         });
 
     }

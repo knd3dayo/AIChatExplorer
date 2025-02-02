@@ -575,6 +575,9 @@ namespace QAChat.Resource {
         // スタックトレース
         public virtual string StackTrace { get; } = "スタックトレース";
 
+        // チャット結果を保存しました
+        public virtual string SavedChatResult { get; } = "チャット結果を保存しました";
+
         // --- ClipboardItemViewModelCommands ---
         // OpenFolder
 

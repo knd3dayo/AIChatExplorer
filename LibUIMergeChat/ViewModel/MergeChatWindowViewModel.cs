@@ -1,42 +1,25 @@
+using System.Collections.ObjectModel;
 using QAChat.Model;
-using QAChat.ViewModel;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
     public class MergeChatWindowViewModel : QAChatViewModelBase {
 
         //初期化
-        public MergeChatWindowViewModel(QAChatStartupProps props) {
+        public MergeChatWindowViewModel(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
-            
-            MergeTargetDataGridViewControlViewModel mergeTargetDataGridViewControlViewModel = new() {
-                UpdateIndeterminateAction = UpdateIndeterminate,
-            };
 
-            MergeTargetTreeViewControlViewModel mergeTargetTreeViewControlViewModel = new() {
-                UpdateIndeterminateAction = UpdateIndeterminate,
-                SelectedFolderChangedAction = (folder) => {
-                    mergeTargetDataGridViewControlViewModel.SelectedFolder = folder;
-                }
-            };
-
-            MergeTargetPanelViewModel mergeTargetPanelViewModel = new(mergeTargetDataGridViewControlViewModel, mergeTargetTreeViewControlViewModel);
+            MergeTargetPanelViewModel mergeTargetPanelViewModel = new(folderViewModel, selectedItems, UpdateIndeterminate);
 
             // QAChatControlViewModelを生成
-            MergeChatControlViewModel = new(props, mergeTargetPanelViewModel);
+            MergeChatControlViewModel = new(mergeTargetPanelViewModel);
 
         }
         // QAChatControlのViewModel
         public MergeChatControlViewModel MergeChatControlViewModel { get; set; }
-
-        // 
-        public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };
-
-        public void UpdateIndeterminate(bool visible) {
-            IsIndeterminate = visible;
-            OnPropertyChanged(nameof(IsIndeterminate));
-        }
 
     }
 }

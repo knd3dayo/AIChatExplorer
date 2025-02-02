@@ -99,13 +99,6 @@
                         FontSize="8pt"
                         IsChecked="{Binding ShowFooter}" />
                 </Grid>
-                <materialDesign:Card.InputBindings>
-                    <!--  Open selected item window by double-clicking  -->
-                    <MouseBinding
-                        Command="{Binding OpenSelectedItemCommand}"
-                        CommandParameter="{Binding}"
-                        MouseAction="LeftDoubleClick" />
-                </materialDesign:Card.InputBindings>
             </materialDesign:Card>
         </Grid>
     </Grid>

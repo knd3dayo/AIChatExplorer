@@ -89,7 +89,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItem item) {
+        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
             // 何もしない
         }
 

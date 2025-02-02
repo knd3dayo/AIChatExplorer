@@ -1,17 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using MergeChat.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using QAChat.Model;
+using QAChat.Resource;
+using QAChat.View.Folder;
 using QAChat.View.PromptTemplate;
-using QAChat.View.QAChatMain;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
@@ -21,18 +26,11 @@ namespace MergeChat.ViewModel {
 
 
         //初期化
-        public MergeChatControlViewModel(QAChatStartupProps props, MergeTargetPanelViewModel mergeTargetPanelViewModel) {
+        public MergeChatControlViewModel(MergeTargetPanelViewModel mergeTargetPanelViewModel) {
 
-            QAChatStartupProps = props;
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            VectorSearchProperties = [.. props.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
+            VectorSearchProperties = [.. mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
 
-            // InputTextを設定
-            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
-            // ClipboardItemがある場合は、ChatItemsを設定
-            if (QAChatStartupProps.ContentItem != null) {
-                ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
-            }
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
             _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
@@ -44,28 +42,68 @@ namespace MergeChat.ViewModel {
 
             // MergeTargetPanelViewModelを設定
             MergeTargetPanelViewModel = mergeTargetPanelViewModel;
+
+            // OutputFolderPath
+            OutputFolder = mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
+
         }
 
         public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; }
 
-
-        public QAChatStartupProps QAChatStartupProps { get; set; }
-
-        public ChatRequest ChatRequest { get; set; } = new();
-
-        private void PromptTemplateCommandExecute(object parameter) {
+        private void PreProcessPromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
+                PreProcessPromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
+            });
+        }
+        private void PostProcessPromptTemplateCommandExecute(object parameter) {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                PostProcessPromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
             });
         }
 
-        // Temperature
-        public double Temperature {
+        // プロンプトの文字列
+        private string _PreProcessPromptText = "";
+        public string PreProcessPromptText {
             get {
-                return ChatRequest.Temperature;
+                return _PreProcessPromptText;
             }
             set {
-                ChatRequest.Temperature = value;
+                _PreProcessPromptText = value;
+                OnPropertyChanged(nameof(PreProcessPromptText));
+            }
+        }
+        // 事後処理用のプロンプトの文字列
+        private string _PostProcessPromptText = "";
+        public string PostProcessPromptText {
+            get {
+                return _PostProcessPromptText;
+            }
+            set {
+                _PostProcessPromptText = value;
+                OnPropertyChanged(nameof(PostProcessPromptText));
+            }
+        }
+
+        // OutputFolderPath
+        private ContentFolderViewModel? _OutputFolder;
+        public ContentFolderViewModel? OutputFolder {
+            get {
+                return _OutputFolder;
+            }
+            set {
+                _OutputFolder = value;
+                OnPropertyChanged(nameof(OutputFolder));
+            }
+        }
+
+        // Temperature
+        private double _Temperature = 0.5;
+        public double Temperature {
+            get {
+                return _Temperature;
+            }
+            set {
+                _Temperature = value;
                 OnPropertyChanged(nameof(Temperature));
             }
         }
@@ -113,16 +151,6 @@ namespace MergeChat.ViewModel {
 
         public static ChatMessage? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatMessage> ChatHistory {
-            get {
-                return [.. ChatRequest.ChatHistory];
-            }
-            set {
-                ChatRequest.ChatHistory = [.. value];
-                OnPropertyChanged(nameof(ChatHistory));
-            }
-
-        }
 
         private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
         public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
@@ -146,39 +174,6 @@ namespace MergeChat.ViewModel {
             }
         }
 
-        public string InputText {
-            get {
-                return ChatRequest.ContentText;
-            }
-            set {
-                ChatRequest.ContentText = value;
-                OnPropertyChanged(nameof(InputText));
-            }
-        }
-
-        // プロンプトの文字列
-        private string _PromptText = "";
-        public string PromptText {
-            get {
-                return _PromptText;
-            }
-            set {
-                _PromptText = value;
-                OnPropertyChanged(nameof(PromptText));
-            }
-        }
-
-        // SelectedContextItem
-        private ContentItem? _SelectedContextItem = null;
-        public ContentItem? SelectedContextItem {
-            get {
-                return _SelectedContextItem;
-            }
-            set {
-                _SelectedContextItem = value;
-                OnPropertyChanged(nameof(SelectedContextItem));
-            }
-        }
         private AutoGenProperties _autoGenProperties;
         public AutoGenProperties AutoGenProperties {
             get {
@@ -200,7 +195,7 @@ namespace MergeChat.ViewModel {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
+                    List<VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -213,34 +208,14 @@ namespace MergeChat.ViewModel {
             }
         }
 
-        public string PreviewJson {
-            get {
-                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                foreach (var item in VectorSearchProperties) {
-                    item.TopK = VectorDBSearchResultMax;
-                }
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
-            }
-        }
-        // GeneratedDebugCommand
-        public string GeneratedDebugCommand {
-            get {
-                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                foreach (var item in VectorSearchProperties) {
-                    item.TopK = VectorDBSearchResultMax;
-                }
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
-            }
-        }
-
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = Int32.Parse(SplitTokenCount);
+            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+            foreach (var item in VectorSearchProperties) {
+                item.TopK = VectorDBSearchResultMax;
+            }
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
                 );
             return chatRequestContext;
         }
@@ -250,19 +225,7 @@ namespace MergeChat.ViewModel {
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
-        // DebugCommandVisibility
-        public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
 
-        // DebugCommand
-        public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
-            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-            foreach (var item in VectorSearchProperties) {
-                item.TopK = VectorDBSearchResultMax;
-            }
-            ChatRequestContext chatRequestContext = CreateChatRequestContext();
-            ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
-            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
-        });
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
@@ -272,87 +235,50 @@ namespace MergeChat.ViewModel {
             try {
                 ChatResult? result = null;
                 // プログレスバーを表示
-                IsIndeterminate = true;
+                UpdateIndeterminate(true);
 
+                ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid;
+                // itemViewModelsからContentItemをSelect
+                List<ContentItem> items = itemViewModels.Select(x => x.ContentItem).ToList();
                 // チャット内容を更新
                 await Task.Run(() => {
-
-                    // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                    foreach (var item in VectorSearchProperties) {
-                        item.TopK = VectorDBSearchResultMax;
-                    }
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
+                    if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
                         LogWrapper.Error(StringResources.PromptTextIsNeededWhenSplitModeIsEnabled);
+                        UpdateIndeterminate(false);
                         return;
                     }
-                    // OpenAIChat or LangChainChatを実行
-                    result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
-                        MainUITask.Run(() => {
-                            // チャット内容を更新
-                            UpdateChatHistoryList();
-                        });
-                    });
-
+                    // MergeChatUtil.MergeChatを実行
+                    result = MergeChatUtil.MergeChat(chatRequestContext, items , PreProcessPromptText, PostProcessPromptText, [ .. ExportItems]);
                 });
 
                 if (result == null) {
                     LogWrapper.Error(StringResources.FailedToSendChat);
+                    UpdateIndeterminate(false);
                     return;
                 }
-                // チャット内容を更新
-                UpdateChatHistoryList();
+                // チャット結果をOutputFolderに保存
+                if (OutputFolder != null) {
+                    ContentItem contentItem = new() {
+                        Content = result.Output,
+                    };
+                    OutputFolder.Folder.AddItem(contentItem, true, (item) => {
+                        UpdateIndeterminate(false);
+                        LogWrapper.Info(StringResources.SavedChatResult);
+                        // OutputFolderを再読み込みした後、Closeを実行
+                        OutputFolder.LoadFolderCommand.Execute();
+                        // Close
+                        MainUITask.Run(() => {
+                            CloseCommand.Execute();
+                        });
+                    });
+                }
 
-                // inputTextをクリア
-                InputText = "";
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
-            } finally {
-                IsIndeterminate = false;
             }
-
-        });
-
-        // チャット内容のリストを更新するメソッド
-        public void UpdateChatHistoryList() {
-            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-            QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
-            OnPropertyChanged(nameof(ChatHistory));
-
-            // ListBoxの一番最後のアイテムに移動
-            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
-            if (userControl != null) {
-
-                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
-                if (listBox != null) {
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                    listBox.ScrollIntoView(listBox.SelectedItem);
-                }
-            }
-        }
-        // チャット履歴をクリアコマンド
-        public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
-            ChatHistory = [];
-            // ClipboardItemがある場合は、ChatItemsをクリア
-            QAChatStartupProps.ContentItem.ChatItems = [];
-            OnPropertyChanged(nameof(ChatHistory));
-        });
-
-        // 本文を再読み込みコマンド
-        public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
-            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
-            OnPropertyChanged(nameof(InputText));
-        });
-
-        // 本文をクリアコマンド
-        public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
-            InputText = "";
-            OnPropertyChanged(nameof(InputText));
-
-            PromptText = "";
-            OnPropertyChanged(nameof(PromptText));
 
         });
 
@@ -392,52 +318,38 @@ namespace MergeChat.ViewModel {
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // タブが変更されたときの処理
+                MergeTargetPanelViewModel.UpdateCheckedItems();
                 // リクエストのメッセージをアップデート
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
-
-                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                ChatRequest request = new() {
+                    // request.Temperature;
+                    Temperature = Temperature
+                };
+                ChatUtil.PrepareNormalRequest( chatRequestContext, request);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
-                // タブが変更されたときの処理
-                if (tabControl.SelectedIndex == 1) {
-                    // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
-                    OnPropertyChanged(nameof(PreviewJson));
-                }
-                if (tabControl.SelectedIndex == 2) {
-                    // デバッグタブが選択された場合、デバッグコマンドを更新
-                    OnPropertyChanged(nameof(GeneratedDebugCommand));
-                }
-                OnPropertyChanged(nameof(DebugCommandVisibility));
             }
         });
 
         // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
-            PromptTemplateCommandExecute(parameter);
+        public SimpleDelegateCommand<object> PreProcessPromptTemplateCommand => new((parameter) => {
+            PreProcessPromptTemplateCommandExecute(parameter);
         });
 
-        // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatMessage> OpenChatItemCommand => new((chatItem) => {
-            EditChatItemWindow.OpenEditChatItemWindow(chatItem);
+        // 事後処理用のプロンプトテンプレート画面を開くコマンド
+        public SimpleDelegateCommand<object> PostProcessPromptTemplateCommand => new((parameter) => {
+            PostProcessPromptTemplateCommandExecute(parameter);
         });
 
-        // チャット内容をエクスポートするコマンド
-        public SimpleDelegateCommand<object> ExportChatCommand => new((parameter) => {
-            QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
-        });
-        // 選択したチャット内容をクリップボードにコピーするコマンド
-        public SimpleDelegateCommand<ChatMessage> CopySelectedChatItemCommand => new((item) => {
-            string text = $"{item.Role}:\n{item.Content}";
-            Clipboard.SetText(text);
-
-        });
-        // 全てのチャット内容をクリップボードにコピーするコマンド
-        public SimpleDelegateCommand<object> CopyAllChatItemCommand => new((parameter) => {
-            string text = "";
-            foreach (var item in ChatHistory) {
-                text += $"{item.Role}:\n{item.Content}\n";
-            }
-            Clipboard.SetText(text);
+        // 出力先フォルダを選択するコマンド
+        public SimpleDelegateCommand<object> SelectOutputFolderCommand => new((parameter) => {
+            // フォルダを選択
+            FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folderViewModel, isSelect) => {
+                if (isSelect) {
+                    OutputFolder = folderViewModel;
+                }
+            });
         });
 
         // ベクトルDBをリストから削除するコマンド
@@ -458,12 +370,6 @@ namespace MergeChat.ViewModel {
                 });
 
             OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-
-        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, true);
-            window.Close();
         });
 
         #region AutoGen Group Chat
@@ -536,6 +442,21 @@ namespace MergeChat.ViewModel {
 
         #endregion
 
+        // ExportItems
+        public ObservableCollection<ExportImportItem> ExportItems { get; set; } = CreateExportItems();
+
+        private static ObservableCollection<ExportImportItem> CreateExportItems() {
+            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
+            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+
+            ObservableCollection<ExportImportItem> items = [
+                new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
+            ];
+            foreach (PromptItem promptItem in promptItems) {
+                items.Add(new ExportImportItem(promptItem.Name, promptItem.Description, false, true));
+            }
+            return items;
+        }
 
 
     }

@@ -2,6 +2,7 @@ using System.IO;
 using System.Net.Http;
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
@@ -228,13 +229,28 @@ namespace PythonAILib.Model.Content {
             return folder;
         }
 
-        public virtual void AddItem(ContentItem item) {
+        public virtual void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null ) {
             // CollectionNameを設定
             item.CollectionId = Id;
-            // 保存
-            item.Save();
-            // 通知
-            LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+            if (applyGlobalAutoAction) {
+                Task.Run(() => {
+                    // Apply automatic processing
+                    Task<ContentItem> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    if (updatedItemTask.Result != null) {
+                        item = updatedItemTask.Result;
+                    }
+                    item.Save();
+                    afterUpdate?.Invoke(item);
+                    // 通知
+                    LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+                });
+            } else {
+                // 保存
+                item.Save();
+                afterUpdate?.Invoke(item);
+                // 通知
+                LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+            }
 
         }
         #region 検索

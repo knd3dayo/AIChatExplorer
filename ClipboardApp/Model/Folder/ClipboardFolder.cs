@@ -69,18 +69,13 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItem item) {
-            if (item is not ClipboardItem) {
-                LogWrapper.Error("Item is not ClipboardItem");
-                return;
-            }
-            ClipboardItem clipboardItem = (ClipboardItem)item;
-            base.AddItem(clipboardItem);
+        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false , Action<ContentItem>? afterUpdate = null) {
+            base.AddItem(item, applyGlobalAutoAction, afterUpdate);
 
             // 自動処理を適用
             if (IsAutoProcessEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
-                ContentItem? result = AutoProcessRuleController.ApplyFolderAutoAction(clipboardItem);
+                ContentItem? result = AutoProcessRuleController.ApplyFolderAutoAction(item);
                 if (result == null) {
                     // 自動処理で削除または移動された場合は何もしない
                     LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);

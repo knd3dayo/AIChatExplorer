@@ -24,13 +24,13 @@ namespace ImageChat.ViewModel {
             OnPropertyChanged(nameof(InputText));
             OnPropertyChanged(nameof(ResultText));
             OnPropertyChanged(nameof(ImageFiles));
-            ChatController = new();
+            ChatRequest = new();
         }
         // データ保存用のClipboardItem
         public ContentItem ClipboardItem { get; set; }
 
         // Chat
-        public ChatRequest ChatController { get; set; }
+        public ChatRequest ChatRequest { get; set; }
 
         // 更新後の処理
         public Action AfterUpdate { get; set; } = () => { };
@@ -147,10 +147,10 @@ namespace ImageChat.ViewModel {
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatUtil.CreateImageURLFromFilePath(imageFileName)).ToList();
 
-                    ChatController.ImageURLs = imageBase64Strings;
-                    ChatController.ContentText = InputText;
+                    ChatRequest.ImageURLs = imageBase64Strings;
+                    ChatRequest.ContentText = InputText;
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatController.ExecuteChat(chatRequestContext, (message) => { });
+                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext, (message) => { });
 
                 });
                 // 結果を表示
@@ -210,7 +210,7 @@ namespace ImageChat.ViewModel {
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
             ImageFiles = [];
-            ChatController = new();
+            ChatRequest = new();
 
         });
 

@@ -18,6 +18,8 @@ using QAChat.View.AutoGen;
 using QAChat.View.AutoProcessRule;
 using QAChat.View.PromptTemplate;
 using QAChat.View.Tag;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
@@ -271,12 +273,21 @@ namespace ClipboardApp.ViewModel.Main {
         });
 
         // OpenMergeChatWindow
-        public SimpleDelegateCommand<object> OpenMergeChatWindow => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
             ClipboardItemViewModelCommands commands = new();
-            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
-            commands.OpenMergeChatWindowCommand(dummyItem, () => {
-                RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
-            });
+
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            commands.OpenMergeChatWindowCommand(folderViewModel, []);
+
+        });
+
+        public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
+            ClipboardItemViewModelCommands commands = new();
+
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
+            commands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
+
         });
 
 

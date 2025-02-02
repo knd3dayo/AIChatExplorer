@@ -1,6 +1,9 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using MergeChat.ViewModel;
 using QAChat.ViewModel;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 
 namespace MergeChat.View {
     /// <summary>
@@ -11,9 +14,9 @@ namespace MergeChat.View {
             InitializeComponent();
         }
 
-        public static void OpenWindow(QAChatStartupProps props) {
+        public static void OpenWindow(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
             MergeChat.View.MergeChatMainWindow openAIChatWindow = new();
-            MergeChatWindowViewModel mainWindowViewModel = new(props);
+            MergeChatWindowViewModel mainWindowViewModel = new(folderViewModel, selectedItems);
             openAIChatWindow.DataContext = mainWindowViewModel;
 
             openAIChatWindow.Show();

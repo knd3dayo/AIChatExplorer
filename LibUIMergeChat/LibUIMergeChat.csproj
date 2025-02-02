@@ -14,11 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="View\MergeChatDataGridViewControl.xaml.cs">
+    <Compile Update="View\MergeTargetSelectedDataGridViewControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MergeTargetDataGridViewControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\MergeChatTreeViewControl.xaml.cs">

@@ -112,9 +112,8 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to Open Merge Chat
-        public void OpenMergeChatWindowCommand(ContentItem item, Action action) {
-            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(item);
-            MergeChatMainWindow.OpenWindow(qAChatStartupProps);
+        public void OpenMergeChatWindowCommand(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
+            MergeChatMainWindow.OpenWindow(folderViewModel, selectedItems);
         }
 
         // Process when "RAG Management" is clicked in the menu

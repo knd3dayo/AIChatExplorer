@@ -6,6 +6,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
+using PythonAILib.Utils.Python;
 using QAChat.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -491,7 +492,7 @@ namespace ClipboardApp.Settings {
                     ChatMode = OpenAIExecutionModeEnum.Normal,
                 };
 
-                string resultString = chatRequest.ExecuteChat(chatRequestContext, (message) => { })?.Output ?? "";
+                string resultString = ChatUtil.ExecuteChat(chatRequest, chatRequestContext, (message) => { })?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
                     testResult.Result = false;

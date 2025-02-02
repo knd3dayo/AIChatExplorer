@@ -220,18 +220,19 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MainWindowViewModel.Instance.UpdateIndeterminate(isIndeterminate);
         }
 
-        public override SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+        public override void LoadFolder(Action afterUpdate) {
             UpdateIndeterminate(true);
             Task.Run(() => {
                 LoadChildren(DefaultNextLevel);
                 LoadItems();
             }).ContinueWith((task) => {
+                afterUpdate?.Invoke();
                 MainUITask.Run(() => {
                     UpdateIndeterminate(false);
                     UpdateStatusText();
                 });
             });
-        });
+        }
 
         protected virtual void UpdateStatusText() {
             string message = $"{StringResources.Folder}[{FolderName}]";

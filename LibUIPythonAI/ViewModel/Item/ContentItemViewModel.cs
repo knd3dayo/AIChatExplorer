@@ -12,6 +12,30 @@ namespace QAChat.ViewModel.Item {
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
 
+
+        // IsSelected
+        private bool isSelected = false;
+        public bool IsSelected {
+            get {
+                return isSelected;
+            }
+            set {
+                isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+        // IsChecked
+        private bool isChecked = false;
+        public bool IsChecked {
+            get {
+                return isChecked;
+            }
+            set {
+                isChecked = value;
+                OnPropertyChanged(nameof(IsChecked));
+            }
+        }
+
         // Tags
         public HashSet<string> Tags { get => ContentItem.Tags; set { ContentItem.Tags = value; } }
 
