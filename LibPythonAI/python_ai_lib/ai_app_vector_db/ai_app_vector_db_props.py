@@ -101,9 +101,7 @@ class VectorDBProps:
             "doc_store_url": os.getenv("DOC_STORE_URL"),
             "collection_name": os.getenv("VECTOR_DB_COLLECTION_NAME"),
             # チャンクサイズ
-            "chunk_size": int(os.getenv("ChunkSize", 500)),
-            # マルチベクトルリトリーバーの場合のドキュメントチャンクサイズ
-            "MultiVectorDocChunkSize": int(os.getenv("MultiVectorDocChunkSize", 500)),
+            "chunk_size": int(os.getenv("ChunkSize", 1024)),
             
         }
         vectorDBProps = VectorDBProps(props)

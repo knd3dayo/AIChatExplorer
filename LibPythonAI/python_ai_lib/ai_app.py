@@ -98,7 +98,8 @@ def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBPro
         from ai_app_langchain.langchain_vector_db import LangChainVectorDB
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         return LangChainVectorDB.vector_search(params)
-
+    # vector_db_itemsが空の場合はNoneを設定
+    vector_search = None if len(vector_db_items) == 0 else vector_search
     return openai_client.run_openai_chat(vector_search, request_context, request)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):

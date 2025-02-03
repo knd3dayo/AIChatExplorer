@@ -102,7 +102,7 @@ namespace PythonAILib.Model.VectorDB {
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
         [JsonPropertyName("chunk_size")]
-        public int ChunkSize { get; set; } = 500;
+        public int ChunkSize { get; set; } = 1024;
 
         // ベクトル検索時の検索結果上限
         [JsonPropertyName("default_search_result_limit")]

@@ -214,12 +214,14 @@ class LangChainVectorDB:
 
         return retriever
 
-    def _add_document_list(self, content_text: str, description_text: str, source_path: str, source_url: str, image_url=""):
+    def add_document_list(self, content_text: str, description_text: str, source_path: str, source_url: str, image_url=""):
         
         chunk_size = self.vector_db_props.ChunkSize
     
         document_list = []
 
+        # テキストをサニタイズ
+        content_text = self._sanitize_text(content_text)
         # テキストをchunk_sizeで分割
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
@@ -239,6 +241,19 @@ class LangChainVectorDB:
             for document in document_list:
                 self.__add_document(document)
 
+
+    # テキストをサニタイズする
+    def _sanitize_text(self, text: str) -> str:
+        # textが空の場合は空の文字列を返す
+        if not text or len(text) == 0:
+            return ""
+        import re
+        # 1. 複数の改行を1つの改行に変換
+        text = re.sub(r'\n+', '\n', text)
+        # 2. 複数のスペースを1つのスペースに変換
+        text = re.sub(r' +', ' ', text)
+
+        return text
 
     def _split_text(self, text: str, chunk_size: int):
         text_list = []
@@ -301,7 +316,7 @@ class LangChainVectorDB:
         # 既に存在するドキュメントを削除
         self.delete_document(params.id)
         # ドキュメントを格納する。
-        self._add_document_list(params.text, params.description, params.source_path, params.git_relative_path)
+        self.add_document_list(params.text, params.description, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
     @classmethod

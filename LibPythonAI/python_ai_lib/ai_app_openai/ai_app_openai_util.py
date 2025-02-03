@@ -255,8 +255,8 @@ class OpenAIClient:
             context_message = ""
             if len(request_context.PromptTemplateText) > 0:
                 context_message = request_context.PromptTemplateText
-            # chat_modeがNormal以外の場合はベクトル検索を実施
-            if request_context.ChatMode != "Normal":
+            # vector_search_functionがNoneでない場合はベクトル検索を実施
+            if vector_search_function:
                 vector_search_result = vector_search_function(query) 
                 vector_search_results = [ document["content"] for document in vector_search_result["documents"]]
                 context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_results)
