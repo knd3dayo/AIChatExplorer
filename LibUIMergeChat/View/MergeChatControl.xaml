@@ -174,10 +174,13 @@
                     Command="{Binding SelectOutputFolderCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.OutputFolderSelection}" />
-                <TextBlock
+                <TextBox
+                    MinWidth="300"
                     Margin="10,0,10,5"
+                    VerticalAlignment="Center"
                     FontSize="12"
-                    Text="{Binding OutputFolder.FolderPath}" />
+                    IsReadOnly="True"
+                    Text="{Binding OutputFolder.FolderPath, Mode=OneWay}" />
             </StackPanel>
             <StackPanel
                 Grid.Column="1"

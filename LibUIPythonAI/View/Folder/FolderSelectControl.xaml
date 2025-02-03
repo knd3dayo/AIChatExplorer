@@ -51,11 +51,29 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </TreeView>
-        <TextBlock
-            Grid.Row="1"
-            MinHeight="20"
-            HorizontalAlignment="Stretch"
-            Text="{Binding SelectedFolderAbsoluteCollectionName}" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Margin="20,10,0,10"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="#616161"
+                Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
+                Text="{x:Static res:ViewStringResources.SelectedClipboardFolder}" />
+            <TextBox
+                Grid.Column="1"
+                MinHeight="20"
+                Margin="20,10,30,10"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                IsReadOnly="True"
+                Text="{Binding SelectedFolderAbsoluteCollectionName}" />
+        </Grid>
+
 
     </Grid>
 </UserControl>

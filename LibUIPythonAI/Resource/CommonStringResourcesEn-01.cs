@@ -642,6 +642,8 @@ namespace LibUIPythonAI.Resource {
         // SelectClipboardFolder
         public override string SelectClipboardFolder { get; } = "Select Clipboard Folder";
 
+        // SelectedClipboardFolder
+        public override string SelectedClipboardFolder { get; } = "Selected Clipboard Folder";
 
         // -- EditItemWindow --
         public override string OpenTextAsFile { get; } = "Open text as file";

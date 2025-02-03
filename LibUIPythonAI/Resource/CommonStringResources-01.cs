@@ -330,6 +330,9 @@ namespace LibUIPythonAI.Resource {
         // SelectClipboardFolder
         public virtual string SelectClipboardFolder { get; } = "クリップボードフォルダ選択";
 
+        // SelectedClipboardFolder
+        public virtual string SelectedClipboardFolder { get; } = "選択したクリップボードフォルダ";
+
         // -- EditItemWindow --
         // テキストをファイルとして開く
         public virtual string OpenTextAsFile { get; } = "テキストをファイルとして開く";

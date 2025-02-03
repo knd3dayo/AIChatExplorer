@@ -22,6 +22,10 @@ namespace LibUIPythonAI.View.Folder {
 
         // SelectClipboardFolder
         public static string SelectClipboardFolder { get; set; } = CommonStringResources.Instance.SelectClipboardFolder;
+
+        // 選択したクリップボードフォルダ
+        public static string SelectedClipboardFolder { get; set; } = CommonStringResources.Instance.SelectedClipboardFolder;
+
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
