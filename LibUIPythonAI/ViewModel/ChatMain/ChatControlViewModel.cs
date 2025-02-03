@@ -1,50 +1,38 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.View.ChatMain;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.PromptTemplate;
-using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using LibUIPythonAI.View.ChatMain;
-using LibUIPythonAI.View.VectorDB;
-using LibUIPythonAI.ViewModel;
 using WpfAppCommon.Utils;
-using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatControlViewModel : ChatViewModelBase {
 
-
         //初期化
         public ChatControlViewModel(QAChatStartupProps props) {
 
-            QAChatStartupProps = props;
-            // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            VectorSearchProperties = [.. props.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
+            QAChatStartupPropsInstance = props;
 
             // InputTextを設定
-            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
-            if (QAChatStartupProps.ContentItem != null) {
-                ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
+            if (QAChatStartupPropsInstance.ContentItem != null) {
+                ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
             }
-            // AutoGenPropertiesを設定
-            _autoGenProperties = new();
-            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
-            _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
-            _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
-
-            // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
+            // ChatContextPanelViewModelを設定
+            ChatContextViewModelInstance = new ChatContextViewModel(QAChatStartupPropsInstance);
 
         }
 
-        public QAChatStartupProps QAChatStartupProps { get; set; }
+        // ChatContextPanelViewModel
+        public ChatContextViewModel ChatContextViewModelInstance { get; set; }
+
+        public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
 
         public ChatRequest ChatRequest { get; set; } = new();
 
@@ -53,58 +41,6 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                 PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
             });
         }
-
-        // Temperature
-        public double Temperature {
-            get {
-                return ChatRequest.Temperature;
-            }
-            set {
-                ChatRequest.Temperature = value;
-                OnPropertyChanged(nameof(Temperature));
-            }
-        }
-
-        private OpenAIExecutionModeEnum _chatMode = OpenAIExecutionModeEnum.Normal;
-        public int ChatMode {
-            get {
-                return (int)_chatMode;
-            }
-            set {
-                _chatMode = (OpenAIExecutionModeEnum)value;
-                OnPropertyChanged(nameof(ChatMode));
-            }
-        }
-        private SplitOnTokenLimitExceedModeEnum _splitMode = SplitOnTokenLimitExceedModeEnum.None;
-        public int SplitMode {
-            get {
-                return (int)_splitMode;
-            }
-            set {
-                _splitMode = (SplitOnTokenLimitExceedModeEnum)value;
-                OnPropertyChanged(nameof(SplitMode));
-            }
-        }
-
-        // SplitTokenCount
-        private int _SplitTokenCount = 8000;
-        public string SplitTokenCount {
-            get {
-                return _SplitTokenCount.ToString();
-            }
-            set {
-                try {
-                    int count = int.Parse(value);
-                    _SplitTokenCount = count;
-                } catch (Exception) {
-                    return;
-                }
-                OnPropertyChanged(nameof(SplitTokenCount));
-            }
-        }
-
-        // VectorDBSearchResultMax
-        public int VectorDBSearchResultMax { get; set; } = 10;
 
         public static ChatMessage? SelectedItem { get; set; }
 
@@ -117,28 +53,6 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                 OnPropertyChanged(nameof(ChatHistory));
             }
 
-        }
-
-        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
-            get {
-                return _vectorSearchProperties;
-            }
-            set {
-                _vectorSearchProperties = value;
-                OnPropertyChanged(nameof(VectorSearchProperties));
-            }
-        }
-
-        private VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public VectorSearchProperty? SelectedVectorSearchProperty {
-            get {
-                return _selectedVectorSearchProperty;
-            }
-            set {
-                _selectedVectorSearchProperty = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
-            }
         }
 
         public string InputText {
@@ -174,47 +88,10 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                 OnPropertyChanged(nameof(SelectedContextItem));
             }
         }
-        private AutoGenProperties _autoGenProperties;
-        public AutoGenProperties AutoGenProperties {
-            get {
-                return _autoGenProperties;
-            }
-            set {
-                _autoGenProperties = value;
-                OnPropertyChanged(nameof(AutoGenProperties));
-            }
-        }
-        // UseVectorDB
-        private bool _UseVectorDB = false;
-        public bool UseVectorDB {
-            get {
-                return _UseVectorDB;
-            }
-            set {
-                _UseVectorDB = value;
-                // _UserVectorDBがTrueの場合はVectorDBItemを取得
-                VectorSearchProperties = [];
-                if (_UseVectorDB) {
-                    List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
-                    foreach (var item in items) {
-                        VectorSearchProperties.Add(item);
-                    }
-                } else {
-                    VectorSearchProperties.Clear();
-                }
-
-                OnPropertyChanged(nameof(UseVectorDB));
-                OnPropertyChanged(nameof(VectorDBItemVisibility));
-            }
-        }
 
         public string PreviewJson {
             get {
-                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                foreach (var item in VectorSearchProperties) {
-                    item.TopK = VectorDBSearchResultMax;
-                }
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
@@ -222,42 +99,22 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                foreach (var item in VectorSearchProperties) {
-                    item.TopK = VectorDBSearchResultMax;
-                }
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
             }
         }
-
-        private ChatRequestContext CreateChatRequestContext() {
-            int splitTokenCount = int.Parse(SplitTokenCount);
-            ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
-                );
-            return chatRequestContext;
-        }
-
-        //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
-
-        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
         // DebugCommandVisibility
         public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
 
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
-            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-            foreach (var item in VectorSearchProperties) {
-                item.TopK = VectorDBSearchResultMax;
-            }
-            ChatRequestContext chatRequestContext = CreateChatRequestContext();
+            ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
             ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
         });
+
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
@@ -272,12 +129,11 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                 // チャット内容を更新
                 await Task.Run(() => {
 
-                    // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
-                    foreach (var item in VectorSearchProperties) {
-                        item.TopK = VectorDBSearchResultMax;
-                    }
-                    ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                    ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
+
+                    ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
+                    SplitOnTokenLimitExceedModeEnum _splitMode = (SplitOnTokenLimitExceedModeEnum)ChatContextViewModelInstance.SplitMode;
                     if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
                         LogWrapper.Error(StringResources.PromptTextIsNeededWhenSplitModeIsEnabled);
                         return;
@@ -313,7 +169,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
             // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-            QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+            QAChatStartupPropsInstance.ContentItem.ChatItems = [.. ChatHistory];
             OnPropertyChanged(nameof(ChatHistory));
 
             // ListBoxの一番最後のアイテムに移動
@@ -331,13 +187,13 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
             // ClipboardItemがある場合は、ChatItemsをクリア
-            QAChatStartupProps.ContentItem.ChatItems = [];
+            QAChatStartupPropsInstance.ContentItem.ChatItems = [];
             OnPropertyChanged(nameof(ChatHistory));
         });
 
         // 本文を再読み込みコマンド
         public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
-            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
             OnPropertyChanged(nameof(InputText));
         });
 
@@ -351,26 +207,6 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
         });
 
-        // Chatモードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ChatModeSelectionChangedCommand => new((routedEventArgs) => {
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            ChatMode = comboBox.SelectedIndex;
-            // ChatModeVisibility
-            OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
-
-
-        });
-
-        // Splitモードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> SplitModeSelectionChangedCommand => new((routedEventArgs) => {
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            SplitMode = comboBox.SelectedIndex;
-            // SplitMOdeVisibility
-            OnPropertyChanged(nameof(SplitMOdeVisibility));
-
-        });
 
         private int _SelectedTabIndex = 0;
         public int SelectedTabIndex {
@@ -388,8 +224,8 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // リクエストのメッセージをアップデート
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
-
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+                ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
@@ -418,7 +254,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
         // チャット内容をエクスポートするコマンド
         public SimpleDelegateCommand<object> ExportChatCommand => new((parameter) => {
-            QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
+            QAChatStartupPropsInstance.ExportChatCommand([.. ChatHistory]);
         });
         // 選択したチャット内容をクリップボードにコピーするコマンド
         public SimpleDelegateCommand<ChatMessage> CopySelectedChatItemCommand => new((item) => {
@@ -435,101 +271,11 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
             Clipboard.SetText(text);
         });
 
-        // ベクトルDBをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchProperty != null) {
-                // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
-            }
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-        // ベクトルDBを追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
-            // フォルダを選択
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    VectorSearchProperties.Add(vectorDBItemBase);
-                });
-
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, true);
+            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, true);
             window.Close();
         });
-
-        #region AutoGen Group Chat
-        // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
-
-        // AutoGenGroupChatList
-        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
-            get {
-                ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
-                foreach (var item in AutoGenGroupChat.GetAutoGenChatList()) {
-                    autoGenGroupChatList.Add(item);
-                }
-                return autoGenGroupChatList;
-            }
-        }
-        // SelectedAutoGenGroupChat
-        private AutoGenGroupChat? _SelectedAutoGenGroupChat = null;
-        public AutoGenGroupChat? SelectedAutoGenGroupChat {
-            get {
-                return _SelectedAutoGenGroupChat;
-            }
-            set {
-                _SelectedAutoGenGroupChat = value;
-                if (_SelectedAutoGenGroupChat != null) {
-                    AutoGenProperties.AutoGenGroupChat = _SelectedAutoGenGroupChat;
-                }
-                OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
-            }
-        }
-        // AutoGenGroupChatSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
-                // 選択されたComboBoxItemのIndexを取得
-                int index = comboBox.SelectedIndex;
-                SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
-            }
-        });
-
-        // terminate_msg
-        public string TerminateMsg {
-            get {
-                return AutoGenProperties.TerminateMsg;
-            }
-            set {
-                AutoGenProperties.TerminateMsg = value;
-                OnPropertyChanged(nameof(TerminateMsg));
-            }
-        }
-        // max_msg
-        public int MaxMsg {
-            get {
-                return AutoGenProperties.MaxMsg;
-            }
-            set {
-                AutoGenProperties.MaxMsg = value;
-                OnPropertyChanged(nameof(MaxMsg));
-            }
-        }
-        // timeout
-        public int Timeout {
-            get {
-                return AutoGenProperties.Timeout;
-            }
-            set {
-                AutoGenProperties.Timeout = value;
-                OnPropertyChanged(nameof(Timeout));
-            }
-        }
-
-        #endregion
 
     }
 

@@ -10,10 +10,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:LibUIPythonAI.ViewModel.ChatMain"
-    xmlns:qaChatControl="clr-namespace:LibUIPythonAI.View.ChatMain"
-    xmlns:res="clr-namespace:LibUIPythonAI.View.ChatMain"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=model:ChatControlViewModel}"
+    d:DataContext="{d:DesignInstance Type=model:ChatContextViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -42,7 +40,7 @@
             <TextBlock
                 Grid.Row="0"
                 Margin="10,0,10,5"
-                Text="{x:Static res:ViewStringResources.Setting}" />
+                Text="{x:Static local:ViewStringResources.Setting}" />
             <Separator Grid.Row="1" />
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -54,13 +52,13 @@
                     Margin="10,0,10,0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.ChatMode}" />
+                    Text="{x:Static local:ViewStringResources.ChatMode}" />
                 <ComboBox
                     Grid.Column="1"
                     Margin="10,0,10,0"
                     SelectedIndex="{Binding ChatMode}">
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_GroupChat}" />
+                    <ComboBoxItem Content="{x:Static local:ViewStringResources.ChatMode_OpenAI}" />
+                    <ComboBoxItem Content="{x:Static local:ViewStringResources.ChatMode_AutoGen_GroupChat}" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ChatModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -78,14 +76,14 @@
                     Margin="10,0,10,0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.SplitMode}" />
+                    Text="{x:Static local:ViewStringResources.SplitMode}" />
                 <ComboBox
                     Grid.Column="1"
                     Margin="10,0,10,0"
                     SelectedIndex="{Binding SplitMode}">
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
+                    <ComboBoxItem Content="{x:Static local:ViewStringResources.SplitMode_None}" />
+                    <ComboBoxItem Content="{x:Static local:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
+                    <ComboBoxItem Content="{x:Static local:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -105,7 +103,7 @@
                 <TextBlock
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Text="{x:Static res:ViewStringResources.NumberOfTokensToSplitRequest}" />
+                    Text="{x:Static local:ViewStringResources.NumberOfTokensToSplitRequest}" />
                 <!--  書式は整数  -->
                 <TextBox
                     Grid.Column="1"
@@ -171,7 +169,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.GroupChatName}" />
+                    Text="{x:Static local:ViewStringResources.GroupChatName}" />
                 <ComboBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -192,7 +190,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.TerminateMessage}" />
+                    Text="{x:Static local:ViewStringResources.TerminateMessage}" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
@@ -205,7 +203,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.MaxMsg}" />
+                    Text="{x:Static local:ViewStringResources.MaxMsg}" />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
@@ -218,7 +216,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.Timeout}" />
+                    Text="{x:Static local:ViewStringResources.Timeout}" />
                 <TextBox
                     Grid.Row="3"
                     Grid.Column="1"
@@ -230,7 +228,7 @@
         <CheckBox
             Grid.Row="2"
             Margin="10,20,0,10"
-            Content="{x:Static res:ViewStringResources.UseVectorDB}"
+            Content="{x:Static local:ViewStringResources.UseVectorDB}"
             IsChecked="{Binding UseVectorDB}" />
         <!--  ベクトルDB設定  -->
         <Grid Grid.Row="3" Visibility="{Binding VectorDBItemVisibility}">
@@ -258,13 +256,13 @@
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             FontWeight="Bold"
-                            Text="{x:Static res:ViewStringResources.VectorDB}" />
+                            Text="{x:Static local:ViewStringResources.VectorDB}" />
                         <TextBlock
                             Grid.Column="1"
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
                             FontSize="10"
-                            Text="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}">
+                            Text="{x:Static local:ViewStringResources.ClickHereToAddVectorDB}">
                             <TextBlock.InputBindings>
                                 <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                             </TextBlock.InputBindings>
@@ -311,7 +309,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.VectorDBSearchResultMax}" />
+                    Text="{x:Static local:ViewStringResources.VectorDBSearchResultMax}" />
                 <TextBox
                     Grid.Column="1"
                     Margin="10,0,0,0"

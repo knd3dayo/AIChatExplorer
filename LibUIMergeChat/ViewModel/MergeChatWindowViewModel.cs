@@ -18,7 +18,7 @@ namespace LibUIMergeChat.ViewModel {
             MergeChatControlViewModel = new(mergeTargetPanelViewModel);
 
         }
-        // QAChatControlのViewModel
+
         public MergeChatControlViewModel MergeChatControlViewModel { get; set; }
 
     }

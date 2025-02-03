@@ -45,7 +45,7 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <local:ChatContextPanel Grid.Column="0" DataContext="{Binding}" />
+        <local:ChatContextPanel Grid.Column="0" DataContext="{Binding ChatContextViewModelInstance}" />
         <GridSplitter Grid.Column="1" Width="5" />
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
