@@ -1,8 +1,10 @@
+using LibUIPythonAI.Resource;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
+using WpfAppCommon.Model;
 
 namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
@@ -50,7 +52,17 @@ namespace LibUIMergeChat.Common {
         private static List<ChatResult> PreProcess(List<ContentItem> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList) {
             List<ChatResult> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
-                foreach (var item in items) {
+                object lockObject = new();
+                int start_count = 0;
+                int count = items.Count;
+
+                // Parallel.ForEを使って、items毎にプリプロセスを実行
+                ParallelOptions parallelOptions = new();
+                parallelOptions.MaxDegreeOfParallelism = 10;
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    string message = $"{CommonStringResources.Instance.MergeChatPreprocessingInProgress} ({start_count}/{count})";
+                    StatusText.Instance.UpdateInProgress(true, message);
+                    ContentItem item = items[i];
                     ChatRequestContext preProcessRequestContext = new() {
                         PromptTemplateText = preProcessPrompt,
                         ChatMode = context.ChatMode,
@@ -63,18 +75,19 @@ namespace LibUIMergeChat.Common {
                     };
                     string contentText = GetTargetData(item, targetDataList);
                     if (string.IsNullOrEmpty(contentText)) {
-                        continue;
+                        return;
                     }
                     ChatRequest preProcessRequest = new() {
                         ContentText = contentText,
                     };
-
                     ChatResult? preProcessResult = ChatUtil.ExecuteChat(preProcessRequest, preProcessRequestContext, (text) => { });
                     if (preProcessResult == null) {
-                        continue;
+                        return;
                     }
-                    preProcessResults.Add(preProcessResult);
-                }
+                    lock (lockObject) {
+                        preProcessResults.Add(preProcessResult);
+                    }
+                });
             } else {
                 foreach (var item in items) {
                     string contentText = GetTargetData(item, targetDataList);
@@ -87,6 +100,7 @@ namespace LibUIMergeChat.Common {
                     preProcessResults.Add(chatResult);
                 }
             }
+            StatusText.Instance.UpdateInProgress(false);
             return preProcessResults;
         }
 

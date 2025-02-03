@@ -845,6 +845,9 @@ namespace LibUIPythonAI.Resource {
         // TextExtractionInProgress
         public override string TextExtractionInProgress { get; } = "Text extraction in progress";
 
+        // // マージチャット 事前処理実行中
+        public override string MergeChatPreprocessingInProgress { get; } = "Preprocessing merge chat";
+
         // TextExtractionCompleted
         public override string TextExtractionCompleted { get; } = "Text extraction completed";
 

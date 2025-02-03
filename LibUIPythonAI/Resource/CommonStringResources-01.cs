@@ -733,6 +733,8 @@ namespace LibUIPythonAI.Resource {
         // テキスト抽出処理実行中
         public virtual string TextExtractionInProgress { get; } = "テキスト抽出処理実行中";
 
+        // マージチャット 事前処理実行中
+        public virtual string MergeChatPreprocessingInProgress { get; } = "マージチャット 事前処理実行中";
         // テキスト抽出処理が完了しました
         public virtual string TextExtractionCompleted { get; } = "テキスト抽出処理が完了しました";
 
