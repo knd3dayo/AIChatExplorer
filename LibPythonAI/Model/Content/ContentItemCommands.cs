@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -74,7 +69,7 @@ namespace PythonAILib.Model.Content {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
+                VectorDBProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -128,10 +123,10 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder<ContentFolder>().GetVectorSearchProperties() : [];
+            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder<ContentFolder>().GetVectorSearchProperties() : [];
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = vectorSearchProperties,
+                VectorDBProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties,
                 PromptTemplateText = promptItem.Prompt,
                 ChatMode = promptItem.ChatMode,
@@ -200,7 +195,7 @@ namespace PythonAILib.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
+                VectorDBProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -250,51 +245,66 @@ namespace PythonAILib.Model.Content {
         }
 
         // ベクトルを更新する
-        public static void UpdateEmbedding(ContentItem item, VectorDBUpdateMode mode) {
+        public static void DeleteEmbeddings(List<ContentItem> items) {
 
-            // VectorDBItemを取得
-            VectorSearchProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+            // VectorDBProperty用のHashSetを作成
+            HashSet<VectorDBProperty> vectorDBProperties = [];
 
-            if (mode == VectorDBUpdateMode.delete) {
+            foreach (var item in items) {
+                // VectorDBItemを取得
+                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                // VectorDBProperty用のHashSetに存在する場合は取得
+                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
+                    // VectorDBProperty用のHashSetに存在しない場合は追加
+                    vectorDBProperties.Add(folderVectorDBItem);
+                    vectorDBProperty = folderVectorDBItem;
+                }
                 // IPythonAIFunctions.ClipboardInfoを作成
                 VectorDBEntry vectorDBEntry = new(item.Id.ToString());
 
-                // Embeddingを削除
-                folderVectorDBItem.DeleteIndex(vectorDBEntry);
-                return;
             }
-            if (mode == VectorDBUpdateMode.update) {
+            // ベクトルを削除
+            foreach (var vectorDBProperty in vectorDBProperties) {
+                vectorDBProperty.DeleteEmbeddings();
+            }
+        }
+        // Embeddingを更新する
+        public static void UpdateEmbeddings(List<ContentItem> items) {
+            // VectorDBProperty用のHashSetを作成
+            HashSet<VectorDBProperty> vectorDBProperties = [];
+
+            foreach (var item in items) {
+                // VectorDBItemを取得
+                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                // VectorDBProperty用のHashSetに存在する場合は取得
+                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
+                    // VectorDBProperty用のHashSetに存在しない場合は追加
+                    vectorDBProperties.Add(folderVectorDBItem);
+                    vectorDBProperty = folderVectorDBItem;
+                }
                 // IPythonAIFunctions.ClipboardInfoを作成
                 VectorDBEntry vectorDBEntry = new(item.Id.ToString());
+
                 // タイトルとHeaderTextを追加
                 string description = item.Description + "\n" + item.HeaderText;
                 if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
                     vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
-                    // Embeddingを保存
-                    folderVectorDBItem.UpdateIndex(vectorDBEntry);
-
                 } else {
                     if (item.IsImage()) {
                         // 画像からテキスト抽出
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", item.Base64String);
-                        // Embeddingを保存
-                        folderVectorDBItem.UpdateIndex(vectorDBEntry);
 
                     } else {
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", "");
-                        // Embeddingを保存
-                        folderVectorDBItem.UpdateIndex(vectorDBEntry);
-
                     }
                 }
+                vectorDBProperty.VectorDBEntries.Add(vectorDBEntry);
                 // ベクトル化日時を更新
                 item.VectorizedAt = DateTime.Now;
-
             }
-        }
-        // Embeddingを更新する
-        public static void UpdateEmbedding(ContentItem item) {
-            UpdateEmbedding(item, VectorDBUpdateMode.update);
+            foreach (var vectorDBProperty in vectorDBProperties) {
+                vectorDBProperty.UpdateEmbeddings();
+            }
         }
         public static void CreateAutoTitle(ContentItem item) {
             // TextとImageの場合

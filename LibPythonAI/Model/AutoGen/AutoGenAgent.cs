@@ -42,7 +42,7 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("vector_db_search_agent")]
         public bool VectorDBSearchAgent { get; set; } = false;
 
-        // ToDictList
+        // CreateEntriesDictList
         public static Dictionary<string, object> ToDict(AutoGenAgent data) {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
@@ -59,7 +59,7 @@ namespace PythonAILib.Model.AutoGen {
             };
             return dict;
         }
-        // ToDictList
+        // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(List<AutoGenAgent> data) {
             // Create a list of dictionaries
             List<Dictionary<string, object>> dictList = [];

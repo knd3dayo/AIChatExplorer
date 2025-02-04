@@ -42,7 +42,7 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("timeout")]
         public int Timeout { get; set; } = 120;
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "autogen_db_path", AutoGenDBPath },

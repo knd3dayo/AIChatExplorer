@@ -17,7 +17,7 @@ namespace PythonAILib.Model.Chat {
         // ベクトルDBアイテム
 
         [JsonPropertyName("vector_db_items")]
-        public List<VectorSearchProperty> VectorSearchProperties { get; set; } = [];
+        public List<VectorDBProperty> VectorDBProperties { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName("autogen_props")]
@@ -48,7 +48,7 @@ namespace PythonAILib.Model.Chat {
 
         public string RelatedInformationPromptText = PythonAILib.Resources.PromptStringResource.Instance.RelatedInformationByVectorSearch;
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             // RequestContext
             Dictionary<string, object> requestContext = new() {
@@ -62,7 +62,7 @@ namespace PythonAILib.Model.Chat {
             };
             Dictionary<string, object> dict = new() {
                 // VectorSearchProperty UseVectorDBがTrueの場合は追加、Falseの場合は空リスト
-                { "vector_db_items", UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchProperties) : [] },
+                { "vector_db_items", UseVectorDB ? VectorDBProperty.ToDictList(VectorDBProperties) : [] },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
                 { "request_context", requestContext },
@@ -78,12 +78,12 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  List<VectorDBProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = vectorSearchProperties,
+                VectorDBProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = promptTemplateText,
                 ChatMode = chatMode,

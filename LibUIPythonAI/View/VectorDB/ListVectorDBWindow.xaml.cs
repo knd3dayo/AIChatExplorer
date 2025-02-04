@@ -13,7 +13,7 @@ namespace LibUIPythonAI.View.VectorDB
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBProperty> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
             ListVectorDBWindowViewModel listVectorDBWindowViewModel = new(mode, rootFolderViewModels, callBackup);
             listVectorDBWindow.DataContext = listVectorDBWindowViewModel;

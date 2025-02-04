@@ -152,8 +152,8 @@ namespace LibUIMergeChat.ViewModel {
         public static ChatMessage? SelectedItem { get; set; }
 
 
-        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -163,8 +163,8 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public VectorSearchProperty? SelectedVectorSearchProperty {
+        private VectorDBProperty? _selectedVectorSearchProperty = null;
+        public VectorDBProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -195,7 +195,7 @@ namespace LibUIMergeChat.ViewModel {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
+                    List<VectorDBProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

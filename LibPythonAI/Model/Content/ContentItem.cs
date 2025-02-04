@@ -351,13 +351,13 @@ namespace PythonAILib.Model.Content {
         #endregion
 
 
-        public virtual VectorSearchProperty GetMainVectorSearchProperty() {
+        public virtual VectorDBProperty GetMainVectorSearchProperty() {
             return GetFolder<ContentFolder>().GetMainVectorSearchProperty();
         }
 
         public virtual void Delete() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            ContentItemCommands.UpdateEmbedding(this, VectorDBUpdateMode.delete);
+            ContentItemCommands.DeleteEmbeddings([this]);
             libManager.DataFactory.GetItemCollection<ContentItem>().Delete(Id);
         }
 
@@ -375,25 +375,6 @@ namespace PythonAILib.Model.Content {
             libManager.DataFactory.GetItemCollection<ContentItem>().Upsert(this);
 
         }
-
-
-        // ベクトル検索を実行する
-        public List<VectorDBEntry> VectorSearch(List<VectorSearchProperty> vectorSearchProperties) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = vectorSearchProperties,
-                OpenAIProperties = openAIProperties
-            };
-
-            string contentText = Content;
-
-            // ベクトル検索を実行
-            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, contentText);
-            return results;
-        }
-
 
         // ClipboardItemをJSON文字列に変換する
         public static string ToJson<T>(T item) where T : ContentItem {

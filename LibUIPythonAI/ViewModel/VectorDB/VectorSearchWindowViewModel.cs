@@ -20,8 +20,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         }
         // VectorSearchProperty
-        private VectorSearchProperty? _vectorSearchProperty;
-        public VectorSearchProperty? VectorSearchProperty {
+        private VectorDBProperty? _vectorSearchProperty;
+        public VectorDBProperty? VectorSearchProperty {
             get => _vectorSearchProperty;
             set {
                 if (value == null) {
@@ -57,7 +57,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public ObservableCollection<VectorDBEntry> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<VectorDBProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         public MyStatusBarViewModel StatusBar { get; set; }
 
@@ -116,7 +116,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
 
                 try {
-                    vectorSearchResults.AddRange(contentItem.VectorSearch([VectorSearchProperty]));
+                    vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(contentItem.Content));
                 } finally {
                     IsIndeterminate = false;
                 }
@@ -161,7 +161,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
-                    VectorSearchProperties = [VectorSearchProperty],
+                    VectorDBProperties = [VectorSearchProperty],
                     OpenAIProperties = openAIProperties
                 };
 
@@ -174,7 +174,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<VectorSearchProperty> items = [];
+            List<VectorDBProperty> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {

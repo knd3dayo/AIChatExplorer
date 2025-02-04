@@ -28,7 +28,7 @@ class VectorDBProps:
     doc_store_url_name = "doc_store_url"
     collection_name = "collection_name"
     search_kwargs_name = "search_kwargs"
-
+    vector_db_entries_name = "vector_db_entries"
     score_name = "score"
 
     def __init__(self, props_dict: dict):
@@ -77,6 +77,9 @@ class VectorDBProps:
         # FolderのID
         self.FolderID = props_dict.get(VectorDBProps.folder_id_name, "")
 
+        # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
+        self.VectorDBEntries = [ContentUpdateOrDeleteRequestParams(entry) for entry in props_dict.get(VectorDBProps.vector_db_entries_name, [])]
+
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}
         vector_db_dict["name"] = self.Name
@@ -86,6 +89,13 @@ class VectorDBProps:
         vector_db_dict["vector_db_type_string"] = self.VectorDBTypeString
         vector_db_dict["collection_name"] = self.CollectionName
         vector_db_dict["doc_store_url"] = self.DocStoreURL
+        vector_db_dict["chunk_size"] = self.ChunkSize
+        vector_db_dict["is_use_multi_vector_retriever"] = self.IsUseMultiVectorRetriever
+        vector_db_dict["search_kwargs"] = self.SearchKwarg
+        vector_db_dict["catalog_db_url"] = self.CatalogDBURL
+        vector_db_dict["folder_id"] = self.FolderID
+        vector_db_dict["vector_db_entries"] = [entry.__dict__ for entry in self.VectorDBEntries]
+        
         return vector_db_dict
 
     @staticmethod
@@ -119,49 +129,14 @@ class VectorSearchParameter:
         #  openai_props, vector_db_items, query, search_kwargを設定する
         self.query = query
 
-    @classmethod
-    def from_json(cls, openai_props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params:VectorSearchParameter = VectorSearchParameter()
-        # OpenAIPorpsを生成
-        props = json.loads(openai_props_json)
-        params.openai_props = OpenAIProps(props)
-
-        # VectorDBPropsのリストを取得
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props = [VectorDBProps(item) for item in vector_db_items]
-
-        #  openai_props, vector_db_items, query, search_kwargを設定する
-        request: dict = json.loads(request_json)
-        params.query = request.get("query", "")
-
-        return params
-
 class ContentUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps], request_json: str):
-
-        self.openai_props = openai_props
-        self.vector_db_props_list = vector_db_props_list
+    def __init__(self, vector_db_entry: dict):
 
         # request_jsonをdictに変換
-        request: dict = json.loads(request_json)
-        self.id = request[VectorDBProps.source_id_name]
-        self.description = request.get(VectorDBProps.description_name, "")
-        self.text = request[VectorDBProps.content_name]
-        self.source_path = request.get(VectorDBProps.source_path_name, "")
-        self.git_repository_url = request.get(VectorDBProps.git_repository_url_name, "")
-        self.git_relative_path = request.get(VectorDBProps.git_relative_path_name, "")
-        self.image_url = request.get(VectorDBProps.image_url_name, "")
-
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-
-        vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(openai_props, vector_db_props_list, request_json)
-        return params
+        self.id = vector_db_entry[VectorDBProps.source_id_name]
+        self.description = vector_db_entry.get(VectorDBProps.description_name, "")
+        self.text = vector_db_entry[VectorDBProps.content_name]
+        self.source_path = vector_db_entry.get(VectorDBProps.source_path_name, "")
+        self.git_repository_url = vector_db_entry.get(VectorDBProps.git_repository_url_name, "")
+        self.git_relative_path = vector_db_entry.get(VectorDBProps.git_relative_path_name, "")
+        self.image_url = vector_db_entry.get(VectorDBProps.image_url_name, "")

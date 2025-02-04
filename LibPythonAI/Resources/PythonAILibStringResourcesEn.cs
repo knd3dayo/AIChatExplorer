@@ -79,7 +79,7 @@ namespace PythonAILib.Resources {
         // Failed to convert image to byte array
         public override string ImageByteFailed { get; } = "Failed to convert image to byte array";
 
-        // VectorSearchProperties is empty
+        // VectorDBProperties is empty
         public override string VectorDBItemsEmpty { get; } = "VectorDBItems is empty";
 
         // No response from OpenAI

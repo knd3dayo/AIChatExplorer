@@ -5,7 +5,7 @@ import base64
 import time
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
+from ai_app_vector_db import VectorDBProps, VectorSearchParameter
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
 from ai_app_autogen import AutoGenProps
@@ -188,16 +188,16 @@ def get_catalog_entry(catalb_db_url: str, vector_db_url: str, collection: str, f
     result_dict = vector_db_catalog.get_catalog(vector_db_url, collection, folder_id)
     return result_dict.get("description", "")
 
-def delete_index(params: ContentUpdateOrDeleteRequestParams):
-    vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
-    vector_db.delete_document(params.id)
+def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBProps):
+    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
+    for entry in vector_db_props.VectorDBEntries:
+        vector_db.delete_document(entry.id)
 
-def update_index(params: ContentUpdateOrDeleteRequestParams):
+def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBProps):
     # LangChainVectorDBを生成
-    vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
-    vector_db.update_document(params)
+    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
+    for entry in vector_db_props.VectorDBEntries:
+        vector_db.update_document(entry)
 
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):

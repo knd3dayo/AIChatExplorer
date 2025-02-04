@@ -28,7 +28,7 @@ namespace PythonAILib.Model.AutoGen {
             return dict;
         }
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "name", Name },

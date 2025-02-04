@@ -27,7 +27,7 @@ namespace PythonAILib.Common {
         [JsonPropertyName("AzureOpenAIAPIVersion")]
         public string AzureOpenAIAPIVersion { get; set; } = "";
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "OpenAIKey", OpenAIKey },

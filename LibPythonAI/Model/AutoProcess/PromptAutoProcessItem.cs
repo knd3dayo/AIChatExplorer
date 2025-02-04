@@ -33,7 +33,7 @@ namespace PythonAILib.Model.AutoProcess {
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
-                VectorSearchProperties = [clipboardFolder.GetMainVectorSearchProperty()],
+                VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()],
                 PromptTemplateText = PromptItem.Prompt,
                 ChatMode = Mode
             };

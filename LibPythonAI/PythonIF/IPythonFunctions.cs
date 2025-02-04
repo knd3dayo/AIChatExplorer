@@ -26,9 +26,9 @@ namespace PythonAILib.PythonIF {
         public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id, string Description);
 
 
-        public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);
+        public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);
+        public void UpdateEmbeddings(ChatRequestContext chatRequestContext);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
         public void ExportToExcel(string filePath, CommonDataTable data);

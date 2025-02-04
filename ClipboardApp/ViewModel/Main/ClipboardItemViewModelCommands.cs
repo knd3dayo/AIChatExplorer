@@ -369,28 +369,14 @@ namespace ClipboardApp.ViewModel.Main {
         // Command to generate vectors
         public void GenerateVectorCommand(List<ContentItem> items, object afterExecuteAction) {
 
-            List<Task> taskList = [];
             // Display ProgressIndicator
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            int count = items.Count;
             Task.Run(() => {
-                object lockObject = new();
-                int start_count = 0;
-                ParallelOptions parallelOptions = new();
-                // 10並列
-                parallelOptions.MaxDegreeOfParallelism = 10;
-                Parallel.For(0, count, parallelOptions, (i) => {
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{CommonStringResources.Instance.GenerateVectorInProgress} ({start_count}/{count})";
-                    StatusText.Instance.UpdateInProgress(true, message);
-                    ContentItem item = items[index];
-                    ContentItemCommands.UpdateEmbedding(item);
-                    // Save
+                ContentItemCommands.UpdateEmbeddings(items);
+                // Save
+                foreach (var item in items) {
                     item.Save(false);
-                });
+                }
                 // Execute if obj is an Action
                 if (afterExecuteAction is Action action) {
                     action();

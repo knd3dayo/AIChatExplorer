@@ -65,7 +65,7 @@ namespace PythonAILib.Model.Chat {
             return result;
         }
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             // type: textと、image_urlの2種類を格納
             List<Dictionary<string, object>> contentItems = [];

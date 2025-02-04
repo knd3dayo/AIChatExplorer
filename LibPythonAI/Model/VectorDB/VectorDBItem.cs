@@ -4,11 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LiteDB;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
-using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.VectorDB {
     /// <summary>
@@ -94,7 +90,7 @@ namespace PythonAILib.Model.VectorDB {
         // コレクション名
         [JsonPropertyName("collection_name")]
         public string CollectionName { get; set; } = DefaultCollectionName;
-        
+
         // カタログ用のDBURL
         [JsonPropertyName("catalog_db_url")]
         public string CatalogDBURL { get; set; } = GetCatalogDBURL();
@@ -128,7 +124,7 @@ namespace PythonAILib.Model.VectorDB {
             return VectorDBURL.GetHashCode();
         }
 
-        // ToDictList
+        // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "vector_db_name", Name },
@@ -140,13 +136,11 @@ namespace PythonAILib.Model.VectorDB {
                 { "vector_db_type_string", VectorDBTypeString },
                 { "collection_name", CollectionName ?? ""},
                 { "chunk_size", ChunkSize },
-                { "is_enabled", IsEnabled },
-                { "is_system", IsSystem },
                 { "catalog_db_url", CatalogDBURL }
             };
             return dict;
         }
-        // ToDictList
+        // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBItem> items) {
             return items.Select(item => item.ToDict()).ToList();
         }

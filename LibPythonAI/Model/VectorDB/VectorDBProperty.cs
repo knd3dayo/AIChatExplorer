@@ -9,12 +9,13 @@ using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.VectorDB {
-    public class VectorSearchProperty {
+    public class VectorDBProperty {
 
-        public VectorSearchProperty() { }
+        public VectorDBProperty() { }
 
-        public VectorSearchProperty(VectorDBItem vectorDBItem) {
+        public VectorDBProperty(VectorDBItem vectorDBItem, LiteDB.ObjectId? folderId ) {
             VectorDBItemId = vectorDBItem.Id;
+            FolderId = folderId ?? LiteDB.ObjectId.Empty;
             TopK = vectorDBItem.DefaultSearchResultLimit;
         }
 
@@ -24,10 +25,13 @@ namespace PythonAILib.Model.VectorDB {
         public int TopK { get; set; }
 
         // FolderId
-        public LiteDB.ObjectId FolderId { get; set; } = LiteDB.ObjectId.Empty;
+        public LiteDB.ObjectId FolderId { get; private set; } = LiteDB.ObjectId.Empty;
 
         // ContentType
         public string ContentType { get; set; } = string.Empty;
+
+        // VectorDBEntries
+        public List<VectorDBEntry> VectorDBEntries { get; set; } = [];
 
         // SearchKWArgs
         private Dictionary<string, object> GetSearchKWArgs() {
@@ -81,7 +85,7 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         // Description
-        public string GetDescription (){
+        public string GetDescription() {
 
             VectorDBItem? item = GetVectorDBItem();
             if (item == null) {
@@ -124,37 +128,67 @@ namespace PythonAILib.Model.VectorDB {
                 dict["search_kwargs"] = search_kwargs;
             }
             dict["vector_db_description"] = GetDescription();
+            // vector_db_entriesを追加
+            dict["vector_db_entries"] = VectorDBEntries;
 
             return dict;
         }
 
-        // ToDictList
-        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchProperty> items) {
+
+        // CreateEntriesDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBProperty> items) {
             return items.Select(item => item.ToDict()).ToList();
         }
-        public void UpdateIndex(VectorDBEntry contentInfo) {
+        public void UpdateEmbeddings() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = [this],
+                VectorDBProperties = [this],
                 OpenAIProperties = openAIProperties
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
         }
 
-        public void DeleteIndex(VectorDBEntry contentInfo) {
+        public void DeleteEmbeddings() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = [this],
+                VectorDBProperties = [this],
                 OpenAIProperties = openAIProperties
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
 
+        // ベクトル検索を実行する
+        public List<VectorDBEntry> VectorSearch(string query) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBProperties = [this],
+                OpenAIProperties = openAIProperties
+            };
+
+            // ベクトル検索を実行
+            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
+            return results;
+        }
+
+
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            VectorDBProperty other = (VectorDBProperty)obj;
+            return VectorDBItemId == other.VectorDBItemId && FolderId == other.FolderId;
+        }
+        public override int GetHashCode() {
+            return VectorDBItemId.GetHashCode() ^ FolderId.GetHashCode();
+        }
     }
 }

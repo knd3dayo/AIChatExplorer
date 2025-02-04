@@ -27,18 +27,16 @@ namespace PythonAILib.Model.Content {
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
 
-        public List<VectorSearchProperty> ReferenceVectorSearchProperties { get; set; } = [];
+        public List<VectorDBProperty> ReferenceVectorSearchProperties { get; set; } = [];
 
-        public VectorSearchProperty GetMainVectorSearchProperty() {
+        public VectorDBProperty GetMainVectorSearchProperty() {
 
-            VectorSearchProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB()) {
-                FolderId = Id,
-            };
+            VectorDBProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB(), Id);
             return searchProperty;
         }
 
-        public List<VectorSearchProperty> GetVectorSearchProperties() {
-            List<VectorSearchProperty> searchProperties =
+        public List<VectorDBProperty> GetVectorSearchProperties() {
+            List<VectorDBProperty> searchProperties =
             [
                 GetMainVectorSearchProperty(),
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
@@ -166,14 +164,14 @@ namespace PythonAILib.Model.Content {
 
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除
-        public void RemoveVectorSearchProperty(VectorSearchProperty vectorDBItem) {
-            List<VectorSearchProperty> existingItems = new(ReferenceVectorSearchProperties.Where(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId && x.FolderId == vectorDBItem.FolderId));
+        public void RemoveVectorSearchProperty(VectorDBProperty vectorDBItem) {
+            List<VectorDBProperty> existingItems = new(ReferenceVectorSearchProperties.Where(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId && x.FolderId == vectorDBItem.FolderId));
             foreach (var item in existingItems) {
                 ReferenceVectorSearchProperties.Remove(item);
             }
         }
         // ReferenceVectorDBItemsにVectorDBItemを追加
-        public void AddVectorSearchProperty(VectorSearchProperty vectorDBItem) {
+        public void AddVectorSearchProperty(VectorDBProperty vectorDBItem) {
             var existingItems = ReferenceVectorSearchProperties.FirstOrDefault(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId);
             if (existingItems == null) {
                 ReferenceVectorSearchProperties.Add(vectorDBItem);
@@ -188,7 +186,7 @@ namespace PythonAILib.Model.Content {
 
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = openAIProperties,
-                    VectorSearchProperties = [GetMainVectorSearchProperty()]
+                    VectorDBProperties = [GetMainVectorSearchProperty()]
                 };
                 PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
 
@@ -198,7 +196,7 @@ namespace PythonAILib.Model.Content {
         public void UpdateVectorDBCollection() {
             Task.Run(() => {
                 // カタログの更新
-                VectorSearchProperty vectorSearchProperty = GetMainVectorSearchProperty();
+                VectorDBProperty vectorSearchProperty = GetMainVectorSearchProperty();
                 vectorSearchProperty.UpdateCatalogDescription(Description);
             });
         }
@@ -213,7 +211,7 @@ namespace PythonAILib.Model.Content {
             // ベクトルを再作成
             // フォルダ内のアイテムを取得して、ベクトルを作成
             foreach (var item in GetItems<T>()) {
-                ContentItemCommands.UpdateEmbedding(item);
+                ContentItemCommands.UpdateEmbeddings([item]);
                 // Save
                 item.Save();
             }

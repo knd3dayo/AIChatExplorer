@@ -123,27 +123,39 @@ namespace PythonAILib.Model.VectorDB {
             if (VectorDBItem == null) {
                 throw new Exception(PythonAILibStringResources.Instance.NoVectorDBSet);
             }
-            ChatRequestContext chatRequestContext = new() {
-                OpenAIProperties = openAIProperties,
-                VectorSearchProperties = [new VectorSearchProperty(VectorDBItem)]
-            };
 
             try {
                 // GitFileInfoの作成
                 string source_path = Path.Combine(WorkingDirectory, fileStatus.Path);
-                VectorDBEntry vectorDBEntry = new(source_path);
                 if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
                     string content = PythonExecutor.PythonAIFunctions.ExtractFileToText(source_path);
                     if (string.IsNullOrEmpty(content)) {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
                     }
+                    VectorDBEntry vectorDBEntry = new(source_path);
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
-                    PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, vectorDBEntry);
+
+                    VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
+                    vectorDBProperty.VectorDBEntries = [vectorDBEntry];
+                    ChatRequestContext chatRequestContext = new() {
+                        OpenAIProperties = openAIProperties,
+                        VectorDBProperties = [vectorDBProperty]
+                    };
+
+                    PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                    PythonExecutor.PythonAIFunctions.DeleteVectorDBIndex(chatRequestContext, vectorDBEntry);
+                    VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
+                    VectorDBEntry vectorDBEntry = new(source_path);
+                    vectorDBProperty.VectorDBEntries = [vectorDBEntry];
+                    ChatRequestContext chatRequestContext = new() {
+                        OpenAIProperties = openAIProperties,
+                        VectorDBProperties = [vectorDBProperty]
+                    };
+
+                    PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);
                 }
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合

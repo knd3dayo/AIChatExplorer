@@ -12,7 +12,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
     /// </summary>
     public class ListVectorDBWindowViewModel : ChatViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBProperty> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
@@ -32,7 +32,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         private ActionModeEnum mode;
-        Action<VectorSearchProperty>? callBackup;
+        Action<VectorDBProperty>? callBackup;
 
 
         // 選択中のVectorDBItem
@@ -146,11 +146,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;
                 }
-                callBackup?.Invoke(new VectorSearchProperty(SelectedVectorDBItem.Item));
+                callBackup?.Invoke(new VectorDBProperty(SelectedVectorDBItem.Item, null));
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
             else if (SelectedTabIndex == 1) {
-                VectorSearchProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
+                VectorDBProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
                 if (item == null) {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;

@@ -69,7 +69,7 @@ namespace LibUIMergeChat.Common {
                         SplitMode = context.SplitMode,
                         SplitTokenCount = context.SplitTokenCount,
                         UseVectorDB = context.UseVectorDB,
-                        VectorSearchProperties = context.VectorSearchProperties,
+                        VectorDBProperties = context.VectorDBProperties,
                         AutoGenProperties = context.AutoGenProperties,
                         OpenAIProperties = context.OpenAIProperties,
                     };
@@ -126,7 +126,7 @@ namespace LibUIMergeChat.Common {
                 SplitMode = context.SplitMode,
                 SplitTokenCount = context.SplitTokenCount,
                 UseVectorDB = context.UseVectorDB,
-                VectorSearchProperties = context.VectorSearchProperties,
+                VectorDBProperties = context.VectorDBProperties,
                 AutoGenProperties = context.AutoGenProperties,
                 OpenAIProperties = context.OpenAIProperties,
             };

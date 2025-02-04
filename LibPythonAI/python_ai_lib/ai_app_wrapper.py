@@ -359,16 +359,14 @@ def delete_collection(context_json: str):
     return wrapper()
 
 # ベクトルDBのインデックスを削除する
-def delete_index(context_json: str, request_json: str):
+def delete_embeddings(context_json: str):
     def func () -> dict:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
-        from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(
-            openai_props, vector_db_items, request_json)
-        ai_app.delete_index(params)
+        for vector_db_item in vector_db_items:
+            ai_app.delete_embeddings(openai_props, vector_db_item)
 
         return {}
 
@@ -378,29 +376,14 @@ def delete_index(context_json: str, request_json: str):
     return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
-def update_index(context_json: str, request_json: str):
+def update_embeddings(context_json: str):
     def func () -> dict:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
-
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(
-            openai_props, vector_db_items, request_json
-            )
-        
-        ai_app.update_index(params)
-
-        # Catalogを更新
-        for vector_db_props in vector_db_items:
-            catalog_db_url = vector_db_props.CatalogDBURL
-            db_url = vector_db_props.VectorDBURL
-            collection = vector_db_props.CollectionName
-            description = vector_db_props.VectorDBDescription
-            # ai_app.update_catalog(catalog_db_url, db_url, collection, description)
-
+        for vector_db_item in vector_db_items:
+            ai_app.update_embeddings(openai_props, vector_db_item)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成

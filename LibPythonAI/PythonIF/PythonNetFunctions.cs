@@ -388,38 +388,35 @@ namespace PythonAILib.PythonIF {
             }, result);
         }
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry, string function_name) {
+        private void UpdateEmbeddings(ChatRequestContext chatRequestContext, string function_name) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
-            // contentInfoをJSON文字列に変換
-            string contentInfoJson = vectorDBEntry.ToJson();
 
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo}:{contentInfoJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
-                return function_object(chatRequestContextJson, contentInfoJson);
+                return function_object(chatRequestContextJson);
             }, result);
 
         }
 
-        public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry) {
+        public void DeleteEmbeddings(ChatRequestContext chatRequestContext) {
 
-            string function_name = "delete_index";
-            UpdateVectorDBIndex(chatRequestContext, vectorDBEntry, function_name);
+            string function_name = "delete_embeddings";
+            UpdateEmbeddings(chatRequestContext, function_name);
 
         }
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry) {
+        public void UpdateEmbeddings(ChatRequestContext chatRequestContext) {
 
             string function_name;
-            function_name = "update_content_index";
-            UpdateVectorDBIndex(chatRequestContext, vectorDBEntry, function_name);
+            function_name = "update_embeddings";
+            UpdateEmbeddings(chatRequestContext, function_name);
         }
 
         // ExportToExcelを実行する
