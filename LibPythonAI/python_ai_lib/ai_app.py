@@ -193,7 +193,7 @@ def delete_index(params: ContentUpdateOrDeleteRequestParams):
     vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
     vector_db.delete_document(params.id)
 
-def update_content_index(params: ContentUpdateOrDeleteRequestParams):
+def update_index(params: ContentUpdateOrDeleteRequestParams):
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
     vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)

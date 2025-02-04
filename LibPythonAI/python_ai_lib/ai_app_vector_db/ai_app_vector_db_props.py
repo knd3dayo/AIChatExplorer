@@ -96,7 +96,6 @@ class VectorDBProps:
             "vector_db_url": os.getenv("VECTOR_DB_URL"),
             "vector_db_type_string": os.getenv("VECTOR_DB_TYPE_STRING"),
             "vector_db_description": os.getenv("VECTOR_DB_DESCRIPTION"),
-            "vector_db_system_message": os.getenv("VECTOR_DB_SYSTEM_MESSAGE"),
             "is_use_multi_vector_retriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
             "doc_store_url": os.getenv("DOC_STORE_URL"),
             "collection_name": os.getenv("VECTOR_DB_COLLECTION_NAME"),

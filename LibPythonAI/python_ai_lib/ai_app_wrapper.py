@@ -378,7 +378,7 @@ def delete_index(context_json: str, request_json: str):
     return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
-def update_content_index(context_json: str, request_json: str):
+def update_index(context_json: str, request_json: str):
     def func () -> dict:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
@@ -391,7 +391,7 @@ def update_content_index(context_json: str, request_json: str):
             openai_props, vector_db_items, request_json
             )
         
-        ai_app.update_content_index(params)
+        ai_app.update_index(params)
 
         # Catalogを更新
         for vector_db_props in vector_db_items:
