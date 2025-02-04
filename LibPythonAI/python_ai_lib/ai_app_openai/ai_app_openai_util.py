@@ -93,18 +93,18 @@ class OpenAIProps:
         
     # openai_chat用のパラメーターを作成する
     @staticmethod
-    def create_openai_chat_parameter_dict(model: str, messages_json: str, templature : float =0.5, json_mode : bool = False) -> dict:
+    def create_openai_chat_parameter_dict(model: str, messages_json: str, temperature : float =0.5, json_mode : bool = False) -> dict:
         params : dict [ str, Any]= {}
         params["model"] = model
         params["messages"] = json.loads(messages_json)
-        if templature:
-            params["temperature"] = str(templature)
+        if temperature:
+            params["temperature"] = str(temperature)
         if json_mode:
             params["response_format"]= {"type": "json_object"}
         return params
     
     @staticmethod
-    def create_openai_chat_parameter_dict_simple(model: str, prompt: str, templature : float =0.5, json_mode : bool = False) -> dict:
+    def create_openai_chat_parameter_dict_simple(model: str, prompt: str, temperature : float =0.5, json_mode : bool = False) -> dict:
         # messagesの作成
         messages = []
         messages.append({"role": "user", "content": prompt})
@@ -112,15 +112,15 @@ class OpenAIProps:
         params : dict [ str, Any]= {}
         params["messages"] = messages
         params["model"] = model
-        if templature:
-            params["temperature"] = templature
+        if temperature:
+            params["temperature"] = temperature
         if json_mode:
             params["response_format"] = {"type": "json_object"}
         return params
 
     # openai_chat_with_vision用のパラメーターを作成する
     @staticmethod
-    def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image_file_name_list: list, templature : float =0.5, json_mode : bool = False, max_tokens = None) -> dict:
+    def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image_file_name_list: list, temperature : float =0.5, json_mode : bool = False, max_tokens = None) -> dict:
         # messagesの作成
         messages = []
         content: list[dict [ str, Any]]  = [{"type": "text", "text": prompt}]
@@ -136,8 +136,8 @@ class OpenAIProps:
         params : dict [ str, Any]= {}
         params["messages"] = messages
         params["model"] = model
-        if templature:
-            params["temperature"] = templature
+        if temperature:
+            params["temperature"] = temperature
         if json_mode:
             params["response_format"] = {"type": "json_object"}
         if max_tokens:
