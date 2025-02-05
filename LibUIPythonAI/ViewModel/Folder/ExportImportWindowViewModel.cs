@@ -33,6 +33,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             ObservableCollection<ExportImportItem> items = [
                 new ExportImportItem("Title", CommonStringResources.Instance.Title, true, false),
                 new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
+                new ExportImportItem("SourcePath", CommonStringResources.Instance.SourcePath, false, false),
             ];
             foreach (PromptItem promptItem in promptItems) {
                 items.Add(new ExportImportItem(promptItem.Name, promptItem.Description, false, true));

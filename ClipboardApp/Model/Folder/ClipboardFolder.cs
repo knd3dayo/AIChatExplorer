@@ -147,19 +147,27 @@ namespace ClipboardApp.Model.Folder {
                 targetNames.Add("SourcePath");
             }
 
+
             foreach (var row in data.Rows) {
+                if (row.Count == 0) {
+                    continue;
+                }
+
                 ContentItem item = new(Id);
                 // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
-                if (importTitle) {
-                    item.Description = row.Count > 0 ? row[0] : "";
+                int titleIndex = targetNames.IndexOf("Title");
+                if (titleIndex != -1) {
+                    item.Description = row[titleIndex].Replace("_x000D_", "").Replace("\n", " ");
                 }
                 // TextのIndexが-1以外の場合は、row[TextのIndex]をContentに設定。Row.Countが足りない場合は空文字を設定
-                if (importText) {
-                    item.Content = row.Count > 1 ? row[1] : "";
+                int textIndex = targetNames.IndexOf("Text");
+                if (textIndex != -1) {
+                    item.Content = row[textIndex].Replace("_x000D_", "");
                 }
                 // SourcePathのIndexが-1以外の場合は、row[SourcePathのIndex]をSourcePathに設定。Row.Countが足りない場合は空文字を設定
-                if (importSourcePath) {
-                    item.SourcePath = row.Count > 2 ? row[2] : "";
+                int sourcePathIndex = targetNames.IndexOf("SourcePath");
+                if (sourcePathIndex != -1) {
+                    item.SourcePath = row[sourcePathIndex];
                 }
                 item.Save();
                 if (executeAutoProcess) {
@@ -170,7 +178,6 @@ namespace ClipboardApp.Model.Folder {
                     });
                 }
             }
-
         }
         #endregion
 
