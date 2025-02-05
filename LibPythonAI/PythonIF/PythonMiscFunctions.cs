@@ -60,7 +60,7 @@ namespace PythonAILib.PythonIF
                         };
 
             MaskedData actionResult = new(beforeTextList);
-            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
+            PyDict resultDict = (PyDict)ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "mask_data";
@@ -68,37 +68,40 @@ namespace PythonAILib.PythonIF
                 // 結果用のDictionaryを作成
                 PyDict resultDict = new();
                 resultDict = function_object(beforeTextList, dict);
-                // resultDictが空の場合は例外をスロー
-                if (resultDict == null || resultDict.Any() == false) {
-                    throw new Exception(StringResources.MaskingResultNotFound);
-                }
-                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.MaskingResultFailed);
-
-                PyDict textDict = textDictObject.As<PyDict>();
-                PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
-                foreach (PyObject item in afterList) {
-                    string? text = item.ToString();
-                    if (text == null) {
-                        continue;
-                    }
-                    actionResult.AfterTextList.Add(text);
-                }
-                // SpacyEntitiesNames毎に処理
-                foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
-                    string entityNameString = entityName.ToString();
-                    PyObject? entities;
-                    try {
-                        entities = resultDict.GetItem(entityNameString);
-                    } catch (PythonException) {
-                        entities = null;
-                        return;
-                    }
-                    PyDict entityDict = entities.As<PyDict>();
-                    List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
-                    actionResult.Entities.UnionWith(maskedEntities);
-                }
+                return resultDict;
 
             });
+            // resultDictが空の場合は例外をスロー
+            if (resultDict == null || resultDict.Any() == false) {
+                throw new Exception(StringResources.MaskingResultNotFound);
+            }
+            PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.MaskingResultFailed);
+
+            PyDict textDict = textDictObject.As<PyDict>();
+            PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
+            foreach (PyObject item in afterList) {
+                string? text = item.ToString();
+                if (text == null) {
+                    continue;
+                }
+                actionResult.AfterTextList.Add(text);
+            }
+            // SpacyEntitiesNames毎に処理
+            foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
+                string entityNameString = entityName.ToString();
+                PyObject? entities;
+                try {
+                    entities = resultDict.GetItem(entityNameString);
+                } catch (PythonException) {
+                    entities = null;
+                    continue;
+                }
+                PyDict entityDict = entities.As<PyDict>();
+                List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
+                actionResult.Entities.UnionWith(maskedEntities);
+            }
+
+
             return actionResult;
         }
 
@@ -110,74 +113,77 @@ namespace PythonAILib.PythonIF
                             { "SpacyModel", SpacyModel }
                         };
             MaskedData actionResult = new(maskedTextList);
-            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
+            PyDict resultDict = (PyDict)ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "unmask_data";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // 結果用のDictionaryを作成
                 PyDict resultDict = new();
                 resultDict = function_object(actionResult, dict);
-                // resultDictが空の場合は例外をスロー
-                if (resultDict == null || resultDict.Any() == false) {
-                    throw new Exception(StringResources.UnmaskingResultNotFound);
-                }
-
-                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.UnmaskingResultFailed);
-                PyList textList = textListObject.As<PyList>();
-                foreach (PyObject item in textList) {
-                    PyObject afterTextObject = item.GetItem("AFTER");
-                    string? text = afterTextObject.ToString();
-                    if (text == null) {
-                        continue;
-                    }
-                    actionResult.AfterTextList.Add(text);
-                }
-                // SpacyEntitiesNames毎に処理
-                foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
-                    string entityNameString = entityName.ToString();
-                    PyObject? entities = resultDict.GetItem(entityNameString);
-                    if (entities == null) {
-                        continue;
-                    }
-                    PyDict entityDict = entities.As<PyDict>();
-                    List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
-                    actionResult.Entities.UnionWith(maskedEntities);
-                }
-
+                return resultDict;
             });
+            // resultDictが空の場合は例外をスロー
+            if (resultDict == null || resultDict.Any() == false) {
+                throw new Exception(StringResources.UnmaskingResultNotFound);
+            }
+
+            PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.UnmaskingResultFailed);
+            PyList textList = textListObject.As<PyList>();
+            foreach (PyObject item in textList) {
+                PyObject afterTextObject = item.GetItem("AFTER");
+                string? text = afterTextObject.ToString();
+                if (text == null) {
+                    continue;
+                }
+                actionResult.AfterTextList.Add(text);
+            }
+            // SpacyEntitiesNames毎に処理
+            foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
+                string entityNameString = entityName.ToString();
+                PyObject? entities = resultDict.GetItem(entityNameString);
+                if (entities == null) {
+                    continue;
+                }
+                PyDict entityDict = entities.As<PyDict>();
+                List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
+                actionResult.Entities.UnionWith(maskedEntities);
+            }
+
             return actionResult;
         }
         public string ExtractTextFromImage(Image image, string tesseractExePath) {
             // Pythonスクリプトを実行する
             string result = "";
-            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
+            ImageConverter imageConverter = new();
+            object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[])) ?? throw new Exception(StringResources.ImageByteFailed);
+            byte[] bytes = (byte[])bytesObject;
+            PyDict pyDict = (PyDict)ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text_from_image";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                ImageConverter imageConverter = new();
-                object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]))
-                ?? throw new Exception(StringResources.ImageByteFailed);
-                byte[] bytes = (byte[])bytesObject;
+
                 // extract_text_from_image関数を呼び出す。戻り値は{ "text": "抽出したテキスト" , "log": "ログ" }の形式
                 Dictionary<string, string> dict = new();
                 PyDict? pyDict = function_object(bytes, tesseractExePath);
                 if (pyDict == null) {
                     throw new Exception("pyDict is null");
                 }
-                // textを取得
-                PyObject? textObject = pyDict.GetItem("text");
-                if (textObject == null) {
-                    throw new Exception("textObject is null");
-                }
-                result = textObject.ToString() ?? "";
-                // logを取得
-                PyObject? logObject = pyDict.GetItem("log");
-                if (logObject != null) {
-                    string log = logObject.ToString() ?? "";
-                    LogWrapper.Info($"log:{log}");
-                }
+                return pyDict;
 
             });
+            // textを取得
+            PyObject? textObject = pyDict.GetItem("text");
+            if (textObject == null) {
+                throw new Exception("textObject is null");
+            }
+            result = textObject.ToString() ?? "";
+            // logを取得
+            PyObject? logObject = pyDict.GetItem("log");
+            if (logObject != null) {
+                string log = logObject.ToString() ?? "";
+                LogWrapper.Info($"log:{log}");
+            }
+
             return result;
         }
 
@@ -212,15 +218,15 @@ namespace PythonAILib.PythonIF
         // スクリプトの内容とJSON文字列を引数に取り、結果となるJSON文字列を返す
         public string RunScript(string script, string input) {
             string resultString = "";
-            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
+            return (string)ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_script";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // run_script関数を呼び出す
                 resultString = function_object(script, input);
+                return resultString;
             });
-            return resultString;
 
         }
 
@@ -228,20 +234,20 @@ namespace PythonAILib.PythonIF
         public HashSet<string> ExtractEntity(string SpacyModel, string text) {
 
             HashSet<string> actionResult = [];
+            // SPACY_MODEL_NAMEが空の場合は例外をスロー
+            if (string.IsNullOrEmpty(SpacyModel)) {
+                throw new Exception(StringResources.SpacyModelNameNotSet);
+            }
+
+            Dictionary<string, string> dict = new() {
+                            { "SpacyModel", SpacyModel }
+                        };
+            // 結果用のDictionaryを作成
+            // Pythonスクリプトの関数を呼び出す
+            string function_name = "extract_entity";
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
-                // SPACY_MODEL_NAMEが空の場合は例外をスロー
-                if (string.IsNullOrEmpty(SpacyModel)) {
-                    throw new Exception(StringResources.SpacyModelNameNotSet);
-                }
-
-                Dictionary<string, string> dict = new() {
-                            { "SpacyModel", SpacyModel }
-                        };
-                // 結果用のDictionaryを作成
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_entity";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 PyIterable pyIterable = function_object(text, dict);
                 // PythonのリストをC#のHashSetに変換
@@ -251,6 +257,7 @@ namespace PythonAILib.PythonIF
                         actionResult.Add(entity);
                     }
                 }
+                return actionResult;
             });
             return actionResult;
         }

@@ -135,41 +135,44 @@ namespace PythonAILib.PythonIF {
                     PythonEngine.SetNoSiteFlag();
                 }
 
-                PythonEngine.Initialize();
-                PythonEngine.BeginAllowThreads();
+                Task.Run(() => {
+                    PythonEngine.Initialize();
+                    PythonEngine.BeginAllowThreads();
 
 
-                // sys.prefix、sys.exec_prefixを venvのパスに変更
+                    // sys.prefix、sys.exec_prefixを venvのパスに変更
 
-                using (Py.GIL()) {
-                    // fix the prefixes to point to our venv
-                    // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
-                    dynamic sys = Py.Import("sys");
-                    dynamic site = Py.Import("site");
-                    dynamic os = Py.Import("os");
-                    if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                        sys.prefix = pathToVirtualEnv;
-                        sys.exec_prefix = pathToVirtualEnv;
+                    using (Py.GIL()) {
+                        // fix the prefixes to point to our venv
+                        // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
+                        dynamic sys = Py.Import("sys");
+                        dynamic site = Py.Import("site");
+                        dynamic os = Py.Import("os");
+                        if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                            sys.prefix = pathToVirtualEnv;
+                            sys.exec_prefix = pathToVirtualEnv;
 
-                        // This has to be overwritten because site module may already have 
-                        // been loaded by the interpreter (but not run yet)
-                        site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
+                            // This has to be overwritten because site module may already have 
+                            // been loaded by the interpreter (but not run yet)
+                            site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
+                        }
+                        // set the path to pythonAILib
+                        site.addsitedir(pythonAILibPath);
+
+                        // set the proxy settings
+                        if (!string.IsNullOrEmpty(httpsProxy)) {
+                            os.environ["HTTPS_PROXY"] = new PyString(httpsProxy);
+                            os.environ["NO_PROXY"] = new PyString(noProxy);
+                        } else {
+                            // NO_PROXY="*"
+                            os.environ["NO_PROXY"] = new PyString("*");
+                        }
+
+                        // Run site path modification with tweaked prefixes
+                        site.main();
                     }
-                    // set the path to pythonAILib
-                    site.addsitedir(pythonAILibPath);
+                }).Wait();
 
-                    // set the proxy settings
-                    if (!string.IsNullOrEmpty(httpsProxy)) {
-                        os.environ["HTTPS_PROXY"] = new PyString(httpsProxy);
-                        os.environ["NO_PROXY"] = new PyString(noProxy);
-                    } else {
-                        // NO_PROXY="*"
-                        os.environ["NO_PROXY"] = new PyString("*");
-                    }
-
-                    // Run site path modification with tweaked prefixes
-                    site.main();
-                }
 
             } catch (TypeInitializationException e) {
                 string message = StringResources.PythonInitFailed + e.Message;
