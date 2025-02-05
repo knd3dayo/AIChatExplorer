@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="LibUIPythonAI.View.ChatMain.QAChatControl"
+    x:Class="LibUIPythonAI.View.ChatMain.ChatControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource"

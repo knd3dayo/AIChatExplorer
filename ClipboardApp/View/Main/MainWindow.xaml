@@ -61,74 +61,113 @@
                     materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
                     IsMainMenu="True">
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.File}">
                         <!--  Toggle Clipbord Monitoring  -->
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ToggleClipboardMonitor, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding ClipboardMonitorButtonText}"
                             ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
 
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ExitCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.Exit}"
                             ToolTip="{x:Static res:ViewStringResources.ExitToolTip}" />
                     </MenuItem>
                     <!--  Edit  -->
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Edit}">
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenTagWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditTag}"
                             ToolTip="{x:Static res:ViewStringResources.EditTagToolTip}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListAutoProcessRuleWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditAutoProcessRule}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPromptTemplateWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenRAGManagementWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditGitRagSource}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorDBManagementWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditVectorDB}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListAutoGenItemWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditAutoGenDefinition}" />
                     </MenuItem>
                     <!--  View  -->
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.View}">
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.TextWrapping}"
                             IsCheckable="True"
                             IsChecked="{Binding TextWrapping}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.AutoTextWrapping}"
                             IsCheckable="True"
@@ -136,48 +175,75 @@
                     </MenuItem>
                     <!--  Tools  -->
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Tool}">
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenOpenAIWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.OpenAIChat}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenImageChatWindow, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.ImageChat}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenFolderMergeChatWindow, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.MergeChat}" />
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.VectorSearch}" />
                     </MenuItem>
 
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding SearchCommand, Mode=OneTime}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Search}" />
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding SettingCommand, Mode=OneTime}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Setting}" />
                     <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Help}">
                         <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVersionInfoCommand, Mode=OneTime}"
+                            FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.VersionInfo}" />
                     </MenuItem>

@@ -23,6 +23,7 @@
         <StatusBar
             Name="statusBar1"
             MaxHeight="30"
+            Margin="0,0,0,0"
             Background="{DynamicResource MaterialDesign.Brush.Primary}"
             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
             <StatusBar.ItemsPanel>
@@ -37,10 +38,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="0">
-                <TextBox
-                    Name="statusBarTextBlock1"
-                    IsReadOnly="True"
-                    Text="{Binding Path=StatusText.Text, Mode=OneWay}" />
+                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text, Mode=OneWay}" />
             </StatusBarItem>
             <StatusBarItem
                 Grid.Column="1"

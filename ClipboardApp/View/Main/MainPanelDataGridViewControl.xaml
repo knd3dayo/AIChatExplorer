@@ -131,8 +131,13 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="ContextMenu" Value="{StaticResource GridRowContextMenu}" />
+                    <Setter Property="Margin" Value="0,5,0,0" />
+
                 </Style>
             </DataGrid.RowStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell" />
+            </DataGrid.CellStyle>
         </DataGrid>
     </Grid>
 </UserControl>
