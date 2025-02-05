@@ -361,6 +361,15 @@ namespace PythonAILib.Model.Content {
             libManager.DataFactory.GetItemCollection<ContentItem>().Delete(Id);
         }
 
+        public static void DeleteItems(List<ContentItem> items) {
+            ContentItemCommands.DeleteEmbeddings(items);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
+            foreach (ContentItem contentItem in items) {
+                collection.Delete(contentItem.Id);
+            }
+        }
+
         public virtual void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 

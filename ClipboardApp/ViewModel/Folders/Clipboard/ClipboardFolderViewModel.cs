@@ -131,40 +131,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // -----------------------------------------------------------------------------------
         #region プログレスインジケーター表示の処理
 
-        /// <summary>
-        /// フォルダ内の表示中のアイテムを削除する処理
-        /// 削除後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="obj"></param>
-        public static void DeleteDisplayedItemCommandExecute(ContentFolderViewModel folderViewModel) {
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                List<Task> taskList = [];
-                foreach (ClipboardItemViewModel item in folderViewModel.Items) {
-                    if (item.IsPinned) {
-                        continue;
-                    }
-                    Task task = Task.Run(() => {
-                        // item.ClipboardItemを削除
-                        ClipboardItemViewModelCommands commands = new();
-                        commands.DeleteItemCommand.Execute(item);
-                    });
-                    taskList.Add(task);
-                }
-                // 全てのタスクが終了したら後続処理を実行
-                Task.WhenAll(taskList).ContinueWith((task) => {
-                    // フォルダ内のアイテムを読み込む
-                    MainUITask.Run(() => {
-                        folderViewModel.LoadFolderCommand.Execute(null);
-                    });
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                    LogWrapper.Info(CommonStringResources.Instance.DeletedItems);
-                });
-            }
-        }
-
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない

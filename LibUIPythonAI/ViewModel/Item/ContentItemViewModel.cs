@@ -49,5 +49,13 @@ namespace LibUIPythonAI.ViewModel.Item {
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
+
+        // DeleteItems
+        public static Task DeleteItems(List<ContentItemViewModel> items) {
+            return Task.Run(() => {
+                var contentItems = items.Select(item => item.ContentItem).ToList();
+                ContentItem.DeleteItems(contentItems);
+            });
+        }
     }
 }

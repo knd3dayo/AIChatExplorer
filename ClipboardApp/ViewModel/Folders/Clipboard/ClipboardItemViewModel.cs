@@ -4,16 +4,14 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
-using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILibUI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Content {
@@ -81,7 +79,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         // ファイルタブの表示可否
         public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
-   
+
         // ImageVisibility
         public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 

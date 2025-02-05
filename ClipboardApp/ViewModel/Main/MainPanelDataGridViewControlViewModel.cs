@@ -5,6 +5,7 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
@@ -95,41 +96,6 @@ namespace ClipboardApp.ViewModel.Main {
             }
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
                 Commands.ChangePinCommand.Execute();
-            }
-        });
-        // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                UpdateIndeterminateAction(true);
-                Task task = Task.Run(() => {
-                    List<ContentItem> contentItems = SelectedItems.Select(x => x.ContentItem).ToList();
-                    ContentItemCommands.DeleteEmbeddings(contentItems);
-                    PythonAILibManager libManager = PythonAILibManager.Instance;
-                    var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
-                    foreach (ContentItem contentItem in contentItems) {
-                        collection.Delete(contentItem.Id);
-                    }
-
-
-                }).ContinueWith((task) => {
-                    // 全ての削除処理が終了した後、後続処理を実行
-                    // フォルダ内のアイテムを再読み込む
-                    MainUITask.Run(() => {
-                        var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                        foreach (var folder in folders) {
-                            folder.LoadFolderCommand.Execute();
-                        }
-                    });
-                    LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                    UpdateIndeterminateAction(false);
-                });
             }
         });
 
@@ -249,7 +215,51 @@ namespace ClipboardApp.ViewModel.Main {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-            ClipboardFolderViewModel.DeleteDisplayedItemCommandExecute(SelectedFolder);
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                UpdateIndeterminateAction(true);
+            }
+            UpdateIndeterminateAction(true);
+            ContentItemViewModel.DeleteItems([.. SelectedFolder.Items]).ContinueWith((task) => {
+                // 全ての削除処理が終了した後、後続処理を実行
+                // フォルダ内のアイテムを再読み込む
+                MainUITask.Run(() => {
+                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                    foreach (var folder in folders) {
+                        folder.LoadFolderCommand.Execute();
+                    }
+                });
+                LogWrapper.Info(CommonStringResources.Instance.Deleted);
+                UpdateIndeterminateAction(false);
+            });
+
+        });
+
+        // Deleteが押された時の処理 選択中のアイテムを削除する処理
+        public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
+            // 選択中のアイテムがない場合は処理をしない
+            if (SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                return;
+            }
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                UpdateIndeterminateAction(true);
+                ContentItemViewModel.DeleteItems([.. SelectedItems]).ContinueWith((task) => {
+                    // 全ての削除処理が終了した後、後続処理を実行
+                    // フォルダ内のアイテムを再読み込む
+                    MainUITask.Run(() => {
+                        var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                    });
+                    LogWrapper.Info(CommonStringResources.Instance.Deleted);
+                    UpdateIndeterminateAction(false);
+                });
+            }
         });
 
 
