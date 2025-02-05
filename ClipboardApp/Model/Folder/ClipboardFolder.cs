@@ -5,13 +5,13 @@ using System.Text.Unicode;
 using ClipboardApp.Common;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
+using LibUIPythonAI.Resource;
 using LiteDB;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
-using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -69,7 +69,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false , Action<ContentItem>? afterUpdate = null) {
+        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
             base.AddItem(item, applyGlobalAutoAction, afterUpdate);
 
             // 自動処理を適用
@@ -131,19 +131,35 @@ namespace ClipboardApp.Model.Folder {
             if (data == null) {
                 return;
             }
+            List<string> targetNames = [];
+
             bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
+            if (importTitle) {
+                targetNames.Add("Title");
+            }
             bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
+            if (importText) {
+                targetNames.Add("Text");
+            }
+            // SourcePath
+            bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
+            if (importSourcePath) {
+                targetNames.Add("SourcePath");
+            }
 
             foreach (var row in data.Rows) {
-                ClipboardItem item = new(Id);
-                // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
-                if (importTitle && importText) {
+                ContentItem item = new(Id);
+                // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
+                if (importTitle) {
                     item.Description = row.Count > 0 ? row[0] : "";
+                }
+                // TextのIndexが-1以外の場合は、row[TextのIndex]をContentに設定。Row.Countが足りない場合は空文字を設定
+                if (importText) {
                     item.Content = row.Count > 1 ? row[1] : "";
-                } else if (importTitle) {
-                    item.Description = row.Count > 0 ? row[0] : "";
-                } else if (importText) {
-                    item.Content = row.Count > 0 ? row[0] : "";
+                }
+                // SourcePathのIndexが-1以外の場合は、row[SourcePathのIndex]をSourcePathに設定。Row.Countが足りない場合は空文字を設定
+                if (importSourcePath) {
+                    item.SourcePath = row.Count > 2 ? row[2] : "";
                 }
                 item.Save();
                 if (executeAutoProcess) {
@@ -154,6 +170,7 @@ namespace ClipboardApp.Model.Folder {
                     });
                 }
             }
+
         }
         #endregion
 

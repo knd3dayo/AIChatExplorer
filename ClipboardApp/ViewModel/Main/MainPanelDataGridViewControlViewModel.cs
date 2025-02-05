@@ -1,17 +1,17 @@
-using ClipboardApp.ViewModel.Content;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Settings;
 using System.Windows;
 using System.Windows.Controls;
-using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Folders.Clipboard;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
+using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
-using ClipboardApp.ViewModel.Folders.Clipboard;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelDataGridViewControlViewModel : ObservableObject{
+    public class MainPanelDataGridViewControlViewModel : ObservableObject {
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
@@ -94,7 +94,7 @@ namespace ClipboardApp.ViewModel.Main {
                 return;
             }
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
-               Commands.ChangePinCommand.Execute();
+                Commands.ChangePinCommand.Execute();
             }
         });
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
@@ -108,16 +108,18 @@ namespace ClipboardApp.ViewModel.Main {
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 UpdateIndeterminateAction(true);
-                List<Task> taskLIst = [];
-                // 選択中のアイテムを削除
-                foreach (var item in SelectedItems) {
-                    Task task = Task.Run(() => {
-                        Commands.DeleteItemCommand.Execute(item);
-                    });
-                    taskLIst.Add(task);
-                }
-                // 全ての削除処理が終了した後、後続処理を実行
-                Task.WhenAll(taskLIst).ContinueWith((task) => {
+                Task task = Task.Run(() => {
+                    List<ContentItem> contentItems = SelectedItems.Select(x => x.ContentItem).ToList();
+                    ContentItemCommands.DeleteEmbeddings(contentItems);
+                    PythonAILibManager libManager = PythonAILibManager.Instance;
+                    var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
+                    foreach (ContentItem contentItem in contentItems) {
+                        collection.Delete(contentItem.Id);
+                    }
+
+
+                }).ContinueWith((task) => {
+                    // 全ての削除処理が終了した後、後続処理を実行
                     // フォルダ内のアイテムを再読み込む
                     MainUITask.Run(() => {
                         var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);

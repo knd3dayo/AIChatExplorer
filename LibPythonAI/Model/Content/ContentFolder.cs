@@ -380,19 +380,35 @@ namespace PythonAILib.Model.Content {
             if (data == null) {
                 return;
             }
+            List<string> targetNames = [];
+
             bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
+            if (importTitle) {
+                targetNames.Add("Title");
+            }
             bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
+            if (importText) {
+                targetNames.Add("Text");
+            }
+            // SourcePath
+            bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
+            if (importSourcePath) {
+                targetNames.Add("SourcePath");
+            }
 
             foreach (var row in data.Rows) {
                 ContentItem item = new(Id);
-                // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
-                if (importTitle && importText) {
+                // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
+                if (importTitle) {
                     item.Description = row.Count > 0 ? row[0] : "";
+                }
+                // TextのIndexが-1以外の場合は、row[TextのIndex]をContentに設定。Row.Countが足りない場合は空文字を設定
+                if (importText) {
                     item.Content = row.Count > 1 ? row[1] : "";
-                } else if (importTitle) {
-                    item.Description = row.Count > 0 ? row[0] : "";
-                } else if (importText) {
-                    item.Content = row.Count > 0 ? row[0] : "";
+                }
+                // SourcePathのIndexが-1以外の場合は、row[SourcePathのIndex]をSourcePathに設定。Row.Countが足りない場合は空文字を設定
+                if (importSourcePath) {
+                    item.SourcePath = row.Count > 2 ? row[2] : "";
                 }
                 item.Save();
             }

@@ -22,7 +22,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             return [
                 new ExportImportItem("Title", CommonStringResources.Instance.Title, true, false),
                 new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
-                new ExportImportItem("SourcePath", CommonStringResources.Instance.SourcePath, false, true),
+                new ExportImportItem("SourcePath", CommonStringResources.Instance.SourcePath, false, false),
             ];
         }
 
@@ -70,10 +70,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public bool IsAutoProcessEnabled { get; set; } = false;
 
         // FileSelectionButtonVisibility
-        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 2 || SelectedIndex == 3);
+        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 1 || SelectedIndex == 2);
 
         // ClipboardFolderSelectionButtonVisibility
-        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 1);
+        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 2);
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
@@ -86,25 +86,20 @@ namespace LibUIPythonAI.ViewModel.Folder {
                         ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
-                        // 新規アイテムとしてエクスポート処理
-                        // ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
-                        break;
-                    case 2:
                         // Excelインポート処理
                         ClipboardFolderViewModel.Folder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
                         break;
-                    case 3:
+                    case 2:
                         // URLリストインポート処理
                         ClipboardFolderViewModel.Folder.ImportFromURLList(SelectedFileName, IsAutoProcessEnabled);
                         break;
                     default:
                         break;
                 }
-                MainUITask.Run(() => {
-                    IsIndeterminate = false;
-                    AfterUpdate();
-                    window.Close();
-                });
+            }).ContinueWith((task) => {
+                IsIndeterminate = false;
+                AfterUpdate();
+                window.Close();
             });
         });
 

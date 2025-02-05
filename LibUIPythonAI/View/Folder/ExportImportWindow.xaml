@@ -138,7 +138,7 @@
                             <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.ImportTarget}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked}" />
+                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -166,7 +166,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Content="{x:Static res:ViewStringResources.ExecuteAutoProcessingOnImport}"
-                        IsChecked="{Binding IsAutoProcessEnabled}" />
+                        IsChecked="{Binding IsAutoProcessEnabled, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </TabItem>
         </TabControl>
