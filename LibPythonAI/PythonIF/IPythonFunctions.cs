@@ -11,6 +11,9 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
+        public IEnumerable<ChatResult> OpenAIChatBatch(List<(ChatRequestContext, ChatRequest)> requests);
+
+
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);

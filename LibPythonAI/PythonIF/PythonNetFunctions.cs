@@ -207,6 +207,10 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
+        public IEnumerable<ChatResult> OpenAIChatBatch(List<(ChatRequestContext, ChatRequest)> requests) {
+            throw new System.NotImplementedException();
+        }
+
         // AutoGenのGroupChatを実行する
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
