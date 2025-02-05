@@ -100,7 +100,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }).ContinueWith((task) => {
                 IsIndeterminate = false;
                 AfterUpdate();
-                window.Close();
+                MainUITask.Run(() => {
+                    window.Close();
+                });
             });
         });
 
