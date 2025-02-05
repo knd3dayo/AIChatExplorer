@@ -417,6 +417,18 @@ def extract_text_from_file(filename):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
+# ファイルからテキストを抽出するバッチ処理
+def extract_text_from_file_batch(filenames: list[str]):
+    def func () -> Generator[dict, None, None]:
+        for filename in filenames:
+            text = ai_app.extract_text_from_file(filename)
+            yield {"output": text}
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_generator_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data: str, extension: str):
     def func () -> dict:
@@ -424,6 +436,18 @@ def extract_base64_to_text(base64_data: str, extension: str):
         return {"output": text}
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+# base64形式のデータからテキストを抽出するバッチ処理
+def extract_base64_to_text_batch(base64_data_list: list[str], extension: str):
+    def func () -> Generator[dict, None, None]:
+        for base64_data in base64_data_list:
+            text = ai_app.extract_base64_to_text(base64_data, extension)
+            yield {"output": text}
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_generator_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 

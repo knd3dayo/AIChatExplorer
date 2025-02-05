@@ -65,6 +65,40 @@ namespace PythonAILib.PythonIF {
         }
 
         // IPythonFunctionsのメソッドを実装
+        public IEnumerable<string> ExtractFileToTextBatch(List<string> pathList) {
+
+            // Pythonスクリプトを実行する
+            using (Py.GIL()) {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "extract_text_from_file_batch";
+                // scriptPathからPyModuleを取得
+                PyModule pyModule = GetPyModule(PythonExecutor.OpenAIScript);
+                dynamic function_object = GetPythonFunction(pyModule, function_name);
+                
+                // extract_text関数を呼び出す
+                foreach (string resultString in function_object(pathList)) {
+                    PythonScriptResult result = new();
+                    try {
+
+                        // resultStringをログに出力
+                        LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                        result.LoadFromJson(resultString);
+                        // Errorがある場合はLogWrapper.Errorを呼び出す
+                        if (!string.IsNullOrEmpty(result.Error)) {
+                            LogWrapper.Error(result.Error);
+                        }
+
+                    } catch (PythonException e) {
+                        // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                        if (e.Message.Contains("Unsupported file type")) {
+                            throw new UnsupportedFileTypeException(e.Message);
+                        }
+                        throw;
+                    }
+                    yield return result.Output;
+                }
+            }
+        }
         public string ExtractFileToText(string path) {
             PythonScriptResult result = new();
             ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
@@ -93,25 +127,37 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
-
-        // テスト用
-        public string HelloWorld() {
-            string result = "";
+        public IEnumerable<string> ExtractBase64ToTextBatch(List<(string, string)> base64List) {
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
+            using (Py.GIL()) {
                 // Pythonスクリプトの関数を呼び出す
-                string function_name = "hello_world";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // hello_world関数を呼び出す
-                PyIterable iterator = function_object();
-                // iteratorから文字列を取得
-                foreach (PyObject item in iterator) {
-                    result += item.ToString();
+                string function_name = "extract_text_from_base64_batch";
+                // scriptPathからPyModuleを取得
+                PyModule pyModule = GetPyModule(PythonExecutor.OpenAIScript);
+                dynamic function_object = GetPythonFunction(pyModule, function_name);
+                // extract_text関数を呼び出す
+                foreach (string resultString in function_object(base64List)) {
+                    PythonScriptResult result = new();
+                    try {
+                        // resultStringをログに出力
+                        LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                        result.LoadFromJson(resultString);
+                        // Errorがある場合はLogWrapper.Errorを呼び出す
+                        if (!string.IsNullOrEmpty(result.Error)) {
+                            LogWrapper.Error(result.Error);
+                        }
+                    } catch (PythonException e) {
+                        // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                        if (e.Message.Contains("Unsupported file type")) {
+                            throw new UnsupportedFileTypeException(e.Message);
+                        }
+                        throw;
+                    }
+                    yield return result.Output;
                 }
-
-            });
-            return result;
+            }
         }
+
         public string ExtractBase64ToText(string base64, string extension) {
 
             // ResultContainerを作成
@@ -143,6 +189,25 @@ namespace PythonAILib.PythonIF {
                 }
             });
             return result.Output;
+        }
+
+        // テスト用
+        public string HelloWorld() {
+            string result = "";
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "hello_world";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // hello_world関数を呼び出す
+                PyIterable iterator = function_object();
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    result += item.ToString();
+                }
+
+            });
+            return result;
         }
 
         private ChatResult OpenAIChatExecute(string function_name, Func<dynamic, string> pythonFunction) {

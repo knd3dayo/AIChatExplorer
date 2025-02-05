@@ -6,8 +6,11 @@ namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
+        public IEnumerable<string> ExtractFileToTextBatch(List<string> pathList);
 
         public string ExtractBase64ToText(string base64, string extension);
+
+        public IEnumerable<string> ExtractBase64ToTextBatch(List<(string, string)> base64List);
 
         public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
