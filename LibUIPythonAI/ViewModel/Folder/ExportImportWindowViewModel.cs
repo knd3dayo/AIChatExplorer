@@ -22,6 +22,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             return [
                 new ExportImportItem("Title", CommonStringResources.Instance.Title, true, false),
                 new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
+                new ExportImportItem("SourcePath", CommonStringResources.Instance.SourcePath, false, true),
             ];
         }
 

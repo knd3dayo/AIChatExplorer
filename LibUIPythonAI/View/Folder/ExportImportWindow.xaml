@@ -103,41 +103,6 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <!--  新規アイテムとしてエクスポート  -->
-            <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,3,10,3"
-                Padding="0"
-                FontSize="10"
-                Header="{x:Static res:ViewStringResources.ExportAsNewItem}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <!--  新規アイテムとしてエクスポート  -->
-                    <DataGrid
-                        Grid.Row="0"
-                        Margin="10,10,10,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        AutoGenerateColumns="False"
-                        ItemsSource="{Binding ExportItems}"
-                        SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.ExportTarget}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
             <!--  Excelからインポート  -->
             <TabItem
                 Width="Auto"
