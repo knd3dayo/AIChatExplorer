@@ -7,7 +7,7 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
-using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Main;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
@@ -30,7 +30,7 @@ using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
         public override SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {

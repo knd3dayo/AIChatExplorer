@@ -1,4 +1,5 @@
 using System.Windows;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using WpfAppCommon.Utils;

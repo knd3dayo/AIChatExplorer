@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Common;
 
 namespace ClipboardApp.ViewModel.Main {
     public class MainPanelTreeViewControlViewModel : ObservableObject{

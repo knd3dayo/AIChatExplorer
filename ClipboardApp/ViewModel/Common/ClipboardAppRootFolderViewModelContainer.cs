@@ -7,7 +7,7 @@ using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Common {
     public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel
