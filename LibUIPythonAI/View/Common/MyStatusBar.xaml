@@ -5,69 +5,61 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:LibUIPythonAI.ViewModel.Common"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:LibUIPythonAI.View.Common"
     x:Name="root"
     Width="Auto"
     d:DataContext="{d:DesignInstance Type=local:MyStatusBarViewModel}"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
-        </Style>
-    </UserControl.Resources>
-    <Grid>
-        <StatusBar
-            Name="statusBar1"
-            MaxHeight="30"
-            Margin="0,0,0,0"
-            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <StatusBarItem Grid.Column="0">
-                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text, Mode=OneWay}" />
-            </StatusBarItem>
-            <StatusBarItem
+    <materialDesign:ColorZone
+        materialDesign:ElevationAssist.Elevation="Dp4"
+        DockPanel.Dock="Top"
+        Mode="PrimaryMid">
+        <Grid Height="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Name="statusBarTextBlock1"
+                Margin="5,0,0,0"
+                VerticalAlignment="Center"
+                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                FontSize="12"
+                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                Text="{Binding Path=StatusText.Text, Mode=OneWay}"
+                TextWrapping="NoWrap" />
+            <StackPanel
                 Grid.Column="1"
-                Margin="10,0,10,0"
-                HorizontalAlignment="Right">
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
                 <TextBlock
+                    Width="50"
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                    FontSize="12"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                    Text="{x:Static res:ViewStringResources.Statistics}">
+                    Text="{x:Static res:ViewStringResources.Statistics}"
+                    TextWrapping="NoWrap">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding OpenStatisticsWindowCommand}" Gesture="LeftClick" />
                     </TextBlock.InputBindings>
                 </TextBlock>
-            </StatusBarItem>
-            <StatusBarItem
-                Grid.Column="2"
-                Margin="10,0,10,0"
-                HorizontalAlignment="Right">
                 <TextBlock
+                    Width="50"
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                    FontSize="12"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                    Text="{x:Static res:ViewStringResources.Log}">
+                    Text="{x:Static res:ViewStringResources.Log}"
+                    TextWrapping="NoWrap">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" Gesture="LeftClick" />
                     </TextBlock.InputBindings>
                 </TextBlock>
-            </StatusBarItem>
-        </StatusBar>
-    </Grid>
+            </StackPanel>
+        </Grid>
+    </materialDesign:ColorZone>
 </UserControl>

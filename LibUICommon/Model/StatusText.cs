@@ -39,7 +39,17 @@ namespace WpfAppCommon.Model {
         private string _text = _DefaultText;
         public string Text {
             get {
-                return _text;
+                // _textの値が100文字以上の場合は50文字目 + "..."にする。.また、改行コードを削除する
+                string result_text;
+                if (_text.Length > 100) {
+                    result_text = _text.Substring(0, 100) + "...";
+                } else {
+                    result_text = _text;
+                }
+                // 改行コードを削除する
+                result_text = result_text.Replace("\r", "").Replace("\n", "");
+
+                return result_text;
             }
             set {
                 _text = value;

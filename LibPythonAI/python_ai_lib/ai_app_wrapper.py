@@ -11,6 +11,8 @@ from ai_app_autogen import AutoGenProps
 
 import ai_app
 
+global_counter = 0
+
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
@@ -378,6 +380,10 @@ def delete_embeddings(context_json: str):
 # ベクトルDBのコンテンツインデックスを更新する
 def update_embeddings(context_json: str):
     def func () -> dict:
+        global global_counter
+        global_counter += 1
+        print(f"global_counter:{global_counter}")
+
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
