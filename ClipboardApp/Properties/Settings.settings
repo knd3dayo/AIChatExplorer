@@ -119,5 +119,11 @@
     <Setting Name="AzureOpenAIAPIVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">2024-02-01</Value>
     </Setting>
+    <Setting Name="APIServerURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:5000</Value>
+    </Setting>
+    <Setting Name="UseInternalAPIServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

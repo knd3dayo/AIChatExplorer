@@ -6,30 +6,27 @@ namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
-        public IEnumerable<string> ExtractFileToTextBatch(List<string> pathList);
 
         public string ExtractBase64ToText(string base64, string extension);
 
-        public IEnumerable<string> ExtractBase64ToTextBatch(List<(string, string)> base64List);
 
         public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
-        public IEnumerable<ChatResult> OpenAIChatBatch(List<(ChatRequestContext, ChatRequest)> requests);
-
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
-
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);
-
-        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
-
-        public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
 
         //　コレクション名とFolderIdにマッチするDescriptionをカタログから取得する。
         public string GetVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id);
 
         // カタログ情報をアップデート
         public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id, string Description);
+
+
+        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);
+
+        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
+
+        public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
 
 
         public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
@@ -46,7 +43,7 @@ namespace PythonAILib.PythonIF {
         public string GetMimeType(string filePath);
 
         // GetTokenCount
-        public long GetTokenCount(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+        public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText);
 
         // extract_webpage
         public string ExtractWebPage(string url);

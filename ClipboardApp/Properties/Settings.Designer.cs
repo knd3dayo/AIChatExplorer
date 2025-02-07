@@ -490,5 +490,29 @@ namespace ClipboardApp.Properties {
                 this["AzureOpenAIAPIVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:5000")]
+        public string APIServerURL {
+            get {
+                return ((string)(this["APIServerURL"]));
+            }
+            set {
+                this["APIServerURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseInternalAPIServer {
+            get {
+                return ((bool)(this["UseInternalAPIServer"]));
+            }
+            set {
+                this["UseInternalAPIServer"] = value;
+            }
+        }
     }
 }

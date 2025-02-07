@@ -29,3 +29,4 @@ webdriver-manager
 duckduckgo-search
 tiktoken
 promptflow-tracing
+flask-socketio

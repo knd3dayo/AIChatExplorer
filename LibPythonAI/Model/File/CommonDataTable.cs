@@ -10,7 +10,6 @@ namespace PythonAILib.Model.File {
         [JsonPropertyName("rows")]
         public List<List<string>> Rows { get; set; } = rows;
 
-
         public static string ToJson(CommonDataTable dataTable) {
             JsonArray jsonArray = [];
             foreach (List<string> row in dataTable.Rows) {

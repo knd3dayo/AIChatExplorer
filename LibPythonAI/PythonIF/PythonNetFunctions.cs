@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.PythonIF;
 using Python.Runtime;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -84,41 +85,133 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
-        // IPythonFunctionsのメソッドを実装
-        public IEnumerable<string> ExtractFileToTextBatch(List<string> pathList) {
 
+        // GetTokenCount
+        public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
+
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext,
+                TokenCountRequestInstance = new(inputText) 
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetTokenCountExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+
+            long totalTokens = 0;
             // Pythonスクリプトを実行する
-            using (Py.GIL()) {
+            string resultString = (string)ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_text_from_file_batch";
-                // scriptPathからPyModuleを取得
-                PyModule pyModule = GetPyModule(PythonExecutor.OpenAIScript);
-                dynamic function_object = GetPythonFunction(pyModule, function_name);
-                
-                // extract_text関数を呼び出す
-                foreach (string resultString in function_object(pathList)) {
-                    PythonScriptResult result = new();
-                    try {
+                dynamic function_object = GetPythonFunction(ps, "get_token_count");
 
-                        // resultStringをログに出力
-                        LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
-                        result.LoadFromJson(resultString);
-                        // Errorがある場合はLogWrapper.Errorを呼び出す
-                        if (!string.IsNullOrEmpty(result.Error)) {
-                            LogWrapper.Error(result.Error);
-                        }
-
-                    } catch (PythonException e) {
-                        // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                        if (e.Message.Contains("Unsupported file type")) {
-                            throw new UnsupportedFileTypeException(e.Message);
-                        }
-                        throw;
-                    }
-                    yield return result.Output;
+                // get_token_count関数を呼び出す
+                string resultString = function_object(chatRequestContextJson);
+                return resultString;
+            });
+            // resultStringをログに出力
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // total_tokensを取得
+            if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                if (totalTokensValue is decimal totalTokensDecimal) {
+                    totalTokens = decimal.ToInt64(totalTokensDecimal);
                 }
             }
+            return totalTokens;
         }
+
+        // 通常のOpenAIChatを実行する
+        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                ChatRequestInstance = chatRequest,
+                RequestContextInstance = chatRequestContext
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestContextJson = requestContainer.ToJson();
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+
+            //OpenAIChatExecuteを呼び出す
+            ChatResult result = OpenAIChatExecute("openai_chat", (function_object) => {
+                return function_object(requestContextJson);
+            });
+            // StatisticManagerにトークン数を追加
+            MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
+            return result;
+        }
+
+        public IEnumerable<ChatResult> OpenAIChatBatch(List<(ChatRequestContext, ChatRequest)> requests) {
+            throw new System.NotImplementedException();
+        }
+
+
+        // AutoGenのGroupChatを実行する
+        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+
+            // ChatRequestから最後のユーザー発言を取得
+            ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
+            string inputText = lastUserRoleMessage.Content;
+            // messageが空の場合はLogWrapper.Errorを呼び出す
+            if (string.IsNullOrEmpty(inputText)) {
+                LogWrapper.Error("Message is empty.");
+            }
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext,
+                AutogenRequestInstance = new(inputText)
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestContextJson = requestContainer.ToJson();
+
+
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+
+            ChatResult chatResult = new();
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "5autogen_group_chat";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                // hello_world関数を呼び出す
+                PyIterable iterator = function_object(requestContextJson);
+                Dictionary<string, dynamic?> resultDict = [];
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    string itemString = item.ToString() ?? "{}";
+                    resultDict = JsonUtil.ParseJson(itemString);
+                    // messageを取得
+                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
+                        iteration(messageValue);
+                    }
+                    // logを取得
+                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
+                        LogWrapper.Info(logValue);
+                    }
+                }
+                // total_tokensを取得.
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
+                }
+                return resultDict;
+            });
+            return chatResult;
+
+        }
+
 
         public string ExtractFileToText(string path) {
             PythonScriptResult result = new();
@@ -147,37 +240,6 @@ namespace PythonAILib.PythonIF {
                 LogWrapper.Error(result.Error);
             }
             return result.Output;
-        }
-
-        public IEnumerable<string> ExtractBase64ToTextBatch(List<(string, string)> base64List) {
-            // Pythonスクリプトを実行する
-            using (Py.GIL()) {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_text_from_base64_batch";
-                // scriptPathからPyModuleを取得
-                PyModule pyModule = GetPyModule(PythonExecutor.OpenAIScript);
-                dynamic function_object = GetPythonFunction(pyModule, function_name);
-                // extract_text関数を呼び出す
-                foreach (string resultString in function_object(base64List)) {
-                    PythonScriptResult result = new();
-                    try {
-                        // resultStringをログに出力
-                        LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
-                        result.LoadFromJson(resultString);
-                        // Errorがある場合はLogWrapper.Errorを呼び出す
-                        if (!string.IsNullOrEmpty(result.Error)) {
-                            LogWrapper.Error(result.Error);
-                        }
-                    } catch (PythonException e) {
-                        // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                        if (e.Message.Contains("Unsupported file type")) {
-                            throw new UnsupportedFileTypeException(e.Message);
-                        }
-                        throw;
-                    }
-                    yield return result.Output;
-                }
-            }
         }
 
         public string ExtractBase64ToText(string base64, string extension) {
@@ -249,89 +311,6 @@ namespace PythonAILib.PythonIF {
             return chatResult;
         }
 
-        // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
-
-            // ChatRequestContextをJSON文字列に変換
-            string chatRequestContextJson = chatRequestContext.ToJson();
-
-            // ChatHistoryとContentなどからリクエストを作成
-            Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
-            // ChatRequestをJSON文字列に変換
-            string chat_request_json = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_request_json}");
-
-            //OpenAIChatExecuteを呼び出す
-            ChatResult result = OpenAIChatExecute("run_openai_chat", (function_object) => {
-                return function_object(chatRequestContextJson, chat_request_json);
-            });
-            // StatisticManagerにトークン数を追加
-            MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
-            return result;
-        }
-
-        public IEnumerable<ChatResult> OpenAIChatBatch(List<(ChatRequestContext, ChatRequest)> requests) {
-            throw new System.NotImplementedException();
-        }
-
-        // AutoGenのGroupChatを実行する
-        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
-
-            // ChatRequestから最後のユーザー発言を取得
-            ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
-            string message = lastUserRoleMessage.Content;
-            // messageが空の場合はLogWrapper.Errorを呼び出す
-            if (string.IsNullOrEmpty(message)) {
-                LogWrapper.Error("Message is empty.");
-            }
-            // chatRequestContextをJSON文字列に変換
-            string requestContextJson = chatRequestContext.ToJson();
-
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {requestContextJson}");
-
-            ChatResult chatResult = new();
-
-            // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "run_autogen_group_chat";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-
-                // hello_world関数を呼び出す
-                PyIterable iterator = function_object(requestContextJson, message);
-                Dictionary<string, dynamic?> resultDict = [];
-                // iteratorから文字列を取得
-                foreach (PyObject item in iterator) {
-                    string itemString = item.ToString() ?? "{}";
-                    resultDict = JsonUtil.ParseJson(itemString);
-                    // messageを取得
-                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
-                        iteration(messageValue);
-                    }
-                    // logを取得
-                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
-                        LogWrapper.Info(logValue);
-                    }
-                }
-                // total_tokensを取得.
-                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                    if (totalTokensValue is decimal totalTokens) {
-                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
-                    }
-                }
-                // Errorがある場合はLogWrapper.Errorを呼び出す
-                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
-                    LogWrapper.Error(errorValue?.ToString());
-                }
-                return resultDict;
-            });
-            return chatResult;
-
-        }
-
 
         private List<VectorDBEntry> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
@@ -365,16 +344,24 @@ namespace PythonAILib.PythonIF {
         public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
-            // ChatRequestContextをJSON文字列に変換
-            string chatRequestContextJson = chatRequestContext.ToJson();
-            
+
+            // QueryRequestを作成
+            QueryRequest queryRequest = new(query);
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext,
+                QueryRequestInstance = queryRequest
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("vector_search", (function_object) => {
-                string resultString = function_object(chatRequestContextJson, query);
+                string resultString = function_object(chatRequestContextJson);
                 return resultString;
             });
         }
@@ -415,7 +402,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = chatRequestContext.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBCollectionExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("update_collection", (function_object) => {
@@ -423,12 +410,20 @@ namespace PythonAILib.PythonIF {
             }, result);
         }
 
-        public string GetVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId) { 
+        public string GetVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId) {
 
+            // CatalogRequestを作成
+            CatalogRequest catalogRequest = new(catalogDBURL, vectorDBURL, collectionName, folderId);
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                CatalogRequestInstance = catalogRequest
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("get_catalog_description", (function_object) => {
-                return function_object(catalogDBURL, vectorDBURL, collectionName, folderId);
+                return function_object(chatRequestContextJson);
             }, result);
 
             return result.Output;
@@ -436,11 +431,22 @@ namespace PythonAILib.PythonIF {
 
         public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId, string description) {
 
+            // CatalogRequestを作成
+            CatalogRequest catalogRequest = new(catalogDBURL, vectorDBURL, collectionName, folderId) {
+                Description = description
+            };
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                CatalogRequestInstance = catalogRequest
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBDescription);
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("update_catalog_description", (function_object) => {
-                return function_object(catalogDBURL, vectorDBURL, collectionName, folderId, description);
+                return function_object(chatRequestContextJson);
             }, result);
 
             return result.Output;
@@ -450,11 +456,16 @@ namespace PythonAILib.PythonIF {
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
-            // ChatRequestContextをJSON文字列に変換
-            string chatRequestContextJson = chatRequestContext.ToJson();
+
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("delete_collection", (function_object) => {
@@ -465,12 +476,17 @@ namespace PythonAILib.PythonIF {
         private void UpdateEmbeddings(ChatRequestContext chatRequestContext, string function_name) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
-            // ChatRequestContextをJSON文字列に変換
-            string chatRequestContextJson = chatRequestContext.ToJson();
+
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
 
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
@@ -492,6 +508,7 @@ namespace PythonAILib.PythonIF {
             function_name = "update_embeddings";
             UpdateEmbeddings(chatRequestContext, function_name);
         }
+
 
         // ExportToExcelを実行する
         public void ExportToExcel(string filePath, CommonDataTable data) {
@@ -560,40 +577,6 @@ namespace PythonAILib.PythonIF {
             return contentType;
         }
 
-        // GetTokenCount
-        public long GetTokenCount(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
-            // ChatRequestContextをJSON文字列に変換
-            string chatRequestContextJson = chatRequestContext.ToJson();
-            // ChatRequestのMessagesを取得
-            string chatRequestMessages = chatRequest.GetMessages(chatRequestContext);
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.GetTokenCountExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatRequestMessages}");
-
-            long totalTokens = 0;
-            // Pythonスクリプトを実行する
-            string resultString =(string)ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                dynamic function_object = GetPythonFunction(ps, "get_token_count");
-
-                // get_token_count関数を呼び出す
-                string resultString = function_object(chatRequestContextJson, chatRequestMessages);
-                return resultString;
-            });
-            // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
-            // resultStringからDictionaryに変換する。
-            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
-            // total_tokensを取得
-            if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                if (totalTokensValue is decimal totalTokensDecimal) {
-                    totalTokens = decimal.ToInt64(totalTokensDecimal);
-                }
-            }
-            return totalTokens;
-        }
-
         // public string ExtractWebPage(string url);
         public string ExtractWebPage(string url) {
             // ResultContainerを作成
@@ -616,5 +599,7 @@ namespace PythonAILib.PythonIF {
             }
             return result.Output;
         }
+
+
     }
 }

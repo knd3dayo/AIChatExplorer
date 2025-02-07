@@ -124,7 +124,7 @@ namespace PythonAILib.Resources {
         public override string EmbeddingExecute { get; } = "Execute embedding";
 
         // Property information
-        public override string PropertyInfo { get; } = "Property information";
+        public override string RequestInfo { get; } = "Request information";
 
         public override string VectorDBItems { get; } = "Vector DB Items";
 
@@ -154,6 +154,8 @@ namespace PythonAILib.Resources {
         // Execute OpenAI
         public override string OpenAIExecute { get; } = "Execute OpenAI";
 
+        // RequestContextInstanceIsNull
+        public override string RequestContextInstanceIsNull { get; } = "RequestContextInstance is null";
         // GetTokenCountExecute
         public override string GetTokenCountExecute { get; } = "Execute GetTokenCount";
 

@@ -3,21 +3,30 @@ from typing import Any
 from collections.abc import Generator
 from io import StringIO
 import sys
-sys.path.append("python")
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_vector_db import VectorDBProps
+from ai_app_vector_db import VectorDBProps, VectorDBCatalog
 from ai_app_autogen import AutoGenProps
 
 import ai_app
-
-global_counter = 0
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
+
+request_context_name = "context"
+openai_props_name = "openai_props"
+vector_db_items_name = "vector_db_items"
+autogen_props_name = "autogen_props"
+chat_request_context_name = "chat_request_context"
+chat_request_name = "chat_request"
+token_count_request_name = "token_count_request"
+autogen_request_name = "autogen_request"
+catalog_request_name = "catalog_request"
+query_request_name = "query_request"
+excel_request_name = "excel_request"
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_stdout_stderr(func):
@@ -94,50 +103,123 @@ def capture_generator_stdout_stderr(func):
 ########################
 # parametar関連
 ########################
-def get_request_context_objects(context_json: str) -> dict:
-    # ChatRequestContextからRequestContextを生成
-    props_dict = json.loads(context_json)
-    request_context_dict = props_dict["request_context"]
+def get_chat_request_context_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request_context:dict = request_dict.get(request_context_name, None)
+    if not request_context:
+        raise ValueError("context is not set.")
+
+    request_context_dict = request_context.get(chat_request_context_name, None)
+    if not request_context_dict:
+        raise ValueError("request_context is not set.")
+
     request_context = RequestContext(request_context_dict)
     return request_context
 
-def get_openai_objects(context_json: str) -> tuple[OpenAIProps, OpenAIClient]:
-    # ChatRequestContextからOpenAIPorpsを生成
-    props_dict = json.loads(context_json)
-    openai_props_dict = props_dict["openai_props"]
+def get_openai_objects(request_dict: dict) -> tuple[OpenAIProps, OpenAIClient]:
+    # contextを取得
+    request_context:dict = request_dict.get(request_context_name, None)
+    if not request_context:
+        raise ValueError("context is not set.")
+    
+    # OpenAIPorps, OpenAIClientを生成
+    openai_props_dict = request_context.get(openai_props_name, None)
+    if not openai_props_dict:
+        raise ValueError("openai_props is not set.")
+
     openai_props = OpenAIProps(openai_props_dict)
     client = OpenAIClient(openai_props)
     return openai_props, client
 
-def get_vector_db_objects(context_json: str) -> list[VectorDBProps]:
-    # ChatRequestContextからVectorDBPropsを生成
-    props_dict = json.loads(context_json)
-    vector_db_items = props_dict["vector_db_items"]
+def get_vector_db_objects(request_dict: dict) -> list[VectorDBProps]:
+    # contextを取得
+    request_context:dict = request_dict.get(request_context_name, None)
+    if not request_context:
+        raise ValueError("context is not set.")
+    # VectorDBPropsを生成
+    vector_db_items = request_context.get(vector_db_items_name, None)
+    if not vector_db_items:
+        print("vector_db_items is not set")
+        return []
+    
     vector_db_props = [VectorDBProps(item) for item in vector_db_items]
     return vector_db_props
 
-def get_autogen_objects(context_json: str) -> AutoGenProps:
-    # ChatRequestContextからAutoGenPropsを生成
-    props_dict = json.loads(context_json)
+def get_autogen_objects(request_dict: dict) -> AutoGenProps:
+    # contextを取得
+    request_context:dict = request_dict.get(request_context_name, None)
+    if not request_context:
+        raise ValueError("context is not set.")
+    # AutoGenPropsを生成
+    props_dict = request_context.get(autogen_props_name, None)
+    if not props_dict:
+        raise ValueError("autogen_props is not set")
+
     autogen_props = AutoGenProps(props_dict["autogen_props"])
     return autogen_props
+
+def get_token_count_objects(request_dict: dict) -> dict:
+
+    # token_count_request_nameを取得
+    token_count_request = request_dict.get(token_count_request_name, None)
+    if not token_count_request:
+        raise ValueError("token_count_request is not set")
+    return token_count_request
+
+def get_autogen_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(autogen_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    return request
+
+def get_catalog_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(catalog_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    # catalog_db_url, vector_db_url, collection, folder_id, descriptionを取得
+
+    return request
+
+def get_query_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(query_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    return request
+
+def get_excel_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(excel_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    # file_pathとdata_jsonを取得
+    file_path = request.get("file_path", None)
+    data_json = request.get("data_json", None)
+
+    return file_path, data_json
 
 ########################
 # openai関連
 ########################
-def run_openai_chat(context_json: str, request_json: str):
+def openai_chat(request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict[str, Any]:
-        # context_jsonからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # OpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(request_dict)
         # context_jsonからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
-        # context_jsonからRequestContextを生成
-        request_context = get_request_context_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
+        # context_jsonからChatRequestContextを生成
+        chat_request_context = get_chat_request_context_objects(request_dict)
+        # chat_requestを取得
+        chat_request_dict = request_dict.get(chat_request_name, None)
+        if not chat_request_dict:
+            raise ValueError("chat_request is not set")
 
-        # request_jsonをdictに変換
-        request = json.loads(request_json)
-        result:dict = ai_app.run_openai_chat(openai_props, vector_db_items, request_context, request)
+        result:dict = ai_app.run_openai_chat(openai_props, vector_db_items, chat_request_context, chat_request_dict)
         return result
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -145,27 +227,21 @@ def run_openai_chat(context_json: str, request_json: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-
-def openai_embedding(context_json: str, input_text: str):
-    # OpenAIチャットを実行する関数を定義
-    def func() -> dict[str, Any]:
-        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        _, openai_client = get_openai_objects(context_json)
-        vector =  openai_client.openai_embedding(input_text)
-        result: dict = {}
-        result["vector"] = vector
-        return result
-
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-def get_token_count(context_json: str, input_text: str):
+def get_token_count(request_json: str):
     # get_token_countを実行する関数を定義
     def func() -> dict:
-        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        
+        openai_props, _ = get_openai_objects(request_dict)
+
+        # input_textを取得
+        token_count_request = request_dict.get(token_count_request_name, None)
+        if not token_count_request:
+            raise ValueError("token_count_request is not set")
+        input_text = token_count_request.get("input_text", "")
+        if not input_text:
+            raise ValueError("input_text is not set")
         # OpenAIClientを生成
         openai_client = OpenAIClient(openai_props)
         result: dict = {}
@@ -176,20 +252,19 @@ def get_token_count(context_json: str, input_text: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def list_openai_models(context_json: str):
-    # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-    openai_props, openai_client = get_openai_objects(context_json)
-    return openai_client.list_openai_models()
-
 ########################
 # Autogen関連
 ########################
-def run_autogen_group_chat( context_json:str, input_text: str):
+def autogen_group_chat( request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> Generator[dict, None, None]:
-        openai_props, _ = get_openai_objects(context_json)
-        vector_db_items = get_vector_db_objects(context_json)
-        autogen_props = get_autogen_objects( context_json)
+        openai_props, _ = get_openai_objects(request_json)
+        vector_db_items = get_vector_db_objects(request_json)
+        autogen_props = get_autogen_objects( request_json)
+        autogen_request = get_autogen_request_objects(request_json)
+        input_text = autogen_request.get("input_text", "")
+        if not input_text:
+            raise ValueError("input_text is not set")
 
         for message in ai_app.run_autogen_group_chat(autogen_props, openai_props, vector_db_items,  input_text):
             if not message:
@@ -207,17 +282,22 @@ def run_autogen_group_chat( context_json:str, input_text: str):
 # langchain関連
 ########################
 
-def run_langchain_chat( context_json: str, request_json: str):
+def langchain_chat( request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
 
         # process_langchain_chat_parameterを実行
         from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
-        params:LangChainChatParameter = LangChainChatParameter(request_json)
+        vector_db_items = get_vector_db_objects(request_dict)
+
+        # chat_requestを取得
+        chat_request_dict = request_dict.get(chat_request_name, None)
+        params:LangChainChatParameter = LangChainChatParameter(chat_request_dict)
         # langchan_chatを実行
         result = ai_app.run_langchain_chat(openai_props, vector_db_items, params)
         return result
@@ -230,11 +310,14 @@ def run_langchain_chat( context_json: str, request_json: str):
 ########################
 # ベクトルDB関連
 ########################
-from ai_app_vector_db.ai_app_vector_db_catalog import VectorDBCatalog
-def get_catalog_list(context_json: str) -> dict:
+def get_catalog_list(request_json: str) -> dict:
+    # 未使用
 
     def func() -> dict:
-        vector_db_items = get_vector_db_objects(context_json)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        vector_db_items = get_vector_db_objects(request_dict)
         # 先頭のVectorDBPropsを取得
         vector_db_props = vector_db_items[0]
         catalog_db_url = vector_db_props.CatalogDBURL
@@ -249,17 +332,22 @@ def get_catalog_list(context_json: str) -> dict:
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def get_catalog(context_json: str) -> dict:
+def get_catalog(request_json: str) -> dict:
+
     def func() -> dict:
-        vector_db_items = get_vector_db_objects(context_json)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        catalog_request = get_catalog_request_objects(request_dict)
+        catalog_db_url = catalog_request.get("catalog_db_url", None)
+        vector_db_url = catalog_request.get("vector_db_url", None)
+        collection = catalog_request.get("collection", None)
+        folder_id = catalog_request.get("folder_id", None)
+        description = catalog_request.get("description", None)
+
         catalog_list = []
-        for vector_db_props in vector_db_items:
-            catalog_db_url = vector_db_props.CatalogDBURL
-            vector_db_url = vector_db_props.VectorDBURL
-            collection = vector_db_props.CollectionName
-            folder_id = vector_db_props.FolderID
-            vector_db_catalog = ai_app.get_catalog(catalog_db_url, vector_db_url, collection, folder_id)
-            catalog_list.append(vector_db_catalog)
+
+        vector_db_catalog = ai_app.get_catalog(catalog_db_url, vector_db_url, collection, folder_id)
+        catalog_list.append(vector_db_catalog)
         result = {}
         result["catalog_list"] = catalog_list
     
@@ -268,8 +356,17 @@ def get_catalog(context_json: str) -> dict:
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def get_catalog_description(catalog_db_url: str, vector_db_url: str, collection: str, folder_id: str):
+def get_catalog_description(request_json: str):
     def func() -> dict:
+
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        catalog_request = get_catalog_request_objects(request_dict)
+        catalog_db_url = catalog_request.get("catalog_db_url", None)
+        vector_db_url = catalog_request.get("vector_db_url", None)
+        collection = catalog_request.get("collection", None)
+        folder_id = catalog_request.get("folder_id", None)
+
         description = ai_app.get_catalog_entry(catalog_db_url, vector_db_url, collection, folder_id)
 
         result = {}
@@ -281,9 +378,19 @@ def get_catalog_description(catalog_db_url: str, vector_db_url: str, collection:
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def update_catalog_description(category_db_url: str, vector_db_url: str, collection: str, folder_id: str, description: str):
+def update_catalog_description(request_json: str):
     def func() -> dict:
-        ai_app.update_catalog(category_db_url, vector_db_url, collection, folder_id, description)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        catalog_request = get_catalog_request_objects(request_dict)
+        catalog_db_url = catalog_request.get("catalog_db_url", None)
+        vector_db_url = catalog_request.get("vector_db_url", None)
+        collection = catalog_request.get("collection", None)
+        folder_id = catalog_request.get("folder_id", None)
+        description = catalog_request.get("description", None)
+
+        ai_app.update_catalog(catalog_db_url, vector_db_url, collection, folder_id, description)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -293,13 +400,19 @@ def update_catalog_description(category_db_url: str, vector_db_url: str, collect
 
 ########################
 
-def vector_search(context_json: str, query: str):
+def vector_search(request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
+        # queryを取得
+        query_request = get_query_request_objects(request_dict)
+        query = query_request.get("input_text", "")
 
         from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
@@ -311,12 +424,15 @@ def vector_search(context_json: str, query: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def update_collection(context_json: str):
+def update_collection(request_json: str):
     def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
 
         ai_app.update_collection(openai_props, vector_db_items)
 
@@ -336,12 +452,15 @@ def update_collection(context_json: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def delete_collection(context_json: str):
+def delete_collection(request_json: str):
     def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
         
         ai_app.delete_collection(openai_props, vector_db_items)
 
@@ -361,12 +480,15 @@ def delete_collection(context_json: str):
     return wrapper()
 
 # ベクトルDBのインデックスを削除する
-def delete_embeddings(context_json: str):
+def delete_embeddings(request_json: str):
     def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
         for vector_db_item in vector_db_items:
             ai_app.delete_embeddings(openai_props, vector_db_item)
 
@@ -378,16 +500,15 @@ def delete_embeddings(context_json: str):
     return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
-def update_embeddings(context_json: str):
+def update_embeddings(request_json: str):
     def func () -> dict:
-        global global_counter
-        global_counter += 1
-        print(f"global_counter:{global_counter}")
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
+        openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
+        vector_db_items = get_vector_db_objects(request_dict)
         for vector_db_item in vector_db_items:
             ai_app.update_embeddings(openai_props, vector_db_item)
         return {}
@@ -423,18 +544,6 @@ def extract_text_from_file(filename):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-# ファイルからテキストを抽出するバッチ処理
-def extract_text_from_file_batch(filenames: list[str]):
-    def func () -> Generator[dict, None, None]:
-        for filename in filenames:
-            text = ai_app.extract_text_from_file(filename)
-            yield {"output": text}
-    
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_generator_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data: str, extension: str):
     def func () -> dict:
@@ -442,18 +551,6 @@ def extract_base64_to_text(base64_data: str, extension: str):
         return {"output": text}
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-# base64形式のデータからテキストを抽出するバッチ処理
-def extract_base64_to_text_batch(base64_data_list: list[str], extension: str):
-    def func () -> Generator[dict, None, None]:
-        for base64_data in base64_data_list:
-            text = ai_app.extract_base64_to_text(base64_data, extension)
-            yield {"output": text}
-    
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_generator_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
@@ -471,10 +568,14 @@ def extract_webpage(url):
     return wrapper()
 
 # export_to_excelを実行する
-def export_to_excel(filePath, dataJson):
+def export_to_excel(request_json: str):
     # export_to_excelを実行する関数を定義
     def func() -> dict:
-        ai_app.export_to_excel(filePath, dataJson)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathとdata_jsonを取得
+        file_path, dataJson = get_excel_request_objects(request_dict)
+        ai_app.export_to_excel(file_path, dataJson)
         # 結果用のdictを生成
         return {}
     

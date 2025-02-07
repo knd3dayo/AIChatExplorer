@@ -65,7 +65,7 @@ namespace PythonAILib.Model.Chat {
                 { "vector_db_items", UseVectorDB ? VectorDBProperty.ToDictList(VectorDBProperties) : [] },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
-                { "request_context", requestContext },
+                { "chat_request_context", requestContext },
             };
             return dict;
         }

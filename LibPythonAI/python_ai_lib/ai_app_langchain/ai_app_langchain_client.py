@@ -52,18 +52,16 @@ class LangChainOpenAIClient:
         
 
 class LangChainChatParameter:
-    def __init__(self, request_json: str):
+    def __init__(self, chat_request_dict: dict):
 
-        # request_jsonをdictに変換
-        request_dict = json.loads(request_json)
         # messagesを取得
-        messages = request_dict.get("messages", [])
+        messages = chat_request_dict.get("messages", [])
         # messagesのlengthが0の場合はエラーを返す
         if len(messages) == 0:
             self.prompt = ""
         else:
             # messagesの最後のメッセージを取得
-            last_message = messages[-1]
+            last_message: dict = messages[-1]
             # contentを取得
             content = last_message.get("content", {})
             # contentのうちtype: textのもののtextを取得

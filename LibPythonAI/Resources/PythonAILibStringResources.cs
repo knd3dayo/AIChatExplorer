@@ -158,8 +158,8 @@ namespace PythonAILib.Resources {
         // Embedding実行
         public virtual string EmbeddingExecute { get; } = "Embedding実行";
 
-        // プロパティ情報
-        public virtual string PropertyInfo { get; } = "プロパティ情報";
+        // リクエスト情報
+        public virtual string RequestInfo { get; } = "リクエスト情報";
 
         // テキスト
         public virtual string Text { get; } = "テキスト";
@@ -170,6 +170,8 @@ namespace PythonAILib.Resources {
         // OpenAI実行
         public virtual string OpenAIExecute { get; } = "OpenAI実行";
 
+        // RequestContextInstanceIsNull
+        public virtual string RequestContextInstanceIsNull { get; } = "RequestContextInstanceがnullです";
         // チャット履歴
         public virtual string ChatHistory { get; } = "チャット履歴";
 

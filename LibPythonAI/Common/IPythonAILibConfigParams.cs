@@ -2,17 +2,21 @@ namespace PythonAILib.Common {
     public interface IPythonAILibConfigParams {
 
         public string GetLang();
+
+        #region 削除候補
         public string GetPythonDllPath();
         
         public string GetPythonLibPath();
+
+        public string GetPathToVirtualEnv();
+
+        #endregion
 
         public string GetDBPath();
 
         public string GetSystemVectorDBPath();
 
         public string GetSystemDocDBPath();
-
-        public string GetPathToVirtualEnv();
 
         public string GetAutoGenDBPath();
 
