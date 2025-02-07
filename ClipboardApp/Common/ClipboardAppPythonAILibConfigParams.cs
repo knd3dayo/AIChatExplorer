@@ -154,5 +154,26 @@ namespace ClipboardApp.Common {
         public bool DevFeaturesEnabled() {
             return ClipboardAppConfig.Instance.EnableDevFeatures;
         }
+
+        // APIServerURL
+        public string GetAPIServerURL() {
+            return ClipboardAppConfig.Instance.APIServerURL;
+        }
+
+        // UseInternalAPI
+        public bool UseInternalAPI() {
+            return ClipboardAppConfig.Instance.UseInternalAPI;
+        }
+        // UseAPI
+        public bool UseExternalAPI() {
+            return ClipboardAppConfig.Instance.UseExternalAPI;
+        }
+
+        // UsePythonNet
+        public bool UsePythonNet() {
+            return ClipboardAppConfig.Instance.UsePythonNet;
+        }
+
+
     }
 }

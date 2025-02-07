@@ -505,13 +505,37 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseInternalAPIServer {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseInternalAPI {
             get {
-                return ((bool)(this["UseInternalAPIServer"]));
+                return ((bool)(this["UseInternalAPI"]));
             }
             set {
-                this["UseInternalAPIServer"] = value;
+                this["UseInternalAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExternalAPI {
+            get {
+                return ((bool)(this["UseExternalAPI"]));
+            }
+            set {
+                this["UseExternalAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UsePythonNet {
+            get {
+                return ((bool)(this["UsePythonNet"]));
+            }
+            set {
+                this["UsePythonNet"] = value;
             }
         }
     }

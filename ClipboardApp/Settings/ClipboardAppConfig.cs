@@ -535,7 +535,63 @@ namespace ClipboardApp.Settings {
                 Properties.Settings.Default.ShowProperties = value;
             }
         }
+        // APIServerURL
+        private string? _apiServerURL;
+        public string APIServerURL {
+            get {
+                if (_apiServerURL == null) {
+                    _apiServerURL = Properties.Settings.Default.APIServerURL;
+                }
+                return _apiServerURL;
+            }
+            set {
+                _apiServerURL = value;
+                Properties.Settings.Default.APIServerURL = value;
+            }
+        }
+        // UseInternalAPI
+        private bool? _useInternalAPI;
+        public bool UseInternalAPI {
+            get {
+                if (_useInternalAPI == null) {
+                    _useInternalAPI = Properties.Settings.Default.UseInternalAPI;
+                }
+                return _useInternalAPI.Value;
+            }
+            set {
+                _useInternalAPI = value;
+                Properties.Settings.Default.UseInternalAPI = value;
+            }
+        }
+        // UseAPI
+        private bool? _useExternalAPI;
+        public bool UseExternalAPI {
+            get {
+                if (_useExternalAPI == null) {
+                    _useExternalAPI = Properties.Settings.Default.UseExternalAPI;
+                }
+                return _useExternalAPI.Value;
+            }
+            set {
+                _useExternalAPI = value;
+                Properties.Settings.Default.UseExternalAPI = value;
+            }
+        }
 
+        // UsePythonNet
+        private bool? _usePythonNet;
+        public bool UsePythonNet {
+            get {
+                if (_usePythonNet == null) {
+                    _usePythonNet = Properties.Settings.Default.UsePythonNet;
+                }
+                return _usePythonNet.Value;
+            }
+            set {
+                _usePythonNet = value;
+                Properties.Settings.Default.UsePythonNet = value;
+            }
+        }
         #endregion
 
 

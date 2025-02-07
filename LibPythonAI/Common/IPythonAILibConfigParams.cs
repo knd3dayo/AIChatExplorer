@@ -12,6 +12,16 @@ namespace PythonAILib.Common {
 
         #endregion
 
+        #region APIサーバー関連
+        public string GetAPIServerURL();
+
+        public bool UseInternalAPI();
+
+        public bool UseExternalAPI();
+
+        public bool UsePythonNet();
+        #endregion
+
         public string GetDBPath();
 
         public string GetSystemVectorDBPath();

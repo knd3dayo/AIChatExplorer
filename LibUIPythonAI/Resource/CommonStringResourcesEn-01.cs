@@ -98,6 +98,23 @@ namespace LibUIPythonAI.Resource {
         // Check settings
         public override string CheckSettings { get; } = "Check settings";
 
+        // PythonSettings
+        public override string PythonSettings { get; } = "Python Settings";
+
+        // UseExternalAPIServer
+        public override string UseExternalAPIServer { get; } = "Use External API Server";
+
+        // UseInternalAPIServer
+        public override string UseInternalAPIServer { get; } = "Use Internal API Server";
+
+        // UsePythonNet
+        public override string UsePythonNet { get; } = "Use PythonNet";
+
+        // API Server URL
+        public override string APIServerURL { get; } = "API Server URL";
+        // SpecifiedAPIServerURL
+        public override string SpecifyAPIServerURL { get; } = "Specified API Server URL";
+
         public override string AppName { get; } = "RAG Clipboard";
         // File
         public override string File { get; } = "File";

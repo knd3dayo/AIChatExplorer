@@ -117,6 +117,22 @@ namespace LibUIPythonAI.Resource {
         // 設定のチェック
         public virtual string CheckSettings { get; } = "設定のチェック";
 
+        // PythonSettings
+        public virtual string PythonSettings { get; } = "Python設定";
+
+        // UseExternalAPIServer
+        public virtual string UseExternalAPIServer { get; } = "外部APIサーバーを使用する";
+        // UseInternalAPIServer
+        public virtual string UseInternalAPIServer { get; } = "内部APIサーバーを使用する";
+
+        // APIServerURL
+        public virtual string APIServerURL { get; } = "APIサーバーURL";
+
+        // SpecifiedAPIServerURL
+        public virtual string SpecifyAPIServerURL { get; } = "APIサーバーURLを指定";
+
+        // UsePythonNet
+        public virtual string UsePythonNet { get; } = "PythonNetを使用する";
 
         #endregion
 

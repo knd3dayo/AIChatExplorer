@@ -198,5 +198,24 @@ namespace ClipboardApp.View.Settings {
 
         // Close
         public static string Close { get; set; } = CommonStringResources.Instance.Close;
+
+        // PythonSettings
+        public static string PythonSettings { get; set; } = CommonStringResources.Instance.PythonSettings;
+
+        // UseExternalAPIServer
+        public static string UseExternalAPIServer { get; set; } = CommonStringResources.Instance.UseExternalAPIServer;
+
+        // UsePythonNet
+        public static string UsePythonNet { get; set; } = CommonStringResources.Instance.UsePythonNet;
+
+        // UseInternalAPIServer
+        public static string UseInternalAPIServer { get; set; } = CommonStringResources.Instance.UseInternalAPIServer;
+
+        // APIServerURL
+        public static string APIServerURL { get; set; } = CommonStringResources.Instance.APIServerURL;
+
+        // SpecifiedAPIServerURL
+        public static string SpecifyAPIServerURL { get; set; } = CommonStringResources.Instance.SpecifyAPIServerURL;
+
     }
 }

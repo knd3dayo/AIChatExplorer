@@ -599,7 +599,85 @@ namespace ClipboardApp.Settings {
                 isPropertyChanged = true;
             }
         }
+        // APIServerURL
+        public string APIServerURL {
+            get {
+                return ClipboardAppConfig.Instance.APIServerURL;
+            }
+            set {
+                ClipboardAppConfig.Instance.APIServerURL = value;
+                OnPropertyChanged(nameof(APIServerURL));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
+        // UseInternalAPI
+        public bool UseInternalAPI {
+            get {
+                return ClipboardAppConfig.Instance.UseInternalAPI;
+            }
+            set {
+                ClipboardAppConfig.Instance.UseInternalAPI = value;
+                OnPropertyChanged(nameof(UseInternalAPI));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+                // Visibilityの変更を通知
+                OnPropertyChanged(nameof(UseInternalAPIVisibility));
+                OnPropertyChanged(nameof(UseExternalAPIVisibility));
+                OnPropertyChanged(nameof(APIServerVisibility));
+                OnPropertyChanged(nameof(InternalVisibility));
+            }
+        }
+
+        // UseExternalAPI
+        public bool UseExternalAPI {
+            get {
+                return ClipboardAppConfig.Instance.UseExternalAPI;
+            }
+            set {
+                ClipboardAppConfig.Instance.UseExternalAPI = value;
+                OnPropertyChanged(nameof(UseExternalAPI));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+                // Visibilityの変更を通知
+                OnPropertyChanged(nameof(UseInternalAPIVisibility));
+                OnPropertyChanged(nameof(UseExternalAPIVisibility));
+                OnPropertyChanged(nameof(APIServerVisibility));
+                OnPropertyChanged(nameof(InternalVisibility));
+            }
+        }
+        // UsePythonNet
+        public bool UsePythonNet {
+            get {
+                return ClipboardAppConfig.Instance.UsePythonNet;
+            }
+            set {
+                ClipboardAppConfig.Instance.UsePythonNet = value;
+                OnPropertyChanged(nameof(UsePythonNet));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+
+                // Visibilityの変更を通知
+                OnPropertyChanged(nameof(UseInternalAPIVisibility));
+                OnPropertyChanged(nameof(UseExternalAPIVisibility));
+                OnPropertyChanged(nameof(APIServerVisibility));
+                OnPropertyChanged(nameof(InternalVisibility));
+
+            }
+        }
+
+        // UseInternalAPIVisibility
+        public Visibility UseInternalAPIVisibility => Tools.BoolToVisibility(UseInternalAPI);
+
+        // UseExternalAPIVisibility
+        public Visibility UseExternalAPIVisibility => Tools.BoolToVisibility(UseExternalAPI);
+
+        // APIServerVisibility
+        public Visibility APIServerVisibility => Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
+
+        // InternalVisibility
+        public Visibility InternalVisibility => Tools.BoolToVisibility(UseInternalAPI || UsePythonNet);
         #endregion
 
         // SaveCommand

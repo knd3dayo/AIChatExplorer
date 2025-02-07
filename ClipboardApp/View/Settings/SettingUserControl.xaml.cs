@@ -15,7 +15,9 @@ namespace ClipboardApp.View.Settings {
             SettingsUserControl settingsControl = new();
             Window window = new() {
                 Title = CommonStringResources.Instance.SettingWindowTitle,
-                Content = settingsControl
+                Content = settingsControl,
+                Margin = new Thickness(0,0,0,0)
+                
             };
             window.ShowDialog();
         }
