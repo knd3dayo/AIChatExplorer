@@ -1,11 +1,14 @@
-using System.Data.SQLite;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using LibGit2Sharp;
+using LibPythonAI.Utils.Common;
 using Python.Runtime;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
+
 namespace PythonAILib.PythonIF {
     public class PythonExecutor {
         // String definition instance
@@ -42,10 +45,9 @@ namespace PythonAILib.PythonIF {
         public static IPythonAIFunctions PythonAIFunctions {
             [MethodImpl(MethodImplOptions.Synchronized)]
             get {
-                if (string.IsNullOrEmpty(ConfigPrams?.GetAppDataPath())) {
-                    throw new Exception(StringResources.PythonDLLNotFound);
+                if (_pythonAIFunctions == null) {
+                    throw new Exception(StringResources.PythonNotInitialized);
                 }
-                _pythonAIFunctions ??= new PythonNetFunctions();
                 return _pythonAIFunctions;
             }
         }
@@ -77,17 +79,30 @@ namespace PythonAILib.PythonIF {
             }
             if (!string.IsNullOrEmpty(appDataDir)) {
 
-                // ★TODO Pythonスクリプトをアプリケーション用ディレクトリにコピーする処理
-                // バージョンアップ時には、アプリケーション用ディレクトリにコピーする処理が必要となるが、
-                // 未実装のため、一旦コメントアウトしておく
                 PythonAILibPath = Path.Combine(appDataDir, DefaultPythonAILibDir);
-
                 // Check if the PythonAILibPath exists
                 // ./pythonディレクトリをPythonAILibPathRootへコピーする
                 Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
-
-                InitPythonNet(configPrams);
             }
+            if (_pythonAIFunctions == null) {
+                // UsePythonNetがTrueの場合はPythonNetを初期化する
+                if (ConfigPrams.UsePythonNet()) {
+                    InitPythonNet(ConfigPrams);
+                    _pythonAIFunctions = new PythonNetFunctions();
+                } else if (ConfigPrams.UseInternalAPI()) {
+                    InitInternalAPI(ConfigPrams);
+                    string baseUrl = ConfigPrams.GetAPIServerURL();
+                    _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
+
+                } else if (ConfigPrams.UseExternalAPI()) {
+                    string baseUrl = ConfigPrams.GetAPIServerURL();
+                    _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
+                } else {
+                    throw new Exception(StringResources.PythonNotInitialized);
+                }
+
+            }
+
         }
 
         private static void InitPythonNet(IPythonAILibConfigParams configPrams) {
@@ -179,6 +194,77 @@ namespace PythonAILib.PythonIF {
                 LogWrapper.Error(message);
             }
         }
+
+        // InitInternalAPI
+        public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
+            // Pythonスクリプトを実行するための準備
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            string appDataDir = configPrams.GetAppDataPath();
+            string pythonAILibPath = PythonAILibPath;
+            string httpsProxy = configPrams.GetHttpsProxy();
+            string noProxy = configPrams.GetNoProxy();
+
+            // Venv環境が存在するかチェック
+            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
+                string message = StringResources.PythonVenvNotFound;
+                throw new Exception(message + pathToVirtualEnv);
+            }
+            Dictionary<string, string> envVars = new Dictionary<string, string>();
+            // Set the code page to UTF-8
+            envVars["PYTHONUTF8"] = "1";
+            // VIRTUAL_ENV
+            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                envVars["VIRTUAL_ENV"] = pathToVirtualEnv;
+            }
+            // PYTHONPATH
+            envVars["PYTHONPATH"] = pythonAILibPath;
+            // HTTPS_PROXY
+            if (!string.IsNullOrEmpty(httpsProxy)) {
+                envVars["HTTPS_PROXY"] = httpsProxy;
+                envVars["NO_PROXY"] = noProxy;
+            } else {
+                // NO_PROXY="*"
+                envVars["NO_PROXY"] = "*";
+            }
+            // PATH
+            string pythonExe = "python";
+            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                string path = Environment.GetEnvironmentVariable("PATH") ?? "";
+                path = $"{Path.Combine(pathToVirtualEnv, "Scripts")}{Path.PathSeparator}{path}";
+                envVars["PATH"] = path;
+                pythonExe = Path.Combine(pathToVirtualEnv, "Scripts", "python.exe");
+            }
+
+            string serverScriptPath = Path.Combine(pythonAILibPath, "ai_app_server.py");
+
+            DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
+            bool showConsole = true;
+
+
+            ProcessUtil.StartProcess(pythonExe, serverScriptPath, envVars, showConsole,
+            (Process process) => {
+                    // 5秒待機した後、processが終了したかどうかを確認する
+                    Task.Run(() => {
+                        // このスレッドを5秒間待機
+                        Task.Delay(5000).Wait();
+
+                        if (process.HasExited) {
+                            LogWrapper.Error($"Process failed: {process.Id}");
+                        } else {
+                            LogWrapper.Info($"Process started: {process.Id}");
+                        }
+
+                    });
+                }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
+                );
+        }
+        private static readonly Action<object, DataReceivedEventArgs> DataReceivedAction = (sender, e) => { 
+            string? message = e.Data;
+            if (message != null) {
+                LogWrapper.Info("flask output:" + e.Data);
+            }
+        };
+
 
         // Load Python script
         public static string LoadPythonScript(string scriptName) {

@@ -27,6 +27,9 @@ namespace LibPythonAI.PythonIF {
         // ExcelRequest
         public ExcelRequest? ExcelRequestInstance { get; set; }
 
+        // FileRequest
+        public FileRequest? FileRequestInstance { get; set; }
+
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
             if (RequestContextInstance != null) {
@@ -49,6 +52,9 @@ namespace LibPythonAI.PythonIF {
             }
             if (ExcelRequestInstance != null) {
                 dict["excel_request"] = ExcelRequestInstance.ToDict();
+            }
+            if (FileRequestInstance != null) {
+                dict["file_request"] = FileRequestInstance.ToDict();
             }
 
             return dict;

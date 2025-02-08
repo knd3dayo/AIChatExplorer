@@ -48,6 +48,9 @@ namespace PythonAILib.Resources {
         // Failed to initialize Python.
         public override string PythonInitFailed { get; } = "Failed to initialize Python.";
 
+        // // Python関連の初期化処理が行われていません
+        public override string PythonNotInitialized { get; } = "Python related initialization process has not been performed";
+
         // {function_name} function not found in Python script file
         public override string FunctionNotFound(string function_name) {
             return $"Function '{function_name}' not found in Python script file";

@@ -120,7 +120,7 @@
       <Value Profile="(Default)">2024-02-01</Value>
     </Setting>
     <Setting Name="APIServerURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://localhost:5000</Value>
+      <Value Profile="(Default)">http://localhost:5000/api</Value>
     </Setting>
     <Setting Name="UseInternalAPI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

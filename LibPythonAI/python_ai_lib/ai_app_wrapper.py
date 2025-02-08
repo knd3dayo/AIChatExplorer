@@ -27,6 +27,7 @@ autogen_request_name = "autogen_request"
 catalog_request_name = "catalog_request"
 query_request_name = "query_request"
 excel_request_name = "excel_request"
+file_request_name = "file_request"
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_stdout_stderr(func):
@@ -199,6 +200,13 @@ def get_excel_request_objects(request_dict: dict) -> dict:
     data_json = request.get("data_json", None)
 
     return file_path, data_json
+
+def get_file_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(file_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    return request
 
 ########################
 # openai関連
@@ -522,20 +530,62 @@ def update_embeddings(request_json: str):
 # ファイル関連
 ########################
 # ファイルのMimeTypeを取得する
-def get_mime_type(filename):
-    return ai_app.get_mime_type(filename)
+def get_mime_type(request_json: str):
+    def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathを取得
+        file_path = request_dict.get("file_path", None)
+        text = ai_app.get_mime_type(file_path)
+        return {"output": text}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # Excelのシート名一覧を取得する
-def get_sheet_names(filename):
-    return ai_app.get_sheet_names(filename)
+def get_sheet_names(request_json: str):
+    # 未使用
+    def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathを取得
+        filename = request_dict.get("file_path", None)
+        text = ai_app.get_sheet_names(filename)
+        return {"output": text}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # Excelのシートのデータを取得する
-def extract_excel_sheet(filename, sheet_name):
-    return ai_app.extract_text_from_sheet(filename, sheet_name)
+def extract_excel_sheet(request_json: str):
+    # 未使用
+    def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathを取得
+        filename = request_dict.get("file_path", None)
+        # excel_sheet_nameを取得
+        sheet_name = request_dict.get("excel_sheet_name", None)
+
+        text = ai_app.extract_text_from_sheet(filename, sheet_name)
+        return {"output": text}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # ファイルからテキストを抽出する
-def extract_text_from_file(filename):
+def extract_text_from_file(request_json: str):
     def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathを取得
+        filename = request_dict.get("file_path", None)
         text = ai_app.extract_text_from_file(filename)
         return {"output": text}
     
@@ -545,17 +595,28 @@ def extract_text_from_file(filename):
     return wrapper()
 
 # base64形式のデータからテキストを抽出する
-def extract_base64_to_text(base64_data: str, extension: str):
+def extract_base64_to_text(request_json: str):
     def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # extensionを取得
+        extension = request_dict.get("extension", None)
+        # base64_dataを取得
+        base64_data = request_dict.get("base64_data", None)
         text = ai_app.extract_base64_to_text(base64_data, extension)
         return {"output": text}
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def extract_webpage(url):
+def extract_webpage(request_json: str):
     def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # urlを取得
+        url = request_dict.get("url", None)
         text, urls = ai_app.extract_webpage(url)
         result = {}
         result["output"] = text
@@ -585,10 +646,15 @@ def export_to_excel(request_json: str):
     return wrapper()
 
 # import_from_excelを実行する
-def import_from_excel(filePath):
+def import_from_excel(request_json: str):
     # import_to_excelを実行する関数を定義
     def func() -> dict:
-        return ai_app.import_from_excel(filePath)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_pathを取得
+        file_path = request_dict.get("file_path", None)
+        result = ai_app.import_from_excel(file_path)
+        return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
@@ -597,8 +663,4 @@ def import_from_excel(filePath):
 
 # テスト用
 def hello_world():
-    # iteratableなオブジェクトを返す
-    words = ['Hello', 'World']
-
-    iter_words = iter(words)    
-    return iter_words
+    return {"output": "Hello, World!"}

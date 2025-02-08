@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
+using PythonAILib.PythonIF;
 
 
 
@@ -18,6 +20,8 @@ namespace ClipboardApp.View.Main {
 
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
+            // ProcessUtilのStopAllProcessを呼び出す
+            // ProcessUtil.StopAllProcess();
         }
         // Closedイベント
         protected override void OnClosed(EventArgs e) {

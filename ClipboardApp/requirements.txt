@@ -30,3 +30,4 @@ duckduckgo-search
 tiktoken
 promptflow-tracing
 flask-socketio
+flask_cors

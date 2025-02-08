@@ -1,43 +1,88 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
-using WpfAppCommon.Model;
+using LibGit2Sharp;
 
-namespace WpfAppCommon.Utils {
+namespace LibPythonAI.Utils.Common {
     public class ProcessUtil {
+
+        // 実行プロセスのリスト
+        private static readonly List<Process> processList = [];
 
         // Processとファイル名の対応を保持するハッシュテーブル
         private static readonly Hashtable processOpenedFileHashTable = [];
         // Processとクローズ後の処理を保持するハッシュテーブル
-        private static readonly Hashtable processAfterCloseHashTable = [];
+        private static readonly Hashtable contentWriterProcessAfterCloseHashTable = [];
 
-        public static Process? StartProcess(string fileName, string arguments, Action<Process> afterOpen, Action<string> afterClose) {
+        public static Process? StartProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
+                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
+
             ProcessStartInfo procInfo = new() {
-                UseShellExecute = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = !showConsole,
                 FileName = fileName,
                 Arguments = arguments
             };
+
             if (procInfo == null) {
                 return null;
             }
-            Process? process = Process.Start(procInfo);
-            if (process == null) {
-                return null;
+            // 環境変数を設定
+            foreach (KeyValuePair<string, string> pair in environmentVariables) {
+                if (procInfo.EnvironmentVariables.ContainsKey(pair.Key)) {
+                    procInfo.EnvironmentVariables[pair.Key] = pair.Value;
+                } else {
+                    procInfo.EnvironmentVariables.Add(pair.Key, pair.Value);
+                }
             }
-            processAfterCloseHashTable.Add(process, afterClose);
+
+            Process process = new() {
+                StartInfo = procInfo
+            };
+
+            process.EnableRaisingEvents = true;
+            // 標準出力イベントハンドラーを設定
+            if (OutputDataReceived != null) {
+                process.OutputDataReceived += OutputDataReceived;
+            }
+            // 標準エラー出力イベントハンドラーを設定
+            if (ErrorDataReceived != null) {
+                process.ErrorDataReceived += ErrorDataReceived;
+            }
+            // プロセス終了イベントハンドラーを設定
+            if (Exited != null) {
+                process.Exited += Exited;
+            }
+            // デフォルトのプロセス終了イベントハンドラーを設定
+            process.Exited += new EventHandler(ProcessExited);
+
+            process.Start();
+
+            // 非同期出力読出し開始
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+
+            // プロセスリストにプロセスを追加
+            processList.Add(process);
+
             // 事後処理を実行
             afterOpen(process);
+
             return process;
         }
+
 
         public static void StopProcess(Process process) {
             // プロセスとサブプロセスを終了
             process.Kill(true);
 
             // プロセス終了時の事後処理を取得
-            Action<string>? processAfterClose = (Action<string>?)processAfterCloseHashTable[process];
+            Action<string>? processAfterClose = (Action<string>?)contentWriterProcessAfterCloseHashTable[process];
             if (processAfterClose == null) {
                 return;
             }
@@ -46,7 +91,19 @@ namespace WpfAppCommon.Utils {
 
         }
 
-        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen, Action<string> afterClose) {
+        // プロセスリストのプロセスを全て終了
+        public static void StopAllProcess() {
+            foreach (Process process in processList.ToList()) {
+                // processがnullでなく、HasExitedがFalseの場合
+                if (process != null && !process.HasExited) {
+                    StopProcess(process);
+                }
+            }
+        }
+
+
+        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen,
+            DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             string cmd = "cmd";
 
@@ -55,36 +112,55 @@ namespace WpfAppCommon.Utils {
                 RedirectStandardInput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true,
+                CreateNoWindow = false,
                 FileName = cmd,
             };
             if (string.IsNullOrEmpty(workingDirectory)) {
                 procInfo.WorkingDirectory = workingDirectory;
             }
 
-            Process? process = Process.Start(procInfo);
-            if (process == null) {
-                return null;
-            }
+            Process process = new() {
+                StartInfo = procInfo
+            };
 
-            using var sw = process.StandardInput;
+            process.EnableRaisingEvents = true;
+            // 標準出力イベントハンドラーを設定
+            if (OutputDataReceived != null) {
+                process.OutputDataReceived += OutputDataReceived;
+            }
+            // 標準エラー出力イベントハンドラーを設定
+            if (ErrorDataReceived != null) {
+                process.ErrorDataReceived += ErrorDataReceived;
+            }
+            // プロセス終了イベントハンドラーを設定
+            if (Exited != null) {
+                process.Exited += Exited;
+            }
+            // デフォルトのプロセス終了イベントハンドラーを設定
+            process.Exited += new EventHandler(ProcessExited);
+
+            process.Start();
+            var sw = process.StandardInput;
             if (sw.BaseStream.CanWrite) {
                 foreach (var command in commands) {
                     sw.WriteLine(command);
                 }
-                sw.Flush();
-                sw.Close();
+
             }
-            process.EnableRaisingEvents = true;
-            process.Exited += new EventHandler(ProcessExited);
-            processAfterCloseHashTable.Add(process, afterClose);
+            // 非同期出力読出し開始
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+
+            // プロセスリストにプロセスを追加
+            processList.Add(process);
+
             // 事後処理を実行
             afterOpen(process);
 
             return process;
         }
 
-        public static Process? StartWindowsCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen, Action<string> afterClose) {
+        public static Process? StartWindowsCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen) {
 
             string cmd = "cmd";
             // テンポラリファイルにコマンドを書き込む.拡張値は.bat
@@ -99,16 +175,25 @@ namespace WpfAppCommon.Utils {
                 procInfo.WorkingDirectory = workingDirectory;
             }
 
-            Process? process = Process.Start(procInfo);
+            Process process = new() {
+                StartInfo = procInfo
+            };
+
+            process.EnableRaisingEvents = true;
+
+            // デフォルトのプロセス終了イベントハンドラーを設定
+            process.Exited += new EventHandler(ProcessExited);
+
+            process.Start();
             if (process == null) {
                 return null;
             }
             // プロセスとファイル名の対応を保持
             processOpenedFileHashTable.Add(process, tempFileName);
 
-            process.EnableRaisingEvents = true;
-            process.Exited += new EventHandler(ProcessExited);
-            processAfterCloseHashTable.Add(process, afterClose);
+            // プロセスリストにプロセスを追加
+            processList.Add(process);
+
             // 事後処理を実行
             afterOpen(process);
 
@@ -133,8 +218,8 @@ namespace WpfAppCommon.Utils {
                 // ハッシュテーブルから削除
                 processOpenedFileHashTable.Remove(process);
             }
-            // 事後処理を実行
-            ((Action<string>?)processAfterCloseHashTable[process])?.Invoke("");
+            // プロセスリストのプロセスを削除
+            processList.Remove(process);
         }
 
 
@@ -151,15 +236,21 @@ namespace WpfAppCommon.Utils {
             if (procInfo == null) {
                 return;
             }
-            Process? process = Process.Start(procInfo);
+            Process process = new() {
+                StartInfo = procInfo
+            };
             //プロセス終了時のイベントハンドラーを設定
+            process.EnableRaisingEvents = true;
+            process.Exited += new EventHandler(ContentProcessExited);
+
+            process.Start();
             if (process != null) {
-                process.EnableRaisingEvents = true;
-                process.Exited += new EventHandler(ContentProcessExited);
                 // プロセスとファイル名の対応を保持
                 processOpenedFileHashTable.Add(process, tempFileName);
                 // プロセスとクローズ後の処理を保持
-                processAfterCloseHashTable.Add(process, afterClose);
+                contentWriterProcessAfterCloseHashTable.Add(process, afterClose);
+                // プロセスリストにプロセスを追加
+                processList.Add(process);
                 // 事後処理を実行
                 afterOpen(process);
 
@@ -188,7 +279,7 @@ namespace WpfAppCommon.Utils {
             processOpenedFileHashTable.Remove(process);
 
             // 事後処理を実行
-            ((Action<string>?)processAfterCloseHashTable[process])?.Invoke(content);
+            ((Action<string>?)contentWriterProcessAfterCloseHashTable[process])?.Invoke(content);
 
         }
 
@@ -212,7 +303,12 @@ namespace WpfAppCommon.Utils {
                 UseShellExecute = true,
                 FileName = contentFilePath
             };
-            Process.Start(proc);
+            Process? process = Process.Start(proc);
+            if (process == null) {
+                return;
+            }
+            // プロセスリストにプロセスを追加
+            processList.Add(process);
         }
 
         public static void OpenBitmapImage(BitmapImage? bitmapImage) {
@@ -236,9 +332,12 @@ namespace WpfAppCommon.Utils {
                 return;
             }
             Process? process = Process.Start(procInfo);
+            if (process == null) {
+                return;
+            }
+            // プロセスリストにプロセスを追加
+            processList.Add(process);
         }
-
-
     }
 
 }
