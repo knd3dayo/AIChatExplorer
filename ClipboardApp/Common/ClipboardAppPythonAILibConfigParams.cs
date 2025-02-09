@@ -3,11 +3,10 @@ using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Settings;
 using PythonAILib.Common;
-using LibUIPythonAI.Abstract;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Common {
-    public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
+    public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams {
 
         public string GetHttpsProxy() {
             return ClipboardAppConfig.Instance.ProxyURL;

@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
-using WpfAppCommon.Model;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using LibUIPythonAI.Utils;
+using PythonAILib.Utils.Common;
 
-namespace WpfAppCommon.Utils {
+namespace LibUIPythonAI.Utils {
     public class TextSelector {
         public bool SingleLineSelected { get; set; } = false;
         public bool URLSelected { get; set; } = false;

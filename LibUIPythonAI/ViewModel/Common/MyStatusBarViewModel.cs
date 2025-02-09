@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Common;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

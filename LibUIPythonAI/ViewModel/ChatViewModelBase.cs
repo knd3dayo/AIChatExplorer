@@ -20,10 +20,11 @@ namespace LibUIPythonAI.ViewModel {
         }
         public TextWrapping TextWrapping {
             get {
-                if (QAChatManager.Instance == null) {
+                PythonAILibManager? libManager = PythonAILibManager.Instance;
+                if (libManager == null) {
                     return TextWrapping.NoWrap;
                 }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
+                return libManager.ConfigParams.GetTextWrapping();
             }
         }
 

@@ -5,6 +5,7 @@ using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     /// <summary>

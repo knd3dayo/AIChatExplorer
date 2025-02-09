@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using LibUIImageChat.View;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.PromptTemplate;

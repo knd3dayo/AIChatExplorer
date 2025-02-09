@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using PythonAILib.Model.Image;
 using WpfAppCommon.Utils;
 using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.Utils;
 
 namespace LibUIImageChat.ViewModel {
 

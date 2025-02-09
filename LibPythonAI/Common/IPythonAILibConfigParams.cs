@@ -1,3 +1,5 @@
+using System.Windows;
+
 namespace PythonAILib.Common {
     public interface IPythonAILibConfigParams {
 
@@ -88,5 +90,7 @@ namespace PythonAILib.Common {
         // DevFeaturesEnabled
         public bool DevFeaturesEnabled();
 
+        // GUI
+        public TextWrapping GetTextWrapping();
     }
 }

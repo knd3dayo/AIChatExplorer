@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.Utils;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 using WpfAppCommon.Utils;

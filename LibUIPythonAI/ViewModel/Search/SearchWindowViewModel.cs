@@ -4,6 +4,7 @@ using PythonAILib.Model.Search;
 using LibUIPythonAI.View.Folder;
 using WpfAppCommon.Utils;
 using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Search {
     public class SearchWindowViewModel : ChatViewModelBase {

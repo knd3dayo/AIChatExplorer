@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.AutoGen;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
+using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class ListAutoGenItemWindowViewModel : ChatViewModelBase {

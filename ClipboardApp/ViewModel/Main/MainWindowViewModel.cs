@@ -10,18 +10,17 @@ using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.AutoGen;
+using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.View.PromptTemplate;
+using LibUIPythonAI.View.Tag;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
-using LibUIPythonAI;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.AutoGen;
-using LibUIPythonAI.View.AutoProcessRule;
-using LibUIPythonAI.View.Tag;
-using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
@@ -52,7 +51,6 @@ namespace ClipboardApp.ViewModel.Main {
             };
             ClipboardAppPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
-            QAChatManager.Init(configParams);
             // フォルダの初期化
             RootFolderViewModelContainer = new();
 

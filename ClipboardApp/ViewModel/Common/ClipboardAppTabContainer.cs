@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Main;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Common {
     public class ClipboardAppTabContainer : ObservableObject {
@@ -30,9 +25,9 @@ namespace ClipboardApp.ViewModel.Common {
         private string _tabName;
         public string TabName {
             get { return _tabName; }
-            set { 
+            set {
                 _tabName = value; OnPropertyChanged(nameof(TabName));
-            
+
             }
         }
         // TabContent

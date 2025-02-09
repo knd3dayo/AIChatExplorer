@@ -4,6 +4,7 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.RAG;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     internal class UpdateRAGIndexWindowViewModel : ChatViewModelBase {

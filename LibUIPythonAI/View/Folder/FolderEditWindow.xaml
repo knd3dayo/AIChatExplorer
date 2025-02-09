@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:LibUIPythonAI.View.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=LibUICommon"
+    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:LibUIPythonAI.ViewModel.Folder"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"

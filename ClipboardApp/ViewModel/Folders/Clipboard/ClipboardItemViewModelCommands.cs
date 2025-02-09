@@ -11,6 +11,7 @@ using ClipboardApp.ViewModel.Main;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.ChatMain;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;

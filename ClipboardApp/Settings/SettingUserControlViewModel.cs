@@ -10,6 +10,7 @@ using PythonAILib.Utils.Python;
 using LibUIPythonAI.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.Settings {
     /// <summary>

@@ -20,6 +20,7 @@ using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 using LibUIMergeChat.Common;
+using LibUIPythonAI.Utils;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : ChatViewModelBase {

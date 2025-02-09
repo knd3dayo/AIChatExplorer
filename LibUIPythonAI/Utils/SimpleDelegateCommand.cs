@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace WpfAppCommon.Utils {
+namespace LibUIPythonAI.Utils {
     // Create a class that implements ICommand and accepts a delegate.
     public class SimpleDelegateCommand<T> : ICommand {
         // Specify the keys and mouse actions that invoke the command. 

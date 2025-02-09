@@ -1,10 +1,10 @@
-using ClipboardApp.Settings;
 using System.Windows;
+using ClipboardApp.Settings;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelViewModel : ObservableObject{
+    public class MainPanelViewModel : ObservableObject {
 
 
 

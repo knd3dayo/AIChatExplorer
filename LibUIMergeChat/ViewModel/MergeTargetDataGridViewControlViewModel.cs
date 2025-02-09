@@ -5,6 +5,7 @@ using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeTargetDataGridViewControlViewModel : ChatViewModelBase {

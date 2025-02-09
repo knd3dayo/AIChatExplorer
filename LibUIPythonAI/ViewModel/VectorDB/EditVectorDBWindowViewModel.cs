@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.Utils;
 using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Utils;
 

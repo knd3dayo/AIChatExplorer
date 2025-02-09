@@ -8,6 +8,7 @@ using PythonAILib.Model.Prompt;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.View.Folder;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Folder {
     public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {

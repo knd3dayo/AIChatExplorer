@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
-namespace WpfAppCommon.Control.Editor {
+namespace LibUIPythonAI.Control.Editor {
     public class MyTextBox : TextBox {
         // TextWrappingMode : 0 = NoWrap, 1 = Wrap, 2 = 閾値より小さい場合はWrap, 閾値以上の場合はNoWrap
         public enum TextWrappingModeEnum {

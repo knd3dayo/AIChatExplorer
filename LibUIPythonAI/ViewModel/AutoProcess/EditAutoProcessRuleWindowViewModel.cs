@@ -14,6 +14,7 @@ using PythonAILib.Model.Prompt;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {

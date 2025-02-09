@@ -5,6 +5,7 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;

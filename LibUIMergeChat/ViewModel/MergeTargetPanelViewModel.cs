@@ -3,7 +3,7 @@ using System.Windows;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeTargetPanelViewModel : ChatViewModelBase {

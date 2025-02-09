@@ -1,4 +1,5 @@
 using System.Windows;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.RAG;
 using WpfAppCommon.Utils;
 

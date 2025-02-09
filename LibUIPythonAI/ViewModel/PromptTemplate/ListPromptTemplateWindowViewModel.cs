@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;

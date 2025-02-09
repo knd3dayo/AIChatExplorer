@@ -1,8 +1,8 @@
 using System.Windows;
 using ClipboardApp.Settings;
 using LibUIPythonAI.Resource;
-using WpfAppCommon.Control.Editor;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Control.Editor;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel {
     public class ClipboardAppViewModelBase : CommonViewModelBase {

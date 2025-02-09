@@ -6,6 +6,7 @@ using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Folder;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {
     public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

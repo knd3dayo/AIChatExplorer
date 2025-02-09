@@ -1,23 +1,21 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
-using LibUIPythonAI.View.Item;
-using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.View.Item;
+using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using ClipboardApp.Common;
 
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {

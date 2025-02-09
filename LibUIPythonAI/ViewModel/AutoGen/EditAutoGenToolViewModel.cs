@@ -1,9 +1,8 @@
 using System.Windows;
-using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.AutoGen;
-using LibUIPythonAI.Resource;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenToolViewModel : ChatViewModelBase {

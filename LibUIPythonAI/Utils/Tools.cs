@@ -1,9 +1,9 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Utils {
+namespace LibUIPythonAI.Utils {
     public partial class Tools {
 
         private static Window _ActiveWindow = Application.Current.MainWindow;

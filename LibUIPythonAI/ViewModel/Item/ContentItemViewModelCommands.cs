@@ -2,6 +2,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace PythonAILibUI.ViewModel.Item {
     public abstract class ContentItemViewModelCommands {

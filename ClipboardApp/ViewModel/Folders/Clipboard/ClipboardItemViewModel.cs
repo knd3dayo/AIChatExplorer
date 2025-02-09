@@ -5,14 +5,13 @@ using System.Windows.Media.Imaging;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILibUI.ViewModel.Item;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {

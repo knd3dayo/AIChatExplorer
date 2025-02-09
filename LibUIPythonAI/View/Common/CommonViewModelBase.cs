@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Control.Editor;
-using WpfAppCommon.Utils;
+using LibUIPythonAI.Control.Editor;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.Resource {
     public abstract class CommonViewModelBase : ObservableObject {
@@ -26,7 +26,7 @@ namespace LibUIPythonAI.Resource {
             if (routedEventArgs.Source is Window) {
                 Window window = (Window)routedEventArgs.Source;
                 ThisWindow = window;
-                Tools.ActiveWindow = ThisWindow;
+                LibUIPythonAI.Utils.Tools.ActiveWindow = ThisWindow;
                 // 追加処理
                 OnLoadedAction();
                 return;
@@ -37,7 +37,7 @@ namespace LibUIPythonAI.Resource {
 
                 Window window = Window.GetWindow(userControl);
                 ThisWindow = window;
-                Tools.ActiveWindow = ThisWindow;
+                LibUIPythonAI.Utils.Tools.ActiveWindow = ThisWindow;
                 // 追加処理
                 OnLoadedAction();
                 return;
@@ -58,7 +58,7 @@ namespace LibUIPythonAI.Resource {
             if (parameter is Window window) {
                 // ウィンドウを閉じる
                 window.Close();
-            }else if (ThisWindow != null) {
+            } else if (ThisWindow != null) {
                 ThisWindow.Close();
             }
         });

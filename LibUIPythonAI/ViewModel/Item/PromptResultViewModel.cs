@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Prompt;
 using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class PromptResultViewModel : ObservableObject {

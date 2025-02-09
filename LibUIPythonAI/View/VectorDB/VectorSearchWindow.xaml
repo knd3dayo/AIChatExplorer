@@ -5,7 +5,7 @@
     xmlns:cc="clr-namespace:LibUIPythonAI.View.Common"
     xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=LibUICommon"
+    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:LibUIPythonAI.ViewModel.VectorDB"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"

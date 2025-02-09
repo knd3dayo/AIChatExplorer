@@ -5,6 +5,7 @@ using PythonAILib.Model.AutoProcess;
 using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class ListAutoProcessRuleWindowViewModel : ChatViewModelBase {
