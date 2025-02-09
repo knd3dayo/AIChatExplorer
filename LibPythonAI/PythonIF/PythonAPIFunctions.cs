@@ -54,6 +54,12 @@ namespace PythonAILib.PythonIF {
             return PostAsync(base_url, "{}").Result;
         }
 
+        // テスト用
+        public static void ShutdownServer(string url) {
+            // ClientでPOSTを実行
+            Client.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
+
+        }
 
         // GetTokenCount
         public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
@@ -210,7 +216,7 @@ namespace PythonAILib.PythonIF {
 
             PythonScriptResult result = new();
             // PostAsyncを実行する
-            string endpoint = $"{this.base_url}/extract_file_to_text";
+            string endpoint = $"{this.base_url}/extract_text_from_file";
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
@@ -591,12 +597,10 @@ namespace PythonAILib.PythonIF {
         // public string ExtractWebPage(string url);
         public string ExtractWebPage(string url) {
             // FileRequestを作成
-            FileRequest fileRequest = new() {
-                URL = url
-            };
+            WebRequest webRequest = new(url);
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                FileRequestInstance = fileRequest
+                WebRequestInstance = webRequest
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();

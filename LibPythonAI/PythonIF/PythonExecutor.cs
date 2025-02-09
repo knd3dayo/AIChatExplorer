@@ -197,6 +197,31 @@ namespace PythonAILib.PythonIF {
 
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
+            // StartPythonConsole(configPrams);
+            StartPython(configPrams);
+        }
+
+        private static Process? _InternalAPIProcess;
+
+        // StopInternalAPI
+        public static void StopInternalAPI() {
+            if (_InternalAPIProcess != null && !_InternalAPIProcess.HasExited) {
+                // Streamを閉じる
+                _InternalAPIProcess.CancelOutputRead();
+                _InternalAPIProcess.CancelErrorRead();
+                _InternalAPIProcess.StandardInput.Close();
+
+                // PythonAPIFunctionsのShutdownを呼び出す
+                string base_url = ConfigPrams?.GetAPIServerURL() ?? "";
+                if (! string.IsNullOrEmpty(base_url)) {
+                    PythonAPIFunctions.ShutdownServer($"{base_url}/shutdown");
+                }
+                _InternalAPIProcess.WaitForExit(5000);
+            }
+        }
+
+
+        private static void StartPythonConsole(IPythonAILibConfigParams configPrams) {
             // Pythonスクリプトを実行するための準備
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             string appDataDir = configPrams.GetAppDataPath();
@@ -209,6 +234,66 @@ namespace PythonAILib.PythonIF {
                 string message = StringResources.PythonVenvNotFound;
                 throw new Exception(message + pathToVirtualEnv);
             }
+            // ProcessController 
+            List<string> cmdLines = [];
+            // Set the code page to UTF-8
+            cmdLines.Add("chcp 65001");
+            // Activate the venv if it is valid
+            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                string venvActivateScript = Path.Combine(pathToVirtualEnv, "Scripts", "activate");
+                cmdLines.Add($"call {venvActivateScript}");
+            }
+            // Set the PYTHONPATH
+            cmdLines.Add($"set PYTHONPATH={pythonAILibPath}");
+            // Set the proxy settings
+            if (!string.IsNullOrEmpty(httpsProxy)) {
+                cmdLines.Add($"set HTTPS_PROXY={httpsProxy}");
+                cmdLines.Add($"set NO_PROXY={noProxy}");
+            } else {
+                // NO_PROXY="*"
+                cmdLines.Add("set NO_PROXY=*");
+            }
+            string serverScriptPath = Path.Combine(pythonAILibPath, "ai_app_server.py");
+            cmdLines.Add($"python {serverScriptPath}");
+
+            string workDir = appDataDir;
+            DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
+            bool showConsole = true;
+            ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, workDir, showConsole,
+                (Process process) => {
+                    // 5秒待機した後、processが終了したかどうかを確認する
+                    Task.Run(() => {
+                        // このスレッドを5秒間待機
+                        Task.Delay(5000).Wait();
+
+                        if (process.HasExited) {
+                            LogWrapper.Error($"Process failed: {process.Id}");
+                        } else {
+                            LogWrapper.Info($"Process started: {process.Id}");
+                            _InternalAPIProcess = process;
+                        }
+
+                    });
+                }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
+                );
+
+        }
+
+
+        private static void StartPython(IPythonAILibConfigParams configPrams) {
+            // Pythonスクリプトを実行するための準備
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            string appDataDir = configPrams.GetAppDataPath();
+            string pythonAILibPath = PythonAILibPath;
+            string httpsProxy = configPrams.GetHttpsProxy();
+            string noProxy = configPrams.GetNoProxy();
+
+            // Venv環境が存在するかチェック
+            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
+                string message = StringResources.PythonVenvNotFound;
+                throw new Exception(message + pathToVirtualEnv);
+            }
+
             Dictionary<string, string> envVars = new Dictionary<string, string>();
             // Set the code page to UTF-8
             envVars["PYTHONUTF8"] = "1";
@@ -243,25 +328,27 @@ namespace PythonAILib.PythonIF {
 
             ProcessUtil.StartProcess(pythonExe, serverScriptPath, envVars, showConsole,
             (Process process) => {
-                    // 5秒待機した後、processが終了したかどうかを確認する
-                    Task.Run(() => {
-                        // このスレッドを5秒間待機
-                        Task.Delay(5000).Wait();
+                // 5秒待機した後、processが終了したかどうかを確認する
+                Task.Run(() => {
+                    // このスレッドを5秒間待機
+                    Task.Delay(5000).Wait();
 
-                        if (process.HasExited) {
-                            LogWrapper.Error($"Process failed: {process.Id}");
-                        } else {
-                            LogWrapper.Info($"Process started: {process.Id}");
-                        }
+                    if (process.HasExited) {
+                        LogWrapper.Error($"Process failed: {process.Id}");
+                    } else {
+                        LogWrapper.Info($"Process started: {process.Id}");
+                        _InternalAPIProcess = process;
+                    }
 
-                    });
-                }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
+                });
+            }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
                 );
         }
+
         private static readonly Action<object, DataReceivedEventArgs> DataReceivedAction = (sender, e) => { 
             string? message = e.Data;
             if (message != null) {
-                LogWrapper.Info("flask output:" + e.Data);
+                LogWrapper.Info("flask output:" + message);
             }
         };
 

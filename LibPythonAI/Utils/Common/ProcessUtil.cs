@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media.Imaging;
 using LibGit2Sharp;
 
@@ -23,6 +24,8 @@ namespace LibPythonAI.Utils.Common {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
                 UseShellExecute = false,
                 CreateNoWindow = !showConsole,
                 FileName = fileName,
@@ -102,7 +105,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen,
+        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, bool showConsole, Action<Process> afterOpen,
             DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             string cmd = "cmd";
@@ -111,8 +114,10 @@ namespace LibPythonAI.Utils.Common {
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
                 UseShellExecute = false,
-                CreateNoWindow = false,
+                CreateNoWindow = !showConsole,
                 FileName = cmd,
             };
             if (string.IsNullOrEmpty(workingDirectory)) {

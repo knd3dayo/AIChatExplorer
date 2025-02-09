@@ -30,6 +30,9 @@ namespace LibPythonAI.PythonIF {
         // FileRequest
         public FileRequest? FileRequestInstance { get; set; }
 
+        // WebRequest
+        public WebRequest? WebRequestInstance { get; set; }
+
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
             if (RequestContextInstance != null) {
@@ -55,6 +58,9 @@ namespace LibPythonAI.PythonIF {
             }
             if (FileRequestInstance != null) {
                 dict["file_request"] = FileRequestInstance.ToDict();
+            }
+            if (WebRequestInstance != null) {
+                dict["web_request"] = WebRequestInstance.ToDict();
             }
 
             return dict;

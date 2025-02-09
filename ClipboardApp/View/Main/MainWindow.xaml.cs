@@ -19,9 +19,9 @@ namespace ClipboardApp.View.Main {
 
 
         protected override void OnClosing(CancelEventArgs e) {
+            PythonExecutor.StopInternalAPI();
             base.OnClosing(e);
-            // ProcessUtilのStopAllProcessを呼び出す
-            // ProcessUtil.StopAllProcess();
+
         }
         // Closedイベント
         protected override void OnClosed(EventArgs e) {

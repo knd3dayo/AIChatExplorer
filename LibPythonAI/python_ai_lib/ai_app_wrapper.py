@@ -28,6 +28,7 @@ catalog_request_name = "catalog_request"
 query_request_name = "query_request"
 excel_request_name = "excel_request"
 file_request_name = "file_request"
+web_request_name = "web_request"
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_stdout_stderr(func):
@@ -204,6 +205,13 @@ def get_excel_request_objects(request_dict: dict) -> dict:
 def get_file_request_objects(request_dict: dict) -> dict:
     # contextを取得
     request:dict = request_dict.get(file_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    return request
+
+def get_web_request_objects(request_dict: dict) -> dict:
+    # contextを取得
+    request:dict = request_dict.get(web_request_name, None)
     if not request:
         raise ValueError("request is not set.")
     return request
@@ -534,8 +542,10 @@ def get_mime_type(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = get_file_request_objects(request_dict)
         # file_pathを取得
-        file_path = request_dict.get("file_path", None)
+        file_path = file_request.get("file_path", None)
         text = ai_app.get_mime_type(file_path)
         return {"output": text}
 
@@ -550,8 +560,10 @@ def get_sheet_names(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # excel_requestを取得
+        excel_request = get_excel_request_objects(request_dict)
         # file_pathを取得
-        filename = request_dict.get("file_path", None)
+        filename = excel_request.get("file_path", None)
         text = ai_app.get_sheet_names(filename)
         return {"output": text}
 
@@ -566,10 +578,12 @@ def extract_excel_sheet(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # excel_requestを取得
+        excel_request = get_excel_request_objects(request_dict)
         # file_pathを取得
-        filename = request_dict.get("file_path", None)
+        filename = excel_request.get("file_path", None)
         # excel_sheet_nameを取得
-        sheet_name = request_dict.get("excel_sheet_name", None)
+        sheet_name = excel_request.get("excel_sheet_name", None)
 
         text = ai_app.extract_text_from_sheet(filename, sheet_name)
         return {"output": text}
@@ -584,8 +598,10 @@ def extract_text_from_file(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = get_file_request_objects(request_dict)
         # file_pathを取得
-        filename = request_dict.get("file_path", None)
+        filename = file_request.get("file_path", None)
         text = ai_app.extract_text_from_file(filename)
         return {"output": text}
     
@@ -599,10 +615,12 @@ def extract_base64_to_text(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = get_file_request_objects(request_dict)
         # extensionを取得
-        extension = request_dict.get("extension", None)
+        extension = file_request.get("extension", None)
         # base64_dataを取得
-        base64_data = request_dict.get("base64_data", None)
+        base64_data = file_request.get("base64_data", None)
         text = ai_app.extract_base64_to_text(base64_data, extension)
         return {"output": text}
 
@@ -615,8 +633,10 @@ def extract_webpage(request_json: str):
     def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
-        # urlを取得
-        url = request_dict.get("url", None)
+        # web_requestを取得
+        request = get_web_request_objects(request_dict)
+
+        url = request.get("url", None)
         text, urls = ai_app.extract_webpage(url)
         result = {}
         result["output"] = text
@@ -634,6 +654,7 @@ def export_to_excel(request_json: str):
     def func() -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        
         # file_pathとdata_jsonを取得
         file_path, dataJson = get_excel_request_objects(request_dict)
         ai_app.export_to_excel(file_path, dataJson)
@@ -651,8 +672,10 @@ def import_from_excel(request_json: str):
     def func() -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = get_file_request_objects(request_dict)
         # file_pathを取得
-        file_path = request_dict.get("file_path", None)
+        file_path = file_request.get("file_path", None)
         result = ai_app.import_from_excel(file_path)
         return result
     

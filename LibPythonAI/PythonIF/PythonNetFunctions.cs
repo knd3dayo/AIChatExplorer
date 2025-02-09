@@ -561,14 +561,23 @@ namespace PythonAILib.PythonIF {
 
         // ImportFromExcelを実行する
         public CommonDataTable ImportFromExcel(string filePath) {
-            // ResultContainerを作成
+            // FileRequestを作成
+            FileRequest fileRequest = new() {
+                FilePath = filePath
+            };
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                FileRequestInstance = fileRequest
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
             CommonDataTable result = new([]);
             // Pythonスクリプトを実行する
             string resultString = (string)ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, "import_from_excel");
                 // import_from_excel関数を呼び出す
-                string resultString = function_object(filePath);
+                string resultString = function_object(chatRequestContextJson);
                 return resultString;
 
             });
@@ -631,12 +640,10 @@ namespace PythonAILib.PythonIF {
         // public string ExtractWebPage(string url);
         public string ExtractWebPage(string url) {
             // FileRequestを作成
-            FileRequest fileRequest = new() {
-                URL = url
-            };
+            WebRequest webRequest = new(url);
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                FileRequestInstance = fileRequest
+                WebRequestInstance = webRequest
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();

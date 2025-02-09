@@ -121,6 +121,79 @@ def update_embeddings():
     print(response)
     return Response(response, mimetype='application/json')
 
+# get_mime_type
+@app.route('/api/get_mime_type', methods=['POST'])
+def get_mime_type():
+    request_json = request.data
+    response = ai_app_wrapper.get_mime_type(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# get_sheet_names
+@app.route('/api/get_sheet_names', methods=['POST'])
+def get_sheet_names():
+    request_json = request.data
+    response = ai_app_wrapper.get_sheet_names(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# extract_excel_sheet
+@app.route('/api/extract_excel_sheet', methods=['POST'])
+def extract_excel_sheet():
+    request_json = request.data
+    response = ai_app_wrapper.extract_excel_sheet(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# extract_text_from_file
+@app.route('/api/extract_text_from_file', methods=['POST'])
+def extract_text_from_file():
+    request_json = request.data
+    response = ai_app_wrapper.extract_text_from_file(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+
+# extract_base64_to_text
+@app.route('/api/extract_base64_to_text', methods=['POST'])
+def extract_base64_to_text():
+    request_json = request.data
+    response = ai_app_wrapper.extract_base64_to_text(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+
+# extract_webpage
+@app.route('/api/extract_webpage', methods=['POST'])
+def extract_webpage():
+    request_json = request.data
+    response = ai_app_wrapper.extract_webpage(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# export_to_excel
+@app.route('/api/export_to_excel', methods=['POST'])
+def export_to_excel():
+    request_json = request.data
+    response = ai_app_wrapper.export_to_excel(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# import_from_excel
+@app.route('/api/import_from_excel', methods=['POST'])
+def import_from_excel():
+    request_json = request.data
+    response = ai_app_wrapper.import_from_excel(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
+
+# hello_world
+@app.route('/api/hello_world', methods=['POST'])
+def hello_world():
+    request_json = request.data
+    response = ai_app_wrapper.hello_world(request_json)
+    print(response)
+    return Response(response, mimetype='application/json')
 
 @socketio.on('connect', namespace='/api/autogen_group_chat')
 def autogen_group_chat(request_json: str):
@@ -128,6 +201,12 @@ def autogen_group_chat(request_json: str):
         emit("response", response)
     emit("close", "close")
 
+
+@app.route('/api/shutdown', methods=['POST', 'GET'])
+def shutdown_server():
+    pid = os.getpid()
+    # Ctrl+CでSIGINTを送信してもらう
+    os.kill(pid, 2)
 
 if __name__ == ('__main__'):
     import sys
