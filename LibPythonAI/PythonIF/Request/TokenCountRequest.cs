@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibPythonAI.PythonIF {
+namespace LibPythonAI.PythonIF.Request {
     public class TokenCountRequest {
 
         public TokenCountRequest(string inputText) {

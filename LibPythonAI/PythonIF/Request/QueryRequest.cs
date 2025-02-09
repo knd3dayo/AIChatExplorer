@@ -4,20 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibPythonAI.PythonIF {
-    public class WebRequest {
+namespace LibPythonAI.PythonIF.Request {
+    public class QueryRequest {
 
-        public  WebRequest(string url) {
-            URL = url;
+        public QueryRequest(string inputText) {
+            InputText = inputText;
         }
-
-        // URL
-        public string URL { get;  set; } = "";
-
+        public string InputText { get; private set; } = "";
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
-            dict["url"] = URL;
+            dict["input_text"] = InputText;
             return dict;
         }
     }

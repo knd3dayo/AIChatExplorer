@@ -1,10 +1,10 @@
+using LibPythonAI.PythonIF.Request;
 using Python.Runtime;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 using System.Drawing;
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public enum SpacyEntityNames {
 
         PERSON,

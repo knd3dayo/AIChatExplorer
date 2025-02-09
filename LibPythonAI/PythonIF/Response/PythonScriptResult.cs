@@ -1,6 +1,6 @@
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF.Response {
     public class PythonScriptResult {
         public string Output { get; set; } = "";
         public string Log { get; set; } = "";

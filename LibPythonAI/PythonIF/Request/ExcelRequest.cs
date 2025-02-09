@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PythonAILib.Model.File;
 
-namespace LibPythonAI.PythonIF {
+namespace LibPythonAI.PythonIF.Request {
     public class ExcelRequest {
 
         public ExcelRequest(string filePath, CommonDataTable data) {

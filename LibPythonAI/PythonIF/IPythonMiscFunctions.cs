@@ -1,4 +1,5 @@
 using System.Drawing;
+using LibPythonAI.PythonIF.Request;
 
 namespace PythonAILib.PythonIF {
     public interface IPythonMiscFunctions {

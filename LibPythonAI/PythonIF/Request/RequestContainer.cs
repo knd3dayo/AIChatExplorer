@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using PythonAILib.Model.Chat;
 
-namespace LibPythonAI.PythonIF {
+namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {
 
         static readonly JsonSerializerOptions options = new() {

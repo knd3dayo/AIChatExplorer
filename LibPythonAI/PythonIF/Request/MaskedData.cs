@@ -1,4 +1,4 @@
-﻿namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF.Request {
     public class MaskedData {
         public HashSet<MaskedEntity> Entities { get; set; } = [];
         public List<string> BeforeTextList { get; set; } = [];

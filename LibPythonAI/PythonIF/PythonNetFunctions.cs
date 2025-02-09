@@ -1,7 +1,8 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibPythonAI.PythonIF;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 using Python.Runtime;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;

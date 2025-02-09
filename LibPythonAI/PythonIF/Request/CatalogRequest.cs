@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibPythonAI.PythonIF {
+namespace LibPythonAI.PythonIF.Request {
     public class CatalogRequest {
 
         public CatalogRequest(string catalogDBURL, string vectorDBURL, string collectionName, string folderId) {
@@ -19,7 +19,7 @@ namespace LibPythonAI.PythonIF {
         public string CollectionName { get; private set; } = "";
         public string FolderId { get; private set; } = "";
 
-        public string Description { get;  set; } = "";
+        public string Description { get; set; } = "";
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];

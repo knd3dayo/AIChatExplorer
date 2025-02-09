@@ -1,4 +1,4 @@
-using PythonAILib.PythonIF;
+using LibPythonAI.PythonIF.Response;
 using PythonAILib.Utils;
 
 namespace PythonAILib.Model.Chat {
