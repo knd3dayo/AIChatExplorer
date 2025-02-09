@@ -10,7 +10,7 @@ namespace LibUIMergeChat.ViewModel {
         //初期化
         public MergeChatWindowViewModel(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
             // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Debug, LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
 
             MergeTargetPanelViewModel mergeTargetPanelViewModel = new(folderViewModel, selectedItems, UpdateIndeterminate);
 

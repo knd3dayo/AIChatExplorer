@@ -221,8 +221,28 @@ namespace PythonAILib.PythonIF {
                 string message = StringResources.PythonVenvNotFound;
                 throw new Exception(message + pathToVirtualEnv);
             }
+            // Environment variables
+            Dictionary<string, string> envVars = new();
+            // PF_TRACE
+            envVars["PF_TRACE"] = "true";
+            // PF_TRACE_PATH
+            envVars["PF_TRACE_PATH"] = Path.Combine(appDataDir, "pf_trace");
+            // PYTHONPATH
+            envVars["PYTHONPATH"] = pythonAILibPath;
+            // Set the proxy settings
+            if (!string.IsNullOrEmpty(httpsProxy)) {
+                envVars["HTTPS_PROXY"] = httpsProxy;
+                envVars["NO_PROXY"] = noProxy;
+            } else {
+                // NO_PROXY="*"
+                envVars["NO_PROXY"] = "*";
+            }
+
             // ProcessController 
             List<string> cmdLines = [];
+            // cd to the appDataDir
+            cmdLines.Add($"cd {appDataDir}");
+
             // Set the code page to UTF-8
             cmdLines.Add("chcp 65001");
             // Activate the venv if it is valid
@@ -230,23 +250,12 @@ namespace PythonAILib.PythonIF {
                 string venvActivateScript = Path.Combine(pathToVirtualEnv, "Scripts", "activate");
                 cmdLines.Add($"call {venvActivateScript}");
             }
-            // Set the PYTHONPATH
-            cmdLines.Add($"set PYTHONPATH={pythonAILibPath}");
-            // Set the proxy settings
-            if (!string.IsNullOrEmpty(httpsProxy)) {
-                cmdLines.Add($"set HTTPS_PROXY={httpsProxy}");
-                cmdLines.Add($"set NO_PROXY={noProxy}");
-            } else {
-                // NO_PROXY="*"
-                cmdLines.Add("set NO_PROXY=*");
-            }
             string serverScriptPath = Path.Combine(pythonAILibPath, scriptPath);
             cmdLines.Add($"python {serverScriptPath}");
 
-            string workDir = appDataDir;
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
             bool showConsole = true;
-            ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, workDir, showConsole,
+            ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, envVars, showConsole,
                 (Process process) => {
                     // 5秒待機した後、processが終了したかどうかを確認する
                     Task.Run(() => {
@@ -281,9 +290,13 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(message + pathToVirtualEnv);
             }
 
-            Dictionary<string, string> envVars = new Dictionary<string, string>();
-            // Set the code page to UTF-8
-            envVars["PYTHONUTF8"] = "1";
+            Dictionary<string, string> envVars = new () {
+                // Set the code page to UTF-8
+                ["PYTHONUTF8"] = "1"
+            };
+            // PF_TRACE
+            envVars["PF_TRACE"] = "true";
+
             // VIRTUAL_ENV
             if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                 envVars["VIRTUAL_ENV"] = pathToVirtualEnv;
@@ -309,8 +322,12 @@ namespace PythonAILib.PythonIF {
 
             string serverScriptPath = Path.Combine(pythonAILibPath, scriptPath);
 
+            // PF_TRACE
+            envVars["PF_TRACE"] = "true";
+
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
-            bool showConsole = true;
+
+            bool showConsole = false;
 
 
             ProcessUtil.StartBackgroundProcess(pythonExe, serverScriptPath, envVars, showConsole,
@@ -328,15 +345,17 @@ namespace PythonAILib.PythonIF {
                     }
 
                 });
-            }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
+            }, ErrorDataReceived: dataReceivedEventHandler
                 );
         }
 
         private static readonly Action<object, DataReceivedEventArgs> DataReceivedAction = (sender, e) => {
-            string? message = e.Data;
-            if (message != null) {
-                LogWrapper.Info("flask output:" + message);
-            }
+            Task.Run(() => {
+                string? message = e.Data;
+                if (message != null) {
+                    LogWrapper.Debug("flask output:" + message);
+                }
+            });
         };
 
 

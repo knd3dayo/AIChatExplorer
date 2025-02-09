@@ -98,7 +98,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.GetTokenCountExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
 
             long totalTokens = 0;
             // Pythonスクリプトを実行する
@@ -111,7 +111,7 @@ namespace PythonAILib.PythonIF {
                 return resultString;
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
             // total_tokensを取得
@@ -135,7 +135,7 @@ namespace PythonAILib.PythonIF {
             string requestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
 
             //OpenAIChatExecuteを呼び出す
             ChatResult result = OpenAIChatExecute("openai_chat", (function_object) => {
@@ -170,7 +170,7 @@ namespace PythonAILib.PythonIF {
             string requestContextJson = requestContainer.ToJson();
 
 
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
 
             ChatResult chatResult = new();
 
@@ -193,7 +193,7 @@ namespace PythonAILib.PythonIF {
                     }
                     // logを取得
                     if (resultDict.TryGetValue("log", out dynamic? logValue)) {
-                        LogWrapper.Info(logValue);
+                        LogWrapper.Debug(logValue);
                     }
                 }
                 // total_tokensを取得.
@@ -246,7 +246,7 @@ namespace PythonAILib.PythonIF {
                 }
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
             if (!string.IsNullOrEmpty(result.Error)) {
@@ -289,7 +289,7 @@ namespace PythonAILib.PythonIF {
                 }
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
             // resultStringからDictionaryに変換する。
             result.LoadFromJson(resultString);
@@ -313,7 +313,7 @@ namespace PythonAILib.PythonIF {
                 return resultString;
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
             // JSON文字列からDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
@@ -350,7 +350,7 @@ namespace PythonAILib.PythonIF {
                 return resultString;
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
             if (resultDict == null) {
@@ -381,8 +381,8 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("vector_search", (function_object) => {
@@ -411,7 +411,7 @@ namespace PythonAILib.PythonIF {
                     throw;
                 }
             });
-            LogWrapper.Info(resultString);
+            LogWrapper.Debug(resultString);
             // resultStringからDictionaryに変換する。
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
@@ -427,7 +427,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = chatRequestContext.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBCollectionExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("update_collection", (function_object) => {
@@ -490,7 +490,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("delete_collection", (function_object) => {
@@ -511,7 +511,7 @@ namespace PythonAILib.PythonIF {
 
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
@@ -547,7 +547,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.ExportToExcelExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.RequestInfo}:{chatRequestContextJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{chatRequestContextJson}");
 
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
@@ -582,7 +582,7 @@ namespace PythonAILib.PythonIF {
 
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
             if (resultDict == null) {
@@ -659,7 +659,7 @@ namespace PythonAILib.PythonIF {
                 return resultString;
             });
             // resultStringをログに出力
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す

@@ -245,10 +245,7 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </DockPanel>
-        <cc:MyStatusBar
-            Grid.Row="5"
-            VerticalAlignment="Bottom"
-            DataContext="{Binding StatusBar}" />
+        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
             IsIndeterminate="{Binding IsIndeterminate}"

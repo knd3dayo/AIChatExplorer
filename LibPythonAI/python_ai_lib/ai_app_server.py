@@ -1,9 +1,9 @@
-import os, json
+import os, sys
 from typing import Any
-from collections.abc import Generator
 from flask_cors import CORS
 from flask import Flask, Response, request, render_template
 from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__)
 CORS(app)  # すべてのオリジンからのアクセスを許可
@@ -208,11 +208,18 @@ def shutdown_server():
     # Ctrl+CでSIGINTを送信してもらう
     os.kill(pid, 2)
 
+def pf_trace():
+    pf_trace = os.getenv("PF_TRACE", "false").upper() == "TRUE"
+    print(f"pf_trace={pf_trace}", file=sys.stderr)
+    if pf_trace == True:
+        from promptflow.tracing import start_trace
+        # instrument OpenAI
+        start_trace(collection="ai_app_server")
+
+
 if __name__ == ('__main__'):
-    import sys
-    if len(sys.argv) > 1:
-        port = int(sys.argv[1])
-    else:
-        port = 5000
-    print(f"port={port}")
-    socketio.run(app, debug=True, host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)
+    flask_port = os.getenv("FLASK_PORT", "5000")
+    print(f"port={flask_port}", file=sys.stderr)
+    # pf_trace()
+    socketio.run(app, debug=True, host='0.0.0.0', port=flask_port, allow_unsafe_werkzeug=True)
+    # app.run(debug=True, host='0.0.0.0', port=flask_port, threaded=True)

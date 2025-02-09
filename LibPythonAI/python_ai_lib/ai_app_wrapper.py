@@ -10,6 +10,7 @@ from ai_app_autogen import AutoGenProps
 
 import ai_app
 
+
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"

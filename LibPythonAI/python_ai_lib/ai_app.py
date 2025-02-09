@@ -17,6 +17,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from typing import Annotated
 from queue import Queue, Empty
 
+
 ########################
 # ファイル関連
 ########################

@@ -336,8 +336,6 @@ class OpenAIClient:
         # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
         # リトライ回数が5回以内で成功した場合は結果を返す
         # OpenAIのchatを実行する
-        print("chat input", json.dumps(input_dict, ensure_ascii=False, indent=2))
-
         client = self.get_completion_client()
         count = 0
         while count < 3:

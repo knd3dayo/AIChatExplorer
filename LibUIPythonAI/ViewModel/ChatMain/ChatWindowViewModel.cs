@@ -7,7 +7,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         //初期化
         public ChatWindowViewModel(QAChatStartupProps props) {
             // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Debug, LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
             // ChatControlViewModelを生成
             ChatControlViewModel = new(props);
         }

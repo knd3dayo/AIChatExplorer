@@ -35,6 +35,7 @@ namespace PythonAILib.Common
         private PythonAILibManager(IPythonAILibConfigParams parameters) {
 
             ConfigParams = parameters;
+            Action<string> debugAction = parameters.GetDebugAction();
             Action<string> infoAction = parameters.GetInfoAction();
             Action<string> warnAction = parameters.GetWarnAction();
             Action<string> errorAction = parameters.GetErrorAction();
@@ -47,7 +48,7 @@ namespace PythonAILib.Common
             // DBControllerの設定
             DataFactory = parameters.GetDataFactory();
             // LogWrapperのログ出力設定
-            LogWrapper.SetActions(infoAction, warnAction, errorAction);
+            LogWrapper.SetActions(debugAction, infoAction, warnAction, errorAction);
 
         }
 

@@ -106,7 +106,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, bool showConsole, Action<Process> afterOpen,
+        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
             DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             string cmd = "cmd";
@@ -121,8 +121,15 @@ namespace LibPythonAI.Utils.Common {
                 CreateNoWindow = !showConsole,
                 FileName = cmd,
             };
-            if (string.IsNullOrEmpty(workingDirectory)) {
-                procInfo.WorkingDirectory = workingDirectory;
+
+
+            // 環境変数を設定
+            foreach (KeyValuePair<string, string> pair in environmentVariables) {
+                if (procInfo.EnvironmentVariables.ContainsKey(pair.Key)) {
+                    procInfo.EnvironmentVariables[pair.Key] = pair.Value;
+                } else {
+                    procInfo.EnvironmentVariables.Add(pair.Key, pair.Value);
+                }
             }
 
             Process process = new() {

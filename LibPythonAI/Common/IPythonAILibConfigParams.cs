@@ -36,6 +36,7 @@ namespace PythonAILib.Common {
 
         public OpenAIProperties GetOpenAIProperties();
 
+        public Action<string> GetDebugAction();
         public Action<string> GetInfoAction();
 
         public Action<string> GetWarnAction();

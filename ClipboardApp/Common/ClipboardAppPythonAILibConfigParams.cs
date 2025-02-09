@@ -38,6 +38,10 @@ namespace ClipboardApp.Common {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();
         }
 
+        public Action<string> GetDebugAction() {
+            return LogWrapper.Debug;
+        }
+
         public Action<string> GetInfoAction() {
             return LogWrapper.Info;
         }

@@ -4,21 +4,16 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using LibUIPythonAI.ViewModel.Common;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : ChatViewModelBase {
 
         public VectorSearchWindowViewModel() {
             InputText = string.Empty;
-
-            StatusBar = new();
-
-            // StatusTextをLogWrapperに登録
-            LogWrapper.TemporaryStatusText.Add(StatusBar.StatusText);
-
         }
+
         // VectorSearchProperty
         private VectorDBProperty? _vectorSearchProperty;
         public VectorDBProperty? VectorSearchProperty {
@@ -58,8 +53,6 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorDBProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
-
-        public MyStatusBarViewModel StatusBar { get; set; }
 
         // SelectedIndex
         private int _selectedTabIndex = 0;
@@ -193,17 +186,14 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             if (VectorSearchProperty == null) {
                 return;
             }
-            StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
-            StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
+            StatusText.Instance.ReadyText = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
+            StatusText.Instance.Text = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
         }
 
         // Closed時の処理
         public SimpleDelegateCommand<object> ClosedCommand => new((parameter) => {
-            // LogWrapperのTemporaryStatusTextから削除
-            LogWrapper.TemporaryStatusText.Remove(StatusBar.StatusText);
-
+            // StatusTextを初期化
+            StatusText.Instance.Init();
         });
-
-
     }
 }
