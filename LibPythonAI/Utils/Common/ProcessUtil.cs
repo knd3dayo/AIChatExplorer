@@ -17,7 +17,8 @@ namespace LibPythonAI.Utils.Common {
         // Processとクローズ後の処理を保持するハッシュテーブル
         private static readonly Hashtable contentWriterProcessAfterCloseHashTable = [];
 
-        public static Process? StartProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
+        
+        public static Process? StartBackgroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
                         DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             ProcessStartInfo procInfo = new() {

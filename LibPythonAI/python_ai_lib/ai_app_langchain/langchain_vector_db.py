@@ -171,7 +171,7 @@ class LangChainVectorDB:
 
     def __delete_document(self, source: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata = self._get_document_ids_by_tag("source", source)
+        vector_ids, metadata = self._get_document_ids_by_tag("source_path", source)
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
             return 0
@@ -182,7 +182,7 @@ class LangChainVectorDB:
     def __delete_multivector_document(self, source: str ) :
         
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata_list = self._get_document_ids_by_tag("source", source)
+        vector_ids, metadata_list = self._get_document_ids_by_tag("source_path", source)
 
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
@@ -314,7 +314,7 @@ class LangChainVectorDB:
     def update_document(self, params: ContentUpdateOrDeleteRequestParams):
         
         # 既に存在するドキュメントを削除
-        self.delete_document(params.id)
+        self.delete_document(params.source_path)
         # ドキュメントを格納する。
         self.add_document_list(params.text, params.description, params.source_path, params.git_relative_path)
 
