@@ -405,9 +405,11 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             Task.Run(() => {
                 object lockObject = new();
                 int start_count = 0;
-                ParallelOptions parallelOptions = new();
-                // 10並列
-                parallelOptions.MaxDegreeOfParallelism = 10;
+                var items = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems.ToList();
+                ParallelOptions parallelOptions = new() {
+                    // 20並列
+                    MaxDegreeOfParallelism = 20
+                };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     int index = i; // Store the current index in a separate variable to avoid closure issues
                     lock (lockObject) {
@@ -415,7 +417,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     }
                     string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
-                    var itemViewModel = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems[index];
+                    var itemViewModel = items[index];
 
                     ContentItem item = itemViewModel.ContentItem;
                     if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
@@ -447,9 +449,11 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             Task.Run(() => {
                 object lockObject = new();
                 int start_count = 0;
-                ParallelOptions parallelOptions = new();
-                // 10並列
-                parallelOptions.MaxDegreeOfParallelism = 10;
+                var items = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems.ToList();
+                ParallelOptions parallelOptions = new() {
+                    // 20並列
+                    MaxDegreeOfParallelism = 20
+                };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     lock (lockObject) {
                         start_count++;

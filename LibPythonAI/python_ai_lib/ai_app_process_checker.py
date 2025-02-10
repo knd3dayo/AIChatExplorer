@@ -13,6 +13,7 @@ def check_process(pid : int, url : str):
         if not psutil.pid_exists(pid):
             # 指定したURLにリクエストを送信
             try:
+                os.environ["NO_PROXY"] = "localhost"
                 #エラーを無視してリクエストを送信
                 requests.post(url)
             except:

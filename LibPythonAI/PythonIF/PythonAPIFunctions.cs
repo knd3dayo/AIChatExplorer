@@ -26,7 +26,9 @@ namespace PythonAILib.PythonIF {
             WriteIndented = true
         };
 
-        private static readonly HttpClient Client = new HttpClient();
+        private static readonly HttpClient Client = new HttpClient(new HttpClientHandler() {
+            UseProxy = false
+        });
 
         private string base_url;
         public PythonAPIFunctions(string base_url) {

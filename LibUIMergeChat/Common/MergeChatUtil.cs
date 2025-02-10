@@ -57,8 +57,10 @@ namespace LibUIMergeChat.Common {
                 int count = items.Count;
 
                 // Parallel.ForEを使って、items毎にプリプロセスを実行
-                ParallelOptions parallelOptions = new();
-                parallelOptions.MaxDegreeOfParallelism = 10;
+                ParallelOptions parallelOptions = new() {
+                    // 20並列
+                    MaxDegreeOfParallelism = 20
+                };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     string message = $"{CommonStringResources.Instance.MergeChatPreprocessingInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
