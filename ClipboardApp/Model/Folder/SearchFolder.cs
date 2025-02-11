@@ -1,5 +1,6 @@
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
+using LibUIPythonAI.Resource;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -103,6 +104,20 @@ namespace ClipboardApp.Model.Folder {
             // 何もしない
         }
         #endregion
+
+        public override string GetStatusText() {
+            string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
+            // folderが検索フォルダの場合
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
+            // SearchConditionがNullでなく、 Emptyでもない場合
+            if (searchCondition != null && !searchCondition.IsEmpty()) {
+                message += $" {CommonStringResources.Instance.SearchCondition}[";
+                message += searchCondition.ToStringSearchCondition();
+                message += "]";
+            }
+            return message;
+        }
     }
 }
 

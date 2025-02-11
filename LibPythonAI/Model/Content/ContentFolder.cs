@@ -59,6 +59,10 @@ namespace PythonAILib.Model.Content {
                 return $"{parentFolder.FolderPath}/{FolderName}";
             }           
         }
+        // ステータス用の文字列
+        public virtual string GetStatusText() {
+            return "";
+        }
 
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";

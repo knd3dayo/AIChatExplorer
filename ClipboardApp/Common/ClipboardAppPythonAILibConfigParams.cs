@@ -73,12 +73,20 @@ namespace ClipboardApp.Common {
         }
 
         public string GetSystemVectorDBPath() {
-            string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db");
+            string vectorDBDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "vector_db");
+            if (!Directory.Exists(vectorDBDir)) {
+                Directory.CreateDirectory(vectorDBDir);
+            }
+            string vectorDBPath = Path.Combine(vectorDBDir, "clipboard_vector_db");
             return vectorDBPath;
         }
 
         public string GetSystemDocDBPath() {
-            string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
+            string vectorDBDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "vector_db");
+            if (!Directory.Exists(vectorDBDir)) {
+                Directory.CreateDirectory(vectorDBDir);
+            }
+            string docDBPath = Path.Combine(vectorDBDir, "clipboard_doc_store.db");
             return docDBPath;
         }
 

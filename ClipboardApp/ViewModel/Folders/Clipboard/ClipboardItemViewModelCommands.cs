@@ -59,9 +59,11 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // ピン留めの切り替えコマンド (複数選択可能)
         public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
             foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
-                item.IsPinned = !item.IsPinned;
-                // ピン留めの時は更新日時を変更しない
-                SaveClipboardItemCommand.Execute(item);
+                if (item is ClipboardItemViewModel clipboardItemViewModel) {
+                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
+                    // ピン留めの時は更新日時を変更しない
+                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
+                }
             }
         });
 
@@ -174,7 +176,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
         public void CutItemCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = model.SelectedItems;
+            ObservableCollection<ContentItemViewModel> SelectedItems = model.SelectedItems;
             // Do not process if no items are selected
             if (SelectedItems == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
@@ -192,8 +194,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         // Process when Ctrl + C is pressed
         public void CopyToClipboardCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = model.SelectedItems;
-            ClipboardItemViewModel? SelectedItem = model.SelectedItem;
+            ObservableCollection<ContentItemViewModel> SelectedItems = model.SelectedItems;
+            ContentItemViewModel? SelectedItem = model.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = model.SelectedFolder;
             // Do not process if no items are selected
             if (SelectedItem == null || SelectedItems.Count == 0) {

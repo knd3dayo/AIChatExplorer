@@ -3,10 +3,10 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using PythonAILib.Model.Folder;
-using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Model.Folder;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {
     public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -57,11 +57,10 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             });
             Children = new ObservableCollection<ContentFolderViewModel>(_children);
             OnPropertyChanged(nameof(Children));
-
         }
         // LoadItems
         protected override void LoadItems() {
-            // ClipboardItemFolder.Itemsは別スレッドで実行
+            ((FileSystemFolder)Folder).SyncItems();
             List<FileSystemItem> _items = Folder.GetItems<FileSystemItem>();
             MainUITask.Run(() => {
                 Items.Clear();
@@ -70,20 +69,6 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 }
             });
         }
-
-        public static SimpleDelegateCommand<FileSystemFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
-            try {
-                FileSystemFolder folder = (FileSystemFolder)folderViewModel.Folder;
-                folderViewModel.UpdateIndeterminate(true);
-                await Task.Run(() => {
-                    folder.SyncItems();
-                });
-            } finally {
-                folderViewModel.UpdateIndeterminate(false);
-            }
-            folderViewModel.LoadItems();
-
-        });
 
         // ショートカット登録コマンド
         public static SimpleDelegateCommand<FileSystemFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {

@@ -1,7 +1,6 @@
 using System.Windows;
-using PythonAILib.Common;
-using LibUIPythonAI;
 using LibUIPythonAI.Resource;
+using PythonAILib.Common;
 
 namespace LibUIPythonAI.ViewModel {
     public class ChatViewModelBase : CommonViewModelBase {
@@ -41,7 +40,7 @@ namespace LibUIPythonAI.ViewModel {
         }
         public void UpdateIndeterminate(bool visible) {
             IsIndeterminate = visible;
-            OnPropertyChanged(nameof(IsIndeterminate));
+            // OnPropertyChanged(nameof(IsIndeterminate));
         }
     }
 }

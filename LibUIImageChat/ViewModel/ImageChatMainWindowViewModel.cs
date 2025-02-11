@@ -135,7 +135,7 @@ namespace LibUIImageChat.ViewModel {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // プログレスバーを表示
-                IsIndeterminate = true;
+                UpdateIndeterminate( true);
 
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信
@@ -165,7 +165,7 @@ namespace LibUIImageChat.ViewModel {
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
             } finally {
-                IsIndeterminate = false;
+                UpdateIndeterminate(false);
             }
 
         });

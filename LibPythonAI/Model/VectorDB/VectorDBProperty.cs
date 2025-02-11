@@ -31,7 +31,7 @@ namespace PythonAILib.Model.VectorDB {
         public string ContentType { get; set; } = string.Empty;
 
         // VectorDBEntries
-        public List<VectorDBEntry> VectorDBEntries { get; set; } = [];
+        public List<VectorMetadata> VectorMetadataList { get; set; } = [];
 
         // SearchKWArgs
         private Dictionary<string, object> GetSearchKWArgs() {
@@ -129,7 +129,7 @@ namespace PythonAILib.Model.VectorDB {
             }
             dict["vector_db_description"] = GetDescription();
             // vector_db_entriesを追加
-            dict["vector_db_entries"] = VectorDBEntries;
+            dict["vector_db_metadata_list"] = VectorMetadataList;
 
             return dict;
         }
@@ -164,7 +164,7 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         // ベクトル検索を実行する
-        public List<VectorDBEntry> VectorSearch(string query) {
+        public List<VectorMetadata> VectorSearch(string query) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
@@ -174,7 +174,7 @@ namespace PythonAILib.Model.VectorDB {
             };
 
             // ベクトル検索を実行
-            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
+            List<VectorMetadata> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
             return results;
         }
 

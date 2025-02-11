@@ -40,13 +40,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
                 menuItems.Add(deleteMenuItem);
 
-                // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                //テキストの抽出
+                MenuItem extractTextMenuItem = new() {
+                    Header = StringResources.ExtractText,
+                    Command = ClipboardFolderViewModel.ExtractTextCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
-                menuItems.Add(exportImportMenuItem);
+                menuItems.Add(extractTextMenuItem);
 
                 // ベクトルのリフレッシュ
                 MenuItem refreshMenuItem = new() {
@@ -55,6 +55,14 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(refreshMenuItem);
+
+                // エクスポート/インポート
+                MenuItem exportImportMenuItem = new() {
+                    Header = StringResources.ExportImport,
+                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(exportImportMenuItem);
 
                 return menuItems;
 

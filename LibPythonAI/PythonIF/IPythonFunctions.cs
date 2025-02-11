@@ -9,9 +9,7 @@ namespace PythonAILib.PythonIF {
 
         public string ExtractBase64ToText(string base64, string extension);
 
-
         public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
-
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
@@ -22,12 +20,11 @@ namespace PythonAILib.PythonIF {
         public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id, string Description);
 
 
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);
+        public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
 
         public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
-
 
         public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
 

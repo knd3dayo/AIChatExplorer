@@ -28,7 +28,7 @@ class VectorDBProps:
     doc_store_url_name = "doc_store_url"
     collection_name = "collection_name"
     search_kwargs_name = "search_kwargs"
-    vector_db_entries_name = "vector_db_entries"
+    vector_db_metadata_list_name = "vector_db_metadata_list"
     score_name = "score"
 
     def __init__(self, props_dict: dict):
@@ -78,7 +78,7 @@ class VectorDBProps:
         self.FolderID = props_dict.get(VectorDBProps.folder_id_name, "")
 
         # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
-        self.VectorDBEntries = [ContentUpdateOrDeleteRequestParams(entry) for entry in props_dict.get(VectorDBProps.vector_db_entries_name, [])]
+        self.VectorMetadataList = [VectorMetadata(entry) for entry in props_dict.get(VectorDBProps.vector_db_metadata_list_name, [])]
 
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}
@@ -94,7 +94,7 @@ class VectorDBProps:
         vector_db_dict["search_kwargs"] = self.SearchKwarg
         vector_db_dict["catalog_db_url"] = self.CatalogDBURL
         vector_db_dict["folder_id"] = self.FolderID
-        vector_db_dict["vector_db_entries"] = [entry.__dict__ for entry in self.VectorDBEntries]
+        vector_db_dict["vector_db_metadata_list"] = [entry.__dict__ for entry in self.VectorMetadataList]
         
         return vector_db_dict
 
@@ -129,11 +129,11 @@ class VectorSearchParameter:
         #  openai_props, vector_db_items, query, search_kwargを設定する
         self.query = query
 
-class ContentUpdateOrDeleteRequestParams:
+class VectorMetadata:
     def __init__(self, vector_db_entry: dict):
 
         # request_jsonをdictに変換
-        self.id = vector_db_entry[VectorDBProps.source_id_name]
+        self.source_id = vector_db_entry[VectorDBProps.source_id_name]
         self.description = vector_db_entry.get(VectorDBProps.description_name, "")
         self.text = vector_db_entry[VectorDBProps.content_name]
         self.source_path = vector_db_entry.get(VectorDBProps.source_path_name, "")

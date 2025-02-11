@@ -107,6 +107,10 @@
                             Header="DocId" />
                         <DataGridTextColumn
                             Width="100"
+                            Binding="{Binding SourceId}"
+                            Header="SourceId" />
+                        <DataGridTextColumn
+                            Width="100"
                             Binding="{Binding SourcePath}"
                             Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
@@ -155,8 +159,12 @@
                             Header="DocId" />
                         <DataGridTextColumn
                             Width="100"
+                            Binding="{Binding SourceId}"
+                            Header="SourceId" />
+                        <DataGridTextColumn
+                            Width="100"
                             Binding="{Binding SourcePath}"
-                            Header="SourcePath" />
+                            Header="SourcePath" />                        
                         <DataGridTemplateColumn Width="*" Header="Content">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

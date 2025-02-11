@@ -24,6 +24,8 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
             os.makedirs(self.vector_db_props.VectorDBURL)
+            # ディレクトリが作成されたことをログに出力
+            print("create directory:", self.vector_db_props.VectorDBURL)
         # params
         params = {}
         params["client"] = chromadb.PersistentClient(path=self.vector_db_props.VectorDBURL)

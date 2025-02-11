@@ -60,9 +60,8 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         // LoadItems
         protected override void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<OutlookItem> _items = [];
+            List<OutlookItem> _items = Folder.GetItems<OutlookItem>();
             MainUITask.Run(() => {
-                _items = Folder.GetItems<OutlookItem>();
                 Items.Clear();
                 foreach (OutlookItem item in _items) {
                     Items.Add(CreateItemViewModel(item));

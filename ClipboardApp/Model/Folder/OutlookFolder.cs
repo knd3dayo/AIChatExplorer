@@ -85,47 +85,36 @@ namespace ClipboardApp.Model.Folder {
             }
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetItemCollection<OutlookItem>();
+            // OutlookItemのEntryIDとIDのDictionary
+            Dictionary<string, LiteDB.ObjectId> entryIdIdDict = collection.Find(x => x.CollectionId == this.Id).ToDictionary(x => x.EntryID, x => x.Id);
 
+            // Outlookのフォルダ内のEntryIDを格納するHashSet
+            HashSet<string> entryIdList = MAPIFolder.Items.Cast<Outlook.MailItem>().Select(x => x.EntryID).ToHashSet();
 
-            // EntryIDを格納するリスト
-            List<string> entryIdList = [];
-            // Outlookのフォルダ内のファイル一覧を取得
-            foreach (var outlookItem in MAPIFolder.Items) {
-                if (outlookItem is Outlook.MailItem mailItem) {
-                    entryIdList.Add(mailItem.EntryID);
-
-                    // EntryIDが一致するOutlookItemが存在しない場合は追加
-                    var items = collection.Find(x => x.EntryID == mailItem.EntryID);
-                    if (items == null || items.Count() == 0) {
-                        OutlookItem newItem = new(this.Id, mailItem.EntryID) {
-                            Description = mailItem.Subject,
-                            ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
-                            Content = mailItem.Body,
-                        };
-                        // 自動処理ルールを適用
-                        Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(newItem);
-                        ContentItem result = task.Result;
-                        result.Save();
-                    }
-                }
+            // EntryIDが一致するOutlookItemが存在しない場合は削除
+            // Exceptで差集合を取得
+            foreach (var entryId in entryIdIdDict.Keys.Except(entryIdList)) {
+                collection.Delete(entryIdIdDict[entryId]);
             }
-            foreach (var item in collection.Find(x => x.CollectionId == this.Id)) {
-                // EntryIDが一致するOutlookItemが存在しない場合は削除
-                if (!entryIdList.Any(x => x == item.EntryID)) {
-                    collection.Delete(item.Id);
-                }
-            }
+            // Parallel処理
+            Parallel.ForEach(MAPIFolder.Items.Cast<Outlook.MailItem>(), outlookItem => {
+                OutlookItem newItem = new(this.Id, outlookItem.EntryID) {
+                    Description = outlookItem.Subject,
+                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
+                    Content = outlookItem.Body,
+                };
+                newItem.Save();
+            });
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
-            IEnumerable<OutlookFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+        public override List<OutlookFolder> GetChildren<OutlookFolder>() {
 
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
-            SyncFolders(folders);
-            return folders.Cast<T>().ToList();
-
+            SyncFolders();
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
+            IEnumerable<OutlookFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            return folders.Cast<OutlookFolder>().ToList();
         }
 
         public MAPIFolder? GetMAPIFolder() {
@@ -144,36 +133,46 @@ namespace ClipboardApp.Model.Folder {
             return mAPIFolder;
         }
 
-        public virtual void SyncFolders(IEnumerable<OutlookFolder> folders) {
-            List<string> outlookFolderNames = [];
-            // Outlook上のフォルダの一覧を取得。
+        public virtual void SyncFolders() {
+
+            // Outlook上のフォルダのNameのHashSet
+            HashSet<string> outlookFolderNames = new();
+
+
             if (IsRootFolder) {
                 // ルートフォルダの場合はInboxフォルダを取得
                 outlookFolderNames.Add(InboxFolder.Name);
-                LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
-
             } else {
                 MAPIFolder = GetMAPIFolder();
                 if (MAPIFolder == null) {
                     return;
                 }
-                outlookFolderNames = MAPIFolder.Folders.Select(x => x.Name).ToList();
-                LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
+                outlookFolderNames = MAPIFolder.Folders.Cast<MAPIFolder>().Select(x => x.Name).ToHashSet();
             }
-            // MAPIFolder内のフォルダ一覧を取得
+            LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
+
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
+
+            // folder内のFolderNameとIdのDictionary
+            Dictionary<string, LiteDB.ObjectId> folderPathIdDict = collection.Find(x => x.ParentId == Id).ToDictionary(x => x.FolderName, x => x.Id);
+
             // DBに存在するフォルダがOutlookに存在しない場合は削除
-            foreach (var folder in folders) {
-                if (!outlookFolderNames.Any(x => x == folder.FolderName)) {
-                    folder.Delete<OutlookFolder, OutlookItem>();
-                }
+            // Exceptで差集合を取得
+            var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
+            foreach (var deleteFolderName in deleteFolderNames) {
+                ObjectId deleteId = folderPathIdDict[deleteFolderName];
+                collection.Delete(deleteId);
             }
+
             // Outlookに存在するフォルダがDBに存在しない場合は追加
-            foreach (var outlookFolderName in outlookFolderNames) {
-                if (!folders.Any(x => x.FolderName == outlookFolderName)) {
-                    var child = this.CreateChild(outlookFolderName);
-                    child.Save();
-                }
-            }
+            // Exceptで差集合を取得
+            var addFolderNames = outlookFolderNames.Except(folderPathIdDict.Keys);
+
+            // Parallel処理
+            Parallel.ForEach(addFolderNames, outlookFolderName => {
+                var child = this.CreateChild(outlookFolderName);
+                child.Save();
+            });
 
             // 自分自身を保存
             this.Save();

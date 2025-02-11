@@ -263,7 +263,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query) {
+        public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
 
@@ -283,7 +283,7 @@ namespace PythonAILib.PythonIF {
 
             // vector_search
             // VectorSearchResultのリストを作成
-            List<VectorDBEntry> vectorSearchResults = [];
+            List<VectorMetadata> vectorSearchResults = [];
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/vector_search";
@@ -299,7 +299,7 @@ namespace PythonAILib.PythonIF {
             if (resultDict.ContainsKey("documents")) {
                 JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorDBEntry.FromJson(documentsObject.ToString() ?? "[]");
+                vectorSearchResults = VectorMetadata.FromJson(documentsObject.ToString() ?? "[]");
             }
 
             return vectorSearchResults;

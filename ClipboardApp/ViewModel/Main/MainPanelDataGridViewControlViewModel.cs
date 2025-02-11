@@ -32,8 +32,8 @@ namespace ClipboardApp.ViewModel.Main {
         public ClipboardItemViewModelCommands Commands { get; } = new();
 
         // 選択中のアイテム(複数選択)
-        private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
-        public ObservableCollection<ClipboardItemViewModel> SelectedItems {
+        private ObservableCollection<ContentItemViewModel> _selectedItems = [];
+        public ObservableCollection<ContentItemViewModel> SelectedItems {
             get {
                 return _selectedItems;
 
@@ -45,7 +45,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
-        public ClipboardItemViewModel? SelectedItem {
+        public ContentItemViewModel? SelectedItem {
             get {
                 // SelectedItemsの最後のアイテムを返す
                 if (SelectedItems.Count > 0) {

@@ -47,10 +47,10 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
 
-        public ObservableCollection<VectorDBEntry> MultiVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorMetadata> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorDBEntry> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorMetadata> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorDBProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
@@ -99,9 +99,9 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 return;
             }
 
-            IsIndeterminate = true;
+            UpdateIndeterminate(true);
             await Task.Run(() => {
-                List<VectorDBEntry> vectorSearchResults = [];
+                List<VectorMetadata> vectorSearchResults = [];
                 // ベクトル検索を実行
                 ContentItem contentItem = new() {
                     Content = InputText
@@ -112,7 +112,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 try {
                     vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(contentItem.Content));
                 } finally {
-                    IsIndeterminate = false;
+                    UpdateIndeterminate(false);
                 }
                 MainUITask.Run(() => {
                     // VectorSearchResultsを更新
@@ -120,17 +120,17 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     VectorSearchResults.Clear();
 
                     if (vectorDBItem.IsUseMultiVectorRetriever) {
-                        foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorMetadata vectorSearchResult in vectorSearchResults) {
                             MultiVectorSearchResults.Add(vectorSearchResult);
                             // sub_docsを追加
-                            foreach (VectorDBEntry subDoc in vectorSearchResult.SubDocs) {
+                            foreach (VectorMetadata subDoc in vectorSearchResult.SubDocs) {
                                 VectorSearchResults.Add(subDoc);
                             }
                         }
                     } else {
                         // VectorSearchResultsを更新
                         VectorSearchResults.Clear();
-                        foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorMetadata vectorSearchResult in vectorSearchResults) {
                             VectorSearchResults.Add(vectorSearchResult);
                         }
                     }

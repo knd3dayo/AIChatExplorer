@@ -1,10 +1,8 @@
 using System.IO;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
-using ClipboardApp.Settings;
 using LiteDB;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
@@ -82,52 +80,6 @@ namespace ClipboardApp.Model.Folder {
 
             return items;
         }
-        public void SyncItems() {
-            // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
-            if (!Directory.Exists(FileSystemFolderPath)) {
-                return;
-            }
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<FileSystemItem>();
-            // FileSystemFolderPathフォルダ内のファイルを取得
-            List<FileSystemItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
-
-            // ファイルシステム上のファイル一覧
-            List<string> fileSystemFilePaths = [];
-            try {
-                fileSystemFilePaths = Directory.GetFiles(FileSystemFolderPath).ToList();
-            } catch (UnauthorizedAccessException e) {
-                LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
-            }
-            // items内に、fileSystemFilePaths以外のFilePathがある場合は削除
-            foreach (var item in items) {
-                if (!fileSystemFilePaths.Any(x => x == item.FilePath)) {
-                    collection.Delete(item.Id);
-                }
-            }
-            // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
-            foreach (var localFileSystemFilePath in fileSystemFilePaths) {
-                // GetMimeTypeを実行して、ファイルのContentTypeを取得
-                string contentType = PythonExecutor.PythonAIFunctions.GetMimeType(localFileSystemFilePath);
-                // TargetMimeTypesに含まれるContentTypeの場合のみ処理
-                if (!TargetMimeTypes.Any(x => contentType.StartsWith(x))) {
-                    continue;
-                }
-                if (!items.Any(x => x.FilePath == localFileSystemFilePath)) {
-                    FileSystemItem item = new() {
-                        FilePath = localFileSystemFilePath,
-                        SourcePath = localFileSystemFilePath,
-                        CollectionId = Id,
-                        ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
-                        Description = Path.GetFileName(localFileSystemFilePath)
-                    };
-                    // 自動処理ルールを適用
-                    Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
-                    ContentItem result = task.Result;
-                    result.Save();
-
-                }
-            }
-        }
 
         // 子フォルダ
         public override List<FileSystemFolder> GetChildren<FileSystemFolder>() {
@@ -139,13 +91,72 @@ namespace ClipboardApp.Model.Folder {
 
         }
 
+
+        public void SyncItems() {
+            // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
+            if (!Directory.Exists(FileSystemFolderPath)) {
+                return;
+            }
+            // ファイルシステム上のファイルパス一覧
+            HashSet<string> fileSystemFilePathSet = [];
+            try {
+                fileSystemFilePathSet = Directory.GetFiles(FileSystemFolderPath).ToHashSet();
+            } catch (UnauthorizedAccessException e) {
+                LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+            }
+
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<FileSystemItem>();
+            // FileSystemFolderPathフォルダ内のファイルを取得
+            List<FileSystemItem> items = [.. collection.Find(x => x.CollectionId == Id)];
+
+            // Items内のFilePathとIdのDictionary
+            Dictionary<string, ObjectId> itemFilePathIdDict = items.ToDictionary(x => x.FilePath, x => x.Id);
+
+            // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
+            // Exceptで差集合を取得
+            var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
+            foreach (var deleteFilePath in deleteFilePaths) {
+                ObjectId deleteId = itemFilePathIdDict[deleteFilePath];
+                collection.Delete(deleteId);
+            }
+            // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
+            // Exceptで差集合を取得
+            var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
+
+            // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
+            var targetMimeTypesSet = new HashSet<string>(TargetMimeTypes);
+
+            Parallel.ForEach(addFilePaths, localFileSystemFilePath => {
+                string contentType = PythonExecutor.PythonAIFunctions.GetMimeType(localFileSystemFilePath);
+                // if (!targetMimeTypesSet.Any(x => contentType.StartsWith(x))) {
+                // return;
+                // }
+                FileSystemItem item = new() {
+                    FilePath = localFileSystemFilePath,
+                    SourcePath = localFileSystemFilePath,
+                    CollectionId = Id,
+                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
+                    Description = Path.GetFileName(localFileSystemFilePath)
+                };
+                item.Save();
+                // 自動処理ルールを適用
+                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                // ContentItem result = task.Result;
+                // result.Save();
+            });
+        }
+
         public virtual void SyncFolders() {
 
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            // ファイルシステム上のフォルダのフルパス一覧
-            List<string> fileSystemFolderPaths = [];
+            var folders = collection.Find(x => x.ParentId == Id);
+            // Folders内のFileSystemFolderPathとIDのDictionary
+            Dictionary<string, ObjectId> folderPathIdDict = folders.ToDictionary(x => x.FileSystemFolderPath, x => x.Id);
+
+
+            // ファイルシステム上のフォルダのフルパス一覧のHashSet
+            HashSet<string> fileSystemFolderPaths = new HashSet<string>();
             // ルートフォルダの場合は、Environment.GetLogicalDrives()を取得
             if (IsRootFolder) {
                 string[] drives = Environment.GetLogicalDrives();
@@ -155,31 +166,38 @@ namespace ClipboardApp.Model.Folder {
             } else {
                 // ルートフォルダ以外は自分自身のFolderPath配下のフォルダを取得
                 try {
-                    fileSystemFolderPaths = Directory.GetDirectories(FileSystemFolderPath).ToList();
+                    fileSystemFolderPaths = new HashSet<string>(Directory.GetDirectories(FileSystemFolderPath));
                 } catch (UnauthorizedAccessException e) {
                     LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
                 }
             }
+
             // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
-            foreach (var folder in folders) {
-                if (!fileSystemFolderPaths.Any(x => x == folder.FileSystemFolderPath)) {
-                    collection.Delete(folder.Id);
+            // Exceptで差集合を取得
+            var deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths);
+            foreach (var deleteFolderPath in deleteFolderPaths) {
+                ObjectId deleteId = folderPathIdDict[deleteFolderPath];
+                collection.Delete(deleteId);
+            }
+            // folders内に、FileSystemFolderPathがない場合は追加
+            // Exceptで差集合を取得
+            var fileSystemFolderPathsSet = new HashSet<string>(fileSystemFolderPaths);
+            var addFolderPaths = fileSystemFolderPathsSet.Except(folderPathIdDict.Keys);
+
+            // Parallel処理
+            Parallel.ForEach(addFolderPaths, localFileSystemFolder => {
+
+                if (IsRootFolder) {
+                    FileSystemFolder child = CreateChild(localFileSystemFolder);
+                    child.Save();
+                } else {
+                    // localFileSystemFolder からフォルダ名を取得
+                    string folderName = Path.GetFileName(localFileSystemFolder);
+                    FileSystemFolder child = CreateChild(folderName);
+                    child.Save();
                 }
             }
-            // foldersのアイテムに、folderPath=ドライブ名:\のアイテムがない場合はアイテムを追加
-            foreach (var localFileSystemFolder in fileSystemFolderPaths) {
-                if (!folders.Any(x => x.FileSystemFolderPath == localFileSystemFolder)) {
-                    if (IsRootFolder) {
-                        FileSystemFolder child = CreateChild(localFileSystemFolder);
-                        child.Save();
-                    } else {
-                        // localFileSystemFolder からフォルダ名を取得
-                        string folderName = Path.GetFileName(localFileSystemFolder);
-                        FileSystemFolder child = CreateChild(folderName);
-                        child.Save();
-                    }
-                }
-            }
+            );
             // 自分自身を保存
             this.Save();
         }

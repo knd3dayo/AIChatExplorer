@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace PythonAILib.Model.VectorDB {
-    public class VectorDBEntry {
+    public class VectorMetadata {
 
         public static readonly JsonSerializerOptions Options = new() {
             Converters = { new JsonStringEnumConverter() },
@@ -13,9 +13,9 @@ namespace PythonAILib.Model.VectorDB {
             WriteIndented = true
         };
 
-        public VectorDBEntry() { }
+        public VectorMetadata() { }
 
-        public VectorDBEntry(string source_id) {
+        public VectorMetadata(string source_id) {
             SourceId = source_id;
         }
 
@@ -53,7 +53,7 @@ namespace PythonAILib.Model.VectorDB {
 
         // sub_docs
         [JsonPropertyName("sub_docs")]
-        public List<VectorDBEntry> SubDocs { get; set; } = [];
+        public List<VectorMetadata> SubDocs { get; set; } = [];
 
 
         public void UpdateSourceInfo(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
@@ -71,9 +71,9 @@ namespace PythonAILib.Model.VectorDB {
             return JsonSerializer.Serialize(this, Options);
         }
 
-        public static List<VectorDBEntry> FromJson(string json) {
+        public static List<VectorMetadata> FromJson(string json) {
             JsonSerializerOptions options = Options;
-            List<VectorDBEntry>? result = System.Text.Json.JsonSerializer.Deserialize<List<VectorDBEntry>>(json, options);
+            List<VectorMetadata>? result = System.Text.Json.JsonSerializer.Deserialize<List<VectorMetadata>>(json, options);
             return result ?? [];
         }
 

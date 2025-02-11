@@ -138,10 +138,10 @@ namespace PythonAILib.Utils.Python {
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
             StringBuilder sb = new();
-            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, query) ?? [];
+            List<VectorMetadata> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, query) ?? [];
             sb.AppendLine();
             for (int i = 0; i < results.Count; i++) {
-                VectorDBEntry vectorSearchResult = results[i];
+                VectorMetadata vectorSearchResult = results[i];
                 sb.AppendLine($"## 参考情報:{i + 1} ##");
                 sb.AppendLine("--------");
                 sb.AppendLine(vectorSearchResult.Description);

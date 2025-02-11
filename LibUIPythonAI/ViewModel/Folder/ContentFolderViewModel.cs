@@ -5,6 +5,7 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 
@@ -112,9 +113,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
             LoadFolder(() => { });
         });
 
-
-        public virtual void UpdateIndeterminate(bool isIndeterminate) { }
-
         public SimpleDelegateCommand<ContentFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
             // フォルダ削除するかどうか確認
@@ -154,7 +152,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 folderViewModel.LoadFolderCommand.Execute();
             });
         });
-
+        protected virtual void UpdateStatusText() {
+            string message = Folder.GetStatusText();
+            StatusText.Instance.ReadyText = message;
+            StatusText.Instance.Text = message;
+        }
 
 
     }

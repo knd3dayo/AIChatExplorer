@@ -20,7 +20,7 @@ from ai_app_langchain.langchain_doc_store import SQLDocStore
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
-from ai_app_vector_db.ai_app_vector_db_props import ContentUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_props import VectorMetadata
 from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
 
 
@@ -169,9 +169,9 @@ class LangChainVectorDB:
         retriever.docstore.mset(param)
 
 
-    def __delete_document(self, source: str):
+    def __delete_document(self, source_id: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata = self._get_document_ids_by_tag("source_path", source)
+        vector_ids, metadata = self._get_document_ids_by_tag("source_id", source_id)
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
             return 0
@@ -179,10 +179,10 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
 
-    def __delete_multivector_document(self, source: str ) :
+    def __delete_multivector_document(self, source_id: str ) :
         
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata_list = self._get_document_ids_by_tag("source_path", source)
+        vector_ids, metadata_list = self._get_document_ids_by_tag("source_id", source_id)
 
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
@@ -214,7 +214,7 @@ class LangChainVectorDB:
 
         return retriever
 
-    def add_document_list(self, content_text: str, description_text: str, source_path: str, source_url: str, image_url=""):
+    def add_document_list(self, content_text: str, description_text: str, source_id: str, source_path: str, source_url: str, image_url=""):
         
         chunk_size = self.vector_db_props.ChunkSize
     
@@ -227,7 +227,7 @@ class LangChainVectorDB:
         for text in text_list:
             doc_id = str(uuid.uuid4())
             folder_id = self.vector_db_props.FolderID
-            metadata = LangChainVectorDB.create_metadata(doc_id, folder_id, source_path, source_url, description_text, image_url)
+            metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
             document_list.append(document)
@@ -302,21 +302,21 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出してコレクションを削除
         self._delete_collection()
 
-    def delete_document(self, source: str):
+    def delete_document(self, source_id: str):
         # MultiVectorRetrieverの場合
         if self.vector_db_props.IsUseMultiVectorRetriever:
             # DBからsourceを指定して既存ドキュメントを削除
-            self.__delete_multivector_document(source)
+            self.__delete_multivector_document(source_id)
         else:
             # DBからsourceを指定して既存ドキュメントを削除
-            self.__delete_document(source)
+            self.__delete_document(source_id)
     
-    def update_document(self, params: ContentUpdateOrDeleteRequestParams):
+    def update_document(self, params: VectorMetadata):
         
         # 既に存在するドキュメントを削除
-        self.delete_document(params.source_path)
+        self.delete_document(params.source_id)
         # ドキュメントを格納する。
-        self.add_document_list(params.text, params.description, params.source_path, params.git_relative_path)
+        self.add_document_list(params.text, params.description, params.source_id, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
     @classmethod
@@ -357,17 +357,18 @@ class LangChainVectorDB:
         return {"documents": result}
 
     @classmethod
-    def create_metadata(cls, doc_id, folder_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
+    def create_metadata(cls, doc_id, source_id, folder_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
         metadata = {
             "folder_id": folder_id, "source_path": source_path, "git_repository_url": source_url, 
             "description": description, "image_url": image_url, "git_relative_path": "",
-            "doc_id": doc_id, "source_id": "", "source_type": 0, "score": score
+            "doc_id": doc_id, "source_id": source_id, "source_type": 0, "score": score
         }
         return metadata
 
     @classmethod
     def create_metadata_from_document(cls, document: Document):
         metadata = document.metadata
+        source_id = metadata.get("source_id", "")
         folder_id = metadata.get("folder_id", "")
         doc_id = metadata.get("doc_id", "")
         source_path = metadata.get("source_path", "")
@@ -375,6 +376,6 @@ class LangChainVectorDB:
         description = metadata.get("description", "")
         image_url = metadata.get("image_url", "")
         score = metadata.get("score", 0)
-        return cls.create_metadata(doc_id, folder_id, source_path, source_url, description, image_url, score)
+        return cls.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description, image_url, score)
 
     

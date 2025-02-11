@@ -294,7 +294,7 @@
         <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding IsIndeterminate, UpdateSourceTrigger=PropertyChanged}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

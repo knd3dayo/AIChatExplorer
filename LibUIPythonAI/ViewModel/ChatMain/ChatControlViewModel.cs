@@ -125,7 +125,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
             try {
                 ChatResult? result = null;
                 // プログレスバーを表示
-                IsIndeterminate = true;
+                UpdateIndeterminate(true);
 
                 // チャット内容を更新
                 await Task.Run(() => {
@@ -162,7 +162,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
             } finally {
-                IsIndeterminate = false;
+                UpdateIndeterminate(false);
             }
 
         });

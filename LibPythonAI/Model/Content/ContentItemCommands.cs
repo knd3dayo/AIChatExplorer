@@ -260,7 +260,7 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperty = folderVectorDBItem;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                VectorDBEntry vectorDBEntry = new(item.Id.ToString());
+                VectorMetadata vectorDBEntry = new(item.Id.ToString());
 
             }
             // ベクトルを削除
@@ -283,11 +283,12 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperty = folderVectorDBItem;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                VectorDBEntry vectorDBEntry = new(item.Id.ToString());
+                VectorMetadata vectorDBEntry = new(item.Id.ToString());
 
                 // タイトルとHeaderTextを追加
                 string description = item.Description + "\n" + item.HeaderText;
                 if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                    string sourcePath = item.SourcePath;
                     vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
                 } else {
                     if (item.IsImage()) {
@@ -298,7 +299,7 @@ namespace PythonAILib.Model.Content {
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", "");
                     }
                 }
-                vectorDBProperty.VectorDBEntries.Add(vectorDBEntry);
+                vectorDBProperty.VectorMetadataList.Add(vectorDBEntry);
                 // ベクトル化日時を更新
                 item.VectorizedAt = DateTime.Now;
             }

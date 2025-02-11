@@ -6,15 +6,13 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Search;
-using WpfAppCommon.Model;
+using PythonAILib.Model.File;
 using WpfAppCommon.Utils;
 
 
@@ -133,7 +131,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         protected virtual void LoadChildren(int nestLevel = 5) {
-            UpdateIndeterminate(true);
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
             foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
@@ -166,54 +163,32 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         #endregion
 
-        public override void UpdateIndeterminate(bool isIndeterminate) {
-            MainWindowViewModel.Instance.UpdateIndeterminate(isIndeterminate);
-        }
-
         public override void LoadFolder(Action afterUpdate) {
-            UpdateIndeterminate(true);
+            MainWindowViewModel.Instance.UpdateIndeterminate(true);
             Task.Run(() => {
                 LoadChildren(DefaultNextLevel);
                 LoadItems();
             }).ContinueWith((task) => {
                 afterUpdate?.Invoke();
                 MainUITask.Run(() => {
-                    UpdateIndeterminate(false);
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
                     UpdateStatusText();
                 });
             });
         }
 
-        protected virtual void UpdateStatusText() {
-            string message = $"{StringResources.Folder}[{FolderName}]";
+        // ExtractTextCommand
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
+            // ContentTypes.Files, ContentTypes.Imageのアイテムを取得
+            var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files || x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files);
 
-            if (Folder is ClipboardFolder clipboardFolder) {
-                // AutoProcessRuleが設定されている場合
-                var rules = AutoProcessRuleController.GetAutoProcessRules(clipboardFolder);
-                if (rules.Count > 0) {
-                    message += $" {StringResources.AutoProcessingIsSet}[";
-                    foreach (AutoProcessRule item in rules) {
-                        message += item.RuleName + " ";
-                    }
-                    message += "]";
-                }
+            // MainWindowViewModel.Instance.SelectedItemsにContentTypes.Files, ContentTypes.Imageのアイテムを設定
+            MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems = [.. itemViewModels];
 
-                // folderが検索フォルダの場合
-                SearchRule? searchConditionRule = FolderManager.GlobalSearchCondition;
-                if (clipboardFolder.FolderType == FolderTypeEnum.Search) {
-                    searchConditionRule = SearchRuleController.GetSearchRuleByFolder(clipboardFolder);
-                }
-                SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
-                // SearchConditionがNullでなく、 Emptyでもない場合
-                if (searchCondition != null && !searchCondition.IsEmpty()) {
-                    message += $" {StringResources.SearchCondition}[";
-                    message += searchCondition.ToStringSearchCondition();
-                    message += "]";
-                }
-            }
+            // コマンドを実行
+            ClipboardItemViewModelCommands commands = new();
+            commands.ExtractTextCommand.Execute();
 
-            StatusText.Instance.ReadyText = message;
-            StatusText.Instance.Text = message;
-        }
+        });
     }
 }

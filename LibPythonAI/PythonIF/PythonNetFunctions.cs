@@ -338,9 +338,9 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        private List<VectorDBEntry> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
+        private List<VectorMetadata> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
-            List<VectorDBEntry> vectorSearchResults = [];
+            List<VectorMetadata> vectorSearchResults = [];
 
             // Pythonスクリプトを実行する
             string resultString = (string)ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
@@ -361,13 +361,13 @@ namespace PythonAILib.PythonIF {
             if (resultDict.ContainsKey("documents")) {
                 JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorDBEntry.FromJson(documentsObject.ToString() ?? "[]");
+                vectorSearchResults = VectorMetadata.FromJson(documentsObject.ToString() ?? "[]");
             }
 
             return vectorSearchResults;
         }
 
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query) {
+        public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
 

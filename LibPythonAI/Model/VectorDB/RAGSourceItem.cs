@@ -133,12 +133,12 @@ namespace PythonAILib.Model.VectorDB {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
                     }
-                    VectorDBEntry vectorDBEntry = new(source_path);
+                    VectorMetadata vectorDBEntry = new(source_path);
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
                     VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
-                    vectorDBProperty.VectorDBEntries = [vectorDBEntry];
+                    vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty]
@@ -148,8 +148,8 @@ namespace PythonAILib.Model.VectorDB {
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
                     VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
-                    VectorDBEntry vectorDBEntry = new(source_path);
-                    vectorDBProperty.VectorDBEntries = [vectorDBEntry];
+                    VectorMetadata vectorDBEntry = new(source_path);
+                    vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty]

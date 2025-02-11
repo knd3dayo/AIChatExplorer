@@ -20,14 +20,6 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 };
                 menuItems.Add(editMenuItem);
 
-                // 同期
-                MenuItem createSyncMenuItem = new() {
-                    Header = StringResources.Sync,
-                    Command = FileSystemFolderViewModel.SyncItemCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createSyncMenuItem);
-
                 // ショートカット登録
                 MenuItem createShortCutMenuItem = new() {
                     Header = StringResources.CreateShortCut,
@@ -36,14 +28,13 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 };
                 menuItems.Add(createShortCutMenuItem);
 
-
-                // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                //テキストの抽出
+                MenuItem extractTextMenuItem = new() {
+                    Header = StringResources.ExtractText,
+                    Command = ClipboardFolderViewModel.ExtractTextCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
-                menuItems.Add(exportImportMenuItem);
+                menuItems.Add(extractTextMenuItem);
 
                 // ベクトルのリフレッシュ
                 MenuItem refreshMenuItem = new() {
@@ -52,6 +43,14 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(refreshMenuItem);
+
+                // エクスポート/インポート
+                MenuItem exportImportMenuItem = new() {
+                    Header = StringResources.ExportImport,
+                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(exportImportMenuItem);
 
                 return menuItems;
 

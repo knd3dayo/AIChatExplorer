@@ -79,7 +79,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
-            IsIndeterminate = true;
+            UpdateIndeterminate(true);
             // 選択されたインデックスによって処理を分岐
             Task.Run(() => {
                 switch (SelectedIndex) {
@@ -99,7 +99,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                         break;
                 }
             }).ContinueWith((task) => {
-                IsIndeterminate = false;
+                UpdateIndeterminate(false);
                 AfterUpdate();
                 MainUITask.Run(() => {
                     window.Close();

@@ -3,9 +3,8 @@ using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Utils.Common;
 using PythonAILib.Resources;
+using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleController {

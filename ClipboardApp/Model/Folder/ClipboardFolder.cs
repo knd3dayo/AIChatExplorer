@@ -11,6 +11,7 @@ using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
+using PythonAILib.Model.Search;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
@@ -280,6 +281,22 @@ namespace ClipboardApp.Model.Folder {
             string jsonString = System.Text.Json.JsonSerializer.Serialize(GetItems<ClipboardItem>, options);
 
             System.IO.File.WriteAllText(fileName, jsonString);
+
+        }
+
+        // ステータス用のテキストを作成
+        public override string GetStatusText() {
+            string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
+            // AutoProcessRuleが設定されている場合
+            var rules = AutoProcessRuleController.GetAutoProcessRules(this);
+            if (rules.Count > 0) {
+                message += $" {CommonStringResources.Instance.AutoProcessingIsSet}[";
+                foreach (AutoProcessRule item in rules) {
+                    message += item.RuleName + " ";
+                }
+                message += "]";
+            }
+            return message;
 
         }
 
