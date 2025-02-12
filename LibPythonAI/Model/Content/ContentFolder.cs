@@ -126,12 +126,12 @@ namespace PythonAILib.Model.Content {
         public virtual void MoveTo(ContentFolder toFolder) {
             // 自分自身を移動
             ParentId = toFolder.Id;
-            Save<ContentFolder, ContentItem>();
+            Save();
         }
         // 名前を変更
         public virtual void Rename(string newName) {
             FolderName = newName;
-            Save<ContentFolder, ContentItem>();
+            Save();
         }
 
         public virtual void Save() {
