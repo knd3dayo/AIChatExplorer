@@ -85,7 +85,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
                     Command = commands.ExecutePromptTemplateCommand,
-                    CommandParameter = new Tuple<List<ContentItemViewModel>, PromptItem>([.. itemViewModels], promptItem)
+                    CommandParameter = new ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>([.. itemViewModels], promptItem)
                 };
                 otherPromptMenuItem.Items.Add(promptItemMenuItem);
             }

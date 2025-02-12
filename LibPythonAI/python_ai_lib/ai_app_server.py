@@ -212,6 +212,9 @@ def pf_trace():
     pf_trace = os.getenv("PF_TRACE", "false").upper() == "TRUE"
     print(f"pf_trace={pf_trace}", file=sys.stderr)
     if pf_trace == True:
+        os.environ["PF_DISABLE_TRACING"] = "false"
+        os.environ["NO_PROXY"] = "*"
+        
         from promptflow.tracing import start_trace
         # instrument OpenAI
         start_trace(collection="ai_app_server")

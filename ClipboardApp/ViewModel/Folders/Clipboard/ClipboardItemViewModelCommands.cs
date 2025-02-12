@@ -367,7 +367,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         });
 
         // プロンプトテンプレートを実行
-        public SimpleDelegateCommand<Tuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
+        public SimpleDelegateCommand<ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
             ObservableCollection<ContentItemViewModel> itemViewModels = tuple.Item1;
             PromptItem promptItem = tuple.Item2;
             ExecutePromptTemplateCommandExecute(itemViewModels, promptItem,
