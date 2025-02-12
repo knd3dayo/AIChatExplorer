@@ -7,6 +7,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
 using LibUIPythonAI.Resource;
 using LiteDB;
+using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -23,17 +24,20 @@ namespace ClipboardApp.Model.Folder {
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardFolder() {
-            IsAutoProcessEnabled = true;
+            ContentFolder.IsAutoProcessEnabled = true;
         }
+
+        // ContentFolder
+        public ContentFolder ContentFolder {  get; set; } = new();
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
 
-            ParentId = parent?.Id ?? ObjectId.Empty;
-            FolderName = folderName;
+            ContentFolder.ParentId = parent?.Id ?? ObjectId.Empty;
+            ContentFolder.FolderName = folderName;
             // 親フォルダがnullの場合は、FolderTypeをNormalに設定
-            FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
+            ContentFolder. FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
 
-            IsAutoProcessEnabled = true;
+            ContentFolder.IsAutoProcessEnabled = true;
 
         }
 
@@ -48,6 +52,13 @@ namespace ClipboardApp.Model.Folder {
         // 親フォルダ
         public override ContentFolder? GetParent() {
             return GetParent<ClipboardFolder>();
+        }
+
+        public override List<ClipboardFolder> GetChildren<ClipboardFolder>() {
+
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ClipboardFolder>();
+            IEnumerable<ClipboardFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            return folders.Cast<ClipboardFolder>().ToList();
         }
 
         // アイテム LiteDBには保存しない。

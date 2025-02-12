@@ -82,6 +82,9 @@ namespace PythonAILib.Model.Content {
         // SourcePath
         public string SourcePath { get; set; } = "";
 
+        // 拡張プロパティ
+        public Dictionary<string, object> ExtendedProperties { get; set; } = new();
+
         // 別フォルダに移動
         public virtual void MoveToFolder<T>(T folder) where T : ContentFolder {
             CollectionId = folder.Id;

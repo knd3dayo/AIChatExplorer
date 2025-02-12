@@ -29,6 +29,10 @@ namespace PythonAILib.Model.Content {
 
         public List<VectorDBProperty> ReferenceVectorSearchProperties { get; set; } = [];
 
+        // 拡張プロパティ
+        public Dictionary<string, object> ExtendedProperties { get; set; } = new();
+
+
         public VectorDBProperty GetMainVectorSearchProperty() {
 
             VectorDBProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB(), Id);
