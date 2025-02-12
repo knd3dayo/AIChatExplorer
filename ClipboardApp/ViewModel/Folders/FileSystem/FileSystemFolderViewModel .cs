@@ -5,6 +5,7 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using WpfAppCommon.Utils;
 
@@ -22,7 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override FileSystemFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override FileSystemFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new System.Exception("childFolder is not FileSystemFolder");
             }

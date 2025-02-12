@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Settings;
 using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.Settings {

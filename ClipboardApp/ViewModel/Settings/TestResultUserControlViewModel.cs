@@ -4,7 +4,7 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Settings {
+namespace ClipboardApp.ViewModel.Settings {
     internal class TestResultUserControlViewModel : ObservableObject {
         public TestResultUserControlViewModel(string logText) {
             LogText = logText;

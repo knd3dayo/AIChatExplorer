@@ -5,10 +5,10 @@
     xmlns:control="clr-namespace:LibUIPythonAI.View.Common;assembly=LibUIPythonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp.Settings"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:ClipboardApp.View.Settings"
+    xmlns:viewmodel="clr-namespace:ClipboardApp.ViewModel.Settings"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -19,7 +19,7 @@
         </Style>
     </UserControl.Resources>
     <UserControl.DataContext>
-        <local:SettingUserControlViewModel />
+        <viewmodel:SettingUserControlViewModel />
     </UserControl.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">

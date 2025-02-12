@@ -1,6 +1,6 @@
 using System.Windows;
 using ClipboardApp.Model.Item;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Utils;
 using PythonAILib.PythonIF;

@@ -30,7 +30,7 @@ namespace WpfAppCommon.Model {
             if (value) {
                 InProgressText = inProgressText;
             } else {
-                Ready();
+                InProgressText = "";
             }
         }
 
@@ -47,7 +47,7 @@ namespace WpfAppCommon.Model {
                     result_text = _text;
                 }
                 // 改行コードを削除する
-                result_text = result_text.Replace("\r", "").Replace("\n", "");
+                result_text = result_text.Replace("\n", "");
 
                 return result_text;
             }
@@ -58,6 +58,7 @@ namespace WpfAppCommon.Model {
                     Messages.Add($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {value}");
                 }
                 OnPropertyChanged(nameof(Text));
+
                 // _tokenSourceがnullの場合は初期化
                 if (_tokenSource != null) {
                     //すでに_tokenSourceが存在する場合はキャンセル
@@ -75,12 +76,12 @@ namespace WpfAppCommon.Model {
                 return;
             }
             CancellationToken token = (CancellationToken)obj;
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 25; i++) {
                 if (token.IsCancellationRequested) {
                     return;
                 }
-                // 100ms待機
-                Thread.Sleep(100);
+                // 200ms待機
+                Thread.Sleep(200);
             }
             if (token.IsCancellationRequested) {
                 return;

@@ -1,7 +1,7 @@
 using System.Windows;
 using LibUIPythonAI.Resource;
 using ClipboardApp.View.Main;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 using ClipboardApp.ViewModel.Main;
 
 namespace ClipboardApp

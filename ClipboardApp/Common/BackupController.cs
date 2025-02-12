@@ -1,5 +1,5 @@
 using System.IO;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 
 namespace ClipboardApp.Common {
     class BackupController {

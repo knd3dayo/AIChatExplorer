@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using System.Windows.Controls;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
-using WpfAppCommon.Utils;
-using System.Windows.Controls;
-using ClipboardApp.ViewModel.Common;
 using LibUIPythonAI.Utils;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelTreeViewControlViewModel : ObservableObject{
+    public class MainPanelTreeViewControlViewModel : ObservableObject {
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
@@ -54,7 +54,14 @@ namespace ClipboardApp.ViewModel.Main {
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
             ClipboardItemViewModelCommands commands = new();
-            commands.ReloadFolderCommand(this);
+            commands.ReloadFolderCommandExecute(this.SelectedFolder,
+                () => {
+                    UpdateIndeterminateAction(true);
+                },
+                () => {
+                    UpdateIndeterminateAction(false);
+                }
+                );
         });
 
         // クリップボードアイテムを作成する。

@@ -7,16 +7,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
     public class MainPanelDataGridViewControlViewModel : ObservableObject {
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
-
 
         private ClipboardFolderViewModel? _selectedFolder;
         public ClipboardFolderViewModel? SelectedFolder {
@@ -44,7 +40,6 @@ namespace ClipboardApp.ViewModel.Main {
                 OnPropertyChanged(nameof(SelectedItems));
             }
         }
-
         public ContentItemViewModel? SelectedItem {
             get {
                 // SelectedItemsの最後のアイテムを返す
@@ -54,9 +49,6 @@ namespace ClipboardApp.ViewModel.Main {
                 return null;
             }
         }
-
-
-
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
@@ -106,171 +98,38 @@ namespace ClipboardApp.ViewModel.Main {
             Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
         });
 
-        // タイトルを生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<object> GenerateTitleCommand => new((parameter) => {
-            Commands.GenerateTitleCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
-        });
-
-        // 背景情報を生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
-            Commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
-        });
-
-        // サマリーを生成する処理　複数アイテム処理可
-        public SimpleDelegateCommand<object> GenerateSummaryCommand => new((parameter) => {
-            Commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
-        });
-
-        // 課題リストを生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<object> GenerateTasksCommand => new((parameter) => {
-            Commands.GenerateTasksCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
-        });
-        // 文書の信頼度を判定する処理 複数アイテム処理可
-        public SimpleDelegateCommand<object> CheckDocumentReliabilityCommand => new((parameter) => {
-            Commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
-        });
-
-
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
-            Commands.GenerateVectorCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            });
+            Commands.GenerateVectorCommand.Execute(this.SelectedItems);
         });
 
-
-        // プロンプトテンプレートを実行
-        public SimpleDelegateCommand<Tuple<ClipboardItemViewModel, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
-            ClipboardItemViewModel itemViewModel = tuple.Item1;
-            PromptItem promptItem = tuple.Item2;
-            List<ContentItem> contentItems = SelectedItems.Select(x => x.ContentItem).ToList();
-            Commands.ExecutePromptTemplateCommand(contentItems, () => {
-                // フォルダ内のアイテムを再読み込み
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-            }, promptItem);
-        });
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
             Commands.VectorSearchCommand.Execute(SelectedItem);
         });
 
-
         #endregion
 
         #region クリップボードアイテムのInputBinding用のコマンド
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                UpdateIndeterminateAction(true);
-            }
-            UpdateIndeterminateAction(true);
-            ContentItemViewModel.DeleteItems([.. SelectedFolder.Items]).ContinueWith((task) => {
-                // 全ての削除処理が終了した後、後続処理を実行
-                // フォルダ内のアイテムを再読み込む
-                MainUITask.Run(() => {
-                    var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                    foreach (var folder in folders) {
-                        folder.LoadFolderCommand.Execute();
-                    }
-                });
-                LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                UpdateIndeterminateAction(false);
-            });
-
+            SelectedFolder?.DeleteDisplayedItemCommand.Execute();
         });
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                UpdateIndeterminateAction(true);
-                ContentItemViewModel.DeleteItems([.. SelectedItems]).ContinueWith((task) => {
-                    // 全ての削除処理が終了した後、後続処理を実行
-                    // フォルダ内のアイテムを再読み込む
-                    MainUITask.Run(() => {
-                        var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
-                        foreach (var folder in folders) {
-                            folder.LoadFolderCommand.Execute();
-                        }
-                    });
-                    LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                    UpdateIndeterminateAction(false);
-                });
-            }
+            Commands.DeleteItemsCommand.Execute(this.SelectedItems);
         });
-
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            Commands.CutItemCommandExecute(this);
+            Commands.CutItemCommand.Execute(this.SelectedItems);
         });
+
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            Commands.CopyToClipboardCommandExecute(this);
+            Commands.CopyToClipboardCommandExecute(this.SelectedItems);
         });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可

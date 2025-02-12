@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Item;
@@ -25,8 +26,47 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // RootFolderのViewModelを取得する
         public abstract ContentFolderViewModel GetRootFolderViewModel();
 
+        public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder);
+
         // フォルダを読み込む
-        public abstract void LoadFolder(Action afterUpdate);
+        public abstract void LoadFolderExecute(Action beforeAction, Action afterAction);
+
+        // LoadChildren
+        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
+        // 0を指定すると、子フォルダの子フォルダは読み込まない
+        protected virtual void LoadChildren(int nestLevel = 5) {
+            // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
+            List<ContentFolderViewModel> _children = [];
+            foreach (var child in Folder.GetChildren<ContentFolder>()) {
+                if (child == null) {
+                    continue;
+                }
+                ContentFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                if (nestLevel > 0) {
+                    childViewModel.LoadChildren(nestLevel - 1);
+                }
+                _children.Add(childViewModel);
+            }
+            MainUITask.Run(() => {
+                Children = new ObservableCollection<ContentFolderViewModel>(_children);
+                OnPropertyChanged(nameof(Children));
+            });
+        }
+
+        // LoadItems
+        protected virtual void LoadItems() {
+            // ClipboardItemFolder.Itemsは別スレッドで実行
+            List<ContentItem> _items = Folder.GetItems<ContentItem>();
+            MainUITask.Run(() => {
+                Items.Clear();
+                foreach (ContentItem item in _items) {
+                    Items.Add(CreateItemViewModel(item));
+                }
+            });
+        }
+
+        public abstract SimpleDelegateCommand<object> LoadFolderCommand { get; }
 
 
         // フォルダー保存コマンド
@@ -54,12 +94,32 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 LogWrapper.Info(StringResources.FolderEdited);
             });
         });
+        public void DeleteDisplayedItemCommandExecute(Action beforeAction, Action afterAction) {
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                beforeAction();
+                ContentItemViewModel.DeleteItems([.. Items]).ContinueWith((task) => {
+                    // 全ての削除処理が終了した後、後続処理を実行
+                    // フォルダ内のアイテムを再読み込む
+                    afterAction();
+                });
+            }
+        }
+
 
         // GetItems
         public ObservableCollection<ContentItemViewModel> Items { get; } = [];
 
         // 子フォルダ
         public ObservableCollection<ContentFolderViewModel> Children { get; set; } = [];
+
+
+        public bool IsNameEditable {
+            get {
+                return Folder.IsRootFolder == false;
+            }
+        }
 
         public ContentFolderViewModel? ParentFolderViewModel { get; set; }
 
@@ -108,10 +168,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 return Folder.FolderPath;
             }
         }
-
-        public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            LoadFolder(() => { });
-        });
 
         public SimpleDelegateCommand<ContentFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 

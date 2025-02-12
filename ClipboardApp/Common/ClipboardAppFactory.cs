@@ -1,11 +1,11 @@
 
 
 namespace ClipboardApp.Factory {
-    public class ClipboardAppFactory : IClipboardFactory {
+    public class ClipboardAppFactory  {
 
-        private static IClipboardFactory? _instance;
+        private static ClipboardAppFactory? _instance;
         // Factory
-        public static IClipboardFactory Instance {
+        public static ClipboardAppFactory Instance {
             get {
                 if (_instance == null) {
                     _instance = new ClipboardAppFactory();
@@ -14,8 +14,8 @@ namespace ClipboardApp.Factory {
             }
         }
         // GetClipboardDBController
-        private IClipboardDBController? _clipboardDBController;
-        public IClipboardDBController GetClipboardDBController() {
+        private ClipboardDBController? _clipboardDBController;
+        public ClipboardDBController GetClipboardDBController() {
             if (_clipboardDBController == null) {
                 _clipboardDBController = new ClipboardDBController();
             }

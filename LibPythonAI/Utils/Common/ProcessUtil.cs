@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Media.Imaging;
 using LibGit2Sharp;
+using PythonAILib.Model.Content;
 
 namespace LibPythonAI.Utils.Common {
     public class ProcessUtil {
@@ -17,7 +18,7 @@ namespace LibPythonAI.Utils.Common {
         // Processとクローズ後の処理を保持するハッシュテーブル
         private static readonly Hashtable contentWriterProcessAfterCloseHashTable = [];
 
-        
+
         public static Process? StartBackgroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
                         DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
@@ -351,6 +352,29 @@ namespace LibPythonAI.Utils.Common {
             // プロセスリストにプロセスを追加
             processList.Add(process);
         }
-    }
 
+
+        public static void OpenClipboardItemContent(ContentItem item) {
+
+            ProcessUtil.OpenTempTextFile(item.Content, (process) => { },
+            (content) => {
+                // プロセス終了時にItemに開いた内容を保存
+                item.Content = content;
+                item.Save();
+            });
+
+        }
+
+        public static void OpenClipboardItemFile(ContentItem item, bool openAsNew = false) {
+            // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
+            if (string.IsNullOrEmpty(item.FilePath)) {
+                // BitmapImageがNullでない場合はファイルを開く
+                if (item.BitmapImage != null) {
+                    ProcessUtil.OpenBitmapImage(item.BitmapImage);
+                }
+            } else {
+                ProcessUtil.OpenFile(item.FilePath, openAsNew);
+            }
+        }
+    }
 }

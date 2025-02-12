@@ -32,7 +32,7 @@ namespace LibUIMergeChat.ViewModel {
                 } else {
                     _selectedFolder = value;
                     // Load
-                    _selectedFolder.LoadFolder(afterUpdate: () => {
+                    _selectedFolder.LoadFolderExecute(beforeAction: () => { } , afterAction: () => {
                         SelectFolderAction(_selectedFolder);
                     });
                 }

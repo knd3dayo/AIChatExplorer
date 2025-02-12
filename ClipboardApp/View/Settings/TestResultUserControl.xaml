@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ClipboardApp.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:ClipboardApp.View.Settings"
-    d:DataContext="{d:DesignInstance Type=local:TestResultUserControlViewModel}"
+    xmlns:viewmodel="clr-namespace:ClipboardApp.ViewModel.Settings"
+    d:DataContext="{d:DesignInstance Type=viewmodel:TestResultUserControlViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

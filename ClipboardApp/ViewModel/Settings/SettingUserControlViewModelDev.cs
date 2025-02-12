@@ -2,7 +2,7 @@ using System.Text;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
 
-namespace ClipboardApp.Settings {
+namespace ClipboardApp.ViewModel.Settings {
     public partial class SettingUserControlViewModel {
 
 

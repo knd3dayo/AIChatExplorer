@@ -5,10 +5,11 @@ using ClipboardApp.Common;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel.Common;
+using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -21,6 +22,7 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
+using PythonAILib.Model.Content;
 
 namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
@@ -253,9 +255,18 @@ namespace ClipboardApp.ViewModel.Main {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
+            // チャット履歴用のItemの設定
+            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            // チャット履歴用のItemの設定
+            ClipboardItem item = new(chatFolderViewModel.Folder.Id) {
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat"
+            };
+            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+
             ClipboardItemViewModelCommands commands = new();
 
-            commands.OpenOpenAIChatWindowCommand(null);
+            commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
 
         });
 
@@ -293,7 +304,7 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
             ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ClipboardItemViewModelCommands commands = new();
-            commands.OpenVectorSearchWindowCommand(folderViewModel.Folder);
+            commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視

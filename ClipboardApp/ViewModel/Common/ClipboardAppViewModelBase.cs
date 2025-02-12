@@ -1,5 +1,5 @@
 using System.Windows;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Control.Editor;
 using LibUIPythonAI.Utils;

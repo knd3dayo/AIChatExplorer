@@ -5,10 +5,11 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.Mail {
-    public class OutlookFolderViewModel(OutlookFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class OutlookFolderViewModel(ContentFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;
 
@@ -21,7 +22,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override OutlookFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override OutlookFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
             if (childFolder is not OutlookFolder) {
                 throw new Exception("childFolder is not OutlookFolder");
             }

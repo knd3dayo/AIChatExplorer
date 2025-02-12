@@ -4,6 +4,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Model.Content;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
     public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder) : FileSystemFolderViewModel(clipboardItemFolder) {
@@ -19,7 +20,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ShortCutFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override ShortCutFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new Exception("childFolder is not FileSystemFolder");
             }

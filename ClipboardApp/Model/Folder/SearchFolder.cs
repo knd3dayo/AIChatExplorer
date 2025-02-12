@@ -57,7 +57,7 @@ namespace ClipboardApp.Model.Folder {
             List<ContentItem> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // フォルダに検索条件が設定されている場合
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {

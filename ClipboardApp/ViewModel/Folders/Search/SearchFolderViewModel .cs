@@ -1,18 +1,16 @@
-using System.Collections.ObjectModel;
+using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.ViewModel.Main;
-using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using PythonAILib.Model.Search;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
-using ClipboardApp.Common;
+using PythonAILib.Model.Content;
+using PythonAILib.Model.Search;
 
 namespace ClipboardApp.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class SearchFolderViewModel(ContentFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
             var searchFolderViewModel = new SearchFolderViewModel(childFolder);
             // 検索フォルダの親フォルダにこのフォルダを追加
             searchFolderViewModel.ParentFolderViewModel = this;

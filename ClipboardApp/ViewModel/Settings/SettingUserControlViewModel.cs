@@ -1,18 +1,18 @@
 using System.Text;
 using System.Windows;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.ViewModel;
+using ClipboardApp.Settings;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Python;
-using LibUIPythonAI.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using LibUIPythonAI.Utils;
 
-namespace ClipboardApp.Settings {
+namespace ClipboardApp.ViewModel.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>

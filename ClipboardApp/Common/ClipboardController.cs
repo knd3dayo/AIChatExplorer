@@ -1,6 +1,6 @@
 using System.Reflection;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Settings;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using LibUIPythonAI.Resource;

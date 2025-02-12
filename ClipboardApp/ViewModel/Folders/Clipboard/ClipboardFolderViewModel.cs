@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
@@ -6,6 +7,7 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
@@ -17,7 +19,7 @@ using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
+    public class ClipboardFolderViewModel(ContentFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
         public override ClipboardItemViewModel CreateItemViewModel(ContentItem item) {
             return new ClipboardItemViewModel(this, item);
         }
@@ -29,7 +31,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public virtual ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
             var childFolderViewModel = new ClipboardFolderViewModel(childFolder) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
@@ -45,12 +47,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             }
         }
 
-        public bool IsNameEditable {
-            get {
-                return Folder.IsRootFolder == false;
-            }
-        }
-
         // フォルダ作成コマンドの実装
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
@@ -59,6 +55,16 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
+        }
+
+        public override void LoadFolderExecute(Action beforeAction, Action afterAction) {
+            beforeAction();
+            Task.Run(() => {
+                LoadChildren(DefaultNextLevel);
+                LoadItems();
+            }).ContinueWith((task) => {
+                afterAction();
+            });
         }
 
         /// <summary>
@@ -127,55 +133,39 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // -----------------------------------------------------------------------------------
         #region プログレスインジケーター表示の処理
 
-        // LoadChildren
-        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
-        // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected virtual void LoadChildren(int nestLevel = 5) {
-            // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-            List<ContentFolderViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
-                if (child == null) {
-                    continue;
-                }
-                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                if (nestLevel > 0) {
-                    childViewModel.LoadChildren(nestLevel - 1);
-                }
-                _children.Add(childViewModel);
-            }
-            MainUITask.Run(() => {
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
-                OnPropertyChanged(nameof(Children));
-            });
-        }
-        // LoadItems
-        protected virtual void LoadItems() {
-            // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ClipboardItem> _items = Folder.GetItems<ClipboardItem>();
-            MainUITask.Run(() => {
-                Items.Clear();
-                foreach (ContentItem item in _items) {
-                    Items.Add(CreateItemViewModel(item));
-                }
-            });
-        }
 
         #endregion
 
-        public override void LoadFolder(Action afterUpdate) {
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            Task.Run(() => {
-                LoadChildren(DefaultNextLevel);
-                LoadItems();
-            }).ContinueWith((task) => {
-                afterUpdate?.Invoke();
-                MainUITask.Run(() => {
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                    UpdateStatusText();
+
+        public override SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+            LoadFolderExecute(
+                () => {
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                        UpdateStatusText();
+                    });
                 });
+        });
+
+
+        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
+            DeleteDisplayedItemCommandExecute(() => {
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+            }, () => {
+                // 全ての削除処理が終了した後、後続処理を実行
+                // フォルダ内のアイテムを再読み込む
+                MainUITask.Run(() => {
+                    LoadFolderCommand.Execute();
+                });
+                LogWrapper.Info(CommonStringResources.Instance.Deleted);
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
             });
-        }
+        });
+
 
         // ExtractTextCommand
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
@@ -190,5 +180,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             commands.ExtractTextCommand.Execute();
 
         });
+
+
+        //
     }
 }

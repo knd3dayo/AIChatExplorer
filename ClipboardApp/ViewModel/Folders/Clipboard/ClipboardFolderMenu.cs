@@ -17,57 +17,97 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
                 // 新規作成
-                MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
-                    Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createMenuItem);
+                menuItems.Add(CreateMenuItem);
 
                 // 編集
-                MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
-                    Command = ClipboardFolderViewModel.EditFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(editMenuItem);
+                menuItems.Add(EditMenuItem);
 
                 // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
-                menuItems.Add(deleteMenuItem);
+                menuItems.Add(DeleteMenuItem);
 
                 //テキストの抽出
-                MenuItem extractTextMenuItem = new() {
-                    Header = StringResources.ExtractText,
-                    Command = ClipboardFolderViewModel.ExtractTextCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(extractTextMenuItem);
+                menuItems.Add(ExtractTextMenuItem);
 
                 // ベクトルのリフレッシュ
-                MenuItem refreshMenuItem = new() {
-                    Header = StringResources.RefreshVectorDB,
-                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(refreshMenuItem);
+                menuItems.Add(RefreshMenuItem);
 
                 // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(exportImportMenuItem);
+                menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
 
                 #endregion
             }
         }
+
+        // 新規作成
+        public MenuItem CreateMenuItem {
+            get {
+                MenuItem createMenuItem = new() {
+                    Header = StringResources.Create,
+                    Command = ClipboardFolderViewModel.CreateFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return createMenuItem;
+            }
+        }
+        // 編集
+        public MenuItem EditMenuItem {
+            get {
+                MenuItem editMenuItem = new() {
+                    Header = StringResources.Edit,
+                    Command = ClipboardFolderViewModel.EditFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return editMenuItem;
+            }
+        }
+        // 削除
+        public MenuItem DeleteMenuItem {
+            get {
+                MenuItem deleteMenuItem = new();
+                deleteMenuItem.Header = StringResources.Delete;
+                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
+                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
+                return deleteMenuItem;
+            }
+        }
+
+        //テキストの抽出
+        public MenuItem ExtractTextMenuItem {
+            get {
+                MenuItem extractTextMenuItem = new() {
+                    Header = StringResources.ExtractText,
+                    Command = ClipboardFolderViewModel.ExtractTextCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return extractTextMenuItem;
+            }
+        }
+        // ベクトルのリフレッシュ
+        public MenuItem RefreshMenuItem {
+            get {
+                MenuItem refreshMenuItem = new() {
+                    Header = StringResources.RefreshVectorDB,
+                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return refreshMenuItem;
+            }
+        }
+
+        // エクスポート/インポート
+        public MenuItem ExportImportMenuItem {
+            get {
+                MenuItem exportImportMenuItem = new() {
+                    Header = StringResources.ExportImport,
+                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return exportImportMenuItem;
+            }
+        }
+
     }
 }

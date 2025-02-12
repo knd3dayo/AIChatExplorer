@@ -8,6 +8,7 @@ using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
+using LibPythonAI.Utils.Common;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
@@ -34,7 +35,55 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
-        public override SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+
+        // フォルダを開くコマンド
+        public SimpleDelegateCommand<ContentItemViewModel> OpenFolderCommand => new((itemViewModel) => {
+            OpenFolderExecute(itemViewModel);
+        });
+
+        // テキストをファイルとして開くコマンド
+        public SimpleDelegateCommand<ContentItemViewModel> OpenContentAsFileCommand => new((itemViewModel) => {
+            OpenFolderExecute(itemViewModel);
+        });
+
+        // ファイルを開くコマンド
+        public SimpleDelegateCommand<ContentItemViewModel> OpenFileCommand => new((itemViewModel) => {
+            OpenFolderExecute(itemViewModel);
+        });
+
+        // ファイルを新規ファイルとして開くコマンド
+        public SimpleDelegateCommand<ContentItemViewModel> OpenFileAsNewFileCommand => new((itemViewModel) => {
+            OpenFileAsNewFileExecute(itemViewModel);
+        });
+
+
+        // アイテム保存
+        public SimpleDelegateCommand<ContentItemViewModel> SaveClipboardItemCommand => new((itemViewModel) => {
+            itemViewModel.ContentItem.Save();
+        });
+
+
+        // OpenContentItemCommand
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+            OpenItemCommandExecute(itemViewModel);
+        });
+
+        public SimpleDelegateCommand<ContentItemViewModel> OpenOpenAIChatWindowCommand => new((itemViewModel) => {
+
+            // QAChatControlのDrawerを開く
+            OpenOpenAIChatWindowCommandExecute(itemViewModel);
+        });
+
+        public SimpleDelegateCommand<ContentItemViewModel> OpenVectorSearchWindowCommand => new((itemViewModel) => {
+            OpenVectorSearchWindowCommandExecute(itemViewModel);
+        });
+        // OpenFolderVectorSearchWindowCommand
+        public SimpleDelegateCommand<ContentFolderViewModel> OpenFolderVectorSearchWindowCommand => new((folderViewModel) => {
+            OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+        });
+
+
+        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel) {
 
             ContentFolderViewModel folderViewModel = itemViewModel.FolderViewModel;
 
@@ -53,58 +102,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             });
 
             MainWindowViewModel.Instance.AddTabItem(container);
-        });
-
-
-        // ピン留めの切り替えコマンド (複数選択可能)
-        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
-            foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
-                if (item is ClipboardItemViewModel clipboardItemViewModel) {
-                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
-                    // ピン留めの時は更新日時を変更しない
-                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
-                }
-            }
-        });
-
-        // Command to start/stop clipboard monitoring
-        public static void StartStopClipboardMonitorCommand() {
-            MainWindowViewModel model = MainWindowViewModel.Instance;
-            model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
-            if (model.IsClipboardMonitoringActive) {
-                ClipboardController.Instance.Start(async (clipboardItem) => {
-                    // Process when a clipboard item is added
-                    // クリップボードフォルダのルートフォルダに追加
-                    await Task.Run(() => {
-                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
-                    });
-                    // クリップボードフォルダのルートフォルダを更新
-                    MainUITask.Run(() => {
-                        model.RootFolderViewModelContainer.RootFolderViewModel?.LoadFolderCommand.Execute();
-                    });
-                });
-                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
-            } else {
-                ClipboardController.Instance.Stop();
-                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
-            }
-            // Notification
-            model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
-            // Change button text
-            model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
         }
 
-        // Command to open OpenAI Chat
-        public override void OpenOpenAIChatWindowCommand(ContentItem? item) {
-            if (item == null) {
-                // チャット履歴用のItemの設定
-                ClipboardFolder chatFolder = (ClipboardFolder)MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                item = new(chatFolder.Id);
-                // タイトルを日付 + 元のタイトルにする
-                item.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
 
-            }
-            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(item);
+        // Command to open OpenAI Chat
+        public override void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
+
+            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
@@ -174,11 +178,14 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             LogWrapper.Info(CommonStringResources.Instance.Cut);
         }
 
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CutItemCommand => new((itemViewModels) => {
+            CutItemCommandExecute(itemViewModels);
+        });
+
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
-        public void CutItemCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ContentItemViewModel> SelectedItems = model.SelectedItems;
+        public void CutItemCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
             // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
+            if (itemViewModels.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
@@ -186,36 +193,33 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             ClipboardController.Instance.CutFlag = ClipboardController.CutFlagEnum.Item;
             // Set the selected items to CopiedItems
             ClipboardController.Instance.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
+            foreach (ClipboardItemViewModel item in itemViewModels) {
                 ClipboardController.Instance.CopiedObjects.Add(item);
             }
             LogWrapper.Info(CommonStringResources.Instance.Cut);
         }
 
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CopyItemCommand => new((itemViewModels) => {
+            CopyToClipboardCommandExecute(itemViewModels);
+        });
+
         // Process when Ctrl + C is pressed
-        public void CopyToClipboardCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ContentItemViewModel> SelectedItems = model.SelectedItems;
-            ContentItemViewModel? SelectedItem = model.SelectedItem;
-            ClipboardFolderViewModel? SelectedFolder = model.SelectedFolder;
+        public void CopyToClipboardCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
+
             // Do not process if no items are selected
-            if (SelectedItem == null || SelectedItems.Count == 0) {
+            if (itemViewModels.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // Do not process if no folder is selected
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             // Reset Cut flag
             ClipboardController.Instance.CutFlag = ClipboardController.CutFlagEnum.None;
             // Set the selected items to CopiedItems
             ClipboardController.Instance.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
+            foreach (ClipboardItemViewModel item in itemViewModels) {
                 ClipboardController.Instance.CopiedObjects.Add(item);
             }
             try {
-                ClipboardController.Instance.SetDataObject(SelectedItem.ContentItem);
+                ClipboardController.Instance.SetDataObject(itemViewModels.Last().ContentItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
             } catch (Exception e) {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
@@ -223,88 +227,66 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             }
         }
 
-        // Command to open a folder
-        public override void OpenFolder(ContentItem contentItem) {
-            // Open the folder only if the ContentType is File
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
-                LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
-                return;
+
+        // ピン留めの切り替えコマンド (複数選択可能)
+        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
+            foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
+                if (item is ClipboardItemViewModel clipboardItemViewModel) {
+                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
+                    // ピン留めの時は更新日時を変更しない
+                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
+                }
             }
-            string message = $"{CommonStringResources.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
-            LogWrapper.Info(message);
+        });
 
-            // Open the folder with Process.Start
-            string? folderPath = contentItem.FolderName;
-            if (folderPath != null) {
-                var p = new Process {
-                    StartInfo = new ProcessStartInfo(folderPath) {
-                        UseShellExecute = true
-                    }
-                };
-                p.Start();
-            }
-            message = $"{CommonStringResources.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
-            LogWrapper.Info(message);
-
-        }
-
-        // Command to open a file
-        public override void OpenFile(ContentItem contentItem) {
-            // Open the selected item
-            ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
-        }
-
-        // Command to open a file as a new file
-        public override void OpenFileAsNewFile(ContentItem contentItem) {
-            // Open the selected item
-            ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
-        }
-
-        // Command to perform vector search
-        public void OpenVectorSearchWindowCommand(ContentFolder folder) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
+        // Command to start/stop clipboard monitoring
+        public static void StartStopClipboardMonitorCommand() {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
+            if (model.IsClipboardMonitoringActive) {
+                ClipboardController.Instance.Start(async (clipboardItem) => {
+                    // Process when a clipboard item is added
+                    // クリップボードフォルダのルートフォルダに追加
+                    await Task.Run(() => {
+                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
+                    });
+                    // クリップボードフォルダのルートフォルダを更新
+                    MainUITask.Run(() => {
+                        model.RootFolderViewModelContainer.RootFolderViewModel?.LoadFolderCommand.Execute();
+                    });
                 });
-            };
-            vectorSearchWindowViewModel.VectorSearchProperty = folder.GetMainVectorSearchProperty();
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-        // Command to perform vector search
-        public void OpenVectorSearchWindowCommand(ContentItem contentItem) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
-                });
-            };
-            vectorSearchWindowViewModel.VectorSearchProperty = contentItem.GetMainVectorSearchProperty();
-            vectorSearchWindowViewModel.InputText = contentItem.Content;
-            // Execute vector search
-            vectorSearchWindowViewModel.SendCommand.Execute(null);
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-        // Command to open text content as a file
-        public override void OpenContentAsFile(ContentItem contentItem) {
-            try {
-                // Open the selected item
-                ClipboardProcessController.OpenClipboardItemContent(contentItem);
-            } catch (Exception e) {
-                LogWrapper.Error(e.Message);
+                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
+            } else {
+                ClipboardController.Instance.Stop();
+                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
         }
-
 
 
         // -----------------------------------------------------------------------------------
         #region プログレスインジケーター表示の処理
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> DeleteItemsCommand => new((itemViewModels) => {
+            DeleteItemsCommandExecute(itemViewModels,
+                () => {
+                    // プログレスインジケータを表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                },
+                () => {
+                    // 全ての削除処理が終了した後、後続処理を実行
+                    // フォルダ内のアイテムを再読み込む
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                    });
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                });
+        });
 
 
         // Process when Ctrl + V is pressed
@@ -349,192 +331,118 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             }
         }
 
+        // ベクトルを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new((itemViewModels) => {
+            GenerateVectorCommandExecute(itemViewModels,
+                () => {
+                    // Display ProgressIndicator
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                },
+                () => {
 
-        // Command to reload the folder
-        public void ReloadFolderCommand(MainPanelTreeViewControlViewModel model) {
-            if (model.SelectedFolder == null) {
-                return;
-            }
-            Task.Run(() => {
-                // Display ProgressIndicator until processing is complete
-                try {
-                    model.UpdateIndeterminateAction(true);
-                    model.SelectedFolder.LoadFolderCommand.Execute();
-                    LogWrapper.Info(CommonStringResources.Instance.Reloaded);
-                } finally {
-                    model.UpdateIndeterminateAction(false);
-                }
-            });
-        }
-
-
-
-        // Command to generate vectors
-        public void GenerateVectorCommand(List<ContentItem> items, object afterExecuteAction) {
-
-            // Display ProgressIndicator
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            Task.Run(() => {
-                ContentItemCommands.UpdateEmbeddings(items);
-                // Save
-                foreach (var item in items) {
-                    item.Save(false);
-                }
-                // Execute if obj is an Action
-                if (afterExecuteAction is Action action) {
-                    action();
-                }
-
-                LogWrapper.Info(CommonStringResources.Instance.GenerateVectorCompleted);
-                // Hide ProgressIndicator
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                StatusText.Instance.UpdateInProgress(false);
-            });
-        }
+                    // Hide ProgressIndicator
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                    StatusText.Instance.UpdateInProgress(false);
+                    // フォルダ内のアイテムを再読み込み
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                    });
+                });
+        });
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
         // 処理中はプログレスインジケータを表示
-        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
 
-            List<Task> taskList = [];
-            // プログレスインジケータを表示
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            int count = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems.Count;
-            if (count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            Task.Run(() => {
-                object lockObject = new();
-                int start_count = 0;
-                var items = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems.ToList();
-                ParallelOptions parallelOptions = new() {
-                    // 20並列
-                    MaxDegreeOfParallelism = 20
-                };
-                Parallel.For(0, count, parallelOptions, (i) => {
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
-                    StatusText.Instance.UpdateInProgress(true, message);
-                    var itemViewModel = items[index];
-
-                    ContentItem item = itemViewModel.ContentItem;
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                        LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                        return;
-                    }
-                    ContentItemCommands.ExtractTextCommandExecute(item);
-                    // Save the item
-                    item.Save(false);
-                });
+            ExtractTextCommandExecute(MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems, () => {
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+            }, () => {
                 LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
                 MainWindowViewModel.Instance.UpdateIndeterminate(false);
                 StatusText.Instance.UpdateInProgress(false);
             });
         });
 
-
-        // Command to execute a prompt template (複数選択可能)
-        public void ExecutePromptTemplateCommand(List<ContentItem> contentItems, object afterExecuteAction, PromptItem promptItem) {
-            List<Task> taskList = [];
-
-            // promptNameからDescriptionを取得
-            string description = promptItem.Description;
-
-            LogWrapper.Info(CommonStringResources.Instance.PromptTemplateExecute(description));
-            // プログレスインジケータを表示
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            int count = contentItems.Count;
-            Task.Run(() => {
-                object lockObject = new();
-                int start_count = 0;
-                var items = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems.ToList();
-                ParallelOptions parallelOptions = new() {
-                    // 20並列
-                    MaxDegreeOfParallelism = 20
-                };
-                Parallel.For(0, count, parallelOptions, (i) => {
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
-                    StatusText.Instance.UpdateInProgress(true, message);
-                    ContentItem item = contentItems[index];
-
-                    ContentItemCommands.CreateChatResult(item, promptItem.Name);
-                    // Save
-                    item.Save(false);
+        // プロンプトテンプレートを実行
+        public SimpleDelegateCommand<Tuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
+            ObservableCollection<ContentItemViewModel> itemViewModels = tuple.Item1;
+            PromptItem promptItem = tuple.Item2;
+            ExecutePromptTemplateCommandExecute(itemViewModels, promptItem,
+                () => {
+                    // プログレスインジケータを表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                },
+                () => {
+                    // フォルダ内のアイテムを再読み込み
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                        // プログレスインジケータを非表示
+                        MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                        StatusText.Instance.UpdateInProgress(false);
+                    });
                 });
-                // Execute if obj is an Action
-                if (afterExecuteAction is Action action) {
-                    action();
-                }
-                LogWrapper.Info(CommonStringResources.Instance.PromptTemplateExecuted(description));
-                // プログレスインジケータを非表示
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                StatusText.Instance.UpdateInProgress(false);
-            });
+        });
 
-        }
-
-        // Command to generate titles
-        public void GenerateTitleCommand(List<ContentItem> items, object afterExecuteAction) {
+        // タイトルを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTitleCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.TitleGeneration.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
                 return;
             }
-            ExecutePromptTemplateCommand(items, afterExecuteAction, promptItem);
-        }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
 
-        // Command to generate background information
-        public void GenerateBackgroundInfoCommand(List<ContentItem> items, object afterExecuteAction) {
+        // 背景情報を生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateBackgroundInfoCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
                 return;
             }
-            ExecutePromptTemplateCommand(items, afterExecuteAction, promptItem);
-        }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
 
-
-        // Command to generate a summary
-        public void GenerateSummaryCommand(List<ContentItem> items, object afterExecuteAction) {
+        // サマリーを生成する処理　複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateSummaryCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.SummaryGeneration.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
                 return;
             }
-            ExecutePromptTemplateCommand(items, afterExecuteAction, promptItem);
-        }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
 
-        // Command to generate a task list
-        public void GenerateTasksCommand(List<ContentItem> items, object afterExecuteAction) {
+        // 課題リストを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTasksCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
                 return;
             }
-            ExecutePromptTemplateCommand(items, afterExecuteAction, promptItem);
-        }
-        // Command to check the reliability of the document
-        public void CheckDocumentReliabilityCommand(List<ContentItem> items, object afterExecuteAction) {
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+        // 文書の信頼度を判定する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CheckDocumentReliabilityCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
                 return;
             }
-            ExecutePromptTemplateCommand(items, afterExecuteAction, promptItem);
-        }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
 
         #endregion
         // -----------------------------------------------------------------------------------
@@ -591,14 +499,11 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             return props;
         }
         // QAChatButtonCommand
-        public SimpleDelegateCommand<ContentItemViewModel> QAChatButtonCommand => new((itemViewModel) => {
-            // QAChatControlのDrawerを開く
-            OpenOpenAIChatWindowCommand(itemViewModel.ContentItem);
-        });
+
 
         // ベクトル検索を実行するコマンド
         public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
-            OpenVectorSearchWindowCommand(itemViewModel.ContentItem);
+            OpenVectorSearchWindowCommandExecute(itemViewModel);
         });
     }
 }
