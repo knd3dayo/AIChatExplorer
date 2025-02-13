@@ -86,11 +86,6 @@ namespace PythonAILib.Model.Content {
             return folders.Cast<T>().ToList();
         }
 
-        // 親フォルダ
-        public virtual ContentFolder? GetParent() {
-            return GetParent<ContentFolder>();
-        }
-
         protected virtual T? GetParent<T>() where T : ContentFolder {
             if (ParentId == ObjectId.Empty) {
                 return null;
@@ -99,6 +94,29 @@ namespace PythonAILib.Model.Content {
             return collection.FindById(ParentId);
         }
 
+        // 保存
+        protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+
+            // ベクトルDBのコレクションを更新
+            UpdateVectorDBCollection();
+
+            IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
+            dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
+            // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
+            foreach (var item in GetItems<T2>()) {
+                item.IsReferenceVectorDBItemsSynced = false;
+                item.Save(false);
+            }
+        }
+        protected virtual void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+            DeleteFolder<T1, T2>((T1)this);
+        }
+
+        public virtual List<T> GetItems<T>() where T : ContentItem {
+            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
+            var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
+            return items.Cast<T>().ToList();
+        }
 
         // フォルダを削除
         protected virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
@@ -113,13 +131,17 @@ namespace PythonAILib.Model.Content {
             foreach (var item in items) {
                 item.Delete();
             }
-            
+
             // ベクトルを全削除
             folder.DeleteVectorDBCollection();
             // folderを削除
             var folderCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T1>();
             folderCollection.Delete(folder.Id);
+        }
 
+        // 親フォルダ
+        public virtual ContentFolder? GetParent() {
+            return GetParent<ContentFolder>();
         }
 
         // フォルダを移動する
@@ -138,36 +160,19 @@ namespace PythonAILib.Model.Content {
             Save<ContentFolder, ContentItem>();
         }
 
-        // 保存
-        protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
-
-            // ベクトルDBのコレクションを更新
-            UpdateVectorDBCollection();
-
-            IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
-            dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
-            // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
-            foreach (var item in GetItems<T2>()) {
-                item.IsReferenceVectorDBItemsSynced = false;
-                item.Save(false);
-            }
-        }
         // 削除
         public virtual void Delete() {
             Delete<ContentFolder, ContentItem>();
-
         }
 
-        protected virtual void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
-            DeleteFolder<T1, T2>((T1)this);
+        public virtual ContentFolder CreateChild(string folderName) {
+            ContentFolder folder = new() {
+                ParentId = Id,
+                FolderName = folderName,
+                FolderType = this.FolderType
+            };
+            return folder;
         }
-
-        public virtual List<T> GetItems<T>() where T : ContentItem {
-            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
-            var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
-            return items.Cast<T>().ToList();
-        }
-
 
 
         #region ベクトル検索
@@ -226,14 +231,8 @@ namespace PythonAILib.Model.Content {
         }
 
         #endregion
-        public virtual ContentFolder CreateChild(string folderName) {
-            ContentFolder folder = new() {
-                ParentId = Id,
-                FolderName = folderName,
-                FolderType = this.FolderType
-            };
-            return folder;
-        }
+
+
 
         public virtual void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null ) {
             // CollectionNameを設定

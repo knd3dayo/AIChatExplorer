@@ -24,20 +24,17 @@ namespace ClipboardApp.Model.Folder {
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardFolder() {
-            ContentFolder.IsAutoProcessEnabled = true;
+            IsAutoProcessEnabled = true;
         }
-
-        // ContentFolder
-        public ContentFolder ContentFolder {  get; set; } = new();
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
 
-            ContentFolder.ParentId = parent?.Id ?? ObjectId.Empty;
-            ContentFolder.FolderName = folderName;
+            ParentId = parent?.Id ?? ObjectId.Empty;
+            FolderName = folderName;
             // 親フォルダがnullの場合は、FolderTypeをNormalに設定
-            ContentFolder. FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
+            FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
 
-            ContentFolder.IsAutoProcessEnabled = true;
+            IsAutoProcessEnabled = true;
 
         }
 
