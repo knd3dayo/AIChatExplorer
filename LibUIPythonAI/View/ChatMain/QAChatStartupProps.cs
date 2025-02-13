@@ -11,7 +11,7 @@ namespace LibUIPythonAI.ViewModel {
         }
         public ContentItem ContentItem { get; set; }
 
-        public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
+        public Action<ContentItem, bool> CloseCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatMessage>> ExportChatCommand { get; set; } = (chatHistory) => { };
 

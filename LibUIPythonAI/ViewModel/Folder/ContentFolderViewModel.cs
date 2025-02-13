@@ -193,7 +193,14 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 try {
                     // MainWindowViewModelのIsIndeterminateをTrueに設定
                     UpdateIndeterminate(true);
-                    Folder.RefreshVectorDBCollection<ContentItem>();
+                    Folder.GetMainVectorSearchProperty().RefreshVectorDBCollection(Folder.Description, () => {
+                        // フォルダ内のアイテムを取得して、ベクトルを作成
+                        foreach (var item in Folder.GetItems<ContentItem>()) {
+                            ContentItemCommands.UpdateEmbeddings([item]);
+                            // Save
+                            item.Save();
+                        }
+                    });
                 } finally {
                     UpdateIndeterminate(false);
                 }

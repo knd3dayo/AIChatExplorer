@@ -1,10 +1,7 @@
-using System.IO;
-using System.Net.Http;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 using PythonAILib.Model.VectorDB;
@@ -13,7 +10,51 @@ using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.Content {
-    public class ContentFolder {
+    public  class ContentFolder {
+
+        // 親フォルダ
+        public virtual void Save() {
+            Save<ContentFolder, ContentItem>();
+        }
+        // 削除
+        public virtual void Delete() {
+            Delete<ContentFolder, ContentItem>();
+        }
+
+        // 親フォルダ
+        public virtual ContentFolder? GetParent() {
+            return GetParent<ContentFolder>();
+        }
+
+        public virtual ContentFolder CreateChild(string folderName) {
+            ContentFolder child = new() {
+                FolderName = folderName,
+                ParentId = Id,
+                FolderType = FolderType,
+            };
+            return child;
+        }
+
+        public virtual List<T> GetChildren<T>() where T: ContentFolder{
+
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
+            IEnumerable<T> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            return folders.Cast<T>().ToList();
+        }
+
+        // アイテム LiteDBには保存しない。
+        [BsonIgnore]
+        public virtual List<T> GetItems<T>() where T : ContentItem {
+            List<T> _items = [];
+            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
+            var items = collection.Find(x => x.CollectionId == Id);
+            foreach (var item in items) {
+                _items.Add(item);
+            }
+            return _items.Cast<T>().ToList();
+
+        }
+
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
@@ -61,7 +102,7 @@ namespace PythonAILib.Model.Content {
                     return FolderName;
                 }
                 return $"{parentFolder.FolderPath}/{FolderName}";
-            }           
+            }
         }
         // ステータス用の文字列
         public virtual string GetStatusText() {
@@ -78,15 +119,8 @@ namespace PythonAILib.Model.Content {
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
             return collection.FindById(id);
         }
-        // 子フォルダ
-        public virtual List<T> GetChildren<T>() where T : ContentFolder {
-            // DBからParentIDが自分のIDのものを取得
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<T>().ToList();
-        }
 
-        protected virtual T? GetParent<T>() where T : ContentFolder {
+        protected T? GetParent<T>() where T : ContentFolder {
             if (ParentId == ObjectId.Empty) {
                 return null;
             }
@@ -95,10 +129,10 @@ namespace PythonAILib.Model.Content {
         }
 
         // 保存
-        protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+        protected void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
 
             // ベクトルDBのコレクションを更新
-            UpdateVectorDBCollection();
+            GetMainVectorSearchProperty().UpdateVectorDBCollection(Description);
 
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
@@ -108,18 +142,12 @@ namespace PythonAILib.Model.Content {
                 item.Save(false);
             }
         }
-        protected virtual void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+        protected void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
             DeleteFolder<T1, T2>((T1)this);
         }
 
-        public virtual List<T> GetItems<T>() where T : ContentItem {
-            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
-            var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
-            return items.Cast<T>().ToList();
-        }
-
         // フォルダを削除
-        protected virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
+        protected void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
             // folderの子フォルダを再帰的に削除
             foreach (var child in folder.GetChildren<T1>()) {
                 if (child != null) {
@@ -133,47 +161,23 @@ namespace PythonAILib.Model.Content {
             }
 
             // ベクトルを全削除
-            folder.DeleteVectorDBCollection();
+            folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
             // folderを削除
             var folderCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T1>();
             folderCollection.Delete(folder.Id);
         }
 
-        // 親フォルダ
-        public virtual ContentFolder? GetParent() {
-            return GetParent<ContentFolder>();
-        }
-
         // フォルダを移動する
-        public virtual void MoveTo(ContentFolder toFolder) {
+        public void MoveTo(ContentFolder toFolder) {
             // 自分自身を移動
             ParentId = toFolder.Id;
             Save();
         }
         // 名前を変更
-        public virtual void Rename(string newName) {
+        public void Rename(string newName) {
             FolderName = newName;
             Save();
         }
-
-        public virtual void Save() {
-            Save<ContentFolder, ContentItem>();
-        }
-
-        // 削除
-        public virtual void Delete() {
-            Delete<ContentFolder, ContentItem>();
-        }
-
-        public virtual ContentFolder CreateChild(string folderName) {
-            ContentFolder folder = new() {
-                ParentId = Id,
-                FolderName = folderName,
-                FolderType = this.FolderType
-            };
-            return folder;
-        }
-
 
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除
@@ -190,51 +194,10 @@ namespace PythonAILib.Model.Content {
                 ReferenceVectorSearchProperties.Add(vectorDBItem);
             }
         }
-        // フォルダに設定されたVectorDBのコレクションを削除
-        public void DeleteVectorDBCollection() {
-            Task.Run(() => {
-
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-
-                ChatRequestContext chatRequestContext = new() {
-                    OpenAIProperties = openAIProperties,
-                    VectorDBProperties = [GetMainVectorSearchProperty()]
-                };
-                PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
-
-            });
-        }
-        // フォルダに設定されたVectorDBのコレクションをアップデート
-        public void UpdateVectorDBCollection() {
-            Task.Run(() => {
-                // カタログの更新
-                VectorDBProperty vectorSearchProperty = GetMainVectorSearchProperty();
-                vectorSearchProperty.UpdateCatalogDescription(Description);
-            });
-        }
-
-        // フォルダに設定されたVectorDBのインデックスを更新
-        public void RefreshVectorDBCollection<T>() where T : ContentItem {
-            // ベクトルを全削除
-            DeleteVectorDBCollection();
-            // コレクション/カタログの更新
-            UpdateVectorDBCollection();
-
-            // ベクトルを再作成
-            // フォルダ内のアイテムを取得して、ベクトルを作成
-            foreach (var item in GetItems<T>()) {
-                ContentItemCommands.UpdateEmbeddings([item]);
-                // Save
-                item.Save();
-            }
-        }
 
         #endregion
 
-
-
-        public virtual void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null ) {
+        public virtual void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
             // CollectionNameを設定
             item.CollectionId = Id;
             if (applyGlobalAutoAction) {
@@ -256,8 +219,8 @@ namespace PythonAILib.Model.Content {
                 // 通知
                 LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
             }
-
         }
+
         #region 検索
         // ClipboardItemを検索する。
         public IEnumerable<ContentItem> SearchItems(SearchCondition searchCondition) {
@@ -342,143 +305,7 @@ namespace PythonAILib.Model.Content {
 
             return results;
         }
+
         #endregion
-        // --- Export/Import
-        public void ExportToExcel(string fileName, List<ExportImportItem> items) {
-            // PythonNetの処理を呼び出す。
-            List<List<string>> data = [];
-            // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in GetItems<ContentItem>()) {
-                List<string> row = [];
-                bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
-                if (exportTitle) {
-                    row.Add(clipboardItem.Description);
-                }
-                bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
-                if (exportText) {
-                    row.Add(clipboardItem.Content);
-                }
-                // SourcePath
-                bool exportSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
-                if (exportSourcePath) {
-                    row.Add(clipboardItem.SourcePath);
-                }
-
-                // PromptItemのリスト要素毎に処理を行う
-                foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
-                    if (promptItem.IsChecked) {
-                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
-                        row.Add(promptResult);
-                    }
-                }
-
-                data.Add(row);
-            }
-            CommonDataTable dataTable = new(data);
-
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
-
-        }
-
-        public virtual void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
-
-            // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
-            if (data == null) {
-                return;
-            }
-            List<string> targetNames = [];
-
-            bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
-            if (importTitle) {
-                targetNames.Add("Title");
-            }
-            bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
-            if (importText) {
-                targetNames.Add("Text");
-            }
-            // SourcePath
-            bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
-            if (importSourcePath) {
-                targetNames.Add("SourcePath");
-            }
-
-            foreach (var row in data.Rows) {
-                if (row.Count == 0) {
-                    continue;
-                }
-
-                ContentItem item = new(Id);
-                // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
-                int titleIndex = targetNames.IndexOf("Title");
-                if (titleIndex != -1) {
-                    item.Description = row[titleIndex].Replace("_x000D_", "").Replace("\n", " ");
-                }
-                // TextのIndexが-1以外の場合は、row[TextのIndex]をContentに設定。Row.Countが足りない場合は空文字を設定
-                int textIndex = targetNames.IndexOf("Text");
-                if (textIndex != -1) {
-                    item.Content = row[textIndex].Replace("_x000D_", "");
-                }
-                // SourcePathのIndexが-1以外の場合は、row[SourcePathのIndex]をSourcePathに設定。Row.Countが足りない場合は空文字を設定
-                int sourcePathIndex = targetNames.IndexOf("SourcePath");
-                if (sourcePathIndex != -1) {
-                    item.SourcePath = row[sourcePathIndex];
-                }
-                item.Save();
-            }
-        }
-
-        public virtual void ImportFromURLList(string filePath, bool executeAutoProcess) {
-
-            // filePathのファイルが存在しない場合は何もしない
-            if (System.IO.File.Exists(filePath) == false) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.FileNotFound);
-                return;
-            }
-            // ファイルからすべての行を読み込んでリストに格納します
-            List<string> lines = new List<string>(System.IO.File.ReadAllLines(filePath));
-            Task[] tasks = [];
-
-            foreach (var line in lines) {
-                // URLを取得
-                string url = line;
-                // URLからデータを取得して一時ファイルに保存
-                // Task.Runを使用して非同期操作を開始します
-                Task task = Task.Run(async () => {
-                    string tempFilePath = Path.GetTempFileName();
-                    try {
-                        string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
-                        // 一時ファイルのパスを取得します
-
-                        // データを一時ファイルに書き込みます
-                        await System.IO.File.WriteAllTextAsync(tempFilePath, data);
-                        // 成功メッセージを表示します
-                        Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
-                        // 一時ファイルからテキスト抽出
-                        string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
-
-                        // アイテムの作成
-                        ContentItem item = new(Id) {
-                            Content = text,
-                            Description = url,
-                            SourcePath = url
-                        };
-                        item.Save();
-
-                    } catch (Exception ex) {
-                        LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
-                    } finally {
-                        // 一時ファイルを削除します
-                        System.IO.File.Delete(tempFilePath);
-                    }
-                });
-                tasks.Append(task);
-            }
-            // すべてのタスクが完了するまで待機します
-            Task.WaitAll(tasks);
-
-        }
-        public virtual void ImportItemsFromJson(string json) { }
-
     }
 }

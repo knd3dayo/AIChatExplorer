@@ -994,7 +994,6 @@ namespace LibUIPythonAI.Resource {
         // 自動処理を適用しました
         public override string AutoProcessingApplied { get; } = "Auto Processing Applied";
         public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
-        public override string FailedToParseJSONString { get; } = "Failed to Parse JSON String";
         public override string CreationDateTime { get; } = "Creation Date Time";
         public override string SourceAppName { get; } = "Source App Name";
         public override string Pinned { get; } = "Pinned";

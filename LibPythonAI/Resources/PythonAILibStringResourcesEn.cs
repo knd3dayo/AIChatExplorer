@@ -345,6 +345,9 @@ namespace PythonAILib.Resources {
 
         public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
 
+        // JSON文字列をパースできませんでした
+        public override string FailedToParseJSONString { get; } = "Failed to parse JSON string";
+
         #region Statistics and Logging
 
         // Daily token count

@@ -36,7 +36,7 @@
     <UserControl.InputBindings>
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand, Mode=OneTime}"
+            Command="{Binding SaveAndCloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </UserControl.InputBindings>
     <Grid>
@@ -244,12 +244,7 @@
                         Content="{x:Static res:ViewStringResources.ReloadContent}" />
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding SaveCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{x:Static res:ViewStringResources.Save}" />
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding CloseCommand, Mode=OneTime}"
+                        Command="{Binding SaveAndCloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{x:Static res:ViewStringResources.Close}" />
                 </StackPanel>

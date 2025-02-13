@@ -1,14 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibUIPythonAI.ViewModel;
+using LibPythonAI.Utils.ExportImport;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.Folder;
 using WpfAppCommon.Utils;
-using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Folder {
     public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {
@@ -60,7 +61,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         // 選択したクリップボードフォルダのパス
         public string SelectedClipboardFolderPath {
-            get { 
+            get {
                 return ExportTargetFolder?.FolderPath ?? "";
             }
         }
@@ -82,18 +83,26 @@ namespace LibUIPythonAI.ViewModel.Folder {
             UpdateIndeterminate(true);
             // 選択されたインデックスによって処理を分岐
             Task.Run(() => {
+                // Excelインポート処理 ★TODO 自動処理の実装
+                Action<ContentItem> afterImport = (item) => { };
+                if (IsAutoProcessEnabled) {
+                    afterImport = (item) => {
+                        AutoProcessRuleController.ApplyGlobalAutoAction(item).Result.Save();
+                    };
+                }
+
                 switch (SelectedIndex) {
                     case 0:
                         // Excelエクスポート処理
-                        ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
+                        ImportExportUtil.ExportToExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
-                        // Excelインポート処理
-                        ClipboardFolderViewModel.Folder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
+                        // Excelインポート処理 ★TODO 自動処理の実装
+                        ImportExportUtil.ImportFromExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
                         break;
                     case 2:
                         // URLリストインポート処理
-                        ClipboardFolderViewModel.Folder.ImportFromURLList(SelectedFileName, IsAutoProcessEnabled);
+                        ImportExportUtil.ImportFromURLList(ClipboardFolderViewModel.Folder, SelectedFileName, afterImport);
                         break;
                     default:
                         break;

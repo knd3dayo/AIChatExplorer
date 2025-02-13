@@ -273,8 +273,8 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         });
 
 
-        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, true);
+        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
+            QAChatStartupPropsInstance.CloseCommand(QAChatStartupPropsInstance.ContentItem, true);
             window.Close();
         });
 

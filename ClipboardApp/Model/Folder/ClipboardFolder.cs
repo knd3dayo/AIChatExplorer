@@ -10,10 +10,7 @@ using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
-using PythonAILib.Model.Search;
-using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -50,6 +47,7 @@ namespace ClipboardApp.Model.Folder {
         public override ContentFolder? GetParent() {
             return GetParent<ClipboardFolder>();
         }
+
 
         public override List<ClipboardFolder> GetChildren<ClipboardFolder>() {
 
@@ -105,89 +103,8 @@ namespace ClipboardApp.Model.Folder {
 
 
         //exportしたJSONファイルをインポート
-        public override void ImportItemsFromJson(string json) {
-            JsonNode? node = JsonNode.Parse(json);
-            if (node == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
-                return;
-            }
-            JsonArray? jsonArray = node as JsonArray;
-            if (jsonArray == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
-                return;
-            }
-
-            foreach (JsonObject? jsonValue in jsonArray.Cast<JsonObject?>()) {
-                if (jsonValue == null) {
-                    continue;
-                }
-                string jsonString = jsonValue.ToString();
-                ClipboardItem? item = ClipboardItem.FromJson<ClipboardItem>(jsonString);
-
-                if (item == null) {
-                    continue;
-                }
-                item.CollectionId = Id;
-                //保存
-                item.Save();
-            }
-        }
-
-        public override void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
-
-            // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
-            if (data == null) {
-                return;
-            }
-            List<string> targetNames = [];
-
-            bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
-            if (importTitle) {
-                targetNames.Add("Title");
-            }
-            bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
-            if (importText) {
-                targetNames.Add("Text");
-            }
-            // SourcePath
-            bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
-            if (importSourcePath) {
-                targetNames.Add("SourcePath");
-            }
 
 
-            foreach (var row in data.Rows) {
-                if (row.Count == 0) {
-                    continue;
-                }
-
-                ContentItem item = new(Id);
-                // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
-                int titleIndex = targetNames.IndexOf("Title");
-                if (titleIndex != -1) {
-                    item.Description = row[titleIndex].Replace("_x000D_", "").Replace("\n", " ");
-                }
-                // TextのIndexが-1以外の場合は、row[TextのIndex]をContentに設定。Row.Countが足りない場合は空文字を設定
-                int textIndex = targetNames.IndexOf("Text");
-                if (textIndex != -1) {
-                    item.Content = row[textIndex].Replace("_x000D_", "");
-                }
-                // SourcePathのIndexが-1以外の場合は、row[SourcePathのIndex]をSourcePathに設定。Row.Countが足りない場合は空文字を設定
-                int sourcePathIndex = targetNames.IndexOf("SourcePath");
-                if (sourcePathIndex != -1) {
-                    item.SourcePath = row[sourcePathIndex];
-                }
-                item.Save();
-                if (executeAutoProcess) {
-                    // システム共通自動処理を適用s
-                    ClipboardController.ProcessClipboardItem(item, (processedItem) => {
-                        // 自動処理後のアイテムを保存
-                        item.Save();
-                    });
-                }
-            }
-        }
         #endregion
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理

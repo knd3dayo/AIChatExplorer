@@ -1000,9 +1000,6 @@ namespace LibUIPythonAI.Resource {
         // 自動処理でアイテムが削除されました
         public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
 
-        // JSON文字列をパースできませんでした
-        public virtual string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
-
 
         // 作成日時
         public virtual string CreationDateTime { get; } = "作成日時";

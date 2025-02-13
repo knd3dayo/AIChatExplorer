@@ -178,6 +178,40 @@ namespace PythonAILib.Model.VectorDB {
             return results;
         }
 
+        // フォルダに設定されたVectorDBのコレクションを削除
+        public void DeleteVectorDBCollection() {
+            Task.Run(() => {
+
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = openAIProperties,
+                    VectorDBProperties = [this]
+                };
+                PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
+
+            });
+        }
+        // フォルダに設定されたVectorDBのコレクションをアップデート
+        public void UpdateVectorDBCollection(string description) {
+            Task.Run(() => {
+                this.UpdateCatalogDescription(description);
+            });
+        }
+
+        // フォルダに設定されたVectorDBのインデックスを更新
+        public void RefreshVectorDBCollection(string description, Action afterRefresh) {
+            // ベクトルを全削除
+            DeleteVectorDBCollection();
+            // コレクション/カタログの更新
+            UpdateVectorDBCollection(description);
+
+            afterRefresh();
+        }
+
+
+
 
         // Equals
         public override bool Equals(object? obj) {

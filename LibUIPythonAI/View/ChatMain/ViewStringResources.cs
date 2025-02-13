@@ -146,5 +146,8 @@ namespace LibUIPythonAI.View.ChatMain {
 
         // UseVectorDB
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
+
+        // ExcludeFromList
+        public static string ExcludeFromList => CommonStringResources.Instance.ExcludeFromList;
     }
 }

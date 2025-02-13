@@ -496,6 +496,8 @@ namespace PythonAILib.Resources {
         // 自動処理でアイテムが削除されました
         public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
 
+        // JSON文字列をパースできませんでした
+        public virtual string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
 
         #region 統計、ログ関連
 

@@ -289,7 +289,7 @@
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
+                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{x:Static local:ViewStringResources.ExcludeFromList}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>

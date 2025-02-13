@@ -83,8 +83,10 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         });
 
 
-        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel) {
-
+        public override void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                return;
+            }
             ContentFolderViewModel folderViewModel = itemViewModel.FolderViewModel;
 
             EditItemControl editItemControl = EditItemControl.CreateEditItemControl(folderViewModel, itemViewModel,
@@ -453,8 +455,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             QAChatStartupProps props = new(clipboardItem) {
-                // Saveアクション
-                SaveCommand = (item, saveChatHistory) => {
+                // Closeアクション
+                CloseCommand = (item, saveChatHistory) => {
                     bool flag = clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat;
                     clipboardItem.Save();
 
