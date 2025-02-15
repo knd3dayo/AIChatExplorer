@@ -1,76 +1,85 @@
 using System.IO;
+using System.Linq;
 using ClipboardApp.Model.Item;
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
 
 namespace ClipboardApp.Model.Folder {
     public class ShortCutFolder : FileSystemFolder {
 
-        public override void Save() {
-            Save<ShortCutFolder, FileSystemItem>();
+        // コンストラクタ
+        public ShortCutFolder(ContentFolder folder) : base(folder) {
+            FolderType = FolderTypeEnum.ShortCut;
         }
-        // 削除
-        public override void Delete() {
-            DeleteFolder<ShortCutFolder, FileSystemItem>(this);
+
+        public ShortCutFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
+            FolderType = FolderTypeEnum.ShortCut;
         }
-        // 親フォルダ
+
         public override ShortCutFolder? GetParent() {
-            return GetParent<ShortCutFolder>();
+            var parentFolder = ContentFolderInstance.GetParent();
+            if (parentFolder == null) {
+                return null;
+            }
+            return new ShortCutFolder(parentFolder);
         }
 
-
-        public override void SyncFolders() {
-
-            if (string.IsNullOrEmpty(FileSystemFolderPath)) {
-                return;
+        public override List<ContentItemWrapper> GetItems() {
+            SyncItems();
+            var items = ContentFolderInstance.GetItems<ContentItem>();
+            List<ContentItemWrapper> result = [];
+            foreach (var item in items) {
+                result.Add(new ShortCutItem(item));
             }
+            return result;
+        }
 
-            // DBからParentIDが自分のIDのものを取得
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            // FoldersのFileSystemFolderPathとIdのDictionary
-            Dictionary<string, LiteDB.ObjectId> folderPathIdDict = folders.ToDictionary(x => x.FileSystemFolderPath, x => x.Id);
-
-            // ファイルシステム上のフォルダのフルパス一覧のHashSet
-            HashSet<string> fileSystemFolderPaths = new HashSet<string>();
-
-            // ルートフォルダの場合、配下のフォルダはショートカット。何もしない。
+        // 子フォルダ
+        public override List<ContentFolderWrapper> GetChildren() {
+            // RootFolder以外の場合はSyncFoldersを実行
+            if (!IsRootFolder) {
+                SyncFolders();
+            }
+            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            List<ContentFolderWrapper> result = [];
+            foreach (var child in children) {
+                result.Add(new ShortCutFolder(child));
+            }
+            return result;
+        }
+        // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
+        protected override HashSet<string> GetFileSystemFolderPaths() {
+            HashSet<string> fileSystemFolderPaths = [];
             if (IsRootFolder) {
-                return;
+                return fileSystemFolderPaths;
             }
-            // ルートフォルダ以外は自分自身のFolderPath配下のフォルダを取得
             try {
                 fileSystemFolderPaths = new HashSet<string>(Directory.GetDirectories(FileSystemFolderPath));
             } catch (UnauthorizedAccessException e) {
                 LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
             }
-            // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
-            // Exceptで差集合を取得
-            HashSet<string> deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths).ToHashSet();
-
-            foreach (var deleteFolderPath in deleteFolderPaths) {
-                ObjectId deleteId = folderPathIdDict[deleteFolderPath];
-                collection.Delete(deleteId);
-            }
-
-
-            // foldersのアイテムに、folderPath=ドライブ名:\のアイテムがない場合はアイテムを追加
-            // Exceptで差集合を取得
-            HashSet<string> addFolderPaths = fileSystemFolderPaths.Except(folderPathIdDict.Keys).ToHashSet();
-
-            // Parallel処理
-            Parallel.ForEach(addFolderPaths, localFileSystemFolder => {
-                if (!folders.Any(x => x.FileSystemFolderPath == localFileSystemFolder)) {
-                    // localFileSystemFolder からフォルダ名を取得
-                    string folderName = Path.GetFileName(localFileSystemFolder);
-                    FileSystemFolder child = CreateChild(folderName);
-                    child.Save();
-                }
-            });
-            // 自分自身を保存
-            this.Save<FileSystemFolder, FileSystemItem>();
+            return fileSystemFolderPaths;
         }
+
+        // Folders内のFileSystemFolderPathとContentFolderのDictionary
+        protected override Dictionary<string, ContentFolder> GetFolderPathIdDict() {
+            // コレクション
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+            var folders = collection.Find(x => x.ParentId == Id).Select(x => new ShortCutFolder(x)).ToList();
+
+            Dictionary<string, ContentFolder> folderPathIdDict = [];
+            foreach (var folder in folders) {
+                // folder.FileSystemFolderPathが存在する場合
+                if (!string.IsNullOrEmpty(folder.FileSystemFolderPath)) {
+                    folderPathIdDict[folder.FileSystemFolderPath] = folder.ContentFolderInstance;
+                }
+            }
+            return folderPathIdDict;
+        }
+
 
     }
 }

@@ -1,7 +1,8 @@
 using ClipboardApp.Factory;
+using LibUIPythonAI.Resource;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
-using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.Model.Folder {
     public class FolderManager {
@@ -21,41 +22,42 @@ namespace ClipboardApp.Model.Folder {
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
 
             // ClipboardRootFolder
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
-            ClipboardFolder? clipboardRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            ContentFolder? clipboardRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
                 clipboardRootFolder.Save();
             }
-            var searchCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<SearchFolder>();
+            var searchCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
             // SearchRootFolder
-            SearchFolder? searchRootFolder = searchCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
+            ContentFolder? searchRootFolder = searchCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
                 searchRootFolder.Save();
             }
             // ChatRootFolder
-            ClipboardFolder? chatRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
+            ContentFolder? chatRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
             if (chatRootFolder != null) {
                 chatRootFolder.FolderName = toRes.ChatHistory;
                 chatRootFolder.Save();
             }
             // ImageCheckRootFolder
-            ClipboardFolder? imageCheckRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
+            ContentFolder? imageCheckRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
                 imageCheckRootFolder.Save();
             }
             // FileSystemRootFolder
-            var fileSystemCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<FileSystemFolder>();
-            FileSystemFolder? fileSystemRootFolder = fileSystemCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+            var fileSystemCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            ContentFolder? fileSystemRootFolder = fileSystemCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
             if (fileSystemRootFolder != null) {
                 fileSystemRootFolder.FolderName = toRes.FileSystem;
                 fileSystemRootFolder.Save();
             }
             // ShortcutRootFolder
-            var shortCutCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ShortCutFolder>();
-            ShortCutFolder? shortcutRootFolder = shortCutCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
+            var shortCutCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            ContentFolder? shortcutRootFolder = shortCutCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
             if (shortcutRootFolder != null) {
                 shortcutRootFolder.FolderName = toRes.Shortcut;
                 shortcutRootFolder.Save();
@@ -70,8 +72,8 @@ namespace ClipboardApp.Model.Folder {
         public static ClipboardFolder RootFolder {
             get {
                 if (clipboardRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
-                    ClipboardFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
@@ -83,7 +85,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    clipboardRootFolder = folder;
+                    clipboardRootFolder = new ClipboardFolder(folder);
                 }
                 return clipboardRootFolder;
             }
@@ -92,8 +94,8 @@ namespace ClipboardApp.Model.Folder {
         public static SearchFolder SearchRootFolder {
             get {
                 if (searchRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<SearchFolder>();
-                    SearchFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
@@ -105,7 +107,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    searchRootFolder = folder;
+                    searchRootFolder = new SearchFolder(folder);
                 }
                 return searchRootFolder;
             }
@@ -115,8 +117,8 @@ namespace ClipboardApp.Model.Folder {
         public static ClipboardFolder ChatRootFolder {
             get {
                 if (chatRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
-                    ClipboardFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = CHAT_ROOT_FOLDER_NAME,
@@ -128,7 +130,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    chatRootFolder = folder;
+                    chatRootFolder = new ClipboardFolder(folder);
                 }
                 return chatRootFolder;
             }
@@ -138,8 +140,8 @@ namespace ClipboardApp.Model.Folder {
         public static FileSystemFolder FileSystemRootFolder {
             get {
                 if (fileSystemRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<FileSystemFolder>();
-                    FileSystemFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
@@ -151,7 +153,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    fileSystemRootFolder = folder;
+                    fileSystemRootFolder = new FileSystemFolder(folder);
                 }
                 return fileSystemRootFolder;
             }
@@ -161,10 +163,10 @@ namespace ClipboardApp.Model.Folder {
         public static ShortCutFolder ShortcutRootFolder {
             get {
                 if (shortcutRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ShortCutFolder>();
-                    ShortCutFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
                     if (folder == null) {
-                        folder = new ShortCutFolder {
+                        folder = new() {
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
                             FolderType = FolderTypeEnum.ShortCut,
                             IsRootFolder = true,
@@ -175,7 +177,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にSearchRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    shortcutRootFolder = folder;
+                    shortcutRootFolder = new ShortCutFolder(folder);
                 }
                 return shortcutRootFolder;
             }
@@ -185,10 +187,10 @@ namespace ClipboardApp.Model.Folder {
         public static OutlookFolder OutlookRootFolder {
             get {
                 if (outlookRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<OutlookFolder>();
-                    OutlookFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Outlook).FirstOrDefault();
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Outlook).FirstOrDefault();
                     if (folder == null) {
-                        folder = new OutlookFolder {
+                        folder = new() {
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
                             FolderType = FolderTypeEnum.Outlook,
                             IsRootFolder = true,
@@ -199,12 +201,12 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にOutlookRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
-                    outlookRootFolder = folder;
+                    outlookRootFolder = new OutlookFolder(folder);
                 }
                 return outlookRootFolder;
+                #endregion
             }
-        }
-        #endregion
 
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace LibUIPythonAI.View.Search {
         }
 
         public static void OpenSearchWindow(SearchRule searchConditionRule,
-            ContentFolder searchFolder, bool isSearchFolder, Action afterUpdate) {
+            ContentFolderWrapper searchFolder, bool isSearchFolder, Action afterUpdate) {
             SearchWindow searchWindow = new() {
                 DataContext = new SearchWindowViewModel(searchConditionRule, searchFolder, isSearchFolder, afterUpdate)
             };

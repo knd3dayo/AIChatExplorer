@@ -11,7 +11,7 @@ namespace LibUIPythonAI.View.Tag
         public TagWindow() {
             InitializeComponent();
         }
-        public static void OpenTagWindow(ContentItem? contentItem, Action action) {
+        public static void OpenTagWindow(ContentItemWrapper? contentItem, Action action) {
             TagWindow tagWindow = new();
             TagWindowViewModel tagWindowViewModel =new(contentItem, action);
             tagWindow.DataContext = tagWindowViewModel;

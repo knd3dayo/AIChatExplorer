@@ -11,7 +11,7 @@ namespace LibUIPythonAI.View.AutoGen {
             InitializeComponent();
         }
         public static void OpenWindow(AutoGenLLMConfig autoGenLLMConfig, Action afterUpdate) {
-            var window = new EditAutoGenAgentWindow();
+            var window = new EditAutoGenLLMConfigWindow();
             window.DataContext = new EditAutoGenLLMConfigViewModel(autoGenLLMConfig, afterUpdate);
             window.ShowDialog();
         }

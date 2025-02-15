@@ -3,8 +3,8 @@ using PythonAILibUI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel.Item {
-    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItem contentItemBase) : ChatViewModelBase {
-        public ContentItem ContentItem { get; set; } = contentItemBase;
+    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {
+        public ContentItemWrapper ContentItem { get; set; } = contentItemBase;
 
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
@@ -54,7 +54,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         public static Task DeleteItems(List<ContentItemViewModel> items) {
             return Task.Run(() => {
                 var contentItems = items.Select(item => item.ContentItem).ToList();
-                ContentItem.DeleteItems(contentItems);
+                ContentItemWrapper.DeleteItems(contentItems);
             });
         }
     }

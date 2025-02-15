@@ -20,9 +20,9 @@ namespace PythonAILib.Model.Search {
 
         public SearchCondition SearchCondition { get; set; }
 
-        public ContentFolder? SearchFolder { get; set; }
+        public ContentFolderWrapper? SearchFolder { get; set; }
 
-        public ContentFolder? TargetFolder { get; set; }
+        public ContentFolderWrapper? TargetFolder { get; set; }
 
         public string Name { get; set; } = "";
 
@@ -44,8 +44,8 @@ namespace PythonAILib.Model.Search {
             collection.Upsert(this);
         }
 
-        public List<ContentItem> SearchItems() {
-            List<ContentItem> result = [];
+        public List<ContentItemWrapper> SearchItems() {
+            List<ContentItemWrapper> result = [];
             if (TargetFolder == null) {
                 return result;
             }

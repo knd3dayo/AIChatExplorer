@@ -57,7 +57,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // 
-        public ContentFolder? ExportTargetFolder { get; set; }
+        public ContentFolderWrapper? ExportTargetFolder { get; set; }
 
         // 選択したクリップボードフォルダのパス
         public string SelectedClipboardFolderPath {
@@ -84,7 +84,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // 選択されたインデックスによって処理を分岐
             Task.Run(() => {
                 // Excelインポート処理 ★TODO 自動処理の実装
-                Action<ContentItem> afterImport = (item) => { };
+                Action<ContentItemWrapper> afterImport = (item) => { };
                 if (IsAutoProcessEnabled) {
                     afterImport = (item) => {
                         AutoProcessRuleController.ApplyGlobalAutoAction(item).Result.Save();

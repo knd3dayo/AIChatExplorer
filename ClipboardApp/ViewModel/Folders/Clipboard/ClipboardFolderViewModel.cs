@@ -19,8 +19,8 @@ using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderViewModel(ContentFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
-        public override ClipboardItemViewModel CreateItemViewModel(ContentItem item) {
+    public class ClipboardFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
+        public override ClipboardItemViewModel CreateItemViewModel(ContentItemWrapper item) {
             return new ClipboardItemViewModel(this, item);
         }
 
@@ -31,7 +31,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             var childFolderViewModel = new ClipboardFolderViewModel(childFolder) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
@@ -72,7 +72,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         protected override void LoadChildren(int nestLevel = 5) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
+            foreach (var child in Folder.GetChildren()) {
                 if (child == null) {
                     continue;
                 }
@@ -92,10 +92,10 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // LoadItems
         protected override void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ClipboardItem> _items = Folder.GetItems<ClipboardItem>();
+            List<ContentItemWrapper> _items = Folder.GetItems();
             MainUITask.Run(() => {
                 Items.Clear();
-                foreach (ContentItem item in _items) {
+                foreach (ContentItemWrapper item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             });
@@ -140,7 +140,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ClipboardItemViewModel itemViewModel) {
-                    ContentItem clipboardItem = itemViewModel.ContentItem;
+                    ContentItemWrapper clipboardItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
                         clipboardItem.MoveToFolder(toFolder.Folder);
@@ -149,7 +149,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     }
                 }
                 if (item is ClipboardFolderViewModel folderViewModel) {
-                    ClipboardFolder folder = (ClipboardFolder)folderViewModel.Folder;
+                    ContentFolderWrapper folder = folderViewModel.Folder;
                     if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
                         folder.MoveTo(toFolder.Folder);

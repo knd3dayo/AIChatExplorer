@@ -10,7 +10,7 @@ namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
 
         public static ChatResult MergeChat(
-            ChatRequestContext context, List<ContentItem> items, string preProcessPrompt, string postProcessPrompt, List<ExportImportItem>? targetDataList = null) {
+            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, List<ExportImportItem>? targetDataList = null) {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
             List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt, targetDataList);
 
@@ -24,7 +24,7 @@ namespace LibUIMergeChat.Common {
 
         }
         // ContentItemとExportImportItemを受け取り、対象データを取得する
-        private static string GetTargetData(ContentItem contentItem, List<ExportImportItem>? targetDataList) {
+        private static string GetTargetData(ContentItemWrapper contentItem, List<ExportImportItem>? targetDataList) {
             string targetData = "";
             if (targetDataList == null) {
                 return contentItem.Content;
@@ -49,7 +49,7 @@ namespace LibUIMergeChat.Common {
             return targetData;
         }
 
-        private static List<ChatResult> PreProcess(List<ContentItem> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList) {
+        private static List<ChatResult> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList) {
             List<ChatResult> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
                 object lockObject = new();
@@ -64,7 +64,7 @@ namespace LibUIMergeChat.Common {
                 Parallel.For(0, count, parallelOptions, (i) => {
                     string message = $"{CommonStringResources.Instance.MergeChatPreprocessingInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
-                    ContentItem item = items[i];
+                    ContentItemWrapper item = items[i];
                     ChatRequestContext preProcessRequestContext = new() {
                         PromptTemplateText = preProcessPrompt,
                         ChatMode = context.ChatMode,

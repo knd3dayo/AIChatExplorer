@@ -13,18 +13,18 @@ namespace PythonAILib.Model.Content {
     public class ContentItemCommands {
 
         // OpenAIを使用してイメージからテキスト抽出する。
-        public static void ExtractImageWithOpenAI(ContentItem item) {
+        public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
             ExtractText(item);
         }
 
         // テキストを抽出」を実行するコマンド
-        public static void ExtractTextCommandExecute(ContentItem item) {
+        public static void ExtractTextCommandExecute(ContentItemWrapper item) {
             ExtractText(item);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
         }
 
         // OpenAIを使用してタイトルを生成する
-        public static void CreateAutoTitleWithOpenAI(ContentItem item) {
+        public static void CreateAutoTitleWithOpenAI(ContentItemWrapper item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -45,7 +45,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // ExecuteSystemDefinedPromptを実行する
-        public static void CreateChatResult(ContentItem item, string promptName) {
+        public static void CreateChatResult(ContentItemWrapper item, string promptName) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             // システム定義のPromptItemを取得
             PromptItem promptItem = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == promptName) ?? throw new Exception("PromptItem not found");
@@ -54,7 +54,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // 文章の信頼度を判定する
-        public static void CheckDocumentReliability(ContentItem item) {
+        public static void CheckDocumentReliability(ContentItemWrapper item) {
 
             CreateChatResult(item, SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得
@@ -69,7 +69,7 @@ namespace PythonAILib.Model.Content {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
+                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -98,7 +98,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
-        public static void CreateChatResult(ContentItem item, PromptItem promptItem) {
+        public static void CreateChatResult(ContentItemWrapper item, PromptItem promptItem) {
 
             // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
             string contentText;
@@ -123,7 +123,7 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder<ContentFolder>().GetVectorSearchProperties() : [];
+            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder().GetVectorSearchProperties() : [];
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = vectorSearchProperties,
@@ -188,14 +188,14 @@ namespace PythonAILib.Model.Content {
 
 
         // テキストを抽出する
-        public static void ExtractText(ContentItem item) {
+        public static void ExtractText(ContentItemWrapper item) {
             // キャッシュを更新
             UpdateCache(item);
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
+                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -223,18 +223,21 @@ namespace PythonAILib.Model.Content {
         // キャッシュを更新する
         // Base64Stringを参照する場合とテキスト抽出を行う場合にキャッシュを更新する。
         // 対象ファイルがない場合は何もしない。
-        public static void UpdateCache(ContentItem item) {
+        public static void UpdateCache(ContentItemWrapper item) {
             if (item.FilePath == null || System.IO.File.Exists(item.FilePath) == false) {
                 return;
             }
             item.LastModified = new System.IO.FileInfo(item.FilePath).LastWriteTime.Ticks;
-
-            byte[] bytes = System.IO.File.ReadAllBytes(item.FilePath);
-            item.CachedBase64String = Convert.ToBase64String(bytes);
+            try {
+                byte[] bytes = System.IO.File.ReadAllBytes(item.FilePath);
+                item.CachedBase64String = Convert.ToBase64String(bytes);
+            } catch (IOException e) {
+                LogWrapper.Info(e.Message);
+            }
         }
 
         // 自動でコンテキスト情報を付与するコマンド
-        public static void CreateAutoBackgroundInfo(ContentItem item) {
+        public static void CreateAutoBackgroundInfo(ContentItemWrapper item) {
             string contentText = item.Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
@@ -245,7 +248,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // ベクトルを更新する
-        public static void DeleteEmbeddings(List<ContentItem> items) {
+        public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
 
             // VectorDBProperty用のHashSetを作成
             HashSet<VectorDBProperty> vectorDBProperties = [];
@@ -269,7 +272,7 @@ namespace PythonAILib.Model.Content {
             }
         }
         // Embeddingを更新する
-        public static void UpdateEmbeddings(List<ContentItem> items) {
+        public static void UpdateEmbeddings(List<ContentItemWrapper> items) {
             // VectorDBProperty用のHashSetを作成
             HashSet<VectorDBProperty> vectorDBProperties = [];
 
@@ -307,7 +310,7 @@ namespace PythonAILib.Model.Content {
                 vectorDBProperty.UpdateEmbeddings();
             }
         }
-        public static void CreateAutoTitle(ContentItem item) {
+        public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合
             if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";

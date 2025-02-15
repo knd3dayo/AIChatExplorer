@@ -24,9 +24,14 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
-            TargetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
-            // DestinationIdに一致するフォルダを取得
-            DestinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
+            var targetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
+            if (targetFolder != null) {
+                TargetFolder = new ContentFolderWrapper(targetFolder);
+            }
+            var destinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
+            if (destinationFolder != null) {
+                DestinationFolder = new ContentFolderWrapper(destinationFolder);
+            }
 
             // RootFolderViewModelを設定
             RootFolderViewModels = rootFolderViewModels;
@@ -131,8 +136,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         }
 
         // ルール適用対象のClipboardItemFolder
-        private ContentFolder? _ClipboardItemFolder = null;
-        public ContentFolder? TargetFolder {
+        private ContentFolderWrapper? _ClipboardItemFolder = null;
+        public ContentFolderWrapper? TargetFolder {
             get {
                 return _ClipboardItemFolder;
             }
@@ -302,8 +307,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
 
         // コピーまたは移動先のフォルダ
-        private ContentFolder? _DestinationFolder = null;
-        public ContentFolder? DestinationFolder {
+        private ContentFolderWrapper? _DestinationFolder = null;
+        public ContentFolderWrapper? DestinationFolder {
             get {
                 return _DestinationFolder;
             }
@@ -501,7 +506,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         });
 
         // OnSelectedFolderChanged
-        public void OnSelectedFolderChanged(ContentFolder? folder) {
+        public void OnSelectedFolderChanged(ContentFolderWrapper? folder) {
             if (folder == null) {
                 return;
             }

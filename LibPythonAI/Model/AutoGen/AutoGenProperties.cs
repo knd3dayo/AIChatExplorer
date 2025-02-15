@@ -76,6 +76,9 @@ namespace PythonAILib.Model.AutoGen {
             string model = ConfigPrams.GetOpenAIProperties().OpenAICompletionModel;
             string api_key = ConfigPrams.GetOpenAIProperties().OpenAIKey;
             string base_url = ConfigPrams.GetOpenAIProperties().OpenAIBaseURL;
+            if (api_type == "azure") {
+                base_url = ConfigPrams.GetOpenAIProperties().AzureOpenAIEndpoint;
+            }
             AutoGenLLMConfig.UpdateAutoGenLLMConfig(name, api_type, api_version, model, api_key, base_url);
 
             // search_wikipedia_ja

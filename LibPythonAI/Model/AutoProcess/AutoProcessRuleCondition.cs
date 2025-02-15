@@ -42,7 +42,7 @@ namespace PythonAILib.Model.AutoProcess {
         public int MaxLineCount { get; set; } = -1;
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public bool IsDescriptionContains(ContentItem clipboardItem, string keyword) {
+        public bool IsDescriptionContains(ContentItemWrapper clipboardItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
             if (clipboardItem.Description == null) {
                 return false;
@@ -55,7 +55,7 @@ namespace PythonAILib.Model.AutoProcess {
 
         }
         //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public bool IsContentContains(ContentItem clipboardItem, string keyword) {
+        public bool IsContentContains(ContentItemWrapper clipboardItem, string keyword) {
             // ContentがNullの場合はFalseを返す
             if (clipboardItem.Content == null) {
                 return false;
@@ -63,7 +63,7 @@ namespace PythonAILib.Model.AutoProcess {
             return clipboardItem.Content.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationNameContains(ContentItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationNameContains(ContentItemWrapper clipboardItem, string keyword) {
             // SourceApplicationNameがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationName == null) {
                 return false;
@@ -71,7 +71,7 @@ namespace PythonAILib.Model.AutoProcess {
             return clipboardItem.SourceApplicationName.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationTitleContains(ContentItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationTitleContains(ContentItemWrapper clipboardItem, string keyword) {
             // SourceApplicationTitleがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationTitle == null) {
                 return false;
@@ -79,7 +79,7 @@ namespace PythonAILib.Model.AutoProcess {
             return clipboardItem.SourceApplicationTitle.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationPathContains(ContentItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationPathContains(ContentItemWrapper clipboardItem, string keyword) {
             // SourceApplicationPathがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationPath == null) {
                 return false;
@@ -88,7 +88,7 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public bool IsContentLineCountOver(ContentItem clipboardItem) {
+        public bool IsContentLineCountOver(ContentItemWrapper clipboardItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
@@ -100,7 +100,7 @@ namespace PythonAILib.Model.AutoProcess {
             return clipboardItem.Content.Split('\n').Length >= MinLineCount;
         }
         // ClipboardItemのContentの行数が指定した行数以下かどうか
-        public bool IsContentLineCountUnder(ContentItem clipboardItem) {
+        public bool IsContentLineCountUnder(ContentItemWrapper clipboardItem) {
             // MaxLineCountが-1の場合はTrueを返す
             if (MaxLineCount == -1) {
                 return true;
@@ -114,7 +114,7 @@ namespace PythonAILib.Model.AutoProcess {
 
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
-        public bool CheckCondition(ContentItem clipboardItem) {
+        public bool CheckCondition(ContentItemWrapper clipboardItem) {
             return Type switch {
                 ConditionTypeEnum.DescriptionContains => IsDescriptionContains(clipboardItem, Keyword),
                 ConditionTypeEnum.ContentContains => IsContentContains(clipboardItem, Keyword),
@@ -127,7 +127,7 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // ContentTypeIsの条件にマッチするかどうか
-        public bool CheckContentTypeIs(ContentItem clipboardItem) {
+        public bool CheckContentTypeIs(ContentItemWrapper clipboardItem) {
             if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
                 return false;
             }

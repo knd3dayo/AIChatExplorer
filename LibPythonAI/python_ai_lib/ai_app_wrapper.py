@@ -158,7 +158,7 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     if not props_dict:
         raise ValueError("autogen_props is not set")
 
-    autogen_props = AutoGenProps(props_dict["autogen_props"])
+    autogen_props = AutoGenProps(props_dict)
     return autogen_props
 
 def get_token_count_objects(request_dict: dict) -> dict:

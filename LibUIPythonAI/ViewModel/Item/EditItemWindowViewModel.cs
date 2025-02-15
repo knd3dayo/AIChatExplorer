@@ -133,7 +133,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
             // フォルダに自動処理が設定されている場合は実行
-            ContentItem? item = AutoProcessRuleController.ApplyFolderAutoAction(ItemViewModel.ContentItem);
+            ContentItemWrapper? item = AutoProcessRuleController.ApplyFolderAutoAction(ItemViewModel.ContentItem);
             // ClipboardItemを更新
             if (item != null) {
 

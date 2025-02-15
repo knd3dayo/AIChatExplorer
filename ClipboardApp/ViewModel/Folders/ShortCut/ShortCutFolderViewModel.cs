@@ -20,7 +20,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ShortCutFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override ShortCutFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new Exception("childFolder is not FileSystemFolder");
             }
@@ -41,7 +41,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
             await Task.Run(() => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                    foreach (var child in Folder.GetChildren()) {
                         if (child == null) {
                             continue;
                         }
@@ -51,7 +51,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                foreach (var child in Folder.GetChildren()) {
                     if (child == null) {
                         continue;
                     }

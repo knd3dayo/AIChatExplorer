@@ -54,13 +54,13 @@ namespace ClipboardApp.Common {
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard _clipboard;
-        private Action<ContentItem> _afterClipboardChanged = (parameter) => { };
+        private Action<ContentItemWrapper> _afterClipboardChanged = (parameter) => { };
 
         /// <summary>
         /// Start clipboard monitoring
         /// </summary>
         /// <param name="afterClipboardChanged"></param>
-        public void Start(Action<ContentItem> afterClipboardChanged) {
+        public void Start(Action<ContentItemWrapper> afterClipboardChanged) {
             _afterClipboardChanged = afterClipboardChanged;
             // Enable clipboard monitoring
             IsClipboardMonitorEnabled = true;
@@ -76,7 +76,7 @@ namespace ClipboardApp.Common {
         /// Copy the content of ContentItem to the clipboard
         /// </summary>
         /// <param name="item"></param>
-        public void SetDataObject(ContentItem item) {
+        public void SetDataObject(ContentItemWrapper item) {
             // System.Windows.MessageBox.Show(item.SourcePath);
 
             IsClipboardMonitorEnabled = false;
@@ -156,7 +156,7 @@ namespace ClipboardApp.Common {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="_afterClipboardChanged"></param>
-        public static void ProcessClipboardItem(ContentItem item, Action<ContentItem> _afterClipboardChanged) {
+        public static void ProcessClipboardItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
 
             // Execute in a separate thread
             Task.Run(() => {
@@ -166,7 +166,7 @@ namespace ClipboardApp.Common {
                 });
                 try {
                     // Apply automatic processing
-                    Task<ContentItem> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
                     if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;

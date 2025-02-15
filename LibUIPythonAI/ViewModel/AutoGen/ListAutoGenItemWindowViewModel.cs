@@ -202,6 +202,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         });
 
+
         // SelectedAutoGenGroupChat
         public AutoGenGroupChat? SelectedAutoGenGroupChat { get; set; }
 

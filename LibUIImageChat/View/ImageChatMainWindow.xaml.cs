@@ -10,7 +10,7 @@ namespace LibUIImageChat.View {
         public ImageChatMainWindow() {
             InitializeComponent();
         }
-        public static void OpenMainWindow(ContentItem clipboardItem, Action afterUpdate) {
+        public static void OpenMainWindow(ContentItemWrapper clipboardItem, Action afterUpdate) {
             ImageChatMainWindow imageEvidenceCheckerWindow = new();
             imageEvidenceCheckerWindow.DataContext = new ImageChatMainWindowViewModel(clipboardItem, afterUpdate);
             imageEvidenceCheckerWindow.Show();

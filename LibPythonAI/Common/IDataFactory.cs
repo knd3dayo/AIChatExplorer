@@ -14,7 +14,7 @@ namespace PythonAILib.Common {
         // Database
         public LiteDatabase GetDatabase();
 
-        //-- ContentItem
+        //-- ContentItemInstance
         public ILiteCollection<T> GetItemCollection<T>() where T : ContentItem;
 
         // ContentFolder

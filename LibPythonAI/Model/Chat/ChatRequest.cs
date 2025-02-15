@@ -103,8 +103,11 @@ namespace PythonAILib.Model.Chat {
             var dc = new Dictionary<string, object> {
                 ["model"] = model,
                 ["messages"] = ChatMessage.ToDictList(ChatHistory),
-                ["temperature"] = Temperature
             };
+            // modelがo*以外の場合は、temperatureを設定する
+            if (model.StartsWith("o") == false) {
+                dc["temperature"] = Temperature;
+            }
             // jsonModeがTrueの場合は、response_formatを json_objectに設定する
             if (JsonMode) {
                 Dictionary<string, string> responseFormat = new() {

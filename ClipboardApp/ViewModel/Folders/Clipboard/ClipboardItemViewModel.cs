@@ -17,7 +17,7 @@ namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
-        public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItem clipboardItem) : base(folderViewModel, clipboardItem) {
+        public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper clipboardItem) : base(folderViewModel, clipboardItem) {
             ContentItem = clipboardItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
@@ -130,7 +130,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         // Copy
         public ClipboardItemViewModel Copy() {
-            ClipboardItem newItem = (ClipboardItem)ContentItem.Copy();
+            ContentItemWrapper newItem = ContentItem.Copy();
             return new ClipboardItemViewModel(FolderViewModel, newItem);
         }
 

@@ -10,7 +10,7 @@ namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
-        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ContentFolder targetFolder) {
+        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ContentFolderWrapper targetFolder) {
             ObservableCollection<AutoProcessRule> rules = [];
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
@@ -41,11 +41,11 @@ namespace PythonAILib.Model.AutoProcess {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        public static async Task<ContentItem> ApplyGlobalAutoAction(ContentItem item) {
+        public static async Task<ContentItemWrapper> ApplyGlobalAutoAction(ContentItemWrapper item) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
-            // ★TODO Implement processing based on automatic processing rules.
+
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
             if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= configParams.IgnoreLineCount()) {
@@ -126,11 +126,11 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static ContentItem? ApplyFolderAutoAction(ContentItem item) {
+        public static ContentItemWrapper? ApplyFolderAutoAction(ContentItemWrapper item) {
 
-            ContentItem? result = item;
+            ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
-            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder<ContentFolder>());
+            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 rule.RunAction(result);

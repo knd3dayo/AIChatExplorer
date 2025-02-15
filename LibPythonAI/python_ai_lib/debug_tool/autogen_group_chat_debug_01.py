@@ -45,18 +45,17 @@ def main():
             context_dict = props_dict.get("context", None)
             if not context_dict:
                 raise ValueError("context is not found in props.")
-            context_json = json.dumps(context_dict, ensure_ascii=False)
 
             request_dict = props_dict.get("request", None)
             if not request_dict:
                 raise ValueError("request is not found in props.")
             
             # vector_db_items
-            vector_db_items = ai_app_wrapper.get_vector_db_objects(context_json)
+            vector_db_items = ai_app_wrapper.get_vector_db_objects(props_dict)
             # autogen_props 
-            autogen_props = ai_app_wrapper.get_autogen_objects(context_json)
+            autogen_props = ai_app_wrapper.get_autogen_objects(props_dict)
             # openai_props
-            openai_props, _ = ai_app_wrapper.get_openai_objects(context_json)
+            openai_props, _ = ai_app_wrapper.get_openai_objects(props_dict)
 
 
             # メッセージを取得

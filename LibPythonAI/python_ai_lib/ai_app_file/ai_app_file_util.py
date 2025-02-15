@@ -1,11 +1,28 @@
-from magika import Magika  # type: ignore
+from magika import Magika
+from magika.types import MagikaResult 
 from chardet.universaldetector import UniversalDetector
+from pathlib import Path
 
 class FileUtil:
 
     @classmethod
     def identify_type(cls, filename):
         m = Magika()
+        # ファイルの種類を判定
+        path = Path(filename)
+        try:
+            res: MagikaResult = m.identify_path(path)
+            encoding = None
+            if res.dl.is_text:
+                encoding = cls.get_encoding(filename)
+        except Exception as e:
+            print(e)
+            return None, None
+
+        return res, encoding
+
+    @classmethod
+    def get_encoding(cls, filename):
         # ファイルのbyte列を取得
         # アクセスできない場合は例外をキャッチ
         try:
@@ -17,15 +34,12 @@ class FileUtil:
         except Exception as e:
             print(e)
             return None, None
-
-        # ファイルの種類を判定
-        res = m.identify_bytes(byte_data)
         # エンコーディング判定
         detector = UniversalDetector()
         detector.feed(byte_data)
         detector.close()
         encoding = detector.result['encoding']  
-        return res, encoding
+        return encoding
 
     @classmethod
     def get_mime_type(cls, filename):

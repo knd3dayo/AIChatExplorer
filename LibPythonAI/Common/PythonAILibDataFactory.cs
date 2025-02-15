@@ -55,7 +55,7 @@ namespace PythonAILib.Common {
             return db;
         }
 
-        //-- ContentItem
+        //-- ContentItemInstance
         public ILiteCollection<T> GetItemCollection<T>() where T : ContentItem {
             var collection = GetDatabase().GetCollection<T>(CONTENT_ITEM_COLLECTION_NAME);
             return collection;
@@ -119,19 +119,8 @@ namespace PythonAILib.Common {
             foreach (var item in items_collection.FindAll()) {
                 // ClipboardApp.item.ClipboardItem, ClipboardApp -> ClipboardApp.Model.Item.ClipboardItem, ClipboardApp
                 string typeString = item["_type"];
-                if (typeString == "ClipboardApp.Model.ClipboardItem,ClipboardApp") {
-                    item["_type"] = "ClipboardApp.Model.Item.ClipboardItem, ClipboardApp";
-                    items_collection.Update(item);
-                }
-
-                // ClipboardApp.Model.FileSystemItem, ClipboardApp -> ClipboardApp.Model.Item.FileSystemItem, ClipboardApp
-                if (typeString == "ClipboardApp.Model.Item.FileSystemItem") {
-                    item["_type"] = "ClipboardApp.Model.Item.FileSystemItem, ClipboardApp";
-                    items_collection.Update(item);
-                }
-                // ClipboardApp.Model.OutlookItem, ClipboardApp -> ClipboardApp.Model.Item.OutlookItem, ClipboardApp
-                if (typeString == "ClipboardApp.Item.OutlookItem, ClipboardApp") {
-                    item["_type"] = "ClipboardApp.Model.Item.OutlookItem, ClipboardApp";
+                if (typeString == "ClipboardApp.Model.Item.ClipboardItem, ClipboardApp") {
+                    item["_type"] = null;
                     items_collection.Update(item);
                 }
             }

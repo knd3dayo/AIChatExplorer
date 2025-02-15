@@ -1,19 +1,14 @@
 using PythonAILib.Model.Content;
 
-
 namespace ClipboardApp.Model.Item {
-    public partial class ClipboardItem : ContentItem {
+    public partial class ClipboardItem : ContentItemWrapper {
         // コンストラクタ
-        public ClipboardItem(LiteDB.ObjectId folderObjectId) {
-            CreatedAt = DateTime.Now;
-            UpdatedAt = DateTime.Now;
-            CollectionId = folderObjectId;
-        }
+        public ClipboardItem(ContentItem item) : base(item) { }
 
-        public override object Copy() {
-            ClipboardItem clipboardItem = new(this.CollectionId);
-            CopyTo(clipboardItem);
-            return clipboardItem;
+        public ClipboardItem(LiteDB.ObjectId folderObjectId) : base(folderObjectId) { }
+
+        public override ClipboardItem Copy() {
+            return new(ContentItemInstance.Copy());
         }
     }
 }

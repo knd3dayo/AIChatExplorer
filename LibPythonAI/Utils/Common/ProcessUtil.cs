@@ -354,7 +354,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        public static void OpenClipboardItemContent(ContentItem item) {
+        public static void OpenClipboardItemContent(ContentItemWrapper item) {
 
             ProcessUtil.OpenTempTextFile(item.Content, (process) => { },
             (content) => {
@@ -365,7 +365,7 @@ namespace LibPythonAI.Utils.Common {
 
         }
 
-        public static void OpenClipboardItemFile(ContentItem item, bool openAsNew = false) {
+        public static void OpenClipboardItemFile(ContentItemWrapper item, bool openAsNew = false) {
             // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
             if (string.IsNullOrEmpty(item.FilePath)) {
                 // BitmapImageがNullでない場合はファイルを開く

@@ -9,52 +9,35 @@ using PythonAILib.Model.Search;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public partial class SearchFolder : ClipboardFolder {
+    public partial class SearchFolder : ContentFolderWrapper {
 
-        public override void Save() {
-            Save<SearchFolder, ClipboardItem>();
-        }
-        // 削除
-        public override void Delete() {
-            DeleteFolder<SearchFolder, ClipboardItem>(this);
-        }
-        // 親フォルダ
-        public override SearchFolder? GetParent() {
-            return GetParent<SearchFolder>();
-        }
-
-
-        //--------------------------------------------------------------------------------
         // コンストラクタ
-        public SearchFolder() {
-            IsAutoProcessEnabled = false;
+        public SearchFolder(ContentFolder folder) : base(folder) {
+            IsAutoProcessEnabled = true;
             FolderType = FolderTypeEnum.Search;
         }
 
         protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
 
-            IsAutoProcessEnabled = false;
             FolderType = FolderTypeEnum.Search;
-            ParentId = parent?.Id ?? ObjectId.Empty;
+            ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
             FolderName = folderName;
+            IsAutoProcessEnabled = false;
 
         }
-
-        // フォルダの絶対パス
-        public override string FolderPath {
-            get {
-                SearchFolder? parent = (SearchFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<SearchFolder>().FindById(ParentId);
-                if (parent == null) {
-                    return FolderName;
-                }
-                return $"{parent.FolderPath}/{FolderName}";
+        // 親フォルダ
+        public override SearchFolder? GetParent() {
+            var parentFolder = ContentFolderInstance.GetParent();
+            if (parentFolder == null) {
+                return null;
             }
+            return new SearchFolder(parentFolder);
         }
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public override List<T> GetItems<T>() {
-            List<ContentItem> _items = [];
+        public override List<ContentItemWrapper> GetItems() {
+            List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             ClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
@@ -65,23 +48,18 @@ namespace ClipboardApp.Model.Folder {
                 _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
 
             }
-            // 検索対象フォルダパスがない場合は何もしない。
-            return _items.Cast<T>().ToList();
+            return _items;
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<SearchFolder>();
-            IEnumerable<SearchFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+        public override List<ContentFolderWrapper> GetChildren() {
+            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            List<ContentFolderWrapper> result = [];
+            foreach (var child in children) {
+                result.Add(new SearchFolder(child));
+            }
+            return result;
 
-            return folders.Cast<T>().ToList();
-
-        }
-
-
-        // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
-        public virtual void DeleteChild(SearchFolder child) {
-            DeleteFolder<SearchFolder, ClipboardItem>(child);
         }
 
         public override SearchFolder CreateChild(string folderName) {
@@ -90,7 +68,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
+        public override void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
             // 何もしない
         }
 
@@ -98,12 +76,6 @@ namespace ClipboardApp.Model.Folder {
         public virtual void DeleteItem(ContentItem item) {
             // 何もしない
         }
-
-        #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItem> _afterClipboardChanged) {
-            // 何もしない
-        }
-        #endregion
 
         public override string GetStatusText() {
             string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";

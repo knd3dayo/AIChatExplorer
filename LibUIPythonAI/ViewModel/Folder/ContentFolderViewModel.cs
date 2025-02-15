@@ -11,7 +11,7 @@ using WpfAppCommon.Utils;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolder folder) : ChatViewModelBase {
+    public abstract class ContentFolderViewModel(ContentFolderWrapper folder) : ChatViewModelBase {
 
 
         // フォルダ作成コマンドの実装
@@ -19,14 +19,14 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public abstract void CreateItemCommandExecute();
         public abstract void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
-        public abstract ContentItemViewModel CreateItemViewModel(ContentItem item);
+        public abstract ContentItemViewModel CreateItemViewModel(ContentItemWrapper item);
 
         public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
 
         // RootFolderのViewModelを取得する
         public abstract ContentFolderViewModel GetRootFolderViewModel();
 
-        public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder);
+        public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder);
 
         // フォルダを読み込む
         public abstract void LoadFolderExecute(Action beforeAction, Action afterAction);
@@ -37,7 +37,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         protected virtual void LoadChildren(int nestLevel = 5) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<ContentFolder>()) {
+            foreach (var child in Folder.GetChildren()) {
                 if (child == null) {
                     continue;
                 }
@@ -57,10 +57,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadItems
         protected virtual void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ContentItem> _items = Folder.GetItems<ContentItem>();
+            List<ContentItemWrapper> _items = Folder.GetItems();
             MainUITask.Run(() => {
                 Items.Clear();
-                foreach (ContentItem item in _items) {
+                foreach (ContentItemWrapper item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             });
@@ -151,7 +151,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public virtual int DefaultNextLevel { get; } = 5;
 
 
-        public ContentFolder Folder { get; set; } = folder;
+        public ContentFolderWrapper Folder { get; set; } = folder;
 
 
         public string FolderName {
@@ -195,7 +195,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                     UpdateIndeterminate(true);
                     Folder.GetMainVectorSearchProperty().RefreshVectorDBCollection(Folder.Description, () => {
                         // フォルダ内のアイテムを取得して、ベクトルを作成
-                        foreach (var item in Folder.GetItems<ContentItem>()) {
+                        foreach (var item in Folder.GetItems()) {
                             ContentItemCommands.UpdateEmbeddings([item]);
                             // Save
                             item.Save();

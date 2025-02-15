@@ -7,10 +7,10 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 
 namespace ClipboardApp.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(ContentFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class SearchFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             var searchFolderViewModel = new SearchFolderViewModel(childFolder);
             // 検索フォルダの親フォルダにこのフォルダを追加
             searchFolderViewModel.ParentFolderViewModel = this;

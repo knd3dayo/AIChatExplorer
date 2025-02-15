@@ -72,8 +72,6 @@
             HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -82,13 +80,12 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="0"
-                Width="120"
                 Margin="10,10,10,10"
                 Text="{x:Static res:ViewStringResources.Name}" />
             <TextBox
@@ -99,21 +96,24 @@
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="0"
-                Width="120"
                 Margin="10,10,10,10"
                 Text="{x:Static res:ViewStringResources.ApiType}" />
             <ComboBox
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,10,10,10"
-                SelectedIndex="{Binding SelectedTypeValueIndex}">
-                <ComboBoxItem Content="" />
+                SelectedIndex="{Binding SelectedAITypeIndex}">
+                <ComboBoxItem Content="openai" />
                 <ComboBoxItem Content="azure" />
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding APITypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </ComboBox>
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
-                Width="120"
                 Margin="10,10,10,10"
                 Text="{x:Static res:ViewStringResources.ApiVersion}" />
             <editorControl:MyTextBox
@@ -124,7 +124,6 @@
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="0"
-                Width="120"
                 Margin="10,10,10,10"
                 Text="{x:Static res:ViewStringResources.BaseURL}" />
             <TextBox
@@ -133,6 +132,18 @@
                 Margin="10,10,10,10"
                 AcceptsReturn="False"
                 Text="{Binding BaseURL}"
+                TextWrapping="NoWrap" />
+            <TextBlock
+                Grid.Row="4"
+                Grid.Column="0"
+                Margin="10,10,10,10"
+                Text="{x:Static res:ViewStringResources.Model}" />
+            <TextBox
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="10,10,10,10"
+                AcceptsReturn="False"
+                Text="{Binding Model}"
                 TextWrapping="NoWrap" />
         </Grid>
         <Grid Grid.Row="2" Margin="10,10,10,10">

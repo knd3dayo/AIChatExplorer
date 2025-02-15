@@ -19,7 +19,7 @@ namespace PythonAILib.Model.AutoProcess {
             PromptItemId = promptItem.Id;
 
         }
-        public override void Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
+        public override void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
 
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return;
@@ -28,7 +28,7 @@ namespace PythonAILib.Model.AutoProcess {
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
-            ContentFolder clipboardFolder = clipboardItem.GetFolder<ContentFolder>();
+            ContentFolderWrapper clipboardFolder = clipboardItem.GetFolder();
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {

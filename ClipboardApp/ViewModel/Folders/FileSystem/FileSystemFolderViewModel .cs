@@ -23,7 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override FileSystemFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override FileSystemFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new System.Exception("childFolder is not FileSystemFolder");
             }
@@ -40,11 +40,12 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         protected override async void LoadChildren(int nestLevel = 0) {
+
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
 
             await Task.Run(() => {
-                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                foreach (var child in Folder.GetChildren()) {
                     if (child == null) {
                         continue;
                     }
@@ -61,11 +62,11 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
         }
         // LoadItems
         protected override void LoadItems() {
-            ((FileSystemFolder)Folder).SyncItems();
-            List<FileSystemItem> _items = Folder.GetItems<FileSystemItem>();
+            List<ContentItemWrapper> _items = Folder.GetItems();
             MainUITask.Run(() => {
                 Items.Clear();
-                foreach (FileSystemItem item in _items) {
+                foreach (var item in _items) {
+
                     Items.Add(CreateItemViewModel(item));
                 }
             });
@@ -79,11 +80,13 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             // ShortCutRootFolderを取得
             FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
             // ショートカットフォルダを作成
-            ShortCutFolder subFolder = new() {
+            ContentFolder contentFolder = new() {
                 FolderType = FolderTypeEnum.ShortCut,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
                 ParentId = shortCutRootFolder.Id,
+            };
+            ShortCutFolder subFolder = new(contentFolder) {
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
             subFolder.Save();

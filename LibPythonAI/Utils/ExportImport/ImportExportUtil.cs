@@ -16,11 +16,11 @@ namespace LibPythonAI.Utils.ExportImport {
     public  class ImportExportUtil {
 
         // --- Export/Import
-        public static void ExportToExcel(ContentFolder fromFolder, string fileName, List<ExportImportItem> items) {
+        public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in fromFolder.GetItems<ContentItem>()) {
+            foreach (var clipboardItem in fromFolder.GetItems()) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
@@ -50,7 +50,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
             PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
         }
-        public static void ImportFromExcel(ContentFolder fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItem> afterImport) {
+        public static void ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
@@ -79,7 +79,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     continue;
                 }
 
-                ContentItem item = new(fromFolder.Id);
+                ContentItemWrapper item = new(fromFolder.Id);
                 // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
                 int titleIndex = targetNames.IndexOf("Title");
                 if (titleIndex != -1) {
@@ -101,7 +101,7 @@ namespace LibPythonAI.Utils.ExportImport {
         }
 
 
-        public static void ImportFromURLList(ContentFolder fromFolder, string filePath, Action<ContentItem> afterImport) {
+        public static void ImportFromURLList(ContentFolderWrapper fromFolder, string filePath, Action<ContentItemWrapper> afterImport) {
 
             // filePathのファイルが存在しない場合は何もしない
             if (System.IO.File.Exists(filePath) == false) {
@@ -131,7 +131,7 @@ namespace LibPythonAI.Utils.ExportImport {
                         string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
 
                         // アイテムの作成
-                        ContentItem item = new(fromFolder.Id) {
+                        ContentItemWrapper item = new(fromFolder.Id) {
                             Content = text,
                             Description = url,
                             SourcePath = url
@@ -153,7 +153,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
         }
 
-        public static void ImportItemsFromJson(ContentFolder toFolder, string json) {
+        public static void ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
                 LogWrapper.Error(PythonAILibStringResources.Instance.FailedToParseJSONString);

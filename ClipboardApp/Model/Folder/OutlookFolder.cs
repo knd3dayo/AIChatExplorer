@@ -13,20 +13,12 @@ using Outlook = NetOffice.OutlookApi;
 namespace ClipboardApp.Model.Folder {
     public class OutlookFolder : ClipboardFolder {
 
-        public override void Save() {
-            Save<OutlookFolder, OutlookItem>();
-        }
-        // 削除
-        public override void Delete() {
-            DeleteFolder<OutlookFolder, OutlookItem>(this);
-        }
-        // 親フォルダ
-        public override OutlookFolder? GetParent() {
-            return GetParent<OutlookFolder>();
+        // コンストラクタ
+        public OutlookFolder(ContentFolder folder) : base(folder) {
+            IsAutoProcessEnabled = false;
+            FolderType = FolderTypeEnum.Outlook;
         }
 
-        // コンストラクタ
-        public OutlookFolder() { }
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
             FolderType = FolderTypeEnum.Outlook;
             // フォルダ名を設定
@@ -37,6 +29,16 @@ namespace ClipboardApp.Model.Folder {
                 MAPIFolder = mAPIFolder;
             }
         }
+
+
+        public override OutlookFolder? GetParent() {
+            var parentFolder = ContentFolderInstance.GetParent();
+            if (parentFolder == null) {
+                return null;
+            }
+            return new OutlookFolder(parentFolder);
+        }
+        
 
         private static Outlook.Application? outlookApplication = null;
 
@@ -67,16 +69,15 @@ namespace ClipboardApp.Model.Folder {
             return child;
         }
 
-        public override List<T> GetItems<T>() {
-            // ローカルファイルシステムとClipboardFolderのファイルを同期
-            // SyncItems();
-
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<T>();
-            // FileSystemFolderPathフォルダ内のファイルを取得
-            List<T> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
-
-            return items;
+        public override List<ContentItemWrapper> GetItems() {
+            var items = ContentFolderInstance.GetItems<ContentItem>();
+            List<ContentItemWrapper> result = [];
+            foreach (var item in items) {
+                result.Add(new OutlookItem(item));
+            }
+            return result;
         }
+
 
         public void SyncItems() {
             // MAPIFolderが存在しない場合は終了
@@ -84,10 +85,15 @@ namespace ClipboardApp.Model.Folder {
                 return;
             }
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetItemCollection<OutlookItem>();
-            // OutlookItemのEntryIDとIDのDictionary
-            Dictionary<string, LiteDB.ObjectId> entryIdIdDict = collection.Find(x => x.CollectionId == this.Id).ToDictionary(x => x.EntryID, x => x.Id);
+            var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
 
+            // OutlookItemのEntryIDとIDのDictionary
+            Dictionary<string, LiteDB.ObjectId> entryIdIdDict = [];
+            foreach (var item in GetItems()) {
+                if (item is OutlookItem outlookItem) {
+                    entryIdIdDict[outlookItem.EntryID] = outlookItem.Id;
+                }
+            }
             // Outlookのフォルダ内のEntryIDを格納するHashSet
             HashSet<string> entryIdList = MAPIFolder.Items.Cast<Outlook.MailItem>().Select(x => x.EntryID).ToHashSet();
 
@@ -108,20 +114,25 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // 子フォルダ
-        public override List<OutlookFolder> GetChildren<OutlookFolder>() {
+        public override List<ContentFolderWrapper> GetChildren() {
 
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
-            IEnumerable<OutlookFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<OutlookFolder>().ToList();
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+            IEnumerable<ContentFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            List<ContentFolderWrapper> result = [];
+            foreach (var folder in folders) {
+                OutlookFolder outlookFolder = new(folder);
+                result.Add(outlookFolder);
+            }
+            return result;
         }
 
         public MAPIFolder? GetMAPIFolder() {
             if (IsRootFolder) {
                 return null;
             }
-            if (GetParent<OutlookFolder>()?.IsRootFolder == true) {
+            if (GetParent()?.IsRootFolder == true) {
                 return InboxFolder;
             }
             // FolderPathを/で分割した要素のリスト
@@ -135,10 +146,9 @@ namespace ClipboardApp.Model.Folder {
 
         public virtual void SyncFolders() {
 
+
             // Outlook上のフォルダのNameのHashSet
             HashSet<string> outlookFolderNames = new();
-
-
             if (IsRootFolder) {
                 // ルートフォルダの場合はInboxフォルダを取得
                 outlookFolderNames.Add(InboxFolder.Name);
@@ -151,17 +161,22 @@ namespace ClipboardApp.Model.Folder {
             }
             LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
 
-            // folder内のFolderNameとIdのDictionary
-            Dictionary<string, LiteDB.ObjectId> folderPathIdDict = collection.Find(x => x.ParentId == Id).ToDictionary(x => x.FolderName, x => x.Id);
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+            // folder内のFolderNameとContentFolderのDictionary
+            Dictionary<string, ContentFolder> folderPathIdDict = [];
+            foreach (var folder in GetChildren()) {
+                if (folder is OutlookFolder outlookFolder) {
+                    folderPathIdDict[outlookFolder.FolderName] = outlookFolder.ContentFolderInstance;
+                }
+            }
 
             // DBに存在するフォルダがOutlookに存在しない場合は削除
             // Exceptで差集合を取得
             var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
             foreach (var deleteFolderName in deleteFolderNames) {
-                ObjectId deleteId = folderPathIdDict[deleteFolderName];
-                collection.Delete(deleteId);
+                ContentFolder contentFolder = folderPathIdDict[deleteFolderName];
+                contentFolder.Delete();
             }
 
             // Outlookに存在するフォルダがDBに存在しない場合は追加

@@ -115,7 +115,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
 
         // Command to open Image Chat
-        public void OpenImageChatWindowCommand(ContentItem item, Action action) {
+        public void OpenImageChatWindowCommand(ContentItemWrapper item, Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
 
@@ -449,7 +449,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         #endregion
         // -----------------------------------------------------------------------------------
 
-        public static QAChatStartupProps CreateQAChatStartupProps(ContentItem clipboardItem) {
+        public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper clipboardItem) {
 
             SearchRule rule = FolderManager.GlobalSearchCondition.Copy();
 
@@ -457,14 +457,15 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
                 CloseCommand = (item, saveChatHistory) => {
-                    bool flag = clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat;
+                    bool flag = clipboardItem.GetFolder().FolderType != FolderTypeEnum.Chat;
                     clipboardItem.Save();
 
                     if (saveChatHistory && flag) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                        ClipboardItem chatHistoryItem = new(chatFolder.Id);
-                        clipboardItem.CopyTo(chatHistoryItem);
+                        ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
+                        chatHistoryItem.CollectionId = chatFolder.Id;
+
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {
                             chatHistoryItem.Description += " " + clipboardItem.Description;
                         }

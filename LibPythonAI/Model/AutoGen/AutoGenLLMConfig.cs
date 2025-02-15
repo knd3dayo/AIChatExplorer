@@ -10,6 +10,9 @@ using PythonAILib.PythonIF;
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenLLMConfig {
 
+        public static readonly string API_TYPE_AZURE = "azure";
+        public static readonly string API_TYPE_OPENAI = "openai";
+
         // name コンフィグ名
         public string Name { get; set; } = "";
         // api_type api_type (azure, openaiなど)

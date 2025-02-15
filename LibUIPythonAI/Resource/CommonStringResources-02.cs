@@ -59,7 +59,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string UseAzureOpenAI { get; } = "Azure OpenAIを使用する";
 
         // AzureOpenAIAPIVersion
-        public virtual string AzureOpenAIAPIVersion { get; } = "AzureOpenAIのAPIVersion";
+        public virtual string AzureOpenAIAPIVersion { get; } = "AzureOpenAIのAPIバージョン";
 
         // OpenAIの代わりにAzure OpenAIを使用します
         public virtual string UseAzureOpenAIInsteadOfOpenAI { get; } = "OpenAIの代わりにAzure OpenAIを使用します";

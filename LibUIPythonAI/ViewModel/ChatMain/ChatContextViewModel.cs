@@ -20,7 +20,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
         public ChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;
-            VectorSearchProperties = [.. qaChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
+            VectorSearchProperties = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
             _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
@@ -129,7 +129,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorDBProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
+                    List<VectorDBProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

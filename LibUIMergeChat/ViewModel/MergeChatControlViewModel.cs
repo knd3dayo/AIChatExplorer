@@ -240,7 +240,7 @@ namespace LibUIMergeChat.ViewModel {
 
                 ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid;
                 // itemViewModelsからContentItemをSelect
-                List<ContentItem> items = itemViewModels.Select(x => x.ContentItem).ToList();
+                List<ContentItemWrapper> items = itemViewModels.Select(x => x.ContentItem).ToList();
                 // チャット内容を更新
                 await Task.Run(() => {
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
@@ -264,7 +264,8 @@ namespace LibUIMergeChat.ViewModel {
                     ContentItem contentItem = new() {
                         Content = result.Output,
                     };
-                    OutputFolder.Folder.AddItem(contentItem, true, (item) => {
+                    ContentItemWrapper contentItemWrapper = new(contentItem);
+                    OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {
                         UpdateIndeterminate(false);
                         LogWrapper.Info(StringResources.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行

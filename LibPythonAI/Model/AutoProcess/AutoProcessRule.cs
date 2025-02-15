@@ -74,7 +74,7 @@ namespace PythonAILib.Model.AutoProcess {
 
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
-        public bool IsMatch(ContentItem clipboardItem) {
+        public bool IsMatch(ContentItemWrapper clipboardItem) {
             if (Conditions.Count == 0) {
                 return false;
             }
@@ -92,7 +92,7 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public void RunAction(ContentItem clipboardItem) {
+        public void RunAction(ContentItemWrapper clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResources.Instance.RuleNameIsInvalid(RuleName));
@@ -112,7 +112,7 @@ namespace PythonAILib.Model.AutoProcess {
             var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
             ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
 
-            RuleAction.Execute(clipboardItem, destinationFolder);
+            RuleAction.Execute(clipboardItem, new ContentFolderWrapper(destinationFolder));
         }
 
         public string GetDescriptionString() {

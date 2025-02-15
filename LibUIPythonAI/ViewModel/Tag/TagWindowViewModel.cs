@@ -14,11 +14,11 @@ namespace LibUIPythonAI.ViewModel.Tag {
 
         public List<TagItemViewModel> SelectedTagList { get; set; } = [];
 
-        private ContentItem? ContentItem { get; set; }
+        private ContentItemWrapper? ContentItem { get; set; }
 
         private Action? AfterUpdate { get; set; }
 
-        public TagWindowViewModel(ContentItem? contentItem, Action afterUpdate) {
+        public TagWindowViewModel(ContentItemWrapper? contentItem, Action afterUpdate) {
             ContentItem = contentItem;
             AfterUpdate = afterUpdate;
 

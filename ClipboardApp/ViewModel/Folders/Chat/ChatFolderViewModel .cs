@@ -9,10 +9,10 @@ using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 
 namespace ClipboardApp.ViewModel.Folders.Chat {
-    public class ChatFolderViewModel(ContentFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class ChatFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             var chatFolderViewModel = new ChatFolderViewModel(childFolder);
             // チャットフォルダの親フォルダにこのフォルダを追加
             chatFolderViewModel.ParentFolderViewModel = this;

@@ -19,10 +19,11 @@ namespace PythonAILib.Model.AutoProcess {
             return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString();
         }
 
-        public virtual void Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
+        public virtual void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
             // DestinationFolderIdからFolderを取得
             ContentFolder? folder = ContentFolder.GetFolderById<ContentFolder>(DestinationFolderId);
-            Action<ContentItem> action = GetAction(TypeName, folder);
+            ContentFolderWrapper? destinationFolderWrapper = folder == null ? null : new ContentFolderWrapper(folder);
+            Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolderWrapper);
             action(clipboardItem);
 
         }
@@ -66,7 +67,7 @@ namespace PythonAILib.Model.AutoProcess {
             }
         }
 
-        public static Action<ContentItem> GetAction(TypeEnum typeEnum, ContentFolder? destinationFolder) {
+        public static Action<ContentItemWrapper> GetAction(TypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
             if (typeEnum == TypeEnum.Ignore) {
                 return (args) => {
                     return;
@@ -80,7 +81,7 @@ namespace PythonAILib.Model.AutoProcess {
                     }
 
                     LogWrapper.Info($"{PythonAILibStringResources.Instance.CopyToFolderDescription}:{destinationFolder.FolderPath}");
-                    ContentItem newItem = (ContentItem)args.Copy();
+                    ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
                     destinationFolder.AddItem(newItem);
                 };
@@ -92,7 +93,7 @@ namespace PythonAILib.Model.AutoProcess {
                         return;
                     }
                     // Folderに追加
-                    ContentItem newItem = (ContentItem)args.Copy();
+                    ContentItemWrapper newItem = args.Copy();
                     destinationFolder.AddItem(newItem);
                     args.Delete();
 

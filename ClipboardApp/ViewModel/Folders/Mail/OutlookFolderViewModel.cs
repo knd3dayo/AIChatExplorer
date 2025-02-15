@@ -9,7 +9,7 @@ using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.Mail {
-    public class OutlookFolderViewModel(ContentFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class OutlookFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;
 
@@ -22,11 +22,11 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override OutlookFolderViewModel CreateChildFolderViewModel(ContentFolder childFolder) {
+        public override OutlookFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not OutlookFolder) {
                 throw new Exception("childFolder is not OutlookFolder");
             }
-            var childFolderViewModel = new OutlookFolderViewModel((OutlookFolder)childFolder) {
+            var childFolderViewModel = new OutlookFolderViewModel(childFolder) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -42,7 +42,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
             List<ContentFolderViewModel> _children = [];
 
             await Task.Run(() => {
-                foreach (var child in Folder.GetChildren<OutlookFolder>()) {
+                foreach (var child in Folder.GetChildren()) {
                     if (child == null) {
                         continue;
                     }
@@ -61,7 +61,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         // LoadItems
         protected override void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<OutlookItem> _items = Folder.GetItems<OutlookItem>();
+            List<ContentItemWrapper> _items = Folder.GetItems();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (OutlookItem item in _items) {

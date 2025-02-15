@@ -6,12 +6,12 @@ using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel {
     public class QAChatStartupProps {
-        public QAChatStartupProps(ContentItem clipboardItem) {
+        public QAChatStartupProps(ContentItemWrapper clipboardItem) {
             ContentItem = clipboardItem;
         }
-        public ContentItem ContentItem { get; set; }
+        public ContentItemWrapper ContentItem { get; set; }
 
-        public Action<ContentItem, bool> CloseCommand { get; set; } = (item, saveChatHistory) => { };
+        public Action<ContentItemWrapper, bool> CloseCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatMessage>> ExportChatCommand { get; set; } = (chatHistory) => { };
 

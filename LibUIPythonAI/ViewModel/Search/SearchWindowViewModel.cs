@@ -10,7 +10,7 @@ namespace LibUIPythonAI.ViewModel.Search {
     public class SearchWindowViewModel : ChatViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
-            ContentFolder searchFolder, bool isSearchFolder,
+            ContentFolderWrapper searchFolder, bool isSearchFolder,
             Action afterUpdate
             ) {
             _searchConditionRule = searchConditionRule;
@@ -44,8 +44,8 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
         }
 
-        private ContentFolder _searchFolder;
-        public ContentFolder SearchFolder {
+        private ContentFolderWrapper _searchFolder;
+        public ContentFolderWrapper SearchFolder {
             get {
                 return _searchFolder;
             }

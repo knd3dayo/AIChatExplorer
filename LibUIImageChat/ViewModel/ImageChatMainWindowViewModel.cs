@@ -18,7 +18,7 @@ using WpfAppCommon.Utils;
 namespace LibUIImageChat.ViewModel {
     public class ImageChatMainWindowViewModel : ChatViewModelBase {
         // コンストラクタ
-        public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
+        public ImageChatMainWindowViewModel(ContentItemWrapper clipboardItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             ClipboardItem = clipboardItem;
             OnPropertyChanged(nameof(Description));
@@ -28,7 +28,7 @@ namespace LibUIImageChat.ViewModel {
             ChatRequest = new();
         }
         // データ保存用のClipboardItem
-        public ContentItem ClipboardItem { get; set; }
+        public ContentItemWrapper ClipboardItem { get; set; }
 
         // Chat
         public ChatRequest ChatRequest { get; set; }

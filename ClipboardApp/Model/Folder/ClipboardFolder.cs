@@ -1,12 +1,10 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Common;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
 using LibUIPythonAI.Resource;
-using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
@@ -15,74 +13,60 @@ using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public partial class ClipboardFolder : ContentFolder {
+    public partial class ClipboardFolder : ContentFolderWrapper {
 
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder() {
+        public ClipboardFolder(ContentFolder folder): base(folder) {
             IsAutoProcessEnabled = true;
+            FolderType = FolderTypeEnum.Normal;
         }
 
-        protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
+        protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base (parent, folderName) {
 
-            ParentId = parent?.Id ?? ObjectId.Empty;
+            ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
             FolderName = folderName;
-            // 親フォルダがnullの場合は、FolderTypeをNormalに設定
-            FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
+            FolderType = FolderTypeEnum.Normal;
 
             IsAutoProcessEnabled = true;
 
         }
 
-        public override void Save() {
-            Save<ClipboardFolder, ClipboardItem>();
-        }
-        // 削除
-        public override void Delete() {
-            Delete<ClipboardFolder, ClipboardItem>();
-        }
-
-        // 親フォルダ
-        public override ContentFolder? GetParent() {
-            return GetParent<ClipboardFolder>();
-        }
-
-
-        public override List<ClipboardFolder> GetChildren<ClipboardFolder>() {
-
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ClipboardFolder>();
-            IEnumerable<ClipboardFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<ClipboardFolder>().ToList();
-        }
-
-        // アイテム LiteDBには保存しない。
-        [BsonIgnore]
-        public override List<T> GetItems<T>() {
-            List<ContentItem> _items = [];
-            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
-            // 検索フォルダの場合は、SearchConditionを適用して取得
-            ClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
-            if (FolderManager.GlobalSearchCondition.SearchCondition != null && FolderManager.GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                _items = [.. SearchItems(FolderManager.GlobalSearchCondition.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
-
-            } else {
-                // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+        public override List<ContentItemWrapper> GetItems() {
+            var items = ContentFolderInstance.GetItems<ContentItem>();
+            List< ContentItemWrapper > result = [];
+            foreach (var item in items) {
+                result.Add(new ClipboardItem(item));
             }
+            return result;
+        }
 
-            return _items.Cast<T>().ToList();
+        public override ClipboardFolder? GetParent() {
+            var parentFolder = ContentFolderInstance.GetParent();
+            if (parentFolder == null) {
+                return null;
+            }
+            return new ClipboardFolder(parentFolder);
+        }
+
+        public override List<ContentFolderWrapper> GetChildren() {
+            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            List<ContentFolderWrapper> result = [];
+            foreach (var child in children) {
+                result.Add(new ClipboardFolder(child));
+            }
+            return result;
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
+        public override void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
             base.AddItem(item, applyGlobalAutoAction, afterUpdate);
 
             // 自動処理を適用
             if (IsAutoProcessEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
-                ContentItem? result = AutoProcessRuleController.ApplyFolderAutoAction(item);
+                ContentItemWrapper? result = AutoProcessRuleController.ApplyFolderAutoAction(item);
                 if (result == null) {
                     // 自動処理で削除または移動された場合は何もしない
                     LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
@@ -98,17 +82,8 @@ namespace ClipboardApp.Model.Folder {
             return child;
         }
 
-
-        #region エクスポート/インポート
-
-
-        //exportしたJSONファイルをインポート
-
-
-        #endregion
-
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItem> _afterClipboardChanged) {
+        public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
 
             // Get the cut/copied text.
             List<ClipboardItem> items = CreateClipboardItem(this, e);
@@ -201,9 +176,8 @@ namespace ClipboardApp.Model.Folder {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
-            };
-            var options = jsonSerializerOptions;
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(GetItems<ClipboardItem>, options);
+            }; 
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(GetItems(), jsonSerializerOptions);
 
             System.IO.File.WriteAllText(fileName, jsonString);
 

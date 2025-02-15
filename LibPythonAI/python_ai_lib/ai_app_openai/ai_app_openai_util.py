@@ -33,13 +33,13 @@ class OpenAIProps:
         if type(self.AzureOpenAI) == str:
             self.AzureOpenAI = self.AzureOpenAI.upper() == "TRUE"
             
-        self.AzureOpenAIVersion = props_dict.get("AzureOpenAIVersion", None)
+        self.AzureOpenAIAPIVersion = props_dict.get("AzureOpenAIAPIVersion", None)
         self.AzureOpenAIEndpoint = props_dict.get("AzureOpenAIEndpoint", None)
         self.OpenAIBaseURL = props_dict.get("OpenAIBaseURL", None)
 
         # AzureOpenAICompletionVersionがNoneの場合は2024-02-01を設定する
-        if self.AzureOpenAIVersion == None:
-            self.AzureOpenAIVersion = "2024-02-01"
+        if self.AzureOpenAIAPIVersion == None:
+            self.AzureOpenAIAPIVersion = "2024-02-01"
 
     # OpenAIのCompletion用のパラメーター用のdictを作成する
     def create_openai_dict(self) -> dict:
@@ -57,7 +57,7 @@ class OpenAIProps:
             completion_dict["base_url"] = self.OpenAIBaseURL
         else:
             completion_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
-            completion_dict["api_version"] = self.AzureOpenAIVersion
+            completion_dict["api_version"] = self.AzureOpenAIAPIVersion
         return completion_dict
 
 
@@ -69,7 +69,7 @@ class OpenAIProps:
             "OpenAICompletionModel": os.getenv("OPENAI_COMPLETION_MODEL"),
             "OpenAIEmbeddingModel": os.getenv("OPENAI_EMBEDDING_MODEL"),
             "AzureOpenAI": os.getenv("AZURE_OPENAI"),
-            "AzureOpenAIVersion": os.getenv("AZURE_OPENAI_API_VERSION"),
+            "AzureOpenAIAPIVersion": os.getenv("AZURE_OPENAI_API_VERSION"),
             "OpenAIBaseURL": os.getenv("OPENAI_BASE_URL"),
         }
         openAIProps = OpenAIProps(props)

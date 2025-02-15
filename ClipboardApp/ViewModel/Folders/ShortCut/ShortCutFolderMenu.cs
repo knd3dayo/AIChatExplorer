@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Folders.FileSystem;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
     public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
@@ -20,14 +21,26 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                 };
                 menuItems.Add(editMenuItem);
 
-                // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
-                menuItems.Add(deleteMenuItem);
+                // ショートカット登録
+                MenuItem createShortCutMenuItem = new() {
+                    Header = StringResources.CreateShortCut,
+                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(createShortCutMenuItem);
 
+                // RootFolderの場合
+                if (ClipboardFolderViewModel.Folder.IsRootFolder) {
+
+                    // 削除
+                    MenuItem deleteMenuItem = new();
+                    deleteMenuItem.Header = StringResources.Delete;
+                    deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
+                    deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
+                    deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
+                    menuItems.Add(deleteMenuItem);
+
+                }
                 //テキストの抽出
                 MenuItem extractTextMenuItem = new() {
                     Header = StringResources.ExtractText,

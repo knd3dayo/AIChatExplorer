@@ -19,7 +19,7 @@ namespace PythonAILibUI.ViewModel.Item {
 
         // Command to open a file
         public  void OpenFileExecute(ContentItemViewModel itemViewModel) {
-            ContentItem contentItem = itemViewModel.ContentItem;
+            ContentItemWrapper contentItem = itemViewModel.ContentItem;
             // Open the selected item
             ProcessUtil.OpenClipboardItemFile(contentItem, false);
         }
@@ -47,7 +47,7 @@ namespace PythonAILibUI.ViewModel.Item {
 
         // Command to open a folder
         public void OpenFolderExecute(ContentItemViewModel itemViewModel) {
-            ContentItem contentItem = itemViewModel.ContentItem;
+            ContentItemWrapper contentItem = itemViewModel.ContentItem;
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
@@ -94,7 +94,7 @@ namespace PythonAILibUI.ViewModel.Item {
                     int index = i; // Store the current index in a separate variable to avoid closure issues
                     string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
-                    ContentItem item = items[index];
+                    ContentItemWrapper item = items[index];
 
                     ContentItemCommands.CreateChatResult(item, promptItem.Name);
                     // Save
@@ -198,7 +198,7 @@ namespace PythonAILibUI.ViewModel.Item {
                     StatusText.Instance.UpdateInProgress(true, message);
                     var itemViewModel = items[index];
 
-                    ContentItem item = itemViewModel.ContentItem;
+                    ContentItemWrapper item = itemViewModel.ContentItem;
                     if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
                         LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
