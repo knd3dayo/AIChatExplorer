@@ -98,7 +98,7 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_props.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\web\index.html">
+    <EmbeddedResource Include="python_ai_lib\templates\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_process_checker.py">

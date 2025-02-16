@@ -2,24 +2,19 @@ import os, sys
 from typing import Any
 from flask_cors import CORS
 from flask import Flask, Response, request, render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
+import ai_app_wrapper
 
 
 app = Flask(__name__)
 CORS(app)  # すべてのオリジンからのアクセスを許可
 
-import ai_app_wrapper
 
 app.config["JSON_AS_ASCII"] = False
-
-app = Flask(__name__)
 app.config['ASCII'] = False
+app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @app.route('/api/openai_chat', methods=['POST'])
 def openai_chat():
@@ -195,11 +190,26 @@ def hello_world():
     print(response)
     return Response(response, mimetype='application/json')
 
-@socketio.on('connect', namespace='/api/autogen_group_chat')
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+def handle_message(msg):
+    print('Message received: ' + msg)
+    emit('response', msg, broadcast=True)
+
+
+@socketio.on('autogen_group_chat')
 def autogen_group_chat(request_json: str):
-    for response in ai_app_wrapper.autogen_group_chat(request_json):
-        emit("response", response)
-    emit("close", "close")
+    try:
+        for response in ai_app_wrapper.autogen_group_chat(request_json):
+            emit("response", response)
+    except Exception as e:
+        import traceback
+        emit("error", traceback.format_exc())
+    finally:
+        print("close", file=sys.stderr)
+        emit("close", "close")
 
 
 @app.route('/api/shutdown', methods=['POST', 'GET'])

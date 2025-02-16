@@ -148,6 +148,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
                     });
 
                 });
+                UpdateIndeterminate(false);
 
                 if (result == null) {
                     LogWrapper.Error(StringResources.FailedToSendChat);
@@ -161,8 +162,6 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
-            } finally {
-                UpdateIndeterminate(false);
             }
 
         });

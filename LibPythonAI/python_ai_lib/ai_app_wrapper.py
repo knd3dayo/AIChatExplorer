@@ -275,10 +275,12 @@ def get_token_count(request_json: str):
 def autogen_group_chat( request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> Generator[dict, None, None]:
-        openai_props, _ = get_openai_objects(request_json)
-        vector_db_items = get_vector_db_objects(request_json)
-        autogen_props = get_autogen_objects( request_json)
-        autogen_request = get_autogen_request_objects(request_json)
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        openai_props, _ = get_openai_objects(request_dict)
+        vector_db_items = get_vector_db_objects(request_dict)
+        autogen_props = get_autogen_objects( request_dict)
+        autogen_request = get_autogen_request_objects(request_dict)
         input_text = autogen_request.get("input_text", "")
         if not input_text:
             raise ValueError("input_text is not set")
