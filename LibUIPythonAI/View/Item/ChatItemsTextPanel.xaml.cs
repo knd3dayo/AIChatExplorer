@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace ClipboardApp.View.Item {
+namespace LibUIPythonAI.View.Item {
     /// <summary>
     /// TaskPanel.xaml の相互作用ロジック
     /// </summary>

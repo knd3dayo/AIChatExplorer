@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClipboardApp.View.Item {
+namespace LibUIPythonAI.View.Item {
     /// <summary>
     /// TaskPanel.xaml の相互作用ロジック
     /// </summary>

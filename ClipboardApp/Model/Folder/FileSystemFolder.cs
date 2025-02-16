@@ -207,7 +207,7 @@ namespace ClipboardApp.Model.Folder {
             // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
             var targetMimeTypesSet = new HashSet<string>(TargetMimeTypes);
             ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 6
+                MaxDegreeOfParallelism = 8
             };
 
             Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {

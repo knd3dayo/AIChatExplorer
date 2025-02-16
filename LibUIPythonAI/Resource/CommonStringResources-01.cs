@@ -1096,5 +1096,8 @@ namespace LibUIPythonAI.Resource {
 
         // VectorDBSettings
         public virtual string VectorDBSettings { get; } = "ベクトルDB設定";
+
+        // ファイルの内容を表示するには「テキストを抽出」を実行してください
+        public virtual string ExecuteExtractTextToViewFileContent { get; } = "ファイルの内容を表示するには「テキストを抽出」を実行してください";
     }
 }

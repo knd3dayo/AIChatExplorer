@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 
-namespace ClipboardApp.View.Item {
+namespace LibUIPythonAI.View.Item {
     /// <summary>
     /// TaskPanel.xaml の相互作用ロジック
     /// </summary>
-    public partial class PromptResultTablePanel : UserControl {
-        public PromptResultTablePanel() {
+    public partial class PromptResultTextPanel : UserControl {
+        public PromptResultTextPanel() {
             InitializeComponent();
         }
     }

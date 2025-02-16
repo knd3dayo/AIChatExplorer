@@ -84,8 +84,7 @@ namespace PythonAILibUI.ViewModel.Item {
                 int start_count = 0;
                 var items = itemViewModels.Select(x => x.ContentItem).ToList();
                 ParallelOptions parallelOptions = new() {
-                    // 20並列
-                    MaxDegreeOfParallelism = 20
+                    MaxDegreeOfParallelism = 8
                 };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     lock (lockObject) {
@@ -187,7 +186,7 @@ namespace PythonAILibUI.ViewModel.Item {
                 var items = itemViewModels.ToList();
                 ParallelOptions parallelOptions = new() {
                     // 20並列
-                    MaxDegreeOfParallelism = 20
+                    MaxDegreeOfParallelism = 8
                 };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     int index = i; // Store the current index in a separate variable to avoid closure issues

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
+using PythonAILib.Model.Content;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
     public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
@@ -30,8 +31,8 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                 menuItems.Add(createShortCutMenuItem);
 
                 // RootFolderの場合
-                if (ClipboardFolderViewModel.Folder.IsRootFolder) {
-
+                ContentFolderWrapper? parentFolder = ClipboardFolderViewModel.Folder.GetParent();
+                if (parentFolder != null && parentFolder.IsRootFolder) {
                     // 削除
                     MenuItem deleteMenuItem = new();
                     deleteMenuItem.Header = StringResources.Delete;

@@ -68,18 +68,6 @@
     <Compile Update="View\Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Item\ChatItemsTextPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\Item\PromptResultTextPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\Item\FilePanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\Item\ContentPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

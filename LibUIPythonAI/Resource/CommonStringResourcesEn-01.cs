@@ -1040,6 +1040,9 @@ namespace LibUIPythonAI.Resource {
         // VectorDBSettings
         public override string VectorDBSettings { get; } = "Vector DB Settings";
 
+        // // ファイルの内容を表示するには「テキストを抽出」を実行してください
+        public override string ExecuteExtractTextToViewFileContent { get; } = "To view the contents of the file, execute \"Extract Text\"";
+
 
 
     }
