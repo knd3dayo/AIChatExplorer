@@ -41,7 +41,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
         }
 
         public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            if (Folder is not ClipboardFolder clipboardFolder) {
+            if (Folder is not SearchFolder searchFolder) {
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = Folder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, true, afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, true, afterUpdate);
 
         }
 

@@ -20,6 +20,8 @@ namespace LibUIPythonAI.ViewModel.Item {
             this.itemViewModel = itemViewModel;
             FolderViewModel = folderViewModel;
             _afterUpdate = afterUpdate;
+            TagsString = string.Join(",", itemViewModel?.Tags ?? []);
+
             OnPropertyChanged(nameof(ItemViewModel));
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(SourcePath));
@@ -33,8 +35,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
             set {
                 itemViewModel = value;
-                TagsString = string.Join(",", itemViewModel?.Tags ?? []);
-
                 OnPropertyChanged(nameof(ItemViewModel));
             }
         }
