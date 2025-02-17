@@ -70,21 +70,18 @@ namespace PythonAILib.Model.Content {
             return GetParent<ContentFolder>();
         }
 
-        public virtual List<T> GetChildren<T>() where T : ContentFolder {
+        public virtual IEnumerable<T> GetChildren<T>() where T : ContentFolder {
 
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
             IEnumerable<T> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<T>().ToList();
+            return folders;
         }
 
-        public virtual List<T> GetItems<T>() where T : ContentItem {
+        public virtual IEnumerable<T> GetItems<T>() where T : ContentItem {
             List<T> _items = [];
             var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
-            var items = collection.Find(x => x.CollectionId == Id);
-            foreach (var item in items) {
-                _items.Add(item);
-            }
-            return _items.Cast<T>().ToList();
+            var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
+            return items;
         }
 
         protected T? GetParent<T>() where T : ContentFolder {
