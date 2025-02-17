@@ -17,7 +17,7 @@ namespace PythonAILib.Model.Search {
         public static SearchRule? GetSearchRuleByFolder(ContentFolderWrapper folder) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetSearchRuleCollection();
-            var item = collection.FindOne(x => x.SearchFolder != null && x.SearchFolder.Id == folder.Id);
+            var item = collection.FindOne(x => x.SearchFolderId == folder.Id);
             return item;
         }
     }

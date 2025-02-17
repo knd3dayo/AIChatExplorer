@@ -19,7 +19,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
-            ClipboardFolder clipboardFolder = (ClipboardFolder)Folder.CreateChild("New Folder");
+            SearchFolder clipboardFolder = (SearchFolder)Folder.CreateChild("New Folder");
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 

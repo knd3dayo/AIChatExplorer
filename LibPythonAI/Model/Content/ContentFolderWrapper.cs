@@ -300,5 +300,14 @@ namespace PythonAILib.Model.Content {
         #endregion
 
 
+        // ObjectIdからContentFolderWrapperを取得
+        public static ContentFolderWrapper? GetFolderById(LiteDB.ObjectId id) {
+            var folder = ContentFolder.GetFolderById<ContentFolder>(id);
+            if (folder == null) {
+                return null;
+            }
+            return new ContentFolderWrapper(folder);
+        }
+
     }
 }

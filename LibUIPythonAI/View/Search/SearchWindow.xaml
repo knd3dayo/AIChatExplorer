@@ -89,7 +89,7 @@
             <!--  適用対象を選択するツリービューを表示するボタン  -->
             <Button
                 Margin="10,10,10,0"
-                Command="{Binding OpenSelectTargetFolderWindowCommand, Mode=OneTime}"
+                Command="{Binding OpenClipboardFolderWindowCommand  , Mode=OneTime}"
                 Content="{x:Static res:ViewStringResources.Select}" />
             <TextBox
                 Margin="10,10,10,0"
