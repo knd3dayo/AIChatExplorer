@@ -190,7 +190,7 @@ namespace ClipboardApp.Model.Folder {
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItem> itemFilePathIdDict = [];
             foreach (var item in items) {
-                itemFilePathIdDict[item.FilePath] = item;
+                itemFilePathIdDict[item.SourcePath] = item;
             }
 
             // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
@@ -217,7 +217,6 @@ namespace ClipboardApp.Model.Folder {
                     CollectionId = Id,
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
-                    FilePath = localFileSystemFilePath,
                     ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),

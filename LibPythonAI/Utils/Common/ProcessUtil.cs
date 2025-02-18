@@ -367,13 +367,13 @@ namespace LibPythonAI.Utils.Common {
 
         public static void OpenClipboardItemFile(ContentItemWrapper item, bool openAsNew = false) {
             // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
-            if (string.IsNullOrEmpty(item.FilePath)) {
+            if (string.IsNullOrEmpty(item.SourcePath)) {
                 // BitmapImageがNullでない場合はファイルを開く
                 if (item.BitmapImage != null) {
                     ProcessUtil.OpenBitmapImage(item.BitmapImage);
                 }
             } else {
-                ProcessUtil.OpenFile(item.FilePath, openAsNew);
+                ProcessUtil.OpenFile(item.SourcePath, openAsNew);
             }
         }
     }

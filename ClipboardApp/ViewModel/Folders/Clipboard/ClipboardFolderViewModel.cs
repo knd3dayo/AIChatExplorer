@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
