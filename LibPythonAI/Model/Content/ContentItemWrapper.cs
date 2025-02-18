@@ -30,6 +30,14 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.Id = value;
             }
         }
+        [BsonIgnore]
+        // Folder
+        public ContentFolderWrapper Folder {
+            get {
+                return GetFolder();
+            }
+        }
+
         // ClipboardFolderのObjectId
         public ObjectId CollectionId {
             get {

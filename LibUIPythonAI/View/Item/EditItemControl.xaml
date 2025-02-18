@@ -66,40 +66,49 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     Width="100"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
                     VerticalAlignment="Center"
-                    Content="{x:Static local:ViewStringResources.Title}" />
+                    Content="{x:Static local:ViewStringResources.Title}"
+                    FontSize="12" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
                     IsEnabled="True"
                     Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
                     Width="100"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
                     VerticalAlignment="Center"
-                    Content="{x:Static local:ViewStringResources.SourcePath}" />
+                    Content="{x:Static local:ViewStringResources.SourcePath}"
+                    FontSize="12" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
                     IsEnabled="True"
                     Text="{Binding SourcePath, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
                     Grid.Row="2"
                     Grid.Column="0"
                     Width="100"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
                     VerticalAlignment="Center"
-                    Content="{x:Static local:ViewStringResources.Tag}" />
+                    Content="{x:Static local:ViewStringResources.Tag}"
+                    FontSize="12" />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
-                    Margin="10,10,10,0"
+                    Margin="10,3,10,0"
+                    VerticalAlignment="Center"
                     materialDesign:HintAssist.Hint="{x:Static local:ViewStringResources.ClickHereToOpenTheTagEditScreen}"
+                    FontSize="12"
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
                     <TextBox.InputBindings>
