@@ -117,7 +117,6 @@ namespace ClipboardApp.Model.Folder {
             PythonAILib.Model.File.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
             if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Text) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
-
             } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Files) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files;
             } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Image) {
@@ -135,7 +134,6 @@ namespace ClipboardApp.Model.Folder {
                 };
                 SetApplicationInfo(item, e);
                 item.Content = (string)e.Content;
-                // SourcePathとして自分自身のパスを設定
                 result.Add(item);
                 return result;
             }
@@ -163,8 +161,8 @@ namespace ClipboardApp.Model.Folder {
                         ContentType = contentTypes
                     };
                     SetApplicationInfo(item, e);
-                    item.SourcePath = files[i];
-                    item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
+                    item.FilePath = files[i];
+                    item.LastModified = new System.IO.FileInfo(item.FilePath).LastWriteTime.Ticks;
                     result.Add(item);
                 }
                 return result;

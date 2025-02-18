@@ -30,14 +30,6 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.Id = value;
             }
         }
-
-        [BsonIgnore]
-        // Folder
-        public ContentFolderWrapper Folder {
-            get {
-                return GetFolder();
-            }
-        }
         // ClipboardFolderのObjectId
         public ObjectId CollectionId {
             get {
@@ -47,14 +39,6 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.CollectionId = value;
             }
         }
-
-        // ObjectPath
-        public string ObjectPath {
-            get {
-                return ContentItemInstance.ObjectPath;
-            }
-        }
-
         // 生成日時
         public DateTime CreatedAt {
             get {
@@ -245,7 +229,15 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.CachedBase64String = value;
             }
         }
-
+        // ファイルパス
+        public string FilePath {
+            get {
+                return ContentItemInstance.FilePath;
+            }
+            set {
+                ContentItemInstance.FilePath = value;
+            }
+        }
         // ファイルの最終更新日時
         public long LastModified {
             get {

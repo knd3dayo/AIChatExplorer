@@ -28,7 +28,6 @@ using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
@@ -312,25 +311,23 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 // Clear selected items after pasting
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
-                ProcessClipboardItem(clipboardFolder, ClipboardController.LastClipboardChangedEventArgs);
-            } 
-        }
-        private void ProcessClipboardItem(ClipboardFolder clipboardFolder, ClipboardChangedEventArgs lastClipboardChangedEventArgs) {
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            clipboardFolder.ProcessClipboardItem(lastClipboardChangedEventArgs,
-                async (clipboardItem) => {
-                    // Process when a clipboard item is added
-                    await Task.Run(() => {
-                        // Save to folder if saveToFolder is true
-                        clipboardFolder.AddItem(clipboardItem);
-                        // Process after pasting
-                    }).ContinueWith((obj) => {
-                        MainUITask.Run(() => {
-                            MainWindowViewModel.Instance.MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                clipboardFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
+                    async (clipboardItem) => {
+                        // Process when a clipboard item is added
+                        await Task.Run(() => {
+                            // Save to folder if saveToFolder is true
+                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
+                            // Process after pasting
+                        }).ContinueWith((obj) => {
+                            MainUITask.Run(() => {
+                                windowViewModel.MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                            });
+                            MainWindowViewModel.Instance.UpdateIndeterminate(false);
                         });
-                        MainWindowViewModel.Instance.UpdateIndeterminate(false);
                     });
-                });
+            }
         }
 
         // ベクトルを生成する処理 複数アイテム処理可

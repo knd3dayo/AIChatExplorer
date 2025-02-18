@@ -28,16 +28,6 @@ namespace PythonAILib.Model.Content {
         public ObjectId Id { get; set; } = ObjectId.NewObjectId();
         // ClipboardFolderのObjectId
         public ObjectId CollectionId { get; set; } = ObjectId.Empty;
-
-        // ObjectPath
-        public string ObjectPath {
-            get {
-                // Folderを取得
-                var folder = GetFolder<ContentFolder>();
-                // folderのFolderPath + Path.Separator + Idを返す
-                return $"{folder.FolderPath}/{Id}";
-            }
-        }
         // 生成日時
         public DateTime CreatedAt { get; set; }
         // 更新日時
@@ -102,7 +92,8 @@ namespace PythonAILib.Model.Content {
                 }
             }
         }
-
+        // ファイルパス
+        public string FilePath { get; set; } = "";
         // ファイルの最終更新日時
         public long LastModified { get; set; } = 0;
 
@@ -127,7 +118,7 @@ namespace PythonAILib.Model.Content {
             // SourcePath
             clipboardItem.SourcePath = SourcePath;
         }
-        public ContentItem Copy() {
+        public  ContentItem Copy() {
             ContentItem clipboardItem = new(this.CollectionId);
             CopyTo(clipboardItem);
             return clipboardItem;

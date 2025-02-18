@@ -53,7 +53,7 @@ namespace PythonAILib.Model.AutoProcess {
             }
             // If AutoFileExtract is set, extract files
             if (configParams.AutoFileExtract() && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
-                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
+                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);
                 item.Content += "\n" + text;
             }
             if (item.IsImage() && item.Image != null) {
