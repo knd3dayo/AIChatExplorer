@@ -439,16 +439,16 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string Base64String {
             get {
-                string FilePath = ContentItemInstance.SourcePath;
+                string filePath = ContentItemInstance.SourcePath;
                 string CachedBase64String = ContentItemInstance.CachedBase64String;
                 long LastModified = ContentItemInstance.LastModified;
 
                 // FilePathがない場合はキャッシュを返す
-                if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
+                if (filePath == null || System.IO.File.Exists(filePath) == false) {
                     return CachedBase64String;
                 }
                 // FilePathがある場合はLastModifiedをチェックしてキャッシュを更新する
-                if (LastModified < new System.IO.FileInfo(FilePath).LastWriteTime.Ticks) {
+                if (LastModified < new System.IO.FileInfo(filePath).LastWriteTime.Ticks) {
                     ContentItemCommands.UpdateCache(this);
                 }
                 return CachedBase64String;

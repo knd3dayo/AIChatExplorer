@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.Content;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -77,6 +78,31 @@ namespace PythonAILib.Model.Content {
         // SourcePath
         public string SourcePath { get; set; } = "";
 
+        // SourceType 
+        [BsonIgnore]
+        public ContentSourceType SourceType {
+            get {
+                ExtendedProperties.TryGetValue("SourceType", out object? value);
+                string? sourceTypeString = value?.ToString();
+                if (sourceTypeString != null) {
+                    return Enum.Parse<ContentSourceType>(sourceTypeString.ToString());
+                } else {
+                    return ContentSourceType.Application;
+                }
+            }
+            set {
+                ExtendedProperties["SourceType"] = value.ToString();
+            }
+        }
+        // ObjectPath FolderPath + ObjectId
+        [BsonIgnore]
+        public string ObjectPath {
+            get { 
+                // GetFolder().FolderPath + ObjectId
+                return GetFolder<ContentFolder>().FolderPath + "/" + Id;
+            }
+        }
+
 
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
         private string _cachedBase64String = "";
@@ -118,7 +144,7 @@ namespace PythonAILib.Model.Content {
             // SourcePath
             clipboardItem.SourcePath = SourcePath;
         }
-        public  ContentItem Copy() {
+        public ContentItem Copy() {
             ContentItem clipboardItem = new(this.CollectionId);
             CopyTo(clipboardItem);
             return clipboardItem;
