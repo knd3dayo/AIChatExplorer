@@ -14,21 +14,7 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace ClipboardApp.Model.Folder {
     public class FileSystemFolder : ClipboardFolder {
 
-        // FileSystemFolderPath 名前
-        public const string FileSystemFolderPathName = "FileSystemFolderPath";
 
-        public string FileSystemFolderPath {
-            get {
-                if (ContentFolderInstance.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
-                    return (string)path;
-                } else {
-                    return "";
-                }
-            }
-            set {
-                ContentFolderInstance.ExtendedProperties[FileSystemFolderPathName] = value;
-            }
-        }
         public static List<string> TargetMimeTypes { get; set; } = [
             "text/",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

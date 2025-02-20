@@ -499,6 +499,12 @@ namespace PythonAILib.Resources {
         // JSON文字列をパースできませんでした
         public virtual string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
 
+        // 拡張プロパティ
+        // FileSystemFolderPathDisplayName
+        public virtual string FileSystemFolderPathDisplayName { get; } = "ファイルシステムフォルダパス";
+
+
+
         #region 統計、ログ関連
 
         // 日次トークン数

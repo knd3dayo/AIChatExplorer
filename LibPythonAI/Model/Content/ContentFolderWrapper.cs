@@ -48,10 +48,10 @@ namespace PythonAILib.Model.Content {
                 ContentFolderInstance.ParentId = value;
             }
         }
-        // フォルダの絶対パス ファイルシステム用
-        public virtual string FolderPath {
+        // アプリケーション上のフォルダのパス
+        public virtual string ContentFolderPath {
             get {
-                return ContentFolderInstance.FolderPath;
+                return ContentFolderInstance.ContentFolderPath;
             }
         }
         // ルートフォルダか否か
@@ -61,6 +61,13 @@ namespace PythonAILib.Model.Content {
             }
             set {
                 ContentFolderInstance.IsRootFolder = value;
+            }
+        }
+
+        // ContentOutputFolderPath
+        public virtual string ContentOutputFolderPath {
+            get {
+                return ContentFolderInstance.ContentOutputFolderPath;
             }
         }
 
@@ -101,6 +108,24 @@ namespace PythonAILib.Model.Content {
                 ContentFolderInstance.Description = value;
             }
         }
+
+
+        // FileSystemFolderPath 名前
+        public const string FileSystemFolderPathName = "FileSystemFolderPath";
+
+        public string FileSystemFolderPath {
+            get {
+                if (ContentFolderInstance.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
+                    return (string)path;
+                } else {
+                    return "";
+                }
+            }
+            set {
+                ContentFolderInstance.ExtendedProperties[FileSystemFolderPathName] = value;
+            }
+        }
+
 
 
         // 削除

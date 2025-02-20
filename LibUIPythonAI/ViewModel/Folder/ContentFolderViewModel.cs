@@ -165,7 +165,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
         public string FolderPath {
             get {
-                return Folder.FolderPath;
+                return Folder.ContentFolderPath;
             }
         }
 

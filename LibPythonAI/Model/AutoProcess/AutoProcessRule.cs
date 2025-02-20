@@ -151,7 +151,7 @@ namespace PythonAILib.Model.AutoProcess {
                     ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
 
                     if (destinationFolder != null) {
-                        result += $"{PythonAILibStringResources.Instance.Folder}:{destinationFolder.FolderPath}\n";
+                        result += $"{PythonAILibStringResources.Instance.Folder}:{destinationFolder.ContentFolderPath}\n";
                     } else {
                         result += $"{PythonAILibStringResources.Instance.FolderNone}\n";
                     }

@@ -80,7 +80,7 @@ namespace PythonAILib.Model.VectorDB {
                     return item.Name;
                 }
 
-                return $"{item.Name}:{folder.FolderPath}";
+                return $"{item.Name}:{folder.ContentFolderPath}";
             }
         }
 

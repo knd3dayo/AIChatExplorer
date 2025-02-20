@@ -94,12 +94,12 @@ namespace PythonAILib.Model.Content {
                 ExtendedProperties["SourceType"] = value.ToString();
             }
         }
-        // ObjectPath FolderPath + ObjectId
+        // ObjectPath ContentFolderPath + ObjectId
         [BsonIgnore]
         public string ObjectPath {
             get { 
-                // GetFolder().FolderPath + ObjectId
-                return GetFolder<ContentFolder>().FolderPath + "/" + Id;
+                // GetFolder().ContentFolderPath + ObjectId
+                return GetFolder<ContentFolder>().ContentFolderPath + "/" + Id;
             }
         }
 

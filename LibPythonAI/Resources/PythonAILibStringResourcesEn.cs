@@ -348,6 +348,9 @@ namespace PythonAILib.Resources {
         // JSON文字列をパースできませんでした
         public override string FailedToParseJSONString { get; } = "Failed to parse JSON string";
 
+        // FileSystemFolderPathDisplayName
+        public override string FileSystemFolderPathDisplayName { get; } = "File System Folder Path";
+
         #region Statistics and Logging
 
         // Daily token count

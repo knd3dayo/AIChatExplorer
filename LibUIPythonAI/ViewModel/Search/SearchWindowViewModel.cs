@@ -21,8 +21,8 @@ namespace LibUIPythonAI.ViewModel.Search {
 
             Name = SearchFolder?.FolderName ?? "";
 
-            SearchFolderPath = SearchFolder?.FolderPath;
-            TargetFolderPath = searchConditionRule.TargetFolder?.FolderPath;
+            SearchFolderPath = SearchFolder?.ContentFolderPath;
+            TargetFolderPath = searchConditionRule.TargetFolder?.ContentFolderPath;
 
             OnPropertyChanged(nameof(SearchTypeText));
             OnPropertyChanged(nameof(SearchFolderVisibility));

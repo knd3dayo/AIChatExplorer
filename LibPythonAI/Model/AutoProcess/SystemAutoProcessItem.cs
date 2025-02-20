@@ -80,7 +80,7 @@ namespace PythonAILib.Model.AutoProcess {
                         return;
                     }
 
-                    LogWrapper.Info($"{PythonAILibStringResources.Instance.CopyToFolderDescription}:{destinationFolder.FolderPath}");
+                    LogWrapper.Info($"{PythonAILibStringResources.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
                     ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
                     destinationFolder.AddItem(newItem);

@@ -27,6 +27,7 @@ namespace PythonAILib.Model.Content {
 
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";
+
         // Description
         public virtual string Description { get; set; } = "";
 
@@ -34,17 +35,43 @@ namespace PythonAILib.Model.Content {
         public Dictionary<string, object> ExtendedProperties { get; set; } = new();
 
 
-        // フォルダの絶対パス ファイルシステム用
-        public virtual string FolderPath {
+
+        //　OS上のフォルダ名
+        public virtual string ContentOutputFolderPrefix { get; set; } = "";
+
+        // アプリケーション内でのフォルダのパス
+        [BsonIgnore]
+        public virtual string ContentFolderPath {
             get {
                 // 親フォルダを取得
                 var parentFolder = GetParent();
                 if (parentFolder == null) {
                     return FolderName;
                 }
-                return $"{parentFolder.FolderPath}/{FolderName}";
+                return $"{parentFolder.ContentFolderPath}/{FolderName}";
             }
         }
+        // OS上のフォルダのパス
+        [BsonIgnore]
+        public virtual string ContentOutputFolderPath {
+            get {
+                string osFolderName;
+                // 親フォルダを取得
+                var parentFolder = GetParent();
+                if (parentFolder == null) {
+
+                    osFolderName =  ContentOutputFolderPrefix;
+                } else {
+                    osFolderName = $"{parentFolder.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{ContentFolderPath}";
+                }
+                // FolderNameに:、\、/が含まれている場合は文字を削除
+                if (ContentOutputFolderPrefix.Contains(':') || ContentOutputFolderPrefix.Contains('\\') || ContentOutputFolderPrefix.Contains('/')) {
+                    osFolderName = ContentOutputFolderPrefix.Replace(":", "").Replace("\\", "").Replace("/", "");
+                }
+                return osFolderName;
+            }
+        }
+
 
         public virtual ContentFolder CreateChild(string folderName) {
             ContentFolder child = new() {

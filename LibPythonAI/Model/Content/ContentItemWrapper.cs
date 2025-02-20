@@ -257,6 +257,24 @@ namespace PythonAILib.Model.Content {
         }
 
 
+        // URL 名前
+        public const string URLName = "URL";
+
+        public string URL {
+            get {
+                if (ContentItemInstance.ExtendedProperties.TryGetValue(URLName, out var url)) {
+                    return (string)url;
+                } else {
+                    return "";
+                }
+            }
+            set {
+                ContentItemInstance.ExtendedProperties[URLName] = value;
+            }
+        }
+
+
+
         // タグ表示用の文字列
         public string TagsString() {
             return string.Join(",", ContentItemInstance.Tags);

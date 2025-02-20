@@ -463,8 +463,13 @@ namespace LibUIPythonAI.Resource {
         public virtual string Tool { get; } = "ツール";
         // OpenAIチャット
         public virtual string OpenAIChat { get; } = "OpenAIチャット";
-        // 画像エビデンスチェッカー
+        // イメージチャット
         public virtual string ImageChat { get; } = "イメージチャット";
+
+        // イメージチャット 英語名
+        public virtual string ImageChatEnglish { get; } = "ImageChat";
+
+
 
         // マージチャット
         public virtual string MergeChat { get; } = "マージチャット";
@@ -472,11 +477,20 @@ namespace LibUIPythonAI.Resource {
         // ローカルファイルシステム
         public virtual string FileSystem { get; } = "ファイルシステム";
 
+        // ローカルファイルシステム 英語名
+        public virtual string FileSystemEnglish { get; } = "FileSystem";
+
         // Shortcut
         public virtual string Shortcut { get; } = "ショートカット";
 
+        // Shortcut 英語名
+        public virtual string ShortcutEnglish { get; } = "Shortcut";
+
         // Outlook
         public virtual string Outlook { get; } = "Outlook";
+
+        // Outlook 英語名
+        public virtual string OutlookEnglish { get; } = "Outlook";
 
         #endregion
 

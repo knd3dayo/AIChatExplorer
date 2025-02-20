@@ -1,5 +1,7 @@
+using System.IO;
 using ClipboardApp.Factory;
 using LibUIPythonAI.Resource;
+using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
@@ -14,6 +16,16 @@ namespace ClipboardApp.Model.Folder {
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME = CommonStringResources.Instance.Shortcut;
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME = CommonStringResources.Instance.Outlook;
+
+        // 英語名
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardEnglish;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.SearchFolderEnglish;
+        public static readonly string CHAT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ChatHistoryEnglish;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ImageChatEnglish;
+        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
+        public static readonly string SHORTCUT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ShortcutEnglish;
+        public static readonly string OUTLOOK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.OutlookEnglish;
+
 
 
         #region static methods
@@ -85,6 +97,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN);
                     clipboardRootFolder = new ClipboardFolder(folder);
                 }
                 return clipboardRootFolder;
@@ -107,6 +120,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
                     searchRootFolder = new SearchFolder(folder);
                 }
                 return searchRootFolder;
@@ -130,6 +144,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN);
                     chatRootFolder = new ClipboardFolder(folder);
                 }
                 return chatRootFolder;
@@ -153,6 +168,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN);
                     fileSystemRootFolder = new FileSystemFolder(folder);
                 }
                 return fileSystemRootFolder;
@@ -177,6 +193,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にSearchRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
                     shortcutRootFolder = new ShortCutFolder(folder);
                 }
                 return shortcutRootFolder;
@@ -201,6 +218,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                     // 既にOutlookRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN);
                     outlookRootFolder = new OutlookFolder(folder);
                 }
                 return outlookRootFolder;

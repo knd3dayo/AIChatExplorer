@@ -28,7 +28,9 @@ namespace ClipboardApp.Common {
         public string GetAppDataPath() {
             return ClipboardAppConfig.Instance.AppDataFolder;
         }
-
+        public string GetContentOutputPath() {
+            return Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "content_output");
+        }
         public IDataFactory GetDataFactory() {
             return ClipboardAppFactory.Instance.GetClipboardDBController();
         }

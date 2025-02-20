@@ -136,7 +136,7 @@ namespace ClipboardApp.Model.Folder {
                 return InboxFolder;
             }
             // FolderPathを/で分割した要素のリスト
-            List<string> strings = [.. FolderPath.Split('/')];
+            List<string> strings = [.. ContentFolderPath.Split('/')];
             MAPIFolder? mAPIFolder = InboxFolder;
             for (int i = 2; i < strings.Count; i++) {
                 mAPIFolder = mAPIFolder?.Folders.FirstOrDefault(x => x.Name == strings[i]);

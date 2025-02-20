@@ -707,6 +707,11 @@ namespace LibUIPythonAI.Resource {
         // 検索フォルダ
         public virtual string SearchFolder { get; } = "検索フォルダ";
 
+        // 検索フォルダ 英語名
+        public virtual string SearchFolderEnglish { get; } = "SearchFolder";
+
+
+
         // 標準
         public virtual string Standard { get; } = "標準";
 
@@ -984,8 +989,17 @@ namespace LibUIPythonAI.Resource {
         // クリップボード
         public virtual string Clipboard { get; } = "クリップボード";
 
+        // クリップボード 英語名
+        public virtual string ClipboardEnglish { get; } = "Clipboard";
+
+
         // チャット履歴
         public virtual string ChatHistory { get; } = "チャット履歴";
+
+        // チャット履歴 英語名
+        public virtual string ChatHistoryEnglish { get; } = "ChatHistory";
+
+
 
         // 自動処理でアイテムが削除または移動されました
         public virtual string ItemsDeletedOrMovedByAutoProcessing { get; } = "自動処理でアイテムが削除または移動されました";
