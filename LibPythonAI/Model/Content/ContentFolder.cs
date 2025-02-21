@@ -59,14 +59,15 @@ namespace PythonAILib.Model.Content {
                 // 親フォルダを取得
                 var parentFolder = GetParent();
                 if (parentFolder == null) {
-
                     osFolderName =  ContentOutputFolderPrefix;
                 } else {
-                    osFolderName = $"{parentFolder.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{ContentFolderPath}";
-                }
-                // FolderNameに:、\、/が含まれている場合は文字を削除
-                if (ContentOutputFolderPrefix.Contains(':') || ContentOutputFolderPrefix.Contains('\\') || ContentOutputFolderPrefix.Contains('/')) {
-                    osFolderName = ContentOutputFolderPrefix.Replace(":", "").Replace("\\", "").Replace("/", "");
+                    // FolderNameに:、\、/が含まれている場合は文字を削除
+                    string modifiedFolderName = FolderName;
+                    if (FolderName.Contains(':') || FolderName.Contains('\\') || FolderName.Contains('/')) {
+                        modifiedFolderName = FolderName.Replace(":", "").Replace("\\", "").Replace("/", "");
+                    }
+
+                    osFolderName = $"{parentFolder.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{modifiedFolderName}";
                 }
                 return osFolderName;
             }
@@ -88,7 +89,7 @@ namespace PythonAILib.Model.Content {
         }
         // 削除
         public virtual void Delete() {
-
+            
             Delete<ContentFolder, ContentItem>();
         }
 
@@ -129,6 +130,12 @@ namespace PythonAILib.Model.Content {
 
         // 保存
         protected void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+            /**
+            // OS上のフォルダが存在しない場合は作成。上位のフォルダも再帰的に作成
+            if (!System.IO.Directory.Exists(ContentOutputFolderPath)) {
+                System.IO.Directory.CreateDirectory(ContentOutputFolderPath);
+            }
+            **/
 
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
@@ -140,6 +147,12 @@ namespace PythonAILib.Model.Content {
         }
         protected void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
             DeleteFolder<T1, T2>((T1)this);
+            // OS上のフォルダを削除
+            /**
+            if (System.IO.Directory.Exists(ContentOutputFolderPath)) {
+                System.IO.Directory.Delete(ContentOutputFolderPath, true);
+            }
+            **/
         }
 
         // フォルダを削除

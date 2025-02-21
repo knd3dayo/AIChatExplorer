@@ -27,9 +27,17 @@ namespace PythonAILib.PythonIF {
             WriteIndented = true
         };
 
-        private static readonly HttpClient Client = new HttpClient(new HttpClientHandler() {
-            UseProxy = false
-        });
+        private static HttpClient CreateHttpClient() {
+            HttpClient client = new(new HttpClientHandler() {
+                UseProxy = false,
+                // 最大接続数を設定
+                MaxConnectionsPerServer = 2,
+            });
+            // タイムアウトを設定
+            client.Timeout = TimeSpan.FromMinutes(5);
+
+            return client;
+        }
 
         private string base_url;
         public PythonAPIFunctions(string base_url) {
@@ -47,7 +55,8 @@ namespace PythonAILib.PythonIF {
             }
             //HTTP　POST要求を送信する
             var data = new StringContent(requestJson, Encoding.UTF8, mediaType: "application/json");
-            HttpResponseMessage response = await Client.PostAsync(endpoint, data);
+            using HttpClient client = CreateHttpClient();
+            HttpResponseMessage response = await client.PostAsync(endpoint, data);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
@@ -61,7 +70,8 @@ namespace PythonAILib.PythonIF {
         // テスト用
         public static void ShutdownServer(string url) {
             // ClientでPOSTを実行
-            Client.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
+            using HttpClient client = CreateHttpClient();
+            client.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
 
         }
 

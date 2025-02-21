@@ -80,6 +80,7 @@ namespace PythonAILibUI.ViewModel.Item {
             LogWrapper.Info(CommonStringResources.Instance.PromptTemplateExecute(description));
             int count = itemViewModels.Count;
             Task.Run(() => {
+                beforeAction();
                 object lockObject = new();
                 int start_count = 0;
                 var items = itemViewModels.Select(x => x.ContentItem).ToList();

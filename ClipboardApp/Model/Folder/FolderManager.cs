@@ -91,7 +91,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
                             IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Normal
+                            FolderType = FolderTypeEnum.Normal,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
@@ -114,7 +115,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
                             IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Search
+                            FolderType = FolderTypeEnum.Search,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
@@ -138,7 +140,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderName = CHAT_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
                             IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Chat
+                            FolderType = FolderTypeEnum.Chat,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
@@ -162,7 +165,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
                             IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.FileSystem
+                            FolderType = FolderTypeEnum.FileSystem,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
@@ -187,7 +191,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderType = FolderTypeEnum.ShortCut,
                             IsRootFolder = true,
                             // 自動処理を無効にする
-                            IsAutoProcessEnabled = false
+                            IsAutoProcessEnabled = false,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SHORTCUT_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
@@ -212,7 +217,8 @@ namespace ClipboardApp.Model.Folder {
                             FolderType = FolderTypeEnum.Outlook,
                             IsRootFolder = true,
                             // 自動処理を無効にする
-                            IsAutoProcessEnabled = false
+                            IsAutoProcessEnabled = false,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN)
                         };
                         folder.Save();
                     }
