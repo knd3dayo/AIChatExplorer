@@ -9,7 +9,7 @@ using ClipboardApp.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {
+    public class AppRootFolderViewModelContainer : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
@@ -31,7 +31,7 @@ namespace ClipboardApp.ViewModel.Main {
 
 
         // コンストラクタ
-        public ClipboardAppRootFolderViewModelContainer() {
+        public AppRootFolderViewModelContainer() {
             RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder);
             SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder);

@@ -23,7 +23,7 @@ using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Main;
 
 namespace ClipboardApp.ViewModel.Main {
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
+    public partial class MainWindowViewModel : AppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -90,7 +90,7 @@ namespace ClipboardApp.ViewModel.Main {
                 DataContext = mainPanelViewModel
             };
 
-            ClipboardAppTabContainer container = new("main", mainPanel) {
+            AppTabContainer container = new("main", mainPanel) {
                 CloseButtonVisibility = Visibility.Collapsed
             };
             TabItems.Add(container);
@@ -105,20 +105,20 @@ namespace ClipboardApp.ViewModel.Main {
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new();
 
-        public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];
+        public ObservableCollection<AppTabContainer> TabItems { get; set; } = [];
 
 
         // メインウィンドウにアイテムのタブを追加
-        public void AddTabItem(ClipboardAppTabContainer tabItem) {
+        public void AddTabItem(AppTabContainer tabItem) {
             if (ThisWindow == null) {
                 return;
             }
             // ClipboardAppTabContainerのHeaderWidthを設定. 現在のタブ数 * ClipboardAppTabContainerのHeaderWidth > ThisWindow.Widthの場合はThisWindow.Widthを超えないようにする
             double tabControlWidth = ThisWindow.ActualWidth - 500;
-            if ((TabItems.Count + 1) * ClipboardAppTabContainer.HeaderWidthStatic > tabControlWidth) {
-                ClipboardAppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
+            if ((TabItems.Count + 1) * AppTabContainer.HeaderWidthStatic > tabControlWidth) {
+                AppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
                 for (int i = 1; i < TabItems.Count; i++) {
-                    TabItems[i].HeaderWidth = ClipboardAppTabContainer.HeaderWidthStatic;
+                    TabItems[i].HeaderWidth = AppTabContainer.HeaderWidthStatic;
                 }
             }
 
@@ -128,14 +128,14 @@ namespace ClipboardApp.ViewModel.Main {
         }
         // メインウィンドウからアイテムのタブを削除
 
-        public void RemoveTabItem(ClipboardAppTabContainer tabItem) {
+        public void RemoveTabItem(AppTabContainer tabItem) {
             TabItems.Remove(tabItem);
             OnPropertyChanged(nameof(TabItems));
         }
 
         // SelectedTabItem
-        private ClipboardAppTabContainer? _selectedTabItem;
-        public ClipboardAppTabContainer? SelectedTabItem {
+        private AppTabContainer? _selectedTabItem;
+        public AppTabContainer? SelectedTabItem {
             get {
                 return _selectedTabItem;
             }
@@ -147,7 +147,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Null許容型
         [AllowNull]
-        public ClipboardAppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public AppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
 
@@ -187,7 +187,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         });
 
-        public SimpleDelegateCommand<ClipboardAppTabContainer> CloseTabCommand => new((tabItem) => {
+        public SimpleDelegateCommand<AppTabContainer> CloseTabCommand => new((tabItem) => {
             if (tabItem == null) {
                 return;
             }
@@ -201,7 +201,7 @@ namespace ClipboardApp.ViewModel.Main {
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            ClipboardItemViewModelCommands.StartStopClipboardMonitorCommand();
+            AppItemViewModelCommands.StartStopClipboardMonitorCommand();
         });
 
 
@@ -262,7 +262,7 @@ namespace ClipboardApp.ViewModel.Main {
             };
             ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
 
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
 
             commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
 
@@ -273,7 +273,7 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
             ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
@@ -281,7 +281,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // OpenMergeChatWindow
         public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
 
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             commands.OpenMergeChatWindowCommand(folderViewModel, []);
@@ -289,7 +289,7 @@ namespace ClipboardApp.ViewModel.Main {
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
 
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
@@ -301,24 +301,24 @@ namespace ClipboardApp.ViewModel.Main {
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
             ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.OpenRAGManagementWindowCommand();
         });
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.OpenVectorDBManagementWindowCommand();
         });
 
         // メニューの「設定」をクリックしたときの処理
         public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.SettingCommandExecute();
         });
 
@@ -330,7 +330,7 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
 
             ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             if (folderViewModel.Folder is not ClipboardFolder clipboardFolder) {
                 return;
             }

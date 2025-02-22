@@ -5,7 +5,7 @@ using ClipboardApp.ViewModel.Folders.FileSystem;
 using PythonAILib.Model.Content;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
-    public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+    public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -15,56 +15,25 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                 ObservableCollection<MenuItem> menuItems = [];
 
                 // 編集
-                MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
-                    Command = ClipboardFolderViewModel.EditFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(editMenuItem);
+                menuItems.Add(EditMenuItem);
 
                 // ショートカット登録
-                MenuItem createShortCutMenuItem = new() {
-                    Header = StringResources.CreateShortCut,
-                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createShortCutMenuItem);
+                menuItems.Add(CreateShortCutMenuItem);
 
                 // RootFolderの場合
                 ContentFolderWrapper? parentFolder = ClipboardFolderViewModel.Folder.GetParent();
                 if (parentFolder != null && parentFolder.IsRootFolder) {
                     // 削除
-                    MenuItem deleteMenuItem = new();
-                    deleteMenuItem.Header = StringResources.Delete;
-                    deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                    deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                    deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
-                    menuItems.Add(deleteMenuItem);
-
+                    menuItems.Add(DeleteMenuItem);
                 }
                 //テキストの抽出
-                MenuItem extractTextMenuItem = new() {
-                    Header = StringResources.ExtractText,
-                    Command = ClipboardFolderViewModel.ExtractTextCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(extractTextMenuItem);
+                menuItems.Add(ExtractTextMenuItem);
 
                 // ベクトルのリフレッシュ
-                MenuItem refreshMenuItem = new() {
-                    Header = StringResources.RefreshVectorDB,
-                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(refreshMenuItem);
+                menuItems.Add(RefreshMenuItem);
 
                 // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(exportImportMenuItem);
+                menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
 

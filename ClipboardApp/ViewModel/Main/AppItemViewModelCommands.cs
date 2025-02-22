@@ -30,7 +30,7 @@ using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
+    public class AppItemViewModelCommands : ContentItemViewModelCommands {
 
 
         // フォルダを開くコマンド
@@ -93,7 +93,7 @@ namespace ClipboardApp.ViewModel.Main {
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
-            ClipboardAppTabContainer container = new(itemViewModel.ContentItem.Description, editItemControl);
+            AppTabContainer container = new(itemViewModel.ContentItem.Description, editItemControl);
 
             // UserControlをクローズする場合の処理を設定
             editItemControl.SetCloseUserControl(() => {

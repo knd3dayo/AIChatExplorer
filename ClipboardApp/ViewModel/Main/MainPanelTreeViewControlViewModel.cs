@@ -16,7 +16,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Null許容型
         [AllowNull]
-        public ClipboardAppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public AppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
 
         // 選択中のフォルダ
         private ClipboardFolderViewModel? _selectedFolder;
@@ -52,7 +52,7 @@ namespace ClipboardApp.ViewModel.Main {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.ReloadFolderCommandExecute(this.SelectedFolder,
                 () => {
                     UpdateIndeterminateAction(true);
@@ -77,13 +77,13 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.PasteFromClipboardCommandExecute();
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.CutFolderCommandExecute(this);
         });
 

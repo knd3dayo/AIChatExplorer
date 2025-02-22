@@ -46,7 +46,7 @@ namespace PythonAILib.Common
             PythonExecutor.Init(parameters);
 
             // DBControllerの設定
-            DataFactory = parameters.GetDataFactory();
+            DataFactory = new PythonAILibDataFactory();
             // LogWrapperのログ出力設定
             LogWrapper.SetActions(debugAction, infoAction, warnAction, errorAction);
 

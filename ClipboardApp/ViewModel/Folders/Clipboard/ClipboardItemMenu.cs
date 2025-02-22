@@ -7,7 +7,7 @@ using PythonAILib.Resources;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardItemMenu : ClipboardAppViewModelBase {
+    public class ClipboardItemMenu : AppViewModelBase {
 
         public ClipboardItemViewModel ClipboardItemViewModel { get; private set; }
 
@@ -23,7 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             // プロンプトメニュー
             MenuItem promptMenuItem = new() {
                 Header = StringResources.PromptMenu,
@@ -97,7 +97,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
             // 開く

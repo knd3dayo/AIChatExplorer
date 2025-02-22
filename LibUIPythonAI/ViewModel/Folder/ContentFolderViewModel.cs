@@ -74,22 +74,22 @@ namespace LibUIPythonAI.ViewModel.Folder {
             Folder.Save();
         });
         // 新規フォルダ作成コマンド
-        public SimpleDelegateCommand<ContentFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<object> CreateFolderCommand => new((parameter) => {
 
-            CreateFolderCommandExecute(folderViewModel, () => {
+            CreateFolderCommandExecute(this, () => {
                 // 親フォルダを保存
-                folderViewModel.Folder.Save();
-                folderViewModel.LoadFolderCommand.Execute();
+                this.Folder.Save();
+                this.LoadFolderCommand.Execute();
 
             });
         });
 
         // フォルダ編集コマンド
-        public SimpleDelegateCommand<ContentFolderViewModel> EditFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {
 
-            EditFolderCommandExecute(folderViewModel, () => {
+            EditFolderCommandExecute(this, () => {
                 //　フォルダを保存
-                folderViewModel.Folder.Save();
+                this.Folder.Save();
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.FolderEdited);
             });
@@ -169,16 +169,16 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        public SimpleDelegateCommand<ContentFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
 
             // フォルダ削除するかどうか確認
             if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             // 親フォルダを取得
-            ContentFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
+            ContentFolderViewModel? parentFolderViewModel = this.ParentFolderViewModel;
 
-            folderViewModel.Folder.Delete();
+            this.Folder.Delete();
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
@@ -208,11 +208,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         });
         // ExportImportFolderCommand
-        public static SimpleDelegateCommand<ContentFolderViewModel> ExportImportFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<object> ExportImportFolderCommand => new((parameter) => {
             // ExportImportFolderWindowを開く
-            ExportImportWindow.OpenExportImportFolderWindow(folderViewModel, () => {
+            ExportImportWindow.OpenExportImportFolderWindow(this, () => {
                 // ファイルを再読み込み
-                folderViewModel.LoadFolderCommand.Execute();
+                this.LoadFolderCommand.Execute();
             });
         });
         protected virtual void UpdateStatusText() {

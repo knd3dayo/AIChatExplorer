@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class ClipboardAppTabContainer : ObservableObject {
+    public class AppTabContainer : ObservableObject {
 
         public static double HeaderWidthStatic { get; set; } = 200;
 
@@ -16,7 +16,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
-        public ClipboardAppTabContainer(string tabName, UserControl tabContent) {
+        public AppTabContainer(string tabName, UserControl tabContent) {
             _tabName = tabName;
             _tabContent = tabContent;
         }
@@ -49,7 +49,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // CloseTabCommand
         public SimpleDelegateCommand<object> CloseTabCommand => new((param) => {
-            if (param is ClipboardAppTabContainer tabContainer) {
+            if (param is AppTabContainer tabContainer) {
                 MainWindowViewModel.Instance.RemoveTabItem(tabContainer);
             }
         });

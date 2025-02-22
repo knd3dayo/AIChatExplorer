@@ -5,7 +5,7 @@ using LibUIPythonAI.Control.Editor;
 using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class ClipboardAppViewModelBase : CommonViewModelBase {
+    public class AppViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
         public static CommonStringResources StringResources {

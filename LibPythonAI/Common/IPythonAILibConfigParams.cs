@@ -36,8 +36,6 @@ namespace PythonAILib.Common {
 
         public string GetContentOutputPath();
 
-        public IDataFactory GetDataFactory();
-
         public OpenAIProperties GetOpenAIProperties();
 
         public Action<string> GetDebugAction();

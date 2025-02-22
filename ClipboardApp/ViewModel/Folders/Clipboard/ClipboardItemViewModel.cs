@@ -22,7 +22,7 @@ namespace ClipboardApp.ViewModel.Content {
             Description = ContentItem.Description;
             Tags = ContentItem.Tags;
             SourceApplicationTitleText = ContentItem.SourceApplicationTitle;
-            Commands = new ClipboardItemViewModelCommands();
+            Commands = new AppItemViewModelCommands();
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
@@ -70,7 +70,7 @@ namespace ClipboardApp.ViewModel.Content {
             }
             clipboardItem.MaskDataCommandExecute();
             // 保存
-            ClipboardItemViewModelCommands command = new();
+            AppItemViewModelCommands command = new();
             command.SaveClipboardItemCommand.Execute(true);
 
         });

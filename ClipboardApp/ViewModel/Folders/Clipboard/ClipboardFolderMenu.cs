@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Main;
+using CommunityToolkit.Mvvm.ComponentModel;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderMenu : ClipboardAppViewModelBase {
+    public class ClipboardFolderMenu : ObservableObject {
 
         public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
 
@@ -45,9 +47,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem CreateMenuItem {
             get {
                 MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
+                    Header = CommonStringResources.Instance.Create,
                     Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
                 };
                 return createMenuItem;
             }
@@ -56,9 +57,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem EditMenuItem {
             get {
                 MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
+                    Header = CommonStringResources.Instance.Edit,
                     Command = ClipboardFolderViewModel.EditFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
                 };
                 return editMenuItem;
             }
@@ -67,10 +67,9 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem DeleteMenuItem {
             get {
                 MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
+                deleteMenuItem.Header = CommonStringResources.Instance.Delete;
                 deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
                 deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
                 return deleteMenuItem;
             }
         }
@@ -79,9 +78,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem ExtractTextMenuItem {
             get {
                 MenuItem extractTextMenuItem = new() {
-                    Header = StringResources.ExtractText,
+                    Header = CommonStringResources.Instance.ExtractText,
                     Command = ClipboardFolderViewModel.ExtractTextCommand,
-                    CommandParameter = ClipboardFolderViewModel
                 };
                 return extractTextMenuItem;
             }
@@ -90,9 +88,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem RefreshMenuItem {
             get {
                 MenuItem refreshMenuItem = new() {
-                    Header = StringResources.RefreshVectorDB,
+                    Header = CommonStringResources.Instance.RefreshVectorDB,
                     Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
-                    CommandParameter = ClipboardFolderViewModel
                 };
                 return refreshMenuItem;
             }
@@ -102,9 +99,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public MenuItem ExportImportMenuItem {
             get {
                 MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
+                    Header = CommonStringResources.Instance.ExportImport,
+                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
                 };
                 return exportImportMenuItem;
             }

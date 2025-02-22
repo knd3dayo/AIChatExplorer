@@ -17,7 +17,7 @@ namespace ClipboardApp.ViewModel.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
-    public partial class SettingUserControlViewModel : ClipboardAppViewModelBase {
+    public partial class SettingUserControlViewModel : AppViewModelBase {
         // プロパティが変更されたか否か
         private bool isPropertyChanged = false;
         // Lang

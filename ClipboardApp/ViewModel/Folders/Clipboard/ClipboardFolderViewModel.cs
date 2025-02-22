@@ -123,7 +123,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     LogWrapper.Info(StringResources.Edited);
                 });
 
-            ClipboardAppTabContainer container = new("New Item", editItemControl);
+            AppTabContainer container = new("New Item", editItemControl);
 
             // UserControlをクローズする場合の処理を設定
             editItemControl.SetCloseUserControl(() => {
@@ -209,7 +209,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems = [.. itemViewModels];
 
             // コマンドを実行
-            ClipboardItemViewModelCommands commands = new();
+            AppItemViewModelCommands commands = new();
             commands.ExtractTextCommand.Execute();
 
         });

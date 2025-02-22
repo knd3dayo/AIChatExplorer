@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {
     public class FileSystemFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
@@ -13,48 +14,36 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 ObservableCollection<MenuItem> menuItems = [];
 
                 // 編集
-                MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
-                    Command = ClipboardFolderViewModel.EditFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(editMenuItem);
+                menuItems.Add(EditMenuItem);
 
                 // ショートカット登録
-                MenuItem createShortCutMenuItem = new() {
-                    Header = StringResources.CreateShortCut,
-                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createShortCutMenuItem);
+                menuItems.Add(CreateShortCutMenuItem);
 
                 //テキストの抽出
-                MenuItem extractTextMenuItem = new() {
-                    Header = StringResources.ExtractText,
-                    Command = ClipboardFolderViewModel.ExtractTextCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(extractTextMenuItem);
+                menuItems.Add(ExtractTextMenuItem);
 
                 // ベクトルのリフレッシュ
-                MenuItem refreshMenuItem = new() {
-                    Header = StringResources.RefreshVectorDB,
-                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(refreshMenuItem);
+                menuItems.Add(RefreshMenuItem);
 
                 // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(exportImportMenuItem);
+                menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
 
                 #endregion
+            }
+
+        }
+
+        // CreateShortCut
+        public MenuItem CreateShortCutMenuItem {
+            get {
+                MenuItem createShortCutMenuItem = new() {
+                    Header = CommonStringResources.Instance.CreateShortCut,
+                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                return createShortCutMenuItem;
             }
         }
     }

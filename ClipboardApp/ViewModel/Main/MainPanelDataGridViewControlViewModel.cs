@@ -25,7 +25,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
-        public ClipboardItemViewModelCommands Commands { get; } = new();
+        public AppItemViewModelCommands Commands { get; } = new();
 
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ContentItemViewModel> _selectedItems = [];

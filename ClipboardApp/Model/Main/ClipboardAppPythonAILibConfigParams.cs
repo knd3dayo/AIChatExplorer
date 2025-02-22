@@ -30,9 +30,7 @@ namespace ClipboardApp.Model.Main {
         public string GetContentOutputPath() {
             return Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "content_output");
         }
-        public IDataFactory GetDataFactory() {
-            return PythonAILibManager.Instance.DataFactory;
-        }
+        
         public OpenAIProperties GetOpenAIProperties() {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();
         }
