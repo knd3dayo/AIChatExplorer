@@ -1,4 +1,5 @@
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders;
+using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.ViewModel.Folders.Chat;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
@@ -7,7 +8,7 @@ using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
 
-namespace ClipboardApp.ViewModel.Common {
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel

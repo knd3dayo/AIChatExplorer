@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Main;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardFolderMenu : ClipboardAppViewModelBase {

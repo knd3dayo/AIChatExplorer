@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;

@@ -1,10 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel.Main;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
-namespace ClipboardApp.ViewModel.Common {
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppTabContainer : ObservableObject {
 
         public static double HeaderWidthStatic { get; set; } = 200;

@@ -270,17 +270,17 @@
                             Width="{Binding HeaderWidth}"
                             Margin="10,0,10,0"
                             Text="{Binding TabName}" />
-                        <StackPanel
+                        <materialDesign:PackIcon
                             Width="25"
-                            Orientation="Horizontal"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                            Kind="Close"
                             Visibility="{Binding CloseButtonVisibility}">
-                            <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}" Kind="Close" />
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonDown">
                                     <i:InvokeCommandAction Command="{Binding CloseTabCommand}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                        </StackPanel>
+                        </materialDesign:PackIcon>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>

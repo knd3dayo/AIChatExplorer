@@ -1,12 +1,17 @@
 using System.IO;
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Folders.FileSystem;
+using ClipboardApp.Model.Folders.Outlook;
+using ClipboardApp.Model.Folders.Search;
+using ClipboardApp.Model.Folders.ShortCut;
 using LibUIPythonAI.Resource;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folders {
     public class FolderManager {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;

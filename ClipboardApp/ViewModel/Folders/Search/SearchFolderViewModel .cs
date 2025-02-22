@@ -1,5 +1,5 @@
 using ClipboardApp.Common;
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;

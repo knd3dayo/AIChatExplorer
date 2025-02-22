@@ -8,7 +8,7 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
 
         // コンストラクタ
@@ -20,7 +20,7 @@ namespace ClipboardApp.Model.Folder {
         protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
 
             FolderType = FolderTypeEnum.Search;
-            ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
+            ParentId = parent?.Id ?? ObjectId.Empty;
             FolderName = folderName;
             IsAutoProcessEnabled = false;
 

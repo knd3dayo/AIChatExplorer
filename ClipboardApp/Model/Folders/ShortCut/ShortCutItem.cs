@@ -1,6 +1,7 @@
+using ClipboardApp.Model.Folders.FileSystem;
 using PythonAILib.Model.Content;
 
-namespace ClipboardApp.Model.Item {
+namespace ClipboardApp.Model.Folders.ShortCut {
     public class ShortCutItem : FileSystemItem {
 
         // コンストラクタ

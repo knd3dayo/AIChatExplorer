@@ -1,4 +1,3 @@
-using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
@@ -7,6 +6,7 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
+using ClipboardApp.Model.Folders.Clipboard;
 
 namespace ClipboardApp.ViewModel.Folders.Chat {
     public class ChatFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

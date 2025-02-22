@@ -1,16 +1,14 @@
-using ClipboardApp.Factory;
-using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Folders.Clipboard;
 using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
-using Outlook = NetOffice.OutlookApi;
+using NetOfficeOutlook = NetOffice.OutlookApi;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folders.Outlook {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
@@ -38,18 +36,18 @@ namespace ClipboardApp.Model.Folder {
             }
             return new OutlookFolder(parentFolder);
         }
-        
 
-        private static Outlook.Application? outlookApplication = null;
+
+        private static NetOfficeOutlook.Application? outlookApplication = null;
 
         [BsonIgnore]
-        public Outlook.MAPIFolder? MAPIFolder { get; set; }
+        public NetOfficeOutlook.MAPIFolder? MAPIFolder { get; set; }
 
         public static MAPIFolder InboxFolder { get; private set; } = CreateInboxFolder();
         private static MAPIFolder CreateInboxFolder() {
 
-            outlookApplication = new Outlook.Application();
-            Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
+            outlookApplication = new NetOfficeOutlook.Application();
+            NetOfficeOutlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
             MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
             return inboxFolder;
         }
@@ -57,7 +55,7 @@ namespace ClipboardApp.Model.Folder {
 
         public static bool OutlookApplicationExists() {
             try {
-                new Outlook.Application();
+                new NetOfficeOutlook.Application();
             } catch (System.Exception) {
                 return false;
             }
@@ -88,14 +86,14 @@ namespace ClipboardApp.Model.Folder {
             var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
 
             // OutlookItemのEntryIDとIDのDictionary
-            Dictionary<string, LiteDB.ObjectId> entryIdIdDict = [];
+            Dictionary<string, ObjectId> entryIdIdDict = [];
             foreach (var item in GetItems()) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem.Id;
                 }
             }
             // Outlookのフォルダ内のEntryIDを格納するHashSet
-            HashSet<string> entryIdList = MAPIFolder.Items.Cast<Outlook.MailItem>().Select(x => x.EntryID).ToHashSet();
+            HashSet<string> entryIdList = MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>().Select(x => x.EntryID).ToHashSet();
 
             // EntryIDが一致するOutlookItemが存在しない場合は削除
             // Exceptで差集合を取得
@@ -103,8 +101,8 @@ namespace ClipboardApp.Model.Folder {
                 collection.Delete(entryIdIdDict[entryId]);
             }
             // Parallel処理
-            Parallel.ForEach(MAPIFolder.Items.Cast<Outlook.MailItem>(), outlookItem => {
-                OutlookItem newItem = new(this.Id, outlookItem.EntryID) {
+            Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), outlookItem => {
+                OutlookItem newItem = new(Id, outlookItem.EntryID) {
                     Description = outlookItem.Subject,
                     ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
                     Content = outlookItem.Body,
@@ -185,12 +183,12 @@ namespace ClipboardApp.Model.Folder {
 
             // Parallel処理
             Parallel.ForEach(addFolderNames, outlookFolderName => {
-                var child = this.CreateChild(outlookFolderName);
+                var child = CreateChild(outlookFolderName);
                 child.Save();
             });
 
             // 自分自身を保存
-            this.Save();
+            Save();
         }
 
     }

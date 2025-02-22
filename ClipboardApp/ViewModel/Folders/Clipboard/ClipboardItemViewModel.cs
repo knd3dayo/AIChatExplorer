@@ -1,10 +1,15 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Settings;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
+using ClipboardApp.Model.Item;
+using ClipboardApp.ViewModel.Main;
 
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {
@@ -44,6 +49,32 @@ namespace ClipboardApp.ViewModel.Content {
             ContentItemWrapper newItem = ContentItem.Copy();
             return new ClipboardItemViewModel(FolderViewModel, newItem);
         }
+
+        #region 開発中機能
+        // EnableDevelopmentFeaturesがTrueの場合のみ有効
+        public bool EnableDevelopmentFeatures {
+            get { return ClipboardAppConfig.Instance.EnableDevFeatures; }
+        }
+
+        // EnableDevelopmentFeaturesがTrueの場合はVisible
+        public Visibility DevFeaturesVisibility {
+            get {
+                return EnableDevelopmentFeatures ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        // コンテキストメニューの「データをマスキング」の実行用コマンド
+        public SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
+            if (ContentItem is not ClipboardItem clipboardItem) {
+                return;
+            }
+            clipboardItem.MaskDataCommandExecute();
+            // 保存
+            ClipboardItemViewModelCommands command = new();
+            command.SaveClipboardItemCommand.Execute(true);
+
+        });
+        #endregion
 
 
 

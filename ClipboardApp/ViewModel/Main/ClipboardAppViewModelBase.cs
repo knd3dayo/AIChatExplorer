@@ -4,7 +4,7 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Control.Editor;
 using LibUIPythonAI.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
@@ -31,12 +31,12 @@ namespace ClipboardApp.ViewModel {
                 ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(TextWrapping));
                 if (TextWrapping) {
-                    CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
+                    TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
                 } else {
                     if (value) {
-                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
+                        TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
                     } else {
-                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
+                        TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
                     }
                 }
             }
@@ -53,12 +53,12 @@ namespace ClipboardApp.ViewModel {
                 OnPropertyChanged(nameof(AutoTextWrapping));
                 // CommonViewModelBaseのTextWrappingModeを更新
                 if (value) {
-                    CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
+                    TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
                 } else {
                     if (TextWrapping) {
-                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
+                        TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
                     } else {
-                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
+                        TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
                     }
                 }
             }

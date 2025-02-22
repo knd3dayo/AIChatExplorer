@@ -1,5 +1,4 @@
 using System.Reflection;
-using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Settings;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
@@ -8,6 +7,7 @@ using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using ClipboardApp.Model.Folders;
 
 namespace ClipboardApp.Common {
     /// <summary>

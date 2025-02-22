@@ -12,18 +12,18 @@ using PythonAILib.Model.Folder;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folders.Clipboard {
     public partial class ClipboardFolder : ContentFolderWrapper {
 
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder(ContentFolder folder): base(folder) {
+        public ClipboardFolder(ContentFolder folder) : base(folder) {
             IsAutoProcessEnabled = true;
             FolderType = FolderTypeEnum.Normal;
         }
 
-        protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base (parent, folderName) {
+        protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
 
             ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
             FolderName = folderName;
@@ -35,7 +35,7 @@ namespace ClipboardApp.Model.Folder {
 
         public override List<ContentItemWrapper> GetItems() {
             var items = ContentFolderInstance.GetItems<ContentItem>();
-            List< ContentItemWrapper > result = [];
+            List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new ClipboardItem(item));
             }
@@ -115,13 +115,13 @@ namespace ClipboardApp.Model.Folder {
             List<ClipboardItem> result = [];
 
             PythonAILib.Model.File.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
-            if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Text) {
+            if (e.ContentType == ContentTypes.Text) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Files) {
+            } else if (e.ContentType == ContentTypes.Files) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Image) {
+            } else if (e.ContentType == ContentTypes.Image) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Other) {
+            } else if (e.ContentType == ContentTypes.Other) {
                 return result;
             } else {
                 return result;
@@ -176,8 +176,8 @@ namespace ClipboardApp.Model.Folder {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
-            }; 
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(GetItems(), jsonSerializerOptions);
+            };
+            string jsonString = JsonSerializer.Serialize(GetItems(), jsonSerializerOptions);
 
             System.IO.File.WriteAllText(fileName, jsonString);
 

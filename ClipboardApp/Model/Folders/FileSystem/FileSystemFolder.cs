@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
 using LiteDB;
 using PythonAILib.Common;
@@ -11,7 +12,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folders.FileSystem {
     public class FileSystemFolder : ClipboardFolder {
 
 
@@ -69,7 +70,7 @@ namespace ClipboardApp.Model.Folder {
             // SyncFolders
             SyncFolders();
             var children = ContentFolderInstance.GetChildren<ContentFolder>();
-            List < ContentFolderWrapper > result = [];
+            List<ContentFolderWrapper> result = [];
             foreach (var child in children) {
                 result.Add(new FileSystemFolder(child));
             }
@@ -83,7 +84,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
-        protected　virtual HashSet<string> GetFileSystemFolderPaths() {
+        protected virtual HashSet<string> GetFileSystemFolderPaths() {
             HashSet<string> fileSystemFolderPaths = [];
             // ルートフォルダの場合は、Environment.GetLogicalDrives()を取得
             if (IsRootFolder) {
@@ -152,7 +153,7 @@ namespace ClipboardApp.Model.Folder {
             }
             );
             // 自分自身を保存
-            this.Save();
+            Save();
         }
 
 

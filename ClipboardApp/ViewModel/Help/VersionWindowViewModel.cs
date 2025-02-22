@@ -1,3 +1,4 @@
+using ClipboardApp.ViewModel.Main;
 using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Help {

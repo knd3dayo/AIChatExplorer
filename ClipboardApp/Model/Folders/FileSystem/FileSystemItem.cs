@@ -1,7 +1,7 @@
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 
-namespace ClipboardApp.Model.Item {
+namespace ClipboardApp.Model.Folders.FileSystem {
     public class FileSystemItem : ContentItemWrapper {
 
         // コンストラクタ

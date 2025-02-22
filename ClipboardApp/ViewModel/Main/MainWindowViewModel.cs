@@ -3,12 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using ClipboardApp.Common;
 using ClipboardApp.Factory;
-using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Settings;
 using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
-using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIPythonAI.Resource;
@@ -23,6 +21,7 @@ using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
+using ClipboardApp.Model.Folders.Clipboard;
 
 namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {

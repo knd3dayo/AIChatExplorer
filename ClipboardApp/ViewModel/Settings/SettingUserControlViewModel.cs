@@ -1,7 +1,8 @@
 using System.Text;
 using System.Windows;
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders;
 using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Main;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;

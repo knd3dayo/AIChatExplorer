@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.Common;
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders;
+using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Settings;
-using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
-using ClipboardApp.ViewModel.Main;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
@@ -30,7 +30,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.ViewModel.Folders.Clipboard {
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
 
