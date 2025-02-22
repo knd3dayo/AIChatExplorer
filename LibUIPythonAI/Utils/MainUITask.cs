@@ -1,7 +1,7 @@
 using System.Windows;
 
-namespace WpfAppCommon.Utils {
-    public  class MainUITask {
+namespace LibUIPythonAI.Utils {
+    public class MainUITask {
 
         public static void Run(Action? action) {
             if (action == null) {

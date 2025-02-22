@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeTargetTreeViewControlViewModel : ObservableObject {
@@ -32,7 +31,7 @@ namespace LibUIMergeChat.ViewModel {
                 } else {
                     _selectedFolder = value;
                     // Load
-                    _selectedFolder.LoadFolderExecute(beforeAction: () => { } , afterAction: () => {
+                    _selectedFolder.LoadFolderExecute(beforeAction: () => { }, afterAction: () => {
                         SelectFolderAction(_selectedFolder);
                     });
                 }

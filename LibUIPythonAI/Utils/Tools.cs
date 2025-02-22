@@ -1,7 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.Utils {
     public partial class Tools {

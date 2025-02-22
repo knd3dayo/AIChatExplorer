@@ -5,9 +5,9 @@ using PythonAILib.Model.Content;
 using LibUIPythonAI.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.Model.Main {
     /// <summary>

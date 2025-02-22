@@ -9,14 +9,12 @@ using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatContextViewModel : ObservableObject {
 
-        private QAChatStartupProps QAChatStartupPropsInstance { get; set;}
+        private QAChatStartupProps QAChatStartupPropsInstance { get; set; }
 
         public ChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;

@@ -18,7 +18,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
 using LibUIMergeChat.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;

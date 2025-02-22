@@ -101,7 +101,8 @@ namespace PythonAILib.Model.AutoProcess {
             }
             if (typeEnum == TypeEnum.ExtractText) {
                 return (args) => {
-                    ContentItemCommands.ExtractTextCommandExecute(args);
+                    List<ContentItemWrapper> contentItemWrappers = [args];
+                    ContentItemCommands.ExtractTexts(contentItemWrappers, () => { }, () => { });
                 };
             }
 

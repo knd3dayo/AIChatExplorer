@@ -2,7 +2,7 @@ using System.Windows;
 using NLog;
 using WpfAppCommon.Model;
 
-namespace WpfAppCommon.Utils {
+namespace LibUIPythonAI.Utils {
     public class CustomLogger : Logger {
 
         public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
@@ -33,7 +33,7 @@ namespace WpfAppCommon.Utils {
                 base.Warn(message);
                 StatusText.Text = message;
                 // 開発中はメッセージボックスを表示する
-                System.Windows.MessageBox.Show(ActiveWindow, message);
+                MessageBox.Show(ActiveWindow, message);
             });
         }
 
@@ -41,7 +41,7 @@ namespace WpfAppCommon.Utils {
             MainUITask.Run(() => {
                 base.Error(message);
                 StatusText.Text = message;
-                System.Windows.MessageBox.Show(ActiveWindow, message);
+                MessageBox.Show(ActiveWindow, message);
             });
         }
 

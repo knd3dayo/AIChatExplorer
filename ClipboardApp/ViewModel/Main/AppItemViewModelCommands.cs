@@ -25,9 +25,9 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
+using PythonAILib.Resources;
 using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.ViewModel.Main {
@@ -185,7 +185,7 @@ namespace ClipboardApp.ViewModel.Main {
         public void CutItemCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
             // Do not process if no items are selected
             if (itemViewModels.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             // Set Cut Flag
@@ -207,7 +207,7 @@ namespace ClipboardApp.ViewModel.Main {
 
             // Do not process if no items are selected
             if (itemViewModels.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             // Reset Cut flag

@@ -4,7 +4,6 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;

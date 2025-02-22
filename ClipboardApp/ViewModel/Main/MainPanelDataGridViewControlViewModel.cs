@@ -8,6 +8,7 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
+using PythonAILib.Resources;
 
 namespace ClipboardApp.ViewModel.Main {
     public class MainPanelDataGridViewControlViewModel(AppItemViewModelCommands commands) : ObservableObject {
@@ -85,7 +86,7 @@ namespace ClipboardApp.ViewModel.Main {
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {

@@ -782,16 +782,7 @@ namespace LibUIPythonAI.Resource {
         public override string SavedChatResult { get; } = "Chat result saved";
 
         // --- ClipboardItemViewModel ---
-        // OpenFolder
-        public override string CannotOpenFolderForNonFileContent { get; } = "Cannot open folder for non-file content";
 
-        // ExecuteOpenFolder
-        public override string ExecuteOpenFolder { get; } = "Execute open folder";
-
-        // ExecuteOpenedFolderSuccess
-        public override string ExecuteOpenFolderSuccess { get; } = "Execute opened folder success";
-
-        public override string CannotExtractTextForNonFileContent { get; } = "Cannot extract text for non-file content";
         public override string MainWindowViewModelIsNull { get; } = "MainWindowViewModel is null";
 
         // TitleGenerationInProgress
@@ -806,7 +797,6 @@ namespace LibUIPythonAI.Resource {
         // Other prompts
         public override string OtherPrompts { get; } = "Other Prompts";
         public override string GenerateVectorInProgress { get; } = "Generate vector";
-        public override string GenerateVectorCompleted { get; } = "Generated vector";
         public override string CannotExtractTextForNonImageContent { get; } = "Cannot extract text for non-image content";
         public override string EnterANumber { get; } = "Enter a number";
         public override string FolderNotSelected { get; } = "Folder not selected";
@@ -857,10 +847,7 @@ namespace LibUIPythonAI.Resource {
         public override string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "Display mode will change when you restart the application";
         public override string Information { get; } = "Information";
         public override string ConfirmExit { get; } = "Confirm exit";
-        public override string NoItemSelected { get; } = "No item selected";
 
-        // TextExtractionInProgress
-        public override string TextExtractionInProgress { get; } = "Text extraction in progress";
 
         // // マージチャット 事前処理実行中
         public override string MergeChatPreprocessingInProgress { get; } = "Preprocessing merge chat";
@@ -868,14 +855,7 @@ namespace LibUIPythonAI.Resource {
         // TextExtractionCompleted
         public override string TextExtractionCompleted { get; } = "Text extraction completed";
 
-        // Execute the prompt template [promptName].
-        public override string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
 
-        // プロンプトテンプレート[promptName]を実行中
-        public override string PromptTemplateInProgress(string promptName) => $"Executing the prompt template [{promptName}].";
-
-        // "The prompt template [promptName] has been executed."
-        public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
 
         #endregion
 

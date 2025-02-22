@@ -1,10 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using Windows.Devices.Spi;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenLLMConfigViewModel : ChatViewModelBase {

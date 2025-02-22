@@ -15,7 +15,6 @@ using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILibUI.ViewModel.Item;
-using WpfAppCommon.Utils;
 using LibPythonAI.Utils.Common;
 
 

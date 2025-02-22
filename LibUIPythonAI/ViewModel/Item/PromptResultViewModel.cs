@@ -2,10 +2,9 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.Prompt;
 using LibUIPythonAI.Resource;
-using WpfAppCommon.Utils;
 using LibUIPythonAI.Utils;
+using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class PromptResultViewModel : ObservableObject {

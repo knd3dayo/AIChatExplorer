@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Utils;
-using PythonAILib.Model.Image;
 using LibUIPythonAI.Utils;
+using PythonAILib.Model.Image;
 
 namespace LibUIImageChat.ViewModel {
     public class ScreenShotImageViewModel : ObservableObject {

@@ -503,7 +503,36 @@ namespace PythonAILib.Resources {
         // FileSystemFolderPathDisplayName
         public virtual string FileSystemFolderPathDisplayName { get; } = "ファイルシステムフォルダパス";
 
+        // 選択中のアイテムがない"
+        public virtual string NoItemSelected { get; } = "選択中のアイテムがない";
 
+        // テキスト抽出処理実行中
+        public virtual string TextExtractionInProgress { get; } = "テキスト抽出処理実行中";
+        // ファイル以外のコンテンツはテキストを抽出できません
+        public virtual string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
+
+        // OpenFolder
+
+        // ファイル以外のコンテンツはフォルダを開けません
+        public virtual string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";
+
+        // フォルダを開きます
+        public virtual string ExecuteOpenFolder { get; } = "フォルダを開きます";
+
+        // フォルダを開きました
+        public virtual string ExecuteOpenFolderSuccess { get; } = "フォルダを開きました";
+
+        // プロンプトテンプレート[promptName]を実行します.
+        public virtual string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
+
+        // プロンプトテンプレート[promptName]を実行中
+        public virtual string PromptTemplateInProgress(string promptName) => $"プロンプトテンプレート[{promptName}]を実行中";
+
+        // "プロンプトテンプレート[promptName]を実行しました."
+        public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+
+        // "ベクトルを生成しました"
+        public virtual string GenerateVectorCompleted { get; } = "ベクトルを生成しました";
 
         #region 統計、ログ関連
 

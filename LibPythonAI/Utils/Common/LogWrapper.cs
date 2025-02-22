@@ -5,7 +5,7 @@ namespace LibPythonAI.Utils.Common {
         private static Action<string> InfoAction = (message) => { };
         private static Action<string> WarnAction = (message) => { };
         private static Action<string> ErrorAction = (message) => { };
-
+        private static Action<bool, string> UpdateInProgressAction = (value, message) => { };
         public static void SetActions(ILogWrapperAction logWrapperAction) {
             DebugAction = logWrapperAction.Debug;
             InfoAction = logWrapperAction.Info;
@@ -27,6 +27,9 @@ namespace LibPythonAI.Utils.Common {
 
         public static void Error(string message) {
             ErrorAction(message);
+        }
+        public static void UpdateInProgress(bool value, string message = "") {
+            UpdateInProgressAction(true, message);
         }
 
 

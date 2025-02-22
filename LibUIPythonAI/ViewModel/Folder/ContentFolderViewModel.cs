@@ -8,7 +8,6 @@ using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 using LibPythonAI.Utils.Common;
 
 

@@ -12,6 +12,7 @@ namespace LibPythonAI.Utils.Common {
         public void Warn(string message);
         public void Error(string message);
 
+        public void UpdateInProgress(bool value, string message = "");
 
     }
 }

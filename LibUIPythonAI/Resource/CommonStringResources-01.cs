@@ -573,19 +573,8 @@ namespace LibUIPythonAI.Resource {
         public virtual string SavedChatResult { get; } = "チャット結果を保存しました";
 
         // --- ClipboardItemViewModelCommands ---
-        // OpenFolder
 
-        // ファイル以外のコンテンツはフォルダを開けません
-        public virtual string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";
 
-        // フォルダを開きます
-        public virtual string ExecuteOpenFolder { get; } = "フォルダを開きます";
-
-        // フォルダを開きました
-        public virtual string ExecuteOpenFolderSuccess { get; } = "フォルダを開きました";
-
-        // ファイル以外のコンテンツはテキストを抽出できません
-        public virtual string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
 
         // "MainWindowViewModelがNullです"
         public virtual string MainWindowViewModelIsNull { get; } = "MainWindowViewModelがNullです";
@@ -735,8 +724,7 @@ namespace LibUIPythonAI.Resource {
         #region  ClipboardItemViewModelCommands
         // **********************************************************************************
         // -- ExtractTextCommand
-        // テキスト抽出処理実行中
-        public virtual string TextExtractionInProgress { get; } = "テキスト抽出処理実行中";
+
 
         // マージチャット 事前処理実行中
         public virtual string MergeChatPreprocessingInProgress { get; } = "マージチャット 事前処理実行中";
@@ -753,18 +741,9 @@ namespace LibUIPythonAI.Resource {
         // ベクトルを生成します
         public virtual string GenerateVectorInProgress { get; } = "ベクトル生成処理実行中";
 
-        // "ベクトルを生成しました"
-        public virtual string GenerateVectorCompleted { get; } = "ベクトルを生成しました";
 
 
-        // プロンプトテンプレート[promptName]を実行します.
-        public virtual string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
 
-        // プロンプトテンプレート[promptName]を実行中
-        public virtual string PromptTemplateInProgress(string promptName) => $"プロンプトテンプレート[{promptName}]を実行中";
-
-        // "プロンプトテンプレート[promptName]を実行しました."
-        public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
 
         // **********************************************************************************
         #endregion
@@ -777,8 +756,6 @@ namespace LibUIPythonAI.Resource {
         // "終了しますか?"
         public virtual string ConfirmExit { get; } = "終了しますか?";
 
-        // 選択中のアイテムがない"
-        public virtual string NoItemSelected { get; } = "選択中のアイテムがない";
 
 
         // 切り取りました"

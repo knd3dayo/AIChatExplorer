@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenGroupChatViewModel : ChatViewModelBase {
@@ -61,7 +59,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
         // LLMConfigList
-        public ObservableCollection<AutoGenLLMConfig> LLMConfigList { get; set; } = [ .. AutoGenLLMConfig.GetAutoGenLLMConfigList()];
+        public ObservableCollection<AutoGenLLMConfig> LLMConfigList { get; set; } = [.. AutoGenLLMConfig.GetAutoGenLLMConfigList()];
 
         // InitAgent
         public AutoGenLLMConfig? LLMConfig { get; set; }
@@ -99,7 +97,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 }
             }
             // LLMConfigを更新
-            if (LLMConfig != null) { 
+            if (LLMConfig != null) {
                 AutoGenGroupChat.LLMConfigName = LLMConfig.Name;
             }
             AutoGenGroupChat.Save();

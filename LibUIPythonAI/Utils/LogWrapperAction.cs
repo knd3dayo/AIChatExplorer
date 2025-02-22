@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using LibPythonAI.Utils.Common;
 using NLog;
-using WpfAppCommon.Utils;
+using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.Utils {
     public class LogWrapperAction : ILogWrapperAction {
@@ -27,6 +27,13 @@ namespace LibUIPythonAI.Utils {
             message = MaskAPIKey(message);
             Logger.Error(message);
         }
+
+        public void UpdateInProgress(bool value, string message = "") {
+
+            StatusText.Instance.UpdateInProgress(true, message);
+        }
+
+
         // OpenAIKey, api_key, OPENAI_API_KEYはログに出力しないよう、messageに含まれている場合はマスクする
         // 大文字小文字を区別しない
         // 例： api_key:"12345678" は api_key:"********" に変換

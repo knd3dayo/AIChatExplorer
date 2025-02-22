@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
@@ -12,16 +14,125 @@ using PythonAILib.Utils.Python;
 namespace PythonAILib.Model.Content {
     public class ContentItemCommands {
 
+
+
+        // Command to open a folder
+        public static void OpenFolder(ContentItemWrapper contentItem) {
+            // Open the folder only if the ContentType is File
+            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.CannotOpenFolderForNonFileContent);
+                return;
+            }
+            string message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
+            LogWrapper.Info(message);
+
+            // Open the folder with Process.Start
+            string? folderPath = contentItem.FolderName;
+            if (folderPath != null) {
+                var p = new Process {
+                    StartInfo = new ProcessStartInfo(folderPath) {
+                        UseShellExecute = true
+                    }
+                };
+                p.Start();
+            }
+            message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
+            LogWrapper.Info(message);
+
+        }
+        public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
+
+            // promptNameからDescriptionを取得
+            string description = promptItem.Description;
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
+            int count = items.Count;
+            Task.Run(() => {
+                beforeAction();
+                object lockObject = new();
+                int start_count = 0;
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 8
+                };
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    lock (lockObject) {
+                        start_count++;
+                    }
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
+                    LogWrapper.UpdateInProgress(true, message);
+                    ContentItemWrapper item = items[index];
+
+                    ContentItemCommands.CreateChatResult(item, promptItem.Name);
+                    // Save
+                    item.Save(false);
+                });
+                // Execute if obj is an Action
+                afterAction();
+                LogWrapper.UpdateInProgress(false);
+                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
+            });
+
+        }
+        public static void GenerateVectors(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+
+            Task.Run(() => {
+                beforeAction();
+                ContentItemCommands.UpdateEmbeddings(items);
+                // Save
+                foreach (var item in items) {
+                    item.Save(false);
+                }
+                LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
+                // Execute if obj is an Action
+                afterAction();
+            });
+
+        }
+
         // OpenAIを使用してイメージからテキスト抽出する。
         public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
             ExtractText(item);
         }
 
-        // テキストを抽出」を実行するコマンド
-        public static void ExtractTextCommandExecute(ContentItemWrapper item) {
-            ExtractText(item);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
+        public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+            int count = items.Count;
+            if (count == 0) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
+                return;
+            }
+            beforeAction();
+
+            Task.Run(() => {
+                object lockObject = new();
+                int start_count = 0;
+                ParallelOptions parallelOptions = new() {
+                    // 20並列
+                    MaxDegreeOfParallelism = 8
+                };
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    lock (lockObject) {
+                        start_count++;
+                    }
+                    string message = $"{PythonAILibStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                    LogWrapper.UpdateInProgress(true, message);
+                    var item = items[index];
+
+                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                        LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
+                        return;
+                    }
+                    ContentItemCommands.ExtractText(item);
+                    // Save the item
+                    item.Save(false);
+                });
+                afterAction();
+                LogWrapper.UpdateInProgress(false);
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
+            });
         }
+            
 
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ContentItemWrapper item) {

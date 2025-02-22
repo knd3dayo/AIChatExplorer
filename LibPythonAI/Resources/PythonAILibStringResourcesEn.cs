@@ -351,6 +351,33 @@ namespace PythonAILib.Resources {
         // FileSystemFolderPathDisplayName
         public override string FileSystemFolderPathDisplayName { get; } = "File System Folder Path";
 
+        public override string NoItemSelected { get; } = "No item selected";
+
+        // TextExtractionInProgress
+        public override string TextExtractionInProgress { get; } = "Text extraction in progress";
+
+        public override string CannotExtractTextForNonFileContent { get; } = "Cannot extract text for non-file content";
+
+        // OpenFolder
+        public override string CannotOpenFolderForNonFileContent { get; } = "Cannot open folder for non-file content";
+
+        // ExecuteOpenFolder
+        public override string ExecuteOpenFolder { get; } = "Execute open folder";
+
+        // ExecuteOpenedFolderSuccess
+        public override string ExecuteOpenFolderSuccess { get; } = "Execute opened folder success";
+
+        // Execute the prompt template [promptName].
+        public override string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
+
+        // プロンプトテンプレート[promptName]を実行中
+        public override string PromptTemplateInProgress(string promptName) => $"Executing the prompt template [{promptName}].";
+
+        // "The prompt template [promptName] has been executed."
+        public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
+
+        public override string GenerateVectorCompleted { get; } = "Generated vector";
+
         #region Statistics and Logging
 
         // Daily token count

@@ -6,7 +6,6 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.Mail {
     public class OutlookFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {

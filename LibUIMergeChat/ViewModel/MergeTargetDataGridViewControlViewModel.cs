@@ -6,6 +6,7 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using PythonAILib.Resources;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeTargetDataGridViewControlViewModel : ChatViewModelBase {
@@ -122,7 +123,7 @@ namespace LibUIMergeChat.ViewModel {
         public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             // Itemsから選択中のアイテムを削除

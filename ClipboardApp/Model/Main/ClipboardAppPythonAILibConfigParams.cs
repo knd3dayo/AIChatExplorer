@@ -4,7 +4,6 @@ using ClipboardApp.ViewModel.Settings;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model.Main {
     public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams {
@@ -32,7 +31,7 @@ namespace ClipboardApp.Model.Main {
         public string GetContentOutputPath() {
             return Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "content_output");
         }
-        
+
         public OpenAIProperties GetOpenAIProperties() {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();
         }

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.Common {
     public class StatusMessageWindowViewModel : ObservableObject {
