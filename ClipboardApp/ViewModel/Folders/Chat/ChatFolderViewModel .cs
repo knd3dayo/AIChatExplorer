@@ -7,13 +7,14 @@ using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 using ClipboardApp.Model.Folders.Clipboard;
+using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Chat {
-    public class ChatFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class ChatFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var chatFolderViewModel = new ChatFolderViewModel(childFolder);
+            var chatFolderViewModel = new ChatFolderViewModel(childFolder, commands);
             // チャットフォルダの親フォルダにこのフォルダを追加
             chatFolderViewModel.ParentFolderViewModel = this;
             return chatFolderViewModel;
@@ -32,7 +33,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
             childFolder.FolderType = FolderTypeEnum.Chat;
-            ChatFolderViewModel childFolderViewModel = new(childFolder);
+            ChatFolderViewModel childFolderViewModel = new(childFolder, commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

@@ -1,7 +1,7 @@
 using System.Windows;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.RAG;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     public class EditRAGSourceWindowViewModel : ChatViewModelBase {

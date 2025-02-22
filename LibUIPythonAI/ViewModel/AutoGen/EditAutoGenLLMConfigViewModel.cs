@@ -87,7 +87,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             // 選択されたComboBoxItemのIndexを取得
             SelectedAITypeIndex = comboBox.SelectedIndex;
 
-        });
+        }, null, null);
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
@@ -95,6 +95,6 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AutoGenLLMConfig.Save();
             AfterUpdate();
             window.Close();
-        });
+        }, null, null);
     }
 }

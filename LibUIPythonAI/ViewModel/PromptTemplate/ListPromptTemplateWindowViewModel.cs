@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
     public class ListPromptTemplateWindowViewModel : ChatViewModelBase {

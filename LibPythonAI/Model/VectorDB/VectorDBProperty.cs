@@ -1,12 +1,12 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.VectorDB {
     public class VectorDBProperty {

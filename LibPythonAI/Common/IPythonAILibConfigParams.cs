@@ -1,4 +1,5 @@
 using System.Windows;
+using LibPythonAI.Utils.Common;
 
 namespace PythonAILib.Common {
     public interface IPythonAILibConfigParams {
@@ -38,12 +39,7 @@ namespace PythonAILib.Common {
 
         public OpenAIProperties GetOpenAIProperties();
 
-        public Action<string> GetDebugAction();
-        public Action<string> GetInfoAction();
-
-        public Action<string> GetWarnAction();
-
-        public Action<string> GetErrorAction();
+        public ILogWrapperAction GetLogWrapperAction();
 
         public string GetHttpsProxy();
 

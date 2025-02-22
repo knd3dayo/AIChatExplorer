@@ -11,13 +11,13 @@ using PythonAILib.Model.Prompt;
 using PythonAILibUI.ViewModel.Item;
 
 namespace LibUIPythonAI.ViewModel.Item {
-    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {
+    public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {
         public ContentItemWrapper ContentItem { get; set; } = contentItemBase;
 
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
 
-        public abstract ContentItemViewModelCommands Commands { get; set; }
+        public ContentItemViewModelCommands Commands { get; set; } = folderViewModel.Commands;
 
         // IsSelected
         private bool isSelected = false;

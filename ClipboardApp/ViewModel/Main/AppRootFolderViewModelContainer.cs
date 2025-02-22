@@ -7,6 +7,7 @@ using ClipboardApp.ViewModel.Folders.Mail;
 using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Main {
     public class AppRootFolderViewModelContainer : RootFolderViewModelContainer {
@@ -31,19 +32,19 @@ namespace ClipboardApp.ViewModel.Main {
 
 
         // コンストラクタ
-        public AppRootFolderViewModelContainer() {
-            RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder);
-            SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder);
-            ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder);
-            FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder);
-            ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder);
+        public AppRootFolderViewModelContainer(ContentItemViewModelCommands commands) :base(commands) {
+            RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder, commands);
+            SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
+            ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
+            FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
+            ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder, commands);
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(FileSystemFolderViewModel);
             FolderViewModels.Add(ShortcutFolderViewModel);
             if (OutlookFolder.OutlookApplicationExists()) {
-                OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder);
+                OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
                 FolderViewModels.Add(OutlookFolderViewModel);
             }
 

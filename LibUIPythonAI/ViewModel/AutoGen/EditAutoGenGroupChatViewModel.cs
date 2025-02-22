@@ -107,7 +107,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
 
             window.Close();
 
-        });
+        }, null, null);
 
     }
 }

@@ -95,35 +95,35 @@ namespace LibUIPythonAI.Control.Editor {
         public SimpleDelegateCommand<object> CutSelectedTextCommand => new((parameter) => {
             // 選択中のテキストを切り取り
             TextSelector.CutText(this);
-        });
+        }, null, null);
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand<object> SelectTextCommand => new((parameter) => {
             // テキスト選択
             TextSelector.SelectText(this);
             return;
-        });
+        }, null, null);
         // 選択中のテキストをプロセスとして実行
         public SimpleDelegateCommand<object> ExecuteSelectedTextCommand => new((parameter) => {
 
             // 選択中のテキストをプロセスとして実行
             TextSelector.ExecuteSelectedText(this);
 
-        });
+        }, null, null);
         // 日付を挿入
         public SimpleDelegateCommand<object> InsertDateCommand => new((parameter) => {
 
             // 日付を挿入
             TextSelector.InsertDate(this);
 
-        });
+        }, null, null);
         // 時刻を挿入
         public SimpleDelegateCommand<object> InsertTimeCommand => new((parameter) => {
 
             // 時刻を挿入
             TextSelector.InsertTime(this);
 
-        });
+        }, null, null);
 
         // インデント
         public SimpleDelegateCommand<object> AddTabCommand => new((parameter) => {
@@ -131,14 +131,14 @@ namespace LibUIPythonAI.Control.Editor {
             // インデント
             TextSelector.AddTab(this);
 
-        });
+        }, null, null);
         // インデント解除
         public SimpleDelegateCommand<object> RemoveTabCommand => new((parameter) => {
 
             // インデント解除
             TextSelector.RemoveTab(this);
 
-        });
+        }, null, null);
 
     }
 }

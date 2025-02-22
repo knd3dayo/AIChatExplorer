@@ -4,13 +4,16 @@ using System.Windows.Controls;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelDataGridViewControlViewModel : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(AppItemViewModelCommands commands) : ObservableObject {
+
+        private AppItemViewModelCommands Commands { get; set; } = commands;
+
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
@@ -24,8 +27,6 @@ namespace ClipboardApp.ViewModel.Main {
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }
-
-        public AppItemViewModelCommands Commands { get; } = new();
 
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ContentItemViewModel> _selectedItems = [];

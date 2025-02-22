@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class EditVectorDBWindowViewModel : ChatViewModelBase {

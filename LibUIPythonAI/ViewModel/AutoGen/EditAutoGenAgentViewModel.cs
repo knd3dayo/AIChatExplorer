@@ -143,7 +143,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AutoGenAgent.Save();
             AfterUpdate();
             window.Close();
-        });
+        }, null, null);
 
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
@@ -156,14 +156,14 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 VectorDBItems.Add(new VectorDBItemViewModel(item));
             });
             OnPropertyChanged(nameof(VectorDBItems));
-        });
+        }, null, null);
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels, (selectedItem) => {
 
             });
-        });
+        }, null, null);
 
         // RemoveVectorDBItemCommand
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
@@ -172,7 +172,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
             VectorDBItems.Remove(SelectedVectorDBItem);
             OnPropertyChanged(nameof(VectorDBItems));
-        });
+        }, null, null);
 
     }
 }

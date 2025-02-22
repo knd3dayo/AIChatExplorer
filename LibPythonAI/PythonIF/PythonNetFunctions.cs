@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Utils.Common;
 using Python.Runtime;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;

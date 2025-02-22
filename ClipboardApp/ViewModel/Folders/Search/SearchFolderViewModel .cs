@@ -5,13 +5,14 @@ using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
+using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class SearchFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var searchFolderViewModel = new SearchFolderViewModel(childFolder);
+            var searchFolderViewModel = new SearchFolderViewModel(childFolder, Commands);
             // 検索フォルダの親フォルダにこのフォルダを追加
             searchFolderViewModel.ParentFolderViewModel = this;
             return searchFolderViewModel;
@@ -23,7 +24,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
-            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder);
+            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
             SearchRule? searchConditionRule = new() {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = clipboardFolder

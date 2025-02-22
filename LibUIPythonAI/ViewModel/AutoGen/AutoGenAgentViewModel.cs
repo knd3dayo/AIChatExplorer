@@ -3,8 +3,6 @@ using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class AutoGenAgentViewModel : ObservableObject {
-
-
         public AutoGenAgentViewModel(AutoGenAgent autoGenAgent) {
             AutoGenAgent = autoGenAgent;
         }

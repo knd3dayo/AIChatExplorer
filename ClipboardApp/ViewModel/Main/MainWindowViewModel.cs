@@ -51,8 +51,11 @@ namespace ClipboardApp.ViewModel.Main {
             };
             ClipboardAppPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
+            // Commandの初期化
+            Commands = new(UpdateIndeterminate);
+
             // フォルダの初期化
-            RootFolderViewModelContainer = new();
+            RootFolderViewModelContainer = new(Commands);
 
             // データベースのチェックポイント処理
             PythonAILibManager.Instance.DataFactory.GetDatabase().Checkpoint();
@@ -66,13 +69,14 @@ namespace ClipboardApp.ViewModel.Main {
                 ClipboardController.Instance.CopiedObjects.Clear();
             };
 
+
             // MainPanelDataGridViewControlViewModelの初期化
-            MainPanelDataGridViewControlViewModel = new() {
+            MainPanelDataGridViewControlViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
 
             };
             // MainPanelTreeViewControlViewModelの初期化
-            MainPanelTreeViewControlViewModel = new() {
+            MainPanelTreeViewControlViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
                 RootFolderViewModelContainer = RootFolderViewModelContainer,
                 SelectedFolderChangedAction = ((selectedFolder) => {
@@ -80,7 +84,7 @@ namespace ClipboardApp.ViewModel.Main {
                 })
             };
 
-            MainPanelViewModel mainPanelViewModel = new() {
+            MainPanelViewModel mainPanelViewModel = new(Commands) {
                 MainPanelTreeViewControlViewModel = MainPanelTreeViewControlViewModel,
                 MainPanelDataGridViewControlViewModel = MainPanelDataGridViewControlViewModel
             };
@@ -101,9 +105,10 @@ namespace ClipboardApp.ViewModel.Main {
 
         }
 
-        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; } = new();
+        public AppItemViewModelCommands Commands { get; set; }
+        public MainPanelTreeViewControlViewModel? MainPanelTreeViewControlViewModel { get; set; } 
 
-        public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new();
+        public MainPanelDataGridViewControlViewModel? MainPanelDataGridViewControlViewModel { get; set; }
 
         public ObservableCollection<AppTabContainer> TabItems { get; set; } = [];
 
@@ -201,7 +206,7 @@ namespace ClipboardApp.ViewModel.Main {
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            AppItemViewModelCommands.StartStopClipboardMonitorCommand();
+            Commands.StartStopClipboardMonitorCommand();
         });
 
 
@@ -262,9 +267,7 @@ namespace ClipboardApp.ViewModel.Main {
             };
             ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
 
-            AppItemViewModelCommands commands = new();
-
-            commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
+            Commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
 
         });
 
@@ -273,27 +276,23 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
             ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
-            AppItemViewModelCommands commands = new();
-            commands.OpenImageChatWindowCommand(dummyItem, () => {
+            Commands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
         });
 
         // OpenMergeChatWindow
         public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
-            AppItemViewModelCommands commands = new();
 
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            commands.OpenMergeChatWindowCommand(folderViewModel, []);
+            Commands.OpenMergeChatWindowCommand(folderViewModel, []);
 
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
-            commands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
+            Commands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
 
         });
 
@@ -301,25 +300,21 @@ namespace ClipboardApp.ViewModel.Main {
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
             ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            AppItemViewModelCommands commands = new();
-            commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+            Commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.OpenRAGManagementWindowCommand();
+            Commands.OpenRAGManagementWindowCommand();
         });
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.OpenVectorDBManagementWindowCommand();
+            Commands.OpenVectorDBManagementWindowCommand();
         });
 
         // メニューの「設定」をクリックしたときの処理
-        public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.SettingCommandExecute();
+        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
+            Commands.SettingCommandExecute();
         });
 
         #endregion
@@ -330,11 +325,10 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
 
             ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            AppItemViewModelCommands commands = new();
             if (folderViewModel.Folder is not ClipboardFolder clipboardFolder) {
                 return;
             }
-            commands.OpenSearchWindowCommand(clipboardFolder, () => { folderViewModel.LoadFolderCommand.Execute(); });
+            Commands.OpenSearchWindowCommand(clipboardFolder, () => { folderViewModel.LoadFolderCommand.Execute(); });
         });
 
         #endregion

@@ -1,11 +1,11 @@
 using ClipboardApp.Model.Folders.Clipboard;
+using LibPythonAI.Utils.Common;
 using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
-using PythonAILib.Utils.Common;
 using NetOfficeOutlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folders.Outlook {

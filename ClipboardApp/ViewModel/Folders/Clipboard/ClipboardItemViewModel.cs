@@ -16,13 +16,15 @@ namespace ClipboardApp.ViewModel.Content {
 
         // コンストラクタ
         public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper clipboardItem) : base(folderViewModel, clipboardItem) {
+            if ( folderViewModel.Commands == null) {
+                throw new Exception("folderViewModel.Commands is null");
+            }
             ContentItem = clipboardItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
             Description = ContentItem.Description;
             Tags = ContentItem.Tags;
             SourceApplicationTitleText = ContentItem.SourceApplicationTitle;
-            Commands = new AppItemViewModelCommands();
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
@@ -30,10 +32,6 @@ namespace ClipboardApp.ViewModel.Content {
             OnPropertyChanged(nameof(FileTabVisibility));
 
         }
-
-        // Commands
-        public override ContentItemViewModelCommands Commands { get; set; }
-
 
         // Context Menu
 
@@ -70,8 +68,7 @@ namespace ClipboardApp.ViewModel.Content {
             }
             clipboardItem.MaskDataCommandExecute();
             // 保存
-            AppItemViewModelCommands command = new();
-            command.SaveClipboardItemCommand.Execute(true);
+            ((AppItemViewModelCommands)FolderViewModel.Commands).SaveClipboardItemCommand.Execute(true);
 
         });
         #endregion

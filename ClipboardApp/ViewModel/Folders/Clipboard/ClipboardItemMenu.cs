@@ -5,6 +5,7 @@ using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 using LibUIPythonAI.ViewModel.Item;
+using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemMenu : AppViewModelBase {
@@ -23,7 +24,12 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            AppItemViewModelCommands commands = new();
+            ContentItemViewModelCommands contentCommands = itemViewModel.Commands;
+
+            if (contentCommands is not AppItemViewModelCommands commands) {
+                throw new Exception("commands is not AppItemViewModelCommands");
+            }
+
             // プロンプトメニュー
             MenuItem promptMenuItem = new() {
                 Header = StringResources.PromptMenu,
@@ -97,9 +103,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            AppItemViewModelCommands commands = new();
+            ContentItemViewModelCommands contentCommands = itemViewModel.Commands;
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
+
+            if (contentCommands is not AppItemViewModelCommands commands ) {
+                throw new Exception("commands is not AppItemViewModelCommands");
+            }
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
@@ -172,7 +182,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem extractTextMenuItem = new() {
                 Header = StringResources.ExtractText,
                 Command = commands.ExtractTextCommand,
-                CommandParameter = itemViewModel
+                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems
             };
             menuItems.Add(extractTextMenuItem);
 

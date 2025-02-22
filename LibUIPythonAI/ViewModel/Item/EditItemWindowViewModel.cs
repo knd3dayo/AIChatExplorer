@@ -8,6 +8,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.Item {
     /// <summary>

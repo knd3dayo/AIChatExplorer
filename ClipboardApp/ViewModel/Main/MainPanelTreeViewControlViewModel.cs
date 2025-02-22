@@ -3,13 +3,19 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
     public class MainPanelTreeViewControlViewModel : ObservableObject {
 
+        private AppItemViewModelCommands Commands { get; set; }
+
+         // constructor
+         public MainPanelTreeViewControlViewModel(AppItemViewModelCommands commands) {
+            Commands = commands;
+        }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
         public Action<ClipboardFolderViewModel> SelectedFolderChangedAction { get; set; } = (selectedFolder) => { };
@@ -52,8 +58,7 @@ namespace ClipboardApp.ViewModel.Main {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.ReloadFolderCommandExecute(this.SelectedFolder,
+            Commands.ReloadFolderCommandExecute(this.SelectedFolder,
                 () => {
                     UpdateIndeterminateAction(true);
                 },
@@ -77,14 +82,12 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.PasteFromClipboardCommandExecute();
+            Commands.PasteFromClipboardCommandExecute();
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            AppItemViewModelCommands commands = new();
-            commands.CutFolderCommandExecute(this);
+            Commands.CutFolderCommandExecute(this);
         });
 
 

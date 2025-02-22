@@ -3,30 +3,38 @@ using System.Windows.Input;
 namespace LibUIPythonAI.Utils {
     // Create a class that implements ICommand and accepts a delegate.
     public class SimpleDelegateCommand<T> : ICommand {
-        // Specify the keys and mouse actions that invoke the command. 
-        public Key GestureKey { get; set; }
-        public ModifierKeys GestureModifier { get; set; }
-        public MouseAction MouseGesture { get; set; }
+
+        #region ICommand implementation
+        public void Execute(object? parameter) {
+            if (BeforeAction != null) { BeforeAction(); }
+
+            _executeDelegate((T?)parameter);
+
+            if (AfterAction != null) { AfterAction(); }
+        }
+
+        public bool CanExecute(object? parameter) { return true; }
+
+        public event EventHandler? CanExecuteChanged;
+
+        #endregion
+
+        private Action? BeforeAction;
+        private Action? AfterAction;
 
         readonly Action<T?> _executeDelegate;
 
-        public SimpleDelegateCommand(Action<T> executeDelegate) {
+        public SimpleDelegateCommand(Action<T> executeDelegate, Action? beforeAction = null, Action? afterAction = null) {
             _executeDelegate = executeDelegate!;
+            this.BeforeAction = beforeAction;
+            this.AfterAction = afterAction;
         }
 
         public void Execute() {
             Execute(null);
         }
 
-        public void Execute(object? parameter) {
-            // System.Windows.MessageBox.Show("Execute");
-            _executeDelegate((T?)parameter);
-        }
 
-        public bool CanExecute(object? parameter) { return true; }
-        public event EventHandler? CanExecuteChanged;
-
-
-        public static SimpleDelegateCommand<object> EmptyCommand => new((parameter) => { });
+        public static SimpleDelegateCommand<object> EmptyCommand => new((parameter) => { }, () => { }, () => { });
     }
 }

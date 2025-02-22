@@ -45,7 +45,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AutoGenTool.Save();
             AfterUpdate();
             window.Close();
-        });
+        }, null, null);
 
         public SimpleDelegateCommand<object> SelectFileCommand => new((obj) => {
             //ファイルダイアログを表示
@@ -60,7 +60,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             } else {
                 SourcePath = dialog.FileName;
             }
-        });
+        }, null, null);
 
     }
 }

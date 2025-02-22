@@ -2,9 +2,9 @@ using System.Windows;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using LibUIPythonAI.View.Folder;
-using WpfAppCommon.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.Search {
     public class SearchWindowViewModel : ChatViewModelBase {

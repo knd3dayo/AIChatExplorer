@@ -10,6 +10,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatControlViewModel : ChatViewModelBase {

@@ -7,6 +7,7 @@ using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using LibPythonAI.Utils.Common;
 
 namespace ClipboardApp.Model.Main {
     /// <summary>

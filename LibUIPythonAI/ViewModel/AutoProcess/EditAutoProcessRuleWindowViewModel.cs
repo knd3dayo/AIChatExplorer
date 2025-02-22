@@ -13,8 +13,8 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Folder;
-using WpfAppCommon.Utils;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {

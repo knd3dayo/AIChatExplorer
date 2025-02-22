@@ -14,11 +14,13 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Utils;
+using LibPythonAI.Utils.Common;
 
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderViewModel(ContentFolderWrapper clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
+    public class ClipboardFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ContentFolderViewModel(clipboardItemFolder, commands) {
         public override ClipboardItemViewModel CreateItemViewModel(ContentItemWrapper item) {
             return new ClipboardItemViewModel(this, item);
         }
@@ -31,7 +33,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var childFolderViewModel = new ClipboardFolderViewModel(childFolder) {
+            var childFolderViewModel = new ClipboardFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -50,7 +52,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            ClipboardFolderViewModel childFolderViewModel = new(childFolder);
+            ClipboardFolderViewModel childFolderViewModel = new(childFolder, Commands);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
@@ -173,11 +175,11 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public override SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
             LoadFolderExecute(
                 () => {
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                    Commands.UpdateIndeterminate(true);
                 },
                 () => {
                     MainUITask.Run(() => {
-                        MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                        Commands.UpdateIndeterminate(false);
                         UpdateStatusText();
                     });
                 });
@@ -187,7 +189,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             DeleteDisplayedItemCommandExecute(() => {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                Commands.UpdateIndeterminate(true);
             }, () => {
                 // 全ての削除処理が終了した後、後続処理を実行
                 // フォルダ内のアイテムを再読み込む
@@ -195,7 +197,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     LoadFolderCommand.Execute();
                 });
                 LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                Commands.UpdateIndeterminate(false);
             });
         });
 
@@ -204,13 +206,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
             // ContentTypes.Files, ContentTypes.Imageのアイテムを取得
             var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files || x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files);
-
-            // MainWindowViewModel.Instance.SelectedItemsにContentTypes.Files, ContentTypes.Imageのアイテムを設定
-            MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems = [.. itemViewModels];
-
-            // コマンドを実行
-            AppItemViewModelCommands commands = new();
-            commands.ExtractTextCommand.Execute();
+            Commands.ExtractTextCommand.Execute(MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems);
 
         });
 

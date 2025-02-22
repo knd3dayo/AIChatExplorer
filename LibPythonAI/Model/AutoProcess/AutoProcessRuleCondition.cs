@@ -1,6 +1,6 @@
+using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleCondition {

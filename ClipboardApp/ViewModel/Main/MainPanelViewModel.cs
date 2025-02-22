@@ -4,13 +4,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelViewModel : ObservableObject {
+    public class MainPanelViewModel(AppItemViewModelCommands commands) : ObservableObject {
+        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; } = new MainPanelTreeViewControlViewModel(commands);
 
-
-
-        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; } = new();
-
-        public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new();
+        public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new MainPanelDataGridViewControlViewModel(commands);
 
 
         // ShowProperties

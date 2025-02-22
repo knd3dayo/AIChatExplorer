@@ -1,28 +1,29 @@
 using System.Text.RegularExpressions;
+using LibPythonAI.Utils.Common;
 using NLog;
-using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Utils {
-    public class LogWrapper {
+namespace LibUIPythonAI.Utils {
+    public class LogWrapperAction : ILogWrapperAction {
 
         public static CustomLogger Logger { get; } = LogManager.LogFactory.GetCurrentClassLogger<CustomLogger>();
 
-        public static void Debug(string message) {
+        public void Debug(string message) {
             message = MaskAPIKey(message);
             Logger.Debug(message);
         }
 
-        public static void Info(string message) {
+        public void Info(string message) {
             message = MaskAPIKey(message);
             Logger.Info(message);
         }
 
-        public static void Warn(string message) {
+        public void Warn(string message) {
             message = MaskAPIKey(message);
             Logger.Warn(message);
         }
 
-        public static void Error(string message) {
+        public void Error(string message) {
             message = MaskAPIKey(message);
             Logger.Error(message);
         }

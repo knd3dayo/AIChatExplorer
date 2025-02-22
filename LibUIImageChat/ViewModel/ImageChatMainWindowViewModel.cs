@@ -13,7 +13,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
-using WpfAppCommon.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatMainWindowViewModel : ChatViewModelBase {

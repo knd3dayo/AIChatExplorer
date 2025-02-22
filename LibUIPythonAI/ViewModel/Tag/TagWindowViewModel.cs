@@ -4,8 +4,8 @@ using System.Windows.Controls;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Tag;
 using LibUIPythonAI.View.Tag;
-using WpfAppCommon.Utils;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.Tag {
     public class TagWindowViewModel : ChatViewModelBase {

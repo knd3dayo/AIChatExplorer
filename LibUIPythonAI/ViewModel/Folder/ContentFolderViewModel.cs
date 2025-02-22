@@ -6,12 +6,19 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
+using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using LibPythonAI.Utils.Common;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolderWrapper folder) : ChatViewModelBase {
+    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : ChatViewModelBase {
+
+
+        public ContentFolderWrapper Folder { get; set; } = folder;
+
+        public ContentItemViewModelCommands Commands { get; set; } = commands;
 
 
         // フォルダ作成コマンドの実装
@@ -150,8 +157,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public virtual int DefaultNextLevel { get; } = 5;
 
-
-        public ContentFolderWrapper Folder { get; set; } = folder;
 
 
         public string FolderName {

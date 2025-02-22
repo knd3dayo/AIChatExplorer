@@ -1,10 +1,9 @@
+using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Common
-{
+namespace PythonAILib.Common {
     public class PythonAILibManager {
 
         private static PythonAILibManager? _instance;
@@ -35,11 +34,7 @@ namespace PythonAILib.Common
         private PythonAILibManager(IPythonAILibConfigParams parameters) {
 
             ConfigParams = parameters;
-            Action<string> debugAction = parameters.GetDebugAction();
-            Action<string> infoAction = parameters.GetInfoAction();
-            Action<string> warnAction = parameters.GetWarnAction();
-            Action<string> errorAction = parameters.GetErrorAction();
-
+            
             // 言語設定
             PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化
@@ -48,7 +43,7 @@ namespace PythonAILib.Common
             // DBControllerの設定
             DataFactory = new PythonAILibDataFactory();
             // LogWrapperのログ出力設定
-            LogWrapper.SetActions(debugAction, infoAction, warnAction, errorAction);
+            LogWrapper.SetActions(parameters.GetLogWrapperAction());
 
         }
 

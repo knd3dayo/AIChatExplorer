@@ -4,11 +4,12 @@ using System.Text.Unicode;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
-using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using LibPythonAI.Utils.Common;
 
 namespace ClipboardApp.Model.Folders.Clipboard {
     public partial class ClipboardFolder : ContentFolderWrapper {

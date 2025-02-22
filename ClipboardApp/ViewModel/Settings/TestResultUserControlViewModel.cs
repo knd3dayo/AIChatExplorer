@@ -1,8 +1,8 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Settings {
     internal class TestResultUserControlViewModel : ObservableObject {

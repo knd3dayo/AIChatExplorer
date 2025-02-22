@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
-using PythonAILib.Utils.Common;
 
 namespace LibUIPythonAI.Utils {
     public class TextSelector {

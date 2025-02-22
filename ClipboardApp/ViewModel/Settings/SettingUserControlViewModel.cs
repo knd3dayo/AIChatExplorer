@@ -11,7 +11,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
+using LibPythonAI.Utils.Common;
 
 namespace ClipboardApp.ViewModel.Settings {
     /// <summary>

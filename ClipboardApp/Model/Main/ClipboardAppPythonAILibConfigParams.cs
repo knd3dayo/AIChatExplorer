@@ -1,6 +1,8 @@
 using System.IO;
 using System.Windows;
 using ClipboardApp.ViewModel.Settings;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Utils;
 using PythonAILib.Common;
 using WpfAppCommon.Utils;
 
@@ -35,18 +37,9 @@ namespace ClipboardApp.Model.Main {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();
         }
 
-        public Action<string> GetDebugAction() {
-            return LogWrapper.Debug;
-        }
 
-        public Action<string> GetInfoAction() {
-            return LogWrapper.Info;
-        }
-        public Action<string> GetWarnAction() {
-            return LogWrapper.Warn;
-        }
-        public Action<string> GetErrorAction() {
-            return LogWrapper.Error;
+        public ILogWrapperAction GetLogWrapperAction() {
+            return new LogWrapperAction();
         }
 
         public TextWrapping GetTextWrapping() {

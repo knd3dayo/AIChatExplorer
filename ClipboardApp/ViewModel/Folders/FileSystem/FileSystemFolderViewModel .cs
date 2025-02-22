@@ -9,10 +9,11 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
+using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;
 
@@ -29,7 +30,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             if (childFolder is not FileSystemFolder) {
                 throw new System.Exception("childFolder is not FileSystemFolder");
             }
-            var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder) {
+            var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };

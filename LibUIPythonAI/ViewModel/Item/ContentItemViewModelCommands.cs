@@ -15,10 +15,18 @@ using System.Windows;
 using LibPythonAI.Utils.Common;
 
 namespace PythonAILibUI.ViewModel.Item {
-    public abstract class ContentItemViewModelCommands {
+    public  class ContentItemViewModelCommands {
+
+        public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };
+
+        // Constructor
+        public ContentItemViewModelCommands(Action<bool> updateIndeterminate) {
+            UpdateIndeterminate = updateIndeterminate;
+        }
+
 
         // Command to open a file
-        public  void OpenFileExecute(ContentItemViewModel itemViewModel) {
+        public void OpenFileExecute(ContentItemViewModel itemViewModel) {
             ContentItemWrapper contentItem = itemViewModel.ContentItem;
             // Open the selected item
             ProcessUtil.OpenClipboardItemFile(contentItem, false);
@@ -39,11 +47,6 @@ namespace PythonAILibUI.ViewModel.Item {
                 LogWrapper.Error(e.Message);
             }
         }
-
-
-        public abstract void OpenItemCommandExecute(ContentItemViewModel itemViewModel);
-
-        public abstract void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel);
 
         // Command to open a folder
         public void OpenFolderExecute(ContentItemViewModel itemViewModel) {
@@ -200,7 +203,7 @@ namespace PythonAILibUI.ViewModel.Item {
 
                     ContentItemWrapper item = itemViewModel.ContentItem;
                     if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                        LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                        LogWrapper.Info(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
                     ContentItemCommands.ExtractTextCommandExecute(item);
@@ -226,6 +229,145 @@ namespace PythonAILibUI.ViewModel.Item {
                 afterAction();
             });
         }
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
+        // 処理中はプログレスインジケータを表示
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> ExtractTextCommand => new((items) => {
+            if (items == null) {
+                return;
+            }
+            ExtractTextCommandExecute(items, () => {
+                UpdateIndeterminate(true);
+            }, () => {
+                LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
+                UpdateIndeterminate(false);
+                StatusText.Instance.UpdateInProgress(false);
+            });
+        });
+
+        // ベクトルを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new((itemViewModels) => {
+            GenerateVectorCommandExecute(itemViewModels,
+                () => {
+                    // Display ProgressIndicator
+                    UpdateIndeterminate(true);
+                },
+                () => {
+
+                    // Hide ProgressIndicator
+                    UpdateIndeterminate(false);
+                    StatusText.Instance.UpdateInProgress(false);
+                    // フォルダ内のアイテムを再読み込み
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                    });
+                });
+        });
+
+        // プロンプトテンプレートを実行
+        public SimpleDelegateCommand<ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
+            ObservableCollection<ContentItemViewModel> itemViewModels = tuple.Item1;
+            PromptItem promptItem = tuple.Item2;
+            ExecutePromptTemplateCommandExecute(itemViewModels, promptItem,
+                () => {
+                    // プログレスインジケータを表示
+                    UpdateIndeterminate(true);
+                },
+                () => {
+                    // フォルダ内のアイテムを再読み込み
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                        // プログレスインジケータを非表示
+                        UpdateIndeterminate(false);
+                        StatusText.Instance.UpdateInProgress(false);
+                    });
+                });
+        });
+
+        // タイトルを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTitleCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.TitleGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+        // 背景情報を生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateBackgroundInfoCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+        // サマリーを生成する処理　複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateSummaryCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.SummaryGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+        // 課題リストを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTasksCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+        // 文書の信頼度を判定する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CheckDocumentReliabilityCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+
+        // ベクトル検索を実行するコマンド
+        public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
+            OpenVectorSearchWindowCommandExecute(itemViewModel);
+        });
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> DeleteItemsCommand => new((itemViewModels) => {
+            DeleteItemsCommandExecute(itemViewModels,
+                () => {
+                    // プログレスインジケータを表示
+                    UpdateIndeterminate(true);
+                },
+                () => {
+                    // 全ての削除処理が終了した後、後続処理を実行
+                    // フォルダ内のアイテムを再読み込む
+                    MainUITask.Run(() => {
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        foreach (var folder in folders) {
+                            folder.LoadFolderCommand.Execute();
+                        }
+                    });
+                    UpdateIndeterminate(false);
+                });
+        });
 
 
 
