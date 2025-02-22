@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using ClipboardApp.Common;
-using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Settings;
 using ClipboardApp.View.Help;
@@ -22,6 +20,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Main;
 
 namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
@@ -56,7 +55,7 @@ namespace ClipboardApp.ViewModel.Main {
             RootFolderViewModelContainer = new();
 
             // データベースのチェックポイント処理
-            ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();
+            PythonAILibManager.Instance.DataFactory.GetDatabase().Checkpoint();
 
             // DBのバックアップの取得
             BackupController.BackupNow();

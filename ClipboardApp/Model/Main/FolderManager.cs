@@ -1,5 +1,4 @@
 using System.IO;
-using ClipboardApp.Factory;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Folders.Outlook;
@@ -11,7 +10,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 
-namespace ClipboardApp.Model.Folders {
+namespace ClipboardApp.Model.Main {
     public class FolderManager {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
@@ -39,14 +38,14 @@ namespace ClipboardApp.Model.Folders {
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
 
             // ClipboardRootFolder
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             ContentFolder? clipboardRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
 
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
                 clipboardRootFolder.Save();
             }
-            var searchCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            var searchCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             // SearchRootFolder
             ContentFolder? searchRootFolder = searchCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
             if (searchRootFolder != null) {
@@ -66,14 +65,14 @@ namespace ClipboardApp.Model.Folders {
                 imageCheckRootFolder.Save();
             }
             // FileSystemRootFolder
-            var fileSystemCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            var fileSystemCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             ContentFolder? fileSystemRootFolder = fileSystemCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
             if (fileSystemRootFolder != null) {
                 fileSystemRootFolder.FolderName = toRes.FileSystem;
                 fileSystemRootFolder.Save();
             }
             // ShortcutRootFolder
-            var shortCutCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+            var shortCutCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             ContentFolder? shortcutRootFolder = shortCutCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
             if (shortcutRootFolder != null) {
                 shortcutRootFolder.FolderName = toRes.Shortcut;
@@ -89,7 +88,7 @@ namespace ClipboardApp.Model.Folders {
         public static ClipboardFolder RootFolder {
             get {
                 if (clipboardRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
@@ -113,7 +112,7 @@ namespace ClipboardApp.Model.Folders {
         public static SearchFolder SearchRootFolder {
             get {
                 if (searchRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
@@ -138,7 +137,7 @@ namespace ClipboardApp.Model.Folders {
         public static ClipboardFolder ChatRootFolder {
             get {
                 if (chatRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
@@ -163,7 +162,7 @@ namespace ClipboardApp.Model.Folders {
         public static FileSystemFolder FileSystemRootFolder {
             get {
                 if (fileSystemRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
@@ -188,7 +187,7 @@ namespace ClipboardApp.Model.Folders {
         public static ShortCutFolder ShortcutRootFolder {
             get {
                 if (shortcutRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
@@ -214,7 +213,7 @@ namespace ClipboardApp.Model.Folders {
         public static OutlookFolder OutlookRootFolder {
             get {
                 if (outlookRootFolder == null) {
-                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ContentFolder>();
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
                     ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Outlook).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {

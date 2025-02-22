@@ -1,5 +1,5 @@
-using ClipboardApp.Model.Folders;
 using ClipboardApp.Model.Folders.Outlook;
+using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Chat;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;

@@ -1,11 +1,10 @@
 using System.IO;
 using System.Windows;
-using ClipboardApp.Factory;
 using ClipboardApp.ViewModel.Settings;
 using PythonAILib.Common;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Common {
+namespace ClipboardApp.Model.Main {
     public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams {
         public string GetHttpsProxy() {
             return ClipboardAppConfig.Instance.ProxyURL;
@@ -32,7 +31,7 @@ namespace ClipboardApp.Common {
             return Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "content_output");
         }
         public IDataFactory GetDataFactory() {
-            return ClipboardAppFactory.Instance.GetClipboardDBController();
+            return PythonAILibManager.Instance.DataFactory;
         }
         public OpenAIProperties GetOpenAIProperties() {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();

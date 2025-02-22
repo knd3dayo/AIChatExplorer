@@ -1,5 +1,5 @@
-using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using LibUIPythonAI.Resource;
 using LiteDB;
 using PythonAILib.Common;
@@ -40,7 +40,6 @@ namespace ClipboardApp.Model.Folders.Search {
             List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
-            ClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // フォルダに検索条件が設定されている場合
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {

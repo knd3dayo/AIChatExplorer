@@ -1,11 +1,9 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using ClipboardApp.Common;
-using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using LibUIPythonAI.Resource;
-using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;

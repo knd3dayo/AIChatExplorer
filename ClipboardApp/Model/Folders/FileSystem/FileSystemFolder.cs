@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
-using ClipboardApp.Factory;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -171,7 +171,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             }
 
             // コレクション
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ContentItem>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ContentItem>();
             var items = collection.Find(x => x.CollectionId == Id);
 
             // Items内のFilePathとContentItemのDictionary

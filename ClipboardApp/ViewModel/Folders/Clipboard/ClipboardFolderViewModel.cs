@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Common;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
 using LibUIPythonAI.Resource;

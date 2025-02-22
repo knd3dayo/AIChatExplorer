@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Common;
-using ClipboardApp.Model.Folders;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;

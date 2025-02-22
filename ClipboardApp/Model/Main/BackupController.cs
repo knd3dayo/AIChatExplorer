@@ -1,7 +1,7 @@
 using System.IO;
 using ClipboardApp.ViewModel.Settings;
 
-namespace ClipboardApp.Common {
+namespace ClipboardApp.Model.Main {
     class BackupController {
         public static void BackupNow() {
             string backupDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "backup");
