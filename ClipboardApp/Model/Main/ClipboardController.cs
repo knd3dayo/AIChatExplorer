@@ -90,7 +90,7 @@ namespace ClipboardApp.Model.Main {
             // If ContentType is Files, copy files to clipboard
             else if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 // SourcePathの取得
-                System.Collections.Specialized.StringCollection strings = [item.FilePath];
+                System.Collections.Specialized.StringCollection strings = [item.SourcePath];
                 // Stringsが空の場合は何もしない
                 if (strings.Count == 0) {
                     return;

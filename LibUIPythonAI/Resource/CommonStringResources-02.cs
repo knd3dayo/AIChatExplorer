@@ -492,6 +492,18 @@ namespace LibUIPythonAI.Resource {
         // Outlook 英語名
         public virtual string OutlookEnglish { get; } = "Outlook";
 
+        // Edgeのブラウズ履歴
+        public virtual string EdgeBrowseHistory { get; } = "Edgeの閲覧履歴";
+
+        // Edgeのブラウズ履歴 英語名
+        public virtual string EdgeBrowseHistoryEnglish { get; } = "EdgeBrowseHistory";
+
+        // RecentFiles
+        public virtual string RecentFiles { get; } = "最近のファイル";
+
+        // RecentFiles 英語名
+        public virtual string RecentFilesEnglish { get; } = "RecentFiles";
+
         #endregion
 
         #region SettingWindow

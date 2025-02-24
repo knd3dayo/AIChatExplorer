@@ -10,7 +10,7 @@ using PythonAILibUI.ViewModel.Item;
 namespace ClipboardApp.ViewModel.Folders.Mail {
     public class OutlookFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
-        public override int DefaultNextLevel { get; } = 0;
+        public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
@@ -36,7 +36,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected override async void LoadChildren(int nestLevel = 0) {
+        public override async void LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
 

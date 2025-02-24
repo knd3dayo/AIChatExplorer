@@ -218,6 +218,15 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.IsReferenceVectorDBItemsSynced = value;
             }
         }
+        // SourceType
+        public string SourceType {
+            get {
+                return ContentItemInstance.SourceType;
+            }
+            set {
+                ContentItemInstance.SourceType = value;
+            }
+        }
 
         // SourcePath
         public string SourcePath {
@@ -238,14 +247,7 @@ namespace PythonAILib.Model.Content {
             }
         }
         // ファイルパス
-        public string FilePath {
-            get {
-                return ContentItemInstance.FilePath;
-            }
-            set {
-                ContentItemInstance.FilePath = value;
-            }
-        }
+
         // ファイルの最終更新日時
         public long LastModified {
             get {

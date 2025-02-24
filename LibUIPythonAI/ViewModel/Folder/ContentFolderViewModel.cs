@@ -40,7 +40,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected virtual void LoadChildren(int nestLevel = 5) {
+        public virtual void LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
             foreach (var child in Folder.GetChildren()) {
@@ -154,7 +154,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
-        public virtual int DefaultNextLevel { get; } = 5;
+        public virtual int DefaultNextLevel { get; } = 1;
 
 
 
@@ -219,6 +219,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 this.LoadFolderCommand.Execute();
             });
         });
+
         protected virtual void UpdateStatusText() {
             string message = Folder.GetStatusText();
             StatusText.Instance.ReadyText = message;

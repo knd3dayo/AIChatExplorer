@@ -1,14 +1,16 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
+using ClipboardApp.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 
-namespace ClipboardApp.ViewModel.Folders.ShortCut {
-    public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(clipboardItemFolder, commands) {
+namespace ClipboardApp.ViewModel.Folders.Browser {
+    public class RecentFilesFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(clipboardItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -21,11 +23,11 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ShortCutFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            if (childFolder is not FileSystemFolder) {
-                throw new Exception("childFolder is not FileSystemFolder");
+        public override RecentFilesFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            if (childFolder is not RecentFilesFolder) {
+                throw new Exception("childFolder is not RecentFilesFolder");
             }
-            var childFolderViewModel = new ShortCutFolderViewModel((FileSystemFolder)childFolder, Commands) {
+            var childFolderViewModel = new RecentFilesFolderViewModel((RecentFilesFolder)childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -46,7 +48,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                         if (child == null) {
                             continue;
                         }
-                        ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                        RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                         _children.Add(childViewModel);
                     }
                     return;
@@ -56,7 +58,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                     if (child == null) {
                         continue;
                     }
-                    ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                    RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                     // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                     if (nestLevel > 0) {
                         childViewModel.LoadChildren(nestLevel - 1);
@@ -67,7 +69,6 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
             Children = new ObservableCollection<ContentFolderViewModel>(_children);
             OnPropertyChanged(nameof(Children));
         }
-
     }
 }
 

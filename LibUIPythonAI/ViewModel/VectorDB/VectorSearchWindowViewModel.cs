@@ -103,14 +103,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             await Task.Run(() => {
                 List<VectorMetadata> vectorSearchResults = [];
                 // ベクトル検索を実行
-                ContentItem contentItem = new() {
-                    Content = InputText
-                };
                 // VectorDBSearchResultMaxをVectorSearchPropertyに設定
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
 
                 try {
-                    vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(contentItem.Content));
+                    vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(InputText));
                 } finally {
                     UpdateIndeterminate(false);
                 }

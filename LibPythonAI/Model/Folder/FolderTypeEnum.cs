@@ -33,6 +33,9 @@ namespace PythonAILib.Model.Folder {
         public static FolderTypeEnum ShortCut { get; } = new("ShortCut");
         // Outlook,
         public static FolderTypeEnum Outlook { get; } = new("Outlook");
+
+        // EdgeBrowseHistory,
+        public static FolderTypeEnum EdgeBrowseHistory { get; } = new("EdgeBrowseHistory");
     }
 }
 

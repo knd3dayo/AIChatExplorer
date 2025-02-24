@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
@@ -137,7 +138,7 @@ namespace PythonAILibUI.ViewModel.Item {
         // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
         // 処理中はプログレスインジケータを表示
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> ExtractTextCommand => new((items) => {
-            if (items == null) {
+            if (items == null || items.Count == 0) {
                 return;
             }
             ExtractTextCommandExecute(items, () => {
@@ -147,6 +148,22 @@ namespace PythonAILibUI.ViewModel.Item {
                 UpdateIndeterminate(false);
                 StatusText.Instance.UpdateInProgress(false);
             });
+        });
+
+        // Webページをダウンロードする
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> DownloadWebPageCommand => new((itemViewModels) => {
+            if (itemViewModels == null || itemViewModels.Count == 0) {
+                return;
+            }
+            UpdateIndeterminate(true);
+            Task.Run(() => {
+                ImportExportUtil.ImportFromURLList(itemViewModels.Select(x => x.ContentItem).ToList(), (item) => { });
+            }).ContinueWith((task) => {
+                UpdateIndeterminate(false);
+                StatusText.Instance.UpdateInProgress(false);
+            });
+
+
         });
 
         // ベクトルを生成する処理 複数アイテム処理可

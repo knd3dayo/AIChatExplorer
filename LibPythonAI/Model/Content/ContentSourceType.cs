@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LibPythonAI.Model.Content {
-    public enum ContentSourceType {
+    public class ContentSourceType {
 
         // アプリ
-        Application,
+        public  static  string Application { get; } = "Application";
         // ファイル
-        File,
-        // Git
-        Git,
+        public static string File { get; } = "File";
+        // URL,
+        public static string Url { get; } = "Url";
 
     }
 }

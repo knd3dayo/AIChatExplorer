@@ -52,7 +52,7 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding ContentItem.FilePath, Mode=OneWay}"
+                    Text="{Binding ContentItem.SourcePath, Mode=OneWay}"
                     TextWrappingMode="{Binding TextWrappingMode}" />
 
                 <TextBlock

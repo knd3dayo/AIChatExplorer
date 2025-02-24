@@ -1,9 +1,11 @@
 using System.IO;
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Folders.ShortCut;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -20,6 +22,8 @@ namespace ClipboardApp.Model.Main {
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME = CommonStringResources.Instance.Shortcut;
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME = CommonStringResources.Instance.Outlook;
+        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.EdgeBrowseHistory;
+        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
 
         // 英語名
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardEnglish;
@@ -29,6 +33,9 @@ namespace ClipboardApp.Model.Main {
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ShortcutEnglish;
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.OutlookEnglish;
+        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.EdgeBrowseHistoryEnglish;
+        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.RecentFilesEnglish;
+
 
 
 
@@ -78,6 +85,20 @@ namespace ClipboardApp.Model.Main {
                 shortcutRootFolder.FolderName = toRes.Shortcut;
                 shortcutRootFolder.Save();
             }
+            // EdgeBrowseHistoryRootFolder
+            var edgeBrowseHistoryCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+            ContentFolder? edgeBrowseHistoryRootFolder = edgeBrowseHistoryCollection.Find(x => x.ParentId == null && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+            if (edgeBrowseHistoryRootFolder != null) {
+                edgeBrowseHistoryRootFolder.FolderName = toRes.EdgeBrowseHistory;
+                edgeBrowseHistoryRootFolder.Save();
+            }
+            // RecentFilesRootFolder
+            var recentFilesCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+            ContentFolder? recentFilesRootFolder = recentFilesCollection.Find(x => x.ParentId == null && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+            if (recentFilesRootFolder != null) {
+                recentFilesRootFolder.FolderName = toRes.RecentFiles;
+                recentFilesRootFolder.Save();
+            }
         }
 
         // アプリ共通の検索条件
@@ -103,6 +124,9 @@ namespace ClipboardApp.Model.Main {
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
+
                     clipboardRootFolder = new ClipboardFolder(folder);
                 }
                 return clipboardRootFolder;
@@ -127,6 +151,8 @@ namespace ClipboardApp.Model.Main {
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
                     searchRootFolder = new SearchFolder(folder);
                 }
                 return searchRootFolder;
@@ -152,6 +178,8 @@ namespace ClipboardApp.Model.Main {
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
                     chatRootFolder = new ClipboardFolder(folder);
                 }
                 return chatRootFolder;
@@ -177,6 +205,8 @@ namespace ClipboardApp.Model.Main {
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
                     fileSystemRootFolder = new FileSystemFolder(folder);
                 }
                 return fileSystemRootFolder;
@@ -203,6 +233,8 @@ namespace ClipboardApp.Model.Main {
                     // 既にSearchRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
                     shortcutRootFolder = new ShortCutFolder(folder);
                 }
                 return shortcutRootFolder;
@@ -229,6 +261,8 @@ namespace ClipboardApp.Model.Main {
                     // 既にOutlookRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
                     outlookRootFolder = new OutlookFolder(folder);
                 }
                 return outlookRootFolder;
@@ -236,5 +270,62 @@ namespace ClipboardApp.Model.Main {
             }
 
         }
+        // EdgeBrowseHistory Root Folder
+        private static EdgeBrowseHistoryFolder? edgeBrowseHistoryRootFolder;
+
+        public static EdgeBrowseHistoryFolder EdgeBrowseHistoryRootFolder {
+            get {
+                if (edgeBrowseHistoryRootFolder == null) {
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
+                            IsRootFolder = true,
+                            // 自動処理を無効にする
+                            IsAutoProcessEnabled = false,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN)
+                        };
+                        folder.Save();
+                    }
+                    // 既にOutlookRootFolder作成済みの環境のための措置
+                    folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
+                    edgeBrowseHistoryRootFolder = new EdgeBrowseHistoryFolder(folder);
+                }
+                return edgeBrowseHistoryRootFolder;
+            }
+        }
+
+        // RecentFiles Root Folder
+        private static RecentFilesFolder? recentFilesRootFolder;
+        public static RecentFilesFolder RecentFilesRootFolder {
+            get {
+                if (recentFilesRootFolder == null) {
+                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
+                            IsRootFolder = true,
+                            // 自動処理を無効にする
+                            IsAutoProcessEnabled = false,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN)
+                        };
+                        folder.Save();
+                    }
+                    // 既にOutlookRootFolder作成済みの環境のための措置
+                    folder.IsRootFolder = true;
+                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN);
+                    folder.FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN;
+                    folder.Save();
+                    recentFilesRootFolder = new RecentFilesFolder(folder);
+                }
+                return recentFilesRootFolder;
+            }
+        }
+
     }
 }

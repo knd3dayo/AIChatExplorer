@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
@@ -150,9 +151,14 @@ namespace LibUIPythonAI.ViewModel.Item {
         // ContentPanelContentHint
         public string ContentPanelContentHint {
             get {
-                if (ContentType == ContentTypes.ContentItemTypes.Files) {
+                if (ContentItem.SourceType == ContentSourceType.File) {
                     return StringResources.ExecuteExtractTextToViewFileContent;
                 }
+                // URLの場合
+                if (ContentItem.SourceType == ContentSourceType.Url) {
+                    return StringResources.ExecuteDownloadWebPageToViewContent;
+                }
+
                 return "";
             }
         }

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -13,7 +9,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Utils.ExportImport {
-    public  class ImportExportUtil {
+    public class ImportExportUtil {
 
         // --- Export/Import
         public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {
@@ -100,6 +96,83 @@ namespace LibPythonAI.Utils.ExportImport {
             }
         }
 
+        public static void ImportFromURLList(List<ContentItemWrapper> items, Action<ContentItemWrapper> afterImport) {
+            // Parallel処理
+            ParallelOptions parallelOptions = new() {
+                MaxDegreeOfParallelism = 8
+            };
+
+            Parallel.ForEach(items, parallelOptions, async item => {
+                // SourceTypeがUrl出ない場合は何もしない
+                if (item.SourceType != ContentSourceType.Url) {
+                    return;
+                }
+                // URLを取得
+                string url = item.SourcePath;
+                string tempFilePath = Path.GetTempFileName();
+                try {
+                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    // 一時ファイルのパスを取得します
+
+                    // データを一時ファイルに書き込みます
+                    await System.IO.File.WriteAllTextAsync(tempFilePath, data);
+                    // 成功メッセージを表示します
+                    Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
+                    // 一時ファイルからテキスト抽出
+                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+                    // itemのContentにTextを設定
+                    item.Content = text;
+
+                    item.Save();
+                    afterImport(item);
+
+                } catch (Exception ex) {
+                    LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
+                } finally {
+                    // 一時ファイルを削除します
+                    System.IO.File.Delete(tempFilePath);
+                }
+            });
+        }
+
+
+        public static void ImportFromURLList(ContentFolderWrapper fromFolder, List<string> urls, Action<ContentItemWrapper> afterImport) {
+
+            // Parallel処理
+            ParallelOptions parallelOptions = new() {
+                MaxDegreeOfParallelism = 8
+            };
+            Parallel.ForEach(urls, parallelOptions, async url => {
+
+                string tempFilePath = Path.GetTempFileName();
+                try {
+                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    // 一時ファイルのパスを取得します
+
+                    // データを一時ファイルに書き込みます
+                    await System.IO.File.WriteAllTextAsync(tempFilePath, data);
+                    // 成功メッセージを表示します
+                    Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
+                    // 一時ファイルからテキスト抽出
+                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+
+                    // アイテムの作成
+                    ContentItemWrapper item = new(fromFolder.Id) {
+                        Content = text,
+                        Description = url,
+                        SourcePath = url
+                    };
+                    item.Save();
+                    afterImport(item);
+
+                } catch (Exception ex) {
+                    LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
+                } finally {
+                    // 一時ファイルを削除します
+                    System.IO.File.Delete(tempFilePath);
+                }
+            });
+        }
 
         public static void ImportFromURLList(ContentFolderWrapper fromFolder, string filePath, Action<ContentItemWrapper> afterImport) {
 
@@ -109,48 +182,9 @@ namespace LibPythonAI.Utils.ExportImport {
                 return;
             }
             // ファイルからすべての行を読み込んでリストに格納します
-            List<string> lines = new List<string>(System.IO.File.ReadAllLines(filePath));
-            Task[] tasks = [];
+            List<string> urls = new(System.IO.File.ReadAllLines(filePath));
 
-            foreach (var line in lines) {
-                // URLを取得
-                string url = line;
-                // URLからデータを取得して一時ファイルに保存
-                // Task.Runを使用して非同期操作を開始します
-                Task task = Task.Run(async () => {
-                    string tempFilePath = Path.GetTempFileName();
-                    try {
-                        string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
-                        // 一時ファイルのパスを取得します
-
-                        // データを一時ファイルに書き込みます
-                        await System.IO.File.WriteAllTextAsync(tempFilePath, data);
-                        // 成功メッセージを表示します
-                        Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
-                        // 一時ファイルからテキスト抽出
-                        string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
-
-                        // アイテムの作成
-                        ContentItemWrapper item = new(fromFolder.Id) {
-                            Content = text,
-                            Description = url,
-                            SourcePath = url
-                        };
-                        item.Save();
-                        afterImport(item);
-
-                    } catch (Exception ex) {
-                        LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
-                    } finally {
-                        // 一時ファイルを削除します
-                        System.IO.File.Delete(tempFilePath);
-                    }
-                });
-                tasks.Append(task);
-            }
-            // すべてのタスクが完了するまで待機します
-            Task.WaitAll(tasks);
-
+            ImportFromURLList(fromFolder, urls, afterImport);
         }
 
         public static void ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {

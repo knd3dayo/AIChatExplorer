@@ -35,7 +35,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         // Context Menu
 
-        public ObservableCollection<MenuItem> ContentItemMenuItems {
+        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
                 ClipboardItemMenu clipboardItemMenu = new(this);
                 return clipboardItemMenu.ContentItemMenuItems;
@@ -43,7 +43,7 @@ namespace ClipboardApp.ViewModel.Content {
         }
 
         // Copy
-        public ClipboardItemViewModel Copy() {
+        public virtual ClipboardItemViewModel Copy() {
             ContentItemWrapper newItem = ContentItem.Copy();
             return new ClipboardItemViewModel(FolderViewModel, newItem);
         }

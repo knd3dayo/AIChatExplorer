@@ -210,6 +210,9 @@ namespace LibUIPythonAI.Resource {
         // 同期
         public override string Sync { get; } = "Sync";
 
+        // DownloadWebPage
+        public override string DownloadWebPage { get; } = "Download Web Page";
+
         // Export/Import
         public override string ExportImport { get; } = "Export/Import";
 
@@ -1023,7 +1026,8 @@ namespace LibUIPythonAI.Resource {
         // // ファイルの内容を表示するには「テキストを抽出」を実行してください
         public override string ExecuteExtractTextToViewFileContent { get; } = "To view the contents of the file, execute \"Extract Text\"";
 
-
+        // Webページの内容を表示するには「Webページをダウンロード」を実行してください。
+        public override string ExecuteDownloadWebPageToViewContent { get; } = "To view the contents of the web page, execute \"Download Web Page\"";
 
     }
 }

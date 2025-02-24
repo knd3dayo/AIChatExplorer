@@ -76,16 +76,25 @@ namespace PythonAILib.Model.Content {
         public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
 
         // SourcePath
-        public string SourcePath { get; set; } = "";
+        [BsonIgnore]
+        public string SourcePath {
+            get {
+                ExtendedProperties.TryGetValue("SourcePath", out object? value);
+                return value?.ToString() ?? "";
+            }
+            set {
+                ExtendedProperties["SourcePath"] = value;
+            }
+        }
 
         // SourceType 
         [BsonIgnore]
-        public ContentSourceType SourceType {
+        public string SourceType {
             get {
                 ExtendedProperties.TryGetValue("SourceType", out object? value);
                 string? sourceTypeString = value?.ToString();
-                if (sourceTypeString != null) {
-                    return Enum.Parse<ContentSourceType>(sourceTypeString.ToString());
+                if (! string.IsNullOrEmpty(sourceTypeString)) {
+                    return sourceTypeString;
                 } else {
                     return ContentSourceType.Application;
                 }
@@ -94,6 +103,26 @@ namespace PythonAILib.Model.Content {
                 ExtendedProperties["SourceType"] = value.ToString();
             }
         }
+
+        // ファイルパス
+        // public string FilePath { get; set; } = "";
+
+
+        // ファイルの最終更新日時
+        [BsonIgnore]
+        public long LastModified {
+            get {
+                ExtendedProperties.TryGetValue("LastModified", out object? value);
+                return value != null ? (long)value : 0;
+            }
+            set {
+                ExtendedProperties["LastModified"] = value;
+            }
+        }
+
+
+
+
         // ObjectPath ContentFolderPath + ObjectId
         [BsonIgnore]
         public string ObjectPath {
@@ -118,11 +147,6 @@ namespace PythonAILib.Model.Content {
                 }
             }
         }
-        // ファイルパス
-        public string FilePath { get; set; } = "";
-        // ファイルの最終更新日時
-        public long LastModified { get; set; } = 0;
-
 
         // 拡張プロパティ
         public Dictionary<string, object> ExtendedProperties { get; set; } = new();

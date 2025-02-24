@@ -12,6 +12,9 @@ namespace PythonAILib.Model.Content {
         // フォルダの種類
         public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
+        // フォルダの種類の文字列
+        public string FolderTypeString { get; set; } = FolderTypeEnum.Normal.Name;
+
         // プロパティf
         // 親フォルダのID
         public ObjectId ParentId { get; set; } = ObjectId.Empty;

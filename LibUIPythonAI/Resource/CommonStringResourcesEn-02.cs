@@ -99,6 +99,12 @@ namespace LibUIPythonAI.Resource {
         // Outlook
         public override string Outlook { get; } = "Outlook";
 
+        // EdgeBrowseHistory
+        public override string EdgeBrowseHistory { get; } = "Edge Browse History";
+
+        // RecentFiles
+        public override string RecentFiles { get; } = "Recent Files";
+
         // ProxyURL
         public override string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList

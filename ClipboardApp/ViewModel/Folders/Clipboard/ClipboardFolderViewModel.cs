@@ -69,14 +69,14 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected override void LoadChildren(int nestLevel = 5) {
+        public override void LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
             foreach (var child in Folder.GetChildren()) {
                 if (child == null) {
                     continue;
                 }
-                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                ContentFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                 // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                 if (nestLevel > 0) {
                     childViewModel.LoadChildren(nestLevel - 1);
@@ -113,7 +113,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(Folder.Id);
-            ContentItemViewModel ItemViewModel = new ClipboardItemViewModel(this, clipboardItem);
+            ContentItemViewModel ItemViewModel = CreateItemViewModel(clipboardItem);
 
 
             // MainWindowViewModelのTabItemを追加する

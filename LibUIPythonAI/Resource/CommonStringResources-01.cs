@@ -1090,5 +1090,8 @@ namespace LibUIPythonAI.Resource {
 
         // ファイルの内容を表示するには「テキストを抽出」を実行してください
         public virtual string ExecuteExtractTextToViewFileContent { get; } = "ファイルの内容を表示するには「テキストを抽出」を実行してください";
+
+        // Webページの内容を表示するには「Webページをダウンロード」を実行してください。
+        public virtual string ExecuteDownloadWebPageToViewContent { get; } = "Webページの内容を表示するには「Webページをダウンロード」を実行してください。";
     }
 }

@@ -6,6 +6,7 @@ using ClipboardApp.ViewModel.Folders.FileSystem;
 using ClipboardApp.ViewModel.Folders.Mail;
 using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
+using ClipboardApp.ViewModel.Folders.Browser;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILibUI.ViewModel.Item;
 
@@ -27,9 +28,14 @@ namespace ClipboardApp.ViewModel.Main {
         // ローカルファイルシステムのショートカットのViewModel
         public ShortCutFolderViewModel ShortcutFolderViewModel { get; private set; }
 
+        // RecentFilesフォルダのViewModel
+        public RecentFilesFolderViewModel RecentFilesFolderViewModel { get; private set; }
+
+        // EdgeBrowseHistoryフォルダのViewModel
+        public EdgeBrowseHistoryFolderViewModel EdgeBrowseHistoryFolderViewModel { get; private set; }
+
         // OutlookフォルダのViewModel
         public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
-
 
         // コンストラクタ
         public AppRootFolderViewModelContainer(ContentItemViewModelCommands commands) :base(commands) {
@@ -38,11 +44,15 @@ namespace ClipboardApp.ViewModel.Main {
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
             ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder, commands);
+            RecentFilesFolderViewModel = new RecentFilesFolderViewModel(FolderManager.RecentFilesRootFolder, commands);
+            EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(FolderManager.EdgeBrowseHistoryRootFolder, commands);
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(FileSystemFolderViewModel);
             FolderViewModels.Add(ShortcutFolderViewModel);
+            FolderViewModels.Add(RecentFilesFolderViewModel);
+            FolderViewModels.Add(EdgeBrowseHistoryFolderViewModel);
             if (OutlookFolder.OutlookApplicationExists()) {
                 OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
                 FolderViewModels.Add(OutlookFolderViewModel);

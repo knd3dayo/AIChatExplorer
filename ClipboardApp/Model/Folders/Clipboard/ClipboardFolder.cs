@@ -160,8 +160,8 @@ namespace ClipboardApp.Model.Folders.Clipboard {
                         ContentType = contentTypes
                     };
                     SetApplicationInfo(item, e);
-                    item.FilePath = files[i];
-                    item.LastModified = new System.IO.FileInfo(item.FilePath).LastWriteTime.Ticks;
+                    item.SourcePath = files[i];
+                    item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
                     result.Add(item);
                 }
                 return result;

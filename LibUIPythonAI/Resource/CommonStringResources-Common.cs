@@ -93,6 +93,9 @@ namespace LibUIPythonAI.Resource {
         // 同期
         public virtual string Sync { get; } = "同期";
 
+        // DownloadWebPage
+        public virtual string DownloadWebPage { get; } = "Webページをダウンロード";
+
         // ExportImport
         public virtual string ExportImport { get; } = "エクスポート/インポート";
 

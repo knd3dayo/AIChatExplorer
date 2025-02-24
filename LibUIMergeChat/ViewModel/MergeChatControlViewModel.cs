@@ -21,6 +21,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIMergeChat.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Content;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : ChatViewModelBase {
@@ -263,6 +264,7 @@ namespace LibUIMergeChat.ViewModel {
                 if (OutputFolder != null) {
                     ContentItem contentItem = new() {
                         Content = result.Output,
+                        SourceType = ContentSourceType.Application
                     };
                     ContentItemWrapper contentItemWrapper = new(contentItem);
                     OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {

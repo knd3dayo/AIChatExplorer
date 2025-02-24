@@ -321,7 +321,7 @@ namespace PythonAILib.Model.Content {
                     }
                 } else {
                     // ファイル名から拡張子を取得
-                    string extension = Path.GetExtension(item.FilePath);
+                    string extension = Path.GetExtension(item.SourcePath);
                     string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64, extension);
                     item.Content = text;
                 }
@@ -335,12 +335,12 @@ namespace PythonAILib.Model.Content {
         // Base64Stringを参照する場合とテキスト抽出を行う場合にキャッシュを更新する。
         // 対象ファイルがない場合は何もしない。
         public static void UpdateCache(ContentItemWrapper item) {
-            if (item.FilePath == null || System.IO.File.Exists(item.FilePath) == false) {
+            if (item.SourcePath == null || System.IO.File.Exists(item.SourcePath) == false) {
                 return;
             }
-            item.LastModified = new System.IO.FileInfo(item.FilePath).LastWriteTime.Ticks;
+            item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
             try {
-                byte[] bytes = System.IO.File.ReadAllBytes(item.FilePath);
+                byte[] bytes = System.IO.File.ReadAllBytes(item.SourcePath);
                 item.CachedBase64String = Convert.ToBase64String(bytes);
             } catch (IOException e) {
                 LogWrapper.Info(e.Message);
@@ -407,10 +407,10 @@ namespace PythonAILib.Model.Content {
                 } else {
                     if (item.IsImage()) {
                         // 画像からテキスト抽出
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", item.Base64String);
+                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64String);
 
                     } else {
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", "");
+                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
                     }
                 }
                 vectorDBProperty.VectorMetadataList.Add(vectorDBEntry);

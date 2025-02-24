@@ -1,0 +1,40 @@
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Model.Content;
+using PythonAILibUI.ViewModel.Item;
+
+namespace ClipboardApp.ViewModel.Folders.Browser {
+    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
+        // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
+        public override int DefaultNextLevel { get; } = 1;
+
+        // -- virtual
+        public override ObservableCollection<MenuItem> FolderMenuItems {
+            get {
+                EdgeBrowseHistoryFolderMenu clipboardItemMenu = new(this);
+                return clipboardItemMenu.MenuItems;
+            }
+        }
+        // RootFolderのViewModelを取得する
+        public override ContentFolderViewModel GetRootFolderViewModel() {
+            return MainWindowViewModel.Instance.RootFolderViewModelContainer.EdgeBrowseHistoryFolderViewModel;
+        }
+
+        public override EdgeBrowseHistoryItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+            return new EdgeBrowseHistoryItemViewModel(this, item);
+        }
+
+        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        public override EdgeBrowseHistoryFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            var childFolderViewModel = new EdgeBrowseHistoryFolderViewModel(childFolder, Commands) {
+                // 親フォルダとして自分自身を設定
+                ParentFolderViewModel = this
+            };
+            return childFolderViewModel;
+        }
+    }
+}
+

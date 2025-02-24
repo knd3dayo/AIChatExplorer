@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
-using LibUIPythonAI.ViewModel.Item;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
@@ -12,9 +12,18 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public ClipboardItemViewModel ClipboardItemViewModel { get; private set; }
 
+        protected AppItemViewModelCommands AppCommands { get; set; }
+
         public ClipboardItemMenu(ClipboardItemViewModel clipboardItemViewModel) {
             ClipboardItemViewModel = clipboardItemViewModel;
+            ContentItemViewModelCommands contentCommands = clipboardItemViewModel.Commands;
+
+            if (contentCommands is not AppItemViewModelCommands commands) {
+                throw new Exception("commands is not AppItemViewModelCommands");
+            }
+            AppCommands = commands;
         }
+
         // Itemのコンテキストメニュー
         public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
@@ -24,11 +33,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            ContentItemViewModelCommands contentCommands = itemViewModel.Commands;
-
-            if (contentCommands is not AppItemViewModelCommands commands) {
-                throw new Exception("commands is not AppItemViewModelCommands");
-            }
 
             // プロンプトメニュー
             MenuItem promptMenuItem = new() {
@@ -38,7 +42,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateTitleMenuItem = new() {
                 Header = StringResources.GenerateTitle,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.GenerateTitleCommand,
+                Command = AppCommands.GenerateTitleCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
 
@@ -48,7 +52,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateBackgroundInfoMenuItem = new() {
                 Header = StringResources.GenerateBackgroundInfo,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.GenerateBackgroundInfoCommand,
+                Command = AppCommands.GenerateBackgroundInfoCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
             promptMenuItem.Items.Add(generateBackgroundInfoMenuItem);
@@ -57,7 +61,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateSummaryMenuItem = new() {
                 Header = StringResources.GenerateSummary,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.GenerateSummaryCommand,
+                Command = AppCommands.GenerateSummaryCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
             promptMenuItem.Items.Add(generateSummaryMenuItem);
@@ -66,7 +70,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateTasksMenuItem = new() {
                 Header = StringResources.GenerateTasks,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.GenerateTasksCommand,
+                Command = AppCommands.GenerateTasksCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
             promptMenuItem.Items.Add(generateTasksMenuItem);
@@ -75,7 +79,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem checkDocumentTrustMenuItem = new() {
                 Header = StringResources.CheckDocumentReliability,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.CheckDocumentReliabilityCommand,
+                Command = AppCommands.CheckDocumentReliabilityCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
             promptMenuItem.Items.Add(checkDocumentTrustMenuItem);
@@ -90,7 +94,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
-                    Command = commands.ExecutePromptTemplateCommand,
+                    Command = AppCommands.ExecutePromptTemplateCommand,
                     CommandParameter = new ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>([.. itemViewModels], promptItem)
                 };
                 otherPromptMenuItem.Items.Add(promptItemMenuItem);
@@ -101,101 +105,151 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             return promptMenuItem;
         }
 
-        public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+        public virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
 
-            ContentItemViewModelCommands contentCommands = itemViewModel.Commands;
-            // MenuItemのリストを作成
-            ObservableCollection<MenuItem> menuItems = [];
-
-            if (contentCommands is not AppItemViewModelCommands commands ) {
-                throw new Exception("commands is not AppItemViewModelCommands");
-            }
-            // 開く
-            MenuItem createMenuItem = new() {
-                Header = StringResources.Open,
-                Command = commands.OpenItemCommand,
-                CommandParameter = itemViewModel,
-                InputGestureText = "Ctrl+O"
-            };
-            menuItems.Add(createMenuItem);
-
-            // テキストをファイルとして開く
-            MenuItem openContentAsFileMenuItem = new() {
-                Header = StringResources.OpenTextAsFile,
-                Command = commands.OpenContentAsFileCommand,
-                CommandParameter = itemViewModel,
-                InputGestureText = "Ctrl+Shit+O"
-            };
-            menuItems.Add(openContentAsFileMenuItem);
-            // ピン留め
-            MenuItem pinnedStateChangeMenuItem = new() {
-                Header = PythonAILibStringResources.Instance.Pin,
-                Command = commands.ChangePinCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(pinnedStateChangeMenuItem);
-
-            // コピー
-            MenuItem copyMenuItem = new() {
-                Header = StringResources.Copy,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.CopyItemCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
-                InputGestureText = "Ctrl+C"
-            };
-            menuItems.Add(copyMenuItem);
-
-            // 削除
-            MenuItem deleteMnuItem = new() {
-                Header = StringResources.Delete,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.DeleteItemsCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
-                InputGestureText = "Delete"
-            };
-            menuItems.Add(deleteMnuItem);
-
+            ObservableCollection<MenuItem> menuItems =
+            [
+                // 新規
+                CreateMenuItem,
+                // 開く
+                OpenMenuItem,
+                // テキストをファイルとして開く
+                OpenContentAsFileMenuItem,
+                // ピン留め
+                PinnedMenuItem,
+                // 削除
+                DeleteMenuItem,
+            ];
 
             // プロンプトメニュー
             MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
             menuItems.Add(promptMenuItem);
 
             // ベクトル生成
-            MenuItem generateVectorMenuItem = new() {
-                Header = StringResources.GenerateVector,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = commands.GenerateVectorCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
-            };
-            menuItems.Add(generateVectorMenuItem);
+            menuItems.Add(GenerateVectorMenuItem);
 
             // ベクトル検索
-            MenuItem vectorSearchMenuItem = new() {
-                Header = StringResources.VectorSearch,
-                // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
-                Command = commands.VectorSearchCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(vectorSearchMenuItem);
+            menuItems.Add(VectorSearchMenuItem);
 
             //  テキストを抽出
-            MenuItem extractTextMenuItem = new() {
-                Header = StringResources.ExtractText,
-                Command = commands.ExtractTextCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems
-            };
-            menuItems.Add(extractTextMenuItem);
+            menuItems.Add(ExtractTextMenuItem);
 
             // マージチャット
-            MenuItem mergeChatMenuItem = new() {
-                Header = StringResources.MergeChat,
-                Command = MainWindowViewModel.Instance.OpenSelectedItemsMergeChatWindow,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(mergeChatMenuItem);
+            menuItems.Add(MergeChatMenuItem);
 
             return menuItems;
         }
 
+        public MenuItem CreateMenuItem {
+            get {
+                MenuItem createMenuItem = new() {
+                    Header = StringResources.Copy,
+                    // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                    Command = AppCommands.CopyItemCommand,
+                    CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
+                    InputGestureText = "Ctrl+C"
+                };
+                return createMenuItem;
+            }
+        }
+
+        // 開く
+        public MenuItem OpenMenuItem {
+            get {
+                MenuItem openMenuItem = new() {
+                    Header = StringResources.Open,
+                    Command = AppCommands.OpenItemCommand,
+                    CommandParameter = ClipboardItemViewModel,
+                    InputGestureText = "Ctrl+O"
+                };
+                return openMenuItem;
+            }
+        }
+        // テキストをファイルとして開く
+        public MenuItem OpenContentAsFileMenuItem {
+            get {
+                MenuItem openContentAsFileMenuItem = new() {
+                    Header = StringResources.OpenTextAsFile,
+                    Command = AppCommands.OpenContentAsFileCommand,
+                    CommandParameter = ClipboardItemViewModel,
+                    InputGestureText = "Ctrl+Shit+O"
+                };
+                return openContentAsFileMenuItem;
+            }
+        }
+
+        // ピン留め
+        public MenuItem PinnedMenuItem {
+            get {
+                MenuItem pinnedStateChangeMenuItem = new() {
+                    Header = PythonAILibStringResources.Instance.Pin,
+                    Command = AppCommands.ChangePinCommand,
+                    CommandParameter = ClipboardItemViewModel
+                };
+                return pinnedStateChangeMenuItem;
+
+            }
+        }
+        // 削除
+        public MenuItem DeleteMenuItem {
+            get {
+                // 削除
+                MenuItem deleteMnuItem = new() {
+                    Header = StringResources.Delete,
+                    // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                    Command = AppCommands.DeleteItemsCommand,
+                    CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
+                    InputGestureText = "Delete"
+                };
+                return deleteMnuItem;
+            }
+        }
+        // ベクトル生成
+        public MenuItem GenerateVectorMenuItem {
+            get {
+                MenuItem generateVectorMenuItem = new() {
+                    Header = StringResources.GenerateVector,
+                    // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                    Command = AppCommands.GenerateVectorCommand,
+                    CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
+                };
+                return generateVectorMenuItem;
+            }
+        }
+
+        // ベクトル検索
+        public MenuItem VectorSearchMenuItem {
+            get {
+                MenuItem vectorSearchMenuItem = new() {
+                    Header = StringResources.VectorSearch,
+                    // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
+                    Command = AppCommands.VectorSearchCommand,
+                    CommandParameter = ClipboardItemViewModel
+                };
+                return vectorSearchMenuItem;
+            }
+        }
+        //  テキストを抽出
+        public MenuItem ExtractTextMenuItem {
+            get {
+                MenuItem extractTextMenuItem = new() {
+                    Header = StringResources.ExtractText,
+                    Command = AppCommands.ExtractTextCommand,
+                    CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems
+                };
+                return extractTextMenuItem;
+            }
+        }
+        // マージチャット
+        public MenuItem MergeChatMenuItem {
+            get {
+                MenuItem mergeChatMenuItem = new() {
+                    Header = StringResources.MergeChat,
+                    Command = MainWindowViewModel.Instance.OpenSelectedItemsMergeChatWindow,
+                    CommandParameter = ClipboardItemViewModel
+                };
+                return mergeChatMenuItem;
+            }
+        }
     }
 }

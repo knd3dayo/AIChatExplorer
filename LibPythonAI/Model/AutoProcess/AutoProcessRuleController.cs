@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -52,8 +53,8 @@ namespace PythonAILib.Model.AutoProcess {
                 return item;
             }
             // If AutoFileExtract is set, extract files
-            if (configParams.AutoFileExtract() && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
-                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);
+            if (configParams.AutoFileExtract() && item.SourceType == ContentSourceType.File) {
+                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
                 item.Content += "\n" + text;
             }
             if (item.IsImage() && item.Image != null) {
