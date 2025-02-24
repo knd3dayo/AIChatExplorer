@@ -5,7 +5,6 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Resources;
@@ -46,7 +45,7 @@ namespace ClipboardApp.ViewModel.Main {
             get {
                 // SelectedItemsの最後のアイテムを返す
                 if (SelectedItems.Count > 0) {
-                    return SelectedItems[SelectedItems.Count - 1];
+                    return SelectedItems[^1];
                 }
                 return null;
             }
@@ -57,26 +56,31 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
-            if (routedEventArgs.OriginalSource is DataGrid) {
+            if (routedEventArgs.OriginalSource is DataGrid dataGrid) {
                 // 前回選択していたTabIndexを取得
-                int lastSelectedIndex = SelectedItem?.SelectedTabIndex ?? 0;
+                int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
-                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                ClipboardItemViewModel? clipboardItemViewModel = (ClipboardItemViewModel)dataGrid.SelectedItem;
-                if (clipboardItemViewModel == null) {
-                    return;
+                if (dataGrid.SelectedItem is ContentItemViewModel clipboardItemViewModel) {
+                    // SelectedItemsをMainWindowViewModelにセット
+                    SelectedItems.Clear();
+                    foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
+                        SelectedItems.Add(item);
+                    }
+                    // SelectedTabIndexを更新する処理
+                    if (SelectedItem != null) {
+                        SelectedItem.SelectedTabIndex = lastSelectedTabIndex;
+                        /**
+                         * Task.Run(() => {
+                            SelectedItem.ContentItem.Load(() => { }, () => {
+                                MainUITask.Run(() => {
+                                    OnPropertyChanged(nameof(SelectedItem));
+                                });
+                            });
+                        });
+                        **/
+                        OnPropertyChanged(nameof(SelectedItem));
+                    }
                 }
-
-                // SelectedItemsをMainWindowViewModelにセット
-                SelectedItems.Clear();
-                foreach (ClipboardItemViewModel item in dataGrid.SelectedItems) {
-                    SelectedItems.Add(item);
-                }
-                // SelectedTabIndexを更新する処理
-                if (SelectedItem != null) {
-                    SelectedItem.SelectedTabIndex = lastSelectedIndex;
-                }
-                OnPropertyChanged(nameof(SelectedItem));
             }
 
         });

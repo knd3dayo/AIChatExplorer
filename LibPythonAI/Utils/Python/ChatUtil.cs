@@ -177,7 +177,7 @@ namespace PythonAILib.Utils.Python {
 
         public static string CreateImageURL(string base64String) {
 
-            ContentTypes.ImageType imageType = ContentTypes.GetImageTypeFromBase64(base64String);
+            ( bool isImage, ContentTypes.ImageType imageType) = ContentTypes.GetImageTypeFromBase64(base64String);
             if (imageType == ContentTypes.ImageType.unknown) {
                 return "";
             }

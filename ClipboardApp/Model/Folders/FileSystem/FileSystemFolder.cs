@@ -13,12 +13,6 @@ namespace ClipboardApp.Model.Folders.FileSystem {
     public class FileSystemFolder : ClipboardFolder {
 
 
-        public static List<string> TargetMimeTypes { get; set; } = [
-            "text/",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ];
 
         // コンストラクタ
         public FileSystemFolder(ContentFolder folder) : base(folder) {
@@ -189,13 +183,11 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
 
             // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
-            var targetMimeTypesSet = new HashSet<string>(TargetMimeTypes);
             ParallelOptions parallelOptions = new() {
                 MaxDegreeOfParallelism = 8
             };
 
             Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {
-                string contentType = PythonExecutor.PythonAIFunctions.GetMimeType(localFileSystemFilePath);
 
                 ContentItem contentItem = new() {
                     CollectionId = Id,

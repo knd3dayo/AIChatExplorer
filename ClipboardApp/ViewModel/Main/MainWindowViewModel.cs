@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
-using ClipboardApp.ViewModel.Settings;
+using ClipboardApp.Model.Main;
 using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Settings;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
@@ -18,9 +20,6 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.Content;
-using ClipboardApp.Model.Folders.Clipboard;
-using ClipboardApp.Model.Main;
 
 namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : AppViewModelBase {
@@ -106,7 +105,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         public AppItemViewModelCommands Commands { get; set; }
-        public MainPanelTreeViewControlViewModel? MainPanelTreeViewControlViewModel { get; set; } 
+        public MainPanelTreeViewControlViewModel? MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel? MainPanelDataGridViewControlViewModel { get; set; }
 
@@ -164,6 +163,10 @@ namespace ClipboardApp.ViewModel.Main {
         public void UpdateIndeterminate(bool visible) {
             IsIndeterminate = visible;
             OnPropertyChanged(nameof(IsIndeterminate));
+            // SelectedItemを更新
+            if ( visible == false) {
+                OnPropertyChanged(nameof(MainPanelDataGridViewControlViewModel.SelectedItem));
+            }
         }
 
         // クリップボード監視が実行中であるかどうか
@@ -213,9 +216,7 @@ namespace ClipboardApp.ViewModel.Main {
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public static void OpenListPromptTemplateWindowCommandExecute(MainWindowViewModel windowViewModel) {
             // ListPromptTemplateWindowを開く
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => {
-                // PromptTemplate = promptTemplateWindowViewModel.ClipboardPromptItem;
-            });
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => { });
         }
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public void OpenListAutoProcessRuleWindowCommandExecute() {

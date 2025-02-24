@@ -19,14 +19,14 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         // コンストラクタ
         public ClipboardFolder(ContentFolder folder) : base(folder) {
             IsAutoProcessEnabled = true;
-            FolderType = FolderTypeEnum.Normal;
+            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
 
             ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
             FolderName = folderName;
-            FolderType = FolderTypeEnum.Normal;
+            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
 
             IsAutoProcessEnabled = true;
 
@@ -145,7 +145,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
                 SetApplicationInfo(item, e);
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 // byte
-                item.CachedBase64String = PythonAILib.Model.File.ContentTypes.GetBase64StringFromImage(image);
+                item.Base64Image = PythonAILib.Model.File.ContentTypes.GetBase64StringFromImage(image);
                 result.Add(item);
                 return result;
             }

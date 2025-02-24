@@ -34,8 +34,6 @@ namespace PythonAILib.Model.Folder {
         // Outlook,
         public static FolderTypeEnum Outlook { get; } = new("Outlook");
 
-        // EdgeBrowseHistory,
-        public static FolderTypeEnum EdgeBrowseHistory { get; } = new("EdgeBrowseHistory");
     }
 }
 

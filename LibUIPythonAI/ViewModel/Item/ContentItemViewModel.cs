@@ -59,13 +59,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-        // DeleteItems
-        public static Task DeleteItems(List<ContentItemViewModel> items) {
-            return Task.Run(() => {
-                var contentItems = items.Select(item => item.ContentItem).ToList();
-                ContentItemWrapper.DeleteItems(contentItems);
-            });
-        }
 
         public string Content { get => ContentItem.Content; set { ContentItem.Content = value; } }
 
@@ -273,6 +266,13 @@ namespace LibUIPythonAI.ViewModel.Item {
                 return tabItems;
             }
 
+        }
+        // DeleteItems
+        public static Task DeleteItems(List<ContentItemViewModel> items) {
+            return Task.Run(() => {
+                var contentItems = items.Select(item => item.ContentItem).ToList();
+                ContentItemWrapper.DeleteItems(contentItems);
+            });
         }
 
 

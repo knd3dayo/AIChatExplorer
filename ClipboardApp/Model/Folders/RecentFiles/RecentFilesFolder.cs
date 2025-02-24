@@ -1,12 +1,10 @@
 using System.IO;
 using ClipboardApp.Model.Folders.FileSystem;
+using ClipboardApp.Model.Main;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.FileUtils;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using PythonAILib.PythonIF;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
@@ -14,7 +12,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         // コンストラクタ
         public RecentFilesFolder(ContentFolder folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderType = FolderTypeEnum.EdgeBrowseHistory;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected RecentFilesFolder(RecentFilesFolder parent, string folderName) : base(parent, folderName) {
@@ -25,7 +23,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderType = FolderTypeEnum.EdgeBrowseHistory;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 

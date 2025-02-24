@@ -238,9 +238,19 @@ namespace PythonAILib.Model.Content {
             }
         }
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
-        public string CachedBase64String {
+        public string Base64Image {
             get {
-                return ContentItemInstance.CachedBase64String;
+                if (ContentItemInstance.ContentType == ContentTypes.ContentItemTypes.Files) {
+                    (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+                    if (isImage) {
+                        byte[] imageBytes = System.IO.File.ReadAllBytes(SourcePath);
+                        return Convert.ToBase64String(imageBytes);
+                    }
+                }
+                if (string.IsNullOrEmpty(ContentItemInstance.CachedBase64String) == false) {
+                    return ContentItemInstance.CachedBase64String;
+                }
+                return "";
             }
             set {
                 ContentItemInstance.CachedBase64String = value;
@@ -257,24 +267,6 @@ namespace PythonAILib.Model.Content {
                 ContentItemInstance.LastModified = value;
             }
         }
-
-
-        // URL 名前
-        public const string URLName = "URL";
-
-        public string URL {
-            get {
-                if (ContentItemInstance.ExtendedProperties.TryGetValue(URLName, out var url)) {
-                    return (string)url;
-                } else {
-                    return "";
-                }
-            }
-            set {
-                ContentItemInstance.ExtendedProperties[URLName] = value;
-            }
-        }
-
 
 
         // タグ表示用の文字列
@@ -396,11 +388,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        // Collectionに対応するClipboardFolderを取得
-        public virtual ContentFolderWrapper GetFolder() {
-            return new ContentFolderWrapper(ContentItemInstance.GetFolder<ContentFolder>());
-        }
-
 
         [BsonIgnore]
         public string UpdatedAtString {
@@ -456,25 +443,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        [BsonIgnore]
-        public string Base64String {
-            get {
-                string filePath = ContentItemInstance.SourcePath;
-                string CachedBase64String = ContentItemInstance.CachedBase64String;
-                long LastModified = ContentItemInstance.LastModified;
-
-                // FilePathがない場合はキャッシュを返す
-                if (filePath == null || System.IO.File.Exists(filePath) == false) {
-                    return CachedBase64String;
-                }
-                // FilePathがある場合はLastModifiedをチェックしてキャッシュを更新する
-                if (LastModified < new System.IO.FileInfo(filePath).LastWriteTime.Ticks) {
-                    ContentItemCommands.UpdateCache(this);
-                }
-                return CachedBase64String;
-            }
-        }
-
         // フォルダ名
         [BsonIgnore]
         public string FolderName {
@@ -506,7 +474,7 @@ namespace PythonAILib.Model.Content {
                 if (!IsImage()) {
                     return null;
                 }
-                byte[] imageBytes = Convert.FromBase64String(Base64String);
+                byte[] imageBytes = Convert.FromBase64String(Base64Image);
                 return ContentTypes.GetBitmapImage(imageBytes);
             }
         }
@@ -516,15 +484,34 @@ namespace PythonAILib.Model.Content {
                 if (!IsImage()) {
                     return null;
                 }
-                return ContentTypes.GetImageFromBase64(Base64String);
+                return ContentTypes.GetImageFromBase64(Base64Image);
             }
         }
 
+        // Load
+        public virtual void Load(Action beforeAction, Action afterAction) { }
+
+        // Collectionに対応するClipboardFolderを取得
+        public virtual ContentFolderWrapper GetFolder() {
+            return new ContentFolderWrapper(ContentItemInstance.GetFolder<ContentFolder>());
+        }
+
+
         public bool IsImage() {
-            if (Base64String == null) {
+
+            if (string.IsNullOrEmpty(Base64Image)) {
                 return false;
             }
-            return ContentTypes.IsImageData(Convert.FromBase64String(Base64String));
+            if ( ContentTypes.GetImageTypeFromBase64(Base64Image).Item1) {
+                return true;
+            } else {
+                Base64Image = "";
+            }
+            if (ContentItemInstance.ContentType == ContentTypes.ContentItemTypes.Files) {
+               ( bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+                return isImage;
+            }
+            return false;
         }
         #endregion
 

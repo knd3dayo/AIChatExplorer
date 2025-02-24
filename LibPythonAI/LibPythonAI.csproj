@@ -77,6 +77,9 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_openai\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_server_shutdown.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_catalog.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using LibPythonAI.Utils.Common;
@@ -94,45 +93,6 @@ namespace PythonAILib.Model.Content {
         public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
             ExtractText(item);
         }
-
-        public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
-            int count = items.Count;
-            if (count == 0) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
-                return;
-            }
-            beforeAction();
-
-            Task.Run(() => {
-                object lockObject = new();
-                int start_count = 0;
-                ParallelOptions parallelOptions = new() {
-                    // 20並列
-                    MaxDegreeOfParallelism = 8
-                };
-                Parallel.For(0, count, parallelOptions, (i) => {
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    string message = $"{PythonAILibStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
-                    LogWrapper.UpdateInProgress(true, message);
-                    var item = items[index];
-
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                        LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
-                        return;
-                    }
-                    ContentItemCommands.ExtractText(item);
-                    // Save the item
-                    item.Save(false);
-                });
-                afterAction();
-                LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
-            });
-        }
-            
 
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ContentItemWrapper item) {
@@ -300,8 +260,6 @@ namespace PythonAILib.Model.Content {
 
         // テキストを抽出する
         public static void ExtractText(ContentItemWrapper item) {
-            // キャッシュを更新
-            UpdateCache(item);
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
@@ -310,19 +268,17 @@ namespace PythonAILib.Model.Content {
                 OpenAIProperties = openAIProperties
             };
 
-            string base64 = item.Base64String;
 
             try {
-
-                if (ContentTypes.IsImageData(base64)) {
+                if (item.IsImage()) {
+                    string base64 = item.Base64Image;
                     string result = ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         item.Content = result;
                     }
-                } else {
+                } else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
                     // ファイル名から拡張子を取得
-                    string extension = Path.GetExtension(item.SourcePath);
-                    string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64, extension);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
                     item.Content = text;
                 }
 
@@ -331,21 +287,46 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        // キャッシュを更新する
-        // Base64Stringを参照する場合とテキスト抽出を行う場合にキャッシュを更新する。
-        // 対象ファイルがない場合は何もしない。
-        public static void UpdateCache(ContentItemWrapper item) {
-            if (item.SourcePath == null || System.IO.File.Exists(item.SourcePath) == false) {
+
+        public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+            int count = items.Count;
+            if (count == 0) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
-            item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
-            try {
-                byte[] bytes = System.IO.File.ReadAllBytes(item.SourcePath);
-                item.CachedBase64String = Convert.ToBase64String(bytes);
-            } catch (IOException e) {
-                LogWrapper.Info(e.Message);
-            }
+            beforeAction();
+
+            Task.Run(() => {
+                object lockObject = new();
+                int start_count = 0;
+                ParallelOptions parallelOptions = new() {
+                    // 20並列
+                    MaxDegreeOfParallelism = 8
+                };
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    lock (lockObject) {
+                        start_count++;
+                    }
+                    string message = $"{PythonAILibStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                    LogWrapper.UpdateInProgress(true, message);
+                    var item = items[index];
+
+                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                        LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
+                        return;
+                    }
+                    ContentItemCommands.ExtractText(item);
+                    // Save the item
+                    item.Save(false);
+                });
+                afterAction();
+                LogWrapper.UpdateInProgress(false);
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
+            });
         }
+
+
 
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ContentItemWrapper item) {
@@ -407,7 +388,7 @@ namespace PythonAILib.Model.Content {
                 } else {
                     if (item.IsImage()) {
                         // 画像からテキスト抽出
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64String);
+                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
 
                     } else {
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");

@@ -233,6 +233,6 @@ def pf_trace():
 if __name__ == ('__main__'):
     flask_port = os.getenv("FLASK_PORT", "5000")
     print(f"port={flask_port}", file=sys.stderr)
-    # pf_trace()
+    pf_trace()
     socketio.run(app, debug=True, host='0.0.0.0', port=flask_port, allow_unsafe_werkzeug=True)
     # app.run(debug=True, host='0.0.0.0', port=flask_port, threaded=True)

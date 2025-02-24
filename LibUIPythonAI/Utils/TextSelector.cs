@@ -25,12 +25,12 @@ namespace LibUIPythonAI.Utils {
                 AngleBracketSelected = false;
             }
             // 1行選択状態または複数行選択状態の場合は全選択
-            if (SingleLineSelected || selectedText.IndexOf('\n') > 0) {
+            if (SingleLineSelected || selectedText.Contains('\n')) {
                 editor.SelectAll();
                 SingleLineSelected = false;
                 URLSelected = false;
                 // 最後に選択したテキストを更新
-                LastSelectedText = selectedText;
+                LastSelectedText = editor.SelectedText;
                 return;
             } else {
                 int pos = editor.SelectionStart;
@@ -47,16 +47,16 @@ namespace LibUIPythonAI.Utils {
                 }
 
                 // lineEnd - lineStartが0以下の場合は何もしない
-                if (lineEnd - lineStart <= 0) {
+                if (lineEnd <= lineStart) {
                     // 最後に選択したテキストを更新
                     LastSelectedText = editor.SelectedText;
                     return;
                 }
                 // 選択対象文字列
-                selectedText = editor.Text[lineStart..lineEnd];
+                selectedText = text.Substring(lineStart, lineEnd - lineStart);
                 // URLの場合はURL選択にする
                 int[]? ints = Tools.GetURLPosition(selectedText);
-                if (ints != null && URLSelected == false) {
+                if (ints != null && !URLSelected) {
                     lineStart += ints[0];
                     lineEnd = lineStart + ints[1] - ints[0];
                     editor.Select(lineStart, lineEnd - lineStart);
@@ -67,7 +67,7 @@ namespace LibUIPythonAI.Utils {
                 }
                 // AngleBracketの場合はAngleBracket選択にする
                 int[] angleBracketInts = Tools.GetInAngleBracketPosition(selectedText);
-                if (angleBracketInts[0] != -1 && AngleBracketSelected == false) {
+                if (angleBracketInts[0] != -1 && !AngleBracketSelected) {
                     lineStart += angleBracketInts[0];
                     lineEnd = lineStart + angleBracketInts[1] - angleBracketInts[0];
                     editor.Select(lineStart, lineEnd - lineStart);
@@ -83,7 +83,6 @@ namespace LibUIPythonAI.Utils {
                 AngleBracketSelected = false;
                 // 最後に選択したテキストを更新
                 LastSelectedText = editor.SelectedText;
-
             }
         }
         // 選択中のテキストをプロセスとして実行
@@ -206,15 +205,11 @@ namespace LibUIPythonAI.Utils {
         // 選択中のテキストをテキストファイルとして開く
 
         private void OpenTextFile(string text) {
-            // テキストをテキストファイルに保存して、プロセスを実行
-            string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
-            File.WriteAllText(tempFileName, text);
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(tempFileName) {
-                UseShellExecute = true
-            };
             try {
-                p.Start();
+                // テキストをテキストファイルに保存して、プロセスを実行
+                string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
+                File.WriteAllText(tempFileName, text);
+                Process.Start(new ProcessStartInfo(tempFileName) { UseShellExecute = true });
             } catch (Exception ex) {
                 LogWrapper.Error($"Fail to run file: {ex.Message}");
             }

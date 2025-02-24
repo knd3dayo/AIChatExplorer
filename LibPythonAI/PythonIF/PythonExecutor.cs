@@ -195,19 +195,35 @@ namespace PythonAILib.PythonIF {
 
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
-            // プロセスチェックを開始する。
-            string base_url = configPrams.GetAPIServerURL();
-            string url = $"{base_url}/shutdown";
+
+            // AIアプリケーションプロセスチェッカーを開始する。
+            string url = $"{configPrams.GetAPIServerURL()}/shutdown";
+
+            // プロセスを終了する
+            StartPython(configPrams, $"ai_app_server_shutdown.py {url}", false, (Process) => { });
+
+
+            LogWrapper.Info("Internal API started");
+
             // 自分自身のプロセスIDを取得
             int currentProcessId = Process.GetCurrentProcess().Id;
-            LogWrapper.Info("Internal API started");
-            StartPython(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", (Process) => { });
+
+            StartPython(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", true, (Process) => {
+            });
 
             // AIアプリケーションサーバーを開始する。
-            StartPython(configPrams, "ai_app_server.py", (process) => { });
+            StartPython(configPrams, "ai_app_server.py", true, (process) => { });
             // StartPythonConsole(configPrams, "ai_app_server.py",(process) => {});
         }
 
+        private static string GetApplicationPidFilePath(IPythonAILibConfigParams configPrams) {
+            string appDataDir = configPrams.GetAppDataPath();
+            string pidFilePath = Path.Combine(appDataDir, "rag-clipboard.pid");
+            return pidFilePath;
+        }
+
+
+        /**
         private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string scriptPath, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
@@ -274,9 +290,9 @@ namespace PythonAILib.PythonIF {
                 );
 
         }
+        **/
 
-
-        private static void StartPython(IPythonAILibConfigParams configPrams, string scriptPath, Action<Process> afterStart) {
+        private static void StartPython(IPythonAILibConfigParams configPrams, string scriptPath, bool background, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             string appDataDir = configPrams.GetAppDataPath();
@@ -290,7 +306,7 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(message + pathToVirtualEnv);
             }
 
-            Dictionary<string, string> envVars = new () {
+            Dictionary<string, string> envVars = new() {
                 // Set the code page to UTF-8
                 ["PYTHONUTF8"] = "1"
             };
@@ -329,24 +345,27 @@ namespace PythonAILib.PythonIF {
 
             bool showConsole = false;
 
+            if (background) {
+                ProcessUtil.StartBackgroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => {
+                    // 5秒待機した後、processが終了したかどうかを確認する
+                    Task.Run(() => {
+                        // このスレッドを5秒間待機
+                        Task.Delay(5000).Wait();
 
-            ProcessUtil.StartBackgroundProcess(pythonExe, serverScriptPath, envVars, showConsole,
-            (Process process) => {
-                // 5秒待機した後、processが終了したかどうかを確認する
-                Task.Run(() => {
-                    // このスレッドを5秒間待機
-                    Task.Delay(5000).Wait();
+                        if (process.HasExited) {
+                            LogWrapper.Error($"Process failed: {process.Id}: {pythonExe} {serverScriptPath} ");
+                        } else {
+                            LogWrapper.Info($"Process started: {process.Id}:  {pythonExe} {serverScriptPath} ");
+                            afterStart(process);
+                        }
 
-                    if (process.HasExited) {
-                        LogWrapper.Error($"Process failed: {process.Id}");
-                    } else {
-                        LogWrapper.Info($"Process started: {process.Id}");
-                        afterStart(process);
-                    }
+                    });
+                }, ErrorDataReceived: dataReceivedEventHandler);
+            } else {
+                ProcessUtil.StartForegroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => { }, 
+                    OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler);
 
-                });
-            }, ErrorDataReceived: dataReceivedEventHandler
-                );
+            }
         }
 
         private static readonly Action<object, DataReceivedEventArgs> DataReceivedAction = (sender, e) => {

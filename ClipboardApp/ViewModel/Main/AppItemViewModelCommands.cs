@@ -23,11 +23,9 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
 using PythonAILib.Resources;
 using PythonAILibUI.ViewModel.Item;
-using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.ViewModel.Main {
@@ -81,7 +79,7 @@ namespace ClipboardApp.ViewModel.Main {
         });
 
 
-        public  void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
+        public void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
             if (itemViewModel == null) {
                 return;
             }
@@ -105,7 +103,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to open OpenAI Chat
-        public  void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
+        public void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);

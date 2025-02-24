@@ -7,15 +7,16 @@ import requests
 import psutil
 
 # プロセスを監視する
-def check_process(pid : int, url : str):
+def check_process(pid : str, url : str):
+    
     while True:
         # pidのプロセスが存在しない場合
         if not psutil.pid_exists(pid):
             # 指定したURLにリクエストを送信
             try:
                 os.environ["NO_PROXY"] = "localhost"
-                #エラーを無視してリクエストを送信
-                requests.post(url)
+                #エラーを無視してリクエストを送信 timeout=5
+                requests.post(url, timeout=5)
             except:
                 pass
 
@@ -29,6 +30,7 @@ def check_process(pid : int, url : str):
 
             break
 
+        print("Process is running") 
         time.sleep(5)
 
 # メイン
@@ -36,7 +38,7 @@ if __name__ == "__main__":
     # 引数の取得
     args = sys.argv
     if len(args) != 3:
-        print("Usage: python ai_app_process_checker.py [pid] [url]")
+        print("Usage: python ai_app_process_checker.py [pid_file] [url]")
         sys.exit(1)
     pid = int(args[1])
     url = args[2]

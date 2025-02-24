@@ -38,6 +38,16 @@ namespace PythonAILib.Model.Content {
                 ContentFolderInstance.FolderType = value;
             }
         }
+        // フォルダの種類の文字列
+        public string FolderTypeString {
+            get {
+                return ContentFolderInstance.FolderTypeString;
+            }
+            set {
+                ContentFolderInstance.FolderTypeString = value;
+            }
+        }
+
         // プロパティ
         // 親フォルダのID
         public LiteDB.ObjectId ParentId {

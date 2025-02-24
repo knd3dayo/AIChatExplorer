@@ -21,6 +21,17 @@ namespace LibPythonAI.Utils.Common {
 
         public static Process? StartBackgroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
                         DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
+            return StartProcess(fileName, arguments, true, environmentVariables, showConsole, afterOpen, OutputDataReceived, ErrorDataReceived, Exited);
+        }
+
+        public static Process? StartForegroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
+                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
+            return StartProcess(fileName, arguments, false, environmentVariables, showConsole, afterOpen, OutputDataReceived, ErrorDataReceived, Exited);
+        }
+
+
+        private static Process? StartProcess(string fileName, string arguments, bool background ,Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
+                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             ProcessStartInfo procInfo = new() {
                 RedirectStandardOutput = true,
@@ -71,15 +82,23 @@ namespace LibPythonAI.Utils.Common {
             // 非同期出力読出し開始
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
+            // backgroundの場合はプロセスリストにプロセスを追加
+            if (background) {
+                processList.Add(process);
+                // 事後処理を実行
+                afterOpen(process);
 
-            // プロセスリストにプロセスを追加
-            processList.Add(process);
+                return process;
+            } else {
+                // プロセス終了まで待機
+                process.WaitForExit();
+                // 事後処理を実行
+                afterOpen(process);
+                return process;
+            }
 
-            // 事後処理を実行
-            afterOpen(process);
-
-            return process;
         }
+
 
 
         public static void StopProcess(Process process) {
