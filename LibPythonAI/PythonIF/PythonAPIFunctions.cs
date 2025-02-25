@@ -290,6 +290,8 @@ namespace PythonAILib.PythonIF {
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
 
 
             // ResultContainerを作成
@@ -660,6 +662,8 @@ namespace PythonAILib.PythonIF {
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
 
             // ResultContainerを作成
             PythonScriptResult result = new();

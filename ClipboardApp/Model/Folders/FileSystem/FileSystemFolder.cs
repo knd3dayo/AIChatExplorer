@@ -159,6 +159,8 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 fileSystemFilePathSet = Directory.GetFiles(FileSystemFolderPath).ToHashSet();
             } catch (UnauthorizedAccessException e) {
                 LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+            } catch (IOException e) {
+                LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
 
             // コレクション

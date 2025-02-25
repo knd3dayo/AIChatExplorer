@@ -224,10 +224,15 @@ def pf_trace():
     if pf_trace == True:
         os.environ["PF_DISABLE_TRACING"] = "false"
         os.environ["NO_PROXY"] = "*"
-        
-        from promptflow.tracing import start_trace
-        # instrument OpenAI
-        start_trace(collection="ai_app_server")
+        try:
+            from promptflow.tracing import start_trace
+            # instrument OpenAI
+            start_trace(collection="ai_app_server")
+        except Exception as e:
+            print(e.message)
+            print("Failed to start tracing")
+            
+
 
 
 if __name__ == ('__main__'):
