@@ -392,6 +392,15 @@ namespace LibUIPythonAI.Resource {
         public virtual string NewPythonScript { get; } = "新規Pythonスクリプト";
 
         // -- SearchWindow --
+        // 検索対象
+        public virtual string SearchTarget { get; } = "検索対象";
+
+        // 検索条件
+        public virtual string SearchCondition { get; } = "検索条件";
+
+        // 全フォルダ
+        public virtual string AllFolders { get; } = "全フォルダ";
+
         // 検索対象フォルダ
         public virtual string SearchTargetFolder { get; } = "検索対象フォルダ";
 
@@ -518,8 +527,7 @@ namespace LibUIPythonAI.Resource {
         // 自動処理が設定されています
         public virtual string AutoProcessingIsSet { get; } = "自動処理が設定されています";
 
-        // 検索条件
-        public virtual string SearchCondition { get; } = "検索条件";
+
 
         // フォルダを編集しました
         public virtual string FolderEdited { get; } = "フォルダを編集しました";

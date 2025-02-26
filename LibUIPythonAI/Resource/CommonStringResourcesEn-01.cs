@@ -692,6 +692,15 @@ namespace LibUIPythonAI.Resource {
         public override string NewPythonScript { get; } = "New Python script";
 
         // -- SearchWindow --
+        // 検索対象
+        public override string SearchTarget { get; } = "Search target";
+
+        // 全フォルダ
+        public override string AllFolders { get; } = "All folders";
+
+        // 検索条件
+        public override string SearchCondition { get; } = "Search condition";
+
         public override string SearchTargetFolder { get; } = "Search target folder";
         public override string Exclude { get; } = "Exclude";
         public override string CopySourceAppName { get; } = "Copy source app name";
@@ -762,7 +771,6 @@ namespace LibUIPythonAI.Resource {
 
         // --- ClipboardFolderViewModel ---
         public override string AutoProcessingIsSet { get; } = "Auto processing is set";
-        public override string SearchCondition { get; } = "Search condition";
         public override string FolderEdited { get; } = "Folder edited";
         public override string Reloaded { get; } = "Reloaded";
         public override string SelectFilePlease { get; } = "Select file, please";

@@ -43,6 +43,9 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -69,7 +72,6 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-
         <Grid Grid.Row="1" Visibility="{Binding NameVisibility}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -78,27 +80,86 @@
             <TextBlock
                 Grid.Column="0"
                 Margin="10,10,10,0"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.Name}" />
             <TextBox
                 Grid.Column="1"
                 Margin="10,10,10,0"
+                FontSize="12"
                 Text="{Binding Name}" />
         </Grid>
-        <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
-            <TextBlock Margin="10,10,10,00" Text="{x:Static res:ViewStringResources.SearchTargetFolder}" />
-            <!--  適用対象を選択するツリービューを表示するボタン  -->
-            <Button
-                Margin="10,10,10,0"
-                Command="{Binding OpenClipboardFolderWindowCommand  , Mode=OneTime}"
-                Content="{x:Static res:ViewStringResources.Select}" />
-            <TextBox
-                Margin="10,10,10,0"
-                IsEnabled="False"
-                Text="{Binding TargetFolderPath}" />
-        </DockPanel>
+        <!--  検索対象  -->
+        <Grid Grid.Row="2">
+            <TextBlock
+                Margin="10,10,10,3"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Text="{x:Static res:ViewStringResources.SearchTarget}" />
+        </Grid>
+
         <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <RadioButton
+                Grid.Row="0"
+                Margin="10,3,10,3"
+                VerticalAlignment="Center"
+                Content="{x:Static res:ViewStringResources.AllFolders}"
+                FontSize="12"
+                GroupName="SearchTarget"
+                IsChecked="{Binding IsSearchAllFolders}" />
+
+            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                <RadioButton
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Content="{x:Static res:ViewStringResources.SearchTargetFolder}"
+                    FontSize="12"
+                    GroupName="SearchTarget"
+                    IsChecked="{Binding IsSearchSpecifiedFolder}" />
+                <!--  適用対象を選択するツリービューを表示するボタン  -->
+                <Button
+                    Margin="10,3,10,3"
+                    Padding="10,0,10,0"
+                    VerticalAlignment="Center"
+                    Command="{Binding OpenClipboardFolderWindowCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Select}"
+                    FontSize="12"
+                    IsEnabled="{Binding IsSearchSpecifiedFolder}" />
+                <TextBox
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    IsEnabled="False"
+                    Text="{Binding TargetFolderPath}" />
+            </DockPanel>
+            <DockPanel
+                Grid.Row="2"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding IsSearchSpecifiedFolder}">
+                <!--  適用対象配下も対象にするかどうか  -->
+                <CheckBox
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Content="{x:Static res:ViewStringResources.IncludeSubfolders}"
+                    FontSize="12"
+                    IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
+            </DockPanel>
+        </Grid>
+
+        <!--  検索条件  -->
+        <Grid Grid.Row="4">
+            <TextBlock
+                Margin="10,10,10,3"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Text="{x:Static res:ViewStringResources.SearchCondition}" />
+        </Grid>
+        <Grid Grid.Row="5">
+            <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -115,151 +176,167 @@
             <CheckBox
                 Grid.Row="0"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Exclude}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeDescription}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.Description}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{Binding SearchConditionRule.SearchCondition.Description}" />
 
             <CheckBox
                 Grid.Row="1"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Exclude}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeContent}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.Content}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{Binding SearchConditionRule.SearchCondition.Content}" />
 
             <CheckBox
                 Grid.Row="2"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Exclude}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeTags}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.Tag}" />
             <TextBox
                 Grid.Row="2"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{Binding SearchConditionRule.SearchCondition.Tags}" />
 
             <CheckBox
                 Grid.Row="3"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Exclude}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationName}" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.CopySourceAppName}" />
             <TextBox
                 Grid.Row="3"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{Binding SearchConditionRule.SearchCondition.SourceApplicationName}" />
 
             <CheckBox
                 Grid.Row="4"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Exclude}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationTitle}" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.SourceTitle}" />
             <TextBox
                 Grid.Row="4"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{Binding SearchConditionRule.SearchCondition.SourceApplicationTitle}" />
 
             <CheckBox
                 Grid.Row="5"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Enable}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableStartTime}" />
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.StartDate}" />
             <DatePicker
                 Grid.Row="5"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 SelectedDate="{Binding SearchConditionRule.SearchCondition.StartTime}" />
 
             <CheckBox
                 Grid.Row="6"
                 Grid.Column="0"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
                 Content="{x:Static res:ViewStringResources.Enable}"
+                FontSize="12"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableEndTime}" />
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="1"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 Text="{x:Static res:ViewStringResources.EndDate}" />
             <DatePicker
                 Grid.Row="6"
                 Grid.Column="2"
-                Margin="10,10,10,0"
+                Margin="10,3,10,3"
                 VerticalAlignment="Center"
+                FontSize="12"
                 SelectedDate="{Binding SearchConditionRule.SearchCondition.EndTime}" />
-            <DockPanel Grid.Row="7" HorizontalAlignment="Stretch">
-                <!--  適用対象配下も対象にするかどうか  -->
-                <CheckBox
-                    Margin="10,10,10,0"
-                    Content="{x:Static res:ViewStringResources.IncludeSubfolders}"
-                    IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
-            </DockPanel>
         </Grid>
-        <Grid Grid.Row="4" VerticalAlignment="Bottom">
+
+        <!--  ボタン  -->
+        <Grid Grid.Row="6" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -291,7 +368,9 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
+
+
+        <cc:MyStatusBar Grid.Row="7" VerticalAlignment="Bottom" />
 
     </Grid>
 

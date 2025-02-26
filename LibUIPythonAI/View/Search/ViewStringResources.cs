@@ -44,6 +44,17 @@ namespace LibUIPythonAI.View.Search {
         // Search
         public static string Search { get; set; } = CommonStringResources.Instance.Search;
 
+        // AllFolders
+        public static string AllFolders { get; set; } = CommonStringResources.Instance.AllFolders;
+
+
+        // SearchTarget
+        public static string SearchTarget { get; set; } = CommonStringResources.Instance.SearchTarget;
+
+
+        // SearchCondition
+        public static string SearchCondition { get; set; } = CommonStringResources.Instance.SearchCondition;
+
         // SearchTargetFolder
         public static string SearchTargetFolder { get; set; } = CommonStringResources.Instance.SearchTargetFolder;
 

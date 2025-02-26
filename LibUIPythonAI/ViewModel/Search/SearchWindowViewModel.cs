@@ -92,6 +92,30 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
         }
 
+        // 全フォルダを検索するかどうか
+        private bool _isSearchAllFolders;
+        public bool IsSearchAllFolders {
+            get {
+                return _isSearchAllFolders;
+            }
+            set {
+                _isSearchAllFolders = value;
+                OnPropertyChanged(nameof(IsSearchAllFolders));
+                OnPropertyChanged(nameof(IsSearchSpecifiedFolder));
+            }
+        }
+        // 特定のフォルダのみ検索するかどうか。 _isSearchFolderがTrueの場合は、Falseに設定する
+        public bool IsSearchSpecifiedFolder {
+            get {
+                return !_isSearchAllFolders;
+            }
+            set {
+                _isSearchAllFolders = !value;
+                OnPropertyChanged(nameof(IsSearchAllFolders));
+                OnPropertyChanged(nameof(IsSearchSpecifiedFolder));
+            }
+        }
+
 
         public string Name {
             get {
