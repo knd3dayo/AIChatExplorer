@@ -11,7 +11,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class AppRootFolderViewModelContainer : RootFolderViewModelContainer {
+    public class FolderViewModelManager : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
@@ -38,7 +38,7 @@ namespace ClipboardApp.ViewModel.Main {
         public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
 
         // コンストラクタ
-        public AppRootFolderViewModelContainer(ContentItemViewModelCommands commands) :base(commands) {
+        public FolderViewModelManager(ContentItemViewModelCommands commands) :base(commands) {
             RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder, commands);
             SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);

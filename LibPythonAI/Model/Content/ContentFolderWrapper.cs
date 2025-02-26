@@ -335,6 +335,18 @@ namespace PythonAILib.Model.Content {
         #endregion
 
 
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            ContentFolderWrapper other = (ContentFolderWrapper)obj;
+            return Id == other.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
+
         // ObjectIdからContentFolderWrapperを取得
         public static ContentFolderWrapper? GetFolderById(LiteDB.ObjectId id) {
             var folder = ContentFolder.GetFolderById<ContentFolder>(id);

@@ -12,15 +12,18 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var searchFolderViewModel = new SearchFolderViewModel(childFolder, Commands);
-            // 検索フォルダの親フォルダにこのフォルダを追加
-            searchFolderViewModel.ParentFolderViewModel = this;
+            var searchFolderViewModel = new SearchFolderViewModel(childFolder, Commands) {
+                // 検索フォルダの親フォルダにこのフォルダを追加
+                ParentFolderViewModel = this
+            };
             return searchFolderViewModel;
         }
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+            string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
             // 子フォルダを作成
-            SearchFolder clipboardFolder = (SearchFolder)Folder.CreateChild("New Folder");
+            SearchFolder clipboardFolder = (SearchFolder)Folder.CreateChild(now);
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
@@ -30,7 +33,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
                 SearchFolder = clipboardFolder
             };
 
-            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, true, () => {
+            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, () => {
                 // 保存と再読み込み
                 searchFolderViewModel.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
@@ -51,7 +54,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = Folder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, true, afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder,  afterUpdate);
 
         }
 

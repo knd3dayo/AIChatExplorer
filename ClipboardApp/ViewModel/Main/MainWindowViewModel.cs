@@ -1,13 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Settings;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -151,7 +152,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Null許容型
         [AllowNull]
-        public AppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
 
@@ -164,7 +165,7 @@ namespace ClipboardApp.ViewModel.Main {
             IsIndeterminate = visible;
             OnPropertyChanged(nameof(IsIndeterminate));
             // SelectedItemを更新
-            if ( visible == false) {
+            if (visible == false) {
                 OnPropertyChanged(nameof(MainPanelDataGridViewControlViewModel.SelectedItem));
             }
         }
@@ -300,7 +301,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
-            ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             Commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
@@ -324,12 +325,35 @@ namespace ClipboardApp.ViewModel.Main {
         #region Window全体のInputBinding用のコマンド
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
+            // 子フォルダを作成
+            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild("New Folder");
 
-            ClipboardFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            if (folderViewModel.Folder is not ClipboardFolder clipboardFolder) {
-                return;
-            }
-            Commands.OpenSearchWindowCommand(clipboardFolder, () => { folderViewModel.LoadFolderCommand.Execute(); });
+            // 検索フォルダの親フォルダにこのフォルダを追加
+
+            SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
+
+            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
+                // 保存と再読み込み
+                searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel;
+                searchFolderViewModel.SaveFolderCommand.Execute(null);
+                // 親フォルダを保存
+                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
+                // Load
+                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
+                () => {
+                    Commands.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        Commands.UpdateIndeterminate(false);
+
+                        MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
+                        // SelectedFolder に　SearchFolderViewModelを設定
+                        MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
+                    });
+                });
+
+            });
         });
 
         #endregion

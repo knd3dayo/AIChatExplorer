@@ -101,9 +101,6 @@ namespace ClipboardApp.Model.Main {
             }
         }
 
-        // アプリ共通の検索条件
-        public static SearchRule GlobalSearchCondition { get; set; } = new();
-
         //--------------------------------------------------------------------------------
         private static ClipboardFolder? clipboardRootFolder;
         public static ClipboardFolder RootFolder {

@@ -35,8 +35,15 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder);
 
         // フォルダを読み込む
-        public abstract void LoadFolderExecute(Action beforeAction, Action afterAction);
-
+        public virtual void LoadFolderExecute(Action beforeAction, Action afterAction) {
+            beforeAction();
+            Task.Run(() => {
+                LoadChildren(DefaultNextLevel);
+                LoadItems();
+            }).ContinueWith((task) => {
+                afterAction();
+            });
+        }
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
@@ -72,8 +79,18 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         }
 
-        public abstract SimpleDelegateCommand<object> LoadFolderCommand { get; }
-
+        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+            LoadFolderExecute(
+                () => {
+                    Commands.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        Commands.UpdateIndeterminate(false);
+                        UpdateStatusText();
+                    });
+                });
+        });
 
         // フォルダー保存コマンド
         public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
@@ -113,6 +130,20 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
+        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
+            DeleteDisplayedItemCommandExecute(() => {
+                Commands.UpdateIndeterminate(true);
+            }, () => {
+                // 全ての削除処理が終了した後、後続処理を実行
+                // フォルダ内のアイテムを再読み込む
+                MainUITask.Run(() => {
+                    LoadFolderCommand.Execute();
+                });
+                LogWrapper.Info(CommonStringResources.Instance.Deleted);
+                Commands.UpdateIndeterminate(false);
+            });
+        });
 
         // GetItems
         public ObservableCollection<ContentItemViewModel> Items { get; } = [];

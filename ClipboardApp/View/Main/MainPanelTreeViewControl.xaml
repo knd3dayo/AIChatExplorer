@@ -25,9 +25,21 @@
             CommandParameter="{Binding}"
             Modifiers="Control" />
     </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
         <!--  Folder TreeView  -->
-        <TreeView Grid.Column="0" ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
+        <TreeView
+            x:Name="FolderTreeView"
+            Grid.Column="0"
+            ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="Margin" Value="3,3,3,3" />

@@ -10,11 +10,11 @@ namespace LibUIPythonAI.ViewModel.Search {
     public class SearchWindowViewModel : ChatViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
-            ContentFolderWrapper searchFolder, bool isSearchFolder,
+            ContentFolderWrapper searchFolder, 
             Action afterUpdate
             ) {
             _searchConditionRule = searchConditionRule;
-            _isSearchFolder = isSearchFolder;
+            _isSearchFolder = true;
 
             _afterUpdate = afterUpdate;
             _searchFolder = searchFolder;
@@ -150,6 +150,7 @@ namespace LibUIPythonAI.ViewModel.Search {
                 // _isSearchFolderがTrueの場合は、フォルダ名を更新
                 SearchFolder.FolderName = SearchConditionRule.Name;
             }
+
             // 検索条件をLiteDBに保存
             SearchConditionRule.Save();
 

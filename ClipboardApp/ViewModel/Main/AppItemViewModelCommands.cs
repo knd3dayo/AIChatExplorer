@@ -1,11 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Folders.Search;
+using LibGit2Sharp;
 using LibPythonAI.Utils.Common;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
@@ -21,6 +24,7 @@ using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
+using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
@@ -110,7 +114,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to open Image Chat
-        public void OpenImageChatWindowCommand(ContentItemWrapper item, Action action) {
+        public void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
 
@@ -144,19 +148,13 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Process to display the search window
-        public void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
-            SearchRule? searchConditionRule;
-            // If the selected folder is a search folder
-            if (folder.FolderType == FolderTypeEnum.Search) {
-                searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folder);
-                searchConditionRule ??= new() {
-                    Type = SearchRule.SearchType.SearchFolder,
-                    SearchFolder = folder
-                };
-            } else {
-                searchConditionRule = FolderManager.GlobalSearchCondition;
-            }
-            SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
+        public void OpenSearchWindowCommand(SearchFolderViewModel searchFolderViewModel, System.Action action) {
+            SearchRule? searchConditionRule = new() {
+                Type = SearchRule.SearchType.SearchFolder,
+                SearchFolder =searchFolderViewModel.Folder
+            };
+            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);
+
         }
 
 
@@ -218,7 +216,7 @@ namespace ClipboardApp.ViewModel.Main {
             try {
                 ClipboardController.Instance.SetDataObject(itemViewModels.Last().ContentItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
-            } catch (Exception e) {
+            } catch (System.Exception e) {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
@@ -270,7 +268,11 @@ namespace ClipboardApp.ViewModel.Main {
         // Process when Ctrl + V is pressed
         public void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
-            ClipboardFolderViewModel? SelectedFolder = windowViewModel.MainPanelTreeViewControlViewModel.SelectedFolder;
+            ContentFolderViewModel? folder = windowViewModel.MainPanelTreeViewControlViewModel?.SelectedFolder;
+            if (folder is not ClipboardFolderViewModel SelectedFolder) {
+                LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
+                return;
+            }
             List<object> CopiedItems = ClipboardController.Instance.CopiedObjects;
             // Do not process if no folder is selected
             if (SelectedFolder == null || SelectedFolder.Folder is not ClipboardFolder clipboardFolder) {
@@ -316,8 +318,6 @@ namespace ClipboardApp.ViewModel.Main {
         // -----------------------------------------------------------------------------------
 
         public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper clipboardItem) {
-
-            SearchRule rule = FolderManager.GlobalSearchCondition.Copy();
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             QAChatStartupProps props = new(clipboardItem) {

@@ -6,6 +6,7 @@ using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Resources;
 
@@ -17,8 +18,8 @@ namespace ClipboardApp.ViewModel.Main {
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
-        private ClipboardFolderViewModel? _selectedFolder;
-        public ClipboardFolderViewModel? SelectedFolder {
+        private ContentFolderViewModel? _selectedFolder;
+        public ContentFolderViewModel? SelectedFolder {
             get {
                 return _selectedFolder;
             }

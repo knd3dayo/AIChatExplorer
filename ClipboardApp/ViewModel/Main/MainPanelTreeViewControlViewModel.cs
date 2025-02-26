@@ -1,14 +1,18 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model.Folders.Search;
+using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Folders.Search;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class MainPanelTreeViewControlViewModel : ObservableObject {
+    public class MainPanelTreeViewControlViewModel : AppViewModelBase {
 
         private AppItemViewModelCommands Commands { get; set; }
 
@@ -18,15 +22,15 @@ namespace ClipboardApp.ViewModel.Main {
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
-        public Action<ClipboardFolderViewModel> SelectedFolderChangedAction { get; set; } = (selectedFolder) => { };
+        public Action<ContentFolderViewModel> SelectedFolderChangedAction { get; set; } = (selectedFolder) => { };
 
         // Null許容型
         [AllowNull]
-        public AppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         // 選択中のフォルダ
-        private ClipboardFolderViewModel? _selectedFolder;
-        public ClipboardFolderViewModel? SelectedFolder {
+        private ContentFolderViewModel? _selectedFolder;
+        public ContentFolderViewModel? SelectedFolder {
             get {
 
                 return _selectedFolder;
@@ -43,8 +47,8 @@ namespace ClipboardApp.ViewModel.Main {
 
 
         // Ctrl + C or X  が押された時のClipboardItemFolder
-        private ClipboardFolderViewModel? _copiedFolder;
-        public ClipboardFolderViewModel? CopiedFolder {
+        private ContentFolderViewModel? _copiedFolder;
+        public ContentFolderViewModel? CopiedFolder {
             get {
                 return _copiedFolder;
             }
@@ -95,7 +99,7 @@ namespace ClipboardApp.ViewModel.Main {
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
+            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
             SelectedFolder = clipboardItemFolderViewModel;
             if (SelectedFolder != null) {
                 // Load
@@ -105,6 +109,76 @@ namespace ClipboardApp.ViewModel.Main {
         });
         #endregion
 
+        // SelectedTreeViewItemChangeCommandExecute
+        public void SelectedTreeViewItemChangeCommandExecute(ContentFolderViewModel folder) {
+            TreeView? treeView = ThisUserControl?.FindName("FolderTreeView") as TreeView;
+            if (treeView == null) {
+                return;
+            }
+            List<ContentFolderViewModel> items = [];
+            // folderからRootFolderまでのフォルダを取得 
+            ContentFolderViewModel? currentFolder = folder;
+            while (currentFolder != null) {
+                items.Add(currentFolder);
+                currentFolder = currentFolder.ParentFolderViewModel;
+            }
+            ItemsControl itemsControl = treeView;
+            // itemsの順番を逆にして、RootFolderからFolderまでのフォルダをExpandする
+            for (int i = items.Count - 1; i >= 0; i--) {
+
+                for (int j = 0; j < itemsControl.Items.Count; j++) {
+                    TreeViewItem? childItem = (TreeViewItem?)itemsControl.ItemContainerGenerator.ContainerFromIndex(j);
+                    if (childItem == null) {
+                        continue;
+                    }
+                    if (childItem.Header is ContentFolderViewModel folderViewModel) {
+                        if (folderViewModel.Folder.Id == items[i].Folder.Id) {
+                            if (childItem.Items.Count == 0) {
+                                childItem.IsExpanded = true;
+                                break;
+                            }
+                            childItem.IsExpanded = true;
+                            itemsControl.UpdateLayout();
+                            itemsControl = childItem;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void CreateSearchFolder() {
+            // 現在の日付 時刻の文字列を取得
+            string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild(now);
+
+            // 検索フォルダの親フォルダにこのフォルダを追加
+
+            SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
+
+            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
+                // 保存と再読み込み
+                searchFolderViewModel.ParentFolderViewModel = RootFolderViewModelContainer.SearchRootFolderViewModel;
+                searchFolderViewModel.SaveFolderCommand.Execute(null);
+                // 親フォルダを保存
+                RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
+                // Load
+                RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
+                () => {
+                    Commands.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        Commands.UpdateIndeterminate(false);
+
+                        SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
+                        // SelectedFolder に　SearchFolderViewModelを設定
+                        SelectedFolder = searchFolderViewModel;
+                    });
+                });
+
+            });
+        }
 
     }
 }
