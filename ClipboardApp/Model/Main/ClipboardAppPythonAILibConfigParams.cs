@@ -51,7 +51,18 @@ namespace ClipboardApp.Model.Main {
             // Create database file path
             string dbPath = Path.Combine(appDataPath, "clipboard.db");
             return dbPath;
+        }
 
+        public string GetMainDBPath() {
+            /// Get AppData folder path
+            string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
+            // Create database file path
+            string dbPath = Path.Combine(appDataPath, "main_db");
+            if (!Directory.Exists(dbPath)) {
+                Directory.CreateDirectory(dbPath);
+            }
+            dbPath = Path.Combine(dbPath, "main.db");
+            return dbPath;
         }
         public string GetPythonLibPath() {
             /// Get AppData folder path

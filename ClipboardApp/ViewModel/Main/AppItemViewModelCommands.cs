@@ -150,7 +150,6 @@ namespace ClipboardApp.ViewModel.Main {
         // Process to display the search window
         public void OpenSearchWindowCommand(SearchFolderViewModel searchFolderViewModel, System.Action action) {
             SearchRule? searchConditionRule = new() {
-                Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder =searchFolderViewModel.Folder
             };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);

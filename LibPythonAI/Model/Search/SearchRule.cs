@@ -10,11 +10,6 @@ namespace PythonAILib.Model.Search {
     // IsGlobalSearchがFalseの場合は検索フォルダのみ検索を行う
     // このクラスのオブジェクトはLiteDBに保存される
     public class SearchRule {
-        public enum SearchType {
-            // 標準 or 検索フォルダ
-            Normal,
-            SearchFolder
-        }
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
@@ -46,14 +41,9 @@ namespace PythonAILib.Model.Search {
 
         public string Name { get; set; } = "";
 
-        // TypeValue
-        // 標準 or 検索フォルダ
-        public SearchType Type { get; set; }
-
         // コンストラクタ
         public SearchRule() {
             SearchCondition = new SearchCondition();
-            Type = SearchType.Normal;
         }
 
         // 保存
@@ -83,7 +73,6 @@ namespace PythonAILib.Model.Search {
             rule.SearchFolderId = SearchFolderId;
             rule.TargetFolderId = TargetFolderId;
             rule.Name = Name;
-            rule.Type = Type;
             return rule;
 
         }

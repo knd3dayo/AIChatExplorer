@@ -13,6 +13,7 @@ namespace PythonAILib.Model.AutoProcess {
             PromptTemplate,
         }
         public ObjectId? Id { get; set; } = ObjectId.Empty;
+
         public string Name { get; set; } = "";
         public string DisplayName { get; set; } = "";
         public string Description { get; set; } = "";

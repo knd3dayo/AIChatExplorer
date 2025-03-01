@@ -316,24 +316,6 @@ namespace PythonAILib.Model.Content {
         }
 
         #endregion
-        #region ベクトル検索
-        // ReferenceVectorDBItemsからVectorDBItemを削除
-        public void RemoveVectorSearchProperty(VectorDBProperty vectorDBItem) {
-            List<VectorDBProperty> existingItems = new(ReferenceVectorSearchProperties.Where(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId && x.FolderId == vectorDBItem.FolderId));
-            foreach (var item in existingItems) {
-                ReferenceVectorSearchProperties.Remove(item);
-            }
-        }
-        // ReferenceVectorDBItemsにVectorDBItemを追加
-        public void AddVectorSearchProperty(VectorDBProperty vectorDBItem) {
-            var existingItems = ReferenceVectorSearchProperties.FirstOrDefault(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId);
-            if (existingItems == null) {
-                ReferenceVectorSearchProperties.Add(vectorDBItem);
-            }
-        }
-
-        #endregion
-
 
         // Equals
         public override bool Equals(object? obj) {

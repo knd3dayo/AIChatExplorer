@@ -10,6 +10,7 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Settings;
+using LibPythonAI.Data;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
@@ -102,6 +103,8 @@ namespace ClipboardApp.ViewModel.Main {
 
             // AutoGenPropertiesの初期化
             AutoGenProperties.Init();
+
+            PythonAILibDBContext.Init();
 
         }
 

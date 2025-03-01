@@ -67,11 +67,6 @@ namespace PythonAILib.Common {
             var collection = GetDatabase().GetCollection<T>(CONTENT_FOLDERS_COLLECTION_NAME);
             return collection;
         }
-        // --
-        public ILiteCollection<T> GetShortCutFolderCollection<T>() where T : ContentFolder {
-            var collection = GetDatabase().GetCollection<T>(SHORTCUT_FOLDERS_COLLECTION_NAME);
-            return collection;
-        }
 
         // -- PromptItem
         public ILiteCollection<T> GetPromptCollection<T>() where T : PromptItem {

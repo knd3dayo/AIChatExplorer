@@ -24,8 +24,6 @@ namespace LibUIPythonAI.ViewModel.Search {
             SearchFolderPath = SearchFolder?.ContentFolderPath;
             TargetFolderPath = searchConditionRule.TargetFolder?.ContentFolderPath;
 
-            OnPropertyChanged(nameof(SearchTypeText));
-            OnPropertyChanged(nameof(SearchFolderVisibility));
             OnPropertyChanged(nameof(NameVisibility));
         }
         private bool _isSearchFolder;
@@ -54,20 +52,9 @@ namespace LibUIPythonAI.ViewModel.Search {
                 OnPropertyChanged(nameof(SearchFolder));
             }
         }
-        // 検索フォルダの場合は表示する、それ以外は非表示
-        public Visibility SearchFolderVisibility => Tools.BoolToVisibility(SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder);
-
+        
         public Visibility NameVisibility => Tools.BoolToVisibility(_isSearchFolder == true);
 
-        // 検索タイプ 標準 or 検索フォルダ
-        public string SearchTypeText {
-            get {
-                if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
-                    return StringResources.SearchFolder;
-                }
-                return StringResources.Standard;
-            }
-        }
 
         // 検索フォルダのパス
         private string? _searchFolderPath;

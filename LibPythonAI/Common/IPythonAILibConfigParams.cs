@@ -27,6 +27,8 @@ namespace PythonAILib.Common {
 
         public string GetDBPath();
 
+        public string GetMainDBPath();
+
         public string GetSystemVectorDBPath();
 
         public string GetSystemDocDBPath();

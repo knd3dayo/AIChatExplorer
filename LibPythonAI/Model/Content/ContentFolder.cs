@@ -22,12 +22,6 @@ namespace PythonAILib.Model.Content {
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
 
-        public List<VectorDBProperty> ReferenceVectorSearchProperties { get; set; } = [];
-
-        // AutoProcessを有効にするかどうか
-        public bool IsAutoProcessEnabled { get; set; } = false;
-
-
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";
 
@@ -37,10 +31,14 @@ namespace PythonAILib.Model.Content {
         // 拡張プロパティ
         public Dictionary<string, object> ExtendedProperties { get; set; } = new();
 
-
-
         //　OS上のフォルダ名
         public virtual string ContentOutputFolderPrefix { get; set; } = "";
+
+        // -- EntityFramework未対応
+        public List<VectorDBProperty> ReferenceVectorSearchProperties { get; set; } = [];
+
+        // AutoProcessを有効にするかどうか
+        public bool IsAutoProcessEnabled { get; set; } = false;
 
         // アプリケーション内でのフォルダのパス
         [BsonIgnore]

@@ -29,7 +29,6 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
             SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
             SearchRule? searchConditionRule = new() {
-                Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = clipboardFolder
             };
 
@@ -51,7 +50,6 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(Folder);
             searchConditionRule ??= new() {
-                Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = Folder
             };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder,  afterUpdate);

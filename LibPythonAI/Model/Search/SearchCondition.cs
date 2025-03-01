@@ -2,17 +2,10 @@ using LiteDB;
 
 namespace PythonAILib.Model.Search {
     public class SearchCondition {
-        private bool _ExcludeSourceApplicationName = false;
-        private bool _ExcludeSourceApplicationTitle = false;
 
-        // ObjectId
-        public ObjectId? Id { get; set; }
-        // 検索条件の名前
+
+        // 検索条件の名前 
         public string Name { get; set; } = "";
-
-        // デフォルトコンストラクタ
-        public SearchCondition() {
-        }
 
         public string Description { get; set; } = "";
         public string Content { get; set; } = "";
@@ -34,6 +27,46 @@ namespace PythonAILib.Model.Search {
 
         public bool ExcludeSourceApplicationName { get; set; } = false;
         public bool ExcludeSourceApplicationTitle { get; set; } = false;
+
+        // ToDict()
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                { "description", Description },
+                { "content", Content },
+                { "tags", Tags },
+                { "source_application_name", SourceApplicationName },
+                { "source_application_title", SourceApplicationTitle },
+                { "start_time", StartTime },
+                { "end_time", EndTime },
+                { "enable_start_time", EnableStartTime },
+                { "enable_end_time", EnableEndTime },
+                { "exclude_description", ExcludeDescription },
+                { "exclude_content", ExcludeContent },
+                { "exclude_tags", ExcludeTags },
+                { "exclude_source_application_name", ExcludeSourceApplicationName },
+                { "exclude_source_application_title", ExcludeSourceApplicationTitle },
+            };
+            return dict;
+        }
+
+        public static SearchCondition FromDict(Dictionary<string, object> dict) {
+            SearchCondition searchCondition = new();
+            searchCondition.Description = (string)dict["description"];
+            searchCondition.Content = (string)dict["content"];
+            searchCondition.Tags = (string)dict["tags"];
+            searchCondition.SourceApplicationName = (string)dict["source_application_name"];
+            searchCondition.SourceApplicationTitle = (string)dict["source_application_title"];
+            searchCondition.StartTime = (DateTime)dict["start_time"];
+            searchCondition.EndTime = (DateTime)dict["end_time"];
+            searchCondition.EnableStartTime = (bool)dict["enable_start_time"];
+            searchCondition.EnableEndTime = (bool)dict["enable_end_time"];
+            searchCondition.ExcludeDescription = (bool)dict["exclude_description"];
+            searchCondition.ExcludeContent = (bool)dict["exclude_content"];
+            searchCondition.ExcludeTags = (bool)dict["exclude_tags"];
+            searchCondition.ExcludeSourceApplicationName = (bool)dict["exclude_source_application_name"];
+            searchCondition.ExcludeSourceApplicationTitle = (bool)dict["exclude_source_application_title"];
+            return searchCondition;
+        }
 
         public SearchCondition Copy() {
             SearchCondition searchCondition = new();
