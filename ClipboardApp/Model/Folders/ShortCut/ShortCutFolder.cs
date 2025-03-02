@@ -2,6 +2,8 @@ using System.IO;
 using System.Linq;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
+using LibPythonAI.Data;
 using LibPythonAI.Utils.Common;
 using LiteDB;
 using PythonAILib.Common;
@@ -12,16 +14,16 @@ namespace ClipboardApp.Model.Folders.ShortCut {
     public class ShortCutFolder : FileSystemFolder {
 
         // コンストラクタ
-        public ShortCutFolder(ContentFolder folder) : base(folder) {
-            FolderType = FolderTypeEnum.ShortCut;
+        public ShortCutFolder(ContentFolderEntity folder) : base(folder) {
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
         public ShortCutFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
-            FolderType = FolderTypeEnum.ShortCut;
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
         public override ShortCutFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -30,7 +32,7 @@ namespace ClipboardApp.Model.Folders.ShortCut {
 
         public override List<ContentItemWrapper> GetItems() {
             SyncItems();
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            var items = Entity.Children;
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new ShortCutItem(item));
@@ -44,7 +46,7 @@ namespace ClipboardApp.Model.Folders.ShortCut {
             if (!IsRootFolder) {
                 SyncFolders();
             }
-            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            var children = Entity.Children;
             List<ContentFolderWrapper> result = [];
             foreach (var child in children) {
                 result.Add(new ShortCutFolder(child));
@@ -66,16 +68,16 @@ namespace ClipboardApp.Model.Folders.ShortCut {
         }
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
-        protected override Dictionary<string, ContentFolder> GetFolderPathIdDict() {
+        protected override Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // コレクション
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).Select(x => new ShortCutFolder(x)).ToList();
+            using PythonAILibDBContext context = new();
+            var folders = context.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new ShortCutFolder(x)).ToList();
 
-            Dictionary<string, ContentFolder> folderPathIdDict = [];
+            Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
                 // folder.FileSystemFolderPathが存在する場合
                 if (!string.IsNullOrEmpty(folder.FileSystemFolderPath)) {
-                    folderPathIdDict[folder.FileSystemFolderPath] = folder.ContentFolderInstance;
+                    folderPathIdDict[folder.FileSystemFolderPath] = folder;
                 }
             }
             return folderPathIdDict;

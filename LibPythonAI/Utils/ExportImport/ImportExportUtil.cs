@@ -75,7 +75,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     continue;
                 }
 
-                ContentItemWrapper item = new(fromFolder.Id);
+                ContentItemWrapper item = new(fromFolder.Entity);
                 // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
                 int titleIndex = targetNames.IndexOf("Title");
                 if (titleIndex != -1) {
@@ -157,7 +157,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
 
                     // アイテムの作成
-                    ContentItemWrapper item = new(fromFolder.Id) {
+                    ContentItemWrapper item = new(fromFolder.Entity) {
                         Content = text,
                         Description = url,
                         SourcePath = url
@@ -204,12 +204,12 @@ namespace LibPythonAI.Utils.ExportImport {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ContentItem? item = ContentItem.FromJson<ContentItem>(jsonString);
+                ContentItemWrapper? item = ContentItemWrapper.FromJson(jsonString);
 
                 if (item == null) {
                     continue;
                 }
-                item.CollectionId = toFolder.Id;
+                item.Folder = toFolder;
                 //保存
                 item.Save();
             }

@@ -5,6 +5,7 @@ using ClipboardApp.Model.Folders.ShortCut;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibPythonAI.Data;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.Content;
@@ -82,11 +83,11 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             // ShortCutRootFolderを取得
             FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
             // ショートカットフォルダを作成
-            ContentFolder contentFolder = new() {
-                FolderType = FolderTypeEnum.ShortCut,
+            ContentFolderEntity contentFolder = new() {
+                FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
-                ParentId = shortCutRootFolder.Id,
+                Parent = shortCutRootFolder.Entity,
             };
             ShortCutFolder subFolder = new(contentFolder) {
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,

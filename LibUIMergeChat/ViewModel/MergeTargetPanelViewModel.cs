@@ -34,9 +34,9 @@ namespace LibUIMergeChat.ViewModel {
                 }
             } else {
                 // SelectedItemsがある場合はSelectedItemsとマッチするアイテムのIsCheckedを設定する
-                var selectedItemIds = new HashSet<string>(SelectedItems.Select(item => item.ContentItem.Id.ToString()));
+                var selectedItemIds = new HashSet<string>(SelectedItems.Select(item => item.ContentItem.Entity.Id));
                 foreach (ContentItemViewModel item in MergeTargetDataGridViewControlViewModel.Items) {
-                    var id = item.ContentItem.Id.ToString();
+                    var id = item.ContentItem.Entity.Id;
                     item.IsChecked = selectedItemIds.Contains(id);
                 }
             }

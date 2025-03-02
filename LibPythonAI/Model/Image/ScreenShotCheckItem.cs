@@ -7,6 +7,9 @@ namespace PythonAILib.Model.Image {
         // InputText
         public string InputText { get; set; } = "";
 
+        // PromptText
+        public string PromptText { get; set; } = "";
+
         // ResultText
         public string ResultText { get; set; } = "";
 

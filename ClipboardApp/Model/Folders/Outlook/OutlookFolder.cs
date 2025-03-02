@@ -1,4 +1,6 @@
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Main;
+using LibPythonAI.Data;
 using LibPythonAI.Utils.Common;
 using LiteDB;
 using NetOffice.OutlookApi;
@@ -12,13 +14,13 @@ namespace ClipboardApp.Model.Folders.Outlook {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
-        public OutlookFolder(ContentFolder folder) : base(folder) {
+        public OutlookFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderType = FolderTypeEnum.Outlook;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
         }
 
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
-            FolderType = FolderTypeEnum.Outlook;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
             // フォルダ名を設定
             FolderName = folderName;
             // FolderNameに一致するMAPIFolderがある場合は取得
@@ -30,7 +32,7 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
 
         public override OutlookFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -68,7 +70,8 @@ namespace ClipboardApp.Model.Folders.Outlook {
         }
 
         public override List<ContentItemWrapper> GetItems() {
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            using PythonAILibDBContext db = new();
+            var items = db.ContentItems.Where(x => x.Folder.Id == Entity.Id).OrderBy(x => x.Description);
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new OutlookItem(item));
@@ -86,10 +89,10 @@ namespace ClipboardApp.Model.Folders.Outlook {
             var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
 
             // OutlookItemのEntryIDとIDのDictionary
-            Dictionary<string, ObjectId> entryIdIdDict = [];
+            Dictionary<string, OutlookItem> entryIdIdDict = [];
             foreach (var item in GetItems()) {
                 if (item is OutlookItem outlookItem) {
-                    entryIdIdDict[outlookItem.EntryID] = outlookItem.Id;
+                    entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
             }
             // Outlookのフォルダ内のEntryIDを格納するHashSet
@@ -98,11 +101,12 @@ namespace ClipboardApp.Model.Folders.Outlook {
             // EntryIDが一致するOutlookItemが存在しない場合は削除
             // Exceptで差集合を取得
             foreach (var entryId in entryIdIdDict.Keys.Except(entryIdList)) {
-                collection.Delete(entryIdIdDict[entryId]);
+                OutlookItem outlookItem = entryIdIdDict[entryId];
+                outlookItem.Delete();
             }
             // Parallel処理
             Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), outlookItem => {
-                OutlookItem newItem = new(Id, outlookItem.EntryID) {
+                OutlookItem newItem = new(Entity, outlookItem.EntryID) {
                     Description = outlookItem.Subject,
                     ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
                     Content = outlookItem.Body,
@@ -116,8 +120,9 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            IEnumerable<ContentFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            using PythonAILibDBContext db = new();
+            var folders = db.ContentFolders.Where(x => x.ParentId == Entity.Id).OrderBy(x => x.FolderName);
+
             List<ContentFolderWrapper> result = [];
             foreach (var folder in folders) {
                 OutlookFolder outlookFolder = new(folder);
@@ -162,10 +167,10 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             // folder内のFolderNameとContentFolderのDictionary
-            Dictionary<string, ContentFolder> folderPathIdDict = [];
+            Dictionary<string, OutlookFolder> folderPathIdDict = [];
             foreach (var folder in GetChildren()) {
                 if (folder is OutlookFolder outlookFolder) {
-                    folderPathIdDict[outlookFolder.FolderName] = outlookFolder.ContentFolderInstance;
+                    folderPathIdDict[outlookFolder.FolderName] = outlookFolder;
                 }
             }
 
@@ -173,8 +178,8 @@ namespace ClipboardApp.Model.Folders.Outlook {
             // Exceptで差集合を取得
             var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
             foreach (var deleteFolderName in deleteFolderNames) {
-                ContentFolder contentFolder = folderPathIdDict[deleteFolderName];
-                contentFolder.Delete();
+                OutlookFolder deleteFolder = folderPathIdDict[deleteFolderName];
+                deleteFolder.Delete();
             }
 
             // Outlookに存在するフォルダがDBに存在しない場合は追加

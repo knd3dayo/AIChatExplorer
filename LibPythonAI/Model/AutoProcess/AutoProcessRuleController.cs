@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
@@ -13,13 +14,12 @@ namespace PythonAILib.Model.AutoProcess {
         // DBから自動処理ルールのコレクションを取得する
         public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ContentFolderWrapper targetFolder) {
             ObservableCollection<AutoProcessRule> rules = [];
-            PythonAILibManager libManager = PythonAILibManager.Instance;
+            using var db = new PythonAILibDBContext();
+            var items = db.AutoProcessRules.Where(x => x.TargetFolder == targetFolder.Entity);
 
-            var collection = libManager.DataFactory.GetAutoProcessRuleCollection();
-            var items = collection.Find(x => x.TargetFolderId == targetFolder.Id);
             foreach (var item in items) {
                 if (item != null) {
-                    rules.Add(item);
+                    rules.Add(new AutoProcessRule(item));
                 }
             }
             return rules;

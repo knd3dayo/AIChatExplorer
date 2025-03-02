@@ -55,7 +55,7 @@ namespace PythonAILib.Common {
             return db;
         }
 
-        //-- ContentItemInstance
+        //-- Entity
         public ILiteCollection<T> GetItemCollection<T>() where T : ContentItem {
             var collection = GetDatabase().GetCollection<T>(CONTENT_ITEM_COLLECTION_NAME);
             return collection;

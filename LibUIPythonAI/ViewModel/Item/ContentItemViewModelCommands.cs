@@ -180,7 +180,7 @@ namespace PythonAILibUI.ViewModel.Item {
                     StatusText.Instance.UpdateInProgress(false);
                     // フォルダ内のアイテムを再読み込み
                     MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
                         foreach (var folder in folders) {
                             folder.LoadFolderCommand.Execute();
                         }
@@ -200,7 +200,7 @@ namespace PythonAILibUI.ViewModel.Item {
                 () => {
                     // フォルダ内のアイテムを再読み込み
                     MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
                         foreach (var folder in folders) {
                             folder.LoadFolderCommand.Execute();
                         }
@@ -281,7 +281,7 @@ namespace PythonAILibUI.ViewModel.Item {
                     // 全ての削除処理が終了した後、後続処理を実行
                     // フォルダ内のアイテムを再読み込む
                     MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
                         foreach (var folder in folders) {
                             folder.LoadFolderCommand.Execute();
                         }

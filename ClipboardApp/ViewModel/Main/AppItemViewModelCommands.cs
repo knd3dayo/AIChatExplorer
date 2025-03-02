@@ -149,9 +149,10 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Process to display the search window
         public void OpenSearchWindowCommand(SearchFolderViewModel searchFolderViewModel, System.Action action) {
-            SearchRule? searchConditionRule = new() {
-                SearchFolder =searchFolderViewModel.Folder
-            };
+            SearchRule? searchConditionRule = new(
+                new LibPythonAI.Data.SearchRuleEntity() {
+                    SearchFolder = searchFolderViewModel.Folder.Entity,
+                });
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);
 
         }
@@ -322,14 +323,14 @@ namespace ClipboardApp.ViewModel.Main {
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
                 CloseCommand = (item, saveChatHistory) => {
-                    bool flag = clipboardItem.GetFolder().FolderType != FolderTypeEnum.Chat;
+                    bool flag = clipboardItem.Entity.Folder?.FolderTypeString != FolderTypeEnum.Chat.ToString();
                     clipboardItem.Save();
 
                     if (saveChatHistory && flag) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
                         ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
-                        chatHistoryItem.CollectionId = chatFolder.Id;
+                        chatHistoryItem.Folder = chatFolder;
 
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {
                             chatHistoryItem.Description += " " + clipboardItem.Description;
@@ -344,7 +345,7 @@ namespace ClipboardApp.ViewModel.Main {
 
                     FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
                         if (finished) {
-                            ClipboardItem chatHistoryItem = new(folder.Folder.Id);
+                            ClipboardItem chatHistoryItem = new(folder.Folder.Entity);
                             // タイトルを日付 + 元のタイトルにする
                             chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
                             if (!string.IsNullOrEmpty(clipboardItem.Description)) {

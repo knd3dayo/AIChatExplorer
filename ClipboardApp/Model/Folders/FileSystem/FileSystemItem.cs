@@ -1,4 +1,5 @@
 using System.IO;
+using LibPythonAI.Data;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
@@ -14,21 +15,18 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         ];
 
         // コンストラクタ
-        public FileSystemItem(ContentItem item) : base(item) { }
+        public FileSystemItem(ContentItemEntity item) : base(item) { }
 
-        public FileSystemItem(LiteDB.ObjectId folderObjectId) : base(folderObjectId) { }
+        public FileSystemItem(ContentFolderEntity folder) : base(folder) { }
 
         public override FileSystemItem Copy() {
-            return new(ContentItemInstance.Copy());
+            return new(Entity.Copy());
         }
 
-        public override void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
-            ContentItemInstance.Save(false, applyAutoProcess);
-        }
 
         public override void Load(Action beforeAction, Action afterAction) {
             // SourcePathのファイルが存在しない場合は、何もしない
-            if (ContentItemInstance.SourcePath == null || !File.Exists(ContentItemInstance.SourcePath)) {
+            if (SourcePath == null || !File.Exists(SourcePath)) {
                 return;
             }
             ContentItemCommands.ExtractTexts([this], beforeAction, afterAction);

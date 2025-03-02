@@ -1,3 +1,4 @@
+using LibPythonAI.Data;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -10,57 +11,69 @@ namespace PythonAILib.Model.Search {
     // IsGlobalSearchがFalseの場合は検索フォルダのみ検索を行う
     // このクラスのオブジェクトはLiteDBに保存される
     public class SearchRule {
+        public SearchRule(SearchRuleEntity entity) {
+            Entity = entity;
+        }
+        public SearchRuleEntity Entity { get; set; }
 
-        public ObjectId Id { get; set; } = ObjectId.Empty;
 
-        public SearchCondition SearchCondition { get; set; }
-
-        public ObjectId SearchFolderId { get; set; } = ObjectId.Empty;
-
-        public ObjectId TargetFolderId { get; set; } = ObjectId.Empty;
-
-        [BsonIgnore]
+        public SearchCondition SearchCondition {
+            get {
+                return Entity.SearchCondition;
+            }
+            set {
+                Entity.SearchCondition = value;
+            }
+        }
         public ContentFolderWrapper? TargetFolder {
             get {
-                return ContentFolderWrapper.GetFolderById(TargetFolderId);
+                if (Entity.TargetFolder == null) {
+                    return null;
+                }
+                ContentFolderWrapper? folder = new ContentFolderWrapper(Entity.TargetFolder);
+                return folder;
+
             }
             set {
-                TargetFolderId = value?.Id ?? ObjectId.Empty;
+                Entity.TargetFolder = value?.Entity;
             }
         }
 
-        [BsonIgnore]
         public ContentFolderWrapper? SearchFolder {
             get {
-                return ContentFolderWrapper.GetFolderById(SearchFolderId);
+                if (Entity.SearchFolder == null) {
+                    return null;
+                }
+                ContentFolderWrapper? folder = new ContentFolderWrapper(Entity.SearchFolder);
+                return folder;
             }
             set {
-                SearchFolderId = value?.Id ?? ObjectId.Empty;
+                Entity.SearchFolder = value?.Entity;
             }
         }
 
-        public string Name { get; set; } = "";
-
-        // コンストラクタ
-        public SearchRule() {
-            SearchCondition = new SearchCondition();
+        public string Name {
+            get {
+                return Entity.Name;
+            }
+            set {
+                Entity.Name = value;
+            }
         }
+
 
         // 保存
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetSearchRuleCollection();
-
-            collection.Upsert(this);
+            using PythonAILibDBContext db = new();
+            db.SearchRules.Update(Entity);
+            db.SaveChanges();
         }
 
         public List<ContentItemWrapper> SearchItems() {
             List<ContentItemWrapper> result = [];
-            if (TargetFolderId == ObjectId.Empty) {
+            if (Entity.TargetFolder == null) {
                 return result;
             }
-            // 検索フォルダの取得
-            var TargetFolder = ContentFolderWrapper.GetFolderById(TargetFolderId);
             if (TargetFolder == null) {
                 return result;
             }
@@ -68,11 +81,7 @@ namespace PythonAILib.Model.Search {
         }
 
         public SearchRule Copy() {
-            SearchRule rule = new();
-            rule.SearchCondition = SearchCondition.Copy();
-            rule.SearchFolderId = SearchFolderId;
-            rule.TargetFolderId = TargetFolderId;
-            rule.Name = Name;
+            SearchRule rule = new SearchRule(Entity.Copy());
             return rule;
 
         }

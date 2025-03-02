@@ -144,7 +144,7 @@ namespace PythonAILib.Model.Content {
                 OpenAIProperties = openAIProperties
             };
 
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new LibPythonAI.Data.PromptItemEntity()) {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 UseVectorDB = true,
@@ -355,7 +355,7 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperty = folderVectorDBItem;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Id.ToString());
+                VectorMetadata vectorDBEntry = new(item.Entity.Id.ToString());
 
             }
             // ベクトルを削除
@@ -378,7 +378,7 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperty = folderVectorDBItem;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Id.ToString());
+                VectorMetadata vectorDBEntry = new(item.Entity.Id.ToString());
 
                 // タイトルとHeaderTextを追加
                 string description = item.Description + "\n" + item.HeaderText;

@@ -1,10 +1,13 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Windows.Media.Imaging;
+using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LiteDB;
-using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
-using PythonAILib.Model.Image;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
@@ -12,94 +15,88 @@ using PythonAILib.Resources;
 namespace PythonAILib.Model.Content {
     public class ContentItemWrapper {
 
-        public ContentItemWrapper(ContentItem contentItem) {
-            ContentItemInstance = contentItem;
+        public ContentItemWrapper(ContentItemEntity contentItem) {
+            Entity = contentItem;
         }
-        public ContentItemWrapper(LiteDB.ObjectId folderObjectId) {
-            ContentItemInstance = new(folderObjectId);
+        public ContentItemWrapper(ContentFolderEntity folder) {
+            Entity = new() {
+                Folder = folder
+            };
         }
 
-        protected ContentItem ContentItemInstance { get; set; }
+        public ContentItemEntity Entity { get; set; }
 
-
-        public ObjectId Id {
-            get {
-                return ContentItemInstance.Id;
-            }
-            set {
-                ContentItemInstance.Id = value;
-            }
-        }
         [BsonIgnore]
         // Folder
-        public ContentFolderWrapper Folder {
+        public ContentFolderWrapper? Folder {
             get {
-                return GetFolder();
+                if (Entity.Folder == null) {
+                    return null;
+                }
+                return new ContentFolderWrapper(Entity.Folder);
+            }
+            set {
+                if (value == null) {
+                    Entity.Folder = null;
+                } else {
+                    Entity.Folder = value.Entity;
+                }
             }
         }
 
-        // ClipboardFolderのObjectId
-        public ObjectId CollectionId {
-            get {
-                return ContentItemInstance.CollectionId;
-            }
-            set {
-                ContentItemInstance.CollectionId = value;
-            }
-        }
         // 生成日時
         public DateTime CreatedAt {
             get {
-                return ContentItemInstance.CreatedAt;
+                return Entity.CreatedAt;
             }
             set {
-                ContentItemInstance.CreatedAt = value;
+                Entity.CreatedAt = value;
             }
         }
         // 更新日時
         public DateTime UpdatedAt {
             get {
-                return ContentItemInstance.UpdatedAt;
+                return Entity.UpdatedAt;
             }
             set {
-                ContentItemInstance.UpdatedAt = value;
+                Entity.UpdatedAt = value;
             }
         }
         // ベクトル化日時
         public DateTime VectorizedAt {
             get {
-                return ContentItemInstance.VectorizedAt;
+                return Entity.VectorizedAt;
             }
             set {
-                ContentItemInstance.VectorizedAt = value;
+                Entity.VectorizedAt = value;
             }
         }
         // クリップボードの内容
         public string Content {
             get {
-                return ContentItemInstance.Content;
+                return Entity.Content;
             }
             set {
-                ContentItemInstance.Content = value;
+                Entity.Content = value;
             }
         }
         //説明
         public string Description {
             get {
-                return ContentItemInstance.Description;
+                return Entity.Description;
             }
             set {
-                ContentItemInstance.Description = value;
+                Entity.Description = value;
             }
         }
 
         // クリップボードの内容の種類
         public ContentTypes.ContentItemTypes ContentType {
             get {
-                return ContentItemInstance.ContentType;
+                return Entity.ContentType;
             }
             set {
-                ContentItemInstance.ContentType = value;
+                Entity.ContentType = value;
             }
         }
 
@@ -107,189 +104,186 @@ namespace PythonAILib.Model.Content {
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatMessage> ChatItems {
             get {
-                return ContentItemInstance.ChatItems;
+                return Entity.ChatItems;
             }
             set {
-                ContentItemInstance.ChatItems = value;
+                Entity.ChatItems = value;
             }
         }
 
         // プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult {
             get {
-                return ContentItemInstance.PromptChatResult;
+                return Entity.PromptChatResult;
             }
             set {
-                ContentItemInstance.PromptChatResult = value;
+                Entity.PromptChatResult = value;
             }
         }
 
         //Tags
         public HashSet<string> Tags {
             get {
-                return ContentItemInstance.Tags;
+                return [.. Entity.Tags.Select(tag => tag.Tag)];
             }
             set {
-                ContentItemInstance.Tags = value;
-            }
-        }
-
-        // 画像ファイルチェッカー
-        public ScreenShotCheckItem ScreenShotCheckItem {
-            get {
-                return ContentItemInstance.ScreenShotCheckItem;
-            }
-            set {
-                ContentItemInstance.ScreenShotCheckItem = value;
+                Entity.Tags = [.. value.Select(tag => new TagItemEntity() { Tag = tag })];
             }
         }
 
         //　貼り付け元のアプリケーション名
         public string SourceApplicationName {
             get {
-                return ContentItemInstance.SourceApplicationName;
+                return Entity.SourceApplicationName;
             }
             set {
-                ContentItemInstance.SourceApplicationName = value;
+                Entity.SourceApplicationName = value;
             }
         }
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle {
             get {
-                return ContentItemInstance.SourceApplicationTitle;
+                return Entity.SourceApplicationTitle;
             }
             set {
-                ContentItemInstance.SourceApplicationTitle = value;
+                Entity.SourceApplicationTitle = value;
             }
         }
         //　貼り付け元のアプリケーションのID
         public int? SourceApplicationID {
             get {
-                return ContentItemInstance.SourceApplicationID;
+                return Entity.SourceApplicationID;
             }
             set {
-                ContentItemInstance.SourceApplicationID = value;
+                Entity.SourceApplicationID = value;
             }
         }
         //　貼り付け元のアプリケーションのパス
         public string? SourceApplicationPath {
             get {
-                return ContentItemInstance.SourceApplicationPath;
+                return Entity.SourceApplicationPath;
             }
             set {
-                ContentItemInstance.SourceApplicationPath = value;
+                Entity.SourceApplicationPath = value;
             }
         }
         // ピン留め
         public bool IsPinned {
             get {
-                return ContentItemInstance.IsPinned;
+                return Entity.IsPinned;
             }
             set {
-                ContentItemInstance.IsPinned = value;
+                Entity.IsPinned = value;
             }
         }
 
         // 文書の信頼度(0-100)
         public int DocumentReliability {
             get {
-                return ContentItemInstance.DocumentReliability;
+                return Entity.DocumentReliability;
             }
             set {
-                ContentItemInstance.DocumentReliability = value;
+                Entity.DocumentReliability = value;
             }
         }
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason {
             get {
-                return ContentItemInstance.DocumentReliabilityReason;
+                return Entity.DocumentReliabilityReason;
             }
             set {
-                ContentItemInstance.DocumentReliabilityReason = value;
+                Entity.DocumentReliabilityReason = value;
             }
         }
 
         // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
         public bool IsReferenceVectorDBItemsSynced {
             get {
-                return ContentItemInstance.IsReferenceVectorDBItemsSynced;
+                return Entity.IsReferenceVectorDBItemsSynced;
             }
             set {
-                ContentItemInstance.IsReferenceVectorDBItemsSynced = value;
+                Entity.IsReferenceVectorDBItemsSynced = value;
             }
         }
-        // SourceType
-        public string SourceType {
-            get {
-                return ContentItemInstance.SourceType;
-            }
-            set {
-                ContentItemInstance.SourceType = value;
-            }
-        }
-
         // SourcePath
         public string SourcePath {
             get {
-                return ContentItemInstance.SourcePath;
+                Entity.ExtendedProperties.TryGetValue("SourcePath", out object? value);
+                return value?.ToString() ?? "";
             }
             set {
-                ContentItemInstance.SourcePath = value;
+                Entity.ExtendedProperties["SourcePath"] = value;
             }
         }
+
+        // SourceType 
+        public string SourceType {
+            get {
+                Entity.ExtendedProperties.TryGetValue("SourceType", out object? value);
+                string? sourceTypeString = value?.ToString();
+                if (!string.IsNullOrEmpty(sourceTypeString)) {
+                    return sourceTypeString;
+                } else {
+                    return ContentSourceType.Application;
+                }
+            }
+            set {
+                Entity.ExtendedProperties["SourceType"] = value.ToString();
+            }
+        }
+        // ファイルの最終更新日時
+        [BsonIgnore]
+        public long LastModified {
+            get {
+                Entity.ExtendedProperties.TryGetValue("LastModified", out object? value);
+                return value != null ? (long)value : 0;
+            }
+            set {
+                Entity.ExtendedProperties["LastModified"] = value;
+            }
+        }
+
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
         public string Base64Image {
             get {
-                if (ContentItemInstance.ContentType == ContentTypes.ContentItemTypes.Files) {
+                if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
                     (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
                     if (isImage) {
                         byte[] imageBytes = System.IO.File.ReadAllBytes(SourcePath);
                         return Convert.ToBase64String(imageBytes);
                     }
                 }
-                if (string.IsNullOrEmpty(ContentItemInstance.CachedBase64String) == false) {
-                    return ContentItemInstance.CachedBase64String;
+                if (string.IsNullOrEmpty(Entity.CachedBase64String) == false) {
+                    return Entity.CachedBase64String;
                 }
                 return "";
             }
             set {
-                ContentItemInstance.CachedBase64String = value;
+                Entity.CachedBase64String = value;
             }
         }
-        // ファイルパス
-
-        // ファイルの最終更新日時
-        public long LastModified {
-            get {
-                return ContentItemInstance.LastModified;
-            }
-            set {
-                ContentItemInstance.LastModified = value;
-            }
-        }
-
 
         // タグ表示用の文字列
         public string TagsString() {
-            return string.Join(",", ContentItemInstance.Tags);
+            return string.Join(",", Entity.Tags);
         }
 
 
         // 別フォルダに移動
-        public virtual void MoveToFolder(ContentFolderWrapper folder){
-            ContentItemInstance.CollectionId = folder.Id;
+        public virtual void MoveTo(ContentFolderWrapper folder) {
+            Folder = folder;
             Save();
         }
 
         // 別フォルダにコピー
         public virtual void CopyToFolder(ContentFolderWrapper folder) {
-            ContentItem newItem = ContentItemInstance.Copy();
-            newItem.CollectionId = folder.Id;
+            ContentItemWrapper newItem = Copy();
+            newItem.Folder = folder;
             newItem.Save();
         }
 
         public virtual ContentItemWrapper Copy() {
-            return new ContentItemWrapper(ContentItemInstance.Copy());
+            return new ContentItemWrapper(Entity.Copy());
         }
 
 
@@ -297,10 +291,10 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string BackgroundInfo {
             get {
-                return ContentItemInstance.PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
             }
             set {
-                ContentItemInstance.PromptChatResult.SetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+                Entity.PromptChatResult.SetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
             }
         }
 
@@ -308,32 +302,25 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string Summary {
             get {
-                return ContentItemInstance.PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
+                return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
             }
             set {
-                ContentItemInstance.PromptChatResult.SetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+                Entity.PromptChatResult.SetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
             }
         }
         // 文章の信頼度
         [BsonIgnore]
         public string InformationReliability {
             get {
-                return ContentItemInstance.PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+                return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             }
             set {
-                ContentItemInstance.PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
+                Entity.PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
             }
         }
         [BsonIgnore]
         public string HeaderText {
             get {
-                string Description = ContentItemInstance.Description;
-                string SourceApplicationName = ContentItemInstance.SourceApplicationName;
-                string SourceApplicationTitle = ContentItemInstance.SourceApplicationTitle;
-                string SourcePath = ContentItemInstance.SourcePath;
-                ContentTypes.ContentItemTypes ContentType = ContentItemInstance.ContentType;
-                int DocumentReliability = ContentItemInstance.DocumentReliability;
-                LiteDB.ObjectId CollectionId = ContentItemInstance.CollectionId;
 
                 string header1 = "";
 
@@ -364,10 +351,8 @@ namespace PythonAILib.Model.Content {
                 // 文書の信頼度
                 header1 += $"\n[{PythonAILibStringResources.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
                 // ★TODO フォルダーの説明を文章のカテゴリーの説明として追加
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                ContentFolder? folder = libManager.DataFactory.GetFolderCollection<ContentFolder>().FindById(CollectionId);
-                if (folder != null && !string.IsNullOrEmpty(folder.Description)) {
-                    header1 += $"[{PythonAILibStringResources.Instance.DocumentCategorySummary}]" + folder.Description + "\n";
+                if (Folder != null && !string.IsNullOrEmpty(Folder.Description)) {
+                    header1 += $"[{PythonAILibStringResources.Instance.DocumentCategorySummary}]" + Folder.Description + "\n";
                 }
 
                 // Tags
@@ -380,7 +365,7 @@ namespace PythonAILib.Model.Content {
             get {
                 // chatHistoryItemの内容をテキスト化
                 string chatHistoryText = "";
-                foreach (var item in ContentItemInstance.ChatItems) {
+                foreach (var item in Entity.ChatItems) {
                     chatHistoryText += $"--- {item.Role} ---\n";
                     chatHistoryText += item.ContentWithSources + "\n\n";
                 }
@@ -392,14 +377,14 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string UpdatedAtString {
             get {
-                return ContentItemInstance.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+                return Entity.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
         [BsonIgnore]
         public string CreatedAtString {
             get {
-                return ContentItemInstance.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+                return Entity.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
@@ -407,17 +392,17 @@ namespace PythonAILib.Model.Content {
         // ベクトル化日時の文字列
         public string VectorizedAtString {
             get {
-                if (ContentItemInstance.VectorizedAt <= ContentItem.InitialDateTime) {
+                if (Entity.VectorizedAt <= ContentItem.InitialDateTime) {
                     return "";
                 }
-                return ContentItemInstance.VectorizedAt.ToString("yyyy/MM/dd HH:mm:ss");
+                return Entity.VectorizedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
         [BsonIgnore]
         public string ContentTypeString {
             get {
-                ContentTypes.ContentItemTypes ContentType = ContentItemInstance.ContentType;
+                ContentTypes.ContentItemTypes ContentType = Entity.ContentType;
                 if (ContentType == ContentTypes.ContentItemTypes.Text) {
                     return "Text";
                 } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
@@ -447,7 +432,7 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string FolderName {
             get {
-                string FilePath = ContentItemInstance.SourcePath;
+                string FilePath = SourcePath;
                 return Path.GetDirectoryName(FilePath) ?? "";
             }
         }
@@ -455,7 +440,7 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string FileName {
             get {
-                string FilePath = ContentItemInstance.SourcePath;
+                string FilePath = SourcePath;
                 return Path.GetFileName(FilePath) ?? "";
             }
         }
@@ -492,8 +477,11 @@ namespace PythonAILib.Model.Content {
         public virtual void Load(Action beforeAction, Action afterAction) { }
 
         // Collectionに対応するClipboardFolderを取得
-        public virtual ContentFolderWrapper GetFolder() {
-            return new ContentFolderWrapper(ContentItemInstance.GetFolder<ContentFolder>());
+        public virtual ContentFolderWrapper? GetFolder() {
+            if (Entity.Folder == null) {
+                return null;
+            }
+            return new(Entity.Folder);
         }
 
 
@@ -502,13 +490,13 @@ namespace PythonAILib.Model.Content {
             if (string.IsNullOrEmpty(Base64Image)) {
                 return false;
             }
-            if ( ContentTypes.GetImageTypeFromBase64(Base64Image).Item1) {
+            if (ContentTypes.GetImageTypeFromBase64(Base64Image).Item1) {
                 return true;
             } else {
                 Base64Image = "";
             }
-            if (ContentItemInstance.ContentType == ContentTypes.ContentItemTypes.Files) {
-               ( bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+            if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
+                (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
                 return isImage;
             }
             return false;
@@ -522,22 +510,55 @@ namespace PythonAILib.Model.Content {
 
         public virtual void Delete() {
             ContentItemCommands.DeleteEmbeddings([this]);
-            ContentItemInstance.Delete();
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentItems.Remove(Entity);
+            db.SaveChanges();
         }
 
         public static void DeleteItems(List<ContentItemWrapper> items) {
             ContentItemCommands.DeleteEmbeddings(items);
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
-            foreach (ContentItemWrapper contentItem in items) {
-                collection.Delete(contentItem.Id);
-            }
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentItems.RemoveRange(items.Select(item => item.Entity));
+            db.SaveChanges();
+
         }
 
         public virtual void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
-            ContentItemInstance.Save(updateLastModifiedTime, applyAutoProcess);
+            if (updateLastModifiedTime) {
+                // 更新日時を設定
+                UpdatedAt = DateTime.Now;
+            }
+            if (applyAutoProcess) {
+                // 自動処理を適用
+
+            }
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentItems.Update(Entity);
+            db.SaveChanges();
         }
 
+        // ClipboardItemをJSON文字列に変換する
+        public static string ToJson(ContentItemWrapper item) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            return System.Text.Json.JsonSerializer.Serialize(item, options);
+        }
+
+
+        // JSON文字列をClipboardItemに変換する
+        public static ContentItemWrapper? FromJson(string json) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            ContentItemWrapper? item = System.Text.Json.JsonSerializer.Deserialize<ContentItemWrapper>(json, options);
+            return item;
+
+        }
 
     }
 }

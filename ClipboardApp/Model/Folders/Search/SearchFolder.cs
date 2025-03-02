@@ -1,5 +1,6 @@
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
+using LibPythonAI.Data;
 using LibUIPythonAI.Resource;
 using LiteDB;
 using PythonAILib.Common;
@@ -12,22 +13,22 @@ namespace ClipboardApp.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
 
         // コンストラクタ
-        public SearchFolder(ContentFolder folder) : base(folder) {
+        public SearchFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = true;
-            FolderType = FolderTypeEnum.Search;
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
         protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
 
-            FolderType = FolderTypeEnum.Search;
-            ParentId = parent?.Id ?? ObjectId.Empty;
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            Parent = parent;
             FolderName = folderName;
             IsAutoProcessEnabled = false;
 
         }
         // 親フォルダ
         public override SearchFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -52,12 +53,9 @@ namespace ClipboardApp.Model.Folders.Search {
 
         // 子フォルダ
         public override List<ContentFolderWrapper> GetChildren() {
-            var children = ContentFolderInstance.GetChildren<ContentFolder>();
-            List<ContentFolderWrapper> result = [];
-            foreach (var child in children) {
-                result.Add(new SearchFolder(child));
-            }
-            return result;
+            using PythonAILibDBContext db = new();
+            var children = db.ContentFolders.Where(x => x.Parent == Entity).Select(x => new ContentFolderWrapper(x)).ToList();
+            return children;
 
         }
 

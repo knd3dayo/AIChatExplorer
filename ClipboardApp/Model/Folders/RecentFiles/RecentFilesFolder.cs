@@ -1,6 +1,7 @@
 using System.IO;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Main;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.FileUtils;
 using PythonAILib.Common;
@@ -10,7 +11,7 @@ namespace ClipboardApp.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
 
         // コンストラクタ
-        public RecentFilesFolder(ContentFolder folder) : base(folder) {
+        public RecentFilesFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
             FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
@@ -33,7 +34,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         }
 
         public override RecentFilesFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -43,12 +44,9 @@ namespace ClipboardApp.Model.Folders.Browser {
         public override List<ContentItemWrapper> GetItems() {
             // SyncItems
             SyncItems();
-            var items = ContentFolderInstance.GetItems<ContentItem>();
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new EdgeBrowseHistoryItem(item));
-            }
-            return result;
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.Folder == this.Entity).Select(x => new ContentItemWrapper(x)).ToList();
+            return items;
         }
 
         // 子フォルダ
@@ -58,20 +56,20 @@ namespace ClipboardApp.Model.Folders.Browser {
 
         public void SyncItems() {
             // コレクション
-            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ContentItem>();
-            var items = collection.Find(x => x.CollectionId == Id);
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.Folder  == this.Entity).Select(x => new RecentFilesItem(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
-            Dictionary<string, ContentItem> itemPathdDict = [];
+            Dictionary<string, ContentItemWrapper> itemPathDict = [];
             foreach (var item in items) {
-                itemPathdDict[item.SourcePath] = item;
+                itemPathDict[item.SourcePath] = item;
             }
             // 最近使用したファイルのリストを取得
             // ファイルシステム上のファイルパス一覧
             HashSet<string> fileSystemFilePathSet = ExplorerUtil.GetRecentFilePaths().ToHashSet();
 
             // Items内のFilePathとContentItemのDictionary
-            Dictionary<string, ContentItem> itemFilePathIdDict = [];
+            Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
             foreach (var item in items) {
                 itemFilePathIdDict[item.SourcePath] = item;
             }
@@ -80,7 +78,7 @@ namespace ClipboardApp.Model.Folders.Browser {
             // Exceptで差集合を取得
             var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
             foreach (var deleteFilePath in deleteFilePaths) {
-                ContentItem contentItem = itemFilePathIdDict[deleteFilePath];
+                ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
                 contentItem.Delete();
             }
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
@@ -99,8 +97,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                     return;
                 }
 
-                ContentItem contentItem = new() {
-                    CollectionId = Id,
+                ContentItemWrapper contentItem = new(this.Entity) {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
@@ -120,9 +117,9 @@ namespace ClipboardApp.Model.Folders.Browser {
             var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathIdDict.Keys);
 
             // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
-            Dictionary<string, ContentItem> oldItemsDict = [];
+            Dictionary<string, ContentItemWrapper> oldItemsDict = [];
             Parallel.ForEach(updateFilePaths, parallelOptions, localFileSystemFilePath => {
-                ContentItem contentItem = itemFilePathIdDict[localFileSystemFilePath];
+                ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);

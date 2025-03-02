@@ -266,7 +266,7 @@ namespace ClipboardApp.ViewModel.Main {
             // チャット履歴用のItemの設定
             ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
-            ClipboardItem item = new(chatFolderViewModel.Folder.Id) {
+            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
                 // タイトルを日付 + 元のタイトルにする
                 Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat"
             };
@@ -280,7 +280,7 @@ namespace ClipboardApp.ViewModel.Main {
         // OpenImageChatWindow
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
-            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
+            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
             Commands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });

@@ -99,7 +99,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
-            AutoProcessRule rule = new();
+            AutoProcessRule rule = new(new LibPythonAI.Data.AutoProcessRuleEntity());
             EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModels, AutoProcessRuleUpdated);
         });
 

@@ -68,7 +68,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
 
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(Folder.Id);
+            ClipboardItem clipboardItem = new(Folder.Entity);
             ContentItemViewModel ItemViewModel = CreateItemViewModel(clipboardItem);
 
 
@@ -99,7 +99,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     ContentItemWrapper clipboardItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        clipboardItem.MoveToFolder(toFolder.Folder);
+                        clipboardItem.MoveTo(toFolder.Folder);
                     } else {
                         clipboardItem.CopyToFolder(toFolder.Folder);
                     }

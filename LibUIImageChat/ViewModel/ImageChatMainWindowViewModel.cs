@@ -27,6 +27,8 @@ namespace LibUIImageChat.ViewModel {
             OnPropertyChanged(nameof(ImageFiles));
             ChatRequest = new();
         }
+        public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
+
         // データ保存用のClipboardItem
         public ContentItemWrapper ClipboardItem { get; set; }
 
@@ -40,20 +42,20 @@ namespace LibUIImageChat.ViewModel {
         // プロンプトの入力テキスト
         public string InputText {
             get {
-                return ClipboardItem.ScreenShotCheckItem.InputText;
+                return ScreenShotCheckItem.InputText;
             }
             set {
-                ClipboardItem.ScreenShotCheckItem.InputText = value;
+                ScreenShotCheckItem.InputText = value;
                 OnPropertyChanged(nameof(InputText));
             }
         }
         // 結果のテキスト
         public string ResultText {
             get {
-                return ClipboardItem.ScreenShotCheckItem.ResultText;
+                return ScreenShotCheckItem.ResultText;
             }
             set {
-                ClipboardItem.ScreenShotCheckItem.ResultText = value;
+                ScreenShotCheckItem.ResultText = value;
                 OnPropertyChanged(nameof(ResultText));
             }
         }
@@ -68,13 +70,12 @@ namespace LibUIImageChat.ViewModel {
             }
         }
         // PromptText
-        private string _PromptText = "";
         public string PromptText {
             get {
-                return _PromptText;
+                return ScreenShotCheckItem.PromptText;
             }
             set {
-                _PromptText = value;
+                ScreenShotCheckItem.PromptText = value;
                 OnPropertyChanged(nameof(PromptText));
             }
         }
@@ -84,13 +85,13 @@ namespace LibUIImageChat.ViewModel {
         public ObservableCollection<ScreenShotImageViewModel> ImageFiles {
             get {
                 ObservableCollection<ScreenShotImageViewModel> result = new();
-                foreach (ScreenShotImage image in ClipboardItem.ScreenShotCheckItem.ScreenShotImages) {
+                foreach (ScreenShotImage image in ScreenShotCheckItem.ScreenShotImages) {
                     result.Add(new(this, image));
                 }
                 return result;
             }
             set {
-                ClipboardItem.ScreenShotCheckItem.ScreenShotImages = new(value.Select(image => image.ScreenShotImage));
+                ScreenShotCheckItem.ScreenShotImages = new(value.Select(image => image.ScreenShotImage));
                 OnPropertyChanged(nameof(ImageFiles));
             }
         }
@@ -101,9 +102,9 @@ namespace LibUIImageChat.ViewModel {
         // ScreenShotCheckPromptWindowを開くコマンド
         public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
-            ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow(ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions, (Conditions) => {
+            ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow(ScreenShotCheckItem.ScreenShotCheckIConditions, (Conditions) => {
                 // ContentItem.ScreenShotCheckItem.ScreenShotCheckIConditionsにConditionsをコピー
-                ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
+                ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
 
                 // ScreenShotCheckItemsを文字列に変換
                 string result = StringResources.ConfirmTheFollowingSentencesAreCorrectOrNot;
@@ -199,7 +200,7 @@ namespace LibUIImageChat.ViewModel {
                         ImagePath = filePath
                     };
                     // 画像ファイル名一覧に画像ファイル名を追加
-                    ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Add(image);
+                    ScreenShotCheckItem.ScreenShotImages.Add(image);
                 }
                 OnPropertyChanged(nameof(ImageFiles));
             }
@@ -230,7 +231,7 @@ namespace LibUIImageChat.ViewModel {
 
         // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
         public SimpleDelegateCommand<ScreenShotImageViewModel> RemoveSelectedImageFileCommand => new((image) => {
-            ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Remove(image.ScreenShotImage);
+            ScreenShotCheckItem.ScreenShotImages.Remove(image.ScreenShotImage);
             OnPropertyChanged(nameof(ImageFiles));
         });
 

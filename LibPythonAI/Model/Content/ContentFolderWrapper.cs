@@ -1,4 +1,6 @@
+using LibPythonAI.Data;
 using LibPythonAI.Utils.Common;
+using LiteDB;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
@@ -8,114 +10,124 @@ using PythonAILib.Resources;
 namespace PythonAILib.Model.Content {
     public class ContentFolderWrapper {
 
-        public ContentFolderWrapper(ContentFolder contentFolder) {
-            ContentFolderInstance = contentFolder;
+        public ContentFolderWrapper(ContentFolderEntity contentFolder) {
+            Entity = contentFolder;
         }
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
-            ContentFolderInstance = new ContentFolder() {
-                ParentId = parent?.Id ?? LiteDB.ObjectId.Empty,
+            Entity = new ContentFolderEntity() {
+                Parent = parent?.Parent?.Entity,
                 FolderName = folderName,
             };
         }
 
-        protected ContentFolder ContentFolderInstance { get; set; }
+        public ContentFolderEntity Entity { get; set; }
 
-        public LiteDB.ObjectId Id {
+        // Parent
+        public ContentFolderWrapper? Parent {
             get {
-                return ContentFolderInstance.Id;
+                var parent = Entity.Parent;
+                if (parent == null) {
+                    return null;
+                }
+                return new ContentFolderWrapper(parent);
             }
             set {
-                ContentFolderInstance.Id = value;
+                Entity.Parent = value?.Entity;
             }
         }
-        // フォルダの種類
-        public FolderTypeEnum FolderType {
-            get {
-                return ContentFolderInstance.FolderType;
-            }
-            set {
-                ContentFolderInstance.FolderType = value;
-            }
-        }
+
         // フォルダの種類の文字列
         public string FolderTypeString {
             get {
-                return ContentFolderInstance.FolderTypeString;
+                return Entity.FolderTypeString;
             }
             set {
-                ContentFolderInstance.FolderTypeString = value;
+                Entity.FolderTypeString = value;
+            }
+        }
+        public bool IsAutoProcessEnabled { get; set; } = true;
+
+        // アプリケーション内でのフォルダのパス
+        [BsonIgnore]
+        public virtual string ContentFolderPath {
+            get {
+                // 親フォルダを取得
+                var parentFolder = GetParent();
+                if (parentFolder == null) {
+                    return FolderName;
+                }
+                return $"{parentFolder.ContentFolderPath}/{FolderName}";
+            }
+        }
+        // OS上のフォルダのパス
+        [BsonIgnore]
+        public virtual string ContentOutputFolderPath {
+            get {
+                string osFolderName;
+                // 親フォルダを取得
+                var parentFolder = GetParent();
+                if (parentFolder == null) {
+                    osFolderName = Entity.ContentOutputFolderPrefix;
+                } else {
+                    // FolderNameに:、\、/が含まれている場合は文字を削除
+                    string modifiedFolderName = FolderName;
+                    if (FolderName.Contains(':') || FolderName.Contains('\\') || FolderName.Contains('/')) {
+                        modifiedFolderName = FolderName.Replace(":", "").Replace("\\", "").Replace("/", "");
+                    }
+
+                    osFolderName = $"{parentFolder.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{modifiedFolderName}";
+                }
+                return osFolderName;
             }
         }
 
-        // プロパティ
-        // 親フォルダのID
-        public LiteDB.ObjectId ParentId {
-            get {
-                return ContentFolderInstance.ParentId;
-            }
-            set {
-                ContentFolderInstance.ParentId = value;
-            }
-        }
-        // アプリケーション上のフォルダのパス
-        public virtual string ContentFolderPath {
-            get {
-                return ContentFolderInstance.ContentFolderPath;
-            }
-        }
         // ルートフォルダか否か
         public bool IsRootFolder {
             get {
-                return ContentFolderInstance.IsRootFolder;
+                return Entity.IsRootFolder;
             }
             set {
-                ContentFolderInstance.IsRootFolder = value;
-            }
-        }
-
-        // ContentOutputFolderPath
-        public virtual string ContentOutputFolderPath {
-            get {
-                return ContentFolderInstance.ContentOutputFolderPath;
+                Entity.IsRootFolder = value;
             }
         }
 
         public List<VectorDBProperty> ReferenceVectorSearchProperties {
             get {
-                return ContentFolderInstance.ReferenceVectorSearchProperties;
-            }
-            set {
-                ContentFolderInstance.ReferenceVectorSearchProperties = value;
-            }
-        }
+                List<VectorDBProperty> result = [];
+                var items = Entity.VectorDBProperties;
+                foreach (var item in items) {
+                    result.Add(new VectorDBProperty(item));
+                }
 
-        // AutoProcessを有効にするかどうか
-        public bool IsAutoProcessEnabled {
-            get {
-                return ContentFolderInstance.IsAutoProcessEnabled;
+                return result;
             }
             set {
-                ContentFolderInstance.IsAutoProcessEnabled = value;
+                List<VectorDBPropertyEntity> result = [];
+
+                foreach (var item in value) {
+                    result.Add(item.Entity);
+                }
+                Entity.VectorDBProperties = result;
             }
         }
 
         //　フォルダ名
         public virtual string FolderName {
             get {
-                return ContentFolderInstance.FolderName;
+                return Entity.FolderName;
             }
             set {
-                ContentFolderInstance.FolderName = value;
+                Entity.FolderName = value;
             }
         }
         // Description
         public virtual string Description {
             get {
-                return ContentFolderInstance.Description;
+                return Entity.Description;
             }
             set {
-                ContentFolderInstance.Description = value;
+                Entity.Description = value;
             }
         }
 
@@ -125,14 +137,14 @@ namespace PythonAILib.Model.Content {
 
         public string FileSystemFolderPath {
             get {
-                if (ContentFolderInstance.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
+                if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
                     return (string)path;
                 } else {
                     return "";
                 }
             }
             set {
-                ContentFolderInstance.ExtendedProperties[FileSystemFolderPathName] = value;
+                Entity.ExtendedProperties[FileSystemFolderPathName] = value;
             }
         }
 
@@ -142,23 +154,30 @@ namespace PythonAILib.Model.Content {
         public virtual void Delete() {
             // ベクトルを全削除
             GetMainVectorSearchProperty().DeleteVectorDBCollection();
-            ContentFolderInstance.Delete();
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentFolders.Remove(Entity);
+            db.SaveChanges();
+
         }
 
 
         public virtual List<ContentItemWrapper> GetItems() {
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            IEnumerable<ContentItemEntity> items = db.ContentItems.Where(x => x.FolderId == Entity.Id);
+
             return items.Select(x => new ContentItemWrapper(x)).ToList();
         }
 
         public virtual List<ContentFolderWrapper> GetChildren() {
-            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            var children = db.ContentFolders.Where(x => x.ParentId == Entity.Id);
             return children.Select(x => new ContentFolderWrapper(x)).ToList();
         }
 
         // 親フォルダ
         public virtual ContentFolderWrapper? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            var parentFolder = db.ContentFolders.Find(Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -168,9 +187,16 @@ namespace PythonAILib.Model.Content {
         // フォルダを移動する
         public void MoveTo(ContentFolderWrapper toFolder) {
             // 自分自身を移動
-            ParentId = toFolder.Id;
+            if (toFolder.Entity.Id == Entity.Id) {
+                return;
+            }
+            if (Parent == null) {
+                return;
+            }
+            Entity.Parent = toFolder.Entity.Parent;
             Save();
         }
+
         // 名前を変更
         public void Rename(string newName) {
             FolderName = newName;
@@ -180,12 +206,22 @@ namespace PythonAILib.Model.Content {
         // 保存
         public void Save() {
             // ベクトルDBのコレクションを更新
-            GetMainVectorSearchProperty().UpdateVectorDBCollection(ContentFolderInstance.Description);
-            ContentFolderInstance.Save();
+            GetMainVectorSearchProperty().UpdateVectorDBCollection(Entity.Description);
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentFolders.Update(Entity);
+            db.SaveChanges();
         }
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {
-            return new ContentFolderWrapper(ContentFolderInstance.CreateChild(folderName));
+            ContentFolderEntity childFolder = new() {
+                Parent = Entity,
+                FolderName = folderName,
+            };
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            db.ContentFolders.Add(childFolder);
+            db.SaveChanges();
+
+            return new ContentFolderWrapper(childFolder);
         }
 
         // ステータス用の文字列
@@ -193,26 +229,11 @@ namespace PythonAILib.Model.Content {
             return "";
         }
 
-        public VectorDBProperty GetMainVectorSearchProperty() {
-
-            VectorDBProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB(), ContentFolderInstance.Id);
-            return searchProperty;
-        }
-
-        public List<VectorDBProperty> GetVectorSearchProperties() {
-            List<VectorDBProperty> searchProperties =
-            [
-                GetMainVectorSearchProperty(),
-                // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
-                .. ContentFolderInstance.ReferenceVectorSearchProperties,
-            ];
-            return searchProperties;
-        }
 
         #region 検索
         // ClipboardItemを検索する。
         public IEnumerable<ContentItemWrapper> SearchItems(SearchCondition searchCondition) {
-            // 結果を格納するIEnumerable<ContentItemInstance>を作成
+            // 結果を格納するIEnumerable<Entity>を作成
             IEnumerable<ContentItemWrapper> result = [];
             // 検索条件が空の場合は、結果を返す
             if (searchCondition.IsEmpty()) {
@@ -238,8 +259,7 @@ namespace PythonAILib.Model.Content {
         }
 
         public virtual void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
-            // CollectionNameを設定
-            item.CollectionId = Id;
+
             if (applyGlobalAutoAction) {
                 Task.Run(() => {
                     // Apply automatic processing
@@ -317,21 +337,39 @@ namespace PythonAILib.Model.Content {
 
         #endregion
 
+
+        public VectorDBProperty GetMainVectorSearchProperty() {
+
+            VectorDBProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB(), this);
+            return searchProperty;
+        }
+
+        public List<VectorDBProperty> GetVectorSearchProperties() {
+            List<VectorDBProperty> searchProperties =
+            [
+                GetMainVectorSearchProperty(),
+                // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
+                .. ReferenceVectorSearchProperties,
+            ];
+            return searchProperties;
+        }
         // Equals
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {
                 return false;
             }
             ContentFolderWrapper other = (ContentFolderWrapper)obj;
-            return Id == other.Id;
+            return Entity.Id == other.Entity.Id;
         }
         public override int GetHashCode() {
-            return Id.GetHashCode();
+            return Entity.Id.GetHashCode();
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static ContentFolderWrapper? GetFolderById(LiteDB.ObjectId id) {
-            var folder = ContentFolder.GetFolderById<ContentFolder>(id);
+        public static ContentFolderWrapper? GetFolderById(string id) {
+
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            var folder = db.ContentFolders.Find(new ObjectId(id));
             if (folder == null) {
                 return null;
             }

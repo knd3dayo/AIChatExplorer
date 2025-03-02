@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Data;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -11,21 +12,24 @@ using PythonAILib.Resources;
 namespace PythonAILib.Model.VectorDB {
     public class VectorDBProperty {
 
-        public VectorDBProperty() { }
+        public VectorDBPropertyEntity Entity { get; set; }
+        public VectorDBProperty(VectorDBPropertyEntity entity) {
+            Entity = entity;
+        }
 
-        public VectorDBProperty(VectorDBItem vectorDBItem, LiteDB.ObjectId? folderId ) {
-            VectorDBItemId = vectorDBItem.Id;
-            FolderId = folderId ?? LiteDB.ObjectId.Empty;
+        public VectorDBProperty(VectorDBItem vectorDBItem, ContentFolderWrapper folder ) {
+            VectorDBItem = vectorDBItem;
+            Folder = folder;
             TopK = vectorDBItem.DefaultSearchResultLimit;
         }
 
-        public LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.NewObjectId();
+        public VectorDBItem? VectorDBItem  { get; set; }
 
         //TopK
         public int TopK { get; set; }
 
         // FolderId
-        public LiteDB.ObjectId FolderId { get; private set; } = LiteDB.ObjectId.Empty;
+        public ContentFolderWrapper? Folder { get; private set; }
 
         // ContentType
         public string ContentType { get; set; } = string.Empty;
@@ -41,8 +45,8 @@ namespace PythonAILib.Model.VectorDB {
             // filter 
             Dictionary<string, object> filter = new();
             // folder_idが指定されている場合
-            if (FolderId != LiteDB.ObjectId.Empty) {
-                filter["folder_id"] = FolderId.ToString();
+            if (Folder != null) {
+                filter["folder_id"] = Folder.Entity.Id.ToString();
             }
             // content_typeが指定されている場合
             if (ContentType != string.Empty) {
@@ -57,7 +61,7 @@ namespace PythonAILib.Model.VectorDB {
         }
         // VectorDBItem
         public VectorDBItem? GetVectorDBItem() {
-            return VectorDBItem.GetItemById(VectorDBItemId);
+            return VectorDBItem;
         }
 
         [LiteDB.BsonIgnore]
@@ -70,17 +74,11 @@ namespace PythonAILib.Model.VectorDB {
                 if (string.IsNullOrEmpty(item.CollectionName)) {
                     return item.Name;
                 }
-                if (FolderId == LiteDB.ObjectId.Empty) {
-                    return item.Name;
-                }
-                // ContentFolderを取得
-                var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                ContentFolder? folder = collection.FindById(FolderId);
-                if (folder == null) {
+                if (Folder == null) {
                     return item.Name;
                 }
 
-                return $"{item.Name}:{folder.ContentFolderPath}";
+                return $"{item.Name}:{Folder.ContentFolderPath}";
             }
         }
 
@@ -92,7 +90,7 @@ namespace PythonAILib.Model.VectorDB {
                 return "";
             }
 
-            string description = PythonExecutor.PythonAIFunctions.GetVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString());
+            string description = PythonExecutor.PythonAIFunctions.GetVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, Folder.Entity.Id.ToString());
             if (string.IsNullOrEmpty(description)) {
                 return item.Description;
             }
@@ -105,7 +103,7 @@ namespace PythonAILib.Model.VectorDB {
             if (item == null) {
                 return;
             }
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString(), description);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, Folder.Entity.Id.ToString(), description);
         }
 
         public string ToJson() {
@@ -118,10 +116,10 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         public Dictionary<string, object> ToDict() {
-            Dictionary<string, object> dict = VectorDBItem.GetItemById(VectorDBItemId)?.ToDict() ?? [];
+            Dictionary<string, object> dict = VectorDBItem?.ToDict() ?? [];
             // FolderId
-            if (FolderId != LiteDB.ObjectId.Empty) {
-                dict["folder_id"] = FolderId.ToString();
+            if (Folder != null) {
+                dict["folder_id"] = Folder.Entity.Id.ToString();
             }
             var search_kwargs = GetSearchKWArgs();
             if (search_kwargs.Count > 0) {
@@ -219,10 +217,14 @@ namespace PythonAILib.Model.VectorDB {
                 return false;
             }
             VectorDBProperty other = (VectorDBProperty)obj;
-            return VectorDBItemId == other.VectorDBItemId && FolderId == other.FolderId;
+            return VectorDBItem == other.VectorDBItem && Folder == other.Folder;
         }
         public override int GetHashCode() {
-            return VectorDBItemId.GetHashCode() ^ FolderId.GetHashCode();
+            if (VectorDBItem == null || Folder == null) {
+                return 0;
+            }
+
+            return VectorDBItem.GetHashCode() ^ Folder.GetHashCode();
         }
     }
 }

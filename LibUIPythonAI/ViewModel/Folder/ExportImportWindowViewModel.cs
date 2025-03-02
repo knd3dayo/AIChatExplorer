@@ -118,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
             // SelectedFileNameが空の場合はデフォルトのファイル名を設定
             if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.Folder.Id.ToString() + ".xlsx";
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.Folder.Entity.Id.ToString() + ".xlsx";
                 OnPropertyChanged(nameof(SelectedFileName));
             }
 

@@ -124,7 +124,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
             IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
-            PromptItem item = new();
+            PromptItem item = new(new LibPythonAI.Data.PromptItemEntity());
 
             PromptItemViewModel itemViewModel = new(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {

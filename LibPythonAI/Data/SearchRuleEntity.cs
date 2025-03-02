@@ -3,12 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 
 namespace LibPythonAI.Data {
-
-
 
     public class SearchRuleEntity {
 
@@ -43,8 +40,16 @@ namespace LibPythonAI.Data {
         [Column("TARGET_FOLDER_ID")]
         public string? TargetFolderId { get; set; }
 
-        public ContentFolderEntity? TargetFolder { get; set; } 
+        public ContentFolderEntity? TargetFolder { get; set; }
 
+        public SearchRuleEntity Copy() {
+            SearchRuleEntity clipboardItem = new();
+            clipboardItem.Name = Name;
+            clipboardItem.SearchCondition = SearchCondition;
+            clipboardItem.SearchFolderId = SearchFolderId;
+            clipboardItem.TargetFolderId = TargetFolderId;
+            return clipboardItem;
+        }
 
     }
 }

@@ -3,8 +3,8 @@ using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
-    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ChatViewModelBase {
-        public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
+    public class AutoProcessItemViewModel(AutoProcessItem autoProcessItem) : ChatViewModelBase {
+        public AutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
         public string Name {
             get {

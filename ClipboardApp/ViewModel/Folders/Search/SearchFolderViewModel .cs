@@ -28,7 +28,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
             // 検索フォルダの親フォルダにこのフォルダを追加
 
             SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
-            SearchRule? searchConditionRule = new() {
+            SearchRule? searchConditionRule = new( new LibPythonAI.Data.SearchRuleEntity()) {
                 SearchFolder = clipboardFolder
             };
 
@@ -49,7 +49,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
             }
 
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(Folder);
-            searchConditionRule ??= new() {
+            searchConditionRule ??= new(new LibPythonAI.Data.SearchRuleEntity()) {
                 SearchFolder = Folder
             };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder,  afterUpdate);

@@ -1,5 +1,7 @@
 using System.IO;
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Main;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using LiteDB;
@@ -15,9 +17,9 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
 
         // コンストラクタ
-        public FileSystemFolder(ContentFolder folder) : base(folder) {
+        public FileSystemFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderType = FolderTypeEnum.FileSystem;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
         }
 
         protected FileSystemFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
@@ -28,7 +30,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderType = FolderTypeEnum.FileSystem;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -38,7 +40,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         }
 
         public override FileSystemFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -48,7 +50,8 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         public override List<ContentItemWrapper> GetItems() {
             // SyncItems
             SyncItems();
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.Folder == Entity);
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new FileSystemItem(item));
@@ -60,7 +63,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         public override List<ContentFolderWrapper> GetChildren() {
             // SyncFolders
             SyncFolders();
-            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            var children = Entity.Children;
             List<ContentFolderWrapper> result = [];
             foreach (var child in children) {
                 result.Add(new FileSystemFolder(child));
@@ -95,16 +98,16 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         }
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
-        protected virtual Dictionary<string, ContentFolder> GetFolderPathIdDict() {
+        protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // コレクション
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).Select(x => new FileSystemFolder(x)).ToList();
+            using PythonAILibDBContext context = new();
+            var folders = context.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new FileSystemFolder(x)).ToList();
 
-            Dictionary<string, ContentFolder> folderPathIdDict = [];
+            Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
                 // folder.FileSystemFolderPathが存在する場合
                 if (!string.IsNullOrEmpty(folder.FileSystemFolderPath)) {
-                    folderPathIdDict[folder.FileSystemFolderPath] = folder.ContentFolderInstance;
+                    folderPathIdDict[folder.FileSystemFolderPath] = folder;
                 }
             }
             return folderPathIdDict;
@@ -113,7 +116,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         public virtual void SyncFolders() {
 
             // Folders内のFileSystemFolderPathとIDのDictionary
-            Dictionary<string, ContentFolder> folderPathIdDict = GetFolderPathIdDict();
+            Dictionary<string, ContentFolderWrapper> folderPathIdDict = GetFolderPathIdDict();
             // ファイルシステム上のフォルダのフルパス一覧のHashSet
             HashSet<string> fileSystemFolderPaths = GetFileSystemFolderPaths();
 
@@ -121,7 +124,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             // Exceptで差集合を取得
             var deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths);
             foreach (var deleteFolderPath in deleteFolderPaths) {
-                ContentFolder contentFolder = folderPathIdDict[deleteFolderPath];
+                ContentFolderWrapper contentFolder = folderPathIdDict[deleteFolderPath];
                 contentFolder.Delete();
             }
             // folders内に、FileSystemFolderPathがない場合は追加
@@ -164,11 +167,11 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             }
 
             // コレクション
-            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ContentItem>();
-            var items = collection.Find(x => x.CollectionId == Id);
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.Folder == Entity).Select(x => new FileSystemItem(x)).ToList();
 
             // Items内のFilePathとContentItemのDictionary
-            Dictionary<string, ContentItem> itemFilePathIdDict = [];
+            Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
             foreach (var item in items) {
                 itemFilePathIdDict[item.SourcePath] = item;
             }
@@ -177,7 +180,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             // Exceptで差集合を取得
             var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
             foreach (var deleteFilePath in deleteFilePaths) {
-                ContentItem contentItem = itemFilePathIdDict[deleteFilePath];
+                ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
                 contentItem.Delete();
             }
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
@@ -191,8 +194,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
             Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {
 
-                ContentItem contentItem = new() {
-                    CollectionId = Id,
+                ContentItemWrapper contentItem = new(this.Entity) {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
@@ -212,9 +214,9 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathIdDict.Keys);
 
             // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
-            Dictionary<string, ContentItem> oldItemsDict = [];
+            Dictionary<string, ContentItemWrapper> oldItemsDict = [];
             Parallel.ForEach(updateFilePaths, parallelOptions, localFileSystemFilePath => {
-                ContentItem contentItem = itemFilePathIdDict[localFileSystemFilePath];
+                ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);

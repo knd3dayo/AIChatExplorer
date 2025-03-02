@@ -1,4 +1,5 @@
 using ClipboardApp.Model.Folders.FileSystem;
+using LibPythonAI.Data;
 using PythonAILib.Model.Content;
 
 namespace ClipboardApp.Model.Folders.Outlook {
@@ -8,29 +9,29 @@ namespace ClipboardApp.Model.Folders.Outlook {
         public const string EntryIDName = "EntryID";
 
         // コンストラクタ
-        public OutlookItem(ContentItem item) : base(item) { }
+        public OutlookItem(ContentItemEntity item) : base(item) { }
 
-        public OutlookItem(LiteDB.ObjectId folderObjectId) : base(folderObjectId) { }
+        public OutlookItem(ContentFolderEntity folder) : base(folder) { }
 
 
-        public OutlookItem(LiteDB.ObjectId collectionId, string entryID) : base(collectionId) {
+        public OutlookItem(ContentFolderEntity folder, string entryID) : base(folder) {
             EntryID = entryID;
         }
 
         public override FileSystemItem Copy() {
-            return new(ContentItemInstance.Copy());
+            return new(Entity.Copy());
         }
 
         public string EntryID {
             get {
-                if (ContentItemInstance.ExtendedProperties.TryGetValue(EntryIDName, out var path)) {
+                if (Entity.ExtendedProperties.TryGetValue(EntryIDName, out var path)) {
                     return (string)path;
                 } else {
                     return "";
                 }
             }
             set {
-                ContentItemInstance.ExtendedProperties[EntryIDName] = value;
+                Entity.ExtendedProperties[EntryIDName] = value;
             }
         }
 

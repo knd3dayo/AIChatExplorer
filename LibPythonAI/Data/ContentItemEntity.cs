@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 
 namespace LibPythonAI.Data {
@@ -21,7 +22,11 @@ namespace LibPythonAI.Data {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         // CollectionId
-        public int CollectionId { get; set; } = -1;
+        [Column("FOLDER_ID")]
+        public string? FolderId { get; set; }
+
+        // Collection
+        public ContentFolderEntity? Folder { get; set; }
 
         // 生成日時
         public DateTime CreatedAt { get; set; }
@@ -36,7 +41,7 @@ namespace LibPythonAI.Data {
 
         // クリップボードの内容の種類
 
-        public string ContentTypeString { get; set; } = "";
+        public ContentTypes.ContentItemTypes ContentType { get; set; }
 
         // ChatMessagesJson
         public string ChatMessagesJson { get; set; } = "[]";
@@ -67,7 +72,7 @@ namespace LibPythonAI.Data {
         }
 
         //Tags
-        public List<TagItemEntity> Tags { get; set; } = [];
+        public HashSet<TagItemEntity> Tags { get; set; } = [];
 
         //　貼り付け元のアプリケーション名
         public string SourceApplicationName { get; set; } = "";
@@ -89,6 +94,8 @@ namespace LibPythonAI.Data {
         // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
         public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
 
+        public string CachedBase64String { get; set; } = "";
+
         public string ExtendedPropertiesJson { get; set; } = "{}";
 
         // 拡張プロパティ (Dictionary<string, object> は EF でサポートされないため、Json で保存)
@@ -98,6 +105,34 @@ namespace LibPythonAI.Data {
                 Dictionary<string, object>? items = JsonSerializer.Deserialize<Dictionary<string, object>>(ExtendedPropertiesJson, jsonSerializerOptions);
                 return items ?? [];
             }
+        }
+
+
+
+        // Copy
+        public ContentItemEntity Copy() {
+            ContentItemEntity newItem = new() {
+                CreatedAt = CreatedAt,
+                UpdatedAt = UpdatedAt,
+                VectorizedAt = VectorizedAt,
+                Content = Content,
+                Description = Description,
+                ContentType = ContentType,
+                ChatItems = ChatItems,
+                PromptChatResult = PromptChatResult,
+                Tags = Tags,
+                SourceApplicationName = SourceApplicationName,
+                SourceApplicationTitle = SourceApplicationTitle,
+                SourceApplicationID = SourceApplicationID,
+                SourceApplicationPath = SourceApplicationPath,
+                IsPinned = IsPinned,
+                DocumentReliability = DocumentReliability,
+                DocumentReliabilityReason = DocumentReliabilityReason,
+                IsReferenceVectorDBItemsSynced = IsReferenceVectorDBItemsSynced,
+                CachedBase64String = CachedBase64String,
+                ExtendedPropertiesJson = ExtendedPropertiesJson
+            };
+            return newItem;
         }
 
 

@@ -5,6 +5,7 @@ using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Folders.ShortCut;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
 using PythonAILib.Common;
@@ -106,25 +107,20 @@ namespace ClipboardApp.Model.Main {
         public static ClipboardFolder RootFolder {
             get {
                 if (clipboardRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Normal,
+                            FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
-
                     clipboardRootFolder = new ClipboardFolder(folder);
+
                 }
                 return clipboardRootFolder;
             }
@@ -133,23 +129,18 @@ namespace ClipboardApp.Model.Main {
         public static SearchFolder SearchRootFolder {
             get {
                 if (searchRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Search,
+                            FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     searchRootFolder = new SearchFolder(folder);
                 }
                 return searchRootFolder;
@@ -160,23 +151,18 @@ namespace ClipboardApp.Model.Main {
         public static ClipboardFolder ChatRootFolder {
             get {
                 if (chatRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = CHAT_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.Chat,
+                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     chatRootFolder = new ClipboardFolder(folder);
                 }
                 return chatRootFolder;
@@ -187,23 +173,18 @@ namespace ClipboardApp.Model.Main {
         public static FileSystemFolder FileSystemRootFolder {
             get {
                 if (fileSystemRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            IsAutoProcessEnabled = true,
-                            FolderType = FolderTypeEnum.FileSystem,
+                            FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     fileSystemRootFolder = new FileSystemFolder(folder);
                 }
                 return fileSystemRootFolder;
@@ -214,24 +195,18 @@ namespace ClipboardApp.Model.Main {
         public static ShortCutFolder ShortcutRootFolder {
             get {
                 if (shortcutRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
-                            FolderType = FolderTypeEnum.ShortCut,
+                            FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
-                            // 自動処理を無効にする
-                            IsAutoProcessEnabled = false,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SHORTCUT_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にSearchRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     shortcutRootFolder = new ShortCutFolder(folder);
                 }
                 return shortcutRootFolder;
@@ -242,24 +217,18 @@ namespace ClipboardApp.Model.Main {
         public static OutlookFolder OutlookRootFolder {
             get {
                 if (outlookRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Outlook).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
-                            FolderType = FolderTypeEnum.Outlook,
+                            FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
-                            // 自動処理を無効にする
-                            IsAutoProcessEnabled = false,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にOutlookRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     outlookRootFolder = new OutlookFolder(folder);
                 }
                 return outlookRootFolder;
@@ -273,23 +242,18 @@ namespace ClipboardApp.Model.Main {
         public static EdgeBrowseHistoryFolder EdgeBrowseHistoryRootFolder {
             get {
                 if (edgeBrowseHistoryRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            // 自動処理を無効にする
-                            IsAutoProcessEnabled = false,
+                            FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にOutlookRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     edgeBrowseHistoryRootFolder = new EdgeBrowseHistoryFolder(folder);
                 }
                 return edgeBrowseHistoryRootFolder;
@@ -301,23 +265,18 @@ namespace ClipboardApp.Model.Main {
         public static RecentFilesFolder RecentFilesRootFolder {
             get {
                 if (recentFilesRootFolder == null) {
-                    var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                    ContentFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    using PythonAILibDBContext db = new();
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
                             FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
                             IsRootFolder = true,
-                            // 自動処理を無効にする
-                            IsAutoProcessEnabled = false,
+                            FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN)
                         };
-                        folder.Save();
+                        db.ContentFolders.Add(folder);
+                        db.SaveChanges();
                     }
-                    // 既にOutlookRootFolder作成済みの環境のための措置
-                    folder.IsRootFolder = true;
-                    folder.ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN);
-                    folder.FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN;
-                    folder.Save();
                     recentFilesRootFolder = new RecentFilesFolder(folder);
                 }
                 return recentFilesRootFolder;

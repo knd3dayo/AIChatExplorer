@@ -10,6 +10,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Data;
 
 namespace ClipboardApp.Model.Folders.Clipboard {
     public partial class ClipboardFolder : ContentFolderWrapper {
@@ -17,23 +18,16 @@ namespace ClipboardApp.Model.Folders.Clipboard {
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder(ContentFolder folder) : base(folder) {
-            IsAutoProcessEnabled = true;
+        public ClipboardFolder(ContentFolderEntity folder) : base(folder) {
             FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
-
-            ParentId = parent?.Id ?? LiteDB.ObjectId.Empty;
-            FolderName = folderName;
             FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
-
-            IsAutoProcessEnabled = true;
-
         }
 
         public override List<ContentItemWrapper> GetItems() {
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            var items = Entity.Children;
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new ClipboardItem(item));
@@ -42,7 +36,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override ClipboardFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -50,7 +44,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override List<ContentFolderWrapper> GetChildren() {
-            var children = ContentFolderInstance.GetChildren<ContentFolder>();
+            var children = Entity.Children;
             List<ContentFolderWrapper> result = [];
             foreach (var child in children) {
                 result.Add(new ClipboardFolder(child));
@@ -128,7 +122,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
 
             // If ContentType is Text, set text data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
-                ClipboardItem item = new(clipboardFolder.Id) {
+                ClipboardItem item = new(clipboardFolder.Entity) {
                     ContentType = contentTypes
                 };
                 SetApplicationInfo(item, e);
@@ -139,7 +133,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
 
             // If ContentType is BitmapImage, set image data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
-                ClipboardItem item = new(clipboardFolder.Id) {
+                ClipboardItem item = new(clipboardFolder.Entity) {
                     ContentType = contentTypes
                 };
                 SetApplicationInfo(item, e);
@@ -156,7 +150,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
 
                 // Get the cut/copied file/files.
                 for (int i = 0; i < files.Length; i++) {
-                    ClipboardItem item = new(clipboardFolder.Id) {
+                    ClipboardItem item = new(clipboardFolder.Entity) {
                         ContentType = contentTypes
                     };
                     SetApplicationInfo(item, e);

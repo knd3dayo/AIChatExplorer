@@ -22,6 +22,7 @@ using LibUIMergeChat.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Data;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : ChatViewModelBase {
@@ -262,11 +263,14 @@ namespace LibUIMergeChat.ViewModel {
                 }
                 // チャット結果をOutputFolderに保存
                 if (OutputFolder != null) {
-                    ContentItem contentItem = new() {
+                    ContentItemEntity contentItem = new() {
                         Content = result.Output,
+                    };
+                    ContentItemWrapper contentItemWrapper = new(contentItem) {
                         SourceType = ContentSourceType.Application
                     };
-                    ContentItemWrapper contentItemWrapper = new(contentItem);
+
+
                     OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {
                         UpdateIndeterminate(false);
                         LogWrapper.Info(StringResources.SavedChatResult);

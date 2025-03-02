@@ -15,6 +15,7 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Data;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {
@@ -24,11 +25,13 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
-            var targetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
+            using var db = new PythonAILibDBContext();
+            var targetFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.TargetFolder.Entity.Id);
+
             if (targetFolder != null) {
                 TargetFolder = new ContentFolderWrapper(targetFolder);
             }
-            var destinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
+            var destinationFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.DestinationFolder.Entity.Id); 
             if (destinationFolder != null) {
                 DestinationFolder = new ContentFolderWrapper(destinationFolder);
             }
@@ -119,13 +122,17 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
             // PromptAutoProcessItemの場合
             if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
-                if (promptAutoProcessItem.PromptItemId == LiteDB.ObjectId.Empty) {
+                if (promptAutoProcessItem.PromptItemEntity == null) {
                     return;
                 }
                 IsPromptTemplateChecked = true;
                 // PromptItemを取得
-                PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
-                SelectedPromptItem = new PromptItemViewModel(promptItem);
+                using var db = new PythonAILibDBContext();
+                var promptItem = db.PromptItems.FirstOrDefault(x => x.Id == promptAutoProcessItem.PromptItemEntity.Id);
+                if (promptItem == null) {
+                    return;
+                }
+                SelectedPromptItem = new PromptItemViewModel(new PromptItem(promptItem));
                 // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
                 OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
 
@@ -407,7 +414,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolderId = TargetFolder.Id;
+            TargetAutoProcessRule.TargetFolder.Entity.Id = TargetFolder.Entity.Id;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -467,11 +474,11 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
-                    if (TargetFolder.Id == DestinationFolder.Id) {
+                    if (TargetFolder.Entity.Id == DestinationFolder.Entity.Id) {
                         LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolderId = DestinationFolder.Id;
+                    TargetAutoProcessRule.DestinationFolder.Entity.Id = DestinationFolder.Entity.Id;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
@@ -487,7 +494,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // キャスト
                 PromptItem promptItem = SelectedPromptItem.PromptItem;
-                PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
+                AutoProcessItemEntity autoProcessItemEntity = new();
+                PromptAutoProcessItem promptAutoProcessItem = new(autoProcessItemEntity, promptItem.Entity);
 
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
@@ -512,12 +520,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
 
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.Id == TargetFolder?.Id) {
+            if (folder.Entity.Id == TargetFolder?.Entity.Id) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
-                return;
-            }// コピーor移動先が標準のフォルダ以外の場合はエラー
-            if (folder.FolderType != FolderTypeEnum.Normal) {
-                LogWrapper.Error(StringResources.CannotCopyOrMoveToNonStandardFolders);
                 return;
             }
             DestinationFolder = folder;

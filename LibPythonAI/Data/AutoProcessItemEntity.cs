@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using LiteDB;
 using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Content;
+using PythonAILib.Resources;
 
 namespace LibPythonAI.Data {
     // 自動処理の引数用のクラス
@@ -21,6 +20,5 @@ namespace LibPythonAI.Data {
 
         public ContentFolderEntity? DestinationFolder { get; set; }
 
-
     }
-    }
+}

@@ -1,3 +1,4 @@
+using LibPythonAI.Data;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -15,6 +16,14 @@ namespace PythonAILib.Model.Prompt {
 
         // プロンプト
         public string Prompt { get; set; } = "";
+
+
+        // コンストラクタ
+        public PromptItem(PromptItemEntity entity) {
+            Entity = entity;
+        }
+
+        public PromptItemEntity Entity { get; set; }
 
         // プロンプトテンプレートの種類
         public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
@@ -96,7 +105,7 @@ namespace PythonAILib.Model.Prompt {
             }
 
             if (titleGeneration == null) {
-                titleGeneration = new PromptItem() {
+                titleGeneration = new PromptItem(new PromptItemEntity()) {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
                     Description = PromptStringResource.Instance.TitleGeneration,
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
@@ -121,7 +130,7 @@ namespace PythonAILib.Model.Prompt {
             }
 
             if (backgroundInformationGeneration == null) {
-                backgroundInformationGeneration = new PromptItem() {
+                backgroundInformationGeneration = new PromptItem(new PromptItemEntity()) {
                     Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     Description = PromptStringResource.Instance.BackgroundInformationGeneration,
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
@@ -146,7 +155,7 @@ namespace PythonAILib.Model.Prompt {
             }
 
             if (summaryGeneration == null) {
-                summaryGeneration = new PromptItem() {
+                summaryGeneration = new PromptItem(new PromptItemEntity()) {
                     Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
                     Description = PromptStringResource.Instance.SummaryGeneration,
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
@@ -171,7 +180,7 @@ namespace PythonAILib.Model.Prompt {
             }
 
             if (TasksGeneration == null) {
-                TasksGeneration = new PromptItem() {
+                TasksGeneration = new PromptItem(new PromptItemEntity()) {
                     Name = SystemDefinedPromptNames.TasksGeneration.ToString(),
                     Description = PromptStringResource.Instance.TasksGeneration,
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
@@ -195,7 +204,7 @@ namespace PythonAILib.Model.Prompt {
                 DocumentReliabilityCheck = null;
             }
             if (DocumentReliabilityCheck == null) {
-                DocumentReliabilityCheck = new PromptItem() {
+                DocumentReliabilityCheck = new PromptItem(new PromptItemEntity()) {
                     Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
                     Description = PromptStringResource.Instance.DocumentReliability,
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,

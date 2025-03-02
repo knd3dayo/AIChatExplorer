@@ -3,6 +3,7 @@ using System.IO;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Settings;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using LiteDB;
@@ -18,7 +19,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
         public static string CopiedHistoryFilePath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "edge");
         // コンストラクタ
-        public EdgeBrowseHistoryFolder(ContentFolder folder) : base(folder) {
+        public EdgeBrowseHistoryFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
             FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
@@ -41,7 +42,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         }
 
         public override EdgeBrowseHistoryFolder? GetParent() {
-            var parentFolder = ContentFolderInstance.GetParent();
+            var parentFolder = Entity.Parent;
             if (parentFolder == null) {
                 return null;
             }
@@ -51,7 +52,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         public override List<ContentItemWrapper> GetItems() {
             // SyncItems
             SyncItems();
-            var items = ContentFolderInstance.GetItems<ContentItem>();
+            var items = Entity.Children;
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new EdgeBrowseHistoryItem(item));
@@ -77,11 +78,11 @@ namespace ClipboardApp.Model.Folders.Browser {
             File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
 
             // コレクション
-            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ContentItem>();
-            var items = collection.Find(x => x.CollectionId == Id);
+            using PythonAILibDBContext db = new();
+            var items = db.ContentItems.Where(x => x.FolderId == Entity.Id).Select(x => new ContentItemWrapper(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
-            Dictionary<string, ContentItem> itemUrlIdDict = [];
+            Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];
             foreach (var item in items) {
                 itemUrlIdDict[item.SourcePath] = item;
             }
@@ -119,8 +120,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 (string title, long lastVisitTime) = historyUrlDict[url];
 
                 DateTime lastVisitTimeDateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                ContentItem contentItem = new() {
-                    CollectionId = Id,
+                ContentItemWrapper contentItem = new(this.Entity) {
                     Description = title,
                     SourcePath = url,
                     SourceType = ContentSourceType.Url,
@@ -142,7 +142,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 // urlからTitle, LastVisitTimeを取得
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                ContentItem contentItem = itemUrlIdDict[url];
+                ContentItemWrapper contentItem = itemUrlIdDict[url];
 
                 if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;

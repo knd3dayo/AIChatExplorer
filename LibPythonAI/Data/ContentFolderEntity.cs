@@ -20,12 +20,15 @@ namespace LibPythonAI.Data {
         // フォルダの種類の文字列
         public string FolderTypeString { get; set; } = "Normal";
 
+
         // 親フォルダのID
         [Column("PARENT_ID")]
 
         public string? ParentId { get; set; }
 
         public ContentFolderEntity? Parent { get; set; }
+
+        public List<ContentFolderEntity> Children { get; set; } = [];
 
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
@@ -39,7 +42,7 @@ namespace LibPythonAI.Data {
         //　OS上のフォルダ名
         public string ContentOutputFolderPrefix { get; set; } = "";
 
-        // public List<VectorDBProperty> VectorDBProperties { get; set; } = new();
+        public List<VectorDBPropertyEntity> VectorDBProperties { get; set; } = new();
 
         public string ExtendedPropertiesJson { get; set; } = "{}";
 

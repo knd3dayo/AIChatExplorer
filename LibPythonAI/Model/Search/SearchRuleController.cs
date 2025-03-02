@@ -1,4 +1,5 @@
 
+using LibPythonAI.Data;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 
@@ -15,10 +16,12 @@ namespace PythonAILib.Model.Search {
         }
         // コレクション名を指定して検索条件ルールを取得する
         public static SearchRule? GetSearchRuleByFolder(ContentFolderWrapper folder) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetSearchRuleCollection();
-            var item = collection.FindOne(x => x.SearchFolderId == folder.Id);
-            return item;
+            using PythonAILibDBContext db = new();
+            var item = db.SearchRules.FirstOrDefault(x => x.SearchFolder == folder.Entity);
+            if (item != null) {
+                return new SearchRule(item);
+            }
+            return null;
         }
     }
 }

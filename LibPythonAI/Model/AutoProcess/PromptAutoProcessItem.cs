@@ -1,3 +1,4 @@
+using LibPythonAI.Data;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -5,38 +6,32 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.AutoProcess {
-    public class PromptAutoProcessItem : SystemAutoProcessItem {
-        public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
+    public class PromptAutoProcessItem : AutoProcessItem {
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
-        public PromptAutoProcessItem() {
+        public PromptAutoProcessItem(AutoProcessItemEntity autoProcessItemEntity, PromptItemEntity promptItemEntity) : base(autoProcessItemEntity) {
+            PromptItemEntity = promptItemEntity;
         }
-        public PromptAutoProcessItem(PromptItem promptItem) {
 
-            Name = promptItem.Name;
-            DisplayName = promptItem.Name;
-            Description = promptItem.Description;
-            TypeName = TypeEnum.PromptTemplate;
-            PromptItemId = promptItem.Id;
+        public PromptItemEntity PromptItemEntity { get; set; } 
 
-        }
         public override void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
 
-            if (PromptItemId == LiteDB.ObjectId.Empty) {
-                return;
-            }
+
             ChatRequest chatRequest = new();
 
             // PromptItemを取得
-            PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
-            ContentFolderWrapper clipboardFolder = clipboardItem.GetFolder();
+            ContentFolderWrapper? clipboardFolder = clipboardItem.Folder;
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
-                VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()],
-                PromptTemplateText = PromptItem.Prompt,
+                PromptTemplateText = PromptItemEntity.Prompt,
                 ChatMode = Mode
             };
+            if (clipboardFolder != null) {
+                chatRequestContent.UseVectorDB = true;
+                chatRequestContent.VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()];
+            }
 
             ChatResult? result = ChatUtil.ExecuteChat(chatRequest, chatRequestContent, (message) => { });
             if (result == null) {
