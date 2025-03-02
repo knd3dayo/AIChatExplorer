@@ -57,13 +57,7 @@ namespace ClipboardApp.ViewModel.Main {
 
             // フォルダの初期化
             RootFolderViewModelContainer = new(Commands);
-
-            // データベースのチェックポイント処理
-            PythonAILibManager.Instance.DataFactory.GetDatabase().Checkpoint();
-
-            // DBのバックアップの取得
-            BackupController.BackupNow();
-
+            
             // ClipboardControllerのOnClipboardChangedに処理をセット
             ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア

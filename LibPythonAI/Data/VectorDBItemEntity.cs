@@ -43,7 +43,7 @@ namespace LibPythonAI.Data {
 
         // ベクトルDBの種類を表す文字列
         [JsonPropertyName("vector_db_type_string")]
-        public string VectorDBTypeString { get; set; } = "Chroma";
+        public VectorDBTypeEnum VectorDBType { get; set; } = VectorDBTypeEnum.Chroma;
 
         // コレクション名
         [JsonPropertyName("collection_name")]

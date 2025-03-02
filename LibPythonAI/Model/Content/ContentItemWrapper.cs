@@ -392,7 +392,7 @@ namespace PythonAILib.Model.Content {
         // ベクトル化日時の文字列
         public string VectorizedAtString {
             get {
-                if (Entity.VectorizedAt <= ContentItem.InitialDateTime) {
+                if (Entity.VectorizedAt <= ContentItemEntity.InitialDateTime) {
                     return "";
                 }
                 return Entity.VectorizedAt.ToString("yyyy/MM/dd HH:mm:ss");

@@ -6,6 +6,7 @@ using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Data;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     /// <summary>
@@ -87,20 +88,21 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-            var items = collection.FindAll();
+            using PythonAILibDBContext db = new();
+
             if (!IsShowSystemCommonVectorDB) {
-                items = items.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-            }
-            foreach (var item in items) {
-                VectorDBItems.Add(new VectorDBItemViewModel(item));
+                var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+                foreach (var itemEntity in items) {
+                    VectorDBItem item = new(itemEntity);
+                    VectorDBItems.Add(new VectorDBItemViewModel(item));
+                }
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
 
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
-            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
+            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem(new VectorDBItemEntity()));
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新

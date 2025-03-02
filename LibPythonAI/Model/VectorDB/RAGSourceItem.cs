@@ -1,4 +1,5 @@
 using System.IO;
+using LibPythonAI.Data;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -9,11 +10,11 @@ using PythonAILib.Utils.Git;
 namespace PythonAILib.Model.VectorDB {
     public class RAGSourceItem {
 
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
+        public RAGSourceItemEntity Entity { get; set; }
 
-        // ベクトルを格納するためのVectorDBItemのId
-        protected LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
-
+        public RAGSourceItem(RAGSourceItemEntity entity) {
+            Entity = entity;
+        }
 
         public string SourceURL { get; set; } = "";
         public string WorkingDirectory { get; set; } = "";
@@ -21,22 +22,32 @@ namespace PythonAILib.Model.VectorDB {
         public string LastIndexCommitHash { get; set; } = "";
         // Get
         public static IEnumerable<RAGSourceItem> GetItems() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-            return collection.FindAll();
+            using PythonAILibDBContext db = new();
+            var items = db.RAGSourceItems;
+
+            foreach (var item in items) {
+                yield return new RAGSourceItem(item);
+            }
         }
 
         public void Save() {
+            using PythonAILibDBContext db = new();
+            var item = db.RAGSourceItems.Find(Entity.Id);
+            if (item != null) {
+                db.RAGSourceItems.Update(Entity);
+            } else {
+                db.RAGSourceItems.Add(Entity);
+            }
+            db.SaveChanges();
 
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-            collection.Upsert(this);
 
         }
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-            collection.Delete(Id);
+            using PythonAILibDBContext db = new();
+            var item = db.RAGSourceItems.Find(Entity.Id);
+            if (item != null) {
+                db.Remove(item);
+            }
 
         }
 
@@ -46,22 +57,28 @@ namespace PythonAILib.Model.VectorDB {
 
         public VectorDBItem? VectorDBItem {
             get {
-                return VectorDBItem.GetItemById(VectorDBItemId);
+                var item =  Entity.VectorDBItem;
+                if (item == null) {
+                    return null;
+                }
+                return new VectorDBItem(item);
             }
             set {
                 if (value == null) {
-                    VectorDBItemId = LiteDB.ObjectId.Empty;
+                    Entity.VectorDBItem = null;
                 } else {
-                    VectorDBItemId = value.Id;
+                    Entity.VectorDBItem = value.Entity;
                 }
             }
         }
 
         public IEnumerable<VectorDBItem>? VectorDBItems {
             get {
-                var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-                var items = collection.Find(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-                return items;
+                using PythonAILibDBContext db = new();
+                var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+                foreach (var item in items) {
+                    yield return new VectorDBItem(item);
+                }
             }
         }
 

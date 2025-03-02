@@ -85,8 +85,6 @@ namespace ClipboardApp.Model.Folders.Outlook {
             if (MAPIFolder == null) {
                 return;
             }
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
 
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
@@ -165,7 +163,6 @@ namespace ClipboardApp.Model.Folders.Outlook {
             LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
 
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             // folder内のFolderNameとContentFolderのDictionary
             Dictionary<string, OutlookFolder> folderPathIdDict = [];
             foreach (var folder in GetChildren()) {

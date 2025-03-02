@@ -80,20 +80,34 @@ namespace PythonAILib.Model.AutoProcess {
             if (Priority == -1) {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
-            collection.Upsert(this);
+            using PythonAILibDBContext db = new();
+            var item = db.AutoProcessRules.Find(Id);
+            if (item == null) {
+                db.AutoProcessRules.Add(AutoProcessRuleInstance);
+            } else {
+                db.AutoProcessRules.Update(AutoProcessRuleInstance);
+            }
+            db.SaveChanges();
         }
         // 削除
         public void Delete() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
-            collection.Delete(Id);
-            // 削除後はIdをNullにする
-            Id = ObjectId.Empty;
+            using PythonAILibDBContext db = new();
+            var item = db.AutoProcessRules.Find(Id);
+            if (item == null) {
+                return;
+            }
+            db.AutoProcessRules.Remove(item);
         }
+
         // 取得
         public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
-            return collection.FindAll().OrderBy(x => x.Priority);
+            using PythonAILibDBContext db = new();
+            // 全てのルールを取得
+            var items = db.AutoProcessRules;
+            foreach (var item in items) {
+                yield return new AutoProcessRule(item);
+            }
+
         }
 
 

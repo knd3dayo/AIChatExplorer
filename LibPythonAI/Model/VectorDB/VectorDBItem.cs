@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.Data;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Resources;
@@ -12,6 +14,12 @@ namespace PythonAILib.Model.VectorDB {
     /// </summary>
     public class VectorDBItem {
 
+        public VectorDBItemEntity Entity { get; set; }
+
+        public VectorDBItem(VectorDBItemEntity entity) {
+            Entity = entity;
+        }
+
         // システム共通のベクトルDBの名前
         public readonly static string SystemCommonVectorDBName = "default";
         // デフォルトのコレクション名
@@ -19,16 +27,16 @@ namespace PythonAILib.Model.VectorDB {
 
         // システム共通のベクトルDB
         public static VectorDBItem GetDefaultVectorDB() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var item = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindOne(item => item.Name == SystemCommonVectorDBName);
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
             if (item == null) {
+                PythonAILibManager libManager = PythonAILibManager.Instance;
                 string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
                 string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
-                item = new VectorDBItem() {
-                    Id = LiteDB.ObjectId.Empty,
+                item = new VectorDBItemEntity() {
                     Name = VectorDBItem.SystemCommonVectorDBName,
                     Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
-                    Type = VectorDBTypeEnum.Chroma,
+                    VectorDBType = VectorDBTypeEnum.Chroma,
                     VectorDBURL = vectorDBPath,
                     DocStoreURL = $"sqlite:///{docDBPath}",
                     IsUseMultiVectorRetriever = true,
@@ -36,11 +44,10 @@ namespace PythonAILib.Model.VectorDB {
                     IsSystem = true,
                     CollectionName = DefaultCollectionName
                 };
-                item.Save();
+                db.VectorDBItems.Add(item);
+                db.SaveChanges();
             }
-            // IsSystemフラグ導入前のバージョンへの対応
-            item.IsSystem = true;
-            return item;
+            return new VectorDBItem(item);
         }
 
         public static string GetCatalogDBURL() {
@@ -155,8 +162,11 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         public static IEnumerable<VectorDBItem> GetItems() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindAll();
+            using PythonAILibDBContext db = new();
+            var items = db.VectorDBItems;
+            foreach (var item in items) {
+                yield return new VectorDBItem(item);
+            }
         }
         // GetItemById
         public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {
@@ -165,16 +175,23 @@ namespace PythonAILib.Model.VectorDB {
 
         // Save
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>();
-            collection.Upsert(this);
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.Find(Id);
+            if (item != null) {
+                db.VectorDBItems.Update(Entity);
+            } else {
+                db.VectorDBItems.Add(Entity);
+            }
+            db.SaveChanges();
         }
 
         // Delete
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>();
-            collection.Delete(this.Id);
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.Find(Entity.Id);
+            if (item != null) {
+                db.Remove(item);
+            }
         }
 
 
@@ -189,21 +206,23 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         public static List<VectorDBItem> GetExternalVectorDBItems() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-            var items = collection.Find(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            List < VectorDBItem > result = [];
+            using PythonAILibDBContext db = new();
+            var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
             if (items == null) {
-                return [];
+                return result;
             }
-            return new(items);
+            foreach (var item in items) {
+                result.Add(new VectorDBItem(item));
+            }
+            return result;
         }
 
         public static List<VectorDBItem> GetVectorDBItems() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-            var items = collection.FindAll();
-            if (items == null) {
-                return [];
-            }
-            return new(items);
+            List<VectorDBItem> result = [];
+            result.Add(VectorDBItem.GetDefaultVectorDB());
+            result.AddRange(VectorDBItem.GetExternalVectorDBItems());
+            return result;
         }
 
 

@@ -5,6 +5,7 @@ using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Data;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>
@@ -15,8 +16,9 @@ namespace LibUIPythonAI.ViewModel.RAG {
         public ListRAGSourceWindowViewModel() {
             // RagSourceItemのリストを初期化
             RagSourceItems.Clear();
-            var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-            foreach (var item in collection.FindAll()) {
+            using PythonAILibDBContext db = new();
+            foreach (var itemEntity in db.RAGSourceItems) {
+                RAGSourceItem item = new(itemEntity);
                 RagSourceItems.Add(new RAGSourceItemViewModel(item));
             }
             OnPropertyChanged(nameof(RagSourceItems));
@@ -40,14 +42,16 @@ namespace LibUIPythonAI.ViewModel.RAG {
         // RAG Sourceの追加
         public SimpleDelegateCommand<object> AddRagSourceCommand => new((parameter) => {
             // SelectRAGSourceItemを設定
-            SelectedRagSourceItem = new RAGSourceItemViewModel(new RAGSourceItem());
+            SelectedRagSourceItem = new RAGSourceItemViewModel(new RAGSourceItem(new RAGSourceItemEntity()));
 
             // RAG Sourceの編集Windowを開く
             EditRAGSourceWindow.OpenEditRAGSourceWindow(SelectedRagSourceItem, (afterUpdate) => {
                 // リストを更新
                 RagSourceItems.Clear();
-                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-                foreach (var item in collection.FindAll()) {
+                using PythonAILibDBContext db = new();
+                var items = db.RAGSourceItems;
+                foreach (var itemEntity in items) {
+                    RAGSourceItem item = new(itemEntity);
                     RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
@@ -65,8 +69,10 @@ namespace LibUIPythonAI.ViewModel.RAG {
 
                 // リストを更新
                 RagSourceItems.Clear();
-                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-                foreach (var item in collection.FindAll()) {
+                using PythonAILibDBContext db = new();
+                var items = db.RAGSourceItems;
+                foreach (var itemEntity in items) {
+                    RAGSourceItem item = new(itemEntity);
                     RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
@@ -87,8 +93,10 @@ namespace LibUIPythonAI.ViewModel.RAG {
                 SelectedRagSourceItem.Item.Delete();
                 // リストを更新
                 RagSourceItems.Clear();
-                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
-                foreach (var item in collection.FindAll()) {
+                using PythonAILibDBContext db = new();
+                var items = db.RAGSourceItems;
+                foreach (var itemEntity in items) {
+                    RAGSourceItem item = new(itemEntity);
                     RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
             }

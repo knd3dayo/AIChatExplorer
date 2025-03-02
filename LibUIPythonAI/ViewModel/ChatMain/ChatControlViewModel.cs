@@ -79,8 +79,8 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         }
 
         // SelectedContextItem
-        private ContentItem? _SelectedContextItem = null;
-        public ContentItem? SelectedContextItem {
+        private ContentItemWrapper? _SelectedContextItem = null;
+        public ContentItemWrapper? SelectedContextItem {
             get {
                 return _SelectedContextItem;
             }

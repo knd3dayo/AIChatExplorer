@@ -44,61 +44,48 @@ namespace ClipboardApp.Model.Main {
 
         // 言語変更時にルートフォルダ名を変更する
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
-
+            using PythonAILibDBContext db = new();
             // ClipboardRootFolder
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            ContentFolder? clipboardRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+
+            var  clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN);
 
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
-                clipboardRootFolder.Save();
             }
-            var searchCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
             // SearchRootFolder
-            ContentFolder? searchRootFolder = searchCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
+            var  searchRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
-                searchRootFolder.Save();
             }
             // ChatRootFolder
-            ContentFolder? chatRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
+            var chatRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN);
             if (chatRootFolder != null) {
                 chatRootFolder.FolderName = toRes.ChatHistory;
-                chatRootFolder.Save();
             }
             // ImageCheckRootFolder
-            ContentFolder? imageCheckRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
+            var imageCheckRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == IMAGECHECK_ROOT_FOLDER_NAME_EN);
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
-                imageCheckRootFolder.Save();
             }
             // FileSystemRootFolder
-            var fileSystemCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            ContentFolder? fileSystemRootFolder = fileSystemCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+            var fileSystemRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN);
             if (fileSystemRootFolder != null) {
                 fileSystemRootFolder.FolderName = toRes.FileSystem;
-                fileSystemRootFolder.Save();
             }
             // ShortcutRootFolder
-            var shortCutCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            ContentFolder? shortcutRootFolder = shortCutCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
+            var shortcutRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN);
             if (shortcutRootFolder != null) {
                 shortcutRootFolder.FolderName = toRes.Shortcut;
-                shortcutRootFolder.Save();
             }
             // EdgeBrowseHistoryRootFolder
-            var edgeBrowseHistoryCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            ContentFolder? edgeBrowseHistoryRootFolder = edgeBrowseHistoryCollection.Find(x => x.ParentId == null && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+            var edgeBrowseHistoryRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
             if (edgeBrowseHistoryRootFolder != null) {
                 edgeBrowseHistoryRootFolder.FolderName = toRes.EdgeBrowseHistory;
-                edgeBrowseHistoryRootFolder.Save();
             }
             // RecentFilesRootFolder
-            var recentFilesCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-            ContentFolder? recentFilesRootFolder = recentFilesCollection.Find(x => x.ParentId == null && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+            var recentFilesRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN);
             if (recentFilesRootFolder != null) {
                 recentFilesRootFolder.FolderName = toRes.RecentFiles;
-                recentFilesRootFolder.Save();
             }
         }
 

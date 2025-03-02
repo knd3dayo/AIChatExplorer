@@ -40,16 +40,10 @@ namespace PythonAILib.Common {
             // Python処理機能の初期化
             PythonExecutor.Init(parameters);
 
-            // DBControllerの設定
-            DataFactory = new PythonAILibDataFactory();
             // LogWrapperのログ出力設定
             LogWrapper.SetActions(parameters.GetLogWrapperAction());
 
         }
-
-        public IDataFactory DataFactory { get; set; }
-
-
 
     }
 }

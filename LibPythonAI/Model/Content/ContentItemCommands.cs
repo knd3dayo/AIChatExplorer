@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using LibPythonAI.Data;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -98,11 +99,13 @@ namespace PythonAILib.Model.Content {
         public static void CreateAutoTitleWithOpenAI(ContentItemWrapper item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                // システム定義のPromptItemを取得
-                PromptItem promptItem = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString()) ?? throw new Exception("PromptItem not found");
-
-                CreateChatResult(item, promptItem);
+                using PythonAILibDBContext db = new();
+                PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
+                if (promptItem == null) {
+                    LogWrapper.Error("PromptItem not found");
+                    return;
+                }
+                CreateChatResult(item, promptItem.Name);
                 return;
             }
             // ContentTypeがFiles,の場合
@@ -117,9 +120,11 @@ namespace PythonAILib.Model.Content {
 
         // ExecuteSystemDefinedPromptを実行する
         public static void CreateChatResult(ContentItemWrapper item, string promptName) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
+            using PythonAILibDBContext db = new();
+
             // システム定義のPromptItemを取得
-            PromptItem promptItem = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == promptName) ?? throw new Exception("PromptItem not found");
+            var promptItemEntity = db.PromptItems.FirstOrDefault(x => x.Name == promptName) ?? throw new Exception("PromptItem not found");
+            PromptItem promptItem = new(promptItemEntity);
             // CreateChatResultを実行
             ContentItemCommands.CreateChatResult(item, promptItem);
         }

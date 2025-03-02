@@ -1,43 +1,57 @@
+using LibPythonAI.Data;
 using LiteDB;
 using PythonAILib.Common;
 
 namespace PythonAILib.Model.Tag {
     public class TagItem {
-        public ObjectId? Id { get; set; }
 
-        public string Tag { get; set; } = "";
+        public TagItemEntity Entity { get; set; }
 
-        public bool IsPinned { get; set; } = false;
+        public TagItem(TagItemEntity entity) {
+            Entity = entity;
+        }
+
+        public string Tag {
+            get => Entity.Tag;
+            set => Entity.Tag = value;
+        }
+
+        public bool IsPinned {
+            get => Entity.IsPinned;
+            set => Entity.IsPinned = value;
+        }
 
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
-            collection.Delete(Id);
+            using PythonAILibDBContext db = new();
+            var item = db.TagItems.Find(Entity.Id);
+            if (item != null) {
+                db.Remove(item);
+            }
         }
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
-            var tag = collection.FindOne(x => x.Tag == Tag);
-            if (tag != null) {
-                tag.IsPinned = IsPinned;
-                collection.Update(tag);
+            using PythonAILibDBContext db = new();
+            var item = db.TagItems.Find(Entity.Id);
+            if (item != null) {
+                db.TagItems.Update(Entity);
             } else {
-                collection.Insert(this);
+                db.TagItems.Add(Entity);
             }
+            db.SaveChanges();
         }
 
         public static IEnumerable<TagItem> GetTagList() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.DataFactory.GetTagCollection<TagItem>().FindAll();
+            using PythonAILibDBContext db = new();
+            var tags = db.TagItems;
+            foreach (var tag in tags) {
+                yield return new TagItem(tag);
+            }
         }
         // タグを検索
         public static IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
-            if (exclude) {
-                return collection.Find(x => x.Tag.Contains(tag) == false);
-            } else {
-                return collection.Find(x => x.Tag.Contains(tag));
+            using PythonAILibDBContext db = new();
+            var items =  db.TagItems.Where(x => x.Tag.Contains(tag) == !exclude);
+            foreach (var item in items) {
+                yield return new TagItem(item);
             }
         }
 

@@ -27,14 +27,16 @@ namespace PythonAILib.Model.AutoProcess {
         }
         // TypeがCopyTo または MoveToのルールをLiteDBから取得する。
         public static IEnumerable<AutoProcessRule> GetCopyToMoveToRules() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetAutoProcessRuleCollection();
+            using var db = new PythonAILibDBContext();
+            var items = db.AutoProcessRules.Where(x => x.RuleAction != null
+                    && (x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.CopyToFolder.ToString()
+                        || x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.MoveToFolder.ToString()));
+            foreach (var item in items) {
+                if (item != null) {
+                    yield return new AutoProcessRule(item);
+                }
+            }
 
-            var items = collection.Find(
-                x => x.RuleAction != null
-                && (x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.CopyToFolder.ToString()
-                    || x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.MoveToFolder.ToString()));
-            return items;
         }
 
         /// <summary>

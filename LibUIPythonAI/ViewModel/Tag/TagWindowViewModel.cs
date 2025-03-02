@@ -52,7 +52,7 @@ namespace LibUIPythonAI.ViewModel.Tag {
                 }
             }
 
-            TagItem tagItem = new() { Tag = tag };
+            TagItem tagItem = new(new LibPythonAI.Data.TagItemEntity()) { Tag = tag };
             tagItem.Save();
 
             TagList.Add(new TagItemViewModel(tagItem));

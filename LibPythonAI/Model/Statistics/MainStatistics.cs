@@ -1,3 +1,4 @@
+using LibPythonAI.Data;
 using LiteDB;
 using PythonAILib.Common;
 
@@ -5,18 +6,23 @@ namespace PythonAILib.Model.Statistics {
     public class MainStatistics {
 
         public static MainStatistics GetMainStatistics() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetStatisticsCollection<MainStatistics>();
-            var item = collection.FindAll().FirstOrDefault();
+            using PythonAILibDBContext db = new();
+            var item = db.MainStatistics.FirstOrDefault();
             if (item == null) {
-                item = new MainStatistics();
-                collection.Upsert(item);
+                item = new MainStatisticsEntity();
+                db.MainStatistics.Add(item);
+                db.SaveChanges();
             }
-            return item;
+            return new MainStatistics(item);
         }
 
-        // SourceId
-        public ObjectId Id { get; set; } = ObjectId.NewObjectId();
+        public MainStatisticsEntity Entity { get; set; }
+
+        public MainStatistics(MainStatisticsEntity entity) {
+            Entity = entity;
+        }
+
+
         // 日毎のStatistics
         public Dictionary<DateTime, DailyStatistics> DailyStatistics { get; set; } = [];
 
@@ -78,9 +84,14 @@ namespace PythonAILib.Model.Statistics {
 
         // Save
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetStatisticsCollection<MainStatistics>();
-            collection.Upsert(this);
+            using PythonAILibDBContext db = new();
+            var item = db.MainStatistics.Find(Entity.Id);
+            if (item != null) {
+                db.MainStatistics.Update(Entity);
+            } else {
+                db.MainStatistics.Add(Entity);
+            }
+            db.SaveChanges();
         }
 
         // Get Statistics message

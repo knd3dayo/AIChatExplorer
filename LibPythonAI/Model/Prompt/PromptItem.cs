@@ -48,45 +48,62 @@ namespace PythonAILib.Model.Prompt {
 
         // Save
         public void Save() {
-
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-            collection.Upsert(this);
+            using PythonAILibDBContext db = new();
+            var item = db.PromptItems.Find(Id);
+            if (item != null) {
+                db.PromptItems.Update(Entity);
+            } else {
+                db.PromptItems.Add(Entity);
+            }
+            db.SaveChanges();
         }
+
         // Delete
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-            collection.Delete(Id);
+            using PythonAILibDBContext db = new();
+            var item = db.PromptItems.Find(Id);
+            if (item != null) {
+                db.PromptItems.Remove(item);
+                db.SaveChanges();
+            }
         }
 
         // PromptItemを取得
-        public static PromptItem GetPromptItemById(ObjectId id) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.DataFactory.GetPromptCollection<PromptItem>().FindById(id);
+        public static PromptItem? GetPromptItemById(string id) {
+            using PythonAILibDBContext db = new();
+            var item = db.PromptItems.Find(id);
+            if (item == null) {
+                return null;
+            }
+            return new PromptItem(item);
+
         }
         // 名前を指定してPromptItemを取得
         public static PromptItem? GetPromptItemByName(string name) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name);
+            using PythonAILibDBContext db = new();
+            var item = db.PromptItems.FirstOrDefault(x => x.Name == name);
+            if (item == null) {
+                return null;
+            }
+            return new PromptItem(item);
         }
+
         // 名前を指定してシステム定義のPromptItemを取得
         public static PromptItem GetSystemPromptItemByName(SystemDefinedPromptNames name) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-
-            var item = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(
-                x => x.Name == name.ToString() && (
+            using PythonAILibDBContext db = new();
+            var item = db.PromptItems.FirstOrDefault(x => x.Name == name.ToString() && (
                 x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
                 x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
                 ) ?? throw new System.Exception("PromptItem not found");
-            return item;
+
+            return new PromptItem(item);
         }
         // List<PromptItem>を取得
         public static List<PromptItem> GetPromptItems() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
+            using PythonAILibDBContext db = new();
             List<PromptItem> promptItems = [];
-            foreach (var item in libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll()) {
-                promptItems.Add(item);
+            foreach (var item in db.PromptItems) {
+                promptItems.Add(new PromptItem(item));
             }
             return promptItems;
         }
@@ -94,18 +111,14 @@ namespace PythonAILib.Model.Prompt {
         // システム定義のPromptItemを取得
         public static void InitSystemPromptItems() {
 
-            PythonAILibManager libManager = PythonAILibManager.Instance;
+            using PythonAILibDBContext db = new();
+
             // TitleGenerationをDBから取得
             string name1 = SystemDefinedPromptNames.TitleGeneration.ToString();
-            PromptItem? titleGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name1);
-
-            if (titleGeneration != null) {
-                libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(titleGeneration.Id);
-                titleGeneration = null;
-            }
+            var titleGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name1);
 
             if (titleGeneration == null) {
-                titleGeneration = new PromptItem(new PromptItemEntity()) {
+                titleGeneration = new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
                     Description = PromptStringResource.Instance.TitleGeneration,
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
@@ -117,20 +130,15 @@ namespace PythonAILib.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
 
                 };
-                var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-                collection.Upsert(titleGeneration);
+                db.PromptItems.Add(titleGeneration);
+                db.SaveChanges();
             }
             // BackgroundInformationGenerationをDBから取得
             string name2 = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-            PromptItem? backgroundInformationGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name2);
-
-            if (backgroundInformationGeneration != null) {
-                libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(backgroundInformationGeneration.Id);
-                backgroundInformationGeneration = null;
-            }
+            var backgroundInformationGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name2);
 
             if (backgroundInformationGeneration == null) {
-                backgroundInformationGeneration = new PromptItem(new PromptItemEntity()) {
+                backgroundInformationGeneration = new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     Description = PromptStringResource.Instance.BackgroundInformationGeneration,
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
@@ -141,21 +149,17 @@ namespace PythonAILib.Model.Prompt {
                     UseVectorDB = true,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
-                var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-                collection.Upsert(backgroundInformationGeneration);
+                db.PromptItems.Add(backgroundInformationGeneration);
+                db.SaveChanges();
 
             }
             // SummaryGenerationをDBから取得
             string name3 = SystemDefinedPromptNames.SummaryGeneration.ToString();
-            PromptItem? summaryGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name3);
+            var summaryGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name3);
 
-            if (summaryGeneration != null) {
-                libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(summaryGeneration.Id);
-                summaryGeneration = null;
-            }
 
             if (summaryGeneration == null) {
-                summaryGeneration = new PromptItem(new PromptItemEntity()) {
+                summaryGeneration =new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
                     Description = PromptStringResource.Instance.SummaryGeneration,
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
@@ -167,20 +171,15 @@ namespace PythonAILib.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
-                var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-                collection.Upsert(summaryGeneration);
+                db.PromptItems.Add(summaryGeneration);
+                db.SaveChanges();
             }
             // TasksGenerationをDBから取得
             string name4 = SystemDefinedPromptNames.TasksGeneration.ToString();
-            PromptItem? TasksGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name4);
+            var tasksGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name4);
 
-            if (TasksGeneration != null) {
-                libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(TasksGeneration.Id);
-                TasksGeneration = null;
-            }
-
-            if (TasksGeneration == null) {
-                TasksGeneration = new PromptItem(new PromptItemEntity()) {
+            if (tasksGeneration == null) {
+                tasksGeneration = new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.TasksGeneration.ToString(),
                     Description = PromptStringResource.Instance.TasksGeneration,
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
@@ -192,19 +191,16 @@ namespace PythonAILib.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
-                var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-                collection.Upsert(TasksGeneration);
+                db.PromptItems.Add(tasksGeneration);
+                db.SaveChanges();
             }
 
             // DocumentReliabilityCheckをDBから取得
             string name5 = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
-            PromptItem? DocumentReliabilityCheck = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name5);
-            if (DocumentReliabilityCheck != null) {
-                libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(DocumentReliabilityCheck.Id);
-                DocumentReliabilityCheck = null;
-            }
-            if (DocumentReliabilityCheck == null) {
-                DocumentReliabilityCheck = new PromptItem(new PromptItemEntity()) {
+            var documentReliabilityCheck = db.PromptItems.FirstOrDefault(x => x.Name == name5);
+
+            if (documentReliabilityCheck == null) {
+                documentReliabilityCheck = new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
                     Description = PromptStringResource.Instance.DocumentReliability,
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
@@ -216,8 +212,8 @@ namespace PythonAILib.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };
-                var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
-                collection.Upsert(DocumentReliabilityCheck);
+                db.PromptItems.Add(documentReliabilityCheck);
+                db.SaveChanges();
             }
         }
 

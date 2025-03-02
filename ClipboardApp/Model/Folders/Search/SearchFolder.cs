@@ -70,7 +70,7 @@ namespace ClipboardApp.Model.Folders.Search {
         }
 
         // ClipboardItemを削除
-        public virtual void DeleteItem(ContentItem item) {
+        public virtual void DeleteItem(ContentItemWrapper item) {
             // 何もしない
         }
 

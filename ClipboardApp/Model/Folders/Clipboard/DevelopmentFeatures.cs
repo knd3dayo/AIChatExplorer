@@ -7,12 +7,11 @@ using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 
 namespace ClipboardApp.Model.Item {
-    internal class DevelopmentFeatures {
-    }
+
 
     public partial class ClipboardItem {
         // 自動でタグを付与するコマンド
-        public static void CreateAutoTags(ContentItem item) {
+        public static void CreateAutoTags(ContentItemWrapper item) {
             // PythonでItem.ContentからEntityを抽出
             string spacyModel = Properties.Settings.Default.SpacyModel;
             HashSet<string> entities = PythonExecutor.PythonMiscFunctions.ExtractEntity(spacyModel, item.Content);
