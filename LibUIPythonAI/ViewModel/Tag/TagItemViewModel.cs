@@ -1,4 +1,4 @@
-using PythonAILib.Model.Tag;
+using LibPythonAI.Model.Tag;
 
 namespace LibUIPythonAI.ViewModel.Tag {
     public class TagItemViewModel : ChatViewModelBase {

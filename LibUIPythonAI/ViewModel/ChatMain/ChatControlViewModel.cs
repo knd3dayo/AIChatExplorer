@@ -7,9 +7,9 @@ using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Utils.Python;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatControlViewModel : ChatViewModelBase {

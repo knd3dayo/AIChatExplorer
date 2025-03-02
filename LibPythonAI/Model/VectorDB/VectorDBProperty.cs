@@ -2,14 +2,15 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.VectorDB {
+namespace LibPythonAI.Model.VectorDB {
     public class VectorDBProperty {
 
         public VectorDBPropertyEntity Entity { get; set; }
@@ -64,7 +65,6 @@ namespace PythonAILib.Model.VectorDB {
             return VectorDBItem;
         }
 
-        [LiteDB.BsonIgnore]
         public string DisplayText {
             get {
                 VectorDBItem? item = GetVectorDBItem();
@@ -194,7 +194,7 @@ namespace PythonAILib.Model.VectorDB {
         // フォルダに設定されたVectorDBのコレクションをアップデート
         public void UpdateVectorDBCollection(string description) {
             Task.Run(() => {
-                this.UpdateCatalogDescription(description);
+                UpdateCatalogDescription(description);
             });
         }
 

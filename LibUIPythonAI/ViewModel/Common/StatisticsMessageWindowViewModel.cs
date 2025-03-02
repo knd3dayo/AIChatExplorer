@@ -1,5 +1,5 @@
 using System.Windows;
-using PythonAILib.Model.Statistics;
+using LibPythonAI.Model.Statistics;
 
 namespace LibUIPythonAI.ViewModel.Common {
     public class StatisticsMessageWindowViewModel : StatusMessageWindowViewModel {

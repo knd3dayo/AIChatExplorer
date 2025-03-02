@@ -2,9 +2,9 @@ using System.Data.SQLite;
 using System.Text.Json.Serialization;
 using PythonAILib.Common;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.Model.AutoGen {
     public class AutoGenTool {
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
+
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -35,11 +35,11 @@ namespace PythonAILib.Model.AutoGen {
         }
 
         public void Save(bool allow_override = true) {
-            UpdateAutoGenTool(this.Name, this.Description, this.SourcePath, allow_override);
+            UpdateAutoGenTool(Name, Description, SourcePath, allow_override);
         }
 
         public void Delete() {
-            DeleteAutoGenTool(this.Name);
+            DeleteAutoGenTool(Name);
         }
 
         public static void DeleteAll() {

@@ -8,6 +8,7 @@ using System.IO;
 
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
+using LibPythonAI.Model.AutoGen;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenProperties {

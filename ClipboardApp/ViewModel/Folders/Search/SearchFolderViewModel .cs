@@ -1,9 +1,10 @@
 using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Search;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Item;
 

@@ -1,6 +1,6 @@
 using ClipboardApp.Model.Folders.FileSystem;
 using LibPythonAI.Data;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
 namespace ClipboardApp.Model.Folders.Outlook {
     public class OutlookItem : ContentItemWrapper {

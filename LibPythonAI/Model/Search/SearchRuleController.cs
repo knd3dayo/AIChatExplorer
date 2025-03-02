@@ -1,7 +1,8 @@
 
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Search;
 using PythonAILib.Common;
-using PythonAILib.Model.Content;
 
 namespace PythonAILib.Model.Search {
     //検索条件ルールを管理するクラス

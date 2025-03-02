@@ -1,6 +1,4 @@
-using LiteDB;
-
-namespace PythonAILib.Model.Search {
+namespace LibPythonAI.Model.Search {
     public class SearchCondition {
 
 
@@ -12,7 +10,7 @@ namespace PythonAILib.Model.Search {
         public string Tags { get; set; } = "";
 
         public string SourceApplicationName { get; set; } = ""
-;       public string SourceApplicationTitle {  get; set; } = "";
+; public string SourceApplicationTitle { get; set; } = "";
 
         public DateTime StartTime { get; set; } = DateTime.Now;
 

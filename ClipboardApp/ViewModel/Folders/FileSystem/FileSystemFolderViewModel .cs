@@ -6,9 +6,9 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILibUI.ViewModel.Item;
 

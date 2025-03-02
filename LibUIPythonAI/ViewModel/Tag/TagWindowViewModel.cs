@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Tag;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.ViewModel.Tag {
     public class TagWindowViewModel : ChatViewModelBase {

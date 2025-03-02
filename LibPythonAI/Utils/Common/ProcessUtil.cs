@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Media.Imaging;
 using LibGit2Sharp;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
 namespace LibPythonAI.Utils.Common {
     public class ProcessUtil {

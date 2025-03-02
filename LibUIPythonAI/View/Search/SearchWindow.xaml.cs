@@ -1,7 +1,7 @@
 using System.Windows;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Search;
 using LibUIPythonAI.ViewModel.Search;
+using LibPythonAI.Model.Search;
+using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.View.Search {
     /// <summary>

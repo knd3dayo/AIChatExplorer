@@ -1,6 +1,5 @@
 using LibPythonAI.Data;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class RecentFilesItem : ContentItemWrapper {

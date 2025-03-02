@@ -1,13 +1,11 @@
 using LibPythonAI.Data;
+using LibPythonAI.Model.Search;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
-using LiteDB;
 using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Search;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.Content {
+namespace LibPythonAI.Model.Content {
     public class ContentFolderWrapper {
 
         public ContentFolderWrapper(ContentFolderEntity contentFolder) {
@@ -49,7 +47,6 @@ namespace PythonAILib.Model.Content {
         public bool IsAutoProcessEnabled { get; set; } = true;
 
         // アプリケーション内でのフォルダのパス
-        [BsonIgnore]
         public virtual string ContentFolderPath {
             get {
                 // 親フォルダを取得
@@ -61,7 +58,6 @@ namespace PythonAILib.Model.Content {
             }
         }
         // OS上のフォルダのパス
-        [BsonIgnore]
         public virtual string ContentOutputFolderPath {
             get {
                 string osFolderName;
@@ -368,8 +364,8 @@ namespace PythonAILib.Model.Content {
         // ObjectIdからContentFolderWrapperを取得
         public static ContentFolderWrapper? GetFolderById(string id) {
 
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            var folder = db.ContentFolders.Find(new ObjectId(id));
+            using PythonAILibDBContext db = new ();
+            var folder = db.ContentFolders.Find(id);
             if (folder == null) {
                 return null;
             }

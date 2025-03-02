@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 

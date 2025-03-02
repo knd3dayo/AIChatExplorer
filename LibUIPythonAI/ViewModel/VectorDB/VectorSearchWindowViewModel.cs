@@ -7,6 +7,7 @@ using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : ChatViewModelBase {

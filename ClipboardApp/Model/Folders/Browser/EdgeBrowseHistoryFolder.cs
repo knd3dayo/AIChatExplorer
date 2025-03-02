@@ -5,13 +5,6 @@ using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Settings;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Utils.Common;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using PythonAILib.PythonIF;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class EdgeBrowseHistoryFolder : ClipboardFolder {
@@ -126,7 +119,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                     SourceType = ContentSourceType.Url,
                     UpdatedAt = lastVisitTimeDateTime,
                     CreatedAt = lastVisitTimeDateTime,
-                   
+
                 };
                 contentItem.Save(false, false);
                 // 自動処理ルールを適用

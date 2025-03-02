@@ -3,14 +3,13 @@ using System.Text.Json;
 using System.Text.Unicode;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
-using LibPythonAI.Utils.Common;
 using LibPythonAI.Data;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
+using PythonAILib.Model.AutoProcess;
+using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folders.Clipboard {
     public partial class ClipboardFolder : ContentFolderWrapper {

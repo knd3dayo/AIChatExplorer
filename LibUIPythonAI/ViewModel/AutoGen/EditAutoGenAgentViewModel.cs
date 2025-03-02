@@ -6,6 +6,7 @@ using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenAgentViewModel : ChatViewModelBase {

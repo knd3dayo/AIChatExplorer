@@ -1,6 +1,6 @@
 using System.Windows;
-using PythonAILib.Model.AutoGen;
 using LibUIPythonAI.ViewModel.AutoGen;
+using LibPythonAI.Model.AutoGen;
 
 namespace LibUIPythonAI.View.AutoGen {
     /// <summary>

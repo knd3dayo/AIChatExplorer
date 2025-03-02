@@ -1,13 +1,10 @@
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
 using NetOfficeOutlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folders.Outlook {
@@ -42,7 +39,6 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
         private static NetOfficeOutlook.Application? outlookApplication = null;
 
-        [BsonIgnore]
         public NetOfficeOutlook.MAPIFolder? MAPIFolder { get; set; }
 
         public static MAPIFolder InboxFolder { get; private set; } = CreateInboxFolder();

@@ -4,15 +4,14 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
-using LibPythonAI.Model.Content;
-using LiteDB;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.Content {
+namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
 
         public ContentItemWrapper(ContentItemEntity contentItem) {
@@ -26,7 +25,6 @@ namespace PythonAILib.Model.Content {
 
         public ContentItemEntity Entity { get; set; }
 
-        [BsonIgnore]
         // Folder
         public ContentFolderWrapper? Folder {
             get {
@@ -232,7 +230,7 @@ namespace PythonAILib.Model.Content {
             }
         }
         // ファイルの最終更新日時
-        [BsonIgnore]
+
         public long LastModified {
             get {
                 Entity.ExtendedProperties.TryGetValue("LastModified", out object? value);
@@ -249,7 +247,7 @@ namespace PythonAILib.Model.Content {
                 if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
                     (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
                     if (isImage) {
-                        byte[] imageBytes = System.IO.File.ReadAllBytes(SourcePath);
+                        byte[] imageBytes = File.ReadAllBytes(SourcePath);
                         return Convert.ToBase64String(imageBytes);
                     }
                 }
@@ -288,7 +286,6 @@ namespace PythonAILib.Model.Content {
 
 
         // 背景情報
-        [BsonIgnore]
         public string BackgroundInfo {
             get {
                 return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
@@ -299,7 +296,6 @@ namespace PythonAILib.Model.Content {
         }
 
         // サマリー
-        [BsonIgnore]
         public string Summary {
             get {
                 return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
@@ -309,7 +305,6 @@ namespace PythonAILib.Model.Content {
             }
         }
         // 文章の信頼度
-        [BsonIgnore]
         public string InformationReliability {
             get {
                 return Entity.PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
@@ -318,7 +313,6 @@ namespace PythonAILib.Model.Content {
                 Entity.PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
             }
         }
-        [BsonIgnore]
         public string HeaderText {
             get {
 
@@ -360,7 +354,6 @@ namespace PythonAILib.Model.Content {
                 return header1;
             }
         }
-        [BsonIgnore]
         public string ChatItemsText {
             get {
                 // chatHistoryItemの内容をテキスト化
@@ -373,22 +366,18 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-
-        [BsonIgnore]
         public string UpdatedAtString {
             get {
                 return Entity.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
-        [BsonIgnore]
         public string CreatedAtString {
             get {
                 return Entity.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
-        [BsonIgnore]
         // ベクトル化日時の文字列
         public string VectorizedAtString {
             get {
@@ -399,7 +388,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        [BsonIgnore]
         public string ContentTypeString {
             get {
                 ContentTypes.ContentItemTypes ContentType = Entity.ContentType;
@@ -418,7 +406,6 @@ namespace PythonAILib.Model.Content {
 
         #region ファイル/画像関連
 
-        [BsonIgnore]
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty(FileName)) {
@@ -429,7 +416,6 @@ namespace PythonAILib.Model.Content {
         }
 
         // フォルダ名
-        [BsonIgnore]
         public string FolderName {
             get {
                 string FilePath = SourcePath;
@@ -437,7 +423,6 @@ namespace PythonAILib.Model.Content {
             }
         }
         // ファイル名
-        [BsonIgnore]
         public string FileName {
             get {
                 string FilePath = SourcePath;
@@ -445,7 +430,6 @@ namespace PythonAILib.Model.Content {
             }
         }
         // フォルダ名 + \n + ファイル名
-        [BsonIgnore]
         public string FolderAndFileName {
             get {
                 return FolderName + Path.PathSeparator + FileName;
@@ -453,7 +437,6 @@ namespace PythonAILib.Model.Content {
         }
 
         // 画像イメージ
-        [BsonIgnore]
         public BitmapImage? BitmapImage {
             get {
                 if (!IsImage()) {
@@ -463,7 +446,6 @@ namespace PythonAILib.Model.Content {
                 return ContentTypes.GetBitmapImage(imageBytes);
             }
         }
-        [BsonIgnore]
         public System.Drawing.Image? Image {
             get {
                 if (!IsImage()) {
@@ -544,7 +526,7 @@ namespace PythonAILib.Model.Content {
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            return System.Text.Json.JsonSerializer.Serialize(item, options);
+            return JsonSerializer.Serialize(item, options);
         }
 
 
@@ -555,7 +537,7 @@ namespace PythonAILib.Model.Content {
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            ContentItemWrapper? item = System.Text.Json.JsonSerializer.Deserialize<ContentItemWrapper>(json, options);
+            ContentItemWrapper? item = JsonSerializer.Deserialize<ContentItemWrapper>(json, options);
             return item;
 
         }

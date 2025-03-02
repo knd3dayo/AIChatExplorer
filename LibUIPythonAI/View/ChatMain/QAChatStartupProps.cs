@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
+using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.ViewModel {
     public class QAChatStartupProps {

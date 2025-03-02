@@ -1,14 +1,13 @@
-using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Data;
-using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.VectorDB {
+namespace LibPythonAI.Model.VectorDB {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
@@ -34,7 +33,7 @@ namespace PythonAILib.Model.VectorDB {
                 string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
                 string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
                 item = new VectorDBItemEntity() {
-                    Name = VectorDBItem.SystemCommonVectorDBName,
+                    Name = SystemCommonVectorDBName,
                     Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
                     VectorDBType = VectorDBTypeEnum.Chroma,
                     VectorDBURL = vectorDBPath,
@@ -60,8 +59,6 @@ namespace PythonAILib.Model.VectorDB {
             WriteIndented = true
         };
 
-
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
         [JsonPropertyName("vector_db_name")]
@@ -154,11 +151,11 @@ namespace PythonAILib.Model.VectorDB {
 
         // Json文字列化する
         public static string ToJson(IEnumerable<VectorDBItem> items) {
-            return System.Text.Json.JsonSerializer.Serialize(items, JsonSerializerOptions);
+            return JsonSerializer.Serialize(items, JsonSerializerOptions);
         }
         // Json文字列化する
         public static string ToJson(VectorDBItem item) {
-            return System.Text.Json.JsonSerializer.Serialize(item, JsonSerializerOptions);
+            return JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
         public static IEnumerable<VectorDBItem> GetItems() {
@@ -169,14 +166,14 @@ namespace PythonAILib.Model.VectorDB {
             }
         }
         // GetItemById
-        public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {
-            return GetItems().FirstOrDefault(item => item.Id == id);
+        public static VectorDBItem? GetItemById(string id) {
+            return GetItems().FirstOrDefault(item => item.Entity.Id == id);
         }
 
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(Id);
+            var item = db.VectorDBItems.Find(Entity.Id);
             if (item != null) {
                 db.VectorDBItems.Update(Entity);
             } else {
@@ -196,7 +193,7 @@ namespace PythonAILib.Model.VectorDB {
 
 
         public static VectorDBItem GetFolderVectorDBItem() {
-            VectorDBItem systemVectorItem = VectorDBItem.GetDefaultVectorDB();
+            VectorDBItem systemVectorItem = GetDefaultVectorDB();
             // NameとDescriptionとCollectionNameを設定する
             systemVectorItem.Name = SystemCommonVectorDBName;
             systemVectorItem.Description = SystemCommonVectorDBName;
@@ -206,9 +203,9 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         public static List<VectorDBItem> GetExternalVectorDBItems() {
-            List < VectorDBItem > result = [];
+            List<VectorDBItem> result = [];
             using PythonAILibDBContext db = new();
-            var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName);
             if (items == null) {
                 return result;
             }
@@ -220,8 +217,8 @@ namespace PythonAILib.Model.VectorDB {
 
         public static List<VectorDBItem> GetVectorDBItems() {
             List<VectorDBItem> result = [];
-            result.Add(VectorDBItem.GetDefaultVectorDB());
-            result.AddRange(VectorDBItem.GetExternalVectorDBItems());
+            result.Add(GetDefaultVectorDB());
+            result.AddRange(GetExternalVectorDBItems());
             return result;
         }
 

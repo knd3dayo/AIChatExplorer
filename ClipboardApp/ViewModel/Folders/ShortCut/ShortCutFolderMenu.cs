@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
     public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {

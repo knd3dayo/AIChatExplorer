@@ -1,6 +1,6 @@
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using PythonAILib.Common;
-using PythonAILib.Model.Content;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class EdgeBrowseHistoryItem : ContentItemWrapper {

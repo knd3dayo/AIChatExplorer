@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.VectorDB;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
@@ -9,7 +11,6 @@ using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatContextViewModel : ObservableObject {

@@ -2,9 +2,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Mail {

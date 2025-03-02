@@ -4,11 +4,6 @@ using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using PythonAILib.PythonIF;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folders.FileSystem {

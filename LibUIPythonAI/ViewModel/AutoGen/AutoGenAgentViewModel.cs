@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.AutoGen;
+using LibPythonAI.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class AutoGenAgentViewModel : ObservableObject {

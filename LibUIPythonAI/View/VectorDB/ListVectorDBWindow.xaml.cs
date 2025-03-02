@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibUIPythonAI.View.VectorDB
 {

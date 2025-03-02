@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
+using LibPythonAI.Model.Prompt;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;

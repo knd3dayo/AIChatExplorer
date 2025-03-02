@@ -1,12 +1,10 @@
 using System.Data.SQLite;
 using System.Text.Json.Serialization;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
-using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.Model.AutoGen {
     public class AutoGenAgent {
-
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -80,7 +78,7 @@ namespace PythonAILib.Model.AutoGen {
         }
         // Delete
         public void Delete() {
-            DeleteAutoGenAgent(this.Name);
+            DeleteAutoGenAgent(Name);
         }
 
         // Update AutoGenAgent

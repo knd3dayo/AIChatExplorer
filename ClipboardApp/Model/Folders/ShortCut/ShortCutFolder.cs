@@ -1,14 +1,9 @@
 using System.IO;
-using System.Linq;
 using ClipboardApp.Model.Folders.FileSystem;
-using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
 
 namespace ClipboardApp.Model.Folders.ShortCut {
     public class ShortCutFolder : FileSystemFolder {

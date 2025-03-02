@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.Folder {
     public class FolderEditWindowViewModel : ChatViewModelBase {

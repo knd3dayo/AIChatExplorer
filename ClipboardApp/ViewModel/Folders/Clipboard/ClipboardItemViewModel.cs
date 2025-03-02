@@ -1,22 +1,21 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Settings;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.Content;
-using PythonAILibUI.ViewModel.Item;
-using ClipboardApp.Model.Item;
-using ClipboardApp.ViewModel.Main;
 
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
         public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper clipboardItem) : base(folderViewModel, clipboardItem) {
-            if ( folderViewModel.Commands == null) {
+            if (folderViewModel.Commands == null) {
                 throw new Exception("folderViewModel.Commands is null");
             }
             ContentItem = clipboardItem;

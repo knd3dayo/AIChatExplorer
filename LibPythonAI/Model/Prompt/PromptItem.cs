@@ -1,13 +1,10 @@
 using LibPythonAI.Data;
-using LiteDB;
-using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
-
-        public ObjectId Id { get; set; } = ObjectId.Empty;
 
         // 名前
         public string Name { get; set; } = "";
@@ -49,7 +46,7 @@ namespace PythonAILib.Model.Prompt {
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Id);
+            var item = db.PromptItems.Find(Entity.Id);
             if (item != null) {
                 db.PromptItems.Update(Entity);
             } else {
@@ -61,7 +58,7 @@ namespace PythonAILib.Model.Prompt {
         // Delete
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Id);
+            var item = db.PromptItems.Find(Entity.Id);
             if (item != null) {
                 db.PromptItems.Remove(item);
                 db.SaveChanges();
@@ -94,7 +91,7 @@ namespace PythonAILib.Model.Prompt {
             var item = db.PromptItems.FirstOrDefault(x => x.Name == name.ToString() && (
                 x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
                 x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
-                ) ?? throw new System.Exception("PromptItem not found");
+                ) ?? throw new Exception("PromptItem not found");
 
             return new PromptItem(item);
         }
@@ -159,7 +156,7 @@ namespace PythonAILib.Model.Prompt {
 
 
             if (summaryGeneration == null) {
-                summaryGeneration =new PromptItemEntity() {
+                summaryGeneration = new PromptItemEntity() {
                     Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
                     Description = PromptStringResource.Instance.SummaryGeneration,
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
@@ -223,12 +220,12 @@ namespace PythonAILib.Model.Prompt {
                 return false;
             }
             PromptItem item = (PromptItem)obj;
-            return Id == item.Id;
+            return Entity == item.Entity;
         }
 
         // GetHashCode
         public override int GetHashCode() {
-            return Id.GetHashCode();
+            return Entity.GetHashCode();
         }
     }
 }

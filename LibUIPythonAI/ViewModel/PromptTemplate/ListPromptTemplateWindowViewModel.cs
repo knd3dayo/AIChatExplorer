@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Data;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
-using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
@@ -92,18 +93,20 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
 
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
+
 
             // PromptItemsを更新
             PromptItems.Clear();
-            foreach (var item in clipboardDBController.GetPromptCollection<PromptItem>().FindAll()) {
+            using PythonAILibDBContext db = new();
+
+            foreach (var itemEntity in db.PromptItems) {
                 // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
                 if (!IsShowSystemPromptItems &&
-                    (item.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
-                       item.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+                    (itemEntity.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
+                       itemEntity.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
                     continue;
                 }
-                PromptItemViewModel itemViewModel = new(item);
+                PromptItemViewModel itemViewModel = new(new PromptItem(itemEntity));
                 PromptItems.Add(itemViewModel);
             }
             OnPropertyChanged(nameof(PromptItems));
@@ -123,7 +126,6 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
-            IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
             PromptItem item = new(new LibPythonAI.Data.PromptItemEntity());
 
             PromptItemViewModel itemViewModel = new(item);

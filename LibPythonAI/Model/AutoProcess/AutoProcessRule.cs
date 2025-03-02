@@ -1,15 +1,13 @@
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
 
     public class AutoProcessRule {
-        public ObjectId Id { get; set; } = ObjectId.Empty;
 
         public string RuleName { get; set; } = "";
 
@@ -23,45 +21,44 @@ namespace PythonAILib.Model.AutoProcess {
 
         public AutoProcessItem? RuleAction {
             get {
-                var item = AutoProcessRuleInstance.RuleAction;
+                var item = Entity.RuleAction;
                 if (item == null) {
                     return null;
                 }
                 return new AutoProcessItem(item);
             }
             set {
-                AutoProcessRuleInstance.RuleAction = value?.AutoProcessItemInstance;
+                Entity.RuleAction = value?.AutoProcessItemInstance;
             }
         }
 
 
-        [BsonIgnore]
         public ContentFolderWrapper? DestinationFolder {
             get {
-                if (AutoProcessRuleInstance.DestinationFolder == null) {
+                if (Entity.DestinationFolder == null) {
                     return null;
                 }
-                return new ContentFolderWrapper(AutoProcessRuleInstance.DestinationFolder);
+                return new ContentFolderWrapper(Entity.DestinationFolder);
             }
             set {
-                AutoProcessRuleInstance.DestinationFolder = value?.Entity;
+                Entity.DestinationFolder = value?.Entity;
             }
         }
-        [BsonIgnore]
+
         public ContentFolderWrapper? TargetFolder {
             get {
-                if (AutoProcessRuleInstance.TargetFolder == null) {
+                if (Entity.TargetFolder == null) {
                     return null;
                 }
-                return new ContentFolderWrapper(AutoProcessRuleInstance.TargetFolder);
+                return new ContentFolderWrapper(Entity.TargetFolder);
             }
         }
 
         public AutoProcessRule(AutoProcessRuleEntity autoProcessRuleEntity) {
-            AutoProcessRuleInstance = autoProcessRuleEntity;
+            Entity = autoProcessRuleEntity;
         }
-        
-        public AutoProcessRuleEntity AutoProcessRuleInstance { get; set; }
+
+        public AutoProcessRuleEntity Entity { get; set; }
 
 
         /// <summary>
@@ -69,7 +66,7 @@ namespace PythonAILib.Model.AutoProcess {
         /// </summary>
         /// <param name="ruleName"></param>
         public AutoProcessRule(string ruleName) {
-            AutoProcessRuleInstance = new AutoProcessRuleEntity() {
+            Entity = new AutoProcessRuleEntity() {
                 RuleName = ruleName
             };
         }
@@ -81,18 +78,18 @@ namespace PythonAILib.Model.AutoProcess {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
             using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Id);
+            var item = db.AutoProcessRules.Find(Entity.Id);
             if (item == null) {
-                db.AutoProcessRules.Add(AutoProcessRuleInstance);
+                db.AutoProcessRules.Add(Entity);
             } else {
-                db.AutoProcessRules.Update(AutoProcessRuleInstance);
+                db.AutoProcessRules.Update(Entity);
             }
             db.SaveChanges();
         }
         // 削除
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Id);
+            var item = db.AutoProcessRules.Find(Entity.Id);
             if (item == null) {
                 return;
             }
@@ -273,7 +270,7 @@ namespace PythonAILib.Model.AutoProcess {
         public static void UpPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
             // 引数のAutoProcessRuleのIndexを取得
-            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
+            int index = autoProcessRules.FindIndex(r => r.Entity.Id == autoProcessRule.Entity.Id);
             // indexが0以下の場合は何もしない
             if (index <= 0) {
                 return;
@@ -294,7 +291,7 @@ namespace PythonAILib.Model.AutoProcess {
         public static void DownPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
             // 引数のAutoProcessRuleのIndexを取得
-            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
+            int index = autoProcessRules.FindIndex(r => r.Entity.Id == autoProcessRule.Entity.Id);
             // indexがリストの最大Index以上の場合は何もしない
             if (index >= autoProcessRules.Count - 1) {
                 return;

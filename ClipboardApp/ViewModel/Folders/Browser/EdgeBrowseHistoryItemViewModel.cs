@@ -1,16 +1,8 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel.Folders.Clipboard;
-using ClipboardApp.ViewModel.Settings;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.Content;
-using PythonAILibUI.ViewModel.Item;
-using ClipboardApp.Model.Item;
-using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Content;
+using LibPythonAI.Model.Content;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryItemViewModel : ClipboardItemViewModel {

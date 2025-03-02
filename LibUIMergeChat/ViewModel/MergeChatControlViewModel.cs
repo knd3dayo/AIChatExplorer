@@ -9,10 +9,8 @@ using LibUIPythonAI.View.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.View.Folder;
@@ -23,6 +21,9 @@ using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Data;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.Prompt;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : ChatViewModelBase {

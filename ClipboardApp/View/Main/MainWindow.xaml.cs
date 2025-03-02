@@ -1,9 +1,5 @@
 using System.ComponentModel;
 using System.Windows;
-using ClipboardApp.ViewModel.Main;
-using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Utils;
-using PythonAILib.PythonIF;
 
 
 

@@ -1,11 +1,8 @@
-using LiteDB;
-
-namespace PythonAILib.Model.Folder {
+namespace LibPythonAI.Model.Folder {
     public class FolderTypeEnum {
 
         public string Name { get; private set; } = "";
 
-        [BsonCtor]
         public FolderTypeEnum(string name) {
             Name = name;
         }
@@ -20,7 +17,7 @@ namespace PythonAILib.Model.Folder {
         }
 
         // Normal,
-        public static FolderTypeEnum  Normal { get; } = new ("Normal");
+        public static FolderTypeEnum Normal { get; } = new("Normal");
         // Search,
         public static FolderTypeEnum Search { get; } = new("Search");
         // ImageCheck,

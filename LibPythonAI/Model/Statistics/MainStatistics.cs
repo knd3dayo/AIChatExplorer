@@ -1,8 +1,7 @@
 using LibPythonAI.Data;
-using LiteDB;
-using PythonAILib.Common;
+using PythonAILib.Model.Statistics;
 
-namespace PythonAILib.Model.Statistics {
+namespace LibPythonAI.Model.Statistics {
     public class MainStatistics {
 
         public static MainStatistics GetMainStatistics() {
@@ -98,7 +97,7 @@ namespace PythonAILib.Model.Statistics {
         public static string GetStatisticsMessage() {
             string message;
             // MainStatisticsを取得
-            MainStatistics mainStatistics = MainStatistics.GetMainStatistics();
+            MainStatistics mainStatistics = GetMainStatistics();
             // 本日のトークン数
             long totalTokens = mainStatistics.GetTotalTokens();
             message = PythonAILib.Resources.PythonAILibStringResources.Instance.TotalTokenFormat(totalTokens) + "\n\n";

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.AutoGen;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;

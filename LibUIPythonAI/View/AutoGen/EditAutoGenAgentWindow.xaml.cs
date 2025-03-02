@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Model.AutoGen;
 using LibUIPythonAI.ViewModel.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
+using LibPythonAI.Model.AutoGen;
 
 namespace LibUIPythonAI.View.AutoGen {
     /// <summary>

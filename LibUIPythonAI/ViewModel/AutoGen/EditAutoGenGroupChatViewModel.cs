@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.AutoGen;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.AutoGen;
 

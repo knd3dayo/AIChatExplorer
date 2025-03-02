@@ -1,8 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Tag;
 
 namespace LibPythonAI.Data {
     public class TagItemEntity {

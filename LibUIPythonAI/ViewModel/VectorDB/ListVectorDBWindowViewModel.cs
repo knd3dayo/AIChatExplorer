@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Common;
-using PythonAILib.Model.VectorDB;
+using LibPythonAI.Data;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Data;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     /// <summary>

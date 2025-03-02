@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Browser {

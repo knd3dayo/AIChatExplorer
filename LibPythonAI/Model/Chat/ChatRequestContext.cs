@@ -2,9 +2,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.Model.Chat {
     // リクエストと共に送信するコンテキスト情報

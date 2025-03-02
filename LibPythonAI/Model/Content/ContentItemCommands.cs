@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System.IO;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;

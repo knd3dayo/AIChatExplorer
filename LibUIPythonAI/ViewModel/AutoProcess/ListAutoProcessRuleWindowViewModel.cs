@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.AutoProcess;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Utils.Common;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class ListAutoProcessRuleWindowViewModel : ChatViewModelBase {

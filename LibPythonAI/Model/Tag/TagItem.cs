@@ -1,8 +1,6 @@
 using LibPythonAI.Data;
-using LiteDB;
-using PythonAILib.Common;
 
-namespace PythonAILib.Model.Tag {
+namespace LibPythonAI.Model.Tag {
     public class TagItem {
 
         public TagItemEntity Entity { get; set; }
@@ -49,7 +47,7 @@ namespace PythonAILib.Model.Tag {
         // タグを検索
         public static IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
             using PythonAILibDBContext db = new();
-            var items =  db.TagItems.Where(x => x.Tag.Contains(tag) == !exclude);
+            var items = db.TagItems.Where(x => x.Tag.Contains(tag) == !exclude);
             foreach (var item in items) {
                 yield return new TagItem(item);
             }

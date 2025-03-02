@@ -1,9 +1,7 @@
 using LibPythonAI.Data;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
-namespace PythonAILib.Model.Search {
+namespace LibPythonAI.Model.Search {
     // 検索条件ルールは
     // - 検索条件
     // 検索結果の保存先フォルダ(検索フォルダ)、検索対象フォルダ、検索対象サブフォルダを含むかどうかを保持する

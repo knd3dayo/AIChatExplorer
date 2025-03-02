@@ -1,13 +1,9 @@
-using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Search;
 using LibUIPythonAI.Resource;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
@@ -36,7 +32,6 @@ namespace ClipboardApp.Model.Folders.Search {
         }
 
         // アイテム LiteDBには保存しない。
-        [BsonIgnore]
         public override List<ContentItemWrapper> GetItems() {
             List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,

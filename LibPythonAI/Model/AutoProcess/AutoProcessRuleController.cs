@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Data;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;

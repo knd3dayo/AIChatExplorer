@@ -3,8 +3,8 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {

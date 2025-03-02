@@ -1,3 +1,5 @@
+using LibPythonAI.Model.Image;
+
 namespace PythonAILib.Model.Image {
     public class ScreenShotCheckItem {
 

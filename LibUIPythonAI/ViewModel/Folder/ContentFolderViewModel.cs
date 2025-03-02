@@ -9,6 +9,7 @@ using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Content;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {

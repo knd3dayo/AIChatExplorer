@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.RAG {

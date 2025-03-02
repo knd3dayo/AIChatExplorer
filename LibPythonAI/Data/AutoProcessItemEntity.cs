@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using PythonAILib.Model.AutoProcess;
+using LibPythonAI.Model.AutoProcess;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Data {

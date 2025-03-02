@@ -1,5 +1,5 @@
 using LibPythonAI.Data;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.Content;
 
 namespace ClipboardApp.Model.Item {
     public partial class ClipboardItem : ContentItemWrapper {

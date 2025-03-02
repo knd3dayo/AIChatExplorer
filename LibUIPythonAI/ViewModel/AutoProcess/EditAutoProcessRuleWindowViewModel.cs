@@ -2,20 +2,19 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Data;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Data;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {
@@ -31,7 +30,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             if (targetFolder != null) {
                 TargetFolder = new ContentFolderWrapper(targetFolder);
             }
-            var destinationFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.DestinationFolder.Entity.Id); 
+            var destinationFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.DestinationFolder.Entity.Id);
             if (destinationFolder != null) {
                 DestinationFolder = new ContentFolderWrapper(destinationFolder);
             }

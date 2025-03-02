@@ -1,12 +1,12 @@
+using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using PythonAILib.Model.Folder;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Content;
-using ClipboardApp.Model.Folders.Clipboard;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Chat {

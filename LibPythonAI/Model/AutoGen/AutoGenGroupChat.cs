@@ -2,10 +2,9 @@ using System.Data.SQLite;
 using System.Text.Json.Serialization;
 using PythonAILib.Common;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.Model.AutoGen {
     public class AutoGenGroupChat {
 
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -41,12 +40,12 @@ namespace PythonAILib.Model.AutoGen {
 
         // Save
         public void Save(bool allow_override = true) {
-            UpdateAutoGenGroupChat(this.Name, this.Description, this.LLMConfigName, this.AgentNames, allow_override);
+            UpdateAutoGenGroupChat(Name, Description, LLMConfigName, AgentNames, allow_override);
         }
 
         // Delete
         public void Delete() {
-            DeleteAutoGenGroupChat(this.Name);
+            DeleteAutoGenGroupChat(Name);
         }
 
         // Equals
@@ -62,7 +61,7 @@ namespace PythonAILib.Model.AutoGen {
             return Name.GetHashCode();
         }
 
-        public static void UpdateAutoGenGroupChat(string name, string description, string llm_config_name, List<string> agent_names  ,bool overwrite) {
+        public static void UpdateAutoGenGroupChat(string name, string description, string llm_config_name, List<string> agent_names, bool overwrite) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
             string autogenDBURL = ConfigPrams.GetAutoGenDBPath();

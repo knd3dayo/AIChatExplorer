@@ -1,10 +1,10 @@
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
     // 自動処理の引数用のクラス
     public class AutoProcessItem {
 
@@ -151,7 +151,7 @@ namespace PythonAILib.Model.AutoProcess {
                     Name = "Ignore",
                     DisplayName = PythonAILibStringResources.Instance.Ignore,
                     Description = PythonAILibStringResources.Instance.DoNothing,
-                    TypeName = AutoProcessItem.TypeEnum.Ignore
+                    TypeName = TypeEnum.Ignore
                 };
                 db.AutoProcessItems.Add(ignore);
             }
@@ -164,7 +164,7 @@ namespace PythonAILib.Model.AutoProcess {
                     Name = "CopyToFolder",
                     DisplayName = PythonAILibStringResources.Instance.CopyToFolder,
                     Description = PythonAILibStringResources.Instance.CopyClipboardContentToSpecifiedFolder,
-                    TypeName = AutoProcessItem.TypeEnum.CopyToFolder
+                    TypeName = TypeEnum.CopyToFolder
                 };
                 db.AutoProcessItems.Add(copyToFolder);
             }
@@ -177,7 +177,7 @@ namespace PythonAILib.Model.AutoProcess {
                     Name = "MoveToFolder",
                     DisplayName = PythonAILibStringResources.Instance.MoveToFolder,
                     Description = PythonAILibStringResources.Instance.MoveClipboardContentToSpecifiedFolder,
-                    TypeName = AutoProcessItem.TypeEnum.MoveToFolder
+                    TypeName = TypeEnum.MoveToFolder
                 };
                 db.AutoProcessItems.Add(moveToFolder);
             }
@@ -190,7 +190,7 @@ namespace PythonAILib.Model.AutoProcess {
                     Name = "ExtractText",
                     DisplayName = PythonAILibStringResources.Instance.ExtractText,
                     Description = PythonAILibStringResources.Instance.ExtractClipboardText,
-                    TypeName = AutoProcessItem.TypeEnum.ExtractText
+                    TypeName = TypeEnum.ExtractText
                 };
                 db.AutoProcessItems.Add(extractText);
             }

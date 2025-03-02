@@ -10,10 +10,11 @@ using LibUIPythonAI.ViewModel.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Image;
+using LibPythonAI.Model.Content;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatMainWindowViewModel : ChatViewModelBase {

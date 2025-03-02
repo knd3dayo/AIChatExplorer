@@ -11,7 +11,7 @@ namespace LibUIPythonAI.View.AutoProcessRule {
         public EditAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModel, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
+        public static void OpenEditAutoProcessRuleWindow(LibPythonAI.Model.AutoProcess.AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModel, Action<LibPythonAI.Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
                 DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, rootFolderViewModel, afterUpdate)
             };

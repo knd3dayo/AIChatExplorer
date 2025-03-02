@@ -1,5 +1,6 @@
 using System.IO;
 using LibPythonAI.Data;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;

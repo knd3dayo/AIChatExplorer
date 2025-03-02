@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;
