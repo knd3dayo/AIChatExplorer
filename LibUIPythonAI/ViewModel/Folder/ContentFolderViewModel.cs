@@ -112,6 +112,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {
 
             EditFolderCommandExecute(this, () => {
+                // ベクトルDBの説明を更新
+                Folder.GetMainVectorSearchProperty().UpdateVectorDBCollection(Folder.Description);
                 //　フォルダを保存
                 this.Folder.Save();
                 LoadFolderCommand.Execute();

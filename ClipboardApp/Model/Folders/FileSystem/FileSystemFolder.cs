@@ -29,11 +29,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         }
 
         public override FileSystemFolder CreateChild(string folderName) {
-            ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
-                FolderName = folderName,
-            };
-            FileSystemFolder child = new(childFolder);
+            FileSystemFolder child = new(this , folderName);
             return child;
         }
 

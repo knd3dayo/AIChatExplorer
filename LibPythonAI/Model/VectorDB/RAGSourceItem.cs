@@ -34,10 +34,10 @@ namespace PythonAILib.Model.VectorDB {
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.RAGSourceItems.Find(Entity.Id);
-            if (item != null) {
-                db.RAGSourceItems.Update(Entity);
-            } else {
+            if (item == null) {
                 db.RAGSourceItems.Add(Entity);
+            } else {
+                db.RAGSourceItems.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
 

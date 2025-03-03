@@ -6,6 +6,7 @@ using System.Text.Unicode;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class ContentItemEntity {
@@ -94,15 +95,23 @@ namespace LibPythonAI.Data {
 
         public string ExtendedPropertiesJson { get; set; } = "{}";
 
+        private Dictionary<string, object?>? _extendedProperties;
         // 拡張プロパティ (Dictionary<string, object> は EF でサポートされないため、Json で保存)
         [NotMapped]
-        public Dictionary<string, object> ExtendedProperties {
+        public Dictionary<string, object?> ExtendedProperties {
             get {
-                Dictionary<string, object>? items = JsonSerializer.Deserialize<Dictionary<string, object>>(ExtendedPropertiesJson, jsonSerializerOptions);
-                return items ?? [];
+                if (_extendedProperties == null) {
+                    _extendedProperties = JsonUtil.ParseJson(ExtendedPropertiesJson);
+                }
+                return _extendedProperties ?? [];
             }
         }
 
+        public void SaveExtendedPropertiesJson() {
+            if (_extendedProperties != null) {
+                ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+            }
+        }
 
 
         // Copy

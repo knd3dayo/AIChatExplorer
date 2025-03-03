@@ -14,7 +14,7 @@ namespace LibPythonAI.Model.Content {
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
             Entity = new ContentFolderEntity() {
-                ParentId = parent?.Parent?.Entity.Id,
+                ParentId = parent?.Entity.Id,
                 FolderName = folderName,
             };
         }
@@ -202,8 +202,8 @@ namespace LibPythonAI.Model.Content {
 
         // 保存
         public void Save() {
-            // ベクトルDBのコレクションを更新
-            GetMainVectorSearchProperty().UpdateVectorDBCollection(Entity.Description);
+            Entity.SaveExtendedPropertiesJson();
+
             using PythonAILibDBContext db = new();
             var folder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.Id);
             if (folder == null) {

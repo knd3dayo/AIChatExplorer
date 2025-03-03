@@ -29,11 +29,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         }
 
         public override RecentFilesFolder CreateChild(string folderName) {
-            ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
-                FolderName = folderName,
-            };
-            RecentFilesFolder child = new(childFolder);
+            RecentFilesFolder child = new(this, folderName);
             return child;
         }
 

@@ -6,14 +6,6 @@ using PythonAILib.Resources;
 namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
 
-        // 名前
-        public string Name { get; set; } = "";
-        // 説明
-        public string Description { get; set; } = "";
-
-        // プロンプト
-        public string Prompt { get; set; } = "";
-
 
         // コンストラクタ
         public PromptItem(PromptItemEntity entity) {
@@ -21,6 +13,23 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         public PromptItemEntity Entity { get; set; }
+
+        // 名前
+        public string Name {
+            get => Entity.Name;
+            set => Entity.Name = value;
+        }
+        // 説明
+        public string Description {
+            get => Entity.Description;
+            set => Entity.Description = value;
+        }
+
+        // プロンプト
+        public string Prompt {
+            get => Entity.Prompt;
+            set => Entity.Prompt = value;
+        }
 
         // プロンプトテンプレートの種類
         public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
@@ -47,10 +56,10 @@ namespace LibPythonAI.Model.Prompt {
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.PromptItems.Find(Entity.Id);
-            if (item != null) {
-                db.PromptItems.Update(Entity);
-            } else {
+            if (item == null) {
                 db.PromptItems.Add(Entity);
+            } else {
+                db.PromptItems.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
         }

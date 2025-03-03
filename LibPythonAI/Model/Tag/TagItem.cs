@@ -29,10 +29,10 @@ namespace LibPythonAI.Model.Tag {
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.TagItems.Find(Entity.Id);
-            if (item != null) {
-                db.TagItems.Update(Entity);
-            } else {
+            if (item == null) {
                 db.TagItems.Add(Entity);
+            } else {
+                db.TagItems.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
         }

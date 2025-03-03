@@ -174,10 +174,10 @@ namespace LibPythonAI.Model.VectorDB {
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.VectorDBItems.Find(Entity.Id);
-            if (item != null) {
-                db.VectorDBItems.Update(Entity);
-            } else {
+            if (item == null) {
                 db.VectorDBItems.Add(Entity);
+            } else {
+                db.VectorDBItems.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
         }

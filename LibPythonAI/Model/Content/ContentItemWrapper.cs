@@ -498,8 +498,9 @@ namespace LibPythonAI.Model.Content {
             }
             if (applyAutoProcess) {
                 // 自動処理を適用
-
             }
+            Entity.SaveExtendedPropertiesJson();
+
             using PythonAILibDBContext db = new PythonAILibDBContext();
             var existingItem = db.ContentItems.Find(Entity.Id);
             if (existingItem == null) {

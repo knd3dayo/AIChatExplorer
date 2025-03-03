@@ -19,11 +19,7 @@ namespace ClipboardApp.Model.Folders.ShortCut {
         }
 
         public override ShortCutFolder CreateChild(string folderName) {
-            ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
-                FolderName = folderName,
-            };
-            ShortCutFolder child = new(childFolder);
+            ShortCutFolder child = new(this, folderName);
             return child;
         }
 

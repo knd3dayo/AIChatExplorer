@@ -82,7 +82,7 @@ namespace LibPythonAI.Model.AutoProcess {
             if (item == null) {
                 db.AutoProcessRules.Add(Entity);
             } else {
-                db.AutoProcessRules.Update(Entity);
+                db.AutoProcessRules.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
         }

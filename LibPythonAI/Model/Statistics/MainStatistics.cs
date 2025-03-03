@@ -85,10 +85,10 @@ namespace LibPythonAI.Model.Statistics {
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.MainStatistics.Find(Entity.Id);
-            if (item != null) {
+            if (item == null) {
                 db.MainStatistics.Update(Entity);
             } else {
-                db.MainStatistics.Add(Entity);
+                db.MainStatistics.Entry(item).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
         }

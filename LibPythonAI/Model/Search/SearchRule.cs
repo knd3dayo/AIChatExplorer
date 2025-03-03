@@ -63,7 +63,12 @@ namespace LibPythonAI.Model.Search {
         // 保存
         public void Save() {
             using PythonAILibDBContext db = new();
-            db.SearchRules.Update(Entity);
+            var item = db.SearchRules.Find(Entity.Id);
+            if (item == null) {
+                db.SearchRules.Add(Entity);
+            } else {
+                db.SearchRules.Entry(item).CurrentValues.SetValues(Entity);
+            }
             db.SaveChanges();
         }
 

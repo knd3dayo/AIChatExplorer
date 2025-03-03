@@ -37,13 +37,13 @@ namespace LibPythonAI.Data {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 
-            var logFilePath = "logfile.txt";
-            logStream = new StreamWriter(logFilePath, append: true);
-            logStream.AutoFlush = true; // 自動的にバッファをフラッシュするように設定
+            // var logFilePath = "logfile.txt";
+            // logStream = new StreamWriter(logFilePath, append: true);
+            // logStream.AutoFlush = true; // 自動的にバッファをフラッシュするように設定
 
             string dbPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
-            optionsBuilder.EnableSensitiveDataLogging()
-                .LogTo(logStream.WriteLine, LogLevel.Information).UseSqlite($"Data Source={dbPath}");
+            // optionsBuilder.EnableSensitiveDataLogging().LogTo(logStream.WriteLine, LogLevel.Information).UseSqlite($"Data Source={dbPath}");
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
 
         public override void Dispose() {
