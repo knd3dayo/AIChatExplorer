@@ -91,6 +91,14 @@ namespace LibUIPythonAI.View.PromptTemplate {
         // EditPromptTemplate
         public static string EditPromptTemplate { get; set; } = CommonStringResources.Instance.EditPromptTemplate;
 
+        // File Menu
+        public static string FileMenu { get; set; } = CommonStringResources.Instance.File;
+
+        // Export
+        public static string ExportToExcel { get; set; } = CommonStringResources.Instance.ExportToExcel;
+
+        // Import
+        public static string ImportFromExcel { get; set; } = CommonStringResources.Instance.ImportFromExcel;
 
     }
 }

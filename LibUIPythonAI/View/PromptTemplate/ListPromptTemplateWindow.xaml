@@ -58,8 +58,13 @@
                     IsMainMenu="False">
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="" />
+                        Header="{x:Static res:ViewStringResources.FileMenu}">
+                        <MenuItem Command="{Binding ExportToExcelCommand}" Header="{x:Static res:ViewStringResources.ExportToExcel}" />
+                        <MenuItem Command="{Binding ImportFromExcelCommand}" Header="{x:Static res:ViewStringResources.ImportFromExcel}" />
+                    </MenuItem>
+
                 </Menu>
 
             </materialDesign:ColorZone>

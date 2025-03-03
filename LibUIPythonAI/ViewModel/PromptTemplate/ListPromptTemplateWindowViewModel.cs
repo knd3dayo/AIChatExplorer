@@ -3,8 +3,11 @@ using System.Windows;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.ExportImport;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
@@ -172,5 +175,50 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
             OnPropertyChanged(nameof(PromptItems));
         }
+
+        // Excelへエクスポートする処理
+
+        public SimpleDelegateCommand<object> ExportToExcelCommand => new((obj) => {
+            string SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-PromptTemplate"   + ".xlsx";
+
+            //ファイルダイアログを表示
+
+
+            using var dialog = new CommonOpenFileDialog() {
+                Title = CommonStringResources.Instance.SelectFilePlease,
+                DefaultFileName = SelectedFileName,
+                InitialDirectory = @".",
+            };
+            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                SelectedFileName = dialog.FileName;
+
+                Task.Run(() => {
+                    ImportExportUtil.ExportPromptItemsToExcel(SelectedFileName, PromptItems.Select( x => x.PromptItem).ToList());
+                });
+            }
+        });
+
+        public SimpleDelegateCommand<object> ImportFromExcelCommand => new((obj) => {
+            string SelectedFileName = "";
+            //ファイルダイアログを表示
+            using var dialog = new CommonOpenFileDialog() {
+                Title = CommonStringResources.Instance.SelectFilePlease,
+                InitialDirectory = @".",
+                DefaultExtension = ".xlsx",
+            };
+            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                SelectedFileName = dialog.FileName;
+                Task.Run(() => {
+                    ImportExportUtil.ImportPromptItemsFromExcel(SelectedFileName);
+                    ReloadCommand.Execute();
+                });
+            }
+        });
     }
 }

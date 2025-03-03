@@ -1,7 +1,10 @@
 using System.IO;
 using System.Text.Json.Nodes;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
@@ -9,6 +12,48 @@ using PythonAILib.Resources;
 
 namespace LibPythonAI.Utils.ExportImport {
     public class ImportExportUtil {
+        // ExportPromptItemsToExcel
+        public static void ExportPromptItemsToExcel(string fileName, List<PromptItem> promptItems) {
+            // PythonNetの処理を呼び出す。
+            List<List<string>> data = [];
+            // PromptItemのリスト要素毎に処理を行う
+            foreach (var promptItem in promptItems) {
+                List<string> row = [];
+                row.Add(promptItem.Name);
+                row.Add(promptItem.Description);
+                row.Add(promptItem.Prompt);
+                row.Add(promptItem.ChatMode.ToString());
+                row.Add(promptItem.SplitMode.ToString());
+                row.Add(promptItem.UseVectorDB.ToString());
+                data.Add(row);
+            }
+            CommonDataTable dataTable = new(data);
+            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+        }
+
+        // ImportPromptItemsFromExcel
+        public static void ImportPromptItemsFromExcel(string fileName) {
+            // PythonNetの処理を呼び出す。
+            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            if (data == null) {
+                return;
+            }
+            foreach (var row in data.Rows) {
+                if (row.Count == 0) {
+                    continue;
+                }
+                PromptItemEntity promptItemEntity = new() {
+                    Name = row[0],
+                    Description = row[1],
+                    Prompt = row[2],
+                    ChatMode = (OpenAIExecutionModeEnum)Enum.Parse(typeof(OpenAIExecutionModeEnum), row[3]),
+                    SplitMode = (SplitOnTokenLimitExceedModeEnum)Enum.Parse(typeof(SplitOnTokenLimitExceedModeEnum), row[4]),
+                    UseVectorDB = bool.Parse(row[5])
+                };
+                PromptItem promptItem = new(promptItemEntity);
+                promptItem.Save();
+            }
+        }
 
         // --- Export/Import
         public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {

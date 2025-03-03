@@ -16,6 +16,7 @@ namespace LibPythonAI.Model.Content {
 
         public ContentItemWrapper(ContentItemEntity contentItem) {
             Entity = contentItem;
+
         }
         public ContentItemWrapper(ContentFolderEntity folder) {
             Entity = new() {

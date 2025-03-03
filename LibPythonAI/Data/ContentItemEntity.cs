@@ -26,7 +26,7 @@ namespace LibPythonAI.Data {
 
 
         // 生成日時
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         // 更新日時
         public DateTime UpdatedAt { get; set; }
         // ベクトル化日時
