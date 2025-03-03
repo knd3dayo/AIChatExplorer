@@ -8,6 +8,7 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
+using Microsoft.EntityFrameworkCore;
 using PythonAILib.Model.AutoProcess;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -26,13 +27,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override List<ContentItemWrapper> GetItems() {
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).ToList();
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new ClipboardItem(item));
-            }
-            return result;
+            return [.. Entity.GetContentItems().Select(x => new ClipboardItem(x))];
         }
 
         public override ClipboardFolder? GetParent() {
@@ -45,13 +40,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override List<ContentFolderWrapper> GetChildren() {
-            using PythonAILibDBContext context = new();
-            var items = context.ContentFolders.Where(x => x.ParentId == this.Entity.Id).ToList();
-            List<ContentFolderWrapper> result = [];
-            foreach (var child in items) {
-                result.Add(new ClipboardFolder(child));
-            }
-            return result;
+            return [.. Entity.GetChildren().Select(x => new ClipboardFolder(x))];
         }
 
         // アイテムを追加する処理

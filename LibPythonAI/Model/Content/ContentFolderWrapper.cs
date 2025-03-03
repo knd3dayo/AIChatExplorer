@@ -159,16 +159,12 @@ namespace LibPythonAI.Model.Content {
 
 
         public virtual List<ContentItemWrapper> GetItems() {
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            IEnumerable<ContentItemEntity> items = db.ContentItems.Where(x => x.FolderId == Entity.Id);
 
-            return items.Select(x => new ContentItemWrapper(x)).ToList();
+            return Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
         }
 
         public virtual List<ContentFolderWrapper> GetChildren() {
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            var children = db.ContentFolders.Where(x => x.ParentId == Entity.Id);
-            return children.Select(x => new ContentFolderWrapper(x)).ToList();
+            return [.. Entity.GetChildren().Select(x => new ContentFolderWrapper(x))];
         }
 
         // 親フォルダ

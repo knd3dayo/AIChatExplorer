@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 using System.IO;
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Item;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Settings;
 using LibPythonAI.Data;
@@ -50,13 +51,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         public override List<ContentItemWrapper> GetItems() {
             // SyncItems
             SyncItems();
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).ToList();
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new EdgeBrowseHistoryItem(item));
-            }
-            return result;
+            return [.. Entity.GetContentItems().Select(x => new EdgeBrowseHistoryItem(x))];
         }
 
         // 子フォルダ

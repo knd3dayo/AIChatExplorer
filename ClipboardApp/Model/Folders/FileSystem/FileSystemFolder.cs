@@ -58,13 +58,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         public override List<ContentFolderWrapper> GetChildren() {
             // SyncFolders
             SyncFolders();
-            using PythonAILibDBContext context = new();
-            var items = context.ContentFolders.Where(x => x.ParentId == this.Entity.Id).ToList();
-            List<ContentFolderWrapper> result = [];
-            foreach (var child in items) {
-                result.Add(new FileSystemFolder(child));
-            }
-            return result;
+            return [.. Entity.GetChildren().Select(x => new FileSystemFolder(x))];
         }
 
         // ProcessClipboardItem
@@ -88,6 +82,8 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                     fileSystemFolderPaths = new HashSet<string>(Directory.GetDirectories(FileSystemFolderPath));
                 } catch (UnauthorizedAccessException e) {
                     LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+                } catch (IOException e) {
+                    LogWrapper.Info($"IO Error:{FileSystemFolderPath} {e.Message}");
                 }
             }
             return fileSystemFolderPaths;
@@ -172,13 +168,20 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 itemFilePathIdDict[item.SourcePath] = item;
             }
 
+            // 削除対象格納用のリスト
+            List<ContentItemWrapper> deleteItems = [];
             // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
             // Exceptで差集合を取得
             var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
             foreach (var deleteFilePath in deleteFilePaths) {
                 ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
-                contentItem.Delete();
+                deleteItems.Add(contentItem);
             }
+            // 削除対象のアイテムを削除
+            ContentItemWrapper.DeleteItems(deleteItems);
+
+            // 追加対象格納用のリスト
+            List<ContentItemWrapper> addItems = [];
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
             // Exceptで差集合を取得
             var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
@@ -199,6 +202,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 
                 };
+                addItems.Add(contentItem);
                 contentItem.Save(false, false);
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);

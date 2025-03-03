@@ -362,15 +362,10 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperties.Add(folderVectorDBItem);
                     vectorDBProperty = folderVectorDBItem;
                 }
-                // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Entity.Id.ToString());
-
             }
-            // ベクトルを削除
-            foreach (var vectorDBProperty in vectorDBProperties) {
-                vectorDBProperty.DeleteEmbeddings();
-            }
+            VectorDBProperty.DeleteEmbeddings([.. vectorDBProperties]);
         }
+
         // Embeddingを更新する
         public static void UpdateEmbeddings(List<ContentItemWrapper> items) {
             // VectorDBProperty用のHashSetを作成

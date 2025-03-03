@@ -149,17 +149,18 @@ namespace LibPythonAI.Model.VectorDB {
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
         }
 
-        public void DeleteEmbeddings() {
+        public static void DeleteEmbeddings(List<VectorDBProperty> items) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = [this],
+                VectorDBProperties = items,
                 OpenAIProperties = openAIProperties
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
+
 
         // ベクトル検索を実行する
         public List<VectorMetadata> VectorSearch(string query) {

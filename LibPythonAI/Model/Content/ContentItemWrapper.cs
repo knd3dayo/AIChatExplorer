@@ -5,6 +5,7 @@ using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -240,10 +241,16 @@ namespace LibPythonAI.Model.Content {
         public string Base64Image {
             get {
                 if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
-                    (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
-                    if (isImage) {
-                        byte[] imageBytes = File.ReadAllBytes(SourcePath);
-                        return Convert.ToBase64String(imageBytes);
+                    // IOExceptionが発生する可能性があるため、try-catchで囲む
+                    try {
+                        (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+                        if (isImage) {
+                            byte[] imageBytes = File.ReadAllBytes(SourcePath);
+                            return Convert.ToBase64String(imageBytes);
+                        }
+                    } catch (IOException e) {
+                        LogWrapper.Info($"access error: {e.Message}");  
+                        return "";
                     }
                 }
                 if (string.IsNullOrEmpty(Entity.CachedBase64String) == false) {
@@ -477,22 +484,17 @@ namespace LibPythonAI.Model.Content {
             return GetFolder().GetMainVectorSearchProperty();
         }
 
-        public virtual void Delete() {
+        public void Delete() {
             ContentItemCommands.DeleteEmbeddings([this]);
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            db.ContentItems.Remove(Entity);
-            db.SaveChanges();
+            ContentItemEntity.DeleteItems([Entity]);
         }
 
         public static void DeleteItems(List<ContentItemWrapper> items) {
             ContentItemCommands.DeleteEmbeddings(items);
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            db.ContentItems.RemoveRange(items.Select(item => item.Entity));
-            db.SaveChanges();
-
+            ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
         }
 
-        public virtual void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
+        public void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
             if (updateLastModifiedTime) {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
@@ -500,16 +502,18 @@ namespace LibPythonAI.Model.Content {
             if (applyAutoProcess) {
                 // 自動処理を適用
             }
-            Entity.SaveExtendedPropertiesJson();
+            ContentItemEntity.SaveItems([Entity]);
+        }
 
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            var existingItem = db.ContentItems.Find(Entity.Id);
-            if (existingItem == null) {
-                db.ContentItems.Add(Entity);
-            } else {
-                db.ContentItems.Entry(existingItem).CurrentValues.SetValues(Entity);
+        public static void SaveItems(List<ContentItemWrapper> items, bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
+            if (updateLastModifiedTime) {
+                // 更新日時を設定
+                items.ForEach(item => item.UpdatedAt = DateTime.Now);
             }
-            db.SaveChanges();
+            if (applyAutoProcess) {
+                // 自動処理を適用
+            }
+            ContentItemEntity.SaveItems(items.Select(item => item.Entity).ToList());
         }
 
         // ClipboardItemをJSON文字列に変換する

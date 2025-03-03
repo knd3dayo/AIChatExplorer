@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Microsoft.EntityFrameworkCore;
 using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Data {
@@ -60,5 +61,19 @@ namespace LibPythonAI.Data {
             }
         }
 
+
+        public List<ContentItemEntity> GetContentItems() {
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems
+                .Include(b => b.Tags)
+                .Where(x => x.FolderId == this.Id).ToList();
+            return items;
+        }
+
+        public List<ContentFolderEntity> GetChildren() {
+            using PythonAILibDBContext context = new();
+            var items = context.ContentFolders.Where(x => x.ParentId == this.Id).ToList();
+            return items;
+        }
     }
 }

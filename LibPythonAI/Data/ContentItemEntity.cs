@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibGit2Sharp;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
@@ -113,7 +114,6 @@ namespace LibPythonAI.Data {
             }
         }
 
-
         // Copy
         public ContentItemEntity Copy() {
             ContentItemEntity newItem = new() {
@@ -138,6 +138,33 @@ namespace LibPythonAI.Data {
                 ExtendedPropertiesJson = ExtendedPropertiesJson
             };
             return newItem;
+        }
+
+        // 複数アイテムのSave
+        public static void SaveItems(List<ContentItemEntity> items) {
+            using PythonAILibDBContext context = new();
+            foreach (var item in items) {
+                item.SaveExtendedPropertiesJson();
+                var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
+                if (ExistingItem == null) {
+                    context.ContentItems.Add(item);
+                } else {
+                    context.Entry(ExistingItem).CurrentValues.SetValues(item);
+                }
+            }
+            context.SaveChanges();
+        }
+
+        // 複数アイテムのDelete
+        public static void DeleteItems(List<ContentItemEntity> items) {
+            using PythonAILibDBContext context = new();
+            foreach (var item in items) {
+                var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
+                if (ExistingItem != null) {
+                    context.ContentItems.Remove(ExistingItem);
+                }
+            }
+            context.SaveChanges();
         }
 
 
