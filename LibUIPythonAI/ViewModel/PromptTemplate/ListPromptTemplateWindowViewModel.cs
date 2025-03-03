@@ -216,7 +216,9 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 SelectedFileName = dialog.FileName;
                 Task.Run(() => {
                     ImportExportUtil.ImportPromptItemsFromExcel(SelectedFileName);
-                    ReloadCommand.Execute();
+                    MainUITask.Run(() => {
+                        ReloadCommand.Execute();
+                    });
                 });
             }
         });
