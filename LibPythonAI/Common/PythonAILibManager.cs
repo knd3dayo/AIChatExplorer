@@ -1,3 +1,4 @@
+using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using PythonAILib.PythonIF;
@@ -24,6 +25,10 @@ namespace PythonAILib.Common {
         public static void Init(IPythonAILibConfigParams parmas) {
 
             Instance = new PythonAILibManager(parmas);
+
+            // DBの初期化
+            PythonAILibDBContext.Init();
+
             // PromptItemの初期化
             PromptItem.InitSystemPromptItems();
         }

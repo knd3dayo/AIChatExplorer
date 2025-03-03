@@ -19,27 +19,21 @@ namespace LibPythonAI.Model.Content {
         }
         public ContentItemWrapper(ContentFolderEntity folder) {
             Entity = new() {
-                Folder = folder
+                FolderId = folder.Id,
             };
         }
 
         public ContentItemEntity Entity { get; set; }
 
         // Folder
-        public ContentFolderWrapper? Folder {
-            get {
-                if (Entity.Folder == null) {
-                    return null;
-                }
-                return new ContentFolderWrapper(Entity.Folder);
+        public virtual ContentFolderWrapper GetFolder() {
+            using PythonAILibDBContext db = new PythonAILibDBContext();
+            var folder = db.ContentFolders.Find(Entity.FolderId);
+            if (folder == null) {
+                throw new Exception("Folder is null");
             }
-            set {
-                if (value == null) {
-                    Entity.Folder = null;
-                } else {
-                    Entity.Folder = value.Entity;
-                }
-            }
+            return new(folder);
+
         }
 
         // 生成日時
@@ -269,14 +263,14 @@ namespace LibPythonAI.Model.Content {
 
         // 別フォルダに移動
         public virtual void MoveTo(ContentFolderWrapper folder) {
-            Folder = folder;
+            Entity.FolderId = folder.Entity.Id;
             Save();
         }
 
         // 別フォルダにコピー
         public virtual void CopyToFolder(ContentFolderWrapper folder) {
             ContentItemWrapper newItem = Copy();
-            newItem.Folder = folder;
+            newItem.Entity.FolderId = folder.Entity.Id;
             newItem.Save();
         }
 
@@ -345,6 +339,7 @@ namespace LibPythonAI.Model.Content {
                 // 文書の信頼度
                 header1 += $"\n[{PythonAILibStringResources.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
                 // ★TODO フォルダーの説明を文章のカテゴリーの説明として追加
+                var Folder = GetFolder();
                 if (Folder != null && !string.IsNullOrEmpty(Folder.Description)) {
                     header1 += $"[{PythonAILibStringResources.Instance.DocumentCategorySummary}]" + Folder.Description + "\n";
                 }
@@ -458,15 +453,6 @@ namespace LibPythonAI.Model.Content {
         // Load
         public virtual void Load(Action beforeAction, Action afterAction) { }
 
-        // Collectionに対応するClipboardFolderを取得
-        public virtual ContentFolderWrapper? GetFolder() {
-            if (Entity.Folder == null) {
-                return null;
-            }
-            return new(Entity.Folder);
-        }
-
-
         public bool IsImage() {
 
             if (string.IsNullOrEmpty(Base64Image)) {
@@ -515,7 +501,12 @@ namespace LibPythonAI.Model.Content {
 
             }
             using PythonAILibDBContext db = new PythonAILibDBContext();
-            db.ContentItems.Update(Entity);
+            var existingItem = db.ContentItems.Find(Entity.Id);
+            if (existingItem == null) {
+                db.ContentItems.Add(Entity);
+            } else {
+                db.ContentItems.Entry(existingItem).CurrentValues.SetValues(Entity);
+            }
             db.SaveChanges();
         }
 

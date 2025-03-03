@@ -21,7 +21,7 @@ namespace PythonAILib.Model.AutoProcess {
             ChatRequest chatRequest = new();
 
             // PromptItemを取得
-            ContentFolderWrapper? clipboardFolder = clipboardItem.Folder;
+            ContentFolderWrapper? clipboardFolder = clipboardItem.GetFolder();
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {

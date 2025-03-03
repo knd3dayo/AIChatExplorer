@@ -87,7 +87,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
-                Parent = shortCutRootFolder.Entity,
+                ParentId = shortCutRootFolder.Entity.Id,
             };
             ShortCutFolder subFolder = new(contentFolder) {
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,

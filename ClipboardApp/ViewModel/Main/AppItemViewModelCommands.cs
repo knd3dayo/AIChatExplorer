@@ -320,14 +320,14 @@ namespace ClipboardApp.ViewModel.Main {
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
                 CloseCommand = (item, saveChatHistory) => {
-                    bool flag = clipboardItem.Entity.Folder?.FolderTypeString != FolderTypeEnum.Chat.ToString();
+                    bool flag = clipboardItem.GetFolder().FolderTypeString != FolderTypeEnum.Chat.ToString();
                     clipboardItem.Save();
 
                     if (saveChatHistory && flag) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
                         ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
-                        chatHistoryItem.Folder = chatFolder;
+                        chatHistoryItem.Entity.FolderId = chatFolder.Entity.Id;
 
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {
                             chatHistoryItem.Description += " " + clipboardItem.Description;

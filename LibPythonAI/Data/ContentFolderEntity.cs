@@ -22,13 +22,8 @@ namespace LibPythonAI.Data {
 
 
         // 親フォルダのID
-        [Column("PARENT_ID")]
 
         public string? ParentId { get; set; }
-
-        public ContentFolderEntity? Parent { get; set; }
-
-        public List<ContentFolderEntity> Children { get; set; } = [];
 
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;

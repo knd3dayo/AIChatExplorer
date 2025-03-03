@@ -1,4 +1,5 @@
 using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
@@ -29,7 +30,8 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
 
         public override OutlookFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -61,13 +63,17 @@ namespace ClipboardApp.Model.Folders.Outlook {
         }
 
         public override OutlookFolder CreateChild(string folderName) {
-            OutlookFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            OutlookFolder child = new(childFolder);
             return child;
         }
 
         public override List<ContentItemWrapper> GetItems() {
             using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.Folder.Id == Entity.Id).OrderBy(x => x.Description);
+            var items = db.ContentItems.Where(x => x.FolderId == Entity.Id).OrderBy(x => x.Description);
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new OutlookItem(item));

@@ -46,12 +46,14 @@ namespace ClipboardApp.ViewModel.Main {
                 Environment.SetEnvironmentVariable("NO_PROXY", ClipboardAppConfig.Instance.NoProxyList);
             }
 
+            ClipboardAppPythonAILibConfigParams configParams = new();
+            PythonAILibManager.Init(configParams);
+
+
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
-            ClipboardAppPythonAILibConfigParams configParams = new();
-            PythonAILibManager.Init(configParams);
             // Commandの初期化
             Commands = new(UpdateIndeterminate);
 
@@ -97,8 +99,6 @@ namespace ClipboardApp.ViewModel.Main {
 
             // AutoGenPropertiesの初期化
             AutoGenProperties.Init();
-
-            PythonAILibDBContext.Init();
 
         }
 

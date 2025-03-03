@@ -26,7 +26,8 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override List<ContentItemWrapper> GetItems() {
-            var items = Entity.Children;
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).ToList();
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new ClipboardItem(item));
@@ -35,7 +36,8 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override ClipboardFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -43,9 +45,10 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override List<ContentFolderWrapper> GetChildren() {
-            var children = Entity.Children;
+            using PythonAILibDBContext context = new();
+            var items = context.ContentFolders.Where(x => x.ParentId == this.Entity.Id).ToList();
             List<ContentFolderWrapper> result = [];
-            foreach (var child in children) {
+            foreach (var child in items) {
                 result.Add(new ClipboardFolder(child));
             }
             return result;
@@ -70,7 +73,11 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         }
 
         public override ClipboardFolder CreateChild(string folderName) {
-            ClipboardFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            ClipboardFolder child = new(childFolder);
             return child;
         }
 

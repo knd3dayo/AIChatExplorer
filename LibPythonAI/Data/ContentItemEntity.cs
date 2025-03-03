@@ -21,12 +21,8 @@ namespace LibPythonAI.Data {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        // CollectionId
-        [Column("FOLDER_ID")]
         public string? FolderId { get; set; }
 
-        // Collection
-        public ContentFolderEntity? Folder { get; set; }
 
         // 生成日時
         public DateTime CreatedAt { get; set; }

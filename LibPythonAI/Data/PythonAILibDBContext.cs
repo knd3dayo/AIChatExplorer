@@ -1,8 +1,14 @@
+using System.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PythonAILib.Common;
 
 namespace LibPythonAI.Data {
     public class PythonAILibDBContext : DbContext {
+
+        public PythonAILibDBContext() : base() {
+
+        }
 
         public DbSet<ContentFolderEntity> ContentFolders { get; set; }
 
@@ -27,47 +33,32 @@ namespace LibPythonAI.Data {
         // MainStatisticsEntity
         public DbSet<MainStatisticsEntity> MainStatistics { get; set; }
 
+        private StreamWriter? logStream;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+
+            var logFilePath = "logfile.txt";
+            logStream = new StreamWriter(logFilePath, append: true);
+            logStream.AutoFlush = true; // 自動的にバッファをフラッシュするように設定
+
             string dbPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            optionsBuilder.EnableSensitiveDataLogging()
+                .LogTo(logStream.WriteLine, LogLevel.Information).UseSqlite($"Data Source={dbPath}");
         }
+
+        public override void Dispose() {
+            base.Dispose();
+            logStream?.Close();
+            logStream?.Dispose();
+        }
+
 
         public static void Init() {
             using var context = new PythonAILibDBContext();
-            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
-
-            // Create ContentFolder
-            ContentFolderEntity rootFolder = new() {
-                FolderName = "Root",
-                IsRootFolder = true
-            };
-            // Children
-            ContentFolderEntity childFolder = new() {
-                FolderName = "Child",
-                ParentId = rootFolder.Id
-            };
-            context.ContentFolders.Add(rootFolder);
-            context.ContentFolders.Add(childFolder);
 
             context.SaveChanges();
 
-            // Querying child folder using LINQ
-            ContentFolderEntity? child = context.ContentFolders.Where(f => f.FolderName == "Child").FirstOrDefault();
-            if (child != null) {
-                Console.WriteLine($"Child folder found: {child.FolderName}");
-                // Get root folder by child.Parent using LINQ
-                ContentFolderEntity? root = child.Parent;
-                if (root != null) {
-                    Console.WriteLine($"Root folder found: {root.FolderName}");
-                } else {
-                    Console.WriteLine("Root folder not found");
-                }
-
-
-            } else {
-                Console.WriteLine("Child folder not found");
-            }
         }
     }
 }

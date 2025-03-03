@@ -1,4 +1,5 @@
 using System.IO;
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
@@ -8,8 +9,6 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folders.FileSystem {
     public class FileSystemFolder : ClipboardFolder {
-
-
 
         // コンストラクタ
         public FileSystemFolder(ContentFolderEntity folder) : base(folder) {
@@ -30,12 +29,17 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         }
 
         public override FileSystemFolder CreateChild(string folderName) {
-            FileSystemFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            FileSystemFolder child = new(childFolder);
             return child;
         }
 
         public override FileSystemFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -46,7 +50,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             // SyncItems
             SyncItems();
             using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.Folder == Entity);
+            var items = context.ContentItems.Where(x => x.FolderId == Entity.Id);
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new FileSystemItem(item));
@@ -58,9 +62,10 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         public override List<ContentFolderWrapper> GetChildren() {
             // SyncFolders
             SyncFolders();
-            var children = Entity.Children;
+            using PythonAILibDBContext context = new();
+            var items = context.ContentFolders.Where(x => x.ParentId == this.Entity.Id).ToList();
             List<ContentFolderWrapper> result = [];
-            foreach (var child in children) {
+            foreach (var child in items) {
                 result.Add(new FileSystemFolder(child));
             }
             return result;
@@ -163,7 +168,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
             // コレクション
             using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.Folder == Entity).Select(x => new FileSystemItem(x)).ToList();
+            var items = context.ContentItems.Where(x => x.FolderId == Entity.Id).Select(x => new FileSystemItem(x)).ToList();
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];

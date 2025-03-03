@@ -30,12 +30,17 @@ namespace ClipboardApp.Model.Folders.Browser {
         }
 
         public override EdgeBrowseHistoryFolder CreateChild(string folderName) {
-            EdgeBrowseHistoryFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            EdgeBrowseHistoryFolder child = new(childFolder);
             return child;
         }
 
         public override EdgeBrowseHistoryFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -45,7 +50,8 @@ namespace ClipboardApp.Model.Folders.Browser {
         public override List<ContentItemWrapper> GetItems() {
             // SyncItems
             SyncItems();
-            var items = Entity.Children;
+            using PythonAILibDBContext context = new();
+            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).ToList();
             List<ContentItemWrapper> result = [];
             foreach (var item in items) {
                 result.Add(new EdgeBrowseHistoryItem(item));

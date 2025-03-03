@@ -1,3 +1,4 @@
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
@@ -24,7 +25,8 @@ namespace ClipboardApp.Model.Folders.Search {
         }
         // 親フォルダ
         public override SearchFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -49,13 +51,17 @@ namespace ClipboardApp.Model.Folders.Search {
         // 子フォルダ
         public override List<ContentFolderWrapper> GetChildren() {
             using PythonAILibDBContext db = new();
-            var children = db.ContentFolders.Where(x => x.Parent == Entity).Select(x => new ContentFolderWrapper(x)).ToList();
+            var children = db.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new ContentFolderWrapper(x)).ToList();
             return children;
 
         }
 
         public override SearchFolder CreateChild(string folderName) {
-            SearchFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            SearchFolder child = new(childFolder);
             return child;
         }
 

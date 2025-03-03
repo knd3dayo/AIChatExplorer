@@ -14,7 +14,7 @@ namespace LibPythonAI.Model.Content {
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
             Entity = new ContentFolderEntity() {
-                Parent = parent?.Parent?.Entity,
+                ParentId = parent?.Parent?.Entity.Id,
                 FolderName = folderName,
             };
         }
@@ -24,14 +24,15 @@ namespace LibPythonAI.Model.Content {
         // Parent
         public ContentFolderWrapper? Parent {
             get {
-                var parent = Entity.Parent;
-                if (parent == null) {
+                using PythonAILibDBContext db = new();
+                var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
+                if (parentFolder == null) {
                     return null;
                 }
-                return new ContentFolderWrapper(parent);
+                return new ContentFolderWrapper(parentFolder);
             }
             set {
-                Entity.Parent = value?.Entity;
+                Entity.ParentId = value?.Entity.Id;
             }
         }
 
@@ -189,7 +190,7 @@ namespace LibPythonAI.Model.Content {
             if (Parent == null) {
                 return;
             }
-            Entity.Parent = toFolder.Entity.Parent;
+            Entity.ParentId = toFolder.Entity.Id;
             Save();
         }
 
@@ -203,20 +204,21 @@ namespace LibPythonAI.Model.Content {
         public void Save() {
             // ベクトルDBのコレクションを更新
             GetMainVectorSearchProperty().UpdateVectorDBCollection(Entity.Description);
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            db.ContentFolders.Update(Entity);
+            using PythonAILibDBContext db = new();
+            var folder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.Id);
+            if (folder == null) {
+                db.ContentFolders.Add(Entity);
+            } else {
+                db.ContentFolders.Entry(folder).CurrentValues.SetValues(Entity);
+            }
             db.SaveChanges();
         }
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                Parent = Entity,
+                ParentId = Entity.Id,
                 FolderName = folderName,
             };
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            db.ContentFolders.Add(childFolder);
-            db.SaveChanges();
-
             return new ContentFolderWrapper(childFolder);
         }
 
@@ -364,7 +366,7 @@ namespace LibPythonAI.Model.Content {
         // ObjectIdからContentFolderWrapperを取得
         public static ContentFolderWrapper? GetFolderById(string id) {
 
-            using PythonAILibDBContext db = new ();
+            using PythonAILibDBContext db = new();
             var folder = db.ContentFolders.Find(id);
             if (folder == null) {
                 return null;

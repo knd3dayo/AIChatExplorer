@@ -1,5 +1,6 @@
 using System.IO;
 using ClipboardApp.Model.Folders.FileSystem;
+using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
@@ -28,12 +29,17 @@ namespace ClipboardApp.Model.Folders.Browser {
         }
 
         public override RecentFilesFolder CreateChild(string folderName) {
-            RecentFilesFolder child = new(this, folderName);
+            ContentFolderEntity childFolder = new() {
+                ParentId = Entity.Id,
+                FolderName = folderName,
+            };
+            RecentFilesFolder child = new(childFolder);
             return child;
         }
 
         public override RecentFilesFolder? GetParent() {
-            var parentFolder = Entity.Parent;
+            using PythonAILibDBContext db = new();
+            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
             if (parentFolder == null) {
                 return null;
             }
@@ -44,7 +50,7 @@ namespace ClipboardApp.Model.Folders.Browser {
             // SyncItems
             SyncItems();
             using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.Folder == this.Entity).Select(x => new ContentItemWrapper(x)).ToList();
+            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).Select(x => new ContentItemWrapper(x)).ToList();
             return items;
         }
 
@@ -56,7 +62,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         public void SyncItems() {
             // コレクション
             using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.Folder  == this.Entity).Select(x => new RecentFilesItem(x)).ToList();
+            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).Select(x => new RecentFilesItem(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemPathDict = [];
