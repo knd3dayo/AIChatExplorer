@@ -17,7 +17,7 @@ namespace LibPythonAI.Data {
 
 
         [Key]
-        public string Id { get; set;  } = Guid.NewGuid().ToString();
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         // フォルダの種類の文字列
         public string FolderTypeString { get; set; } = "Normal";
@@ -72,8 +72,21 @@ namespace LibPythonAI.Data {
 
         public List<ContentFolderEntity> GetChildren() {
             using PythonAILibDBContext context = new();
-            var items = context.ContentFolders.Where(x => x.ParentId == this.Id).ToList();
+            var items = context.ContentFolders
+                .Include(b => b.VectorDBProperties)
+                .Where(x => x.ParentId == this.Id).ToList();
             return items;
+        }
+
+        public static ContentFolderEntity? GetFolder(string? id) {
+            if (id == null) {
+                return null;
+            }
+            using PythonAILibDBContext context = new();
+            var folder = context.ContentFolders
+                .Include(b => b.VectorDBProperties)
+                .FirstOrDefault(x => x.Id == id);
+            return folder;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folders.FileSystem;
+using ClipboardApp.Model.Folders.ShortCut;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
 using LibPythonAI.Model.Content;
@@ -42,7 +43,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
             await Task.Run(() => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in Folder.GetChildren()) {
+                    foreach (var child in Folder.GetChildren<ShortCutFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -52,7 +53,7 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in Folder.GetChildren()) {
+                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                     if (child == null) {
                         continue;
                     }

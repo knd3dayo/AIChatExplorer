@@ -41,7 +41,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
             List<ContentFolderViewModel> _children = [];
 
             await Task.Run(() => {
-                foreach (var child in Folder.GetChildren()) {
+                foreach (var child in Folder.GetChildren<OutlookFolder>()) {
                     if (child == null) {
                         continue;
                     }
@@ -60,7 +60,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         // LoadItems
         protected override void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ContentItemWrapper> _items = Folder.GetItems();
+            List<OutlookItem> _items = Folder.GetItems<OutlookItem>();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (OutlookItem item in _items) {

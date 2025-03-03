@@ -39,23 +39,14 @@ namespace ClipboardApp.Model.Folders.Browser {
             return child;
         }
 
-        public override EdgeBrowseHistoryFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new EdgeBrowseHistoryFolder(parentFolder);
-        }
-
-        public override List<ContentItemWrapper> GetItems() {
+        public override List<T> GetItems<T>() {
             // SyncItems
             SyncItems();
-            return [.. Entity.GetContentItems().Select(x => new EdgeBrowseHistoryItem(x))];
+            return base.GetItems<T>();
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
+        public override List<T> GetChildren<T>() {
             return []; ;
         }
 
@@ -73,7 +64,7 @@ namespace ClipboardApp.Model.Folders.Browser {
 
             // コレクション
             using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.FolderId == Entity.Id).Select(x => new ContentItemWrapper(x)).ToList();
+            var items = Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];

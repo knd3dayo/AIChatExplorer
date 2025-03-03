@@ -29,16 +29,6 @@ namespace ClipboardApp.Model.Folders.Outlook {
         }
 
 
-        public override OutlookFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new OutlookFolder(parentFolder);
-        }
-
-
         private static NetOfficeOutlook.Application? outlookApplication = null;
 
         public NetOfficeOutlook.MAPIFolder? MAPIFolder { get; set; }
@@ -71,17 +61,6 @@ namespace ClipboardApp.Model.Folders.Outlook {
             return child;
         }
 
-        public override List<ContentItemWrapper> GetItems() {
-            using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.FolderId == Entity.Id).OrderBy(x => x.Description);
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new OutlookItem(item));
-            }
-            return result;
-        }
-
-
         public void SyncItems() {
             // MAPIFolderが存在しない場合は終了
             if (MAPIFolder == null) {
@@ -90,7 +69,7 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
-            foreach (var item in GetItems()) {
+            foreach (var item in GetItems< OutlookItem>()) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
@@ -116,26 +95,18 @@ namespace ClipboardApp.Model.Folders.Outlook {
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
+        public override List<T> GetChildren<T>() {
 
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
-            using PythonAILibDBContext db = new();
-            var folders = db.ContentFolders.Where(x => x.ParentId == Entity.Id).OrderBy(x => x.FolderName);
-
-            List<ContentFolderWrapper> result = [];
-            foreach (var folder in folders) {
-                OutlookFolder outlookFolder = new(folder);
-                result.Add(outlookFolder);
-            }
-            return result;
+            return base.GetChildren<T>();
         }
 
         public MAPIFolder? GetMAPIFolder() {
             if (IsRootFolder) {
                 return null;
             }
-            if (GetParent()?.IsRootFolder == true) {
+            if (GetParent<OutlookFolder>()?.IsRootFolder == true) {
                 return InboxFolder;
             }
             // FolderPathを/で分割した要素のリスト
@@ -167,7 +138,7 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
             // folder内のFolderNameとContentFolderのDictionary
             Dictionary<string, OutlookFolder> folderPathIdDict = [];
-            foreach (var folder in GetChildren()) {
+            foreach (var folder in GetChildren< OutlookFolder>()) {
                 if (folder is OutlookFolder outlookFolder) {
                     folderPathIdDict[outlookFolder.FolderName] = outlookFolder;
                 }

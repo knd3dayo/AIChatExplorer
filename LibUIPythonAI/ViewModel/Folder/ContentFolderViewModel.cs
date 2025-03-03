@@ -51,7 +51,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public virtual void LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
-            foreach (var child in Folder.GetChildren()) {
+            foreach (var child in Folder.GetChildren<ContentFolderWrapper>()) {
                 if (child == null) {
                     continue;
                 }
@@ -71,7 +71,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadItems
         protected virtual void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ContentItemWrapper> _items = Folder.GetItems();
+            List<ContentItemWrapper> _items = Folder.GetItems< ContentItemWrapper>();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (ContentItemWrapper item in _items) {
@@ -233,7 +233,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                     UpdateIndeterminate(true);
                     Folder.GetMainVectorSearchProperty().RefreshVectorDBCollection(Folder.Description, () => {
                         // フォルダ内のアイテムを取得して、ベクトルを作成
-                        foreach (var item in Folder.GetItems()) {
+                        foreach (var item in Folder.GetItems< ContentItemWrapper>()) {
                             ContentItemCommands.UpdateEmbeddings([item]);
                             // Save
                             item.Save();

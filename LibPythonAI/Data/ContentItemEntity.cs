@@ -48,7 +48,7 @@ namespace LibPythonAI.Data {
         [NotMapped]
         public List<ChatMessage> ChatItems {
             get {
-                List<ChatMessage>? items = JsonSerializer.Deserialize<List<ChatMessage>>(ChatMessagesJson, jsonSerializerOptions);
+                List<ChatMessage>? items = ChatMessage.FromListJson(ChatMessagesJson);
                 return items ?? [];
             }
             set {
@@ -113,6 +113,14 @@ namespace LibPythonAI.Data {
                 ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
             }
         }
+        public void SavePromptChatResultJson() {
+            PromptChatResultJson = JsonSerializer.Serialize(PromptChatResult, jsonSerializerOptions);
+        }
+
+        public void SaveChatMessagesJson() {
+            ChatMessagesJson = JsonSerializer.Serialize(ChatItems, jsonSerializerOptions);
+        }
+
 
         // Copy
         public ContentItemEntity Copy() {
@@ -145,6 +153,8 @@ namespace LibPythonAI.Data {
             using PythonAILibDBContext context = new();
             foreach (var item in items) {
                 item.SaveExtendedPropertiesJson();
+                item.SavePromptChatResultJson();
+                item.SaveChatMessagesJson();
                 var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
                 if (ExistingItem == null) {
                     context.ContentItems.Add(item);

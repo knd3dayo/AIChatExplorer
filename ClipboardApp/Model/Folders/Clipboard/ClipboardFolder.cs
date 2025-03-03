@@ -26,23 +26,6 @@ namespace ClipboardApp.Model.Folders.Clipboard {
             FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
-        public override List<ContentItemWrapper> GetItems() {
-            return [.. Entity.GetContentItems().Select(x => new ClipboardItem(x))];
-        }
-
-        public override ClipboardFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new ClipboardFolder(parentFolder);
-        }
-
-        public override List<ContentFolderWrapper> GetChildren() {
-            return [.. Entity.GetChildren().Select(x => new ClipboardFolder(x))];
-        }
-
         // アイテムを追加する処理
         public override void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
             base.AddItem(item, applyGlobalAutoAction, afterUpdate);
@@ -165,7 +148,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(GetItems(), jsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(GetItems<ClipboardItem>(), jsonSerializerOptions);
 
             System.IO.File.WriteAllText(fileName, jsonString);
 

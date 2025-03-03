@@ -33,32 +33,21 @@ namespace ClipboardApp.Model.Folders.Browser {
             return child;
         }
 
-        public override RecentFilesFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new RecentFilesFolder(parentFolder);
-        }
 
-        public override List<ContentItemWrapper> GetItems() {
+        public override List<T> GetItems<T>() {
             // SyncItems
             SyncItems();
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).Select(x => new ContentItemWrapper(x)).ToList();
-            return items;
+            return base.GetItems<T>();
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
+        public override List<T> GetChildren<T>() {
             return []; ;
         }
 
         public void SyncItems() {
             // コレクション
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).Select(x => new RecentFilesItem(x)).ToList();
+            var items = Entity.GetContentItems().Select(x => new RecentFilesItem(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemPathDict = [];

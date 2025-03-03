@@ -48,7 +48,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             List<ContentFolderViewModel> _children = [];
 
             await Task.Run(() => {
-                foreach (var child in Folder.GetChildren()) {
+                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                     if (child == null) {
                         continue;
                     }
@@ -65,7 +65,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
         }
         // LoadItems
         protected override void LoadItems() {
-            List<ContentItemWrapper> _items = Folder.GetItems();
+            List<FileSystemItem> _items = Folder.GetItems<FileSystemItem>();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (var item in _items) {
@@ -93,6 +93,7 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
             subFolder.Save();
+            
         });
 
     }

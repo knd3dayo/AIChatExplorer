@@ -11,11 +11,11 @@ namespace ClipboardApp.Model.Folders.ShortCut {
 
         // コンストラクタ
         public ShortCutFolder(ContentFolderEntity folder) : base(folder) {
-            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
         }
 
         public ShortCutFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
         }
 
         public override ShortCutFolder CreateChild(string folderName) {
@@ -23,39 +23,18 @@ namespace ClipboardApp.Model.Folders.ShortCut {
             return child;
         }
 
-        public override ShortCutFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new ShortCutFolder(parentFolder);
-        }
-
-        public override List<ContentItemWrapper> GetItems() {
+        public override List<T> GetItems<T>() {
             SyncItems();
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == this.Entity.Id).ToList();
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new ShortCutItem(item));
-            }
-            return result;
+            return base.GetItems<T>();
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
+        public override List<T> GetChildren<T>() {
             // RootFolder以外の場合はSyncFoldersを実行
             if (!IsRootFolder) {
                 SyncFolders();
             }
-            using PythonAILibDBContext context = new();
-            var items = context.ContentFolders.Where(x => x.ParentId == this.Entity.Id).ToList();
-            List<ContentFolderWrapper> result = [];
-            foreach (var child in items) {
-                result.Add(new ShortCutFolder(child));
-            }
-            return result;
+            return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
         }
         // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
         protected override HashSet<string> GetFileSystemFolderPaths() {

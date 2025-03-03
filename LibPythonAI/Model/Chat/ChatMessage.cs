@@ -1,8 +1,6 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using PythonAILib.Resources;
+using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.Chat {
     public class ChatMessage {
@@ -49,7 +47,7 @@ namespace PythonAILib.Model.Chat {
             Role = role;
             Content = text;
         }
-        public ChatMessage(string role, string text, List<Dictionary<string,string>> sources) {
+        public ChatMessage(string role, string text, List<Dictionary<string, string>> sources) {
             Role = role;
             Content = text;
             Sources = sources;
@@ -85,7 +83,7 @@ namespace PythonAILib.Model.Chat {
                 };
                 contentItems.Add(dc);
             }
- 
+
             Dictionary<string, object> message = new() {
                 { "role", Role },
                 { "content", contentItems }
@@ -99,6 +97,52 @@ namespace PythonAILib.Model.Chat {
                 messageValues.Add(message.ToDict());
             }
             return messageValues;
+        }
+
+        public static ChatMessage FromDict(Dictionary<string, dynamic?> dict) {
+            string role = SystemRole;
+            if (dict.TryGetValue("role", out object? value)) {
+                if (value != null) {
+                    role = (string)value;
+                }
+            }
+
+            List<Dictionary<string, string>> sources = [];
+            if (dict.TryGetValue("sources", out object? value1)) {
+                if (value1 != null) {
+                    sources = (List<Dictionary<string, string>>)value1;
+                }
+            }
+            List<string> imageURLs = [];
+            if (dict.TryGetValue("image_urls", out object? value2)) {
+                if (value2 != null) {
+                    imageURLs = (List<string>)value2;
+                }
+            }
+            // content
+            string content = "";
+            if (dict.TryGetValue("content", out object? value3)) {
+                if (value3 != null) {
+                    content = (string)value3;
+                }
+            }
+            ChatMessage message = new(role, content, sources) {
+                ImageURLs = imageURLs
+            };
+            return message;
+
+        }
+
+        public static List<ChatMessage> FromDictList(List<Dictionary<string, dynamic?>> dictList) {
+            List<ChatMessage> messages = [];
+            foreach (var dict in dictList) {
+                messages.Add(FromDict(dict));
+            }
+            return messages;
+        }
+        public static List<ChatMessage> FromListJson(string jsonString) {
+            List<Dictionary<string, dynamic?>> dictList = JsonUtil.ParseJsonArray(jsonString);
+            return FromDictList(dictList);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace ClipboardApp.ViewModel.Folders.Browser {
             await Task.Run(() => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in Folder.GetChildren()) {
+                    foreach (var child in Folder.GetChildren<RecentFilesFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -54,7 +54,7 @@ namespace ClipboardApp.ViewModel.Folders.Browser {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in Folder.GetChildren()) {
+                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                     if (child == null) {
                         continue;
                     }

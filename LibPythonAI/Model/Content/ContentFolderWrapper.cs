@@ -51,7 +51,7 @@ namespace LibPythonAI.Model.Content {
         public virtual string ContentFolderPath {
             get {
                 // 親フォルダを取得
-                var parentFolder = GetParent();
+                var parentFolder = GetParent<ContentFolderWrapper>();
                 if (parentFolder == null) {
                     return FolderName;
                 }
@@ -63,7 +63,7 @@ namespace LibPythonAI.Model.Content {
             get {
                 string osFolderName;
                 // 親フォルダを取得
-                var parentFolder = GetParent();
+                var parentFolder = GetParent<ContentFolderWrapper>();
                 if (parentFolder == null) {
                     osFolderName = Entity.ContentOutputFolderPrefix;
                 } else {
@@ -151,30 +151,30 @@ namespace LibPythonAI.Model.Content {
         public virtual void Delete() {
             // ベクトルを全削除
             GetMainVectorSearchProperty().DeleteVectorDBCollection();
-            using PythonAILibDBContext db = new PythonAILibDBContext();
+            using PythonAILibDBContext db = new ();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
 
         }
 
 
-        public virtual List<ContentItemWrapper> GetItems() {
+        public virtual List<T> GetItems<T>() where T : ContentItemWrapper {
 
-            return Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
+            return [.. Entity.GetContentItems().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
         }
 
-        public virtual List<ContentFolderWrapper> GetChildren() {
-            return [.. Entity.GetChildren().Select(x => new ContentFolderWrapper(x))];
+        public virtual List<T> GetChildren<T>() where T: ContentFolderWrapper {
+            return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
         }
 
         // 親フォルダ
-        public virtual ContentFolderWrapper? GetParent() {
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            var parentFolder = db.ContentFolders.Find(Entity.ParentId);
-            if (parentFolder == null) {
+        public virtual T? GetParent<T>() where T: ContentFolderWrapper {
+            var folder = ContentFolderEntity.GetFolder(Entity.ParentId);
+            if (folder == null) {
                 return null;
             }
-            return new ContentFolderWrapper(parentFolder);
+            return (T?)Activator.CreateInstance(typeof(T), [folder]);
+
         }
 
         // フォルダを移動する
@@ -235,14 +235,14 @@ namespace LibPythonAI.Model.Content {
             }
 
             // folder内のアイテムを保持するコレクションを取得
-            var clipboardItems = GetItems();
+            var clipboardItems = GetItems< ContentItemWrapper>();
             // Filterの結果を結果に追加
             result = Filter(clipboardItems, searchCondition);
 
             // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
             if (searchCondition.IsIncludeSubFolder) {
                 // 対象フォルダの子フォルダを取得
-                foreach (var childFolder in GetChildren()) {
+                foreach (var childFolder in GetChildren<ContentFolderWrapper>()) {
                     // サブフォルダのアイテムを検索
                     var subFolderResult = childFolder.SearchItems(searchCondition);
                     // Filterの結果を結果に追加
@@ -362,8 +362,7 @@ namespace LibPythonAI.Model.Content {
         // ObjectIdからContentFolderWrapperを取得
         public static ContentFolderWrapper? GetFolderById(string id) {
 
-            using PythonAILibDBContext db = new();
-            var folder = db.ContentFolders.Find(id);
+            var folder  = ContentFolderEntity.GetFolder(id);
             if (folder == null) {
                 return null;
             }

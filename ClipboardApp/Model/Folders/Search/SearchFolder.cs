@@ -23,38 +23,27 @@ namespace ClipboardApp.Model.Folders.Search {
             IsAutoProcessEnabled = false;
 
         }
-        // 親フォルダ
-        public override SearchFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new SearchFolder(parentFolder);
-        }
+
 
         // アイテム LiteDBには保存しない。
-        public override List<ContentItemWrapper> GetItems() {
-            List<ContentItemWrapper> _items = [];
+        public override List<T> GetItems<T>() {
+            List<T> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             // フォルダに検索条件が設定されている場合
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
                 // 検索対象フォルダのアイテムを検索する。
-                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
-
+                var searchItems = searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt);
+                foreach (var item in searchItems) {
+                    _items.Add((T)item);
+                }
             }
             return _items;
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
-            using PythonAILibDBContext db = new();
-            var children = db.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new ContentFolderWrapper(x)).ToList();
-            return children;
 
-        }
 
         public override SearchFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {

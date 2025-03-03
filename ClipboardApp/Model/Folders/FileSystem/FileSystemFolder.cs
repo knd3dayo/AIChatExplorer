@@ -33,32 +33,17 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             return child;
         }
 
-        public override FileSystemFolder? GetParent() {
-            using PythonAILibDBContext db = new();
-            var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-            if (parentFolder == null) {
-                return null;
-            }
-            return new FileSystemFolder(parentFolder);
-        }
-
-        public override List<ContentItemWrapper> GetItems() {
+        public override List<T> GetItems<T>() {
             // SyncItems
             SyncItems();
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == Entity.Id);
-            List<ContentItemWrapper> result = [];
-            foreach (var item in items) {
-                result.Add(new FileSystemItem(item));
-            }
-            return result;
+            return base.GetItems<T>();
         }
 
         // 子フォルダ
-        public override List<ContentFolderWrapper> GetChildren() {
+        public override List<T> GetChildren<T>() {
             // SyncFolders
             SyncFolders();
-            return [.. Entity.GetChildren().Select(x => new FileSystemFolder(x))];
+            return base.GetChildren<T>();
         }
 
         // ProcessClipboardItem
@@ -159,8 +144,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             }
 
             // コレクション
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems.Where(x => x.FolderId == Entity.Id).Select(x => new FileSystemItem(x)).ToList();
+            var items = Entity.GetContentItems().Select(x => new FileSystemItem(x)).ToList();
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
