@@ -1,9 +1,11 @@
+using LibPythonAI.Model.Chat;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -69,7 +71,7 @@ namespace PythonAILib.Model.Prompt {
                 x => x.Name == name.ToString() && (
                 x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
                 x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
-                ) ?? throw new System.Exception("PromptItem not found");
+                ) ?? throw new Exception("PromptItem not found");
             return item;
         }
         // List<PromptItem>を取得

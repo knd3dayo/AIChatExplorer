@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LibPythonAI.Model.Chat;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 

@@ -2,13 +2,15 @@ using System.IO;
 using System.Text.Json.Nodes;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
+using LibPythonAI.Model.Prompt;
+using PythonAILib.Model.Chat;
+using LibPythonAI.Model.Chat;
 
 namespace LibPythonAI.Utils.ExportImport {
     public class ImportExportUtil {
@@ -42,7 +44,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (row.Count == 0) {
                     continue;
                 }
-                PromptItemEntity promptItemEntity = new() {
+                PromptItem promptItem = new() {
                     Name = row[0],
                     Description = row[1],
                     Prompt = row[2],
@@ -50,7 +52,6 @@ namespace LibPythonAI.Utils.ExportImport {
                     SplitMode = (SplitOnTokenLimitExceedModeEnum)Enum.Parse(typeof(SplitOnTokenLimitExceedModeEnum), row[4]),
                     UseVectorDB = bool.Parse(row[5])
                 };
-                PromptItem promptItem = new(promptItemEntity);
                 promptItem.Save();
             }
         }

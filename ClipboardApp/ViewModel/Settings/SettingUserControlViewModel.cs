@@ -12,6 +12,7 @@ using PythonAILib.Resources;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Model;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Chat;
 
 namespace ClipboardApp.ViewModel.Settings {
     /// <summary>

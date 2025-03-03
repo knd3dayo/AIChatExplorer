@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.IO;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;

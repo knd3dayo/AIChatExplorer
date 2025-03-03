@@ -1,8 +1,9 @@
 using System.Text;
 using System.Text.Json;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Prompt;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
-using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;

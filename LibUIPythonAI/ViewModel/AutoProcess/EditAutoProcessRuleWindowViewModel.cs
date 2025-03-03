@@ -6,15 +6,15 @@ using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {

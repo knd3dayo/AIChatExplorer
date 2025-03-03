@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
@@ -213,7 +215,9 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 SelectedFileName = dialog.FileName;
                 Task.Run(() => {
                     ImportExportUtil.ImportPromptItemsFromExcel(SelectedFileName);
-                    ReloadCommand.Execute();
+                    MainUITask.Run(() => {
+                        ReloadCommand.Execute();
+                    });
                 });
             }
         });

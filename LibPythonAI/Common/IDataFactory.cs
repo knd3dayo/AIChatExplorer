@@ -1,8 +1,8 @@
+using LibPythonAI.Model.Prompt;
 using LiteDB;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
