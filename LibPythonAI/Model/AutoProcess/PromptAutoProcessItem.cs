@@ -41,7 +41,8 @@ namespace PythonAILib.Model.AutoProcess {
             // ClipboardItemのContentにレスポンスを設定
             clipboardItem.Content = result.Output;
             // レスポンスをClipboardItemに設定
-            clipboardItem.ChatItems = chatRequest.ChatHistory;
+            clipboardItem.ChatItems.Clear();
+            clipboardItem.ChatItems.AddRange(chatRequest.ChatHistory);
         }
     }
 

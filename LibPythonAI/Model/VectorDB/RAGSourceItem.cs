@@ -155,7 +155,11 @@ namespace PythonAILib.Model.VectorDB {
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
-                    VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
+                    VectorDBPropertyEntity searchPropertyEntity = new() {
+                        TopK = 4,
+                        VectorDBItemId = VectorDBItem.Entity.Id,
+                    };
+                    VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
@@ -165,7 +169,10 @@ namespace PythonAILib.Model.VectorDB {
                     PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                    VectorDBProperty vectorDBProperty = new(VectorDBItem, null);
+                    VectorDBPropertyEntity searchPropertyEntity = new() {
+                        TopK = 4,
+                        VectorDBItemId = VectorDBItem.Entity.Id,
+                    }; VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
                     VectorMetadata vectorDBEntry = new(source_path);
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {

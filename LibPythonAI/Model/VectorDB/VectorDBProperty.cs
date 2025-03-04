@@ -18,25 +18,34 @@ namespace LibPythonAI.Model.VectorDB {
             Entity = entity;
         }
 
-        public VectorDBProperty(VectorDBItem vectorDBItem, ContentFolderWrapper folder ) {
-            VectorDBItem = vectorDBItem;
-            Folder = folder;
-            TopK = vectorDBItem.DefaultSearchResultLimit;
+        public VectorDBItem? VectorDBItem  {
+            get {
+                VectorDBItem? item = VectorDBItem.GetItemById(Entity.VectorDBItemId);
+                return item;
+            }
         }
 
-        public VectorDBItem? VectorDBItem  { get; set; }
-
         //TopK
-        public int TopK { get; set; }
+        public int TopK {
+            get => Entity.TopK;
+            set => Entity.TopK = value;
+        }
 
         // FolderId
-        public ContentFolderWrapper? Folder { get; private set; }
-
+        public ContentFolderWrapper? Folder {
+            get {
+                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById(Entity.FolderId);
+                return folder;
+            }
+        }
         // ContentType
-        public string ContentType { get; set; } = string.Empty;
+        public string ContentType {
+            get => Entity.ContentType;
+            set => Entity.ContentType = value;
+        }
 
         // VectorDBEntries
-        public List<VectorMetadata> VectorMetadataList { get; set; } = [];
+        public List<VectorMetadata> VectorMetadataList { get; set; } = new();
 
         // SearchKWArgs
         private Dictionary<string, object> GetSearchKWArgs() {

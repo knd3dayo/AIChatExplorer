@@ -9,11 +9,10 @@ namespace LibPythonAI.Data {
         //TopK
         public int TopK { get; set; }
 
-        // FolderId
-        [Column("FOLDER_ID")]
         public string? FolderId { get; set; }
 
-        public ContentFolderEntity? Folder { get; set; }
+        // VectorDBItemId
+        public string? VectorDBItemId { get; set; }
 
         // ContentType
         public string ContentType { get; set; } = string.Empty;

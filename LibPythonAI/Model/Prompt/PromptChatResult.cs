@@ -1,3 +1,8 @@
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using PythonAILib.Utils.Common;
+
 namespace PythonAILib.Model.Prompt {
     public class PromptChatResult() {
 
@@ -37,6 +42,31 @@ namespace PythonAILib.Model.Prompt {
             Results[promptName] = content;
         }
 
+        public string ToJson() {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            JsonSerializerOptions options = jsonSerializerOptions;
+            return JsonSerializer.Serialize(this, options);
+        }
 
+        public static PromptChatResult? FromDict(Dictionary<string, dynamic?> dict) {
+            PromptChatResult? result = new();
+            // key = Results があるかどうか
+            if (!dict.TryGetValue("Results", out object? value)) {
+                return result;
+            }
+            // Resultsの中身を取り出す
+            if (value is Dictionary<string, object> results) {
+                result.Results = results;
+            }
+            return result;
+        }
+
+        public static PromptChatResult? FromJson(string json) {
+            Dictionary<string, dynamic?> dict = JsonUtil.ParseJson(json);
+            return FromDict(dict);
+        }
     }
 }

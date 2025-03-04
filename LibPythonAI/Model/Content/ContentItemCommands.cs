@@ -123,11 +123,8 @@ namespace PythonAILib.Model.Content {
 
         // ExecuteSystemDefinedPromptを実行する
         public static void CreateChatResult(ContentItemWrapper item, string promptName) {
-            using PythonAILibDBContext db = new();
-
             // システム定義のPromptItemを取得
-            var promptItemEntity = db.PromptItems.FirstOrDefault(x => x.Name == promptName) ?? throw new Exception("PromptItem not found");
-            PromptItem promptItem = new(promptItemEntity);
+            PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
             // CreateChatResultを実行
             ContentItemCommands.CreateChatResult(item, promptItem);
         }

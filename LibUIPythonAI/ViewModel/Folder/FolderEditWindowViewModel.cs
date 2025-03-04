@@ -35,7 +35,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
-                return [.. VectorDBItem.GetVectorDBItems()];
+                return [.. VectorDBItem.GetVectorDBItems(true)];
             }
         }
 

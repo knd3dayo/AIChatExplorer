@@ -126,12 +126,11 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 IsPromptTemplateChecked = true;
                 // PromptItemを取得
-                using var db = new PythonAILibDBContext();
-                var promptItem = db.PromptItems.FirstOrDefault(x => x.Id == promptAutoProcessItem.PromptItemEntity.Id);
+                var promptItem = PromptItem.GetPromptItemById( promptAutoProcessItem.PromptItemEntity.Id);
                 if (promptItem == null) {
                     return;
                 }
-                SelectedPromptItem = new PromptItemViewModel(new PromptItem(promptItem));
+                SelectedPromptItem = new PromptItemViewModel(promptItem);
                 // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
                 OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
 

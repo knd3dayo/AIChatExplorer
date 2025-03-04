@@ -1,14 +1,11 @@
 using System.IO;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using PythonAILib.Common;
 
 namespace LibPythonAI.Data {
     public class PythonAILibDBContext : DbContext {
 
-        public PythonAILibDBContext() : base() {
-
-        }
+        public PythonAILibDBContext() : base() { }
 
         public DbSet<ContentFolderEntity> ContentFolders { get; set; }
 
@@ -56,7 +53,7 @@ namespace LibPythonAI.Data {
         public static void Init() {
             using var context = new PythonAILibDBContext();
             context.Database.EnsureCreated();
-
+            
             context.SaveChanges();
 
         }

@@ -32,25 +32,46 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // プロンプトテンプレートの種類
-        public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
+        public PromptTemplateTypeEnum PromptTemplateType {
+            get => Entity.PromptTemplateType;
+            set => Entity.PromptTemplateType = value;
+        }
 
         // プロンプト結果の種類
-        public PromptResultTypeEnum PromptResultType { get; set; } = PromptResultTypeEnum.TextContent;
+        public PromptResultTypeEnum PromptResultType {
+            get => Entity.PromptResultType;
+            set => Entity.PromptResultType = value;
+        }
 
         // チャットタイプ
-        public OpenAIExecutionModeEnum ChatMode { get; set; } = OpenAIExecutionModeEnum.Normal;
+        public OpenAIExecutionModeEnum ChatMode {
+            get => Entity.ChatMode;
+            set => Entity.ChatMode = value;
+        }
 
         // 分割モード
-        public SplitOnTokenLimitExceedModeEnum SplitMode { get; set; } = SplitOnTokenLimitExceedModeEnum.None;
+        public SplitOnTokenLimitExceedModeEnum SplitMode {
+            get => Entity.SplitMode;
+            set => Entity.SplitMode = value;
+        }
 
         // ベクトルDBを使用する
-        public bool UseVectorDB { get; set; } = false;
+        public bool UseVectorDB {
+            get => Entity.UseVectorDB;
+            set => Entity.UseVectorDB = value;
+        }
 
         // プロンプトの出力タイプ
-        public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
+        public PromptOutputTypeEnum PromptOutputType {
+            get => Entity.PromptOutputType;
+            set => Entity.PromptOutputType = value;
+        }
 
         // PromptInputName
-        public string PromptInputName { get; set; } = string.Empty;
+        public string PromptInputName {
+            get => Entity.PromptInputName;
+            set => Entity.PromptInputName = value;
+        }
 
         // Save
         public void Save() {

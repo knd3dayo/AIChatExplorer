@@ -169,7 +169,8 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
             // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-            QAChatStartupPropsInstance.ContentItem.ChatItems = [.. ChatHistory];
+            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange( [.. ChatHistory]);
             OnPropertyChanged(nameof(ChatHistory));
 
             // ListBoxの一番最後のアイテムに移動
@@ -187,7 +188,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
             // ClipboardItemがある場合は、ChatItemsをクリア
-            QAChatStartupPropsInstance.ContentItem.ChatItems = [];
+            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
             OnPropertyChanged(nameof(ChatHistory));
         });
 

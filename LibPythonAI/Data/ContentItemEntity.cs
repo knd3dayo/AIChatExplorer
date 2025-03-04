@@ -45,27 +45,28 @@ namespace LibPythonAI.Data {
         public string ChatMessagesJson { get; set; } = "[]";
 
         // OpenAIチャットのChatItemコレクション
+        private List<ChatMessage>? _chatItems;
         [NotMapped]
         public List<ChatMessage> ChatItems {
             get {
-                List<ChatMessage>? items = ChatMessage.FromListJson(ChatMessagesJson);
-                return items ?? [];
-            }
-            set {
-                ChatMessagesJson = JsonSerializer.Serialize(value, jsonSerializerOptions);
+                if (_chatItems == null) {
+                    _chatItems = ChatMessage.FromListJson(ChatMessagesJson);
+                }
+                return _chatItems ?? new();
             }
         }
 
         public string PromptChatResultJson { get; set; } = "{}";
+
         // プロンプトテンプレートに基づくチャットの結果
+        private PromptChatResult? _promptChatResult;
         [NotMapped]
         public PromptChatResult PromptChatResult {
             get {
-                PromptChatResult? result = JsonSerializer.Deserialize<PromptChatResult>(PromptChatResultJson, jsonSerializerOptions);
-                return result ?? new();
-            }
-            set {
-                PromptChatResultJson = JsonSerializer.Serialize(value, jsonSerializerOptions);
+                if (_promptChatResult == null) {
+                    _promptChatResult = PromptChatResult.FromJson(PromptChatResultJson);
+                }
+                return _promptChatResult ?? new();
             }
         }
 
@@ -110,15 +111,19 @@ namespace LibPythonAI.Data {
 
         public void SaveExtendedPropertiesJson() {
             if (_extendedProperties != null) {
-                ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+                ExtendedPropertiesJson = JsonSerializer.Serialize(_extendedProperties, jsonSerializerOptions);
             }
         }
         public void SavePromptChatResultJson() {
-            PromptChatResultJson = JsonSerializer.Serialize(PromptChatResult, jsonSerializerOptions);
+            if (_promptChatResult != null) {
+                PromptChatResultJson = _promptChatResult.ToJson();
+            }
         }
 
         public void SaveChatMessagesJson() {
-            ChatMessagesJson = JsonSerializer.Serialize(ChatItems, jsonSerializerOptions);
+            if (_chatItems != null) {
+                ChatMessagesJson = JsonSerializer.Serialize(_chatItems, jsonSerializerOptions);
+            }
         }
 
 
@@ -131,8 +136,8 @@ namespace LibPythonAI.Data {
                 Content = Content,
                 Description = Description,
                 ContentType = ContentType,
-                ChatItems = ChatItems,
-                PromptChatResult = PromptChatResult,
+                ChatMessagesJson = ChatMessagesJson,
+                PromptChatResultJson = PromptChatResultJson,
                 Tags = Tags,
                 SourceApplicationName = SourceApplicationName,
                 SourceApplicationTitle = SourceApplicationTitle,

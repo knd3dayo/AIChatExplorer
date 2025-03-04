@@ -333,8 +333,12 @@ namespace LibPythonAI.Model.Content {
 
 
         public VectorDBProperty GetMainVectorSearchProperty() {
-
-            VectorDBProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB(), this);
+            VectorDBPropertyEntity searchPropertyEntity = new() {
+                FolderId = Entity.Id,
+                TopK = 4,
+                VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Entity.Id,
+            };
+            VectorDBProperty searchProperty = new(searchPropertyEntity);
             return searchProperty;
         }
 
@@ -360,7 +364,10 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static ContentFolderWrapper? GetFolderById(string id) {
+        public static ContentFolderWrapper? GetFolderById(string? id) {
+            if (string.IsNullOrEmpty(id)) {
+                return null;
+            }
 
             var folder  = ContentFolderEntity.GetFolder(id);
             if (folder == null) {

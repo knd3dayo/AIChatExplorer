@@ -87,14 +87,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            using PythonAILibDBContext db = new();
-
-            if (!IsShowSystemCommonVectorDB) {
-                var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-                foreach (var itemEntity in items) {
-                    VectorDBItem item = new(itemEntity);
-                    VectorDBItems.Add(new VectorDBItemViewModel(item));
-                }
+            foreach (var item in VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB)) {
+                VectorDBItems.Add(new VectorDBItemViewModel(item));
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
@@ -148,7 +142,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;
                 }
-                callBackup?.Invoke(new VectorDBProperty(SelectedVectorDBItem.Item, null));
+                VectorDBPropertyEntity? entity = new () { VectorDBItemId = SelectedVectorDBItem.Item.Entity.Id };
+                callBackup?.Invoke(new VectorDBProperty(entity));
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
             else if (SelectedTabIndex == 1) {

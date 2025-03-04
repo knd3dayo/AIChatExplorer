@@ -24,15 +24,13 @@ namespace LibPythonAI.Model.VectorDB {
         // デフォルトのコレクション名
         public readonly static string DefaultCollectionName = "ai_app_default_collection";
 
-        // システム共通のベクトルDB
-        public static VectorDBItem GetDefaultVectorDB() {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
+        public static void Init() {
+            var item = GetItemByName(SystemCommonVectorDBName);
             if (item == null) {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
                 string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
-                item = new VectorDBItemEntity() {
+                var entity = new VectorDBItemEntity() {
                     Name = SystemCommonVectorDBName,
                     Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
                     VectorDBType = VectorDBTypeEnum.Chroma,
@@ -43,10 +41,18 @@ namespace LibPythonAI.Model.VectorDB {
                     IsSystem = true,
                     CollectionName = DefaultCollectionName
                 };
-                db.VectorDBItems.Add(item);
-                db.SaveChanges();
+                item = new(entity);
+                item.Save();
             }
-            return new VectorDBItem(item);
+        }
+        // システム共通のベクトルDB
+        public static VectorDBItem GetDefaultVectorDB() {
+            var item = GetItemByName(SystemCommonVectorDBName);
+            if (item == null) {
+                Init();
+                item = GetItemByName(SystemCommonVectorDBName);
+            }
+            return item!;
         }
 
         public static string GetCatalogDBURL() {
@@ -62,26 +68,44 @@ namespace LibPythonAI.Model.VectorDB {
 
         // 名前
         [JsonPropertyName("vector_db_name")]
-        public string Name { get; set; } = DefaultCollectionName;
+        public string Name {
+            get => Entity.Name;
+            set => Entity.Name = value;
+        }
         // 説明
         [JsonPropertyName("vector_db_description")]
-        public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
+        public string Description {
+            get => Entity.Description;
+            set => Entity.Description = value;
+        }   
 
         // ベクトルDBのURL
         [JsonPropertyName("vector_db_url")]
-        public string VectorDBURL { get; set; } = "";
+        public string VectorDBURL {
+            get => Entity.VectorDBURL;
+            set => Entity.VectorDBURL = value;
+        }
 
         // マルチベクトルリトリーバを使うかどうか
         [JsonPropertyName("is_use_multi_vector_retriever")]
-        public bool IsUseMultiVectorRetriever { get; set; } = false;
+        public bool IsUseMultiVectorRetriever {
+            get => Entity.IsUseMultiVectorRetriever;
+            set => Entity.IsUseMultiVectorRetriever = value;
+        }
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
         [JsonPropertyName("doc_store_url")]
-        public string DocStoreURL { get; set; } = "";
+        public string DocStoreURL {
+            get => Entity.DocStoreURL;
+            set => Entity.DocStoreURL = value;
+        }
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
-        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
+        public VectorDBTypeEnum Type {
+            get => Entity.VectorDBType;
+            set => Entity.VectorDBType = value;
+        }
 
         // ベクトルDBの種類を表す文字列
         [JsonPropertyName("vector_db_type_string")]
@@ -165,10 +189,6 @@ namespace LibPythonAI.Model.VectorDB {
                 yield return new VectorDBItem(item);
             }
         }
-        // GetItemById
-        public static VectorDBItem? GetItemById(string id) {
-            return GetItems().FirstOrDefault(item => item.Entity.Id == id);
-        }
 
         // Save
         public void Save() {
@@ -215,11 +235,29 @@ namespace LibPythonAI.Model.VectorDB {
             return result;
         }
 
-        public static List<VectorDBItem> GetVectorDBItems() {
+        public static List<VectorDBItem> GetVectorDBItems(bool includeDefaultVectorDB) {
             List<VectorDBItem> result = [];
-            result.Add(GetDefaultVectorDB());
+            if (includeDefaultVectorDB) {
+                result.Add(GetDefaultVectorDB());
+            }
             result.AddRange(GetExternalVectorDBItems());
             return result;
+        }
+
+        // GetItemById
+        public static VectorDBItem? GetItemById(string? id) {
+            if (id == null) {
+                return null;
+            }
+            return GetItems().FirstOrDefault(item => item.Entity.Id == id);
+        }
+
+        // GetItemByName
+        public static VectorDBItem? GetItemByName(string? name) {
+            if (name == null) {
+                return null;
+            }
+            return GetItems().FirstOrDefault(item => item.Entity.Name == name);
         }
 
 

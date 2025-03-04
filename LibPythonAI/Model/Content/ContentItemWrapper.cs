@@ -100,18 +100,12 @@ namespace LibPythonAI.Model.Content {
             get {
                 return Entity.ChatItems;
             }
-            set {
-                Entity.ChatItems = value;
-            }
         }
 
         // プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult {
             get {
                 return Entity.PromptChatResult;
-            }
-            set {
-                Entity.PromptChatResult = value;
             }
         }
 
