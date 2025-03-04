@@ -7,8 +7,6 @@ namespace PythonAILib.Common {
         public string GetLang();
 
         #region 削除候補
-        public string GetPythonDllPath();
-        
         public string GetPythonLibPath();
 
         public string GetPathToVirtualEnv();
@@ -21,8 +19,6 @@ namespace PythonAILib.Common {
         public bool UseInternalAPI();
 
         public bool UseExternalAPI();
-
-        public bool UsePythonNet();
         #endregion
 
         public string GetDBPath();

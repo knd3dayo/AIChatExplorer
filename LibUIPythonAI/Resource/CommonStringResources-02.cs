@@ -131,6 +131,9 @@ namespace LibUIPythonAI.Resource {
         // SpecifiedAPIServerURL
         public virtual string SpecifyAPIServerURL { get; } = "APIサーバーURLを指定";
 
+        // InternalAPIServerSettings
+        public virtual string InternalAPIServerSettings { get; } = "内部APIサーバー設定";
+
         // UsePythonNet
         public virtual string UsePythonNet { get; } = "PythonNetを使用する";
 

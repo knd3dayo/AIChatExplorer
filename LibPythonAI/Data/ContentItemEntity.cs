@@ -78,9 +78,9 @@ namespace LibPythonAI.Data {
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle { get; set; } = "";
         //　貼り付け元のアプリケーションのID
-        public int? SourceApplicationID { get; set; }
+        public int SourceApplicationID { get; set; }
         //　貼り付け元のアプリケーションのパス
-        public string? SourceApplicationPath { get; set; }
+        public string SourceApplicationPath { get; set; } = "";
 
         // ピン留め
         public bool IsPinned { get; set; }

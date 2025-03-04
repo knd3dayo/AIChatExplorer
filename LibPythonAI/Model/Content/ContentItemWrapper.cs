@@ -120,25 +120,29 @@ namespace LibPythonAI.Model.Content {
         }
 
         //　貼り付け元のアプリケーション名
-        public string SourceApplicationName {
+        public string? SourceApplicationName {
             get {
-                return Entity.SourceApplicationName;
+                return Entity.SourceApplicationName ;
             }
             set {
-                Entity.SourceApplicationName = value;
+                if (value != null) {
+                    Entity.SourceApplicationName = value;
+                }
             }
         }
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle {
             get {
-                return Entity.SourceApplicationTitle;
+                return Entity.SourceApplicationTitle ;
             }
             set {
-                Entity.SourceApplicationTitle = value;
+                if (value != null) {
+                    Entity.SourceApplicationTitle = value;
+                }
             }
         }
         //　貼り付け元のアプリケーションのID
-        public int? SourceApplicationID {
+        public int SourceApplicationID {
             get {
                 return Entity.SourceApplicationID;
             }
@@ -147,12 +151,14 @@ namespace LibPythonAI.Model.Content {
             }
         }
         //　貼り付け元のアプリケーションのパス
-        public string? SourceApplicationPath {
+        public string SourceApplicationPath {
             get {
                 return Entity.SourceApplicationPath;
             }
             set {
-                Entity.SourceApplicationPath = value;
+                if (value != null) {
+                    Entity.SourceApplicationPath = value;
+                }
             }
         }
         // ピン留め

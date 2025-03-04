@@ -578,20 +578,6 @@ namespace ClipboardApp.ViewModel.Settings {
             }
         }
 
-        // UsePythonNet
-        private bool? _usePythonNet;
-        public bool UsePythonNet {
-            get {
-                if (_usePythonNet == null) {
-                    _usePythonNet = Properties.Settings.Default.UsePythonNet;
-                }
-                return _usePythonNet.Value;
-            }
-            set {
-                _usePythonNet = value;
-                Properties.Settings.Default.UsePythonNet = value;
-            }
-        }
         #endregion
 
 

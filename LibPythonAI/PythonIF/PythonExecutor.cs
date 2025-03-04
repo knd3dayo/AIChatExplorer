@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using LibPythonAI.Utils.Common;
-using Python.Runtime;
 using PythonAILib.Common;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
@@ -50,21 +49,6 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        private static IPythonMiscFunctions? _pythonMiscFunctions;
-        public static IPythonMiscFunctions PythonMiscFunctions {
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            get {
-                if (string.IsNullOrEmpty(PythonPath)) {
-                    throw new Exception(StringResources.PythonDLLNotFound);
-
-                }
-                if (_pythonMiscFunctions == null) {
-                    _pythonMiscFunctions = new PythonMiscFunctions();
-
-                }
-                return _pythonMiscFunctions;
-            }
-        }
         // Initialize Python functions
         public static void Init(IPythonAILibConfigParams configPrams) {
             ConfigPrams = configPrams;
@@ -83,11 +67,7 @@ namespace PythonAILib.PythonIF {
                 Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
             }
             if (_pythonAIFunctions == null) {
-                // UsePythonNetがTrueの場合はPythonNetを初期化する
-                if (ConfigPrams.UsePythonNet()) {
-                    InitPythonNet(ConfigPrams);
-                    _pythonAIFunctions = new PythonNetFunctions();
-                } else if (ConfigPrams.UseInternalAPI()) {
+                if (ConfigPrams.UseInternalAPI()) {
                     InitInternalAPI(ConfigPrams);
                     string baseUrl = ConfigPrams.GetAPIServerURL();
                     _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
@@ -98,98 +78,6 @@ namespace PythonAILib.PythonIF {
                 } else {
                     throw new Exception(StringResources.PythonNotInitialized);
                 }
-
-            }
-
-        }
-
-        private static void InitPythonNet(IPythonAILibConfigParams configPrams) {
-            // Pythonスクリプトを実行するための準備
-
-            // 既に初期化されている場合は初期化しない
-            if (PythonEngine.IsInitialized) {
-                return;
-            }
-
-            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
-            string appDataDir = configPrams.GetAppDataPath();
-            string pythonDLLPath = configPrams.GetPythonDllPath();
-            string pythonAILibPath = PythonAILibPath;
-            string httpsProxy = configPrams.GetHttpsProxy();
-            string noProxy = configPrams.GetNoProxy();
-
-            // PythonDLLのパスを設定
-            Runtime.PythonDLL = pythonDLLPath;
-
-            // Runtime.PythonDLLのファイルが存在するかチェック
-            if (!File.Exists(Runtime.PythonDLL)) {
-                string message = StringResources.PythonDLLNotFound;
-                throw new Exception(message + Runtime.PythonDLL);
-
-            }
-            // Venv環境が存在するかチェック
-            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
-                string message = StringResources.PythonVenvNotFound;
-                throw new Exception(message + pathToVirtualEnv);
-            }
-
-            try {
-                // venvを使用する場合の設定
-                // 公式ドキュメントの設定ではPythonEngine.Initialize()時にクラッシュするため、
-                // 以下を参考にして設定を行う
-                // https://github.com/pythonnet/pythonnet/issues/1478#issuecomment-897933730
-
-                // PythonEngineにアクセスするためのダミー処理
-                string version = PythonEngine.Version;
-
-                if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                    LogWrapper.Info($"Python Version: {version}");
-                    // 実行中の Python のユーザー site-packages へのパスを無効にする
-                    PythonEngine.SetNoSiteFlag();
-                }
-
-                Task.Run(() => {
-                    PythonEngine.Initialize();
-                    PythonEngine.BeginAllowThreads();
-
-
-                    // sys.prefix、sys.exec_prefixを venvのパスに変更
-
-                    using (Py.GIL()) {
-                        // fix the prefixes to point to our venv
-                        // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
-                        dynamic sys = Py.Import("sys");
-                        dynamic site = Py.Import("site");
-                        dynamic os = Py.Import("os");
-                        if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                            sys.prefix = pathToVirtualEnv;
-                            sys.exec_prefix = pathToVirtualEnv;
-
-                            // This has to be overwritten because site module may already have 
-                            // been loaded by the interpreter (but not run yet)
-                            site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
-                        }
-                        // set the path to pythonAILib
-                        site.addsitedir(pythonAILibPath);
-
-                        // set the proxy settings
-                        if (!string.IsNullOrEmpty(httpsProxy)) {
-                            os.environ["HTTPS_PROXY"] = new PyString(httpsProxy);
-                            os.environ["NO_PROXY"] = new PyString(noProxy);
-                        } else {
-                            // NO_PROXY="*"
-                            os.environ["NO_PROXY"] = new PyString("*");
-                        }
-
-                        // Run site path modification with tweaked prefixes
-                        site.main();
-                    }
-                }).Wait();
-
-
-            } catch (TypeInitializationException e) {
-                string message = StringResources.PythonInitFailed + e.Message;
-                LogWrapper.Error(message);
             }
         }
 

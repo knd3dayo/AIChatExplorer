@@ -30,8 +30,8 @@ namespace PythonAILib.Model.AutoProcess {
         public static IEnumerable<AutoProcessRule> GetCopyToMoveToRules() {
             using var db = new PythonAILibDBContext();
             var items = db.AutoProcessRules.Where(x => x.RuleAction != null
-                    && (x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.CopyToFolder.ToString()
-                        || x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.MoveToFolder.ToString()));
+                    && (x.RuleAction.Name == AutoProcessItem.TypeEnum.CopyToFolder.ToString()
+                        || x.RuleAction.Name == AutoProcessItem.TypeEnum.MoveToFolder.ToString()));
             foreach (var item in items) {
                 if (item != null) {
                     yield return new AutoProcessRule(item);
@@ -63,12 +63,7 @@ namespace PythonAILib.Model.AutoProcess {
             if (item.IsImage() && item.Image != null) {
                 // ★TODO Implement processing based on automatic processing rules.
                 // If AutoExtractImageWithPyOCR is set, perform OCR
-                if (configParams.AutoExtractImageWithPyOCR()) {
-                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(item.Image, configParams.TesseractExePath());
-                    item.Content += "\n" + extractImageText;
-                    LogWrapper.Info(PythonAILibStringResources.Instance.OCR);
-
-                } else if (configParams.AutoExtractImageWithOpenAI()) {
+                if (configParams.AutoExtractImageWithOpenAI()) {
 
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoExtractImageText);
                     ContentItemCommands.ExtractImageWithOpenAI(item);

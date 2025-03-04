@@ -7,7 +7,6 @@ using LibPythonAI.Model.Statistics;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
-using Python.Runtime;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -19,7 +18,6 @@ namespace PythonAILib.PythonIF {
 
     public class PythonAPIFunctions : IPythonAIFunctions {
 
-        private readonly Dictionary<string, PyModule> PythonModules = [];
 
         private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
@@ -155,7 +153,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // AutoGenのGroupChatを実行する
-        public  ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
             // ChatRequestから最後のユーザー発言を取得
             ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
@@ -182,7 +180,7 @@ namespace PythonAILib.PythonIF {
             string host = uri.GetLeftPart(UriPartial.Authority);
             string path = uri.PathAndQuery;
             SocketIOOptions options = new() {
-               AutoUpgrade = false,
+                AutoUpgrade = false,
             };
 
             Task.Run(async () => {
@@ -355,7 +353,7 @@ namespace PythonAILib.PythonIF {
 
         }
 
- 
+
         public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
             chatRequestContext.UseVectorDB = true;
@@ -366,25 +364,16 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // update_collection
             PythonScriptResult result = new();
-            try {
-                // PostAsyncを実行する
-                string endpoint = $"{this.base_url}/update_collection";
-                string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_collection";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
 
-                LogWrapper.Debug(resultString);
-                // resultStringからDictionaryに変換する。
-                result.LoadFromJson(resultString);
-                // Errorがある場合はLogWrapper.Errorを呼び出す
-                if (!string.IsNullOrEmpty(result.Error)) {
-                    LogWrapper.Error(result.Error);
-                }
-            } catch (PythonException e) {
-                // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                if (e.Message.Contains("Unsupported file type")) {
-                    throw new UnsupportedFileTypeException(e.Message);
-                }
-                LogWrapper.Error($"{e.Message}\n{e.StackTrace}");
-                throw;
+            LogWrapper.Debug(resultString);
+            // resultStringからDictionaryに変換する。
+            result.LoadFromJson(resultString);
+            // Errorがある場合はLogWrapper.Errorを呼び出す
+            if (!string.IsNullOrEmpty(result.Error)) {
+                LogWrapper.Error(result.Error);
             }
         }
 
@@ -402,28 +391,19 @@ namespace PythonAILib.PythonIF {
             // get_catalog_description
             PythonScriptResult result = new();
             // PostAsyncを実行する
-            try {
+            string endpoint = $"{this.base_url}/get_catalog_description";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
 
-                string endpoint = $"{this.base_url}/get_catalog_description";
-                string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
-
-                LogWrapper.Debug(resultString);
-                // resultStringからDictionaryに変換する。
-                result.LoadFromJson(resultString);
-                // Errorがある場合はLogWrapper.Errorを呼び出す
-                if (!string.IsNullOrEmpty(result.Error)) {
-                    LogWrapper.Error(result.Error);
-                }
-                return result.Output;
-
-            } catch (PythonException e) {
-                // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                if (e.Message.Contains("Unsupported file type")) {
-                    throw new UnsupportedFileTypeException(e.Message);
-                }
-                LogWrapper.Error($"{e.Message}\n{e.StackTrace}");
-                throw;
+            LogWrapper.Debug(resultString);
+            // resultStringからDictionaryに変換する。
+            result.LoadFromJson(resultString);
+            // Errorがある場合はLogWrapper.Errorを呼び出す
+            if (!string.IsNullOrEmpty(result.Error)) {
+                LogWrapper.Error(result.Error);
             }
+            return result.Output;
+
+
         }
 
         public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId, string description) {
@@ -442,28 +422,20 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBDescription);
             // update_catalog_description
             PythonScriptResult result = new();
-            try {
-                // PostAsyncを実行する
-                string endpoint = $"{this.base_url}/update_catalog_description";
-                string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_catalog_description";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
 
-                LogWrapper.Debug(resultString);
-                // resultStringからDictionaryに変換する。
-                result.LoadFromJson(resultString);
-                // Errorがある場合はLogWrapper.Errorを呼び出す
-                if (!string.IsNullOrEmpty(result.Error)) {
-                    LogWrapper.Error(result.Error);
-                }
-
-                return result.Output;
-            } catch (PythonException e) {
-                // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                if (e.Message.Contains("Unsupported file type")) {
-                    throw new UnsupportedFileTypeException(e.Message);
-                }
-                LogWrapper.Error($"{e.Message}\n{e.StackTrace}");
-                throw;
+            LogWrapper.Debug(resultString);
+            // resultStringからDictionaryに変換する。
+            result.LoadFromJson(resultString);
+            // Errorがある場合はLogWrapper.Errorを呼び出す
+            if (!string.IsNullOrEmpty(result.Error)) {
+                LogWrapper.Error(result.Error);
             }
+
+            return result.Output;
+
         }
 
         // 指定されたベクトルDBのコレクションを削除する

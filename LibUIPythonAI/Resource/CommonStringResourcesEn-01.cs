@@ -115,6 +115,9 @@ namespace LibUIPythonAI.Resource {
         // SpecifiedAPIServerURL
         public override string SpecifyAPIServerURL { get; } = "Specified API Server URL";
 
+        // InternalAPIServerSettings
+        public override string InternalAPIServerSettings { get; } = "Internal API Server Settings";
+
         public override string AppName { get; } = "RAG Clipboard";
         // File
         public override string File { get; } = "File";

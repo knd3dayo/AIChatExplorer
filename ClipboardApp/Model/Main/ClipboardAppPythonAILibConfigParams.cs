@@ -17,9 +17,6 @@ namespace ClipboardApp.Model.Main {
         public string GetLang() {
             return ClipboardAppConfig.Instance.ActualLang;
         }
-        public string GetPythonDllPath() {
-            return ClipboardAppConfig.Instance.PythonDllPath;
-        }
 
 
         public string GetPathToVirtualEnv() {
@@ -180,12 +177,6 @@ namespace ClipboardApp.Model.Main {
         public bool UseExternalAPI() {
             return ClipboardAppConfig.Instance.UseExternalAPI;
         }
-
-        // UsePythonNet
-        public bool UsePythonNet() {
-            return ClipboardAppConfig.Instance.UsePythonNet;
-        }
-
 
     }
 }

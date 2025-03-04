@@ -101,32 +101,7 @@ namespace ClipboardApp.ViewModel.Settings {
         }
 
         #endregion
-        private TestResult TestSpacy() {
-            TestResult testResult = new();
-            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
-            StringBuilder stringBuilder = new();
-            stringBuilder.AppendLine("def execute(input_str):");
-            stringBuilder.AppendLine("    import spacy");
-            stringBuilder.AppendLine("    nlp = spacy.load(\"" + SpacyModel + "\")");
-            stringBuilder.AppendLine("    doc = nlp(input_str)");
-            stringBuilder.AppendLine("    return doc.text");
 
-
-            try {
-                string resultString = PythonExecutor.PythonMiscFunctions.RunScript(stringBuilder.ToString(), "Hello World!");
-                if (string.IsNullOrEmpty(resultString)) {
-                    testResult.Message = "[NG]:Spacyの実行に失敗しました。";
-                    testResult.Result = false;
-                } else {
-                    testResult.Message = "[OK]:Spacyの実行が可能です。";
-                    testResult.Result = true;
-                }
-            } catch (Exception ex) {
-                testResult.Message = "[NG]:Spacyの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
-                testResult.Result = false;
-            }
-            return testResult;
-        }
 
 
 

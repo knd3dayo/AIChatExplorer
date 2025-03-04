@@ -151,7 +151,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     <PackageReference Include="NLog" Version="5.4.0" />
-    <PackageReference Include="pythonnet" Version="3.1.0-preview2024-06-03" />
     <PackageReference Include="SocketIOClient" Version="3.1.2" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.6" />

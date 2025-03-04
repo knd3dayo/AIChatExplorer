@@ -173,24 +173,39 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.UsePythonNet}"
-                                GroupName="PythonServer"
-                                IsChecked="{Binding UsePythonNet, UpdateSourceTrigger=PropertyChanged}" />
-                            <RadioButton
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
                                 Content="{x:Static res:ViewStringResources.UseInternalAPIServer}"
                                 GroupName="PythonServer"
                                 IsChecked="{Binding UseInternalAPI, UpdateSourceTrigger=PropertyChanged}" />
                             <RadioButton
-                                Grid.Row="2"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{x:Static res:ViewStringResources.UseExternalAPIServer}"
                                 GroupName="PythonServer"
                                 IsChecked="{Binding UseExternalAPI, UpdateSourceTrigger=PropertyChanged}" />
 
+
+                            <!--  APIServer APIServerVisibility  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.APIServerURL}"
+                                Visibility="{Binding APIServerVisibility}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyAPIServerURL}"
+                                Text="{Binding APIServerURL}"
+                                Visibility="{Binding APIServerVisibility}" />
+
+
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.InternalAPIServerSettings}" />
                             <!--  PythonVenvPth  -->
                             <TextBlock
                                 Grid.Row="3"
@@ -204,37 +219,6 @@
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyVenvPath}"
                                 Text="{Binding PythonVenvPath}"
-                                Visibility="{Binding InternalVisibility}" />
-
-                            <!--  APIServer APIServerVisibility  -->
-                            <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.APIServerURL}"
-                                Visibility="{Binding APIServerVisibility}" />
-                            <TextBox
-                                Grid.Row="4"
-                                Grid.Column="2"
-                                Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyAPIServerURL}"
-                                Text="{Binding APIServerURL}"
-                                Visibility="{Binding APIServerVisibility}" />
-
-
-                            <!--  PythonDLLPath InternalVisibility  -->
-                            <TextBlock
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.PythonDLLPath}"
-                                Visibility="{Binding InternalVisibility}" />
-                            <TextBox
-                                Grid.Row="5"
-                                Grid.Column="2"
-                                Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyPython3Dll}"
-                                Text="{Binding PythonDllPath}"
                                 Visibility="{Binding InternalVisibility}" />
 
                         </Grid>

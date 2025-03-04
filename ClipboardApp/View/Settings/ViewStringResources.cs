@@ -217,5 +217,8 @@ namespace ClipboardApp.View.Settings {
         // SpecifiedAPIServerURL
         public static string SpecifyAPIServerURL { get; set; } = CommonStringResources.Instance.SpecifyAPIServerURL;
 
+        // InternalAPIServerSettings
+        public static string InternalAPIServerSettings { get; set; } = CommonStringResources.Instance.InternalAPIServerSettings;
+
     }
 }

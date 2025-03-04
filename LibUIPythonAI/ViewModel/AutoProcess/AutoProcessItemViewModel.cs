@@ -29,7 +29,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public static ObservableCollection<AutoProcessItemViewModel> SystemAutoProcesses {
             get {
                 ObservableCollection<AutoProcessItemViewModel> autoProcesses = [];
-                foreach (SystemAutoProcessItem item in SystemAutoProcessItem.SystemAutoProcesses) {
+                foreach (AutoProcessItem item in AutoProcessItem.SystemAutoProcesses) {
                     autoProcesses.Add(new AutoProcessItemViewModel(item));
                 }
                 return autoProcesses;

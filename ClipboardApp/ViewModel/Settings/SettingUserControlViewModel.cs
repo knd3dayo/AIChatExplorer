@@ -649,25 +649,6 @@ namespace ClipboardApp.ViewModel.Settings {
                 OnPropertyChanged(nameof(InternalVisibility));
             }
         }
-        // UsePythonNet
-        public bool UsePythonNet {
-            get {
-                return ClipboardAppConfig.Instance.UsePythonNet;
-            }
-            set {
-                ClipboardAppConfig.Instance.UsePythonNet = value;
-                OnPropertyChanged(nameof(UsePythonNet));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-
-                // Visibilityの変更を通知
-                OnPropertyChanged(nameof(UseInternalAPIVisibility));
-                OnPropertyChanged(nameof(UseExternalAPIVisibility));
-                OnPropertyChanged(nameof(APIServerVisibility));
-                OnPropertyChanged(nameof(InternalVisibility));
-
-            }
-        }
 
         // UseInternalAPIVisibility
         public Visibility UseInternalAPIVisibility => Tools.BoolToVisibility(UseInternalAPI);
@@ -679,7 +660,7 @@ namespace ClipboardApp.ViewModel.Settings {
         public Visibility APIServerVisibility => Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
 
         // InternalVisibility
-        public Visibility InternalVisibility => Tools.BoolToVisibility(UseInternalAPI || UsePythonNet);
+        public Visibility InternalVisibility => Tools.BoolToVisibility(UseInternalAPI);
         #endregion
 
         // SaveCommand
