@@ -53,6 +53,16 @@ namespace LibPythonAI.Model.Tag {
             }
         }
 
+        public static TagItem? GetTagItemByName(string tag) {
+
+            using PythonAILibDBContext db = new();
+            var item = db.TagItems.FirstOrDefault(x => x.Tag == tag);
+            if (item != null) {
+                return new TagItem(item);
+            }
+            return null;
+        }
+
     }
 
 }

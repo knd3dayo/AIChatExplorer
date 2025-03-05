@@ -70,8 +70,21 @@ namespace LibPythonAI.Data {
             }
         }
 
+        public string TagString { get; set; } = "";
         //Tags
-        public HashSet<TagItemEntity> Tags { get; set; } = [];
+        private HashSet<string>? _tagIds;
+        [NotMapped]
+        public HashSet<string> Tags {
+            get {
+                if (_tagIds == null) {
+                    _tagIds = TagString.Split(',').ToHashSet();
+                }
+                return _tagIds;
+            }
+            set {
+                _tagIds = value;
+            }
+        }
 
         //　貼り付け元のアプリケーション名
         public string SourceApplicationName { get; set; } = "";
@@ -126,6 +139,12 @@ namespace LibPythonAI.Data {
             }
         }
 
+        public void SaveTagString() {
+            if (_tagIds != null) {
+                TagString = string.Join(",", _tagIds);
+            }
+        }
+
 
         // Copy
         public ContentItemEntity Copy() {
@@ -138,7 +157,7 @@ namespace LibPythonAI.Data {
                 ContentType = ContentType,
                 ChatMessagesJson = ChatMessagesJson,
                 PromptChatResultJson = PromptChatResultJson,
-                Tags = Tags,
+                TagString = TagString,
                 SourceApplicationName = SourceApplicationName,
                 SourceApplicationTitle = SourceApplicationTitle,
                 SourceApplicationID = SourceApplicationID,
@@ -160,6 +179,7 @@ namespace LibPythonAI.Data {
                 item.SaveExtendedPropertiesJson();
                 item.SavePromptChatResultJson();
                 item.SaveChatMessagesJson();
+                item.SaveTagString();
                 var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
                 if (ExistingItem == null) {
                     context.ContentItems.Add(item);

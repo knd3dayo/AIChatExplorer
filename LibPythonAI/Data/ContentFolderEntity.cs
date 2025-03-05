@@ -65,7 +65,6 @@ namespace LibPythonAI.Data {
         public List<ContentItemEntity> GetContentItems() {
             using PythonAILibDBContext context = new();
             var items = context.ContentItems
-                .Include(b => b.Tags)
                 .Where(x => x.FolderId == this.Id).ToList();
             return items;
         }

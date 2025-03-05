@@ -112,10 +112,10 @@ namespace LibPythonAI.Model.Content {
         //Tags
         public HashSet<string> Tags {
             get {
-                return [.. Entity.Tags.Select(tag => tag.Tag)];
+                return Entity.Tags;
             }
             set {
-                Entity.Tags = [.. value.Select(tag => new TagItemEntity() { Tag = tag })];
+                Entity.Tags = value;
             }
         }
 

@@ -44,7 +44,10 @@ namespace LibUIPythonAI.ViewModel.Item {
         }
 
         // Tags
-        public HashSet<string> Tags { get => ContentItem.Tags; set { ContentItem.Tags = value; } }
+        public HashSet<string> Tags { 
+            get => ContentItem.Tags; 
+            set => ContentItem.Tags = value;
+        }
 
         // SelectedTabIndex
         private int selectedTabIndex = 0;
