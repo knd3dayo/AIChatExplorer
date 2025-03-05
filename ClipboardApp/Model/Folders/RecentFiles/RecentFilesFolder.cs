@@ -45,7 +45,7 @@ namespace ClipboardApp.Model.Folders.Browser {
             return []; ;
         }
 
-        public void SyncItems() {
+        public override void SyncItems() {
             // コレクション
             var items = Entity.GetContentItems().Select(x => new RecentFilesItem(x)).ToList();
 

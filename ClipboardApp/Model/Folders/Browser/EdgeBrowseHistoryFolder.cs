@@ -63,7 +63,8 @@ namespace ClipboardApp.Model.Folders.Browser {
             File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
 
             // コレクション
-            var items = GetItems<EdgeBrowseHistoryItem>();
+            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
+            var items = Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];

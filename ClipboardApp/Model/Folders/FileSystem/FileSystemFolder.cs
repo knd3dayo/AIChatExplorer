@@ -46,11 +46,6 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             return base.GetChildren<T>();
         }
 
-        // ProcessClipboardItem
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
-            // ローカルファイルのフォルダは処理しない
-            throw new NotImplementedException();
-        }
 
         // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
         protected virtual HashSet<string> GetFileSystemFolderPaths() {
@@ -76,8 +71,8 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
-            // コレクション
-            var folders = GetChildren<FileSystemFolder>();
+            // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
+            var folders = Entity.GetChildren().Select(x => new FileSystemFolder(x)).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
@@ -127,7 +122,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         }
 
 
-        public void SyncItems() {
+        public virtual void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
@@ -142,7 +137,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
 
-            // コレクション
+            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
             var items = Entity.GetContentItems().Select(x => new FileSystemItem(x)).ToList();
 
             // Items内のFilePathとContentItemのDictionary
@@ -207,6 +202,11 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 }
             });
 
+        }
+        // ProcessClipboardItem
+        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
+            // ローカルファイルのフォルダは処理しない
+            throw new NotImplementedException();
         }
 
     }
