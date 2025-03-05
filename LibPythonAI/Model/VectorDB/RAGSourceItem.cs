@@ -17,6 +17,11 @@ namespace PythonAILib.Model.VectorDB {
             Entity = entity;
         }
 
+        // Id
+        public string Id {
+            get => Entity.Id;
+        }
+
         public string SourceURL { get; set; } = "";
         public string WorkingDirectory { get; set; } = "";
 
@@ -33,7 +38,7 @@ namespace PythonAILib.Model.VectorDB {
 
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.RAGSourceItems.Find(Entity.Id);
+            var item = db.RAGSourceItems.Find(Id);
             if (item == null) {
                 db.RAGSourceItems.Add(Entity);
             } else {
@@ -45,7 +50,7 @@ namespace PythonAILib.Model.VectorDB {
         }
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.RAGSourceItems.Find(Entity.Id);
+            var item = db.RAGSourceItems.Find(Id);
             if (item != null) {
                 db.Remove(item);
             }
@@ -157,7 +162,7 @@ namespace PythonAILib.Model.VectorDB {
 
                     VectorDBPropertyEntity searchPropertyEntity = new() {
                         TopK = 4,
-                        VectorDBItemId = VectorDBItem.Entity.Id,
+                        VectorDBItemId = VectorDBItem.Id,
                     };
                     VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];
@@ -171,7 +176,7 @@ namespace PythonAILib.Model.VectorDB {
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
                     VectorDBPropertyEntity searchPropertyEntity = new() {
                         TopK = 4,
-                        VectorDBItemId = VectorDBItem.Entity.Id,
+                        VectorDBItemId = VectorDBItem.Id,
                     }; VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
                     VectorMetadata vectorDBEntry = new(source_path);
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];

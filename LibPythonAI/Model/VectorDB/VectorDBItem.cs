@@ -19,6 +19,8 @@ namespace LibPythonAI.Model.VectorDB {
             Entity = entity;
         }
 
+        public string Id { get => Entity.Id; }
+
         // システム共通のベクトルDBの名前
         public readonly static string SystemCommonVectorDBName = "default";
         // デフォルトのコレクション名
@@ -77,7 +79,7 @@ namespace LibPythonAI.Model.VectorDB {
         public string Description {
             get => Entity.Description;
             set => Entity.Description = value;
-        }   
+        }
 
         // ベクトルDBのURL
         [JsonPropertyName("vector_db_url")]
@@ -193,7 +195,7 @@ namespace LibPythonAI.Model.VectorDB {
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(Entity.Id);
+            var item = db.VectorDBItems.Find(Id);
             if (item == null) {
                 db.VectorDBItems.Add(Entity);
             } else {
@@ -205,7 +207,7 @@ namespace LibPythonAI.Model.VectorDB {
         // Delete
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(Entity.Id);
+            var item = db.VectorDBItems.Find(Id);
             if (item != null) {
                 db.Remove(item);
             }
@@ -249,7 +251,7 @@ namespace LibPythonAI.Model.VectorDB {
             if (id == null) {
                 return null;
             }
-            return GetItems().FirstOrDefault(item => item.Entity.Id == id);
+            return GetItems().FirstOrDefault(item => item.Id == id);
         }
 
         // GetItemByName
@@ -257,7 +259,7 @@ namespace LibPythonAI.Model.VectorDB {
             if (name == null) {
                 return null;
             }
-            return GetItems().FirstOrDefault(item => item.Entity.Name == name);
+            return GetItems().FirstOrDefault(item => item.Name == name);
         }
 
 

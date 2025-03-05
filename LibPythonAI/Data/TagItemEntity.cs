@@ -13,5 +13,16 @@ namespace LibPythonAI.Data {
 
         public bool IsPinned { get; set; } = false;
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            TagItemEntity entity = (TagItemEntity)obj;
+            return Id == entity.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
     }
 }

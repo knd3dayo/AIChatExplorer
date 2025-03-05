@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Data;
 using PythonAILib.Model.File;
 
 namespace PythonAILib.Model.AutoProcess {
@@ -62,6 +63,19 @@ namespace PythonAILib.Model.AutoProcess {
             return JsonSerializer.Serialize(ToDict(), jsonSerializerOptions);
         }
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            AutoProcessRuleConditionEntity entity = (AutoProcessRuleConditionEntity)obj;
+            return Id == entity.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
+
+
         public static AutoProcessRuleConditionEntity? FromDict(Dictionary<string, object>? dict) {
             if (dict == null) {
                 return null;
@@ -80,6 +94,7 @@ namespace PythonAILib.Model.AutoProcess {
         public static AutoProcessRuleConditionEntity? FromJson(string json) {
             return FromDict(JsonSerializer.Deserialize<Dictionary<string, object>>(json, jsonSerializerOptions));
         }
+
     }
 
 }

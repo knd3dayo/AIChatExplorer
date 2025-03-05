@@ -24,6 +24,7 @@ namespace LibPythonAI.Model.VectorDB {
                 return item;
             }
         }
+        public string Id { get => Entity.Id; }
 
         //TopK
         public int TopK {
@@ -56,7 +57,7 @@ namespace LibPythonAI.Model.VectorDB {
             Dictionary<string, object> filter = new();
             // folder_idが指定されている場合
             if (Folder != null) {
-                filter["folder_id"] = Folder.Entity.Id.ToString();
+                filter["folder_id"] = Folder.Id.ToString();
             }
             // content_typeが指定されている場合
             if (ContentType != string.Empty) {
@@ -104,7 +105,7 @@ namespace LibPythonAI.Model.VectorDB {
             Dictionary<string, object> dict = VectorDBItem?.ToDict() ?? [];
             // FolderId
             if (Folder != null) {
-                dict["folder_id"] = Folder.Entity.Id.ToString();
+                dict["folder_id"] = Folder.Id.ToString();
             }
             var search_kwargs = GetSearchKWArgs();
             if (search_kwargs.Count > 0) {

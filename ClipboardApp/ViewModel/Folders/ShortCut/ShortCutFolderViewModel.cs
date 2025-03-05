@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Folders.FileSystem;
 using ClipboardApp.Model.Folders.ShortCut;
 using ClipboardApp.ViewModel.Folders.Clipboard;
@@ -33,12 +34,15 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
             return childFolderViewModel;
         }
 
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<ShortCutItem>();
+        }
+
         // LoadChildren
-        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
-        // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-            List<ClipboardFolderViewModel> _children = [];
+            List<ShortCutFolderViewModel> _children = [];
 
             await Task.Run(() => {
                 // RootFolderの場合は、ShortCutFolderを取得

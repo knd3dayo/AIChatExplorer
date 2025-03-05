@@ -9,6 +9,11 @@ namespace LibPythonAI.Model.Tag {
             Entity = entity;
         }
 
+        // Id
+        public string Id {
+            get => Entity.Id;
+        }
+
         public string Tag {
             get => Entity.Tag;
             set => Entity.Tag = value;
@@ -21,14 +26,14 @@ namespace LibPythonAI.Model.Tag {
 
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.TagItems.Find(Entity.Id);
+            var item = db.TagItems.Find(Id);
             if (item != null) {
                 db.Remove(item);
             }
         }
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.TagItems.Find(Entity.Id);
+            var item = db.TagItems.Find(Id);
             if (item == null) {
                 db.TagItems.Add(Entity);
             } else {

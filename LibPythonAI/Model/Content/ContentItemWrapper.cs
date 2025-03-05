@@ -27,6 +27,9 @@ namespace LibPythonAI.Model.Content {
 
         public ContentItemEntity Entity { get; set; }
 
+        // ID
+        public string Id { get => Entity.Id; }
+
         // Folder
         public virtual ContentFolderWrapper GetFolder() {
             using PythonAILibDBContext db = new PythonAILibDBContext();
@@ -271,14 +274,14 @@ namespace LibPythonAI.Model.Content {
 
         // 別フォルダに移動
         public virtual void MoveTo(ContentFolderWrapper folder) {
-            Entity.FolderId = folder.Entity.Id;
+            Entity.FolderId = folder.Id;
             Save();
         }
 
         // 別フォルダにコピー
         public virtual void CopyToFolder(ContentFolderWrapper folder) {
             ContentItemWrapper newItem = Copy();
-            newItem.Entity.FolderId = folder.Entity.Id;
+            newItem.Entity.FolderId = folder.Id;
             newItem.Save();
         }
 

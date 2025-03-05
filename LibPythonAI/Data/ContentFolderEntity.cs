@@ -87,5 +87,17 @@ namespace LibPythonAI.Data {
                 .FirstOrDefault(x => x.Id == id);
             return folder;
         }
+
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            ContentFolderEntity other = (ContentFolderEntity)obj;
+            return Id == other.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
     }
 }

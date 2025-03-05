@@ -14,6 +14,8 @@ namespace LibPythonAI.Model.Search {
         }
         public SearchRuleEntity Entity { get; set; }
 
+        // Id
+        public string Id { get => Entity.Id; }
 
         public SearchCondition SearchCondition {
             get {
@@ -25,28 +27,28 @@ namespace LibPythonAI.Model.Search {
         }
         public ContentFolderWrapper? TargetFolder {
             get {
-                if (Entity.TargetFolder == null) {
+                if (Entity.TargetFolderId == null) {
                     return null;
                 }
-                ContentFolderWrapper? folder = new ContentFolderWrapper(Entity.TargetFolder);
+                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById(Entity.TargetFolderId);
                 return folder;
 
             }
             set {
-                Entity.TargetFolder = value?.Entity;
+                Entity.TargetFolderId = value?.Id;
             }
         }
 
         public ContentFolderWrapper? SearchFolder {
             get {
-                if (Entity.SearchFolder == null) {
+                if (Entity.SearchFolderId == null) {
                     return null;
                 }
-                ContentFolderWrapper? folder = new ContentFolderWrapper(Entity.SearchFolder);
+                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById(Entity.SearchFolderId);
                 return folder;
             }
             set {
-                Entity.SearchFolder = value?.Entity;
+                Entity.TargetFolderId = value?.Id;
             }
         }
 
@@ -63,7 +65,7 @@ namespace LibPythonAI.Model.Search {
         // 保存
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.SearchRules.Find(Entity.Id);
+            var item = db.SearchRules.Find(Id);
             if (item == null) {
                 db.SearchRules.Add(Entity);
             } else {
@@ -72,9 +74,14 @@ namespace LibPythonAI.Model.Search {
             db.SaveChanges();
         }
 
+        // 削除
+        public void Delete() {
+            SearchRuleEntity.DeleteItems([Entity]);
+        }
+
         public List<ContentItemWrapper> SearchItems() {
             List<ContentItemWrapper> result = [];
-            if (Entity.TargetFolder == null) {
+            if (TargetFolder == null) {
                 return result;
             }
             if (TargetFolder == null) {
@@ -87,6 +94,25 @@ namespace LibPythonAI.Model.Search {
             SearchRule rule = new SearchRule(Entity.Copy());
             return rule;
 
+        }
+        // GetItemByName
+        public static SearchRule? GetItemByName(string name) {
+            using PythonAILibDBContext db = new();
+            var item = db.SearchRules.Where(x => x.Name == name).FirstOrDefault();
+            if (item == null) {
+                return null;
+            }
+            return new SearchRule(item);
+        }
+
+        // GetItmByFolder
+        public static SearchRule? GetItemByFolder(ContentFolderWrapper folder) {
+            using PythonAILibDBContext db = new();
+            var item = db.SearchRules.Where(x => x.SearchFolderId == folder.Id).FirstOrDefault();
+            if (item == null) {
+                return null;
+            }
+            return new SearchRule(item);
         }
     }
 }

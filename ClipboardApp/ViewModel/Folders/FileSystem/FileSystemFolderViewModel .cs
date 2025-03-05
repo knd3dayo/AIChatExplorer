@@ -8,8 +8,6 @@ using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Folder;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {
@@ -37,42 +35,14 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             return childFolderViewModel;
         }
 
-
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<FileSystemItem>();
+        }
 
         // LoadChildren
-        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
-        // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public override async void LoadChildren(int nestLevel) {
-
-            // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-            List<ContentFolderViewModel> _children = [];
-
-            await Task.Run(() => {
-                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
-                    if (child == null) {
-                        continue;
-                    }
-                    FileSystemFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                    if (nestLevel > 0) {
-                        childViewModel.LoadChildren(nestLevel - 1);
-                    }
-                    _children.Add(childViewModel);
-                }
-            });
-            Children = new ObservableCollection<ContentFolderViewModel>(_children);
-            OnPropertyChanged(nameof(Children));
-        }
-        // LoadItems
-        protected override void LoadItems() {
-            List<FileSystemItem> _items = Folder.GetItems<FileSystemItem>();
-            MainUITask.Run(() => {
-                Items.Clear();
-                foreach (var item in _items) {
-
-                    Items.Add(CreateItemViewModel(item));
-                }
-            });
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<FileSystemFolderViewModel, FileSystemFolder>(nestLevel);
         }
 
         // ショートカット登録コマンド
@@ -87,13 +57,13 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
                 FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
-                ParentId = shortCutRootFolder.Entity.Id,
+                ParentId = shortCutRootFolder.Id,
             };
             ShortCutFolder subFolder = new(contentFolder) {
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
             subFolder.Save();
-            
+
         });
 
     }

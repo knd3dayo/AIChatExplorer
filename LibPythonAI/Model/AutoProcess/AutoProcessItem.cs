@@ -17,59 +17,54 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         public AutoProcessItem(AutoProcessItemEntity entity) {
-            AutoProcessItemInstance = entity;
+            Entity = entity;
         }
 
-        public AutoProcessItemEntity AutoProcessItemInstance { get; set; }
+        public AutoProcessItemEntity Entity { get; set; }
+
+        // Id
+        public string Id {  get => Entity.Id; }
 
         public string Name {
             get {
-                return AutoProcessItemInstance.Name;
+                return Entity.Name;
             }
             set {
-                AutoProcessItemInstance.Name = value;
+                Entity.Name = value;
             }
         }
         public string DisplayName {
             get {
-                return AutoProcessItemInstance.DisplayName;
+                return Entity.DisplayName;
             }
             set {
-                AutoProcessItemInstance.DisplayName = value;
+                Entity.DisplayName = value;
             }
         }
         public string Description {
             get {
-                return AutoProcessItemInstance.Description;
+                return Entity.Description;
             }
             set {
-                AutoProcessItemInstance.Description = value;
+                Entity.Description = value;
             }
         }
         public TypeEnum TypeName {
             get {
-                return AutoProcessItemInstance.TypeName;
+                return Entity.TypeName;
             }
             set {
-                AutoProcessItemInstance.TypeName = value;
+                Entity.TypeName = value;
             }
         }
 
         public ContentFolderWrapper? DestinationFolder {
             get {
-                if (AutoProcessItemInstance.DestinationFolder == null) {
-                    return null;
-                }
-                return new ContentFolderWrapper(AutoProcessItemInstance.DestinationFolder);
+                return ContentFolderWrapper.GetFolderById(Entity.DestinationFolderId);
             }
             set {
-                if (value == null) {
-                    AutoProcessItemInstance.DestinationFolder = null;
-                } else {
-                    AutoProcessItemInstance.DestinationFolder = value.Entity;
-                }
+                Entity.DestinationFolderId = value?.Id;
             }
-
         }
 
         public static Action<ContentItemWrapper> GetAction(TypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
@@ -202,6 +197,39 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            AutoProcessItem item = (AutoProcessItem)obj;
+            return item.Entity == Entity;
+        }
+        public override int GetHashCode() {
+            return Entity.GetHashCode();
+        }
 
+        // GetItemById
+        public static AutoProcessItem? GetItemById(string? id) {
+            if (id == null) {
+                return null;
+            }
+            using PythonAILibDBContext db = new();
+            var item = db.AutoProcessItems.Find(id);
+            if (item == null) {
+                return null;
+            }
+            return new AutoProcessItem(item);
+        }
+
+        // GetItemsByType
+        public static List<AutoProcessItem> GetItemsByType(TypeEnum? typeEnum) {
+            if (typeEnum == null) {
+                return [];
+            }
+            using PythonAILibDBContext db = new();
+            var items = db.AutoProcessItems.Where(x => x.TypeName == typeEnum);
+            return items.Select(x => new AutoProcessItem(x)).ToList();
+        }
     }
 }

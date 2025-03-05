@@ -47,7 +47,7 @@ namespace ClipboardApp.Model.Folders.Search {
 
         public override SearchFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
+                ParentId = Id,
                 FolderName = folderName,
             };
             SearchFolder child = new(childFolder);
@@ -62,6 +62,15 @@ namespace ClipboardApp.Model.Folders.Search {
         // ClipboardItemを削除
         public virtual void DeleteItem(ContentItemWrapper item) {
             // 何もしない
+        }
+
+        public override void Delete() {
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            if (searchConditionRule != null) {
+                searchConditionRule.Delete();
+            }
+
+            base.Delete();
         }
 
         public override string GetStatusText() {

@@ -54,7 +54,7 @@ namespace ClipboardApp.Model.Folders.Outlook {
 
         public override OutlookFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
+                ParentId = Id,
                 FolderName = folderName,
             };
             OutlookFolder child = new(childFolder);

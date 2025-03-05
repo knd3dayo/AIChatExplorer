@@ -55,7 +55,12 @@ namespace ClipboardApp.ViewModel.Main {
                 IsIndeterminate = visible;
             };
             // Commandの初期化
-            Commands = new(UpdateIndeterminate);
+            Commands = new(UpdateIndeterminate, () => {
+                // 現在選択中のフォルダをReload
+                MainUITask.Run(() => {
+                    MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                });
+            });
 
             // フォルダの初期化
             RootFolderViewModelContainer = new(Commands);
@@ -103,9 +108,9 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         public AppItemViewModelCommands Commands { get; set; }
-        public MainPanelTreeViewControlViewModel? MainPanelTreeViewControlViewModel { get; set; }
+        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
-        public MainPanelDataGridViewControlViewModel? MainPanelDataGridViewControlViewModel { get; set; }
+        public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
 
         public ObservableCollection<AppTabContainer> TabItems { get; set; } = [];
 

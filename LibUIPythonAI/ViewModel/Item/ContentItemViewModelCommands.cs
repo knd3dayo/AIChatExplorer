@@ -20,9 +20,11 @@ namespace PythonAILibUI.ViewModel.Item {
 
         public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };
 
+        public Action UpdateView { get; set; } = () => { };
         // Constructor
-        public ContentItemViewModelCommands(Action<bool> updateIndeterminate) {
+        public ContentItemViewModelCommands(Action<bool> updateIndeterminate, Action updateView) {
             UpdateIndeterminate = updateIndeterminate;
+            UpdateView = updateView;
         }
 
 
@@ -149,6 +151,7 @@ namespace PythonAILibUI.ViewModel.Item {
                 LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
                 UpdateIndeterminate(false);
                 StatusText.Instance.UpdateInProgress(false);
+                UpdateView();
             });
         });
 
@@ -163,6 +166,7 @@ namespace PythonAILibUI.ViewModel.Item {
             }).ContinueWith((task) => {
                 UpdateIndeterminate(false);
                 StatusText.Instance.UpdateInProgress(false);
+                UpdateView();
             });
 
 
@@ -180,13 +184,7 @@ namespace PythonAILibUI.ViewModel.Item {
                     // Hide ProgressIndicator
                     UpdateIndeterminate(false);
                     StatusText.Instance.UpdateInProgress(false);
-                    // フォルダ内のアイテムを再読み込み
-                    MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
-                        foreach (var folder in folders) {
-                            folder.LoadFolderCommand.Execute();
-                        }
-                    });
+                    UpdateView();
                 });
         });
 
@@ -202,13 +200,15 @@ namespace PythonAILibUI.ViewModel.Item {
                 () => {
                     // フォルダ内のアイテムを再読み込み
                     MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
+                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
                         foreach (var folder in folders) {
                             folder.LoadFolderCommand.Execute();
                         }
                         // プログレスインジケータを非表示
                         UpdateIndeterminate(false);
                         StatusText.Instance.UpdateInProgress(false);
+                        UpdateView();
+
                     });
                 });
         });
@@ -280,15 +280,8 @@ namespace PythonAILibUI.ViewModel.Item {
                     UpdateIndeterminate(true);
                 },
                 () => {
-                    // 全ての削除処理が終了した後、後続処理を実行
-                    // フォルダ内のアイテムを再読み込む
-                    MainUITask.Run(() => {
-                        var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Entity.Id);
-                        foreach (var folder in folders) {
-                            folder.LoadFolderCommand.Execute();
-                        }
-                    });
                     UpdateIndeterminate(false);
+                    UpdateView();
                 });
         });
 

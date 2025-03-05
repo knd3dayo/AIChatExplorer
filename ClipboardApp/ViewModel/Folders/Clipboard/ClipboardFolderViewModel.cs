@@ -39,6 +39,16 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             return childFolderViewModel;
         }
 
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<ClipboardItem>();
+        }
+
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<ClipboardFolderViewModel, ClipboardFolder>(nestLevel);
+        }
+
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {

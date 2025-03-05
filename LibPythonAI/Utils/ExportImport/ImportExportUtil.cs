@@ -253,7 +253,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (item == null) {
                     continue;
                 }
-                item.Entity.FolderId = toFolder.Entity.Id;
+                item.Entity.FolderId = toFolder.Id;
                 //保存
                 item.Save();
             }

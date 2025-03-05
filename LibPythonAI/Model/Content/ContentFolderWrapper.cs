@@ -14,12 +14,19 @@ namespace LibPythonAI.Model.Content {
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
             Entity = new ContentFolderEntity() {
-                ParentId = parent?.Entity.Id,
+                ParentId = parent?.Id,
                 FolderName = folderName,
             };
         }
 
         public ContentFolderEntity Entity { get; set; }
+
+        public string Id {
+            get {
+                return Entity.Id;
+            }
+        }
+
 
         // Parent
         public ContentFolderWrapper? Parent {
@@ -180,13 +187,13 @@ namespace LibPythonAI.Model.Content {
         // フォルダを移動する
         public void MoveTo(ContentFolderWrapper toFolder) {
             // 自分自身を移動
-            if (toFolder.Entity.Id == Entity.Id) {
+            if (toFolder.Id == Id) {
                 return;
             }
             if (Parent == null) {
                 return;
             }
-            Entity.ParentId = toFolder.Entity.Id;
+            Entity.ParentId = toFolder.Id;
             Save();
         }
 
@@ -201,7 +208,7 @@ namespace LibPythonAI.Model.Content {
             Entity.SaveExtendedPropertiesJson();
 
             using PythonAILibDBContext db = new();
-            var folder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.Id);
+            var folder = db.ContentFolders.FirstOrDefault(x => x.Id == Id);
             if (folder == null) {
                 db.ContentFolders.Add(Entity);
             } else {
@@ -212,7 +219,7 @@ namespace LibPythonAI.Model.Content {
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
+                ParentId = Id,
                 FolderName = folderName,
             };
             return new ContentFolderWrapper(childFolder);
@@ -334,9 +341,9 @@ namespace LibPythonAI.Model.Content {
 
         public VectorDBProperty GetMainVectorSearchProperty() {
             VectorDBPropertyEntity searchPropertyEntity = new() {
-                FolderId = Entity.Id,
+                FolderId = Id,
                 TopK = 4,
-                VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Entity.Id,
+                VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Id,
             };
             VectorDBProperty searchProperty = new(searchPropertyEntity);
             return searchProperty;
@@ -357,10 +364,10 @@ namespace LibPythonAI.Model.Content {
                 return false;
             }
             ContentFolderWrapper other = (ContentFolderWrapper)obj;
-            return Entity.Id == other.Entity.Id;
+            return Id == other.Id;
         }
         public override int GetHashCode() {
-            return Entity.Id.GetHashCode();
+            return Id.GetHashCode();
         }
 
         // ObjectIdからContentFolderWrapperを取得

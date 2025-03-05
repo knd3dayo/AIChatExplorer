@@ -21,21 +21,24 @@ namespace LibPythonAI.Data {
         [NotMapped]        
         public List<AutoProcessRuleConditionEntity> Conditions { get; set; } = [];
 
-        public AutoProcessItemEntity? RuleAction { get; set; }
+        public string? AutoProcessItemId { get; set; }
 
-
-        [Column("TARGET_FOLDER_ID")]
         public string? TargetFolderId { get; set; }
 
-        public ContentFolderEntity? TargetFolder { get; set; }
-
-
-
-        // 移動またはコピー先のフォルダ
-        [Column("DESTINATION_FOLDER_ID")]
         public string? DestinationFolderId { get; set; }
 
-        public ContentFolderEntity? DestinationFolder { get; set; }
+
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            AutoProcessRuleEntity other = (AutoProcessRuleEntity)obj;
+            return Id == other.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
 
     }
 }

@@ -3,7 +3,6 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Prompt;
 using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.AutoProcess {
@@ -13,7 +12,7 @@ namespace PythonAILib.Model.AutoProcess {
             PromptItemEntity = promptItemEntity;
         }
 
-        public PromptItemEntity PromptItemEntity { get; set; } 
+        public PromptItemEntity PromptItemEntity { get; set; }
 
         public override void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
 

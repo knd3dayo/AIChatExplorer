@@ -46,7 +46,7 @@ namespace ClipboardApp.Model.Folders.Clipboard {
 
         public override ClipboardFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
+                ParentId = Id,
                 FolderName = folderName,
             };
             ClipboardFolder child = new(childFolder);
@@ -86,12 +86,18 @@ namespace ClipboardApp.Model.Folders.Clipboard {
             List<ClipboardItem> result = [];
 
             PythonAILib.Model.File.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
+
+            string sourceType = ContentSourceType.Application;
+
             if (e.ContentType == ContentTypes.Text) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
+                sourceType = ContentSourceType.Application;
             } else if (e.ContentType == ContentTypes.Files) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files;
+                sourceType = ContentSourceType.File;
             } else if (e.ContentType == ContentTypes.Image) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image;
+                sourceType = ContentSourceType.Application;
             } else if (e.ContentType == ContentTypes.Other) {
                 return result;
             } else {
@@ -101,7 +107,8 @@ namespace ClipboardApp.Model.Folders.Clipboard {
             // If ContentType is Text, set text data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
                 ClipboardItem item = new(clipboardFolder.Entity) {
-                    ContentType = contentTypes
+                    ContentType = contentTypes,
+                    SourceType = sourceType
                 };
                 SetApplicationInfo(item, e);
                 item.Content = (string)e.Content;
@@ -112,7 +119,9 @@ namespace ClipboardApp.Model.Folders.Clipboard {
             // If ContentType is BitmapImage, set image data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
                 ClipboardItem item = new(clipboardFolder.Entity) {
-                    ContentType = contentTypes
+                    ContentType = contentTypes,
+                    SourceType = sourceType
+
                 };
                 SetApplicationInfo(item, e);
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
@@ -129,7 +138,8 @@ namespace ClipboardApp.Model.Folders.Clipboard {
                 // Get the cut/copied file/files.
                 for (int i = 0; i < files.Length; i++) {
                     ClipboardItem item = new(clipboardFolder.Entity) {
-                        ContentType = contentTypes
+                        ContentType = contentTypes,
+                        SourceType = sourceType
                     };
                     SetApplicationInfo(item, e);
                     item.SourcePath = files[i];

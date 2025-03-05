@@ -1,4 +1,5 @@
 using ClipboardApp.Model.Folders.Search;
+using ClipboardApp.Model.Folders.ShortCut;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
@@ -43,7 +44,15 @@ namespace ClipboardApp.ViewModel.Folders.Search {
             });
 
         }
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<ContentItemWrapper>();
+        }
 
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<SearchFolderViewModel, SearchFolder>(nestLevel);
+        }
         public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             if (Folder is not SearchFolder searchFolder) {
                 return;

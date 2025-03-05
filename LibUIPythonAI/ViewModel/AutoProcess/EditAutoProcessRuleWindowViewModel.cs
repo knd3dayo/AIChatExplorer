@@ -24,17 +24,10 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
-            using var db = new PythonAILibDBContext();
-            var targetFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.TargetFolder.Entity.Id);
 
-            if (targetFolder != null) {
-                TargetFolder = new ContentFolderWrapper(targetFolder);
-            }
-            var destinationFolder = db.ContentFolders.FirstOrDefault(x => x.Id == autoProcessRule.DestinationFolder.Entity.Id);
-            if (destinationFolder != null) {
-                DestinationFolder = new ContentFolderWrapper(destinationFolder);
-            }
-
+            TargetFolder = autoProcessRule.TargetFolder;
+            DestinationFolder = autoProcessRule.DestinationFolder;
+        
             // RootFolderViewModelを設定
             RootFolderViewModels = rootFolderViewModels;
 
@@ -412,7 +405,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolder.Entity.Id = TargetFolder.Entity.Id;
+            TargetAutoProcessRule.TargetFolder = TargetFolder;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -472,11 +465,11 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
-                    if (TargetFolder.Entity.Id == DestinationFolder.Entity.Id) {
+                    if (TargetFolder.Id == DestinationFolder.Id) {
                         LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolder.Entity.Id = DestinationFolder.Entity.Id;
+                    TargetAutoProcessRule.DestinationFolder = DestinationFolder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
@@ -518,7 +511,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
 
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.Entity.Id == TargetFolder?.Entity.Id) {
+            if (folder.Id == TargetFolder?.Id) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                 return;
             }

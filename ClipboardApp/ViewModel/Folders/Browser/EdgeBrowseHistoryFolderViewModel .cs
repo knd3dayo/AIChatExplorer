@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
 using LibPythonAI.Model.Content;
@@ -34,6 +35,16 @@ namespace ClipboardApp.ViewModel.Folders.Browser {
                 ParentFolderViewModel = this
             };
             return childFolderViewModel;
+        }
+
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<EdgeBrowseHistoryItem>();
+        }
+
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<EdgeBrowseHistoryFolderViewModel, EdgeBrowseHistoryFolder>(nestLevel);
         }
     }
 }

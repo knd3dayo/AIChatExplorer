@@ -142,7 +142,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;
                 }
-                VectorDBPropertyEntity? entity = new () { VectorDBItemId = SelectedVectorDBItem.Item.Entity.Id };
+                VectorDBPropertyEntity? entity = new() { VectorDBItemId = SelectedVectorDBItem.Item.Id };
                 callBackup?.Invoke(new VectorDBProperty(entity));
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す

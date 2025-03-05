@@ -154,6 +154,10 @@ namespace LibUIPythonAI.ViewModel.Item {
                 if (ContentItem.SourceType == ContentSourceType.Url) {
                     return StringResources.ExecuteDownloadWebPageToViewContent;
                 }
+                // 画像の場合
+                if (ContentItem.ContentType == ContentTypes.ContentItemTypes.Image) {
+                    return StringResources.ExecuteExtractTextToViewFileContent;
+                }
 
                 return "";
             }

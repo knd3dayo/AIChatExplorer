@@ -30,5 +30,16 @@ namespace LibPythonAI.Data {
             }
 
         }
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            MainStatisticsEntity entity = (MainStatisticsEntity)obj;
+            return Id == entity.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
     }
 }

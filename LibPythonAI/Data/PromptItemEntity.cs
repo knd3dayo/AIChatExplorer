@@ -36,6 +36,17 @@ namespace LibPythonAI.Data {
         // PromptInputName
         public string PromptInputName { get; set; } = string.Empty;
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            PromptItemEntity other = (PromptItemEntity)obj;
+            return Id == other.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
 
     }
 }

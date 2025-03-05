@@ -21,6 +21,8 @@ namespace LibPythonAI.Model.Statistics {
             Entity = entity;
         }
 
+        // Id
+        public string Id { get => Entity.Id; }
 
         // 日毎のStatistics
         public Dictionary<DateTime, DailyStatistics> DailyStatistics { get; set; } = [];
@@ -84,7 +86,7 @@ namespace LibPythonAI.Model.Statistics {
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.MainStatistics.Find(Entity.Id);
+            var item = db.MainStatistics.Find(Id);
             if (item == null) {
                 db.MainStatistics.Update(Entity);
             } else {

@@ -65,5 +65,17 @@ namespace LibPythonAI.Data {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            VectorDBItemEntity item = (VectorDBItemEntity)obj;
+            return Id == item.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
+
     }
 }

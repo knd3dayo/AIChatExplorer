@@ -9,57 +9,9 @@ namespace LibPythonAI.Model.AutoProcess {
 
     public class AutoProcessRule {
 
-        public string RuleName { get; set; } = "";
-
-        // このルールを有効にするかどうか
-        public bool IsEnabled { get; set; } = true;
-
-        // 優先順位
-        public int Priority { get; set; } = -1;
-
-        public List<AutoProcessRuleCondition> Conditions { get; set; } = [];
-
-        public AutoProcessItem? RuleAction {
-            get {
-                var item = Entity.RuleAction;
-                if (item == null) {
-                    return null;
-                }
-                return new AutoProcessItem(item);
-            }
-            set {
-                Entity.RuleAction = value?.AutoProcessItemInstance;
-            }
-        }
-
-
-        public ContentFolderWrapper? DestinationFolder {
-            get {
-                if (Entity.DestinationFolder == null) {
-                    return null;
-                }
-                return new ContentFolderWrapper(Entity.DestinationFolder);
-            }
-            set {
-                Entity.DestinationFolder = value?.Entity;
-            }
-        }
-
-        public ContentFolderWrapper? TargetFolder {
-            get {
-                if (Entity.TargetFolder == null) {
-                    return null;
-                }
-                return new ContentFolderWrapper(Entity.TargetFolder);
-            }
-        }
-
         public AutoProcessRule(AutoProcessRuleEntity autoProcessRuleEntity) {
             Entity = autoProcessRuleEntity;
         }
-
-        public AutoProcessRuleEntity Entity { get; set; }
-
 
         /// <summary>
         /// 指定した名前のルールを作成する
@@ -71,6 +23,61 @@ namespace LibPythonAI.Model.AutoProcess {
             };
         }
 
+
+
+        public AutoProcessRuleEntity Entity { get; set; }
+
+        public string Id { get => Entity.Id; }
+
+
+        public string RuleName {
+            get => Entity.RuleName;
+            set => Entity.RuleName = value;
+        }
+
+        // このルールを有効にするかどうか
+        public bool IsEnabled {
+            get => Entity.IsEnabled;
+            set => Entity.IsEnabled = value;
+        }
+
+        // 優先順位
+        public int Priority {
+            get => Entity.Priority;
+            set => Entity.Priority = value;
+        }
+
+        public List<AutoProcessRuleCondition> Conditions { get; set; } = [];
+
+        public AutoProcessItem? RuleAction {
+            get {
+                return  AutoProcessItem.GetItemById(Entity?.AutoProcessItemId);
+            }
+            set {
+                Entity.AutoProcessItemId = value?.Id;
+            }
+        }
+
+
+        public ContentFolderWrapper? DestinationFolder {
+            get {
+                return ContentFolderWrapper.GetFolderById(Entity.DestinationFolderId);
+            }
+            set {
+                Entity.DestinationFolderId = value?.Id;
+            }
+        }
+
+        public ContentFolderWrapper? TargetFolder {
+            get {
+                return ContentFolderWrapper.GetFolderById(Entity.TargetFolderId);
+            }
+            set {
+                Entity.TargetFolderId = value?.Id;
+            }
+        }
+
+
         // 保存
         public void Save() {
             // 優先順位が-1の場合は、最大の優先順位を取得して設定
@@ -78,7 +85,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
             using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Entity.Id);
+            var item = db.AutoProcessRules.Find(Id);
             if (item == null) {
                 db.AutoProcessRules.Add(Entity);
             } else {
@@ -89,7 +96,7 @@ namespace LibPythonAI.Model.AutoProcess {
         // 削除
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Entity.Id);
+            var item = db.AutoProcessRules.Find(Id);
             if (item == null) {
                 return;
             }
@@ -270,7 +277,7 @@ namespace LibPythonAI.Model.AutoProcess {
         public static void UpPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
             // 引数のAutoProcessRuleのIndexを取得
-            int index = autoProcessRules.FindIndex(r => r.Entity.Id == autoProcessRule.Entity.Id);
+            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexが0以下の場合は何もしない
             if (index <= 0) {
                 return;
@@ -291,7 +298,7 @@ namespace LibPythonAI.Model.AutoProcess {
         public static void DownPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
             // 引数のAutoProcessRuleのIndexを取得
-            int index = autoProcessRules.FindIndex(r => r.Entity.Id == autoProcessRule.Entity.Id);
+            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexがリストの最大Index以上の場合は何もしない
             if (index >= autoProcessRules.Count - 1) {
                 return;
@@ -306,6 +313,44 @@ namespace LibPythonAI.Model.AutoProcess {
                 // 保存
                 autoProcessRules[i].Save();
             }
+        }
+        // GetItemsByRuleName
+        public static List<AutoProcessRule> GetItemsByRuleName(string? ruleName) {
+            List<AutoProcessRule> rules = [];
+            if (ruleName == null) {
+                return rules;
+            }
+            using PythonAILibDBContext db = new();
+            var items = db.AutoProcessRules.Where(x => x.RuleName == ruleName);
+            foreach (var item in items) {
+                rules.Add(new AutoProcessRule(item));
+            }
+            return rules;
+        }
+        // GetItemsByTargetFolder
+        public static List<AutoProcessRule> GetItemByTargetFolder(ContentFolderWrapper? targetFolder) {
+            List<AutoProcessRule> rules = [];
+            if (targetFolder == null) {
+                return rules;
+            }
+            using PythonAILibDBContext db = new();
+            var items = db.AutoProcessRules.Where(x => x.TargetFolderId == targetFolder.Id);
+            foreach (var item in items) {
+                rules.Add(new AutoProcessRule(item));
+            }
+            return rules;
+        }
+
+
+        // GetCopyToMoveToRules
+        public static List<AutoProcessRule> GetCopyToMoveToRules() {
+            var copyRules = GetItemsByRuleName(AutoProcessItem.TypeEnum.CopyToFolder.ToString());
+            var moveRules = GetItemsByRuleName(AutoProcessItem.TypeEnum.MoveToFolder.ToString());
+
+            List<AutoProcessRule> rules = [];
+            rules.AddRange(copyRules);
+            rules.AddRange(moveRules);
+            return rules;
         }
     }
 }

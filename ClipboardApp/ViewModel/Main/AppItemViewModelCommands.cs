@@ -30,7 +30,7 @@ using PythonAILibUI.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class AppItemViewModelCommands(Action<bool> updateIndeterminate) : ContentItemViewModelCommands(updateIndeterminate) {
+    public class AppItemViewModelCommands(Action<bool> updateIndeterminate, Action updateView) : ContentItemViewModelCommands(updateIndeterminate, updateView) {
 
 
         // フォルダを開くコマンド
@@ -148,7 +148,7 @@ namespace ClipboardApp.ViewModel.Main {
         public void OpenSearchWindowCommand(SearchFolderViewModel searchFolderViewModel, System.Action action) {
             SearchRule? searchConditionRule = new(
                 new LibPythonAI.Data.SearchRuleEntity() {
-                    SearchFolder = searchFolderViewModel.Folder.Entity,
+                    SearchFolderId = searchFolderViewModel.Folder.Id,
                 });
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);
 
@@ -289,6 +289,7 @@ namespace ClipboardApp.ViewModel.Main {
                 // Clear selected items after pasting
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
+                // システムのクリップボードからのコピーの場合
                 ProcessClipboardItem(clipboardFolder, ClipboardController.LastClipboardChangedEventArgs);
             }
         }
@@ -303,10 +304,8 @@ namespace ClipboardApp.ViewModel.Main {
                         clipboardFolder.AddItem(clipboardItem);
                         // Process after pasting
                     }).ContinueWith((obj) => {
-                        MainUITask.Run(() => {
-                            MainWindowViewModel.Instance.MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
-                        });
                         UpdateIndeterminate(false);
+                        UpdateView();
                     });
                 });
         }
@@ -327,7 +326,7 @@ namespace ClipboardApp.ViewModel.Main {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
                         ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
-                        chatHistoryItem.Entity.FolderId = chatFolder.Entity.Id;
+                        chatHistoryItem.Entity.FolderId = chatFolder.Id;
 
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {
                             chatHistoryItem.Description += " " + clipboardItem.Description;

@@ -32,15 +32,11 @@ namespace LibPythonAI.Data {
             }
         }
 
-        [Column("SEARCH_FOLDER_ID")]
         public string? SearchFolderId { get; set; }
 
-        public ContentFolderEntity? SearchFolder { get; set; }
 
-        [Column("TARGET_FOLDER_ID")]
         public string? TargetFolderId { get; set; }
 
-        public ContentFolderEntity? TargetFolder { get; set; }
 
         public SearchRuleEntity Copy() {
             SearchRuleEntity clipboardItem = new();
@@ -51,5 +47,24 @@ namespace LibPythonAI.Data {
             return clipboardItem;
         }
 
+        public static void DeleteItems(List<SearchRuleEntity> items) {
+            using PythonAILibDBContext db = new();
+            foreach (var item in items) {
+                db.SearchRules.Remove(item);
+            }
+            db.SaveChanges();
+        }
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            SearchRuleEntity item = (SearchRuleEntity)obj;
+            return Id == item.Id;
+        }
+
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
     }
 }

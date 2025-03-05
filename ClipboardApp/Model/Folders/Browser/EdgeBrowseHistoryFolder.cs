@@ -32,7 +32,7 @@ namespace ClipboardApp.Model.Folders.Browser {
 
         public override EdgeBrowseHistoryFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
-                ParentId = Entity.Id,
+                ParentId = Id,
                 FolderName = folderName,
             };
             EdgeBrowseHistoryFolder child = new(childFolder);

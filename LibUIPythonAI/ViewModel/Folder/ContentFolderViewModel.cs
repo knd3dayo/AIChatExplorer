@@ -45,20 +45,24 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 afterAction();
             });
         }
+        public virtual void LoadChildren(int nestLevel) {
+            LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
+        }
+
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public virtual void LoadChildren(int nestLevel) {
+        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel: ContentFolderViewModel where Model: ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-            List<ContentFolderViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<ContentFolderWrapper>()) {
+            List<ViewModel> _children = [];
+            foreach (var child in Folder.GetChildren<Model>()) {
                 if (child == null) {
                     continue;
                 }
-                ContentFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                ViewModel childViewModel = (ViewModel)CreateChildFolderViewModel(child);
                 // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                 if (nestLevel > 0) {
-                    childViewModel.LoadChildren(nestLevel - 1);
+                    childViewModel.LoadChildren<ViewModel, Model>(nestLevel - 1);
                 }
                 _children.Add(childViewModel);
             }
@@ -69,12 +73,17 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // LoadItems
-        protected virtual void LoadItems() {
+        public virtual void LoadItems() {
+            LoadItems<ContentItemWrapper>();
+        }
+
+
+        public void LoadItems<Item>() where Item: ContentItemWrapper{
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ContentItemWrapper> _items = Folder.GetItems<ContentItemWrapper>();
+            List<Item> _items = Folder.GetItems<Item>();
             MainUITask.Run(() => {
                 Items.Clear();
-                foreach (ContentItemWrapper item in _items) {
+                foreach (Item item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             });

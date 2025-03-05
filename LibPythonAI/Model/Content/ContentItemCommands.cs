@@ -378,7 +378,7 @@ namespace PythonAILib.Model.Content {
                     vectorDBProperty = folderVectorDBItem;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Entity.Id.ToString());
+                VectorMetadata vectorDBEntry = new(item.Id.ToString());
 
                 // タイトルとHeaderTextを追加
                 string description = item.Description + "\n" + item.HeaderText;

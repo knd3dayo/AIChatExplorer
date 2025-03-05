@@ -132,7 +132,7 @@ namespace ClipboardApp.ViewModel.Main {
                         continue;
                     }
                     if (childItem.Header is ContentFolderViewModel folderViewModel) {
-                        if (folderViewModel.Folder.Entity.Id == items[i].Folder.Entity.Id) {
+                        if (folderViewModel.Folder.Id == items[i].Folder.Id) {
                             if (childItem.Items.Count == 0) {
                                 childItem.IsExpanded = true;
                                 break;

@@ -1,9 +1,9 @@
 using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
@@ -32,7 +32,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            childFolder.Entity.FolderTypeString = FolderTypeEnum.Chat.ToString();
+            childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
             ChatFolderViewModel childFolderViewModel = new(childFolder, commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
@@ -48,6 +48,15 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
         }
 
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<ClipboardItem>();
+        }
+
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<ChatFolderViewModel, ClipboardFolder>(nestLevel);
+        }
     }
 }
 

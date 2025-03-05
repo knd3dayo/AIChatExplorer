@@ -15,10 +15,28 @@ namespace LibPythonAI.Data {
         public string DisplayName { get; set; } = "";
         public string Description { get; set; } = "";
         public AutoProcessItem.TypeEnum TypeName { get; set; } = AutoProcessItem.TypeEnum.CopyToFolder;
-        [Column("DESTINATION_FOLDER_ID")]
+
         public string? DestinationFolderId { get; set; }
 
-        public ContentFolderEntity? DestinationFolder { get; set; }
+        // GetItemById
+        public static AutoProcessItemEntity? GetItemById(string? id) {
+            if (id == null) {
+                return null;
+            }
+            using PythonAILibDBContext db = new();
+            return db.AutoProcessItems.FirstOrDefault(x => x.Id == id);
+        }
 
+        // Equals , GetHashCodeのオーバーライド
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            AutoProcessItemEntity other = (AutoProcessItemEntity)obj;
+            return Id == other.Id;
+        }
+        public override int GetHashCode() {
+            return Id.GetHashCode();
+        }
     }
 }

@@ -14,6 +14,11 @@ namespace LibPythonAI.Model.Prompt {
 
         public PromptItemEntity Entity { get; set; }
 
+        // ID
+        public string Id {
+            get => Entity.Id;
+        }
+
         // 名前
         public string Name {
             get => Entity.Name;
@@ -76,7 +81,7 @@ namespace LibPythonAI.Model.Prompt {
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Entity.Id);
+            var item = db.PromptItems.Find(Id);
             if (item == null) {
                 db.PromptItems.Add(Entity);
             } else {
@@ -88,7 +93,7 @@ namespace LibPythonAI.Model.Prompt {
         // Delete
         public void Delete() {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Entity.Id);
+            var item = db.PromptItems.Find(Id);
             if (item != null) {
                 db.PromptItems.Remove(item);
                 db.SaveChanges();
