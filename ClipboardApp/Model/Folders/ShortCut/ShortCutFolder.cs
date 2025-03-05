@@ -43,18 +43,20 @@ namespace ClipboardApp.Model.Folders.ShortCut {
                 return fileSystemFolderPaths;
             }
             try {
-                fileSystemFolderPaths = new HashSet<string>(Directory.GetDirectories(FileSystemFolderPath));
+                fileSystemFolderPaths = [.. Directory.GetDirectories(FileSystemFolderPath)];
             } catch (UnauthorizedAccessException e) {
                 LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+            } catch(IOException e) {
+                LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
+
             return fileSystemFolderPaths;
         }
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected override Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // コレクション
-            using PythonAILibDBContext context = new();
-            var folders = context.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new ShortCutFolder(x)).ToList();
+            var folders = GetChildren<ShortCutFolder>();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {

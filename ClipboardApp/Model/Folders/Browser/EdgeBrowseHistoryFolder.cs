@@ -63,8 +63,7 @@ namespace ClipboardApp.Model.Folders.Browser {
             File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
 
             // コレクション
-            using PythonAILibDBContext db = new();
-            var items = Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
+            var items = GetItems<EdgeBrowseHistoryItem>();
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];

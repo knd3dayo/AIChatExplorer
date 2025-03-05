@@ -68,7 +68,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 } catch (UnauthorizedAccessException e) {
                     LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
                 } catch (IOException e) {
-                    LogWrapper.Info($"IO Error:{FileSystemFolderPath} {e.Message}");
+                    LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
                 }
             }
             return fileSystemFolderPaths;
@@ -77,8 +77,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // コレクション
-            using PythonAILibDBContext context = new();
-            var folders = context.ContentFolders.Where(x => x.ParentId == Entity.Id).Select(x => new FileSystemFolder(x)).ToList();
+            var folders = GetChildren<FileSystemFolder>();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
