@@ -6,12 +6,8 @@ using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Folders.ShortCut;
 using LibPythonAI.Data;
-using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
 using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Search;
 
 namespace ClipboardApp.Model.Main {
     public class FolderManager {
@@ -47,13 +43,13 @@ namespace ClipboardApp.Model.Main {
             using PythonAILibDBContext db = new();
             // ClipboardRootFolder
 
-            var  clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN);
+            var clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN);
 
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
             }
             // SearchRootFolder
-            var  searchRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
+            var searchRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
             }

@@ -204,7 +204,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // 保存
-        public void Save() {
+        public virtual void Save() {
             Entity.SaveExtendedPropertiesJson();
 
             using PythonAILibDBContext db = new();
@@ -231,34 +231,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        #region 検索
-        // ClipboardItemを検索する。
-        public IEnumerable<ContentItemWrapper> SearchItems(SearchCondition searchCondition) {
-            // 結果を格納するIEnumerable<Entity>を作成
-            IEnumerable<ContentItemWrapper> result = [];
-            // 検索条件が空の場合は、結果を返す
-            if (searchCondition.IsEmpty()) {
-                return result;
-            }
-
-            // folder内のアイテムを保持するコレクションを取得
-            var clipboardItems = GetItems< ContentItemWrapper>();
-            // Filterの結果を結果に追加
-            result = Filter(clipboardItems, searchCondition);
-
-            // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
-            if (searchCondition.IsIncludeSubFolder) {
-                // 対象フォルダの子フォルダを取得
-                foreach (var childFolder in GetChildren<ContentFolderWrapper>()) {
-                    // サブフォルダのアイテムを検索
-                    var subFolderResult = childFolder.SearchItems(searchCondition);
-                    // Filterの結果を結果に追加
-                    result = result.Concat(subFolderResult);
-                }
-            }
-            return result;
-        }
-
+        
         public virtual void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
 
             if (applyGlobalAutoAction) {
@@ -281,63 +254,6 @@ namespace LibPythonAI.Model.Content {
                 LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
             }
         }
-
-
-        public IEnumerable<ContentItemWrapper> Filter(IEnumerable<ContentItemWrapper> liteCollection, SearchCondition searchCondition) {
-            if (searchCondition.IsEmpty()) {
-                return liteCollection;
-            }
-
-            var results = liteCollection;
-            // SearchConditionの内容に従ってフィルタリング
-            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
-                if (searchCondition.ExcludeDescription) {
-                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
-                } else {
-                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
-                if (searchCondition.ExcludeContent) {
-                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
-                } else {
-                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
-                if (searchCondition.ExcludeTags) {
-                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
-                } else {
-                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
-                if (searchCondition.ExcludeSourceApplicationName) {
-                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
-                } else {
-                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
-                if (searchCondition.ExcludeSourceApplicationTitle) {
-                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
-                } else {
-                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
-                }
-            }
-            if (searchCondition.EnableStartTime) {
-                results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
-            }
-            if (searchCondition.EnableEndTime) {
-                results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
-            }
-            results = results.OrderByDescending(x => x.UpdatedAt);
-
-            return results;
-        }
-
-        #endregion
-
 
         public VectorDBProperty GetMainVectorSearchProperty() {
             VectorDBPropertyEntity searchPropertyEntity = new() {

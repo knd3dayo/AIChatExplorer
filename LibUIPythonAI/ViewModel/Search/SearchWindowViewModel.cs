@@ -23,6 +23,7 @@ namespace LibUIPythonAI.ViewModel.Search {
 
             SearchFolderPath = SearchFolder?.ContentFolderPath;
             TargetFolderPath = searchConditionRule.TargetFolder?.ContentFolderPath;
+            IsGlobalSearch = searchConditionRule.IsGlobalSearch;
 
             OnPropertyChanged(nameof(NameVisibility));
         }
@@ -80,25 +81,25 @@ namespace LibUIPythonAI.ViewModel.Search {
         }
 
         // 全フォルダを検索するかどうか
-        private bool _isSearchAllFolders;
-        public bool IsSearchAllFolders {
+        private bool _isGlobalSearch;
+        public bool IsGlobalSearch {
             get {
-                return _isSearchAllFolders;
+                return _isGlobalSearch;
             }
             set {
-                _isSearchAllFolders = value;
-                OnPropertyChanged(nameof(IsSearchAllFolders));
+                _isGlobalSearch = value;
+                OnPropertyChanged(nameof(IsGlobalSearch));
                 OnPropertyChanged(nameof(IsSearchSpecifiedFolder));
             }
         }
         // 特定のフォルダのみ検索するかどうか。 _isSearchFolderがTrueの場合は、Falseに設定する
         public bool IsSearchSpecifiedFolder {
             get {
-                return !_isSearchAllFolders;
+                return !_isGlobalSearch;
             }
             set {
-                _isSearchAllFolders = !value;
-                OnPropertyChanged(nameof(IsSearchAllFolders));
+                _isGlobalSearch = !value;
+                OnPropertyChanged(nameof(IsGlobalSearch));
                 OnPropertyChanged(nameof(IsSearchSpecifiedFolder));
             }
         }
@@ -136,6 +137,8 @@ namespace LibUIPythonAI.ViewModel.Search {
                 SearchConditionRule.SearchFolder = SearchFolder;
                 // _isSearchFolderがTrueの場合は、フォルダ名を更新
                 SearchFolder.FolderName = SearchConditionRule.Name;
+                // IsGlobalSearch
+                SearchConditionRule.IsGlobalSearch = IsGlobalSearch;
             }
 
             // 検索条件をLiteDBに保存

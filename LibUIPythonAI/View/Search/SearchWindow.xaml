@@ -110,7 +110,7 @@
                 Content="{x:Static res:ViewStringResources.AllFolders}"
                 FontSize="12"
                 GroupName="SearchTarget"
-                IsChecked="{Binding IsSearchAllFolders}" />
+                IsChecked="{Binding IsGlobalSearch}" />
 
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
                 <RadioButton
@@ -146,7 +146,7 @@
                     VerticalAlignment="Center"
                     Content="{x:Static res:ViewStringResources.IncludeSubfolders}"
                     FontSize="12"
-                    IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
+                    IsChecked="{Binding SearchConditionRule.IsIncludeSubFolder}" />
             </DockPanel>
         </Grid>
 

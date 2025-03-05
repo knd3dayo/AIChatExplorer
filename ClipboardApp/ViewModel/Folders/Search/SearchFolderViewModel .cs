@@ -1,12 +1,10 @@
 using ClipboardApp.Model.Folders.Search;
-using ClipboardApp.Model.Folders.ShortCut;
 using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Folders.Search {
@@ -30,7 +28,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
             // 検索フォルダの親フォルダにこのフォルダを追加
 
             SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
-            SearchRule? searchConditionRule = new( new LibPythonAI.Data.SearchRuleEntity()) {
+            SearchRule? searchConditionRule = new(new LibPythonAI.Data.SearchRuleEntity()) {
                 SearchFolder = clipboardFolder
             };
 
@@ -58,11 +56,11 @@ namespace ClipboardApp.ViewModel.Folders.Search {
                 return;
             }
 
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(Folder);
+            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(Folder);
             searchConditionRule ??= new(new LibPythonAI.Data.SearchRuleEntity()) {
                 SearchFolder = Folder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder,  afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, afterUpdate);
 
         }
 

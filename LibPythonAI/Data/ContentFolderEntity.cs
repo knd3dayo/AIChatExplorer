@@ -77,6 +77,15 @@ namespace LibPythonAI.Data {
             return items;
         }
 
+        public List<ContentFolderEntity> GetChildrenAll() {
+            List<ContentFolderEntity> result = [];
+            foreach (var child in GetChildren()) {
+                result.Add(child);
+                result.AddRange(child.GetChildrenAll());
+            }
+            return result;
+        }
+
         public static ContentFolderEntity? GetFolder(string? id) {
             if (id == null) {
                 return null;

@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Chat;
@@ -125,7 +126,7 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーション名
         public string? SourceApplicationName {
             get {
-                return Entity.SourceApplicationName ;
+                return Entity.SourceApplicationName;
             }
             set {
                 if (value != null) {
@@ -136,7 +137,7 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle {
             get {
-                return Entity.SourceApplicationTitle ;
+                return Entity.SourceApplicationTitle;
             }
             set {
                 if (value != null) {
@@ -252,7 +253,7 @@ namespace LibPythonAI.Model.Content {
                             return Convert.ToBase64String(imageBytes);
                         }
                     } catch (IOException e) {
-                        LogWrapper.Info($"access error: {e.Message}");  
+                        LogWrapper.Info($"access error: {e.Message}");
                         return "";
                     }
                 }
@@ -487,16 +488,6 @@ namespace LibPythonAI.Model.Content {
             return GetFolder().GetMainVectorSearchProperty();
         }
 
-        public void Delete() {
-            ContentItemCommands.DeleteEmbeddings([this]);
-            ContentItemEntity.DeleteItems([Entity]);
-        }
-
-        public static void DeleteItems(List<ContentItemWrapper> items) {
-            ContentItemCommands.DeleteEmbeddings(items);
-            ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
-        }
-
         public void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
             if (updateLastModifiedTime) {
                 // 更新日時を設定
@@ -506,6 +497,16 @@ namespace LibPythonAI.Model.Content {
                 // 自動処理を適用
             }
             ContentItemEntity.SaveItems([Entity]);
+        }
+
+        public void Delete() {
+            ContentItemCommands.DeleteEmbeddings([this]);
+            ContentItemEntity.DeleteItems([Entity]);
+        }
+
+        public static void DeleteItems(List<ContentItemWrapper> items) {
+            ContentItemCommands.DeleteEmbeddings(items);
+            ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
         }
 
         public static void SaveItems(List<ContentItemWrapper> items, bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
@@ -541,6 +542,85 @@ namespace LibPythonAI.Model.Content {
             return item;
 
         }
+
+
+        public static List<ContentItemWrapper> SearchAll(SearchCondition searchCondition) {
+            if (searchCondition.IsEmpty()) {
+                return [];
+            }
+            using PythonAILibDBContext db = new();
+            var items = db.ContentItems;
+            return Search(searchCondition, items).ToList();
+        }
+
+        public static List<ContentItemWrapper> Search(SearchCondition searchCondition, ContentFolderWrapper targetFolder, bool isIncludeSubFolders) {
+            if (searchCondition.IsEmpty()) {
+                return [];
+            }
+
+            List<string> folderIds = [];
+            folderIds.Add(targetFolder.Entity.Id);
+            if (isIncludeSubFolders) {
+                folderIds.AddRange(targetFolder.Entity.GetChildrenAll().Select(x => x.Id));
+            }
+            using PythonAILibDBContext db = new();
+            var items = db.ContentItems.Where(x => x.FolderId != null && folderIds.Contains(x.FolderId));
+
+            return Search(searchCondition, items).ToList();
+
+
+        }
+
+        private static IEnumerable<ContentItemWrapper> Search(SearchCondition searchCondition, IEnumerable<ContentItemEntity> items) {
+            IEnumerable<ContentItemEntity> results = items;
+
+            // SearchConditionの内容に従ってフィルタリング
+            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
+                if (searchCondition.ExcludeDescription) {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
+                } else {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
+                if (searchCondition.ExcludeContent) {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
+                } else {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
+                if (searchCondition.ExcludeTags) {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
+                } else {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
+                if (searchCondition.ExcludeSourceApplicationName) {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
+                if (searchCondition.ExcludeSourceApplicationTitle) {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
+                }
+            }
+            if (searchCondition.EnableStartTime) {
+                results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
+            }
+            if (searchCondition.EnableEndTime) {
+                results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
+            }
+            results = results.OrderByDescending(x => x.UpdatedAt);
+
+            return results.Select(x => new ContentItemWrapper(x));
+        }
+
 
     }
 }

@@ -1,10 +1,8 @@
-using ClipboardApp.Model.Folders.Browser;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibUIPythonAI.Resource;
-using PythonAILib.Model.Search;
 
 namespace ClipboardApp.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
@@ -24,6 +22,12 @@ namespace ClipboardApp.Model.Folders.Search {
 
         }
 
+        public SearchRule? SearchRule {
+            get {
+                return SearchRule.GetItemBySearchFolder(this);
+            }
+        }
+
 
         // アイテム LiteDBには保存しない。
         public override List<T> GetItems<T>() {
@@ -31,13 +35,10 @@ namespace ClipboardApp.Model.Folders.Search {
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             // フォルダに検索条件が設定されている場合
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
-                // 検索対象フォルダのアイテムを検索する。
-                var searchItems = searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt);
-                foreach (var item in searchItems) {
-                    _items.Add((T)item);
-                }
+                _items = searchConditionRule.SearchItems().Select(x => (T)x).ToList();
+
             }
             return _items;
         }
@@ -65,7 +66,7 @@ namespace ClipboardApp.Model.Folders.Search {
         }
 
         public override void Delete() {
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
             if (searchConditionRule != null) {
                 searchConditionRule.Delete();
             }
@@ -73,10 +74,11 @@ namespace ClipboardApp.Model.Folders.Search {
             base.Delete();
         }
 
+
         public override string GetStatusText() {
             string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
             // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合
             if (searchCondition != null && !searchCondition.IsEmpty()) {

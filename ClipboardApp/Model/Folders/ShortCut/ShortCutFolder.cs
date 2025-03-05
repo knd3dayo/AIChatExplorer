@@ -55,8 +55,8 @@ namespace ClipboardApp.Model.Folders.ShortCut {
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected override Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
-            // コレクション
-            var folders = GetChildren<ShortCutFolder>();
+            // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
+            var folders = Entity.GetChildren().Select(x => new ShortCutFolder(x)).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {

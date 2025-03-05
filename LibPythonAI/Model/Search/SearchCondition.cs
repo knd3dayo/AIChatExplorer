@@ -9,8 +9,8 @@ namespace LibPythonAI.Model.Search {
         public string Content { get; set; } = "";
         public string Tags { get; set; } = "";
 
-        public string SourceApplicationName { get; set; } = ""
-; public string SourceApplicationTitle { get; set; } = "";
+        public string SourceApplicationName { get; set; } = "";
+        public string SourceApplicationTitle { get; set; } = "";
 
         public DateTime StartTime { get; set; } = DateTime.Now;
 
@@ -47,25 +47,34 @@ namespace LibPythonAI.Model.Search {
             return dict;
         }
 
-        public static SearchCondition FromDict(Dictionary<string, object> dict) {
+        public static SearchCondition FromDict(Dictionary<string, dynamic?> dict) {
             SearchCondition searchCondition = new();
             if (dict.Count == 0) {
                 return searchCondition;
             }
-            searchCondition.Description = (string)dict["description"];
-            searchCondition.Content = (string)dict["content"];
-            searchCondition.Tags = (string)dict["tags"];
-            searchCondition.SourceApplicationName = (string)dict["source_application_name"];
-            searchCondition.SourceApplicationTitle = (string)dict["source_application_title"];
-            searchCondition.StartTime = (DateTime)dict["start_time"];
-            searchCondition.EndTime = (DateTime)dict["end_time"];
-            searchCondition.EnableStartTime = (bool)dict["enable_start_time"];
-            searchCondition.EnableEndTime = (bool)dict["enable_end_time"];
-            searchCondition.ExcludeDescription = (bool)dict["exclude_description"];
-            searchCondition.ExcludeContent = (bool)dict["exclude_content"];
-            searchCondition.ExcludeTags = (bool)dict["exclude_tags"];
-            searchCondition.ExcludeSourceApplicationName = (bool)dict["exclude_source_application_name"];
-            searchCondition.ExcludeSourceApplicationTitle = (bool)dict["exclude_source_application_title"];
+            if (dict.TryGetValue("description", out dynamic? description)) { searchCondition.Description = description ?? ""; }
+            if (dict.TryGetValue("content", out dynamic? content)) { searchCondition.Content = content ?? ""; }
+            if (dict.TryGetValue("tags", out dynamic? tags)) { searchCondition.Tags = tags ?? ""; }
+            if (dict.TryGetValue("source_application_name", out dynamic? sourceApplicationName)) { searchCondition.SourceApplicationName = sourceApplicationName ?? ""; }
+            if (dict.TryGetValue("source_application_title", out dynamic? sourceApplicationTitle)) { searchCondition.SourceApplicationTitle = sourceApplicationTitle ?? ""; }
+            if (dict.TryGetValue("start_time", out dynamic? startTime)) {
+                // UTC文字列をDateTimeに変換
+                DateTime utcDateTime = DateTime.Parse(startTime, null, System.Globalization.DateTimeStyles.RoundtripKind); 
+                searchCondition.StartTime = utcDateTime; 
+            }
+            if (dict.TryGetValue("end_time", out dynamic? endTime)) {
+                // UTC文字列をDateTimeに変換
+                DateTime utcDateTime = DateTime.Parse(endTime, null, System.Globalization.DateTimeStyles.RoundtripKind);
+                searchCondition.EndTime = utcDateTime;
+            }
+            if (dict.TryGetValue("enable_start_time", out dynamic? enableStartTime)) { searchCondition.EnableStartTime = enableStartTime ?? false; }
+            if (dict.TryGetValue("enable_end_time", out dynamic? enableEndTime)) { searchCondition.EnableEndTime = enableEndTime ?? false; }
+            if (dict.TryGetValue("exclude_description", out dynamic? excludeDescription)) { searchCondition.ExcludeDescription = excludeDescription ?? false; }
+            if (dict.TryGetValue("exclude_content", out dynamic? excludeContent)) { searchCondition.ExcludeContent = excludeContent ?? false; }
+            if (dict.TryGetValue("exclude_tags", out dynamic? excludeTags)) { searchCondition.ExcludeTags = excludeTags ?? false; }
+            if (dict.TryGetValue("exclude_source_application_name", out dynamic? excludeSourceApplicationName)) { searchCondition.ExcludeSourceApplicationName = excludeSourceApplicationName ?? false; }
+            if (dict.TryGetValue("exclude_source_application_title", out dynamic? excludeSourceApplicationTitle)) { searchCondition.ExcludeSourceApplicationTitle = excludeSourceApplicationTitle ?? false; }
+
             return searchCondition;
         }
 
@@ -164,9 +173,6 @@ namespace LibPythonAI.Model.Search {
             }
             return description;
         }
-        // 検索対象フォルダ配下を検索するかどうか
-        public bool IsIncludeSubFolder { get; set; }
-
 
     }
 
