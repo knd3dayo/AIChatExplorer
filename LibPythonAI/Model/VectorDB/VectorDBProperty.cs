@@ -91,30 +91,6 @@ namespace LibPythonAI.Model.VectorDB {
             }
         }
 
-        // Description
-        public string GetDescription() {
-
-            VectorDBItem? item = GetVectorDBItem();
-            if (item == null) {
-                return "";
-            }
-
-            string description = PythonExecutor.PythonAIFunctions.GetVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, Folder.Entity.Id.ToString());
-            if (string.IsNullOrEmpty(description)) {
-                return item.Description;
-            }
-            return description;
-        }
-
-        // UpdateVectorDBDescription
-        public void UpdateCatalogDescription(string description) {
-            VectorDBItem? item = GetVectorDBItem();
-            if (item == null) {
-                return;
-            }
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, Folder.Entity.Id.ToString(), description);
-        }
-
         public string ToJson() {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -134,7 +110,7 @@ namespace LibPythonAI.Model.VectorDB {
             if (search_kwargs.Count > 0) {
                 dict["search_kwargs"] = search_kwargs;
             }
-            dict["vector_db_description"] = GetDescription();
+            dict["vector_db_description"] = Folder?.Description ?? "";
             // vector_db_entriesを追加
             dict["vector_db_metadata_list"] = VectorMetadataList;
 
@@ -146,11 +122,12 @@ namespace LibPythonAI.Model.VectorDB {
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBProperty> items) {
             return items.Select(item => item.ToDict()).ToList();
         }
-        public void UpdateEmbeddings() {
+
+        public static void UpdateEmbeddings(List<VectorDBProperty> items) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = [this],
+                VectorDBProperties = items,
                 OpenAIProperties = openAIProperties
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
@@ -187,7 +164,7 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // フォルダに設定されたVectorDBのコレクションを削除
-        public void DeleteVectorDBCollection() {
+        public  void DeleteVectorDBCollection() {
             Task.Run(() => {
 
                 PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -201,24 +178,6 @@ namespace LibPythonAI.Model.VectorDB {
 
             });
         }
-        // フォルダに設定されたVectorDBのコレクションをアップデート
-        public void UpdateVectorDBCollection(string description) {
-            Task.Run(() => {
-                UpdateCatalogDescription(description);
-            });
-        }
-
-        // フォルダに設定されたVectorDBのインデックスを更新
-        public void RefreshVectorDBCollection(string description, Action afterRefresh) {
-            // ベクトルを全削除
-            DeleteVectorDBCollection();
-            // コレクション/カタログの更新
-            UpdateVectorDBCollection(description);
-
-            afterRefresh();
-        }
-
-
 
 
         // Equals

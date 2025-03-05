@@ -49,6 +49,9 @@ namespace LibPythonAI.Model.Search {
 
         public static SearchCondition FromDict(Dictionary<string, object> dict) {
             SearchCondition searchCondition = new();
+            if (dict.Count == 0) {
+                return searchCondition;
+            }
             searchCondition.Description = (string)dict["description"];
             searchCondition.Content = (string)dict["content"];
             searchCondition.Tags = (string)dict["tags"];

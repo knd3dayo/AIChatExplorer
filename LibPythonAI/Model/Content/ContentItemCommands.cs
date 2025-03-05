@@ -398,9 +398,7 @@ namespace PythonAILib.Model.Content {
                 // ベクトル化日時を更新
                 item.VectorizedAt = DateTime.Now;
             }
-            foreach (var vectorDBProperty in vectorDBProperties) {
-                vectorDBProperty.UpdateEmbeddings();
-            }
+            VectorDBProperty.UpdateEmbeddings(vectorDBProperties.ToList());
         }
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合

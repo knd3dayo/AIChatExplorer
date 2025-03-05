@@ -131,28 +131,6 @@ def run_autogen_group_chat(autogen_props: AutoGenProps, openai_props: OpenAIProp
     return autogen_props.run_group_chat(input_text, message_queue)
 
 ########################
-# VectorDBCatalog関連
-########################
-from ai_app_vector_db.ai_app_vector_db_catalog import VectorDBCatalog
-def get_catalogs(catalog_db_url: str, vector_db_url: str) -> list[dict]:
-    vector_db_catalog = VectorDBCatalog(catalog_db_url)
-    result_list = vector_db_catalog.get_catalogs(vector_db_url)
-    return result_list
-
-def get_catalog(catalog_db_url: str, vector_db_url: str, collection: str, folder_id: str) -> dict:
-    vector_db_catalog = VectorDBCatalog(catalog_db_url)
-    result_dict = vector_db_catalog.get_catalog(vector_db_url, collection, folder_id)
-    return result_dict
-
-def update_catalog(catalog_db_url: str, vector_db_url: str, collection: str, folder_id: str, description: str):
-    vector_db_catalog = VectorDBCatalog(catalog_db_url)
-    vector_db_catalog.update_catalog(vector_db_url, collection, folder_id, description)
-
-def delete_catalog(catalog_db_url: str, vector_db_url: str, collection: str, folder_id: str):
-    vector_db_catalog = VectorDBCatalog(catalog_db_url)
-    vector_db_catalog.delete_catalog(vector_db_url, collection, folder_id)
-
-########################
 # langchain関連
 ########################
 
@@ -166,14 +144,6 @@ def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDB
     return result
 
 # vector db関連
-def update_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps]):
-    # vector_db_itemsからVectorDBPropsを取得
-    # LangChainVectorDBを生成
-    for vector_db_props in vector_db_items:
-        vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-        # update_catalogを実行
-        update_catalog(vector_db_props.CatalogDBURL, vector_db_props.VectorDBURL, vector_db_props.CollectionName, vector_db_props.FolderID, vector_db_props.Description)
-        
 def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps]):
     # vector_db_itemsからVectorDBPropsを取得
     # LangChainVectorDBを生成
@@ -181,13 +151,6 @@ def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBP
         vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
         # delete_collectionを実行
         vector_db.delete_collection()
-        # delete_catalogを実行
-        delete_catalog(vector_db_props.CatalogDBURL, vector_db_props.VectorDBURL, vector_db_props.CollectionName, vector_db_props.FolderID)
-
-def get_catalog_entry(catalb_db_url: str, vector_db_url: str, collection: str, folder_id: str) -> str:
-    vector_db_catalog = VectorDBCatalog(catalb_db_url)
-    result_dict = vector_db_catalog.get_catalog(vector_db_url, collection, folder_id)
-    return result_dict.get("description", "")
 
 def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBProps):
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)

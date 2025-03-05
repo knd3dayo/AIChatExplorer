@@ -44,51 +44,11 @@ def langchain_chat():
     print(response)
     return Response(response, mimetype='application/json')
 
-# get_catalog_list
-@app.route('/api/get_catalog_list', methods=['POST'])
-def get_catalog_list():
-    request_json = request.data
-    response = ai_app_wrapper.get_catalog_list(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
-# get_catalog
-@app.route('/api/get_catalog', methods=['POST'])
-def get_catalog():
-    request_json = request.data
-    response = ai_app_wrapper.get_catalog(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
-# get_catalog_description
-@app.route('/api/get_catalog_description', methods=['POST'])
-def get_catalog_description():
-    request_json = request.data
-    response = ai_app_wrapper.get_catalog_description(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
-# update_catalog_description
-@app.route('/api/update_catalog_description', methods=['POST'])
-def update_catalog_description():
-    request_json = request.data
-    response = ai_app_wrapper.update_catalog_description(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
 # vector_search
 @app.route('/api/vector_search', methods=['POST'])
 def vector_search():
     request_json = request.data
     response = ai_app_wrapper.vector_search(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
-# update_collection
-@app.route('/api/update_collection', methods=['POST'])
-def update_collection():
-    request_json = request.data
-    response = ai_app_wrapper.update_collection(request_json)
     print(response)
     return Response(response, mimetype='application/json')
 

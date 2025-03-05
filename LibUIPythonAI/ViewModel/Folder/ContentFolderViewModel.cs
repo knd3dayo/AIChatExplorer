@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
@@ -8,8 +10,6 @@ using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Content;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
@@ -71,7 +71,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadItems
         protected virtual void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ContentItemWrapper> _items = Folder.GetItems< ContentItemWrapper>();
+            List<ContentItemWrapper> _items = Folder.GetItems<ContentItemWrapper>();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (ContentItemWrapper item in _items) {
@@ -112,8 +112,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {
 
             EditFolderCommandExecute(this, () => {
-                // ベクトルDBの説明を更新
-                Folder.GetMainVectorSearchProperty().UpdateVectorDBCollection(Folder.Description);
                 //　フォルダを保存
                 this.Folder.Save();
                 LoadFolderCommand.Execute();
@@ -231,14 +229,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 try {
                     // MainWindowViewModelのIsIndeterminateをTrueに設定
                     UpdateIndeterminate(true);
-                    Folder.GetMainVectorSearchProperty().RefreshVectorDBCollection(Folder.Description, () => {
-                        // フォルダ内のアイテムを取得して、ベクトルを作成
-                        foreach (var item in Folder.GetItems< ContentItemWrapper>()) {
-                            ContentItemCommands.UpdateEmbeddings([item]);
-                            // Save
-                            item.Save();
-                        }
-                    });
+                    Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
+                    ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>());
+                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
+
                 } finally {
                     UpdateIndeterminate(false);
                 }

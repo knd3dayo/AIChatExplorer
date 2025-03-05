@@ -13,18 +13,9 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
-        //　コレクション名とFolderIdにマッチするDescriptionをカタログから取得する。
-        public string GetVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id);
-
-        // カタログ情報をアップデート
-        public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id, string Description);
-
-
         public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
-
-        public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
 
         public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
 
