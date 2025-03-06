@@ -108,7 +108,7 @@
                 <TextBox
                     Margin="10,3,10,3"
                     IsEnabled="False"
-                    Text="{Binding TargetFolder.FolderPath, Mode=OneWay}" />
+                    Text="{Binding TargetFolder.ContentFolderPath, Mode=OneWay}" />
             </DockPanel>
 
             <Grid Grid.Row="2">
@@ -296,7 +296,7 @@
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
-                        Text="{Binding DestinationFolder.FolderPath, Mode=OneWay}" />
+                        Text="{Binding DestinationFolder.ContentFolderPath, Mode=OneWay}" />
                 </DockPanel>
                 <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
                     <RadioButton

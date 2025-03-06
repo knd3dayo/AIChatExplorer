@@ -4,26 +4,12 @@ using PythonAILib.Model.File;
 
 namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleCondition {
-        // 条件の種類
-        public ConditionTypeEnum Type { get; set; }
 
-        // アイテムのタイプ種類のリスト
-        public List<ContentTypes.ContentItemTypes> ContentTypes { get; set; } = [];
 
-        // 条件のキーワード
-        public string Keyword { get; set; } = "";
-
-        public AutoProcessRuleCondition(ConditionTypeEnum type, string keyword) {
-            Type = type;
-            Keyword = keyword;
+        public AutoProcessRuleConditionEntity Entity { get; set; }
+        public AutoProcessRuleCondition(AutoProcessRuleConditionEntity entity) {
+            Entity = entity;
         }
-        public AutoProcessRuleCondition(List<ContentTypes.ContentItemTypes> contentTypes, int minLineCount, int maxLineCount) {
-            ContentTypes = contentTypes;
-            MinLineCount = minLineCount;
-            MaxLineCount = maxLineCount;
-            Type = ConditionTypeEnum.ContentTypeIs;
-        }
-
 
         public enum ConditionTypeEnum {
             AllItems,
@@ -35,11 +21,63 @@ namespace PythonAILib.Model.AutoProcess {
             ContentTypeIs,
 
         }
+        // 条件のキーワード
+        public string Keyword {
+            get {
+                return Entity.Keyword;
+            }
+            set {
+                Entity.Keyword = value;
+            }
+        }
 
-        public ConditionTypeEnum ConditionType { get; set; } = ConditionTypeEnum.AllItems;
-        public int MinLineCount { get; set; } = -1;
+        // 条件の種類
+        public ConditionTypeEnum Type {
+            get {
+                return Entity.ConditionType;
+            }
+            set {
+                Entity.ConditionType = value;
+            }
+        }
 
-        public int MaxLineCount { get; set; } = -1;
+        // アイテムのタイプ種類のリスト
+        public List<ContentTypes.ContentItemTypes> ContentTypes {
+            get {
+                return Entity.ContentTypes;
+            }
+            set {
+                Entity.ContentTypes = value;
+            }
+        }
+
+
+        public ConditionTypeEnum ConditionType {
+            get {
+                return Entity.ConditionType;
+            }
+            set {
+                Entity.ConditionType = value;
+            }
+        }
+
+        public int MinLineCount {
+            get {
+                return Entity.MinLineCount;
+            }
+            set {
+                Entity.MinLineCount = value;
+            }
+        }
+
+        public int MaxLineCount {
+            get {
+                return Entity.MaxLineCount;
+            }
+            set {
+                Entity.MaxLineCount = value;
+            }
+        }
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
         public bool IsDescriptionContains(ContentItemWrapper clipboardItem, string keyword) {

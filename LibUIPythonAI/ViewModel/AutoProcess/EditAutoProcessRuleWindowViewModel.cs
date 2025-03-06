@@ -27,7 +27,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
             TargetFolder = autoProcessRule.TargetFolder;
             DestinationFolder = autoProcessRule.DestinationFolder;
-        
+
             // RootFolderViewModelを設定
             RootFolderViewModels = rootFolderViewModels;
 
@@ -119,7 +119,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 IsPromptTemplateChecked = true;
                 // PromptItemを取得
-                var promptItem = PromptItem.GetPromptItemById( promptAutoProcessItem.PromptItemEntity.Id);
+                var promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemEntity.Id);
                 if (promptItem == null) {
                     return;
                 }
@@ -409,32 +409,51 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.AllItems, ""));
+                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity = new() {
+                    ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.AllItems,
+                };
+                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
             } else {
-
+                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity;
                 // IsDescriptionRuleCheckedがTrueの場合は条件を追加
                 if (IsDescriptionRuleChecked) {
                     // Descriptionを条件に追加
+                    autoProcessRuleConditionEntity = new() {
+                        ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains,
+                        Keyword = Description
+                    };
 
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains, Description));
+                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
                 }
                 // IsContentRuleCheckedがTrueの場合は条件を追加
                 if (IsContentRuleChecked) {
                     // Contentを条件に追加
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.ContentContains, Content));
+                    autoProcessRuleConditionEntity = new() {
+                        ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.ContentContains,
+                        Keyword = Content
+                    };
+                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
                 }
                 // IsSourceApplicationRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationRuleChecked) {
                     // SourceApplicationNameを条件に追加
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains, SourceApplicationName));
+                    autoProcessRuleConditionEntity = new() {
+                        ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains,
+                        Keyword = SourceApplicationName
+                    };
+                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
                 }
                 // IsSourceApplicationTitleRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationTitleRuleChecked) {
                     // SourceApplicationTitleを条件に追加
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains, SourceApplicationTitle));
+                    autoProcessRuleConditionEntity = new() {
+                        ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains,
+                        Keyword = SourceApplicationTitle
+                    };
+                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
                 }
                 // ContentTypeの処理
-                List<ContentTypes.ContentItemTypes> contentTypes = new List<ContentTypes.ContentItemTypes>();
+                List<ContentTypes.ContentItemTypes> contentTypes = [];
                 // IsTextItemAppliedがTrueの場合は条件を追加
                 if (IsTextItemApplied) {
                     // TextItemを条件に追加
@@ -451,7 +470,13 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     contentTypes.Add(ContentTypes.ContentItemTypes.Files);
                 }
                 // ContentTypeIsを条件に追加
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(contentTypes, MinTextLineCountInt, MaxTextLineCountInt));
+                autoProcessRuleConditionEntity = new() {
+                    ContentTypes = contentTypes,
+                    MaxLineCount = MaxTextLineCountInt,
+                    MinLineCount = MinTextLineCountInt
+                };
+
+                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
 
             }
             // アクションを追加

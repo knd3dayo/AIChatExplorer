@@ -100,7 +100,7 @@
                                 Header="{x:Static res:ViewStringResources.RuleName}" />
                             <GridViewColumn
                                 Width="200"
-                                DisplayMemberBinding="{Binding TargetFolder.FolderPath}"
+                                DisplayMemberBinding="{Binding TargetFolder.ContentFolderPath}"
                                 Header="{x:Static res:ViewStringResources.TargetFolderFullPath}" />
                         </GridView>
                     </ListView.View>

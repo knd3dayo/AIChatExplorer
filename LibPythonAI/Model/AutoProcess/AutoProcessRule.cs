@@ -47,7 +47,14 @@ namespace LibPythonAI.Model.AutoProcess {
             set => Entity.Priority = value;
         }
 
-        public List<AutoProcessRuleCondition> Conditions { get; set; } = [];
+        public List<AutoProcessRuleCondition> Conditions {
+            get {
+                return Entity.Conditions.ToList().Select(c => new AutoProcessRuleCondition(c)).ToList();
+            }
+            set {
+                Entity.Conditions = value.Select(c => c.Entity).ToList();
+            }
+        }
 
         public AutoProcessItem? RuleAction {
             get {
