@@ -83,10 +83,11 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(page_html, "html.parser")
     text = soup.get_text()
+    sanitized_text = FileUtil.sanitize_text(text)
     # Retrieve href attribute and text from <a> tags
     urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
     driver.close()
-    return text, urls
+    return sanitized_text, urls
     
 ########################
 # openai関連

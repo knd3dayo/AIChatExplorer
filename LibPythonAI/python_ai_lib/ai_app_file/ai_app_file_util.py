@@ -5,6 +5,20 @@ from pathlib import Path
 
 class FileUtil:
 
+    @classmethod    
+    def sanitize_text(cls, text: str) -> str:
+        # テキストをサニタイズする
+        # textが空の場合は空の文字列を返す
+        if not text or len(text) == 0:
+            return ""
+        import re
+        # 1. 複数の改行を1つの改行に変換
+        text = re.sub(r'\n+', '\n', text)
+        # 2. 複数のスペースを1つのスペースに変換
+        text = re.sub(r' +', ' ', text)
+
+        return text
+
     @classmethod
     def identify_type(cls, filename):
         m = Magika()
@@ -51,32 +65,33 @@ class FileUtil:
     @classmethod
     def extract_text_from_file(cls, filename):
         res, encoding = cls.identify_type(filename)
+        
         if res is None:
             return None
         print(res.output.mime_type)
-        
+        result = None        
         if res.output.mime_type.startswith("text/"):
-            return cls.process_text(filename, res, encoding)
+            result = cls.process_text(filename, res, encoding)
 
         # application/pdf
         elif res.output.mime_type == "application/pdf":
-            return cls.process_pdf(filename)
+            result = cls.process_pdf(filename)
             
         # application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
         elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            return ExcelUtil.extract_text_from_sheet(filename)
+            result = ExcelUtil.extract_text_from_sheet(filename)
             
         # application/vnd.openxmlformats-officedocument.wordprocessingml.document
         elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            return cls.process_docx(filename)
+            result = cls.process_docx(filename)
             
         # application/vnd.openxmlformats-officedocument.presentationml.presentation
         elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-            return cls.process_pptx(filename)
+            result = cls.process_pptx(filename)
         else:
             print("Unsupported file type: " + res.output.mime_type)
 
-
+        return cls.sanitize_text(result)
 
     # application/pdfのファイルを読み込んで文字列として返す関数
     @classmethod
@@ -84,7 +99,6 @@ class FileUtil:
         from pdfminer.high_level import extract_text
         text = extract_text(filename)
         return text
-
 
     # application/vnd.openxmlformats-officedocument.wordprocessingml.documentのファイルを読み込んで文字列として返す関数
     @classmethod
@@ -143,14 +157,14 @@ class FileUtil:
             from bs4 import BeautifulSoup
             from markdown import markdown
             # テキストを取得
-            with open(filename, "r" ,encoding=encoding) as f:
+            with open(filename, "r" ,encoding=encoding, errors='ignore') as f:
                 text_data = f.read()
                 md = markdown(text_data)
                 soup = BeautifulSoup(md, "html.parser")
             result = soup.get_text()
         else:
             # その他のtext/*の場合
-            with open(filename, "r", encoding=encoding) as f:
+            with open(filename, "r", encoding=encoding, errors='ignore') as f:
                 result = f.read()
             
         return result
