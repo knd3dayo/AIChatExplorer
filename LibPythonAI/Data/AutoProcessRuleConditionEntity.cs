@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibPythonAI.Data;
 using PythonAILib.Model.File;
 
 namespace PythonAILib.Model.AutoProcess {
@@ -59,8 +58,41 @@ namespace PythonAILib.Model.AutoProcess {
             result["MaxLineCount"] = MaxLineCount;
             return result;
         }
-        public string ToJson() {
-            return JsonSerializer.Serialize(ToDict(), jsonSerializerOptions);
+
+
+        public static List<AutoProcessRuleConditionEntity> FromDictList(List<Dictionary<string, dynamic?>> dict) {
+
+            List<AutoProcessRuleConditionEntity> result = [];
+            foreach (var item in dict) {
+                result.Add(FromDict(item));
+            }
+            return result;
+
+        }
+
+        public static AutoProcessRuleConditionEntity FromDict(Dictionary<string, dynamic?> dict) {
+            AutoProcessRuleConditionEntity entity = new();
+
+            if (dict.TryGetValue("Id", out dynamic? value1) && value1 is not null) {
+                entity.Id = (string)value1;
+            }
+            if (dict.TryGetValue("ConditionType", out dynamic? value2) && value2 is not null) {
+                entity.ConditionType = (AutoProcessRuleCondition.ConditionTypeEnum)value2;
+            }
+            if (dict.TryGetValue("ContentTypesJson", out dynamic? value3) && value3 is not null) {
+                entity.ContentTypesJson = (string)value3;
+            }
+            if (dict.TryGetValue("Keyword", out dynamic? value4) && value4 is not null) {
+                entity.Keyword = (string)value4;
+            }
+            if (dict.TryGetValue("MinLineCount", out dynamic? value5) && value5 is not null) {
+                entity.MinLineCount = (int)value5;
+            }
+            if (dict.TryGetValue("MaxLineCount", out dynamic? value6) && value6 is not null) {
+                entity.MaxLineCount = (int)value6;
+            }
+
+            return entity;
         }
 
         // Equals , GetHashCodeのオーバーライド
@@ -73,26 +105,6 @@ namespace PythonAILib.Model.AutoProcess {
         }
         public override int GetHashCode() {
             return Id.GetHashCode();
-        }
-
-
-        public static AutoProcessRuleConditionEntity? FromDict(Dictionary<string, object>? dict) {
-            if (dict == null) {
-                return null;
-            }
-            AutoProcessRuleConditionEntity entity = new() {
-                ConditionType = (AutoProcessRuleCondition.ConditionTypeEnum)dict["ConditionType"],
-                ContentTypesJson = (string)dict["ContentTypesJson"],
-                Keyword = (string)dict["Keyword"],
-                MinLineCount = (int)dict["MinLineCount"],
-                MaxLineCount = (int)dict["MaxLineCount"]
-            };
-            return entity;
-
-        }
-
-        public static AutoProcessRuleConditionEntity? FromJson(string json) {
-            return FromDict(JsonSerializer.Deserialize<Dictionary<string, object>>(json, jsonSerializerOptions));
         }
 
     }

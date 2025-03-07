@@ -96,12 +96,12 @@ namespace PythonAILib.PythonIF {
             // 自分自身のプロセスIDを取得
             int currentProcessId = Process.GetCurrentProcess().Id;
 
-            StartPython(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", true, (Process) => {
-            });
+            // StartPython(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", true, (Process) => { });
+            StartPythonConsole(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", false, (Process) => { });
 
             // AIアプリケーションサーバーを開始する。
-            StartPython(configPrams, "ai_app_server.py", true, (process) => { });
-            // StartPythonConsole(configPrams, "ai_app_server.py",(process) => {});
+            // StartPython(configPrams, "ai_app_server.py", true, (process) => { });
+            StartPythonConsole(configPrams, "ai_app_server.py", false, (process) => { });
         }
 
         private static string GetApplicationPidFilePath(IPythonAILibConfigParams configPrams) {
@@ -111,8 +111,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        /**
-        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string scriptPath, Action<Process> afterStart) {
+        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string scriptPath, bool showConsole, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             string appDataDir = configPrams.GetAppDataPath();
@@ -158,7 +157,7 @@ namespace PythonAILib.PythonIF {
             cmdLines.Add($"python {serverScriptPath}");
 
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
-            bool showConsole = true;
+
             ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, envVars, showConsole,
                 (Process process) => {
                     // 5秒待機した後、processが終了したかどうかを確認する
@@ -178,7 +177,6 @@ namespace PythonAILib.PythonIF {
                 );
 
         }
-        **/
 
         private static void StartPython(IPythonAILibConfigParams configPrams, string scriptPath, bool background, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
@@ -250,7 +248,7 @@ namespace PythonAILib.PythonIF {
                     });
                 }, ErrorDataReceived: dataReceivedEventHandler);
             } else {
-                ProcessUtil.StartForegroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => { }, 
+                ProcessUtil.StartForegroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => { },
                     OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler);
 
             }

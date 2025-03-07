@@ -79,6 +79,9 @@ namespace PythonAILib.Model.AutoProcess {
             }
         }
 
+
+
+
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
         public bool IsDescriptionContains(ContentItemWrapper clipboardItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す

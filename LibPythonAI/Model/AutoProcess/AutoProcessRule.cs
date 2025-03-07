@@ -23,8 +23,6 @@ namespace LibPythonAI.Model.AutoProcess {
             };
         }
 
-
-
         public AutoProcessRuleEntity Entity { get; set; }
 
         public string Id { get => Entity.Id; }
@@ -46,13 +44,13 @@ namespace LibPythonAI.Model.AutoProcess {
             get => Entity.Priority;
             set => Entity.Priority = value;
         }
-
+        private List<AutoProcessRuleCondition>? _condition;
         public List<AutoProcessRuleCondition> Conditions {
             get {
-                return Entity.Conditions.ToList().Select(c => new AutoProcessRuleCondition(c)).ToList();
-            }
-            set {
-                Entity.Conditions = value.Select(c => c.Entity).ToList();
+                if (_condition == null) {
+                    _condition = Entity.Conditions.Select(c => new AutoProcessRuleCondition(c)).ToList();
+                }
+                return _condition;
             }
         }
 
@@ -91,14 +89,9 @@ namespace LibPythonAI.Model.AutoProcess {
             if (Priority == -1) {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
-            using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Id);
-            if (item == null) {
-                db.AutoProcessRules.Add(Entity);
-            } else {
-                db.AutoProcessRules.Entry(item).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
+            Entity.Conditions = Conditions.Select(c => c.Entity).ToList();
+            AutoProcessRuleEntity.SaveItems([ Entity ]);
+
         }
         // 削除
         public void Delete() {

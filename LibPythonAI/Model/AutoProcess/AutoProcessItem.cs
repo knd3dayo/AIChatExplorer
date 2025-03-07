@@ -92,10 +92,8 @@ namespace LibPythonAI.Model.AutoProcess {
                         LogWrapper.Warn(PythonAILibStringResources.Instance.NoFolderSelected);
                         return;
                     }
-                    // Folderに追加
-                    ContentItemWrapper newItem = args.Copy();
-                    destinationFolder.AddItem(newItem);
-                    args.Delete();
+                    // Folderに移動
+                    args.MoveTo(destinationFolder);
 
                 };
             }
@@ -117,7 +115,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         public virtual void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
 
-            Action<ContentItemWrapper> action = GetAction(TypeName, DestinationFolder);
+            Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolder);
             action(clipboardItem);
 
         }
