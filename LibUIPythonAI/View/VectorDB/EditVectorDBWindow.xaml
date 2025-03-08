@@ -125,23 +125,9 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="{x:Static res:ViewStringResources.VectorDBLocation}" />
-                <TextBox
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="{Binding VectorDBURLHintText}"
-                    IsEnabled="True"
-                    Text="{Binding ItemViewModel.VectorDBURL}" />
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                     Text="{x:Static res:ViewStringResources.VectorDBType}" />
                 <ComboBox
-                    Grid.Row="4"
+                    Grid.Row="3"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
@@ -154,27 +140,54 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
                 <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="{x:Static res:ViewStringResources.VectorDBLocation}" />
+                <TextBox
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    materialDesign:HintAssist.Hint="{Binding VectorDBURLHintText}"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.VectorDBURL}" />
+                <TextBlock
                     Grid.Row="5"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="{x:Static res:ViewStringResources.DocumentChunkSize}" />
+                    Text="{x:Static res:ViewStringResources.CollectionName}" />
                 <TextBox
                     Grid.Row="5"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
-                    Text="{Binding ItemViewModel.ChunkSize}" />
+                    Text="{Binding ItemViewModel.CollectionName}" />
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="{x:Static res:ViewStringResources.DefaultSearchResultLimit}" />
+                    Text="{x:Static res:ViewStringResources.DocumentChunkSize}" />
                 <TextBox
                     Grid.Row="6"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.ChunkSize}" />
+                <TextBlock
+                    Grid.Row="7"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="{x:Static res:ViewStringResources.DefaultSearchResultLimit}" />
+                <TextBox
+                    Grid.Row="7"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"

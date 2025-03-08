@@ -12,15 +12,38 @@ namespace LibPythonAI.Data {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        protected string? VectorDBItemId { get; set; }
+        public string? VectorDBItemId { get; set; }
         // VectorDBIte
-
-        public VectorDBItemEntity? VectorDBItem { get; set; }
 
         public string SourceURL { get; set; } = "";
         public string WorkingDirectory { get; set; } = "";
 
         public string LastIndexCommitHash { get; set; } = "";
+
+
+        // 複数アイテムのSave
+        public static void SaveItems(IEnumerable<RAGSourceItemEntity> items) {
+            using PythonAILibDBContext db = new();
+            foreach (var item in items) {
+                var entity = db.RAGSourceItems.Find(item.Id);
+                if (entity == null) {
+                    db.RAGSourceItems.Add(item);
+                } else {
+                    db.RAGSourceItems.Entry(entity).CurrentValues.SetValues(item);
+                }
+            }
+            db.SaveChanges();
+        }
+
+        // 複数アイテムのDelete
+        public static void DeleteItems(IEnumerable<RAGSourceItemEntity> items) {
+            using PythonAILibDBContext db = new();
+            foreach (var item in items) {
+                db.RAGSourceItems.Remove(item);
+            }
+            db.SaveChanges();
+        }
+
 
         // Equals , GetHashCodeのオーバーライド
         public override bool Equals(object? obj) {

@@ -19,7 +19,7 @@ namespace LibPythonAI.Data {
 
         // 名前
         [JsonPropertyName("vector_db_name")]
-        public string Name { get; set; } = DefaultCollectionName;
+        public string Name { get; set; } = "";
         // 説明
         [JsonPropertyName("vector_db_description")]
         public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
@@ -43,10 +43,6 @@ namespace LibPythonAI.Data {
         // コレクション名
         [JsonPropertyName("collection_name")]
         public string CollectionName { get; set; } = DefaultCollectionName;
-
-        // カタログ用のDBURL
-        [JsonPropertyName("catalog_db_url")]
-        public string CatalogDBURL { get; set; } = "";
 
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する

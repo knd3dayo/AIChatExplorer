@@ -22,39 +22,18 @@ namespace PythonAILib.Model.VectorDB {
             get => Entity.Id;
         }
 
-        public string SourceURL { get; set; } = "";
-        public string WorkingDirectory { get; set; } = "";
-
-        public string LastIndexCommitHash { get; set; } = "";
-        // Get
-        public static IEnumerable<RAGSourceItem> GetItems() {
-            using PythonAILibDBContext db = new();
-            var items = db.RAGSourceItems;
-
-            foreach (var item in items) {
-                yield return new RAGSourceItem(item);
-            }
+        public string SourceURL {
+            get => Entity.SourceURL;
+            set => Entity.SourceURL = value;
+        }
+        public string WorkingDirectory {
+            get => Entity.WorkingDirectory;
+            set => Entity.WorkingDirectory = value;
         }
 
-        public void Save() {
-            using PythonAILibDBContext db = new();
-            var item = db.RAGSourceItems.Find(Id);
-            if (item == null) {
-                db.RAGSourceItems.Add(Entity);
-            } else {
-                db.RAGSourceItems.Entry(item).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
-
-
-        }
-        public void Delete() {
-            using PythonAILibDBContext db = new();
-            var item = db.RAGSourceItems.Find(Id);
-            if (item != null) {
-                db.Remove(item);
-            }
-
+        public string LastIndexCommitHash {
+            get => Entity.LastIndexCommitHash;
+            set => Entity.LastIndexCommitHash = value;
         }
 
         public string GetRemoteURL() {
@@ -63,31 +42,13 @@ namespace PythonAILib.Model.VectorDB {
 
         public VectorDBItem? VectorDBItem {
             get {
-                var item =  Entity.VectorDBItem;
-                if (item == null) {
-                    return null;
-                }
-                return new VectorDBItem(item);
+                return VectorDBItem.GetItemById(Entity.VectorDBItemId);
+
             }
             set {
-                if (value == null) {
-                    Entity.VectorDBItem = null;
-                } else {
-                    Entity.VectorDBItem = value.Entity;
-                }
+                Entity.VectorDBItemId = value?.Id;
             }
         }
-
-        public IEnumerable<VectorDBItem>? VectorDBItems {
-            get {
-                using PythonAILibDBContext db = new();
-                var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-                foreach (var item in items) {
-                    yield return new VectorDBItem(item);
-                }
-            }
-        }
-
 
         public string LastIndexedCommitInfoDisplayString {
             get {
@@ -198,6 +159,24 @@ namespace PythonAILib.Model.VectorDB {
             return result;
 
 
+        }
+
+        // Get
+        public static IEnumerable<RAGSourceItem> GetItems() {
+            using PythonAILibDBContext db = new();
+            var items = db.RAGSourceItems;
+
+            foreach (var item in items) {
+                yield return new RAGSourceItem(item);
+            }
+        }
+
+        public void Save() {
+            RAGSourceItemEntity.SaveItems([Entity]);
+        }
+
+        public void Delete() {
+            RAGSourceItemEntity.DeleteItems([Entity]);
         }
 
     }

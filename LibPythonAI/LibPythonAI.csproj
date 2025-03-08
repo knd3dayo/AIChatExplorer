@@ -25,7 +25,6 @@
     <None Remove="python_ai_lib\ai_app_openai_util.py" />
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
-    <None Remove="python_ai_lib\ai_app_vector_db\ai_app_vector_db_catalog.py" />
     <None Remove="python_ai_lib\ai_app_vector_db\__init__.py" />
     <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
@@ -78,9 +77,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_server_shutdown.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_catalog.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">

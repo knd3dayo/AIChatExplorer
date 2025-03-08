@@ -57,11 +57,6 @@ namespace LibPythonAI.Model.VectorDB {
             return item!;
         }
 
-        public static string GetCatalogDBURL() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.ConfigParams.GetCatalogDBURL();
-        }
-
         private static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
@@ -119,28 +114,38 @@ namespace LibPythonAI.Model.VectorDB {
 
         // コレクション名
         [JsonPropertyName("collection_name")]
-        public string CollectionName { get; set; } = DefaultCollectionName;
-
-        // カタログ用のDBURL
-        [JsonPropertyName("catalog_db_url")]
-        public string CatalogDBURL { get; set; } = GetCatalogDBURL();
-
+        public string CollectionName {
+            get => Entity.CollectionName;
+            set => Entity.CollectionName = value;
+        }
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
         [JsonPropertyName("chunk_size")]
-        public int ChunkSize { get; set; } = 1024;
+        public int ChunkSize {
+            get => Entity.ChunkSize;
+            set => Entity.ChunkSize = value;
+        }
 
         // ベクトル検索時の検索結果上限
         [JsonPropertyName("default_search_result_limit")]
-        public int DefaultSearchResultLimit { get; set; } = 10;
+        public int DefaultSearchResultLimit {
+            get => Entity.DefaultSearchResultLimit;
+            set => Entity.DefaultSearchResultLimit = value;
+        }
 
         // 有効かどうか
         [JsonIgnore]
-        public bool IsEnabled { get; set; } = true;
+        public bool IsEnabled {
+            get => Entity.IsEnabled;
+            set => Entity.IsEnabled = value;
+        }
 
         // システム用のフラグ
         [JsonIgnore]
-        public bool IsSystem { get; set; } = false;
+        public bool IsSystem {
+            get => Entity.IsSystem;
+            set => Entity.IsSystem = value;
+        }
 
         // Equals
         public override bool Equals(object? obj) {
@@ -166,7 +171,6 @@ namespace LibPythonAI.Model.VectorDB {
                 { "vector_db_type_string", VectorDBTypeString },
                 { "collection_name", CollectionName ?? ""},
                 { "chunk_size", ChunkSize },
-                { "catalog_db_url", CatalogDBURL }
             };
             return dict;
         }
@@ -184,12 +188,24 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
-        public static IEnumerable<VectorDBItem> GetItems() {
+        public static List<VectorDBItem> GetItems() {
+            List<VectorDBItem> result = [];
             using PythonAILibDBContext db = new();
             var items = db.VectorDBItems;
             foreach (var item in items) {
-                yield return new VectorDBItem(item);
+                result.Add(new VectorDBItem(item));
             }
+            return result;
+        }
+
+        // GetItemById
+        public static VectorDBItem? GetItemById(string? id) {
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.Find(id);
+            if (item == null) {
+                return null;
+            }
+            return new VectorDBItem(item);
         }
 
         // Save
@@ -209,8 +225,9 @@ namespace LibPythonAI.Model.VectorDB {
             using PythonAILibDBContext db = new();
             var item = db.VectorDBItems.Find(Id);
             if (item != null) {
-                db.Remove(item);
+                db.VectorDBItems.Remove(item);
             }
+            db.SaveChanges();
         }
 
 
@@ -246,20 +263,16 @@ namespace LibPythonAI.Model.VectorDB {
             return result;
         }
 
-        // GetItemById
-        public static VectorDBItem? GetItemById(string? id) {
-            if (id == null) {
-                return null;
-            }
-            return GetItems().FirstOrDefault(item => item.Id == id);
-        }
-
         // GetItemByName
         public static VectorDBItem? GetItemByName(string? name) {
-            if (name == null) {
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == name);
+            if (item == null) {
                 return null;
             }
-            return GetItems().FirstOrDefault(item => item.Name == name);
+            return new VectorDBItem(item);
+
+
         }
 
 

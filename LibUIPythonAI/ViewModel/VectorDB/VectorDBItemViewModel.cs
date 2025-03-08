@@ -40,6 +40,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 OnPropertyChanged(nameof(VectorDBURL));
             }
         }
+        // CollectionName
+        public string CollectionName {
+            get => Item.CollectionName;
+            set {
+                Item.CollectionName = value;
+                OnPropertyChanged(nameof(CollectionName));
+            }
+        }
+
         // DocStoreURL
         public string DocStoreURL {
             get => Item.DocStoreURL;

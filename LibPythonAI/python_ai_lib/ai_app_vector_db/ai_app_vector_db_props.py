@@ -22,7 +22,6 @@ class VectorDBProps:
     vector_db_type_string_name = "vector_db_type_string"
     vector_db_name_name = "vector_db_name"
     vector_db_description_name = "vector_db_description"
-    catalog_db_url_name = "catalog_db_url"
     chunk_size_name = "chunk_size"
     is_use_multi_vector_retriever_name = "is_use_multi_vector_retriever"
     doc_store_url_name = "doc_store_url"
@@ -44,11 +43,6 @@ class VectorDBProps:
         if not self.VectorDBDescription:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
 
-        # DBのカタログ情報を保持するDBのURL
-        self.CatalogDBURL = props_dict.get(VectorDBProps.catalog_db_url_name, "")
-        if not self.CatalogDBURL:
-            raise ValueError("catalog_db_url is not set.")
-        
         # チャンクサイズ
         self.ChunkSize = props_dict.get(VectorDBProps.chunk_size_name, 500)
 
@@ -92,7 +86,6 @@ class VectorDBProps:
         vector_db_dict["chunk_size"] = self.ChunkSize
         vector_db_dict["is_use_multi_vector_retriever"] = self.IsUseMultiVectorRetriever
         vector_db_dict["search_kwargs"] = self.SearchKwarg
-        vector_db_dict["catalog_db_url"] = self.CatalogDBURL
         vector_db_dict["folder_id"] = self.FolderID
         vector_db_dict["vector_db_metadata_list"] = [entry.__dict__ for entry in self.VectorMetadataList]
         

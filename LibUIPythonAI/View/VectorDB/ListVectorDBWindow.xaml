@@ -108,12 +108,17 @@
                                     Header="{x:Static res:ViewStringResources.Name}" />
                                 <GridViewColumn
                                     Width="Auto"
+                                    DisplayMemberBinding="{Binding VectorDBTypeString}"
+                                    Header="{x:Static res:ViewStringResources.VectorDBType}" />
+                                <GridViewColumn
+                                    Width="Auto"
                                     DisplayMemberBinding="{Binding VectorDBURL}"
                                     Header="{x:Static res:ViewStringResources.VectorDBLocation}" />
                                 <GridViewColumn
                                     Width="Auto"
-                                    DisplayMemberBinding="{Binding VectorDBTypeString}"
-                                    Header="{x:Static res:ViewStringResources.VectorDBType}" />
+                                    DisplayMemberBinding="{Binding CollectionName}"
+                                    Header="{x:Static res:ViewStringResources.CollectionName}" />
+
                             </GridView>
                         </ListView.View>
                         <!--  コンテキストメニュー  -->

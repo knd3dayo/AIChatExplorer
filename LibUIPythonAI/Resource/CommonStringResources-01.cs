@@ -495,6 +495,9 @@ namespace LibUIPythonAI.Resource {
         // ベクトルDB(外部)
         public virtual string VectorDBExternal { get; } = "ベクトルDB(外部)";
 
+        // CollectionName
+        public virtual string CollectionName { get; } = "コレクション名";
+
         // ここをクリックしてベクトルDBを追加
         public virtual string ClickHereToAddVectorDB { get; } = "ここをクリックしてベクトルDBを追加";
 

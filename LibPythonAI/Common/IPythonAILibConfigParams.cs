@@ -45,8 +45,6 @@ namespace PythonAILib.Common {
 
         public string GetAutoGenWorkDir();
 
-        public string GetCatalogDBURL();
-
         public bool AutoTag();
 
         // AutoTitle

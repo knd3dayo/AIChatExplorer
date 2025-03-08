@@ -5,7 +5,7 @@ from io import StringIO
 import sys
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_vector_db import VectorDBProps, VectorDBCatalog
+from ai_app_vector_db import VectorDBProps
 from ai_app_autogen import AutoGenProps
 
 import ai_app
@@ -25,7 +25,6 @@ chat_request_context_name = "chat_request_context"
 chat_request_name = "chat_request"
 token_count_request_name = "token_count_request"
 autogen_request_name = "autogen_request"
-catalog_request_name = "catalog_request"
 query_request_name = "query_request"
 excel_request_name = "excel_request"
 file_request_name = "file_request"
@@ -174,15 +173,6 @@ def get_autogen_request_objects(request_dict: dict) -> dict:
     request:dict = request_dict.get(autogen_request_name, None)
     if not request:
         raise ValueError("request is not set.")
-    return request
-
-def get_catalog_request_objects(request_dict: dict) -> dict:
-    # contextを取得
-    request:dict = request_dict.get(catalog_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    # catalog_db_url, vector_db_url, collection, folder_id, descriptionを取得
-
     return request
 
 def get_query_request_objects(request_dict: dict) -> dict:
@@ -366,15 +356,6 @@ def update_collection(request_json: str):
 
         ai_app.update_collection(openai_props, vector_db_items)
 
-        # Catalogを更新
-        for vector_db_props in vector_db_items:
-            catalog_db_url = vector_db_props.CatalogDBURL
-            db_url = vector_db_props.VectorDBURL
-            collection = vector_db_props.CollectionName
-            description = vector_db_props.VectorDBDescription
-            folder_id = vector_db_props.FolderID
-            ai_app.update_catalog(catalog_db_url, db_url, collection, folder_id, description)
-
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -393,14 +374,6 @@ def delete_collection(request_json: str):
         vector_db_items = get_vector_db_objects(request_dict)
         
         ai_app.delete_collection(openai_props, vector_db_items)
-
-        # Catalogを削除
-        for vector_db_props in vector_db_items:
-            catalog_db_url = vector_db_props.CatalogDBURL
-            db_url = vector_db_props.VectorDBURL
-            collection = vector_db_props.CollectionName
-            folder_id = vector_db_props.FolderID
-            ai_app.delete_catalog(catalog_db_url, db_url, collection, folder_id)
 
         return {}
 

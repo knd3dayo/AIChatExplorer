@@ -759,6 +759,10 @@ namespace LibUIPythonAI.Resource {
         public override string ExcludeFromList { get; } = "Exclude from list";
         public override string VectorDB { get; } = "Vector DB";
         public override string VectorDBExternal { get; } = "Vector DB (external)";
+
+        // CollectionName
+        public override string CollectionName { get; } = "Collection Name";
+
         public override string ClickHereToAddVectorDB { get; } = "Click here to add Vector DB";
 
         // ベクトルDB検索結果の最大値

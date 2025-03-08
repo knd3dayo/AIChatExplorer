@@ -129,6 +129,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
                 // 削除
                 SelectedVectorDBItem.Item.Delete();
+
                 // リストを更新
                 LoadVectorItemsCommand.Execute();
             }

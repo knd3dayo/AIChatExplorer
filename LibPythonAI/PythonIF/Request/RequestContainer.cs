@@ -21,9 +21,6 @@ namespace LibPythonAI.PythonIF.Request {
         // QueryRequest
         public QueryRequest? QueryRequestInstance { get; set; }
 
-        // CatalogRequest
-        public CatalogRequest? CatalogRequestInstance { get; set; }
-
         // ExcelRequest
         public ExcelRequest? ExcelRequestInstance { get; set; }
 
@@ -49,9 +46,6 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (QueryRequestInstance != null) {
                 dict["query_request"] = QueryRequestInstance.ToDict();
-            }
-            if (CatalogRequestInstance != null) {
-                dict["catalog_request"] = CatalogRequestInstance.ToDict();
             }
             if (ExcelRequestInstance != null) {
                 dict["excel_request"] = ExcelRequestInstance.ToDict();

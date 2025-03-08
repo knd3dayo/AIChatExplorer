@@ -102,5 +102,8 @@ namespace LibUIPythonAI.View.VectorDB {
         // VectorDBSearchResultMax
         public static string VectorDBSearchResultMax => CommonStringResources.Instance.VectorDBSearchResultMax;
 
+        // CollectionName
+        public static string CollectionName { get; set; } = CommonStringResources.Instance.CollectionName;
+
     }
 }
