@@ -38,7 +38,7 @@ namespace PythonAILib.Model.AutoGen {
         public static void UpdateAutoGenLLMConfig(string name, string api_type, string api_version, string model, string api_key, string base_url) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
                 );
@@ -53,14 +53,14 @@ namespace PythonAILib.Model.AutoGen {
             // model llmのモデル
             // api_key apiキー
             // base_url base_url
-            using var insertCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS llm_configs (name TEXT, api_type TEXT, api_version TEXT, model TEXT, api_key TEXT, base_url TEXT)", sqlConn);
+            using var insertCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS autogen_llm_configs (name TEXT, api_type TEXT, api_version TEXT, model TEXT, api_key TEXT, base_url TEXT)", sqlConn);
             insertCmd.ExecuteNonQuery();
             // llm_configの情報をDBに登録
-            using var checkCmd = new SQLiteCommand("SELECT * FROM llm_configs WHERE name = @name", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows == false) {
-                using var insertCmd2 = new SQLiteCommand("INSERT INTO llm_configs (name, api_type, api_version, model, api_key, base_url) VALUES (@name, @api_type, @api_version, @model, @api_key, @base_url)", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("INSERT INTO autogen_llm_configs (name, api_type, api_version, model, api_key, base_url) VALUES (@name, @api_type, @api_version, @model, @api_key, @base_url)", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@api_type", api_type);
                 insertCmd2.Parameters.AddWithValue("@api_version", api_version);
@@ -69,7 +69,7 @@ namespace PythonAILib.Model.AutoGen {
                 insertCmd2.Parameters.AddWithValue("@base_url", base_url);
                 insertCmd2.ExecuteNonQuery();
             } else {
-                using var insertCmd2 = new SQLiteCommand("UPDATE llm_configs SET api_type = @api_type, api_version = @api_version, model = @model, api_key = @api_key, base_url = @base_url WHERE name = @name", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("UPDATE autogen_llm_configs SET api_type = @api_type, api_version = @api_version, model = @model, api_key = @api_key, base_url = @base_url WHERE name = @name", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@api_type", api_type);
                 insertCmd2.Parameters.AddWithValue("@api_version", api_version);
@@ -86,7 +86,7 @@ namespace PythonAILib.Model.AutoGen {
         public static void DeleteAutoGenLLMConfig(string name) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
                 );
@@ -94,11 +94,11 @@ namespace PythonAILib.Model.AutoGen {
             // DBに接続
             sqlConn.Open();
             // llm_configの情報をDBから削除
-            using var checkCmd = new SQLiteCommand("SELECT * FROM llm_configs WHERE name = @name", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows == true) {
-                using var insertCmd = new SQLiteCommand("DELETE FROM llm_configs WHERE name = @name", sqlConn);
+                using var insertCmd = new SQLiteCommand("DELETE FROM autogen_llm_configs WHERE name = @name", sqlConn);
                 insertCmd.Parameters.AddWithValue("@name", name);
                 insertCmd.ExecuteNonQuery();
             }
@@ -109,7 +109,7 @@ namespace PythonAILib.Model.AutoGen {
         public static List<AutoGenLLMConfig> GetAutoGenLLMConfigList() {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
                 );
@@ -117,7 +117,7 @@ namespace PythonAILib.Model.AutoGen {
             // DBに接続
             sqlConn.Open();
             // llm_configの情報をDBから取得
-            using var checkCmd = new SQLiteCommand("SELECT * FROM llm_configs", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs", sqlConn);
             using var reader = checkCmd.ExecuteReader();
             List<AutoGenLLMConfig> llmConfigs = [];
             while (reader.Read()) {

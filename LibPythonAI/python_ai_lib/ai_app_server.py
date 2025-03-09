@@ -159,10 +159,10 @@ def handle_message(msg):
     emit('response', msg, broadcast=True)
 
 
-@socketio.on('autogen_group_chat')
+@socketio.on('autogen_chat')
 def autogen_group_chat(request_json: str):
     try:
-        for response in ai_app_wrapper.autogen_group_chat(request_json):
+        for response in ai_app_wrapper.autogen_chat(request_json):
             emit("response", response)
     except Exception as e:
         import traceback

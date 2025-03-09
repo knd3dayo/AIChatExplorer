@@ -234,7 +234,7 @@ namespace PythonAILib.PythonIF {
                     finished = true;
                 });
                 client.OnConnected += async (sender, e) => {
-                    await client.EmitAsync("autogen_group_chat", requestContextJson);
+                    await client.EmitAsync("autogen_chat", requestContextJson);
                 };
                 // サーバーに接続
                 await client.ConnectAsync();

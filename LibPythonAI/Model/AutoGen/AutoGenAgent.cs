@@ -85,7 +85,7 @@ namespace LibPythonAI.Model.AutoGen {
         public static void UpdateAutoGenAgent(string name, string description, string system_message, bool code_execution, string llm_config_name, List<string> tool_names, List<VectorDBItem> vector_db_items, bool overwrite) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
 
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
@@ -104,14 +104,14 @@ namespace LibPythonAI.Model.AutoGen {
             // tooo_names ツール名
             // vector_db_items ベクトルDBアイテムをJSON形式で格納
             // テーブルが存在しない場合のみ作成
-            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)", sqlConn);
+            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS autogen_agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)", sqlConn);
             createCmd.ExecuteNonQuery();
             // Agentの情報をDBに登録
-            using var checkCmd = new SQLiteCommand("SELECT * FROM agents WHERE name = @name", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_agents WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows == false) {
-                using var insertCmd2 = new SQLiteCommand("INSERT INTO agents (name, description, system_message, code_execution, llm_config_name, tool_names, vector_db_items) VALUES (@name, @description, @system_message, @code_execution, @llm_config_name, @tool_names, @vector_db_items)", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("INSERT INTO autogen_agents (name, description, system_message, code_execution, llm_config_name, tool_names, vector_db_items) VALUES (@name, @description, @system_message, @code_execution, @llm_config_name, @tool_names, @vector_db_items)", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@description", description);
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
@@ -121,7 +121,7 @@ namespace LibPythonAI.Model.AutoGen {
                 insertCmd2.Parameters.AddWithValue("@vector_db_items", VectorDBItem.ToJson(vector_db_items));
                 insertCmd2.ExecuteNonQuery();
             } else if (overwrite){
-                using var insertCmd2 = new SQLiteCommand("UPDATE agents SET description = @description, system_message = @system_message, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("UPDATE autogen_agents SET description = @description, system_message = @system_message, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@description", description);
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
@@ -139,7 +139,7 @@ namespace LibPythonAI.Model.AutoGen {
         public static void DeleteAutoGenAgent(string name) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
                 );
@@ -147,11 +147,11 @@ namespace LibPythonAI.Model.AutoGen {
             // DBに接続
             sqlConn.Open();
             // Agentの情報をDBから削除
-            using var checkCmd = new SQLiteCommand("SELECT * FROM agents WHERE name = @name", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_agents WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows) {
-                using var deleteCmd = new SQLiteCommand("DELETE FROM agents WHERE name = @name", sqlConn);
+                using var deleteCmd = new SQLiteCommand("DELETE FROM autogen_agents WHERE name = @name", sqlConn);
                 deleteCmd.Parameters.AddWithValue("@name", name);
                 deleteCmd.ExecuteNonQuery();
             }
@@ -163,7 +163,7 @@ namespace LibPythonAI.Model.AutoGen {
         public static List<AutoGenAgent> GetAutoGenAgentList() {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            string autogenDBURL = ConfigPrams.GetMainDBPath();
             var sqlConnStr = new SQLiteConnectionStringBuilder(
                 $"Data Source={autogenDBURL};Version=3;"
                 );
@@ -171,7 +171,7 @@ namespace LibPythonAI.Model.AutoGen {
             // DBに接続
             sqlConn.Open();
             // Agentの情報をDBから取得
-            using var checkCmd = new SQLiteCommand("SELECT * FROM agents", sqlConn);
+            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_agents", sqlConn);
             using var reader = checkCmd.ExecuteReader();
             List<AutoGenAgent> agents = [];
             while (reader.Read()) {

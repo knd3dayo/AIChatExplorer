@@ -37,7 +37,7 @@ namespace LibUIMergeChat.ViewModel {
 
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
-            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
+            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
             _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
             _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
 
@@ -404,7 +404,8 @@ namespace LibUIMergeChat.ViewModel {
             set {
                 _SelectedAutoGenGroupChat = value;
                 if (_SelectedAutoGenGroupChat != null) {
-                    AutoGenProperties.AutoGenGroupChat = _SelectedAutoGenGroupChat;
+                    AutoGenProperties.ChatType = AutoGenProperties.CHAT_TYPE_GROUP;
+                    AutoGenProperties.ChatName = _SelectedAutoGenGroupChat.Name;
                 }
                 OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
             }

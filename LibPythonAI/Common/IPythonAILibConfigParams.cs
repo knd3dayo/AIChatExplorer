@@ -29,8 +29,6 @@ namespace PythonAILib.Common {
 
         public string GetSystemDocDBPath();
 
-        public string GetAutoGenDBPath();
-
         public string GetAppDataPath();
 
         public string GetContentOutputPath();

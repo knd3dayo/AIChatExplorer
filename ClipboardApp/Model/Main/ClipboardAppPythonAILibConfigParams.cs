@@ -88,11 +88,6 @@ namespace ClipboardApp.Model.Main {
             return docDBPath;
         }
 
-        public string GetAutoGenDBPath() {
-            string dbPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen.db");
-            return dbPath;
-        }
-
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {
             string workDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen");

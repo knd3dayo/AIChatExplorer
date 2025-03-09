@@ -1,8 +1,5 @@
-import json
-
 from typing import Annotated
-
-
+# main_db
 
 
 def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
@@ -162,26 +159,50 @@ def get_current_time() -> str:
     now = datetime.now()
     return now.strftime("%Y/%m/%d (%a) %H:%M:%S")
 
+def arxiv_search(query: str, max_results: int = 2) -> list:  # type: ignore[type-arg]
+    """
+    Search Arxiv for papers and return the results including abstracts.
+    """
+    import arxiv
+
+    client = arxiv.Client()
+    search = arxiv.Search(query=query, max_results=max_results, sort_by=arxiv.SortCriterion.Relevance)
+
+    results = []
+    for paper in client.results(search):
+        results.append(
+            {
+                "title": paper.title,
+                "authors": [author.name for author in paper.authors],
+                "published": paper.published.strftime("%Y-%m-%d"),
+                "abstract": paper.summary,
+                "pdf_url": paper.pdf_url,
+            }
+        )
+
+    # # Write results to a file
+    # with open('arxiv_search_results.json', 'w') as f:
+    #     json.dump(results, f, indent=2)
+
+    return results
+
+
 # ツール一覧を取得する関数
 def list_tools() -> Annotated[list[dict[str, str]], "List of registered tools, each containing 'name' and 'description'"]:
     """
     This function retrieves a list of registered tools from the database.
     """
+    from main_db import MainDB
+
     global autogen_props
     autogen_db_path = autogen_props.autogen_db_path
-    tools_table_name = "tools"
-    # sqlite3のDBを開く
-    import sqlite3
-    conn = sqlite3.connect(autogen_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {tools_table_name}")
-    # ツール一覧を取得
-    tools = cursor.fetchall()
+    main_db = MainDB(autogen_db_path)
+    tools = main_db.get_autogen_tools()
     tool_list = []
     for tool in tools:
-        tool_list.append({"name": tool[0], "description": tool[2]})
-    conn.close()
+        tool_list.append({"name": tool.name, "description": tool.description})
     return tool_list
+
 
 
 # ツールを登録する関数
@@ -199,56 +220,76 @@ def register_tool(
     If the registration is successful, return tuple(True, "The tool has been successfully registered.").
     If the registration fails, return tuple(False, "Failed to register the tool.").
     """
+    from main_db import MainDB, AutogenTools
 
     global autogen_props
     autogen_db_path = autogen_props.autogen_db_path
-    tools_table_name = "tools"
-    # sqlite3のDBを開く
-    import sqlite3
-    conn = sqlite3.connect(autogen_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {tools_table_name} WHERE name = ?", (tool_name,))
     # 既に同じ名前のツールが登録されているか確認
-    if cursor.fetchone() is not None:
-        cursor.close()
-        conn.close()
+    main_db = MainDB(autogen_db_path)
+    tool = main_db.get_autogen_tool(tool_name)
+    if tool is not None:
         return True, "The tool with the same name already exists."
 
     # ツールを登録
-    cursor = conn.cursor()
-    cursor.execute(f"INSERT INTO {tools_table_name} (name, path, description) VALUES (?, ?, ?)", (tool_name, source_path, tool_description))
-    conn.commit()
-    cursor.close()
+    agent_tool_dict = {
+        "name": tool_name,
+        "path": source_path,
+        "description": tool_description
+    }
+    agent_tool_object = AutogenTools(agent_tool_dict)
+    main_db.update_autogen_tool(agent_tool_object)
 
     # ツール登録結果を確認
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {tools_table_name} WHERE name = ?", (tool_name,))
-    tool = cursor.fetchone()
-    cursor.close()
-    conn.close()
+    tool = main_db.get_autogen_tool(tool_name)
     if tool is None:
         return False, "Failed to register the tool."
     return True, "The tool has been successfully registered."
+
+# execute_agent
+# エージェントを実行する関数
+def execute_agent(
+        agent_name: Annotated[str, "Agent name"], input_text: Annotated[str, "Input text"],
+        ) -> Annotated[str, "Output text"]:
+    """
+    This function executes the specified agent with the input text and returns the output text.
+    First argument: agent name, second argument: input text.
+    - Agent name: Specify the name of the agent as the Python function name.
+    - Input text: The text data to be processed by the agent.
+    """
+    from main_db import MainDB
+    from queue import Queue
+
+    global autogen_props 
+    autogen_db_path = autogen_props.autogen_db_path
+    main_db = MainDB(autogen_db_path)
+    agent = main_db.get_autogen_agent(agent_name)
+    if agent is None:
+        return "The specified agent does not exist."
     
+    message_queue = Queue()
+    output_text = ""
+    # run_agent関数を使用して、エージェントを実行
+    for message in autogen_props.run_agent(agent_name, input_text, message_queue):
+        if not message:
+            break
+        output_text += message + "\n"
+    return output_text
+
 # エージェント一覧を取得する関数
 def list_agents() -> Annotated[list[dict[str, str]], "List of registered agents, each containing 'name' and 'description'"]:
     """
     This function retrieves a list of registered agents from the database.
     """
+    from main_db import MainDB
+
     global autogen_props
     autogen_db_path = autogen_props.autogen_db_path
-    agents_table_name = "agents"
-    # sqlite3のDBを開く
-    import sqlite3
-    conn = sqlite3.connect(autogen_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {agents_table_name}")
-    # エージェント一覧を取得
-    agents = cursor.fetchall()
+
+    main_db = MainDB(autogen_db_path)
+    agents = main_db.get_autogen_agents()
     agent_list = []
     for agent in agents:
-        agent_list.append({"name": agent[0], "description": agent[1]})
-    conn.close()
+        agent_list.append({"name": agent.name, "description": agent.description})
     return agent_list
 
 # register_agent
@@ -273,35 +314,34 @@ def register_agent(
     If the registration is successful, return tuple(True, "The agent has been successfully registered.").
     If the registration fails, return tuple(False, "Failed to register the agent.").
     """
+    from main_db import MainDB, AutogenAgent
 
     global autogen_props
     autogen_db_path = autogen_props.autogen_db_path
-    agents_table_name = "agents"
     # sqlite3のDBを開く
-    import sqlite3
-    conn = sqlite3.connect(autogen_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {agents_table_name} WHERE name = ?", (agent_name,))
+    main_db = MainDB(autogen_db_path)
     # 既に同じ名前のエージェントが登録されているか確認
-    if cursor.fetchone() is not None:
-        cursor.close()
-        conn.close()
+    agent = main_db.get_autogen_agent(agent_name)
+    if agent is not None:
         return True, "The agent with the same name already exists."
     
     # エージェントを登録
-    cursor = conn.cursor()
-    cursor.execute(f"INSERT INTO {agents_table_name} (name, description, system_message, code_execution, llm_config_name, tool_names) VALUES (?, ?, ?, ?, ?, ?)", (agent_name, description, system_message, code_execution, llm_config_name, ",".join(tool_names)))
-    conn.commit()
-    cursor.close()
+    agent_dict = {
+        "name": agent_name,
+        "description": description,
+        "system_message": system_message,
+        "code_execution": code_execution,
+        "llm_config_name": llm_config_name,
+        "tool_names": tool_names
+    }
+    agent_object = AutogenAgent(agent_dict)
+    main_db.update_autogen_agent(agent_object)
 
     # エージェント登録結果を確認
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {agents_table_name} WHERE name = ?", (agent_name,))
-    agent = cursor.fetchone()
-    cursor.close()
-    conn.close()
+    agent = main_db.get_autogen_agent(agent_name)
     if agent is None:
         return False, "Failed to register the agent."
+
     return True, "The agent has been successfully registered."
 
 # register_agent

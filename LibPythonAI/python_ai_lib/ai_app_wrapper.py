@@ -5,8 +5,9 @@ from io import StringIO
 import sys
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_vector_db import VectorDBProps
+from ai_app_langchain import VectorDBProps
 from ai_app_autogen import AutoGenProps
+from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter
 
 import ai_app
 
@@ -156,8 +157,14 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     props_dict = request_context.get(autogen_props_name, None)
     if not props_dict:
         raise ValueError("autogen_props is not set")
+    
+    # get_openai_objectsを使ってOpenAIPropsを取得
+    openai_props, _ = get_openai_objects(request_dict)
 
-    autogen_props = AutoGenProps(props_dict)
+    # vector_db_itemsを取得
+    vector_db_items = get_vector_db_objects(request_dict)
+
+    autogen_props = AutoGenProps(props_dict, openai_props, vector_db_items)
     return autogen_props
 
 def get_token_count_objects(request_dict: dict) -> dict:
@@ -262,7 +269,7 @@ def get_token_count(request_json: str):
 ########################
 # Autogen関連
 ########################
-def autogen_group_chat( request_json: str):
+def autogen_chat( request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> Generator[dict, None, None]:
         # request_jsonからrequestを作成
@@ -275,7 +282,7 @@ def autogen_group_chat( request_json: str):
         if not input_text:
             raise ValueError("input_text is not set")
 
-        for message in ai_app.run_autogen_group_chat(autogen_props, openai_props, vector_db_items,  input_text):
+        for message in ai_app.run_autogen_chat(autogen_props, openai_props, vector_db_items,  input_text):
             if not message:
                 break
             # dictを作成
@@ -334,7 +341,6 @@ def vector_search(request_json: str):
         query_request = get_query_request_objects(request_dict)
         query = query_request.get("input_text", "")
 
-        from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         result = ai_app.vector_search(params)
         return result

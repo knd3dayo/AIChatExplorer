@@ -1,14 +1,10 @@
-using System.Data.SQLite;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.Common;
-using System.IO;
-
-using PythonAILib.Model.Chat;
-using PythonAILib.PythonIF;
 using LibPythonAI.Model.AutoGen;
+using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenProperties {
@@ -17,9 +13,13 @@ namespace PythonAILib.Model.AutoGen {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
+
+        public static readonly string CHAT_TYPE_GROUP = "group";
+        public static readonly string CHAT_TYPE_NORMAL = "normal";
+
         // autogen_db_path
         [JsonPropertyName("autogen_db_path")]
-        public string AutoGenDBPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
+        public string AutoGenDBPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
         // venv_path
         [JsonPropertyName("venv_path")]
         public string VenvPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
@@ -27,9 +27,14 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("work_dir")]
         public string WorkDir { get; set; } = "";
 
-        // AutoGenGroupChat
-        [JsonPropertyName("group_chat")]
-        public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
+        // chat_type
+        [JsonPropertyName("chat_type")]
+        public string ChatType { get; set; } = CHAT_TYPE_GROUP;
+
+        // chat_name
+        [JsonPropertyName("chat_name")]
+        public string ChatName { get; set; } = "default";
+
 
         // terminate_msg
         [JsonPropertyName("terminate_msg")]
@@ -49,7 +54,8 @@ namespace PythonAILib.Model.AutoGen {
                 { "autogen_db_path", AutoGenDBPath },
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
-                { "group_chat", AutoGenGroupChat.CreateRequestDict() },
+                { "chat_type", ChatType },
+                { "chat_name", ChatName },
                 { "terminate_msg", TerminateMsg },
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
@@ -118,6 +124,21 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function saves the specified text to a file.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
+            // arxiv_search
+            toolName = "arxiv_search";
+            toolDescription = "This function searches arXiv with the specified keywords and returns related articles.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // list_agents
+            toolName = "list_agents";
+            toolDescription = "This function retrieves a list of registered agents from the database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // execute_agent
+            toolName = "execute_agent";
+            toolDescription = "This function executes the specified agent.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
             // register_agent
             toolName = "register_tool_agent";
             toolDescription = """
@@ -143,6 +164,7 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function returns the current time.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
+
             // agentの初期化
             var agentName = "planner";
             var agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します";
@@ -158,7 +180,7 @@ namespace PythonAILib.Model.AutoGen {
                 """;
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
-            var agentTools =new List<string> {};
+            var agentTools = new List<string> { };
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -244,6 +266,20 @@ namespace PythonAILib.Model.AutoGen {
                 Directory.CreateDirectory(toolsDir);
             }
 
+            // arxiv_searcher
+            agentName = "arxiv_searcher";
+            agentDescription = "arXivから論文を検索するエージェントです。";
+            agentSystemMessage = $"""
+                あなたはarXiv検索エージェントです。
+                ユーザーからキーワードを受け取り、arXivから論文を検索します。
+                検索結果をユーザーに提供してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["arxiv_search"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
             agentName = "tool_agent_register";
             agentDescription = "ツール実行エージェントを登録するエージェントです。";
             agentSystemMessage = $"""
@@ -256,6 +292,20 @@ namespace PythonAILib.Model.AutoGen {
             agentCodeExecution = false;
             agentLLMConfig = "default";
             agentTools = ["register_tool_agent", "list_agents"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
+            // ユーザーからの指示にマッチするエージェントを検索してエージェントを実行する
+            agentName = "execute_agent";
+            agentDescription = "エージェント一覧からユーザーの要求にマッチするエージェントを取得して実行するエージェントです。";
+            agentSystemMessage = $"""
+                あなたはエージェント実行エージェントです。
+                list_agents
+                エージェント一覧からユーザーの要求にマッチするエージェントを取得して実行します。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["execute_agent", "list_agents"];
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -277,8 +327,16 @@ namespace PythonAILib.Model.AutoGen {
             groupName = "agent_registration";
             groupDescription = "ツールとエージェントを登録するためのグループチャットです。";
             groupLLMConfig = "default";
-            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "tool_agent_register"};
+            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "tool_agent_register" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
+            // エージェント一覧から適切なエージェントを取得して実行するグループチャット
+            groupName = "execute_agent";
+            groupDescription = "エージェント一覧から適切なエージェントを取得して実行するグループチャットです。";
+            groupLLMConfig = "default";
+            groupAgentNames = new List<string> { "planner", "execute_agent" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
 
             Initialized = true;
 

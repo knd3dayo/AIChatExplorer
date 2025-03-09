@@ -36,6 +36,8 @@ duckduckgo-search
 flask-socketio
 Flask-Cors
 
+arxiv
+
 # promptflow-core
 # promptflow-devkit
 # promptflow-tracing

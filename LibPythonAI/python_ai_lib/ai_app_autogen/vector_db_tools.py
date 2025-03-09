@@ -1,5 +1,5 @@
 from typing import Annotated
-from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
+from ai_app_langchain.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 

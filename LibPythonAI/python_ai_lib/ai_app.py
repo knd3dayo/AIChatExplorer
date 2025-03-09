@@ -5,7 +5,7 @@ import base64
 import time
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_vector_db import VectorDBProps, VectorSearchParameter
+from ai_app_langchain import VectorDBProps, VectorSearchParameter
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
 from ai_app_autogen import AutoGenProps
@@ -96,7 +96,7 @@ def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBPro
     openai_client = OpenAIClient(openai_props)
     # ベクトル検索関数
     def vector_search(query: str) -> dict:
-        from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
+        from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter
         from ai_app_langchain.langchain_vector_db import LangChainVectorDB
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         return LangChainVectorDB.vector_search(params)
@@ -119,17 +119,15 @@ def get_token_count(openai_props: OpenAIProps, input_text: str):
 ########################
 # autogen関連
 ########################
-def run_autogen_group_chat(autogen_props: AutoGenProps, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
+def run_autogen_chat(autogen_props: AutoGenProps, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
 
     if type ( openai_props) != OpenAIProps:
         raise ValueError("openai_props is not OpenAIProps")
     # queueを生成.
     message_queue = Queue()
 
-    # prepare_group_chatを実行
-    autogen_props.prepare_group_chat(openai_props, vector_db_items)
     # run_group_chatを実行
-    return autogen_props.run_group_chat(input_text, message_queue)
+    return autogen_props.run_autogen_chat(input_text, message_queue)
 
 ########################
 # langchain関連

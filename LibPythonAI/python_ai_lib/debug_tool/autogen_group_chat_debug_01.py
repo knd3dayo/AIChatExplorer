@@ -71,9 +71,8 @@ def main():
     print(f"Input message: {input_text}")
 
     # AutogenGroupChatを実行
-    TaskResult = None
     message_count = 0
-    for message in ai_app.run_autogen_group_chat(autogen_props, openai_props, vector_db_items, input_text):
+    for message in ai_app.run_autogen_chat(autogen_props, openai_props, vector_db_items, input_text):
         if not message:
             break
         message_count += 1

@@ -20,8 +20,8 @@ from ai_app_langchain.langchain_doc_store import SQLDocStore
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
-from ai_app_vector_db.ai_app_vector_db_props import VectorMetadata
-from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
+from ai_app_langchain.ai_app_vector_db_props import VectorMetadata
+from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
 
 
 

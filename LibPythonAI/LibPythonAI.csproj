@@ -25,7 +25,6 @@
     <None Remove="python_ai_lib\ai_app_openai_util.py" />
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
-    <None Remove="python_ai_lib\ai_app_vector_db\__init__.py" />
     <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
     <None Remove="python_ai_lib\flask_app.py" />
@@ -79,9 +78,6 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_server_shutdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_server.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -94,7 +90,13 @@
     <EmbeddedResource Include="python_ai_lib\debug_tool\autogen_group_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_props.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\ai_app_vector_db_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\main_db\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\main_db\ai_app_main_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\templates\index.html">
