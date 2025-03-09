@@ -86,6 +86,7 @@ namespace PythonAILib.Model.AutoGen {
             if (api_type == "azure") {
                 base_url = ConfigPrams.GetOpenAIProperties().AzureOpenAIEndpoint;
             }
+            string work_dir = ConfigPrams.GetAutoGenWorkDir();
             AutoGenLLMConfig.UpdateAutoGenLLMConfig(name, api_type, api_version, model, api_key, base_url);
 
             // search_wikipedia_ja
@@ -164,23 +165,43 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function returns the current time.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
+            // vector_search
+            toolName = "vector_search";
+            toolDescription = "This function searches for the specified vector in the database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // agentの初期化
             var agentName = "planner";
             var agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します";
             var agentSystemMessage = """
                 ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します
-                - まず、各エージェントがどのようなタスクを実行できるか調べます。
-                - ユーザーの要求を達成するためにはどのエージェントと協力すべきか計画を作成します。
+                - ユーザーの要求を達成するための計画を作成してタスク一覧を作成します。
+                - タスクの割り当てに問題ないか？もっと効率的な計画およびタスク割り当てがないか？については対象エージェントに確認します。
                 - 計画に基づき、対象のエージェントにタスクを割り当てます。
-                - code_writerエージェント、code_executorエージェントが参加している場合があります。　
-                  code_writerエージェント、code_executorエージェントはなるべく呼び出さず、他のエージェントを優先的に呼び出してください。
                 - 計画作成が完了したら[計画作成完了]と返信してください
                   その後、計画に基づきタスクを実行します。全てのタスクが完了したら、[TERMINATE]と返信してください。
                 """;
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
             var agentTools = new List<string> { };
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
+            agentName = "auto_generative_planner";
+            agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します.必要に応じてPython関数を作成してツールとして登録します";
+            agentSystemMessage = """
+                ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します
+                - ユーザーの要求を達成するための計画を作成してタスク一覧を作成します。
+                - タスクの割り当てに問題ないか？もっと効率的な計画およびタスク割り当てがないか？については対象エージェントに確認します。
+                - 適切なエージェントが存在せず、coder_writer,code_executerエージェントがいる場合は、彼らにタスク遂行が可能か確認します。 
+                  coder_writerがタスクを処理するための適切なPythonコードを生成した場合は、tool_resister_agentにツール登録を依頼します。
+                - 計画に基づき、対象のエージェントにタスクを割り当てます。
+                - 計画作成が完了したら[計画作成完了]と返信してください
+                  その後、計画に基づきタスクを実行します。全てのタスクが完了したら、[TERMINATE]と返信してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = new List<string> { };
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -191,7 +212,7 @@ namespace PythonAILib.Model.AutoGen {
                 コードの実行結果は、コードを投稿した後に自動的に表示されます。 
                 ただし、次の条件を厳守する必要があります。 
                 ルール:
-                - コードは必ずコードブロック内に提案すること。
+                - コードはPythonで実装して、出力は、Markdown形式(例:```python ...```)であること。
                 - スクリプトの実行結果がエラーの場合、エラーメッセージに基づいて対策を検討し、再度修正したコードを作成すること。
                 - スクリプトの実行から得られる情報が不十分な場合、現在得られている情報に基づいて再度修正したコードを作成すること。
 
@@ -233,13 +254,12 @@ namespace PythonAILib.Model.AutoGen {
 
             agentName = "file_operator";
             agentDescription = "ファイル操作を行うエージェントです。";
-            agentSystemMessage = """
+            agentSystemMessage = $"""
                 あなたはファイルオペレーターです。ユーザーの指示に従って、以下の機能を利用してファイル操作を行います。
-                それ以外の指示には返信しないでください。
-                - 指定されたディレクトリ内のファイルをリストするために提供された list_files_in_directory 関数を使用してください。
-                - 指定されたファイルを抽出するために提供された extract_file 関数を使用してください。
-                - 指定されたファイルが存在するかどうかを確認するために提供された check_file 関数を使用してください。
-                - テキストをファイルに保存するために提供された save_text_file 関数を使用してください。
+                - list_files_in_directory 関数で指定されたディレクトリ内のファイルをリストします。
+                - extract_file 関数を使用して指定されたファイルからテキスト抽出します。
+                - check_file 関数を使用して指定されたファイルが存在するかどうかを確認します。
+                - save_text_file 関数を使用してテキストをファイルに保存します。 デフォルトのディレクトリは、{work_dir}です。
                 """;
             agentCodeExecution = false;
             agentLLMConfig = "default";
@@ -283,15 +303,16 @@ namespace PythonAILib.Model.AutoGen {
             agentName = "tool_agent_register";
             agentDescription = "ツール実行エージェントを登録するエージェントです。";
             agentSystemMessage = $"""
-                あなたはツール実行エージェントの登録者です。
-                あなたは以下の処理を行います。
-                1. ユーザーからツール名を渡されます。[ツール名]_agentという名前のエージェントが登録されているかどうか、list_agents関数で確認します。  
-                   エージェントが既に登録されている場合は登録する必要はありません。
-                2. register_tool_agent 関数を用いてエージェント登録を行ってください。register_tool_agent 関数の第1引数:指定したツール名です。
+                あなたはツール実行エージェントの登録者です。code_writerエージェントが作成したpythonコードをPython関数(ツール)に加工します。
+                このpython関数は. 引数と戻り値はAnnotatedを使用して型を指定する必要があります。
+                ツールは汎用的なものであるべきです。code_writerエージェントが作成したpythonコードが具体的なものである場合は汎用化可能か検討してください。
+                例： xxxという文字列をファイルに書き込む -> 引数で指定された文字列をファイルに書き込む
+                加工したコードをregister_tool_agentツールを用いてDBに保存します。register_tool_agentに渡すfunction_nameは作成したPython関数名と同じである必要があります。
+
                 """;
             agentCodeExecution = false;
             agentLLMConfig = "default";
-            agentTools = ["register_tool_agent", "list_agents"];
+            agentTools = ["register_tool_agent"];
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -306,6 +327,20 @@ namespace PythonAILib.Model.AutoGen {
             agentCodeExecution = false;
             agentLLMConfig = "default";
             agentTools = ["execute_agent", "list_agents"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
+            // ベクトル検索エージェント
+            agentName = "vector_searcher";
+            agentDescription = "ベクトルを検索するエージェントです。";
+            agentSystemMessage = $"""
+                あなたはベクトル検索エージェントです。
+                ユーザーからの依頼に基づきベクトルを検索します。
+                検索結果をユーザーに提供してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["vector_search"];
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -334,7 +369,7 @@ namespace PythonAILib.Model.AutoGen {
             groupName = "execute_agent";
             groupDescription = "エージェント一覧から適切なエージェントを取得して実行するグループチャットです。";
             groupLLMConfig = "default";
-            groupAgentNames = new List<string> { "planner", "execute_agent" };
+            groupAgentNames = new List<string> { "auto_generative_planner", "execute_agent" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
 

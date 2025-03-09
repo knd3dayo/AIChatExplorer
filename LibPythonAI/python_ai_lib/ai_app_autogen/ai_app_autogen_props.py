@@ -4,6 +4,7 @@ from typing import Any
 from queue import Queue, Empty
 # asyncio
 import asyncio
+
 # json
 import json
 # sqlite3
@@ -35,7 +36,6 @@ class AutoGenProps:
 
     CHAT_TYPE_GROUP_NAME = "group"
     CHAT_TYPE_NORMAL_NAME = "normal"
-
     def __init__(self, props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBProps]):
 
         # autogen_db_path
@@ -104,6 +104,11 @@ class AutoGenProps:
 
         def run_task():
             try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:  # No running event loop
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+            try:
                 asyncio.run(task)
             except Exception as e:
                 print(f"run_task error:{e}")
@@ -127,6 +132,11 @@ class AutoGenProps:
         import threading
 
         def run_task():
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:  # No running event loop
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
             try:
                 asyncio.run(task)
             except Exception as e:
@@ -167,7 +177,7 @@ class AutoGenProps:
         chat_dict = main_db.get_autogen_group_chat(self.chat_name)
 
         # agent_namesを取得
-        agent_names = chat_dict.agent_names.split(",")
+        agent_names = chat_dict.agent_names
         agents = []
         for agent_name in agent_names:
             agent = self.__create_agent(agent_name, self.openai_props)
@@ -214,11 +224,12 @@ class AutoGenProps:
                     
 
     async def __create_run_autogen_chat_task(self, chat_object: SelectorGroupChat, initial_message: str, result_queue: Queue):
-        if not initial_message:
-            raise ValueError("initial_message is None")
+
         if not result_queue:
+            self.quit()
             raise ValueError("result_queue is None")
         if not self.chat_object:
+            self.quit()
             raise ValueError("chat_object is not prepared")
         
         async for message in chat_object.run_stream(task=initial_message):
@@ -284,28 +295,36 @@ class AutoGenProps:
 
             # tool_namesが指定されている場合は、tool_dictを作成
             tool_dict_list = []
-            if agent_dict.tool_names:
-                tool_names = agent_dict.tool_names.split(",")
-                for tool_name in tool_names:
-                    print(f"tool_name:{tool_name}")
-                    func_tool = self.__create_tool(tool_name)
-                    tool_dict_list.append(func_tool)
+            for tool_name in agent_dict.tool_names.split(","):
+                if not tool_name:
+                    continue
+                print(f"tool_name:{tool_name}")
+                func_tool = self.__create_tool(tool_name)
+                tool_dict_list.append(func_tool)
             # vector_db_itemsが指定されている場合は、vector_db_items用のtoolを作成
             # vector_search_toolを作成
             from ai_app_autogen.vector_db_tools import create_vector_search_tool
             import uuid
-            for vector_db_item in json.loads(agent_dict.vector_db_items_json):
+            for vector_db_item in json.loads(agent_dict.vector_db_items):
                 id = str(uuid.uuid4()).replace('-', '_')
                 func = create_vector_search_tool(openai_props, [vector_db_item])
-                func_tool = FunctionTool(func, description=f"Vector Search Tool for {vector_db_item.Description}", name=f"vector_search_tool_{id}")
+                vector_db_props = VectorDBProps(vector_db_item)
+                func_tool = FunctionTool(
+                    func, description=f"Vector Search Tool for {vector_db_props.Description}", 
+                    name=f"vector_search_tool_{id}",
+                    global_imports=[" from typing import Annotated"]
+                    )
                 tool_dict_list.append(func_tool)
+
             params["tools"] = tool_dict_list
             return AssistantAgent(**params)
 
     def __create_tool(self, name: str):
         main_db = MainDB(self.autogen_db_path)
         tool_dict = main_db.get_autogen_tool(name)
-
+        if not tool_dict:
+            raise ValueError (f"Tool {name} not found in the database.")
+        
         # source_pathからファイルを読み込む
         with open(tool_dict.path, "r", encoding="utf-8") as f:
             content = f.read()
@@ -318,7 +337,11 @@ class AutoGenProps:
         # nameの関数を取得
         func = locals_copy[name]
 
-        return FunctionTool(func, description=tool_dict.description, name=tool_dict.name)
+        return FunctionTool(
+            func, description=tool_dict.description, 
+            name=tool_dict.name,
+            global_imports=[" from typing import Annotated"]
+         )
     
     # 指定したnameのLLMConfigをDBから取得して、llm_configを返す    
     def __create_client(self, name: str):

@@ -1,5 +1,5 @@
 import sqlite3
-
+import json
 from typing import List
 
 class ContentFolder:
@@ -146,7 +146,7 @@ class AutogenAgent:
         self.code_execution = agent_dict.get("code_execution", False)
         self.llm_config_name = agent_dict.get("llm_config_name", "")
         self.tool_names = agent_dict.get("tool_names", "")
-        self.vector_db_items_json = agent_dict.get("vector_db_items", "[]")
+        self.vector_db_items = agent_dict.get("vector_db_items", json.dumps([]))
 
 class AutogenGroupChat:
     '''
@@ -157,7 +157,8 @@ class AutogenGroupChat:
         self.name = group_chat_dict.get("name", "")
         self.description = group_chat_dict.get("description", "")
         self.llm_config_name = group_chat_dict.get("llm_config_name", "")
-        self.agent_names = group_chat_dict.get("agent_names", "")
+        self.agent_names_str = group_chat_dict.get("agent_names", "")
+        self.agent_names = self.agent_names_str.split(",")
 
 class MainDB:
     def __init__(self, db_path):
