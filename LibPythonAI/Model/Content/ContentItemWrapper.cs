@@ -497,6 +497,11 @@ namespace LibPythonAI.Model.Content {
                 // 自動処理を適用
             }
             ContentItemEntity.SaveItems([Entity]);
+
+            // ベクトルを更新
+            Task.Run(() => {
+                VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+            });
         }
 
         public void Delete() {

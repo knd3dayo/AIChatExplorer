@@ -1,6 +1,6 @@
 import os, json
 from typing import Any
-from collections.abc import Generator
+from collections.abc import Generator, AsyncGenerator
 from io import StringIO
 import sys
 
@@ -102,6 +102,7 @@ def capture_generator_stdout_stderr(func):
         return json.dumps(result, ensure_ascii=False, indent=4)
 
     return wrapper
+
 
 ########################
 # parametar関連
@@ -269,31 +270,40 @@ def get_token_count(request_json: str):
 ########################
 # Autogen関連
 ########################
-def autogen_chat( request_json: str):
-    # OpenAIチャットを実行する関数を定義
-    def func() -> Generator[dict, None, None]:
-        # request_jsonからrequestを作成
-        request_dict: dict = json.loads(request_json)
-        openai_props, _ = get_openai_objects(request_dict)
-        vector_db_items = get_vector_db_objects(request_dict)
-        autogen_props = get_autogen_objects( request_dict)
-        autogen_request = get_autogen_request_objects(request_dict)
-        input_text = autogen_request.get("input_text", "")
-        if not input_text:
-            raise ValueError("input_text is not set")
+async def autogen_chat( request_json: str):
 
-        for message in ai_app.run_autogen_chat(autogen_props, openai_props, vector_db_items,  input_text):
-            if not message:
-                break
-            # dictを作成
-            result_dict = {"message": message }
-            yield result_dict
+    result = None # 初期化
+    # request_jsonからrequestを作成
+    request_dict: dict = json.loads(request_json)
+    autogen_props = get_autogen_objects( request_dict)
+    autogen_request = get_autogen_request_objects(request_dict)
+    input_text = autogen_request.get("input_text", "")
+    if not input_text:
+        raise ValueError("input_text is not set")
+
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+
+    async for message in ai_app.run_autogen_chat(autogen_props, input_text):
+        if not message:
+            break
+        # dictを作成
+        result = {"message": message }
+        # resultにlogを追加して返す
+        result["log"] = buffer.getvalue()
+        json_string = json.dumps(result, ensure_ascii=False, indent=4)
+        # bufferをクリア
+        buffer.truncate(0)
     
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_generator_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
+        yield json_string
 
+    # strout,stderrorを元に戻す
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+
+ 
 ########################
 # langchain関連
 ########################

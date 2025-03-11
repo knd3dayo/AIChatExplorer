@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask import Flask, Response, request, render_template
 from flask_socketio import SocketIO, emit, send
 import ai_app_wrapper
-
+import asyncio
 
 app = Flask(__name__)
 CORS(app)  # すべてのオリジンからのアクセスを許可
@@ -27,13 +27,6 @@ def openai_chat():
 def get_token_count():
     request_json = request.data
     response = ai_app_wrapper.get_token_count(request_json)
-    print(response)
-    return Response(response, mimetype='application/json')
-
-@app.route('/api/autogen_group_chat', methods=['POST'])
-def autogen_group_chat():
-    request_json = request.data
-    response = ai_app_wrapper.autogen_group_chat(request_json)
     print(response)
     return Response(response, mimetype='application/json')
 
@@ -161,15 +154,18 @@ def handle_message(msg):
 
 @socketio.on('autogen_chat')
 def autogen_group_chat(request_json: str):
-    try:
-        for response in ai_app_wrapper.autogen_chat(request_json):
-            emit("response", response)
-    except Exception as e:
-        import traceback
-        emit("error", traceback.format_exc())
-    finally:
-        print("close", file=sys.stderr)
-        emit("close", "close")
+    async def task():
+        try:
+            async for response in ai_app_wrapper.autogen_chat(request_json):
+                emit("response", response)
+        except Exception as e:
+            import traceback
+            emit("error", traceback.format_exc())
+        finally:
+            print("close", file=sys.stderr)
+            emit("close", "close")
+
+    asyncio.run(task())
 
 
 @app.route('/api/shutdown', methods=['POST', 'GET'])
@@ -198,6 +194,6 @@ def pf_trace():
 if __name__ == ('__main__'):
     flask_port = os.getenv("FLASK_PORT", "5000")
     print(f"port={flask_port}", file=sys.stderr)
-    pf_trace()
+    # pf_trace()
     socketio.run(app, debug=True, host='0.0.0.0', port=flask_port, allow_unsafe_werkzeug=True)
     # app.run(debug=True, host='0.0.0.0', port=flask_port, threaded=True)

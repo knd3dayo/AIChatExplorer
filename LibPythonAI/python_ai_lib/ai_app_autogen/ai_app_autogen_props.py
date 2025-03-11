@@ -12,7 +12,7 @@ import sqlite3
 # time
 import time
 # Generator
-from typing import Generator
+from typing import Generator, AsyncGenerator
 
 # autogen
 from autogen_ext.models.openai import OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient
@@ -93,66 +93,6 @@ class AutoGenProps:
     def clear_agents(self):
         self.agents = []
 
-    # 指定した名前のエージェントを実行する
-    def run_agent(self, agent_name: str, input_text: str, result_queue: Queue) -> Generator:
-        # agent_nameのAgentを作成
-        agent = self.__create_agent(agent_name, self.openai_props)
-        task = self.__create_run_autogen_chat_task(agent, input_text, result_queue)
-
-        # agentを実行
-        import threading
-
-        def run_task():
-            try:
-                loop = asyncio.get_running_loop()
-            except RuntimeError:  # No running event loop
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-            try:
-                asyncio.run(task)
-            except Exception as e:
-                print(f"run_task error:{e}")
-                self.quit()
-                raise e
-
-        thread = threading.Thread(target=run_task)
-        thread.start()
-
-        # _get_messageを使って、result_queueからメッセージを取得して、Generatorを返す
-        try:
-            yield from self._get_message(result_queue)
-        except Exception as e:
-            self.quit()
-            raise e
-    
-    # 指定したinitial_messageを使って、GroupChatを実行する
-    def run_autogen_chat(self, initial_message: str, result_queue: Queue) -> Generator:
-        task = self.__create_run_autogen_chat_task(self.chat_object, initial_message, result_queue)
-
-        import threading
-
-        def run_task():
-            try:
-                loop = asyncio.get_running_loop()
-            except RuntimeError:  # No running event loop
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-            try:
-                asyncio.run(task)
-            except Exception as e:
-                print(f"run_task error:{e}")
-                self.quit()
-                raise e
-
-        thread = threading.Thread(target=run_task)
-        thread.start()
-
-        # _get_messageを使って、result_queueからメッセージを取得して、Generatorを返す
-        try:
-            yield from self._get_message(result_queue)
-        except Exception as e:
-            self.quit()
-            raise e
 
     # 指定したnameのGroupChatをDBから取得して、GroupChatを返す
     def __prepare_autogen_chat(self):
@@ -203,46 +143,25 @@ class AutoGenProps:
         
         self.chat_object = chat
 
+    # 指定した名前のエージェントを実行する
+    async def run_agent(self, agent_name: str, initial_message: str) -> AsyncGenerator:
+        # agent_nameのAgentを作成
+        agent = self.__create_agent(agent_name, self.openai_props)
 
-    def _get_message(self, result_queue: Queue) -> Generator:
-        while True:
-            retry_count = 0
-            while retry_count < 10:
-                if self.quit_flag:
-                    self.quit_flag = False
-                    return None
-                try:
-                    message = result_queue.get(block=True, timeout=5)
-                    if message:
-                        yield message
-                    else:
-                        return None
-                except Empty:
-                    retry_count += 1
-                    if retry_count > 10:
-                        return None
-                    
-
-    async def __create_run_autogen_chat_task(self, chat_object: SelectorGroupChat, initial_message: str, result_queue: Queue):
-
-        if not result_queue:
-            self.quit()
-            raise ValueError("result_queue is None")
-        if not self.chat_object:
-            self.quit()
-            raise ValueError("chat_object is not prepared")
-        
-        async for message in chat_object.run_stream(task=initial_message):
-            if self.quit_flag:
-                self.quit_flag = False
-                return
-            
+        async for message in agent.run_stream(task=initial_message):
             if type(message) == TaskResult:
-                result_queue.put(None)
                 break
             message_str = f"{message.source}: {message.content}"
-            result_queue.put(message_str)
-            # result_queue.put(message)
+            yield message_str
+    
+    # 指定したinitial_messageを使って、GroupChatを実行する
+    async def run_autogen_chat(self, initial_message: str) -> AsyncGenerator:
+
+        async for message in self.chat_object.run_stream(task=initial_message):
+            if type(message) == TaskResult:
+                break
+            message_str = f"{message.source}: {message.content}"
+            yield message_str
 
     # vector_search_agentsを準備する。vector_db_props_listを受け取り、vector_search_agentsを作成する
     def __create_vector_search_agent_list(self, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBProps]):

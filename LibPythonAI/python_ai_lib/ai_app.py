@@ -1,5 +1,5 @@
 import os, json
-from typing import Any, Tuple, Generator
+from typing import Any, Tuple, AsyncGenerator
 import tempfile
 import base64
 import time
@@ -119,15 +119,11 @@ def get_token_count(openai_props: OpenAIProps, input_text: str):
 ########################
 # autogen関連
 ########################
-def run_autogen_chat(autogen_props: AutoGenProps, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
-
-    if type ( openai_props) != OpenAIProps:
-        raise ValueError("openai_props is not OpenAIProps")
-    # queueを生成.
-    message_queue = Queue()
+async def run_autogen_chat(autogen_props: AutoGenProps,input_text: str) -> AsyncGenerator:
 
     # run_group_chatを実行
-    return autogen_props.run_autogen_chat(input_text, message_queue)
+    async for message in autogen_props.run_autogen_chat(input_text):
+        yield message
 
 ########################
 # langchain関連

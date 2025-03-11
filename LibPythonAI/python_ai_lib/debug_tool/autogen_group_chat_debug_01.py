@@ -6,12 +6,10 @@ import ai_app
 import logging 
 logging.basicConfig(level=logging.ERROR)
 
-from autogen_agentchat.base import TaskResult
-from autogen_agentchat.messages import TextMessage, HandoffMessage
-
+import asyncio
 import sys
 import getopt
-def main():
+async def main():
     # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
     os.environ["PYTHONUTF8"] = "1"
 
@@ -50,12 +48,8 @@ def main():
             if not request_dict:
                 raise ValueError("request is not found in props.")
             
-            # vector_db_items
-            vector_db_items = ai_app_wrapper.get_vector_db_objects(props_dict)
             # autogen_props 
             autogen_props = ai_app_wrapper.get_autogen_objects(props_dict)
-            # openai_props
-            openai_props, _ = ai_app_wrapper.get_openai_objects(props_dict)
 
 
             # メッセージを取得
@@ -72,7 +66,7 @@ def main():
 
     # AutogenGroupChatを実行
     message_count = 0
-    for message in ai_app.run_autogen_chat(autogen_props, openai_props, vector_db_items, input_text):
+    async for message in ai_app.run_autogen_chat(autogen_props,  input_text):
         if not message:
             break
         message_count += 1
@@ -80,4 +74,4 @@ def main():
         # print(f"source:{message.source}\nmessage:{message.content}")
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

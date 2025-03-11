@@ -215,6 +215,7 @@ namespace LibPythonAI.Model.Content {
                 db.ContentFolders.Entry(folder).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
+
         }
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {

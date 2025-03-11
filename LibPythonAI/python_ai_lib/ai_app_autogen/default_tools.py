@@ -261,7 +261,7 @@ def register_tool(
 
 # execute_agent
 # エージェントを実行する関数
-def execute_agent(
+async def execute_agent(
         agent_name: Annotated[str, "Agent name"], input_text: Annotated[str, "Input text"],
         ) -> Annotated[str, "Output text"]:
     """
@@ -271,7 +271,6 @@ def execute_agent(
     - Input text: The text data to be processed by the agent.
     """
     from main_db import MainDB
-    from queue import Queue
 
     global autogen_props 
     autogen_db_path = autogen_props.autogen_db_path
@@ -280,10 +279,9 @@ def execute_agent(
     if agent is None:
         return "The specified agent does not exist."
     
-    message_queue = Queue()
     output_text = ""
     # run_agent関数を使用して、エージェントを実行
-    for message in autogen_props.run_agent(agent_name, input_text, message_queue):
+    async for message in autogen_props.run_agent(agent_name, input_text):
         if not message:
             break
         output_text += message + "\n"
