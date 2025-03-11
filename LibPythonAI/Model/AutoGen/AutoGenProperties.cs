@@ -304,11 +304,12 @@ namespace PythonAILib.Model.AutoGen {
             agentDescription = "ツール実行エージェントを登録するエージェントです。";
             agentSystemMessage = $"""
                 あなたはツール実行エージェントの登録者です。code_writerエージェントが作成したpythonコードをPython関数(ツール)に加工します。
-                このpython関数は. 引数と戻り値はAnnotatedを使用して型を指定する必要があります。
-                ツールは汎用的なものであるべきです。code_writerエージェントが作成したpythonコードが具体的なものである場合は汎用化可能か検討してください。
-                例： xxxという文字列をファイルに書き込む -> 引数で指定された文字列をファイルに書き込む
-                加工したコードをregister_tool_agentツールを用いてDBに保存します。register_tool_agentに渡すfunction_nameは作成したPython関数名と同じである必要があります。
-
+                Python関数(ツール)をregister_tool_agentツールを用いてDBに保存します。
+                - Python関数(ツール)は. 引数と戻り値はAnnotatedを使用して型を指定する必要があります。
+                - Python関数(ツール)はexecにより動的に呼び出されるため、import文は原則、関数内に記述してください。
+                - Python関数(ツール)は汎用的なものであるべきです。code_writerエージェントが作成したpythonコードが具体的なものである場合は汎用化可能か検討してください。
+                - 例： xxxという文字列をファイルに書き込む -> 引数で指定された文字列をファイルに書き込む
+                - register_tool_agentに渡すfunction_nameは作成したPython関数(ツール)と同じである必要があります。
                 """;
             agentCodeExecution = false;
             agentLLMConfig = "default";

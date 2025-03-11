@@ -76,7 +76,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 1 || SelectedIndex == 2);
 
         // ClipboardFolderSelectionButtonVisibility
-        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 2);
+        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 

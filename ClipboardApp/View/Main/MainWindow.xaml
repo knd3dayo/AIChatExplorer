@@ -121,6 +121,7 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />
+                        <!-- RAGソース編集 現在はGitリポジトリの内容を元にベクトル生成する機能のみ提供。機能の要否、メニュー化の要否（フォルダ化でよい？)の検討中
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
@@ -129,6 +130,7 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditGitRagSource}" />
+                        -->
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
