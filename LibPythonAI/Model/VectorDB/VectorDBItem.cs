@@ -23,8 +23,11 @@ namespace LibPythonAI.Model.VectorDB {
 
         // システム共通のベクトルDBの名前
         public readonly static string SystemCommonVectorDBName = "default";
-        // デフォルトのコレクション名
+        // デフォルトのコレクション名 
         public readonly static string DefaultCollectionName = "ai_app_default_collection";
+        // フォルダーカタログのコレクション名 
+        public readonly static string FolderCatalogCollectionName = "ai_app_folder_catalog_collection";
+
 
         public static void Init() {
             var item = GetItemByName(SystemCommonVectorDBName);
@@ -64,34 +67,29 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // 名前
-        [JsonPropertyName("vector_db_name")]
         public string Name {
             get => Entity.Name;
             set => Entity.Name = value;
         }
         // 説明
-        [JsonPropertyName("vector_db_description")]
         public string Description {
             get => Entity.Description;
             set => Entity.Description = value;
         }
 
         // ベクトルDBのURL
-        [JsonPropertyName("vector_db_url")]
         public string VectorDBURL {
             get => Entity.VectorDBURL;
             set => Entity.VectorDBURL = value;
         }
 
         // マルチベクトルリトリーバを使うかどうか
-        [JsonPropertyName("is_use_multi_vector_retriever")]
         public bool IsUseMultiVectorRetriever {
             get => Entity.IsUseMultiVectorRetriever;
             set => Entity.IsUseMultiVectorRetriever = value;
         }
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        [JsonPropertyName("doc_store_url")]
         public string DocStoreURL {
             get => Entity.DocStoreURL;
             set => Entity.DocStoreURL = value;
@@ -105,7 +103,6 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // ベクトルDBの種類を表す文字列
-        [JsonPropertyName("vector_db_type_string")]
         public string VectorDBTypeString {
             get {
                 return Type.ToString();
@@ -113,21 +110,18 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // コレクション名
-        [JsonPropertyName("collection_name")]
         public string CollectionName {
             get => Entity.CollectionName;
             set => Entity.CollectionName = value;
         }
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
-        [JsonPropertyName("chunk_size")]
         public int ChunkSize {
             get => Entity.ChunkSize;
             set => Entity.ChunkSize = value;
         }
 
         // ベクトル検索時の検索結果上限
-        [JsonPropertyName("default_search_result_limit")]
         public int DefaultSearchResultLimit {
             get => Entity.DefaultSearchResultLimit;
             set => Entity.DefaultSearchResultLimit = value;
@@ -162,15 +156,15 @@ namespace LibPythonAI.Model.VectorDB {
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                { "vector_db_name", Name },
-                { "vector_db_description", Description },
-                { "vector_db_system_message", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
-                { "vector_db_url", VectorDBURL },
-                { "is_use_multi_vector_retriever", IsUseMultiVectorRetriever },
-                { "doc_store_url", DocStoreURL },
-                { "vector_db_type_string", VectorDBTypeString },
-                { "collection_name", CollectionName ?? ""},
-                { "chunk_size", ChunkSize },
+                { "Name", Name },
+                { "Description", Description },
+                { "SystemMessage", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
+                { "VectorDBURL", VectorDBURL },
+                { "IsUseMultiVectorRetriever", IsUseMultiVectorRetriever },
+                { "DocStoreURL", DocStoreURL },
+                { "VectorDBTypeString", VectorDBTypeString },
+                { "CollectionName", CollectionName ?? ""},
+                { "ChunkSize", ChunkSize },
             };
             return dict;
         }

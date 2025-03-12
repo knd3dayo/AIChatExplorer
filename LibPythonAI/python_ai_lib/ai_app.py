@@ -5,10 +5,11 @@ import base64
 import time
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_langchain import VectorDBProps, VectorSearchParameter
+from ai_app_langchain import VectorSearchParameter
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
 from ai_app_autogen import AutoGenProps
+from main_db import VectorDBItem, VectorSearchParameter
 
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -92,11 +93,11 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], request_context: RequestContext, request: dict) -> Tuple[str, str]:
+def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], request_context: RequestContext, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
     # ベクトル検索関数
     def vector_search(query: str) -> dict:
-        from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter
+        from main_db import VectorSearchParameter
         from ai_app_langchain.langchain_vector_db import LangChainVectorDB
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         return LangChainVectorDB.vector_search(params)
@@ -133,29 +134,32 @@ def vector_search(params:VectorSearchParameter) -> dict:
     result = LangChainVectorDB.vector_search(params)
     return result
 
-def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], params:LangChainChatParameter) -> dict:
+def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], params:LangChainChatParameter) -> dict:
     # langchan_chatを実行
     result = LangChainUtil.langchain_chat(openai_props, vector_db_items, params)
     return result
 
 # vector db関連
-def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps]):
-    # vector_db_itemsからVectorDBPropsを取得
+def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem]):
+    # vector_db_itemsからVectorDBItemを取得
     # LangChainVectorDBを生成
     for vector_db_props in vector_db_items:
         vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
         # delete_collectionを実行
         vector_db.delete_collection()
 
-def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBProps):
+def update_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem]):
+    pass
+
+def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.VectorMetadataList:
+    for entry in vector_db_props.vector_db_metadata_list:
         vector_db.delete_document(entry.source_id)
 
-def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBProps):
+def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     # LangChainVectorDBを生成
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.VectorMetadataList:
+    for entry in vector_db_props.vector_db_metadata_list:
         vector_db.update_document(entry)
 
 # export_to_excelを実行する

@@ -9,11 +9,11 @@ from langchain_core.vectorstores import VectorStore
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
-from ai_app_langchain.ai_app_vector_db_props import VectorDBProps
+from main_db import VectorDBItem
 
 class LangChainVectorDBChroma(LangChainVectorDB):
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         super().__init__(langchain_openai_client, vector_db_props)
 
     def _load(self):
@@ -21,14 +21,15 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         if self.vector_db_props.VectorDBTypeString != "Chroma":
             raise ValueError("vector_db_type_string must be 'Chroma'")
         # ベクトルDB用のディレクトリが存在しない、または空の場合
-        if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
+        vector_db_url = self.vector_db_props.VectorDBURL
+        if not vector_db_url or not os.path.exists(vector_db_url):
             # ディレクトリを作成
-            os.makedirs(self.vector_db_props.VectorDBURL)
+            os.makedirs(vector_db_url)
             # ディレクトリが作成されたことをログに出力
-            print("create directory:", self.vector_db_props.VectorDBURL)
+            print("create directory:", vector_db_url)
         # params
         params = {}
-        params["client"] = chromadb.PersistentClient(path=self.vector_db_props.VectorDBURL)
+        params["client"] = chromadb.PersistentClient(path=vector_db_url)
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         params["collection_metadata"] = {"hnsw:space":"cosine"}
         # collectionが指定されている場合

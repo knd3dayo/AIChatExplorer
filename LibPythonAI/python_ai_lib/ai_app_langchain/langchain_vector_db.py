@@ -20,9 +20,7 @@ from ai_app_langchain.langchain_doc_store import SQLDocStore
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
-from ai_app_langchain.ai_app_vector_db_props import VectorMetadata
-from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
-
+from main_db import VectorMetadata, VectorDBItem, VectorSearchParameter
 
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
@@ -59,7 +57,7 @@ class CustomMultiVectorRetriever(MultiVectorRetriever):
 class LangChainVectorDB:
 
     @staticmethod
-    def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
+    def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBItem):
 
         langchain_openai_client = LangChainOpenAIClient(openai_props)
         # ベクトルDBのタイプがChromaの場合
@@ -75,15 +73,15 @@ class LangChainVectorDB:
             raise ValueError("VectorDBType is invalid")
     
     @staticmethod
-    def get_vector_db_with_default_collection(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
+    def get_vector_db_with_default_collection(openai_props: OpenAIProps, vector_db_props: VectorDBItem):
         # vector_db_propsのコピーを作成
         new_vector_db_props = copy.deepcopy(vector_db_props)
         # デフォルトのコレクション名を設定
-        new_vector_db_props.CollectionName = VectorDBProps.DEFAULT_COLLECTION_NAME
+        new_vector_db_props.CollectionName = VectorDBItem.DEFAULT_COLLECTION_NAME
 
         return LangChainVectorDB.get_vector_db(openai_props, new_vector_db_props)
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         self.langchain_openai_client = langchain_openai_client
         self.vector_db_props = vector_db_props
         if vector_db_props.IsUseMultiVectorRetriever:
@@ -226,7 +224,7 @@ class LangChainVectorDB:
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
             doc_id = str(uuid.uuid4())
-            folder_id = self.vector_db_props.FolderID
+            folder_id = self.vector_db_props.FolderId
             metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
@@ -316,7 +314,7 @@ class LangChainVectorDB:
         # 既に存在するドキュメントを削除
         self.delete_document(params.source_id)
         # ドキュメントを格納する。
-        self.add_document_list(params.text, params.description, params.source_id, params.source_path, params.git_relative_path)
+        self.add_document_list(params.content, params.description, params.source_id, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
     @classmethod
@@ -332,8 +330,8 @@ class LangChainVectorDB:
             # デバッグ出力
             print(f'検索文字列: {params.query}')
             print('ベクトルDBの設定')
-            print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwarg)
+            print(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwargs)
             documents: list[Document] = retriever.invoke(params.query)
 
             print(f"documents:\n{documents}")

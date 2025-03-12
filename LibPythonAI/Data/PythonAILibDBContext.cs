@@ -9,6 +9,8 @@ namespace LibPythonAI.Data {
 
         public DbSet<ContentFolderEntity> ContentFolders { get; set; }
 
+        public DbSet<ContentFolderRootEntity> ContentFolderRoots { get; set; }
+
         public DbSet<ContentItemEntity> ContentItems { get; set; }
 
         //TagItemEntity

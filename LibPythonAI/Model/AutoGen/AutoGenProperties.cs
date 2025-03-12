@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
@@ -18,34 +19,26 @@ namespace PythonAILib.Model.AutoGen {
         public static readonly string CHAT_TYPE_NORMAL = "normal";
 
         // autogen_db_path
-        [JsonPropertyName("autogen_db_path")]
         public string AutoGenDBPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
         // venv_path
-        [JsonPropertyName("venv_path")]
         public string VenvPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
         // work_dir
-        [JsonPropertyName("work_dir")]
         public string WorkDir { get; set; } = "";
 
         // chat_type
-        [JsonPropertyName("chat_type")]
         public string ChatType { get; set; } = CHAT_TYPE_GROUP;
 
         // chat_name
-        [JsonPropertyName("chat_name")]
         public string ChatName { get; set; } = "default";
 
 
         // terminate_msg
-        [JsonPropertyName("terminate_msg")]
         public string TerminateMsg { get; set; } = "TERMINATE";
 
         // max_msg
-        [JsonPropertyName("max_msg")]
         public int MaxMsg { get; set; } = 15;
 
         // timeout
-        [JsonPropertyName("timeout")]
         public int Timeout { get; set; } = 120;
 
         // CreateEntriesDictList
@@ -59,6 +52,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "terminate_msg", TerminateMsg },
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
+                { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id }
             };
             return dict;
         }
@@ -168,6 +162,11 @@ namespace PythonAILib.Model.AutoGen {
             // vector_search
             toolName = "vector_search";
             toolDescription = "This function searches for the specified vector in the database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // global_vector_search
+            toolName = "global_vector_search";
+            toolDescription = "This function searches for the specified vector in the global database.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // agentの初期化
@@ -299,6 +298,21 @@ namespace PythonAILib.Model.AutoGen {
             agentTools = ["arxiv_search"];
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
+            // global_vector_searcher
+            agentName = "global_vector_searcher";
+            agentDescription = "ユーザーが過去に収集したデータを検索するエージェントです。";
+            agentSystemMessage = $"""
+                あなたはグローバルベクトル検索エージェントです。
+                ユーザーからの依頼に基づき、ユーザーが過去に収集したデータを検索します。
+                検索結果をユーザーに提供してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["global_vector_search"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
 
             agentName = "tool_agent_register";
             agentDescription = "ツール実行エージェントを登録するエージェントです。";

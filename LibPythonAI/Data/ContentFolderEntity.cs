@@ -27,17 +27,11 @@ namespace LibPythonAI.Data {
 
         public string? ParentId { get; set; }
 
-        // ルートフォルダか否か
-        public bool IsRootFolder { get; set; } = false;
-
         //　フォルダ名
         public string FolderName { get; set; } = "";
 
         // Description
         public string Description { get; set; } = "";
-
-        //　OS上のフォルダ名
-        public string ContentOutputFolderPrefix { get; set; } = "";
 
         public List<VectorDBPropertyEntity> VectorDBProperties { get; set; } = new();
 
@@ -85,6 +79,18 @@ namespace LibPythonAI.Data {
             }
             return result;
         }
+
+        // ルートフォルダを取得  ParentIdがnullでFolderTypeStringが一致するものを取得
+        public ContentFolderEntity GetRootFolder() {
+            using PythonAILibDBContext context = new();
+            var folder = context.ContentFolders
+                .FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == FolderTypeString);
+            if (folder == null) {
+                throw new Exception("Root folder not found");
+            }
+            return folder;
+        }
+
 
         public static ContentFolderEntity? GetFolder(string? id) {
             if (id == null) {

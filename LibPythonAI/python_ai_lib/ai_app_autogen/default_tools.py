@@ -187,12 +187,30 @@ def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
     if vector_db_items is empty, return None
     """
     global autogen_props
-    from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter
+    from main_db import VectorSearchParameter
     from ai_app_langchain.langchain_vector_db import LangChainVectorDB
     if not autogen_props.vector_db_props_list:
         return None
 
     params: VectorSearchParameter = VectorSearchParameter(autogen_props.openai_props, autogen_props.vector_db_props_list, query)
+    result = LangChainVectorDB.vector_search(params)
+    # Retrieve documents from result
+    documents = result.get("documents", [])
+    # Extract content of each document from documents
+    result = [doc.get("content", "") for doc in documents]
+    return result
+
+def global_vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
+    """
+    メインDBに登録されている全てのデータについて、ベクトル検索を行い、関連するドキュメントを返します。
+    """
+    global autogen_props
+    from main_db import MainDB, VectorSearchParameter
+    from ai_app_langchain.langchain_vector_db import LangChainVectorDB
+    main_db = main_db = MainDB(autogen_props.autogen_db_path)
+    main_vector_db_item = main_db.get_vector_db_item(autogen_props.main_vector_db_id)
+
+    params: VectorSearchParameter = VectorSearchParameter(autogen_props.openai_props, [main_vector_db_item], query)
     result = LangChainVectorDB.vector_search(params)
     # Retrieve documents from result
     documents = result.get("documents", [])

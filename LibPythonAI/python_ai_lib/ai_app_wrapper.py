@@ -5,9 +5,8 @@ from io import StringIO
 import sys
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
-from ai_app_langchain import VectorDBProps
+from main_db import VectorDBItem, VectorSearchParameter
 from ai_app_autogen import AutoGenProps
-from ai_app_langchain.ai_app_vector_db_props import VectorSearchParameter
 
 import ai_app
 
@@ -135,18 +134,18 @@ def get_openai_objects(request_dict: dict) -> tuple[OpenAIProps, OpenAIClient]:
     client = OpenAIClient(openai_props)
     return openai_props, client
 
-def get_vector_db_objects(request_dict: dict) -> list[VectorDBProps]:
+def get_vector_db_objects(request_dict: dict) -> list[VectorDBItem]:
     # contextを取得
     request_context:dict = request_dict.get(request_context_name, None)
     if not request_context:
         raise ValueError("context is not set.")
-    # VectorDBPropsを生成
+    # VectorDBItemを生成
     vector_db_items = request_context.get(vector_db_items_name, None)
     if not vector_db_items:
         print("vector_db_items is not set")
         return []
     
-    vector_db_props = [VectorDBProps(item) for item in vector_db_items]
+    vector_db_props = [VectorDBItem(item) for item in vector_db_items]
     return vector_db_props
 
 def get_autogen_objects(request_dict: dict) -> AutoGenProps:
@@ -225,7 +224,7 @@ def openai_chat(request_json: str):
         request_dict: dict = json.loads(request_json)
         # OpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # context_jsonからVectorDBPropsを生成
+        # context_jsonからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         # context_jsonからChatRequestContextを生成
         chat_request_context = get_chat_request_context_objects(request_dict)
@@ -318,7 +317,7 @@ def langchain_chat( request_json: str):
         from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
 
         # chat_requestを取得
@@ -345,7 +344,7 @@ def vector_search(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         # queryを取得
         query_request = get_query_request_objects(request_dict)
@@ -367,7 +366,7 @@ def update_collection(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
 
         ai_app.update_collection(openai_props, vector_db_items)
@@ -386,7 +385,7 @@ def delete_collection(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         
         ai_app.delete_collection(openai_props, vector_db_items)
@@ -406,7 +405,7 @@ def delete_embeddings(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         for vector_db_item in vector_db_items:
             ai_app.delete_embeddings(openai_props, vector_db_item)
@@ -426,7 +425,7 @@ def update_embeddings(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBPropsを生成
+        # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         for vector_db_item in vector_db_items:
             ai_app.update_embeddings(openai_props, vector_db_item)

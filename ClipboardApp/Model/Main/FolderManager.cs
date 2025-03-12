@@ -91,13 +91,21 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (clipboardRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
+                            FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
@@ -113,13 +121,21 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (searchRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = SEARCH_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = SEARCH_ROOT_FOLDER_NAME,
+                            FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
@@ -135,13 +151,21 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (chatRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = CHAT_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = CHAT_ROOT_FOLDER_NAME,
+                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
@@ -157,17 +181,26 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (fileSystemRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
+                            FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
                     }
+
                     fileSystemRootFolder = new FileSystemFolder(folder);
                 }
                 return fileSystemRootFolder;
@@ -179,17 +212,26 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (shortcutRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SHORTCUT_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
                             FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SHORTCUT_ROOT_FOLDER_NAME_EN)
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
                     }
+
                     shortcutRootFolder = new ShortCutFolder(folder);
                 }
                 return shortcutRootFolder;
@@ -201,17 +243,26 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (outlookRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
                             FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN)
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
                     }
+
                     outlookRootFolder = new OutlookFolder(folder);
                 }
                 return outlookRootFolder;
@@ -226,17 +277,26 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (edgeBrowseHistoryRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
+                            FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
                     }
+
                     edgeBrowseHistoryRootFolder = new EdgeBrowseHistoryFolder(folder);
                 }
                 return edgeBrowseHistoryRootFolder;
@@ -249,17 +309,26 @@ namespace ClipboardApp.Model.Main {
             get {
                 if (recentFilesRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.ParentId == null && x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
-                            IsRootFolder = true,
+                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    if (folderRoot == null) {
+                        folderRoot = new() {
                             FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN)
+                        };
+                        db.ContentFolderRoots.Add(folderRoot);
+                        db.SaveChanges();
+                    }
+                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
+                            FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                         };
                         db.ContentFolders.Add(folder);
                         db.SaveChanges();
                     }
+
                     recentFilesRootFolder = new RecentFilesFolder(folder);
                 }
                 return recentFilesRootFolder;

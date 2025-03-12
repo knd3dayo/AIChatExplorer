@@ -1,10 +1,11 @@
 from typing import Annotated
-from ai_app_langchain.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
+from main_db import VectorDBItem, VectorSearchParameter
+
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
 
-def create_vector_search_tool(openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> callable:
+def create_vector_search_tool(openai_props: OpenAIProps, vector_db_props_list: list[VectorDBItem]) -> callable:
 
     def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
         """

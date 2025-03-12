@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from typing import List
+import uuid
 
 class ContentFolder:
     '''
@@ -9,22 +10,18 @@ class ContentFolder:
     "Id" TEXT NOT NULL CONSTRAINT "PK_ContentFolders" PRIMARY KEY,
     "FolderTypeString" TEXT NOT NULL,
     "ParentId" TEXT NULL,
-    "IsRootFolder" INTEGER NOT NULL,
     "FolderName" TEXT NOT NULL,
     "Description" TEXT NOT NULL,
-    "ContentOutputFolderPrefix" TEXT NOT NULL,
     "ExtendedPropertiesJson" TEXT NOT NULL
 )
     '''
-    def __init__(self, id: str, content_folder_dict: dict):
-        self.id = id
-        self.folder_type_string = content_folder_dict.get("folder_type_string", "")
-        self.parent_id = content_folder_dict.get("parent_id", "")
-        self.is_root_folder = content_folder_dict.get("is_root_folder", 0)
-        self.folder_name = content_folder_dict.get("folder_name", "")
-        self.description = content_folder_dict.get("description", "")
-        self.content_output_folder_prefix = content_folder_dict.get("content_output_folder_prefix", "")
-        self.extended_properties_json = content_folder_dict.get("extended_properties_json", "")
+    def __init__(self, content_folder_dict: dict):
+        self.Id = content_folder_dict.get("Id", "")
+        self.FolderTypeString = content_folder_dict.get("FolderTypeString", "")
+        self.ParentId = content_folder_dict.get("ParentId", "")
+        self.FolderName = content_folder_dict.get("FolderName", "")
+        self.Description = content_folder_dict.get("Description", "")
+        self.ExtendedPropertiesJson = content_folder_dict.get("ExtendedPropertiesJson", "")
  
 
 class ContentItem:
@@ -54,30 +51,56 @@ class ContentItem:
     '''
     def __init__(self, content_item_dict: dict):
 
-        self.id = content_item_dict.get("id", "")
-        self.folder_id = content_item_dict.get("folder_id", "")
-        self.created_at = content_item_dict.get("created_at", "")
-        self.updated_at = content_item_dict.get("updated_at", "")
-        self.vectorized_at = content_item_dict.get("vectorized_at", "")
-        self.content = content_item_dict.get("content", "")
-        self.description = content_item_dict.get("description", "")
-        self.content_type = content_item_dict.get("content_type", 0)
-        self.chat_messages_json = content_item_dict.get("chat_messages_json", "")
-        self.prompt_chat_result_json = content_item_dict.get("prompt_chat_result_json", "")
-        self.tag_string = content_item_dict.get("tag_string", "")
-        self.source_application_name = content_item_dict.get("source_application_name", "")
-        self.source_application_title = content_item_dict.get("source_application_title", "")
-        self.source_application_id = content_item_dict.get("source_application_id", 0)
-        self.source_application_path = content_item_dict.get("source_application_path", "")
-        self.is_pinned = content_item_dict.get("is_pinned", 0)
-        self.document_reliability = content_item_dict.get("document_reliability", 0)
-        self.document_reliability_reason = content_item_dict.get("document_reliability_reason", "")
-        self.is_reference_vector_db_items_synced = content_item_dict.get("is_reference_vector_db_items_synced", 0)
-        self.cached_base64_string = content_item_dict.get("cached_base64_string", "")
-        self.extended_properties_json = content_item_dict.get("extended_properties_json", "")
+        self.Id = content_item_dict.get("Id", "")
+        self.FolderId = content_item_dict.get("FolderId", "")
+        self.CreatedAt = content_item_dict.get("CreatedAt", "")
+        self.UpdatedAt = content_item_dict.get("UpdatedAt", "")
+        self.VectorizedAt = content_item_dict.get("VectorizedAt", "")
+        self.Content = content_item_dict.get("Content", "")
+        self.Description = content_item_dict.get("Description", "")
+        self.ContentType = content_item_dict.get("ContentType", 0)
+        self.ChatMessagesJson = content_item_dict.get("ChatMessagesJson", "")
+        self.PromptChatResultJson = content_item_dict.get("PromptChatResultJson", "")
+        self.TagString = content_item_dict.get("TagString", "")
+        self.SourceApplicationName = content_item_dict.get("SourceApplicationName", "")
+        self.SourceApplicationTitle = content_item_dict.get("SourceApplicationTitle", "")
+        self.SourceApplicationID = content_item_dict.get("SourceApplicationID", 0)
+        self.SourceApplicationPath = content_item_dict.get("SourceApplicationPath", "")
+        self.IsPinned = content_item_dict.get("IsPinned", 0)
+        self.DocumentReliability = content_item_dict.get("DocumentReliability", 0)
+        self.DocumentReliabilityReason = content_item_dict.get("DocumentReliabilityReason", "")
+        self.IsReferenceVectorDBItemsSynced = content_item_dict.get("IsReferenceVectorDBItemsSynced", 0)
+        self.CachedBase64String = content_item_dict.get("CachedBase64String", "")
+        self.ExtendedPropertiesJson = content_item_dict.get("ExtendedPropertiesJson", "")
 
 
 class VectorDBItem:
+
+    # コレクションの指定がない場合はデフォルトのコレクション名を使用
+    DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
+    FOLDER_CATALOG_COLLECTION_NAME = "ai_app_folder_catalog_collection"
+
+    source_id_name = "source_id"
+    source_path_name = "source_path"
+    git_repository_url_name = "git_repository_url"
+    git_relative_path_name = "git_relative_path"
+    image_url_name = "image_url"
+    description_name = "description"
+    system_message_name = "system_message"
+    content_name = "content"
+    folder_id_name = "folder_id"
+
+    vector_db_url_name = "vector_db_url"
+    vector_db_type_string_name = "vector_db_type_string"
+    vector_db_name_name = "vector_db_name"
+    vector_db_description_name = "vector_db_description"
+    chunk_size_name = "chunk_size"
+    is_use_multi_vector_retriever_name = "is_use_multi_vector_retriever"
+    doc_store_url_name = "doc_store_url"
+    search_kwargs_name = "search_kwargs"
+    vector_db_metadata_list_name = "vector_db_metadata_list"
+    score_name = "score"
+
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE "VectorDBItems" (
@@ -97,20 +120,92 @@ class VectorDBItem:
     )    
     '''
     def __init__(self, vector_db_item_dict: dict):
-        self.id = vector_db_item_dict.get("id", "")
-        self.name = vector_db_item_dict.get("name", "")
-        self.description = vector_db_item_dict.get("description", "")
-        self.vector_db_url = vector_db_item_dict.get("vector_db_url", "")
-        self.is_use_multi_vector_retriever = vector_db_item_dict.get("is_use_multi_vector_retriever", 0)
-        self.doc_store_url = vector_db_item_dict.get("doc_store_url", "")
-        self.vector_db_type = vector_db_item_dict.get("vector_db_type", 0)
-        self.collection_name = vector_db_item_dict.get("collection_name", "")
-        self.catalog_db_url = vector_db_item_dict.get("catalog_db_url", "")
-        self.chunk_size = vector_db_item_dict.get("chunk_size", 0)
-        self.default_search_result_limit = vector_db_item_dict.get("default_search_result_limit", 0)
-        self.is_enabled = vector_db_item_dict.get("is_enabled", 0)
-        self.is_system = vector_db_item_dict.get("is_system", 0)
+        self.Id = vector_db_item_dict.get("Id", str(uuid.uuid4()))
+        self.Name = vector_db_item_dict.get("Name", "")
+        self.Description = vector_db_item_dict.get("Description", "")
+        self.VectorDBURL = vector_db_item_dict.get("VectorDBURL", "")
+        value1 = vector_db_item_dict.get("IsUseMultiVectorRetriever", 0)
+        if value1 == 1 or value1 == True:
+            self.IsUseMultiVectorRetriever = True
+        elif (type(value1) == str and value1.upper() == "TRUE"):
+            self.IsUseMultiVectorRetriever = True
+        else:
+            self.IsUseMultiVectorRetriever = False
 
+        self.DocStoreURL = vector_db_item_dict.get("DocStoreURL", "")
+        self.VectorDBType = vector_db_item_dict.get("VectorDBType", 0)
+        self.CollectionName = vector_db_item_dict.get("CollectionName", "")
+        self.CatalogDBURL = vector_db_item_dict.get("CatalogDBURL", "")
+        self.ChunkSize = vector_db_item_dict.get("ChunkSize", 0)
+        self.DefaultSearchResultLimit = vector_db_item_dict.get("DefaultSearchResultLimit", 0)
+        self.IsEnabled = vector_db_item_dict.get("IsEnabled", 0)
+        self.IsSystem = vector_db_item_dict.get("IsSystem", 0)
+
+        self.VectorDBTypeString :str = vector_db_item_dict.get("VectorDBTypeString", "")
+        if not self.VectorDBTypeString:
+            if self.VectorDBType == 1:
+                self.VectorDBTypeString = "Chroma"
+            elif self.VectorDBType == 2:
+                self.VectorDBTypeString = "PGVector"
+            else:
+                raise ValueError("VectorDBType must be 0 or 1")
+
+
+        # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
+        self.VectorDBMetadataList = [VectorMetadata(entry) for entry in vector_db_item_dict.get("VectorDBMetadataList", [])]
+
+        # search_kwarg
+        self.SearchKwargs = vector_db_item_dict.get("SearchKwargs", {})
+
+        # system_message
+        self.SystemMessage = vector_db_item_dict.get("SystemMessage", self.Description)
+
+        # FolderのID
+        self.FolderId = vector_db_item_dict.get("FolderId", "")
+
+    @staticmethod
+    def get_vector_db_env_variables() -> 'VectorDBItem':
+        from dotenv import load_dotenv
+        import os
+        load_dotenv()
+        props: dict = {
+            "Name": os.getenv("VECTOR_DB_NAME"),
+            "VectorDBUrl": os.getenv("VECTOR_DB_URL"),
+            "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
+            "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
+            "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
+            "DocStoreUrl": os.getenv("DOC_STORE_URL"),
+            "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
+            # チャンクサイズ
+            "ChunkSize": int(os.getenv("ChunkSize", 1024)),
+            
+        }
+        return  VectorDBItem(props)
+
+class VectorMetadata:
+    def __init__(self, vector_db_entry: dict):
+
+        # request_jsonをdictに変換
+        self.source_id = vector_db_entry["source_id"]
+        self.description = vector_db_entry.get("description", "")
+        self.content = vector_db_entry["content"]
+        self.source_path = vector_db_entry.get("source_path", "")
+        self.git_repository_url = vector_db_entry.get("git_repository_url", "")
+        self.git_relative_path = vector_db_entry.get("git_relative_path", "")
+        self.image_url = vector_db_entry.get("image_url", "")
+
+class VectorSearchParameter:
+    from ai_app_openai import OpenAIProps
+    def __init__(self, openai_props: OpenAIProps = None, vector_db_props: list[VectorDBItem] = None, query: str = ""):
+
+        # OpenAIPorpsを生成
+        self.openai_props = openai_props
+
+        # VectorDBItemのリストを取得
+        self.vector_db_props = vector_db_props
+
+        #  openai_props, vector_db_items, query, search_kwargを設定する
+        self.query = query
 
 class AutogentLLMConfig:
     '''
@@ -163,6 +258,60 @@ class AutogenGroupChat:
 class MainDB:
     def __init__(self, db_path):
         self.db_path = db_path
+
+    def get_content_folder(self, folder_id: str) -> ContentFolder:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM ContentFolders WHERE Id=?", (folder_id,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None:
+            return None
+
+        folder_dict = dict(row)
+        conn.close()
+
+        return ContentFolder(folder_dict)
+    
+    def get_content_folders(self) -> List[ContentFolder]:
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM ContentFolders")
+        rows = cur.fetchall()
+        folders = [ContentFolder(dict(row)) for row in rows]
+        conn.close()
+
+        return folders
+
+    def get_vector_db_item(self, vector_db_item_id: str) -> VectorDBItem:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM VectorDBItems WHERE Id=?", (vector_db_item_id,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None:
+            return None
+        # debug
+        print(dict(row))
+        vector_db_item_dict = dict(row)
+        conn.close()
+
+        return VectorDBItem(vector_db_item_dict)
+    
+    def get_vector_db_items(self) -> List[VectorDBItem]:
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM VectorDBItems")
+        rows = cur.fetchall()
+        vector_db_items = [VectorDBItem(dict(row)) for row in rows]
+        conn.close()
+
+        return vector_db_items
+
 
     def get_autogen_llm_config(self, llm_config_name: str) -> AutogentLLMConfig:
         conn = sqlite3.connect(self.db_path)

@@ -11,11 +11,12 @@ from sqlalchemy.sql import text
 from langchain_core.vectorstores import VectorStore
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
-from ai_app_langchain.ai_app_vector_db_props import VectorDBProps
+from main_db import VectorDBItem
+
     
 class LangChainVectorDBPGVector(LangChainVectorDB):
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         super().__init__(langchain_openai_client, vector_db_props)
 
 

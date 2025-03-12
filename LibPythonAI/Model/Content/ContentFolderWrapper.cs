@@ -1,5 +1,4 @@
 using LibPythonAI.Data;
-using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.AutoProcess;
@@ -65,23 +64,28 @@ namespace LibPythonAI.Model.Content {
                 return $"{parentFolder.ContentFolderPath}/{FolderName}";
             }
         }
-        // OS上のフォルダのパス
+        // OS上の出力先フォルダのパス
         public virtual string ContentOutputFolderPath {
             get {
                 string osFolderName;
-                // 親フォルダを取得
-                var parentFolder = GetParent<ContentFolderWrapper>();
-                if (parentFolder == null) {
-                    osFolderName = Entity.ContentOutputFolderPrefix;
+                // ルートフォルダのIdを取得
+                var rootFolder = Entity.GetRootFolder();
+                // ContentFolderRootEntityを取得
+                var rootFolderEntity = ContentFolderRootEntity.GetFolderRoot(rootFolder.Id);
+                if (rootFolderEntity == null) {
+                    throw new Exception("Root folder not found");
+                }
+                if (IsRootFolder) {
+                    return rootFolderEntity.ContentOutputFolderPrefix;
                 } else {
                     // FolderNameに:、\、/が含まれている場合は文字を削除
                     string modifiedFolderName = FolderName;
                     if (FolderName.Contains(':') || FolderName.Contains('\\') || FolderName.Contains('/')) {
                         modifiedFolderName = FolderName.Replace(":", "").Replace("\\", "").Replace("/", "");
                     }
-
-                    osFolderName = $"{parentFolder.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{modifiedFolderName}";
+                    osFolderName = $"{Parent?.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{modifiedFolderName}";
                 }
+
                 return osFolderName;
             }
         }
@@ -89,10 +93,9 @@ namespace LibPythonAI.Model.Content {
         // ルートフォルダか否か
         public bool IsRootFolder {
             get {
-                return Entity.IsRootFolder;
-            }
-            set {
-                Entity.IsRootFolder = value;
+                // このオブジェクトのIdと一致するIdをContentFolderRootEntityが存在するか
+                var rootId = Entity.GetRootFolder().Id;
+                return rootId != null && rootId.Equals(Id);
             }
         }
 
@@ -158,7 +161,7 @@ namespace LibPythonAI.Model.Content {
         public virtual void Delete() {
             // ベクトルを全削除
             GetMainVectorSearchProperty().DeleteVectorDBCollection();
-            using PythonAILibDBContext db = new ();
+            using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
 
@@ -170,12 +173,12 @@ namespace LibPythonAI.Model.Content {
             return [.. Entity.GetContentItems().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
         }
 
-        public virtual List<T> GetChildren<T>() where T: ContentFolderWrapper {
+        public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
             return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
         }
 
         // 親フォルダ
-        public virtual T? GetParent<T>() where T: ContentFolderWrapper {
+        public virtual T? GetParent<T>() where T : ContentFolderWrapper {
             var folder = ContentFolderEntity.GetFolder(Entity.ParentId);
             if (folder == null) {
                 return null;
@@ -232,7 +235,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        
+
         public virtual void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
 
             if (applyGlobalAutoAction) {
@@ -293,7 +296,7 @@ namespace LibPythonAI.Model.Content {
                 return null;
             }
 
-            var folder  = ContentFolderEntity.GetFolder(id);
+            var folder = ContentFolderEntity.GetFolder(id);
             if (folder == null) {
                 return null;
             }

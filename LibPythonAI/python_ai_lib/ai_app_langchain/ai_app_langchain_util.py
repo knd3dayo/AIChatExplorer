@@ -15,14 +15,15 @@ from ai_app_langchain.ai_app_langchain_client import LangChainOpenAIClient, Lang
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
-from ai_app_langchain.ai_app_vector_db_props import VectorDBProps
+from main_db import VectorDBItem
+
 
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
 
 class RetrievalQAUtil:
 
-    def __init__(self, client: LangChainOpenAIClient, vector_db_items:list[VectorDBProps]):
+    def __init__(self, client: LangChainOpenAIClient, vector_db_items:list[VectorDBItem]):
         self.client = client
         self.vector_db_items = vector_db_items
 
@@ -124,14 +125,12 @@ class RetrievalQAUtil:
 
 
     # ベクトル検索結果を返すToolを作成する関数
-    def create_vector_search_tools(self, client: LangChainOpenAIClient, vector_db_props: list[VectorDBProps]) -> list[Any]:
+    def create_vector_search_tools(self, client: LangChainOpenAIClient, vector_db_props: list[VectorDBItem]) -> list[Any]:
         tools = []
         for i in range(len(vector_db_props)):
             item = vector_db_props[i]
             # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
-            description = item.VectorDBDescription
-            if not description:
-                description = "ユーザーの質問に関連する情報をベクトルDBから検索するための汎用的なツールです。"
+            description = item.Description
 
             # ツールを作成
             def vector_search_function(question: str) -> list[Document]:
@@ -160,7 +159,7 @@ class LangChainUtil:
 
 
     @staticmethod
-    def langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], params: LangChainChatParameter):
+    def langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], params: LangChainChatParameter):
 
         # langchainのログを出力する
         langchain.verbose = True
@@ -194,9 +193,10 @@ if __name__ == '__main__':
     question1 = input("Please enter your question:")
 
     from ai_app_openai.ai_app_openai_util import OpenAIProps
-    from ai_app_langchain.ai_app_vector_db_props import VectorDBProps
+
+    from main_db import VectorDBItem
     openai_props:OpenAIProps  = OpenAIProps.env_to_props()
-    vector_db_item: VectorDBProps = VectorDBProps.get_vector_db_settings()
+    vector_db_item: VectorDBItem = VectorDBItem.get_vector_db_env_variables()
 
     params: LangChainChatParameter = LangChainChatParameter()
 

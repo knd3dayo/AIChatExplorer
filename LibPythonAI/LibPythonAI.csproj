@@ -96,9 +96,6 @@
     <EmbeddedResource Include="python_ai_lib\debug_tool\autogen_group_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\ai_app_vector_db_props.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\main_db\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
