@@ -104,12 +104,6 @@ namespace PythonAILib.PythonIF {
             StartPythonConsole(configPrams, "ai_app_server.py", false, (process) => { });
         }
 
-        private static string GetApplicationPidFilePath(IPythonAILibConfigParams configPrams) {
-            string appDataDir = configPrams.GetAppDataPath();
-            string pidFilePath = Path.Combine(appDataDir, "rag-clipboard.pid");
-            return pidFilePath;
-        }
-
 
         private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string scriptPath, bool showConsole, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
@@ -122,7 +116,8 @@ namespace PythonAILib.PythonIF {
             // Venv環境が存在するかチェック
             if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
                 string message = StringResources.PythonVenvNotFound;
-                throw new Exception(message + pathToVirtualEnv);
+                LogWrapper.Error($"{message}:{pathToVirtualEnv}");
+                return;
             }
             // Environment variables
             Dictionary<string, string> envVars = new();
@@ -189,7 +184,8 @@ namespace PythonAILib.PythonIF {
             // Venv環境が存在するかチェック
             if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
                 string message = StringResources.PythonVenvNotFound;
-                throw new Exception(message + pathToVirtualEnv);
+                LogWrapper.Error($"{message}:{pathToVirtualEnv}" );
+                return;
             }
 
             Dictionary<string, string> envVars = new() {

@@ -15,7 +15,7 @@ using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.ChatMain;
+using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.View.RAG;
@@ -107,17 +107,17 @@ namespace ClipboardApp.ViewModel.Main {
         public void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
-            QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
+            QAChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
         // Command to open Image Chat
         public void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
-            ImageChatMainWindow.OpenMainWindow(item, action);
+            ImageChatWindow.OpenMainWindow(item, action);
         }
 
         // Command to Open Merge Chat
         public void OpenMergeChatWindowCommand(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
-            MergeChatMainWindow.OpenWindow(folderViewModel, selectedItems);
+            MergeChatWindow.OpenWindow(folderViewModel, selectedItems);
         }
 
         // Process when "RAG Management" is clicked in the menu
@@ -319,21 +319,28 @@ namespace ClipboardApp.ViewModel.Main {
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
                 CloseCommand = (item, saveChatHistory) => {
-                    bool flag = clipboardItem.GetFolder().FolderTypeString != FolderTypeEnum.Chat.ToString();
-                    clipboardItem.Save();
+                    bool isChatFolder = clipboardItem.GetFolder().Id == ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id;
 
-                    if (saveChatHistory && flag) {
-                        // チャット履歴用のItemの設定
-                        ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                        ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
-                        chatHistoryItem.Entity.FolderId = chatFolder.Id;
+                    if (saveChatHistory) {
+                        if (isChatFolder) {
+                            // ChatItemsTextをContentに設定
+                            clipboardItem.Content = clipboardItem.ChatItemsText;
+                            clipboardItem.Save();
 
-                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
-                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                        } else {
+                            clipboardItem.Save();
+                            // チャット履歴用のItemの設定
+                            ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
+                            ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
+                            chatHistoryItem.Entity.FolderId = chatFolder.Id;
+
+                            // タイトルを日付 + 元のタイトルにする
+                            chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + chatHistoryItem.Description;
+                            // ChatItemsTextをContentに設定
+                            chatHistoryItem.Content = clipboardItem.ChatItemsText;
+
+                            chatHistoryItem.Save();
                         }
-                        // タイトルを日付 + 元のタイトルにする
-                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
-                        chatHistoryItem.Save();
                     }
                 },
                 // ExportChatアクション

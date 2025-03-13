@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.ChatMain;
+using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
@@ -11,7 +11,7 @@ using PythonAILib.Utils.Python;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 
-namespace LibUIPythonAI.ViewModel.ChatMain {
+namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : ChatViewModelBase {
 
         //初期化
@@ -37,6 +37,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
         public ChatRequest ChatRequest { get; set; } = new();
 
+        public bool ChatExecuted { get; set; } = false;
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
@@ -159,6 +160,8 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
                 // inputTextをクリア
                 InputText = "";
+                // ChatExecutedをTrueに設定
+                ChatExecuted = true;
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
@@ -274,7 +277,9 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
 
 
         public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
-            QAChatStartupPropsInstance.CloseCommand(QAChatStartupPropsInstance.ContentItem, true);
+            // Chatを実行した場合は 、ContentItemを更新
+
+            QAChatStartupPropsInstance.CloseCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
             window.Close();
         });
 

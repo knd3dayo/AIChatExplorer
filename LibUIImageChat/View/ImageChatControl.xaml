@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:LibUIImageChat.ViewModel"
     xmlns:res="clr-namespace:LibUIImageChat.View"
-    d:DataContext="{d:DesignInstance Type=model:ImageChatMainWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=model:ImageChatWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />

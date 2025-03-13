@@ -6,13 +6,13 @@ namespace LibUIImageChat.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class ImageChatMainWindow : Window {
-        public ImageChatMainWindow() {
+    public partial class ImageChatWindow : Window {
+        public ImageChatWindow() {
             InitializeComponent();
         }
         public static void OpenMainWindow(ContentItemWrapper clipboardItem, Action afterUpdate) {
-            ImageChatMainWindow imageEvidenceCheckerWindow = new();
-            imageEvidenceCheckerWindow.DataContext = new ImageChatMainWindowViewModel(clipboardItem, afterUpdate);
+            ImageChatWindow imageEvidenceCheckerWindow = new();
+            imageEvidenceCheckerWindow.DataContext = new ImageChatWindowViewModel(clipboardItem, afterUpdate);
             imageEvidenceCheckerWindow.Show();
         }
     }

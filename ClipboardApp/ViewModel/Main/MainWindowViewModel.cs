@@ -267,7 +267,7 @@ namespace ClipboardApp.ViewModel.Main {
             // チャット履歴用のItemの設定
             ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
                 // タイトルを日付 + 元のタイトルにする
-                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat"
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
             };
             ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
 

@@ -1,18 +1,18 @@
 using System.Windows;
-using LibUIPythonAI.ViewModel.ChatMain;
 using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Chat;
 
-namespace LibUIPythonAI.View.ChatMain {
+namespace LibUIPythonAI.View.Chat {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class QAChatMainWindow : Window {
-        public QAChatMainWindow() {
+    public partial class QAChatWindow : Window {
+        public QAChatWindow() {
             InitializeComponent();
         }
 
         public static void OpenOpenAIChatWindow(QAChatStartupProps props) {
-            LibUIPythonAI.View.ChatMain.QAChatMainWindow openAIChatWindow = new();
+            LibUIPythonAI.View.Chat.QAChatWindow openAIChatWindow = new();
             ChatWindowViewModel mainWindowViewModel = new(props);
             openAIChatWindow.DataContext = mainWindowViewModel;
 

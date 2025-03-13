@@ -1,5 +1,5 @@
 <Window
-    x:Class="LibUIPythonAI.View.ChatMain.EditChatItemWindow"
+    x:Class="LibUIPythonAI.View.Chat.EditChatItemWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:LibUIPythonAI.View.Common"
@@ -9,8 +9,8 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="clr-namespace:LibUIPythonAI.ViewModel.ChatMain"
-    xmlns:res="clr-namespace:LibUIPythonAI.View.ChatMain"
+    xmlns:model="clr-namespace:LibUIPythonAI.ViewModel.Chat"
+    xmlns:res="clr-namespace:LibUIPythonAI.View.Chat"
     Title="{x:Static res:ViewStringResources.ChatItem}"
     Width="800"
     Height="450"

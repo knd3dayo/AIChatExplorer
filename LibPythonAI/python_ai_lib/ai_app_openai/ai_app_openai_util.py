@@ -248,13 +248,14 @@ class OpenAIClient:
         else:
             target_messages = [original_last_message]
 
-        for target_message in target_messages:
+        for i in range(0, len(target_messages)):
+            target_message = target_messages[i]
             # ベクトル検索用の文字列としてqueryにtarget_messageを設定する
             query = target_message
             # context_message 
             context_message = ""
-            if len(request_context.PromptTemplateText) > 0:
-                context_message = request_context.PromptTemplateText
+            if i > 0 and len(request_context.PromptTemplateText) > 0:
+                context_message = request_context.PromptTemplateText + "\n\n"
             # vector_search_functionがNoneでない場合はベクトル検索を実施
             if vector_search_function:
                 vector_search_result = vector_search_function(query) 

@@ -1,8 +1,7 @@
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel;
 
-namespace LibUIPythonAI.ViewModel.ChatMain {
+namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatWindowViewModel : ChatViewModelBase {
 
         //初期化

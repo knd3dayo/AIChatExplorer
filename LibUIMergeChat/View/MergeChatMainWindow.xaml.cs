@@ -8,13 +8,13 @@ namespace LibUIMergeChat.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MergeChatMainWindow : Window {
-        public MergeChatMainWindow() {
+    public partial class MergeChatWindow : Window {
+        public MergeChatWindow() {
             InitializeComponent();
         }
 
         public static void OpenWindow(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
-            LibUIMergeChat.View.MergeChatMainWindow openAIChatWindow = new();
+            LibUIMergeChat.View.MergeChatWindow openAIChatWindow = new();
             MergeChatWindowViewModel mainWindowViewModel = new(folderViewModel, selectedItems);
             openAIChatWindow.DataContext = mainWindowViewModel;
 

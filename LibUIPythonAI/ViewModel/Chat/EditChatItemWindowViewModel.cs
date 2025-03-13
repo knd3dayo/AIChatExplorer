@@ -1,6 +1,6 @@
 using PythonAILib.Model.Chat;
 
-namespace LibUIPythonAI.ViewModel.ChatMain {
+namespace LibUIPythonAI.ViewModel.Chat {
     public class EditChatItemWindowViewModel : ChatViewModelBase {
 
         public ChatMessage ChatItem { get; set; }

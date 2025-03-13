@@ -12,7 +12,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 
-namespace LibUIPythonAI.ViewModel.ChatMain {
+namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatContextViewModel : ObservableObject {
 
         private QAChatStartupProps QAChatStartupPropsInstance { get; set; }

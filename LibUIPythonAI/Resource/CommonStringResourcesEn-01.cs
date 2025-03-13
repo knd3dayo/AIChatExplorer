@@ -1044,5 +1044,11 @@ namespace LibUIPythonAI.Resource {
         // Webページの内容を表示するには「Webページをダウンロード」を実行してください。
         public override string ExecuteDownloadWebPageToViewContent { get; } = "To view the contents of the web page, execute \"Download Web Page\"";
 
+        // "Chat: "
+        public override string ChatHeader { get; } = "Chat: ";
+
+        // タイトルなし
+        public override string NoTitle { get; } = "No Title";
+
     }
 }

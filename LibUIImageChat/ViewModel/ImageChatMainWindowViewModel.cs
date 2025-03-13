@@ -17,9 +17,9 @@ using LibPythonAI.Model.Image;
 using LibPythonAI.Model.Content;
 
 namespace LibUIImageChat.ViewModel {
-    public class ImageChatMainWindowViewModel : ChatViewModelBase {
+    public class ImageChatWindowViewModel : ChatViewModelBase {
         // コンストラクタ
-        public ImageChatMainWindowViewModel(ContentItemWrapper clipboardItem, Action afterUpdate) {
+        public ImageChatWindowViewModel(ContentItemWrapper clipboardItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             ClipboardItem = clipboardItem;
             OnPropertyChanged(nameof(Description));

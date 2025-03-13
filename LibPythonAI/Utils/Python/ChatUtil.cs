@@ -207,7 +207,7 @@ namespace PythonAILib.Utils.Python {
             }
 
             // PromptTextを作成
-            string promptText = chatRequest.ContentText;
+            string promptText = $"{chatRequestContext.PromptTemplateText}\n\n{chatRequest.ContentText}";
 
             // 最後のユーザー発言のContentにPromptTextを追加
             lastUserRoleMessage.Content = promptText;

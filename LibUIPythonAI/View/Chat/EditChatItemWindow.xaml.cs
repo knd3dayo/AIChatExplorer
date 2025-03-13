@@ -1,8 +1,8 @@
 using System.Windows;
-using LibUIPythonAI.ViewModel.ChatMain;
+using LibUIPythonAI.ViewModel.Chat;
 using PythonAILib.Model.Chat;
 
-namespace LibUIPythonAI.View.ChatMain {
+namespace LibUIPythonAI.View.Chat {
     /// <summary>
     /// EditChatItem.xaml の相互作用ロジック
     /// </summary>

@@ -313,9 +313,19 @@ class AutoGenProps:
         return executor
 
     def __create_termination_condition(self, termination_msg: str, max_msg: int, timeout: int):
+        from functools import reduce
+        termination_list = []
         # Define termination condition
-        max_msg_termination = MaxMessageTermination(max_messages=max_msg)
-        text_termination = TextMentionTermination(termination_msg)
-        time_terminarion = TimeoutTermination(timeout)
-        combined_termination = max_msg_termination | text_termination | time_terminarion
+        if termination_msg:
+            termination_list.append(TextMentionTermination(termination_msg))
+        if max_msg > 0:
+            termination_list.append(MaxMessageTermination(max_messages=max_msg))
+        if timeout > 0:
+            termination_list.append(TimeoutTermination(timeout))
+        # Combine termination conditions using | operator
+        if termination_list:
+            combined_termination = reduce(lambda x, y: x | y, termination_list)
+        else:
+            combined_termination = None  # or some default termination condition if needed
+
         return combined_termination

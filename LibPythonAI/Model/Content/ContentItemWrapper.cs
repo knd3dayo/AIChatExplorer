@@ -361,6 +361,7 @@ namespace LibPythonAI.Model.Content {
                 return header1;
             }
         }
+
         public string ChatItemsText {
             get {
                 // chatHistoryItemの内容をテキスト化

@@ -5,10 +5,10 @@ using LibUIPythonAI.Utils;
 namespace LibUIImageChat.ViewModel {
     public class ScreenShotImageViewModel : ObservableObject {
 
-        public ImageChatMainWindowViewModel MainWindowViewModel { get; set; }
+        public ImageChatWindowViewModel MainWindowViewModel { get; set; }
         public ScreenShotImage ScreenShotImage { get; set; }
 
-        public ScreenShotImageViewModel(ImageChatMainWindowViewModel mainWindowViewModel, ScreenShotImage screenShotImage) {
+        public ScreenShotImageViewModel(ImageChatWindowViewModel mainWindowViewModel, ScreenShotImage screenShotImage) {
             MainWindowViewModel = mainWindowViewModel;
             ScreenShotImage = screenShotImage;
         }

@@ -1104,5 +1104,10 @@ namespace LibUIPythonAI.Resource {
 
         // Webページの内容を表示するには「Webページをダウンロード」を実行してください。
         public virtual string ExecuteDownloadWebPageToViewContent { get; } = "Webページの内容を表示するには「Webページをダウンロード」を実行してください。";
+
+        // チャット：
+        public virtual string ChatHeader { get; } = "チャット：";
+        // タイトルなし
+        public virtual string NoTitle { get; } = "タイトルなし";
     }
 }
