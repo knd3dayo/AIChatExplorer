@@ -55,7 +55,7 @@ namespace PythonAILib.Model.Content {
                 object lockObject = new();
                 int start_count = 0;
                 ParallelOptions parallelOptions = new() {
-                    MaxDegreeOfParallelism = 8
+                    MaxDegreeOfParallelism = 4
                 };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     lock (lockObject) {
@@ -306,7 +306,7 @@ namespace PythonAILib.Model.Content {
                 int start_count = 0;
                 ParallelOptions parallelOptions = new() {
                     // 20並列
-                    MaxDegreeOfParallelism = 8
+                    MaxDegreeOfParallelism = 4
                 };
                 Parallel.For(0, count, parallelOptions, (i) => {
                     int index = i; // Store the current index in a separate variable to avoid closure issues

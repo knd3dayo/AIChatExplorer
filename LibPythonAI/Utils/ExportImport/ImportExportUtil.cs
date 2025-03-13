@@ -143,7 +143,7 @@ namespace LibPythonAI.Utils.ExportImport {
         public static void ImportFromURLList(List<ContentItemWrapper> items, Action<ContentItemWrapper> afterImport) {
             // Parallel処理
             ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = 4
             };
 
             Parallel.ForEach(items, parallelOptions, async item => {
@@ -184,7 +184,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
             // Parallel処理
             ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = 4
             };
             Parallel.ForEach(urls, parallelOptions, async url => {
 

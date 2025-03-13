@@ -166,7 +166,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
             // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
             ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = 4
             };
 
             Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {

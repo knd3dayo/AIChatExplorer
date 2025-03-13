@@ -97,7 +97,7 @@ namespace ClipboardApp.Model.Folders.Browser {
 
 
             ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = 4
             };
 
             Parallel.ForEach(addUrls, parallelOptions, url => {
