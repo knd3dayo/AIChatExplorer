@@ -61,28 +61,31 @@ def extract_base64_to_text(base64_data:str, extension:str) -> str:
         os.remove(temp_path)
         return text
 
-web_driver = None
+edge_driver_path = None
 
-def _init_web_driver():
-        # Edgeドライバをセットアップ
+def _create_web_driver():
+    # Edgeドライバをセットアップ
     # ヘッドレスモードのオプションを設定
     edge_options = Options()
     edge_options.add_argument("--headless")
     edge_options.add_argument("--disable-gpu")
     edge_options.add_argument("--no-sandbox")
     edge_options.add_argument("--disable-dev-shm-usage")
-
+    
+    global edge_driver_path
+    # Edgeドライバをインストールし、インストール場所を取得
+    if edge_driver_path is None:
+        edge_driver_path = EdgeChromiumDriverManager().install()
+        print(f"EdgeDriverのインストール場所: {edge_driver_path}")
     # Edgeドライバをセットアップ
-    global web_driver
-    web_driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
-
+    return webdriver.Edge(service=Service(edge_driver_path), options=edge_options)
 
 def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
     """
     This function extracts text and links from the specified URL of a web page.
     """
-    if web_driver is None:
-        _init_web_driver()
+    # Edgeドライバをセットアップ
+    web_driver = _create_web_driver()
 
     # Wait for the page to fully load (set explicit wait conditions if needed)
     web_driver.implicitly_wait(10)
