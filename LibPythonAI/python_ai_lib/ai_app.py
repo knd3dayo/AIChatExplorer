@@ -100,7 +100,7 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     sanitized_text = FileUtil.sanitize_text(text)
     # Retrieve href attribute and text from <a> tags
     urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
-    # web_driver.close()
+    web_driver.close()
     return sanitized_text, urls
     
 ########################
