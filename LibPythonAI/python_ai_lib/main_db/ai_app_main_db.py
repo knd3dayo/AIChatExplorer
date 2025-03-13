@@ -90,16 +90,6 @@ class VectorDBItem:
     content_name = "content"
     folder_id_name = "folder_id"
 
-    vector_db_url_name = "vector_db_url"
-    vector_db_type_string_name = "vector_db_type_string"
-    vector_db_name_name = "vector_db_name"
-    vector_db_description_name = "vector_db_description"
-    chunk_size_name = "chunk_size"
-    is_use_multi_vector_retriever_name = "is_use_multi_vector_retriever"
-    doc_store_url_name = "doc_store_url"
-    search_kwargs_name = "search_kwargs"
-    vector_db_metadata_list_name = "vector_db_metadata_list"
-    score_name = "score"
 
     '''
     以下のテーブル定義のデータを格納するクラス

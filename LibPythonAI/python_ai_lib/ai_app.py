@@ -61,10 +61,10 @@ def extract_base64_to_text(base64_data:str, extension:str) -> str:
         os.remove(temp_path)
         return text
 
-def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
-    """
-    This function extracts text and links from the specified URL of a web page.
-    """
+web_driver = None
+
+def _init_web_driver():
+        # Edgeドライバをセットアップ
     # ヘッドレスモードのオプションを設定
     edge_options = Options()
     edge_options.add_argument("--headless")
@@ -73,13 +73,23 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     edge_options.add_argument("--disable-dev-shm-usage")
 
     # Edgeドライバをセットアップ
-    driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
+    global web_driver
+    web_driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
+
+
+def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
+    """
+    This function extracts text and links from the specified URL of a web page.
+    """
+    if web_driver is None:
+        _init_web_driver()
+
     # Wait for the page to fully load (set explicit wait conditions if needed)
-    driver.implicitly_wait(10)
+    web_driver.implicitly_wait(10)
     # Retrieve HTML of the web page and extract text and links
-    driver.get(url)
+    web_driver.get(url)
     # Get the entire HTML of the page
-    page_html = driver.page_source
+    page_html = web_driver.page_source
 
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(page_html, "html.parser")
@@ -87,7 +97,7 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     sanitized_text = FileUtil.sanitize_text(text)
     # Retrieve href attribute and text from <a> tags
     urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
-    driver.close()
+    # web_driver.close()
     return sanitized_text, urls
     
 ########################
@@ -153,13 +163,13 @@ def update_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBI
 
 def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.vector_db_metadata_list:
+    for entry in vector_db_props.VectorDBMetadataList:
         vector_db.delete_document(entry.source_id)
 
 def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     # LangChainVectorDBを生成
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.vector_db_metadata_list:
+    for entry in vector_db_props.VectorDBMetadataList:
         vector_db.update_document(entry)
 
 # export_to_excelを実行する

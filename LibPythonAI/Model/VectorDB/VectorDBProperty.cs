@@ -105,15 +105,15 @@ namespace LibPythonAI.Model.VectorDB {
             Dictionary<string, object> dict = VectorDBItem?.ToDict() ?? [];
             // FolderId
             if (Folder != null) {
-                dict["folder_id"] = Folder.Id.ToString();
+                dict["FolderId"] = Folder.Id.ToString();
             }
             var search_kwargs = GetSearchKWArgs();
             if (search_kwargs.Count > 0) {
-                dict["search_kwargs"] = search_kwargs;
+                dict["SearchKWArgs"] = search_kwargs;
             }
-            dict["vector_db_description"] = Folder?.Description ?? "";
+            dict["Description"] = Folder?.Description ?? "";
             // vector_db_entriesを追加
-            dict["vector_db_metadata_list"] = VectorMetadataList;
+            dict["VectorMetadataList"] = VectorMetadataList;
 
             return dict;
         }
