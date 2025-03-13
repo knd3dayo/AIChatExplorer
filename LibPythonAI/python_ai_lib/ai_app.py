@@ -67,11 +67,14 @@ def _create_web_driver():
     # Edgeドライバをセットアップ
     # ヘッドレスモードのオプションを設定
     edge_options = Options()
+    edge_options.add_argument("--incognito")
     edge_options.add_argument("--headless")
-    edge_options.add_argument("--disable-gpu")
-    edge_options.add_argument("--no-sandbox")
-    edge_options.add_argument("--disable-dev-shm-usage")
-    
+    edge_options.add_argument('--blink-settings=imagesEnabled=false')
+    edge_options.add_argument('--disable-extensions')
+    edge_options.add_argument('--disable-gpu')
+    edge_options.add_argument('--no-sandbox')
+    edge_options.add_argument('--disable-dev-shm-usage')
+    edge_options.add_argument('--enable-chrome-browser-cloud-management')    
     global edge_driver_path
     # Edgeドライバをインストールし、インストール場所を取得
     if edge_driver_path is None:
