@@ -1,22 +1,15 @@
 import venv
 from typing import Any
-# queue
-from queue import Queue, Empty
-# asyncio
-import asyncio
 
 # json
 import json
-# sqlite3
-import sqlite3
-# time
-import time
 # Generator
-from typing import Generator, AsyncGenerator
+from typing import AsyncGenerator
 
 # autogen
 from autogen_ext.models.openai import OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient
 from autogen_core.tools import FunctionTool
+from autogen_core import CancellationToken
 from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination, TimeoutTermination
@@ -32,11 +25,32 @@ from ai_app_openai import OpenAIProps
 # main_db
 from main_db import MainDB
 
+# uuid
+import uuid
+
 class AutoGenProps:
+
 
     CHAT_TYPE_GROUP_NAME = "group"
     CHAT_TYPE_NORMAL_NAME = "normal"
-    def __init__(self, props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem]):
+
+    session_tokens = {}
+    # session_tokenを登録する
+    @classmethod
+    def register_session_token(cls, session_token: str):
+        cls.session_tokens[session_token] = True
+
+    # session_tokenを削除する
+    @classmethod
+    def remove_session_token(cls, session_token: str):
+        if session_token in cls.session_tokens:
+            cls.session_tokens.pop(session_token)
+
+    def __init__(self, props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem], session_token: str):
+
+        
+        # session_token
+        self.session_token = session_token
 
         # autogen_db_path
         autogen_db_path = props_dict.get("autogen_db_path", None)
@@ -86,6 +100,7 @@ class AutoGenProps:
         # chat_object
         self.chat_object: SelectorGroupChat = None
 
+        # quit_flag 
         self.quit_flag = False
 
         # __prepare_autogen_chat
@@ -153,7 +168,13 @@ class AutoGenProps:
         # agent_nameのAgentを作成
         agent = self.__create_agent(agent_name, self.openai_props)
 
-        async for message in agent.run_stream(task=initial_message):
+        # session_tokenを登録
+        AutoGenProps.register_session_token(self.session_token)
+        cancel_token: CancellationToken = CancellationToken()
+        async for message in agent.run_stream(task=initial_message, cancel_token=cancel_token):
+            # session_tokensにsesson_tokenがない場合は、処理を中断
+            if AutoGenProps.session_tokens.get(self.session_token) is None:
+                cancel_token.cancel()    
             if type(message) == TaskResult:
                 break
             message_str = f"{message.source}: {message.content}"
@@ -161,8 +182,14 @@ class AutoGenProps:
     
     # 指定したinitial_messageを使って、GroupChatを実行する
     async def run_autogen_chat(self, initial_message: str) -> AsyncGenerator:
+        # session_tokenを登録
+        AutoGenProps.register_session_token(self.session_token)
+        cancel_token: CancellationToken = CancellationToken()
 
-        async for message in self.chat_object.run_stream(task=initial_message):
+        async for message in self.chat_object.run_stream(task=initial_message, cancel_token=cancel_token):
+            # session_tokensにsesson_tokenがない場合は、処理を中断
+            if AutoGenProps.session_tokens.get(self.session_token) is None:
+                cancel_token.cancel()    
             if type(message) == TaskResult:
                 break
             message_str = f"{message.source}: {message.content}"

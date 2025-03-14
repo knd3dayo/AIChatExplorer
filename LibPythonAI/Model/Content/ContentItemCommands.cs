@@ -146,7 +146,8 @@ namespace PythonAILib.Model.Content {
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString()
             };
 
             Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new LibPythonAI.Data.PromptItemEntity()) {
@@ -206,7 +207,9 @@ namespace PythonAILib.Model.Content {
                 OpenAIProperties = openAIProperties,
                 PromptTemplateText = promptItem.Prompt,
                 ChatMode = promptItem.ChatMode,
-                SplitMode = promptItem.SplitMode
+                SplitMode = promptItem.SplitMode,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
 
 
@@ -270,7 +273,9 @@ namespace PythonAILib.Model.Content {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
 
 

@@ -79,6 +79,17 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 OnPropertyChanged(nameof(SplitTokenCount));
             }
         }
+        // SessionToken
+        private string _SessionToken = Guid.NewGuid().ToString();
+        public string SessionToken {
+            get {
+                return _SessionToken;
+            }
+            set {
+                _SessionToken = value;
+                OnPropertyChanged(nameof(SessionToken));
+            }
+        }
 
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
@@ -268,7 +279,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText, SessionToken
                 );
             return chatRequestContext;
         }

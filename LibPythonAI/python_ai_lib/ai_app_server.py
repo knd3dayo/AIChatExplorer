@@ -5,6 +5,7 @@ from flask import Flask, Response, request, render_template
 from flask_socketio import SocketIO, emit, send
 import ai_app_wrapper
 import asyncio
+from ai_app_autogen import AutoGenProps
 
 app = Flask(__name__)
 CORS(app)  # すべてのオリジンからのアクセスを許可
@@ -152,12 +153,25 @@ def handle_message(msg):
     emit('response', msg, broadcast=True)
 
 
+@app.route('/api/cancel_autogen_chat', methods=['POST'])
+def cancel_autogen_chat():
+    import json
+    request_json = request.data
+    request_data = json.loads(request_json)
+    session_token = request_data.get("session_token")
+    print(f"cancel_autogen_chat: {session_token}")
+    # session_toknes
+    print (AutoGenProps.session_tokens)
+    AutoGenProps.remove_session_token(session_token)
+
 @socketio.on('autogen_chat')
 def autogen_group_chat(request_json: str):
     async def task():
         try:
+
             async for response in ai_app_wrapper.autogen_chat(request_json):
                 emit("response", response)
+
         except Exception as e:
             import traceback
             emit("error", traceback.format_exc())
@@ -188,8 +202,6 @@ def pf_trace():
             print(e.message)
             print("Failed to start tracing")
             
-
-
 
 if __name__ == ('__main__'):
     flask_port = os.getenv("FLASK_PORT", "5000")

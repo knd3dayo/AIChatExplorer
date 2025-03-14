@@ -11,6 +11,8 @@ namespace LibPythonAI.PythonIF.Request {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
 
+        public string SessionToken { get; set; } = "";
+
         public ChatRequestContext? RequestContextInstance { get; set; }
         public ChatRequest? ChatRequestInstance { get; set; }
 
@@ -55,6 +57,9 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (WebRequestInstance != null) {
                 dict["web_request"] = WebRequestInstance.ToDict();
+            }
+            if (SessionToken != "") {
+                dict["session_token"] = SessionToken;
             }
 
             return dict;

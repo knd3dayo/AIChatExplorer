@@ -35,6 +35,9 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("prompt_template_text")]
         public string PromptTemplateText { get; set; } = "";
 
+        // SessionToken
+        [JsonPropertyName("session_token")]
+        public string SessionToken { get; set; } = "";
 
         // ベクトルDBを使用するかどうか
         [JsonIgnore]
@@ -58,6 +61,7 @@ namespace PythonAILib.Model.Chat {
                 { "summarize_prompt_text", SummarizePromptText },
                 { "related_information_prompt_text", RelatedInformationPromptText },
                 { "split_token_count", SplitTokenCount },
+                { "session_token", SessionToken },
 
             };
             Dictionary<string, object> dict = new() {
@@ -78,7 +82,8 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  List<VectorDBProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  
+                List<VectorDBProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText, string sessionToken
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
@@ -90,6 +95,7 @@ namespace PythonAILib.Model.Chat {
                 UseVectorDB = userVectorDB,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
+                SessionToken = sessionToken
             };
             if (autoGenProperties != null) {
                 chatRequestContext.AutoGenProperties = autoGenProperties;

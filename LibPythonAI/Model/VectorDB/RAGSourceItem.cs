@@ -129,7 +129,9 @@ namespace PythonAILib.Model.VectorDB {
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
-                        VectorDBProperties = [vectorDBProperty]
+                        VectorDBProperties = [vectorDBProperty],
+                        SessionToken = Guid.NewGuid().ToString()
+
                     };
 
                     PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
@@ -143,7 +145,9 @@ namespace PythonAILib.Model.VectorDB {
                     vectorDBProperty.VectorMetadataList = [vectorDBEntry];
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
-                        VectorDBProperties = [vectorDBProperty]
+                        VectorDBProperties = [vectorDBProperty],
+                        SessionToken = Guid.NewGuid().ToString()
+
                     };
 
                     PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);

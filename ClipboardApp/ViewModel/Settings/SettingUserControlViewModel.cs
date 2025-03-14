@@ -479,6 +479,7 @@ namespace ClipboardApp.ViewModel.Settings {
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    SessionToken = Guid.NewGuid().ToString()
                 };
 
                 string resultString = ChatUtil.ExecuteChat(chatRequest, chatRequestContext, (message) => { })?.Output ?? "";

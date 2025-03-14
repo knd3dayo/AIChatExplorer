@@ -10,7 +10,9 @@ namespace LibPythonAI.PythonIF.Request {
         public AutogenRequest(string inputText) {
             InputText = inputText;
         }
+
         public string InputText { get; private set; } = "";
+
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];

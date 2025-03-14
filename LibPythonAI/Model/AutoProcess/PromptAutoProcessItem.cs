@@ -26,7 +26,9 @@ namespace PythonAILib.Model.AutoProcess {
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = PromptItemEntity.Prompt,
-                ChatMode = Mode
+                ChatMode = Mode,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
             if (clipboardFolder != null) {
                 chatRequestContent.UseVectorDB = true;

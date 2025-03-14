@@ -10,12 +10,12 @@ namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
 
         public static ChatResult MergeChat(
-            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, List<ExportImportItem>? targetDataList = null) {
+            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList = null) {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
-            List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt, targetDataList);
+            List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt, sessionToken, targetDataList);
 
             // ポストプロセスのリクエストを作成。 プリプロセスの結果を結合してリクエストを作成
-            ChatResult? postProcessResult = PostProcess(preProcessResults, context, postProcessPrompt);
+            ChatResult? postProcessResult = PostProcess(preProcessResults, context, postProcessPrompt, sessionToken);
             // ChatUtil.ExecuteChatを実行
             if (postProcessResult == null) {
                 return new ChatResult();
@@ -49,7 +49,7 @@ namespace LibUIMergeChat.Common {
             return targetData;
         }
 
-        private static List<ChatResult> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList) {
+        private static List<ChatResult> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList) {
             List<ChatResult> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
                 object lockObject = new();
@@ -74,6 +74,7 @@ namespace LibUIMergeChat.Common {
                         VectorDBProperties = context.VectorDBProperties,
                         AutoGenProperties = context.AutoGenProperties,
                         OpenAIProperties = context.OpenAIProperties,
+
                     };
                     string contentText = GetTargetData(item, targetDataList);
                     if (string.IsNullOrEmpty(contentText)) {
@@ -107,7 +108,7 @@ namespace LibUIMergeChat.Common {
         }
 
 
-        private static ChatResult? PostProcess(List<ChatResult> preProcessResults, ChatRequestContext context, string postProcessPrompt) {
+        private static ChatResult? PostProcess(List<ChatResult> preProcessResults, ChatRequestContext context, string postProcessPrompt, string sessionToken) {
             if (preProcessResults.Count == 0) {
                 LogWrapper.Info("PreProcessResults is empty.");
                 return null;
@@ -131,6 +132,7 @@ namespace LibUIMergeChat.Common {
                 VectorDBProperties = context.VectorDBProperties,
                 AutoGenProperties = context.AutoGenProperties,
                 OpenAIProperties = context.OpenAIProperties,
+                SessionToken = sessionToken
             };
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,

@@ -52,6 +52,9 @@ namespace LibUIMergeChat.ViewModel {
 
         }
 
+        // SessionToken
+        public string SessionToken { get; set; } = Guid.NewGuid().ToString();
+
         public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; }
 
         private void PreProcessPromptTemplateCommandExecute(object parameter) {
@@ -219,7 +222,7 @@ namespace LibUIMergeChat.ViewModel {
                 item.TopK = VectorDBSearchResultMax;
             }
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText, SessionToken
                 );
             return chatRequestContext;
         }
@@ -254,7 +257,7 @@ namespace LibUIMergeChat.ViewModel {
                         return;
                     }
                     // MergeChatUtil.MergeChatを実行
-                    result = MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, [.. ExportItems]);
+                    result = MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, SessionToken, [.. ExportItems]);
                 });
 
                 if (result == null) {

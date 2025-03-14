@@ -153,7 +153,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
                     VectorDBProperties = [VectorSearchProperty],
-                    OpenAIProperties = openAIProperties
+                    OpenAIProperties = openAIProperties,
+                    SessionToken = Guid.NewGuid().ToString()
                 };
 
                 string json = chatRequestContext.ToJson();

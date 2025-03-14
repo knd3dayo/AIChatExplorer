@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -32,7 +33,6 @@ namespace PythonAILib.PythonIF {
 
         public static string? PythonPath { get; set; }
 
-        private static string PathToVirtualEnv { get; set; } = "";
 
         private static string PythonAILibPath { get; set; } = DefaultPythonAILibDir;
 
@@ -56,9 +56,7 @@ namespace PythonAILib.PythonIF {
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             string appDataDir = configPrams.GetAppDataPath();
 
-            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                PathToVirtualEnv = pathToVirtualEnv;
-            }
+
             if (!string.IsNullOrEmpty(appDataDir)) {
 
                 PythonAILibPath = Path.Combine(appDataDir, DefaultPythonAILibDir);
@@ -80,6 +78,7 @@ namespace PythonAILib.PythonIF {
                 }
             }
         }
+
 
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {

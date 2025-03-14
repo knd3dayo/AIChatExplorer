@@ -106,7 +106,7 @@ def capture_generator_stdout_stderr(func):
 ########################
 # parametar関連
 ########################
-def get_chat_request_context_objects(request_dict: dict) -> dict:
+def get_chat_request_context_objects(request_dict: dict) -> RequestContext:
     # contextを取得
     request_context:dict = request_dict.get(request_context_name, None)
     if not request_context:
@@ -164,7 +164,13 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     # vector_db_itemsを取得
     vector_db_items = get_vector_db_objects(request_dict)
 
-    autogen_props = AutoGenProps(props_dict, openai_props, vector_db_items)
+    # context_jsonからChatRequestContextを生成
+    chat_request_context = get_chat_request_context_objects(request_dict)
+
+    if not chat_request_context.SessionToken:
+        raise ValueError("SessionToken is not set.")
+
+    autogen_props = AutoGenProps(props_dict, openai_props, vector_db_items, chat_request_context.SessionToken)
     return autogen_props
 
 def get_token_count_objects(request_dict: dict) -> dict:

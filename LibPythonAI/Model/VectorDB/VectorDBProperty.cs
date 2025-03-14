@@ -129,7 +129,9 @@ namespace LibPythonAI.Model.VectorDB {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = items,
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
@@ -141,7 +143,9 @@ namespace LibPythonAI.Model.VectorDB {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = items,
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
@@ -156,7 +160,9 @@ namespace LibPythonAI.Model.VectorDB {
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = [this],
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString()
+
             };
 
             // ベクトル検索を実行
@@ -173,7 +179,8 @@ namespace LibPythonAI.Model.VectorDB {
 
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = openAIProperties,
-                    VectorDBProperties = [this]
+                    VectorDBProperties = [this],
+                    SessionToken = Guid.NewGuid().ToString()
                 };
                 PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
 
