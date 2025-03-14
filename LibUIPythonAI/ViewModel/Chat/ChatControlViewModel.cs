@@ -10,6 +10,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Utils.Python;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
+using PythonAILib.PythonIF;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : ChatViewModelBase {
@@ -43,6 +44,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
             });
         }
+
+        public string SessionToken { get; set; } = Guid.NewGuid().ToString();
 
         public static ChatMessage? SelectedItem { get; set; }
 
@@ -93,7 +96,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public string PreviewJson {
             get {
-                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
@@ -101,7 +104,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
             }
@@ -112,7 +115,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
-            ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+            ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
             ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
         });
@@ -133,7 +136,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
                     ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
 
-                    ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+                    ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
                     SplitOnTokenLimitExceedModeEnum _splitMode = (SplitOnTokenLimitExceedModeEnum)ChatContextViewModelInstance.SplitMode;
                     if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
@@ -187,6 +190,14 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 }
             }
         }
+        // AutoGeChatのキャンセルコマンド
+        public SimpleDelegateCommand<object> CancelAutoGenChatCommand => new((parameter) => {
+            Task.Run(() => {
+                ChatUtil.CancelAutoGenChat(SessionToken);
+            }).ContinueWith((task) => {
+                UpdateIndeterminate(false);
+            });
+        });
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
@@ -228,7 +239,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // リクエストのメッセージをアップデート
-                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText);
+                ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 // SelectedTabIndexを更新

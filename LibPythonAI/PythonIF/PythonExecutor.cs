@@ -253,7 +253,7 @@ namespace PythonAILib.PythonIF {
             Task.Run(() => {
                 string? message = e.Data;
                 if (message != null) {
-                    LogWrapper.Debug("flask output:" + message);
+                    LogWrapper.Debug("api server output:" + message);
                 }
             });
         };

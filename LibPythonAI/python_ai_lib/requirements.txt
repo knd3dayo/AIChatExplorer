@@ -33,8 +33,10 @@ selenium
 webdriver-manager
 duckduckgo-search
 
-flask-socketio
-Flask-Cors
+# flask-socketio
+# Flask-Cors
+aiohttp
+python-socketio
 
 arxiv
 

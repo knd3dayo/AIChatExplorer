@@ -248,6 +248,19 @@ namespace PythonAILib.PythonIF {
             return chatResult;
 
         }
+
+        public void CancelAutoGenChat(string sessionToken) {
+            // SessionToken: sessionTokenを持つJSON文字列を作成
+            string sessionTokenJson = JsonSerializer.Serialize(new { session_token = sessionToken }, jsonSerializerOptions);
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{sessionTokenJson}");
+            // cancel_request
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/cancel_autogen_chat";
+            string resultString = PostAsync(endpoint, sessionTokenJson).Result;
+
+
+        }
         public string ExtractFileToText(string path) {
 
             // FileRequestを作成

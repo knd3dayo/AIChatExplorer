@@ -22,17 +22,10 @@
 
   <ItemGroup>
     <None Remove="clipboard_app_utils.py" />
-    <None Remove="requirements.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="favicon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="requirements.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

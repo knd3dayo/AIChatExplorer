@@ -79,17 +79,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 OnPropertyChanged(nameof(SplitTokenCount));
             }
         }
-        // SessionToken
-        private string _SessionToken = Guid.NewGuid().ToString();
-        public string SessionToken {
-            get {
-                return _SessionToken;
-            }
-            set {
-                _SessionToken = value;
-                OnPropertyChanged(nameof(SessionToken));
-            }
-        }
 
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
@@ -272,14 +261,14 @@ namespace LibUIPythonAI.ViewModel.Chat {
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
 
-        public ChatRequestContext CreateChatRequestContext(string PromptText) {
+        public ChatRequestContext CreateChatRequestContext(string PromptText, string sessionToken) {
             // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;
             }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText, SessionToken
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText, sessionToken
                 );
             return chatRequestContext;
         }

@@ -158,6 +158,10 @@ namespace PythonAILib.Utils.Python {
             return "";
         }
 
+        public static void CancelAutoGenChat(string sessionToken) {
+            PythonExecutor.PythonAIFunctions?.CancelAutoGenChat(sessionToken);
+        }
+
         public static ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(chatRequestContext, chat, iteration);
             return result;

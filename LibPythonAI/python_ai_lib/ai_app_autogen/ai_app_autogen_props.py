@@ -42,9 +42,13 @@ class AutoGenProps:
 
     # session_tokenを削除する
     @classmethod
-    def remove_session_token(cls, session_token: str):
+    def remove_session_token(cls, session_token: str) -> bool:
+        print(f"remove_session_token: {session_token}")
+        print(cls.session_tokens)
         if session_token in cls.session_tokens:
             cls.session_tokens.pop(session_token)
+            return True
+        return False
 
     def __init__(self, props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem], session_token: str):
 
@@ -171,10 +175,12 @@ class AutoGenProps:
         # session_tokenを登録
         AutoGenProps.register_session_token(self.session_token)
         cancel_token: CancellationToken = CancellationToken()
-        async for message in agent.run_stream(task=initial_message, cancel_token=cancel_token):
+        async for message in agent.run_stream(task=initial_message, cancellation_token=cancel_token):
             # session_tokensにsesson_tokenがない場合は、処理を中断
             if AutoGenProps.session_tokens.get(self.session_token) is None:
+                print("request cancel")
                 cancel_token.cancel()    
+                break
             if type(message) == TaskResult:
                 break
             message_str = f"{message.source}: {message.content}"
@@ -186,10 +192,12 @@ class AutoGenProps:
         AutoGenProps.register_session_token(self.session_token)
         cancel_token: CancellationToken = CancellationToken()
 
-        async for message in self.chat_object.run_stream(task=initial_message, cancel_token=cancel_token):
+        async for message in self.chat_object.run_stream(task=initial_message, cancellation_token=cancel_token):
             # session_tokensにsesson_tokenがない場合は、処理を中断
             if AutoGenProps.session_tokens.get(self.session_token) is None:
+                print("request cancel")
                 cancel_token.cancel()    
+                break
             if type(message) == TaskResult:
                 break
             message_str = f"{message.source}: {message.content}"
