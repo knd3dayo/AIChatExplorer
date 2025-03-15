@@ -24,7 +24,7 @@ namespace PythonAILib.Utils.Python {
         // ChatRequestの内容からPythonスクリプトを実行するコマンド文字列を生成する。
         public static List<string> GetPythonScriptCommand(string pythonScriptName, string pythonScriptArgs, string beforeExecScriptCommands = "", string afterExecScriptCommands = "") {
             List<string> cmdLines = [];
-            // python_ai_libのディレクトリ
+            // python_libのディレクトリ
             string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
             // debug用のScriptのディレクトリ
             string debugScriptDir = Path.Combine(pythonAILibDir, "debug_tool");
