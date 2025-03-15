@@ -11,11 +11,11 @@ using PythonAILibUI.ViewModel.Item;
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemMenu : AppViewModelBase {
 
-        public ClipboardItemViewModel ClipboardItemViewModel { get; private set; }
+        public ContentItemViewModel ClipboardItemViewModel { get; private set; }
 
         protected AppItemViewModelCommands AppCommands { get; set; }
 
-        public ClipboardItemMenu(ClipboardItemViewModel clipboardItemViewModel) {
+        public ClipboardItemMenu(ContentItemViewModel clipboardItemViewModel) {
             ClipboardItemViewModel = clipboardItemViewModel;
             ContentItemViewModelCommands contentCommands = clipboardItemViewModel.Commands;
 
@@ -32,7 +32,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             }
         }
 
-        public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
+        public MenuItem CreatePromptMenuItems(ContentItemViewModel itemViewModel) {
 
 
             // プロンプトメニュー
@@ -106,7 +106,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             return promptMenuItem;
         }
 
-        public virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+        public virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
 
             ObservableCollection<MenuItem> menuItems =
             [

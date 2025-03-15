@@ -65,7 +65,7 @@ namespace ClipboardApp.Model.Main {
             /// Get AppData folder path
             string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
             // Create database file path
-            string path = Path.Combine(appDataPath, "python_ai_lib");
+            string path = Path.Combine(appDataPath, "python_lib");
             return path;
 
         }

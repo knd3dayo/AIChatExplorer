@@ -668,7 +668,7 @@ namespace ClipboardApp.ViewModel.Settings {
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             if (Save()) {
                 //追加設定.言語を変更
-                FolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
+                ClipboardAppFolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
                 LogWrapper.Info(StringResources.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);

@@ -1,6 +1,7 @@
 using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
@@ -24,6 +25,16 @@ namespace ClipboardApp.Model.Folders.FileSystem {
             return new(Entity.Copy());
         }
 
+        public override void Save() {
+            if (ContentModified || DescriptionModified) {
+                // ベクトルを更新
+                Task.Run(() => {
+                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                });
+            }
+
+            ContentItemEntity.SaveItems([Entity]);
+        }
 
         public override void Load(Action beforeAction, Action afterAction) {
             // SourcePathのファイルが存在しない場合は、何もしない

@@ -13,7 +13,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
         // コンストラクタ
         public FileSystemFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
         }
 
         protected FileSystemFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
@@ -24,7 +24,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -181,7 +181,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
 
                 };
                 addItems.Add(contentItem);
-                contentItem.Save(false, false);
+                contentItem.Save();
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
                 // ContentItem result = task.Result;
@@ -198,7 +198,7 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    contentItem.Save(false, false);
+                    contentItem.Save();
                 }
             });
 

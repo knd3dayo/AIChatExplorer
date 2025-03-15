@@ -221,6 +221,33 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     result = [doc.get("content", "") for doc in documents]
     return result
 
+def past_chat_history_vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
+    """
+    過去のチャット履歴に関連するドキュメントを検索します。
+    """
+    global autogen_props
+    from clipboard_app.db_modules import MainDB, VectorSearchParameter
+    from clipboard_app.langchain_modules.langchain_vector_db import LangChainVectorDB
+    from clipboard_app.autogen_modules import AutoGenProps
+
+    props : AutoGenProps = autogen_props # type: ignore
+    main_db = main_db = MainDB(props.autogen_db_path) 
+    main_vector_db_item = main_db.get_vector_db_item(props.main_vector_db_id)
+    if main_vector_db_item is None:
+        raise ValueError("main_vector_db_id is not set.")
+    if props.chat_history_folder_id is None:
+        raise ValueError("chat_history_folder_id is not set.")
+
+    main_vector_db_item.FolderId = props.chat_history_folder_id
+
+    vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
+    params: VectorSearchParameter = VectorSearchParameter(props.openai_props,vector_db_item_list, query)
+    result = LangChainVectorDB.vector_search(params)
+    # Retrieve documents from result
+    documents = result.get("documents", [])
+    # Extract content of each document from documents
+    result = [doc.get("content", "") for doc in documents]
+    return result
 
 # ツール一覧を取得する関数
 def list_tools() -> Annotated[list[dict[str, str]], "List of registered tools, each containing 'name' and 'description'"]:

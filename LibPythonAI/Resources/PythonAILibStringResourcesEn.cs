@@ -165,6 +165,9 @@ namespace PythonAILib.Resources {
         // Chat history
         public override string ChatHistory { get; } = "Chat history";
 
+        // Chat history (English)
+        public override string ChatHistoryEnglish { get; } = "Chat history (English)";
+
         // UpdateVectorDBIndex実行
         public override string UpdateVectorDBIndexExecute { get; } = "Execute UpdateVectorDBIndex";
 

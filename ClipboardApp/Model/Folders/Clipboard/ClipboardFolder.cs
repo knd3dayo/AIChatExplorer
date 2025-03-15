@@ -19,11 +19,11 @@ namespace ClipboardApp.Model.Folders.Clipboard {
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardFolder(ContentFolderEntity folder) : base(folder) {
-            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
         // アイテムを追加する処理

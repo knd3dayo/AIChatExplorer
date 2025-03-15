@@ -4,11 +4,12 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Resources;
 
 namespace ClipboardApp.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryItemMenu(ClipboardItemViewModel clipboardItemViewModel) : ClipboardItemMenu(clipboardItemViewModel) {
-        public override ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+    public class EdgeBrowseHistoryItemMenu(ContentItemViewModel clipboardItemViewModel) : ClipboardItemMenu(clipboardItemViewModel) {
+        public override ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
 
             ObservableCollection<MenuItem> menuItems =
             [

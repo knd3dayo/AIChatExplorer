@@ -20,7 +20,7 @@ namespace PythonAILib.PythonIF {
 
         private static string PythonAILibPath { get; set; } = DefaultPythonAILibDir;
 
-        private const string DefaultPythonAILibDir = "python_ai_lib";
+        private const string DefaultPythonAILibDir = "python_lib";
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {

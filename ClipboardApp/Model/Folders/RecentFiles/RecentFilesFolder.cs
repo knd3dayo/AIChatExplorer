@@ -1,11 +1,9 @@
 using System.IO;
 using ClipboardApp.Model.Folders.FileSystem;
-using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.FileUtils;
-using PythonAILib.Common;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
@@ -13,7 +11,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         // コンストラクタ
         public RecentFilesFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected RecentFilesFolder(RecentFilesFolder parent, string folderName) : base(parent, folderName) {
@@ -24,7 +22,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -96,7 +94,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 
                 };
-                contentItem.Save(false, false);
+                contentItem.Save();
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
                 // ContentItem result = task.Result;
@@ -113,7 +111,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    contentItem.Save(false, false);
+                    contentItem.Save();
                 }
             });
         }

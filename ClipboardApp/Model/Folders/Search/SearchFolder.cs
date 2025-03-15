@@ -10,12 +10,12 @@ namespace ClipboardApp.Model.Folders.Search {
         // コンストラクタ
         public SearchFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = true;
-            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
         protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
 
-            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
             Parent = parent;
             FolderName = folderName;
             IsAutoProcessEnabled = false;

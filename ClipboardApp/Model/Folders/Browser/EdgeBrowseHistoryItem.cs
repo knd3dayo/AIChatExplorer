@@ -1,5 +1,6 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 
 namespace ClipboardApp.Model.Folders.Browser {
@@ -12,6 +13,16 @@ namespace ClipboardApp.Model.Folders.Browser {
 
         public override EdgeBrowseHistoryItem Copy() {
             return new(Entity.Copy());
+        }
+        public override void Save() {
+            if (ContentModified || DescriptionModified) {
+                // ベクトルを更新
+                Task.Run(() => {
+                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                });
+            }
+
+            ContentItemEntity.SaveItems([Entity]);
         }
 
     }
