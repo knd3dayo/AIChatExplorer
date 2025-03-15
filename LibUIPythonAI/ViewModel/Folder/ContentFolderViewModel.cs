@@ -80,7 +80,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public void LoadItems<Item>() where Item: ContentItemWrapper{
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<Item> _items = Folder.GetItems<Item>();
+            List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (Item item in _items) {
