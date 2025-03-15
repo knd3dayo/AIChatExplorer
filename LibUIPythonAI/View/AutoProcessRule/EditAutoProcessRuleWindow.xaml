@@ -1,0 +1,364 @@
+<Window
+    x:Class="LibUIPythonAI.View.AutoProcessRule.EditAutoProcessRuleWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="clr-namespace:LibUIPythonAI.View.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:LibUIPythonAI.ViewModel.AutoProcess"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:LibUIPythonAI.View.AutoProcessRule"
+    Title="{x:Static res:ViewStringResources.EditAutoProcessRuleWindowTitle}"
+    Width="700"
+    d:DataContext="{d:DesignInstance Type=local:EditAutoProcessRuleWindowViewModel}"
+    SizeToContent="Height"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  メニューバー  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <Menu
+                    Name="menu1"
+                    Margin="0,0,0,0"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="False">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="" />
+                </Menu>
+
+            </materialDesign:ColorZone>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Column="0"
+                    Margin="10,10,10,3"
+                    VerticalAlignment="Center"
+                    Content="{x:Static res:ViewStringResources.RuleName}" />
+                <TextBox
+                    Grid.Column="1"
+                    Margin="10,10,10,3"
+                    HorizontalAlignment="Stretch"
+                    Text="{Binding RuleName}" />
+                <CheckBox
+                    Grid.Column="2"
+                    Margin="10,10,10,3"
+                    Content="{x:Static res:ViewStringResources.Enable}"
+                    IsChecked="{Binding IsAutoProcessRuleEnabled}" />
+            </Grid>
+            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                <Label
+                    Width="260"
+                    Margin="10,3,10,3"
+                    Content="{Binding StringResources.TargetFolder, Mode=OneTime}" />
+                <!--  適用対象を選択するツリービューを表示するボタン  -->
+                <Button
+                    Margin="10,3,10,3"
+                    Command="{Binding OpenSelectTargetFolderWindowCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Select}" />
+                <TextBox
+                    Margin="10,3,10,3"
+                    IsEnabled="False"
+                    Text="{Binding TargetFolder.ContentFolderPath, Mode=OneWay}" />
+            </DockPanel>
+
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <RadioButton
+                        Grid.Row="0"
+                        Width="260"
+                        Margin="20,3,10,3"
+                        Content="{x:Static res:ViewStringResources.ApplyAllItems}"
+                        DockPanel.Dock="Left"
+                        GroupName="AllorConditions"
+                        IsChecked="{Binding IsAllItemsRuleChecked}" />
+                    <RadioButton
+                        Grid.Row="1"
+                        Width="260"
+                        Margin="20,3,10,3"
+                        Content="{x:Static res:ViewStringResources.ApplyMatchedItems}"
+                        DockPanel.Dock="Left"
+                        GroupName="AllorConditions"
+                        IsChecked="{Binding IsNotAllItemsRuleChecked}" />
+                </Grid>
+                <!--  アイテムの種類  -->
+                <Grid Grid.Row="1" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" HorizontalAlignment="Left">
+                        <Label
+                            Width="260"
+                            Margin="10,0,10,0"
+                            Content="{x:Static res:ViewStringResources.ItemType}"
+                            DockPanel.Dock="Left" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="{x:Static res:ViewStringResources.ItemTypeText}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsTextItemApplied}" />
+                        <TextBox
+                            Width="50"
+                            Margin="20,0,10,3"
+                            Text="{Binding MinTextLineCount}" />
+                        <Label
+                            Width="20"
+                            Margin="0,0,10,3"
+                            Content="{x:Static res:ViewStringResources.LineOrMore}"
+                            DockPanel.Dock="Left" />
+                        <TextBox
+                            Width="50"
+                            Margin="20,0,10,3"
+                            Text="{Binding MaxTextLineCount}" />
+                        <Label
+                            Width="150"
+                            Margin="0,0,10,3"
+                            Content="{x:Static res:ViewStringResources.LineOrLess}"
+                            DockPanel.Dock="Left" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="{x:Static res:ViewStringResources.ItemTypeFile}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsFileItemApplied}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="3" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="{x:Static res:ViewStringResources.ItemTypeImage}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsImageItemApplied}" />
+                    </DockPanel>
+                </Grid>
+                <Grid Grid.Row="2" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Margin="10,0,10,0"
+                        Content="文字列" />
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="{x:Static res:ViewStringResources.TitleContains}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsDescriptionRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="{x:Static res:ViewStringResources.BodyContains}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsContentRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
+                    </DockPanel>
+                    <!--  ソースアプリの名前  -->
+                    <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="{x:Static res:ViewStringResources.SourceAppContains}"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsSourceApplicationRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
+                    </DockPanel>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="3" Margin="0,20,0,0">
+                <!--  AutoProcessItemを選択するComboBox  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Margin="10,0,10,0"
+                    Content="{x:Static res:ViewStringResources.ExecuteProcess}" />
+                <DockPanel Grid.Row="1" Margin="0,0,0,0">
+                    <RadioButton
+                        Width="260"
+                        Margin="10,0,10,0"
+                        Content="{x:Static res:ViewStringResources.ExecuteNextProcess}"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsBasicProcessChecked}" />
+                    <ComboBox
+                        Margin="10,0,10,0"
+                        DisplayMemberPath="DisplayName"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding AutoProcessItems}"
+                        SelectedItem="{Binding SelectedAutoProcessItem}"
+                        SelectedValue="{Binding SelectedAutoProcessItem.Name}"
+                        SelectedValuePath="Name">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand, Mode=OneTime}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <Label
+                        Width="260"
+                        Margin="10,3,10,3"
+                        Content="{x:Static res:ViewStringResources.CopyMoveTarget}" />
+                    <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
+                    <Button
+                        Margin="10,3,10,3"
+                        Command="{Binding OpenSelectDestinationFolderWindowCommand}"
+                        Content="{x:Static res:ViewStringResources.Select}" />
+                    <TextBox
+                        Margin="10,3,10,3"
+                        IsEnabled="False"
+                        Text="{Binding DestinationFolder.ContentFolderPath, Mode=OneWay}" />
+                </DockPanel>
+                <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                    <RadioButton
+                        Width="260"
+                        Margin="10,3,10,3"
+                        Content="{x:Static res:ViewStringResources.ExecuteOpenAI}"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsPromptTemplateChecked}" />
+                    <!--  プロンプトテンプレート一覧画面を表示するボタン  -->
+                    <Button
+                        Margin="10,3,10,3"
+                        Command="{Binding OpenSelectPromptTemplateWindowCommand, Mode=OneTime}"
+                        Content="{x:Static res:ViewStringResources.Select}" />
+                    <TextBox
+                        Margin="10,3,10,3"
+                        IsEnabled="False"
+                        Text="{Binding SelectedPromptItem.Name, Mode=OneTime}" />
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="4"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding IsPromptTemplateChecked}">
+                    <Label
+                        Width="260"
+                        Margin="10,3,10,3"
+                        Content="{x:Static res:ViewStringResources.OpenAIMode}" />
+                    <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
+                    <ComboBox Margin="10,3,10,3" SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}">
+                        <ComboBoxItem Name="Normal">通常</ComboBoxItem>
+                        <ComboBoxItem Name="RAG">RAG</ComboBoxItem>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding OpenAIExecutionModeSelectionChangeCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+            </Grid>
+            <Grid Grid.Row="5" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0" HorizontalAlignment="Right">
+                    <Button
+                        Width="100"
+                        Margin="10,0,0,0"
+                        Command="{Binding OKButtonClickedCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{x:Static res:ViewStringResources.OK}" />
+                    <Button
+                        Width="100"
+                        Margin="10,0,30,0"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{x:Static res:ViewStringResources.Cancel}"
+                        DockPanel.Dock="Right" />
+                </DockPanel>
+            </Grid>
+        </Grid>
+        <cc:MyStatusBar
+            Grid.Row="2"
+            Margin="0,0,0,0"
+            VerticalAlignment="Bottom" />
+    </Grid>
+</Window>

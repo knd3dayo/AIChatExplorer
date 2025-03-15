@@ -1,0 +1,166 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Nlog.config" />
+    <None Remove="python_ai_lib\ai_app.py" />
+    <None Remove="python_ai_lib\clipboard_app\autogen_modules\default_tools.py" />
+    <None Remove="python_ai_lib\clipboard_app\autogen_modules\vector_db_tools.py" />
+    <None Remove="python_ai_lib\clipboard_app\autogen_modules\__init__.py" />
+    <None Remove="python_ai_lib\ai_app_autogen_tools.py" />
+    <None Remove="python_ai_lib\ai_app_autogen_util.py" />
+    <None Remove="python_ai_lib\clipboard_app\file_modules\__init__.py" />
+    <None Remove="python_ai_lib\ai_app_file_util.py" />
+    <None Remove="python_ai_lib\clipboard_app\langchain_modules\__init__.py" />
+    <None Remove="python_ai_lib\ai_app_langchain_client.py" />
+    <None Remove="python_ai_lib\ai_app_langchain_util.py" />
+    <None Remove="python_ai_lib\ai_app_openai_util.py" />
+    <None Remove="python_ai_lib\ai_app_pyocr.py" />
+    <None Remove="python_ai_lib\ai_app_spacy.py" />
+    <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
+    <None Remove="python_ai_lib\ai_app_wrapper.py" />
+    <None Remove="python_ai_lib\flask_app.py" />
+    <None Remove="python_ai_lib\langchain_doc_store.py" />
+    <None Remove="python_ai_lib\langchain_doc_store_postgres.py" />
+    <None Remove="python_ai_lib\langchain_file_processor.py" />
+    <None Remove="python_ai_lib\langchain_object_processor.py" />
+    <None Remove="python_ai_lib\langchain_vector_db.py" />
+    <None Remove="python_ai_lib\langchain_vector_db_chroma.py" />
+    <None Remove="python_ai_lib\langchain_vector_db_faiss.py" />
+    <None Remove="python_ai_lib\langchain_vector_db_pgvector.py" />
+    <None Remove="python_ai_lib\llamaindex_client.py" />
+    <None Remove="python_ai_lib\llamaindex_vector_db.py" />
+    <None Remove="python_ai_lib\llamaindex_vector_db_chroma.py" />
+    <None Remove="python_ai_lib\clipboard_app\openai_modules\__init__.py" />
+    <None Remove="python_ai_lib\script_template.py" />
+    <None Remove="python_ai_lib\test_ai_app_autogen_group_chat_01.py" />
+    <None Remove="python_ai_lib\test_ai_app_langchain_chat_01.py" />
+    <None Remove="python_ai_lib\test_ai_app_open_ai_chat_01.py" />
+    <None Remove="python_ai_lib\__init__.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\autogen_modules\vector_db_tools.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\autogen_modules\default_tools.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\autogen_modules\autogen_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\autogen_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\file_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_client.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\openai_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app_server_flask.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app_server_shutdown.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app_server.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\debug_tool\autogen_group_chat_debug_03.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\debug_tool\autogen_group_chat_debug_02.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\debug_tool\ai_app_langchain_chat_debug_01.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\debug_tool\ai_app_open_ai_chat_debug_01.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\debug_tool\autogen_group_chat_debug_01.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\db_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\db_modules\main_db.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\requirements.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\templates\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app_process_checker.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app_wrapper.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\ai_app.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\file_modules\file_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_doc_store_postgres.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_doc_store.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_vector_db.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_vector_db_pgvector.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\langchain_modules\langchain_vector_db_chroma.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\clipboard_app\openai_modules\openai_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+    <PackageReference Include="NLog" Version="5.4.0" />
+    <PackageReference Include="SocketIOClient" Version="3.1.2" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.6" />
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
+  </ItemGroup>
+
+</Project>

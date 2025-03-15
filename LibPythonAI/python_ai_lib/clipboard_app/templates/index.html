@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask-SocketIO Chat App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function() {
+        console.log('WebSocket connection established');
+        });
+
+        socket.on('response', function(msg) {
+        console.log('Message from server:', msg);
+        var messageBox = document.getElementById('messages');
+        var message = document.createElement('li');
+        message.textContent = msg;
+        messageBox.appendChild(message);
+        });
+        socket.on('error', function(msg) {
+        console.log('Message from server:', msg);
+        var messageBox = document.getElementById('messages');
+        var message = document.createElement('li');
+        message.textContent = msg;
+        messageBox.appendChild(message);
+        });
+
+        document.getElementById('sendButton').addEventListener('click', function() {
+        var messageInput = document.getElementById('messageInput');
+        var message = messageInput.value;
+        socket.emit('autogen_group_chat', message);
+        messageInput.value = '';
+        });
+        });
+    </script>
+</head>
+<body>
+    <h1>Flask-SocketIO Chat App</h1>
+    <ul id="messages">
+    </ul>
+    <input id="messageInput" type="text" placeholder="Type your message here...">
+    <button id="sendButton">Send</button>
+</body>
+</html>

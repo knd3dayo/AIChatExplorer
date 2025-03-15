@@ -1,8 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Main;
+using CommunityToolkit.Mvvm.ComponentModel;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderMenu : ClipboardAppViewModelBase {
+    public class ClipboardFolderMenu : ObservableObject {
 
         public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
 
@@ -17,74 +20,91 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
                 // 新規作成
-                MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
-                    Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createMenuItem);
+                menuItems.Add(CreateMenuItem);
 
                 // 編集
-                MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
-                    Command = ClipboardFolderViewModel.EditFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(editMenuItem);
+                menuItems.Add(EditMenuItem);
 
                 // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
-                menuItems.Add(deleteMenuItem);
+                menuItems.Add(DeleteMenuItem);
 
-                // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
-                    Header = StringResources.ExportImport,
-                    Command = QAChat.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(exportImportMenuItem);
-
-
-                // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new() {
-                    Header = StringResources.BackupRestore
-                };
-
-                // バックアップ
-                MenuItem backupMenuItem = new() {
-                    Header = StringResources.BackupItem,
-                    Command = ClipboardFolderViewModel.BackupItemsFromFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                backupRestoreMenuItem.Items.Add(backupMenuItem);
-
-
-                // リストア
-                MenuItem restoreMenuItem = new() {
-                    Header = StringResources.RestoreItem,
-                    Command = ClipboardFolderViewModel.RestoreItemsToFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                backupRestoreMenuItem.Items.Add(restoreMenuItem);
-
-                menuItems.Add(backupRestoreMenuItem);
+                //テキストの抽出
+                menuItems.Add(ExtractTextMenuItem);
 
                 // ベクトルのリフレッシュ
-                MenuItem refreshMenuItem = new() {
-                    Header = StringResources.RefreshVectorDB,
-                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(refreshMenuItem);
+                menuItems.Add(RefreshMenuItem);
+
+                // エクスポート/インポート
+                menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
 
                 #endregion
             }
         }
+
+        // 新規作成
+        public MenuItem CreateMenuItem {
+            get {
+                MenuItem createMenuItem = new() {
+                    Header = CommonStringResources.Instance.Create,
+                    Command = ClipboardFolderViewModel.CreateFolderCommand,
+                };
+                return createMenuItem;
+            }
+        }
+        // 編集
+        public MenuItem EditMenuItem {
+            get {
+                MenuItem editMenuItem = new() {
+                    Header = CommonStringResources.Instance.Edit,
+                    Command = ClipboardFolderViewModel.EditFolderCommand,
+                };
+                return editMenuItem;
+            }
+        }
+        // 削除
+        public MenuItem DeleteMenuItem {
+            get {
+                MenuItem deleteMenuItem = new();
+                deleteMenuItem.Header = CommonStringResources.Instance.Delete;
+                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
+                return deleteMenuItem;
+            }
+        }
+
+        //テキストの抽出
+        public MenuItem ExtractTextMenuItem {
+            get {
+                MenuItem extractTextMenuItem = new() {
+                    Header = CommonStringResources.Instance.ExtractText,
+                    Command = ClipboardFolderViewModel.ExtractTextCommand,
+                };
+                return extractTextMenuItem;
+            }
+        }
+        // ベクトルのリフレッシュ
+        public MenuItem RefreshMenuItem {
+            get {
+                MenuItem refreshMenuItem = new() {
+                    Header = CommonStringResources.Instance.RefreshVectorDB,
+                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
+                };
+                return refreshMenuItem;
+            }
+        }
+
+        // エクスポート/インポート
+        public MenuItem ExportImportMenuItem {
+            get {
+                MenuItem exportImportMenuItem = new() {
+                    Header = CommonStringResources.Instance.ExportImport,
+                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
+                };
+                return exportImportMenuItem;
+            }
+        }
+
     }
 }

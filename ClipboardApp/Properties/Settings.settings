@@ -32,20 +32,14 @@
     <Setting Name="UserMaskedDataInOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoMergeItemsBySourceApplicationTitle" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="OpenAICompletionBaseURL" Type="System.String" Scope="User">
+    <Setting Name="OpenAIBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AutoExtractImageWithPyOCR" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -55,9 +49,6 @@
     </Setting>
     <Setting Name="TesseractExePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Tesseract-OCR\tesseract.exe</Value>
-    </Setting>
-    <Setting Name="PreviewMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -120,7 +111,25 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AutoDocumentReliabilityCheck" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowProperties" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AzureOpenAIAPIVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2024-02-01</Value>
+    </Setting>
+    <Setting Name="APIServerURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:5000/api</Value>
+    </Setting>
+    <Setting Name="UseInternalAPI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UseExternalAPI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UsePythonNet" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -5,15 +5,15 @@ VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardApp", "ClipboardApp\ClipboardApp.csproj", "{AA0C0A47-FEC1-4D89-A619-F02A79C26773}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonAILibUI", "QAChat\PythonAILibUI.csproj", "{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppCommon", "WpfAppCommon\WpfAppCommon.csproj", "{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{B731EF66-0D96-487E-BE6E-31E477E09715}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonAILib", "PythonAILib\PythonAILib.csproj", "{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibPythonAI", "LibPythonAI\LibPythonAI.csproj", "{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageChat", "ImageChat\ImageChat.csproj", "{4DCCD794-7D80-490F-91AB-A38AB2F9E10F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibUIImageChat", "LibUIImageChat\LibUIImageChat.csproj", "{4DCCD794-7D80-490F-91AB-A38AB2F9E10F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibUIPythonAI", "LibUIPythonAI\LibUIPythonAI.csproj", "{814368F4-99B4-433E-B8A2-D37D18EB1E7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibUIMergeChat", "LibUIMergeChat\LibUIMergeChat.csproj", "{49228F16-6214-4CAF-9599-A6F2A7E0345E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,6 @@ Global
 		{AA0C0A47-FEC1-4D89-A619-F02A79C26773}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA0C0A47-FEC1-4D89-A619-F02A79C26773}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA0C0A47-FEC1-4D89-A619-F02A79C26773}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +33,14 @@ Global
 		{4DCCD794-7D80-490F-91AB-A38AB2F9E10F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DCCD794-7D80-490F-91AB-A38AB2F9E10F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DCCD794-7D80-490F-91AB-A38AB2F9E10F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49228F16-6214-4CAF-9599-A6F2A7E0345E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49228F16-6214-4CAF-9599-A6F2A7E0345E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49228F16-6214-4CAF-9599-A6F2A7E0345E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49228F16-6214-4CAF-9599-A6F2A7E0345E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

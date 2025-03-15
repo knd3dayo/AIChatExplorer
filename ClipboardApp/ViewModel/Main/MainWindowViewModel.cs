@@ -1,24 +1,30 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using ClipboardApp.Factory;
+using ClipboardApp.Model.Folders.Search;
+using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
+using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
-using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Content;
-using ClipboardApp.ViewModel.Common;
-using ClipboardApp.ViewModel.Main;
-using PythonAILib.Common;
-using QAChat;
-using WpfAppCommon.Utils;
-using PythonAILib.Model.AutoGen;
-using ClipboardApp.Common;
-using ClipboardApp.Settings;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ClipboardApp.ViewModel.Folders.Search;
+using ClipboardApp.ViewModel.Settings;
+using LibPythonAI.Data;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.AutoGen;
+using LibUIPythonAI.View.AutoProcessRule;
+using LibUIPythonAI.View.PromptTemplate;
+using LibUIPythonAI.View.Tag;
+using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.PromptTemplate;
+using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 
-namespace ClipboardApp
-{
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
+namespace ClipboardApp.ViewModel.Main {
+    public partial class MainWindowViewModel : AppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -40,59 +46,86 @@ namespace ClipboardApp
                 Environment.SetEnvironmentVariable("NO_PROXY", ClipboardAppConfig.Instance.NoProxyList);
             }
 
+            ClipboardAppPythonAILibConfigParams configParams = new();
+            PythonAILibManager.Init(configParams);
+
+
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
-            ClipboardAppPythonAILibConfigParams configParams = new();
-            PythonAILibManager.Init(configParams);
-            QAChatManager.Init(configParams);
+            // Commandの初期化
+            Commands = new(UpdateIndeterminate, () => {
+                // 現在選択中のフォルダをReload
+                MainUITask.Run(() => {
+                    MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                });
+            });
+
             // フォルダの初期化
-            RootFolderViewModelContainer = new();
-
-            // データベースのチェックポイント処理
-            ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();
-
-            // DBのバックアップの取得
-            BackupController.BackupNow();
-
+            RootFolderViewModelContainer = new(Commands);
+            
             // ClipboardControllerのOnClipboardChangedに処理をセット
             ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア
-                CopiedObjects.Clear();
+                ClipboardController.Instance.CopiedObjects.Clear();
+            };
+
+
+            // MainPanelDataGridViewControlViewModelの初期化
+            MainPanelDataGridViewControlViewModel = new(Commands) {
+                UpdateIndeterminateAction = UpdateIndeterminate,
+
+            };
+            // MainPanelTreeViewControlViewModelの初期化
+            MainPanelTreeViewControlViewModel = new(Commands) {
+                UpdateIndeterminateAction = UpdateIndeterminate,
+                RootFolderViewModelContainer = RootFolderViewModelContainer,
+                SelectedFolderChangedAction = ((selectedFolder) => {
+                    MainPanelDataGridViewControlViewModel.SelectedFolder = selectedFolder;
+                })
+            };
+
+            MainPanelViewModel mainPanelViewModel = new(Commands) {
+                MainPanelTreeViewControlViewModel = MainPanelTreeViewControlViewModel,
+                MainPanelDataGridViewControlViewModel = MainPanelDataGridViewControlViewModel
             };
 
             // TabItemsの初期化
             MainPanel mainPanel = new() {
-                DataContext = this
+                DataContext = mainPanelViewModel
             };
 
-            ClipboardAppTabContainer container = new("main", mainPanel) {
+            AppTabContainer container = new("main", mainPanel) {
                 CloseButtonVisibility = Visibility.Collapsed
             };
             TabItems.Add(container);
 
+
             // AutoGenPropertiesの初期化
-            PythonAILibManager? libManager = PythonAILibManager.Instance;
-            Task.Run(() => {
-                AutoGenProperties.Init(libManager.ConfigParams.GetOpenAIProperties());
-            });
+            AutoGenProperties.Init();
 
         }
 
- 
-        public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];
+        public AppItemViewModelCommands Commands { get; set; }
+        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
-        public void AddTabItem(ClipboardAppTabContainer tabItem) {
+        public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
+
+        public ObservableCollection<AppTabContainer> TabItems { get; set; } = [];
+
+
+        // メインウィンドウにアイテムのタブを追加
+        public void AddTabItem(AppTabContainer tabItem) {
             if (ThisWindow == null) {
                 return;
             }
             // ClipboardAppTabContainerのHeaderWidthを設定. 現在のタブ数 * ClipboardAppTabContainerのHeaderWidth > ThisWindow.Widthの場合はThisWindow.Widthを超えないようにする
             double tabControlWidth = ThisWindow.ActualWidth - 500;
-            if ( (TabItems.Count + 1) * ClipboardAppTabContainer.HeaderWidthStatic > tabControlWidth ) {
-                ClipboardAppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
+            if ((TabItems.Count + 1) * AppTabContainer.HeaderWidthStatic > tabControlWidth) {
+                AppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
                 for (int i = 1; i < TabItems.Count; i++) {
-                    TabItems[i].HeaderWidth = ClipboardAppTabContainer.HeaderWidthStatic;
+                    TabItems[i].HeaderWidth = AppTabContainer.HeaderWidthStatic;
                 }
             }
 
@@ -100,26 +133,16 @@ namespace ClipboardApp
             OnPropertyChanged(nameof(TabItems));
             SelectedTabItem = tabItem;
         }
+        // メインウィンドウからアイテムのタブを削除
 
-        public void RemoveTabItem(ClipboardAppTabContainer tabItem) {
+        public void RemoveTabItem(AppTabContainer tabItem) {
             TabItems.Remove(tabItem);
             OnPropertyChanged(nameof(TabItems));
         }
 
-        public SimpleDelegateCommand<ClipboardAppTabContainer> CloseTabCommand => new((tabItem) => {
-            if (tabItem == null) {
-                return;
-            }
-            if (TabItems.Count == 1) {
-                return;
-            }
-            TabItems.Remove(tabItem);
-            OnPropertyChanged(nameof(TabItems));
-        });
-
         // SelectedTabItem
-        private ClipboardAppTabContainer? _selectedTabItem;
-        public ClipboardAppTabContainer? SelectedTabItem {
+        private AppTabContainer? _selectedTabItem;
+        public AppTabContainer? SelectedTabItem {
             get {
                 return _selectedTabItem;
             }
@@ -131,7 +154,7 @@ namespace ClipboardApp
 
         // Null許容型
         [AllowNull]
-        public ClipboardAppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
 
@@ -143,6 +166,10 @@ namespace ClipboardApp
         public void UpdateIndeterminate(bool visible) {
             IsIndeterminate = visible;
             OnPropertyChanged(nameof(IsIndeterminate));
+            // SelectedItemを更新
+            if (visible == false) {
+                OnPropertyChanged(nameof(MainPanelDataGridViewControlViewModel.SelectedItem));
+            }
         }
 
         // クリップボード監視が実行中であるかどうか
@@ -155,98 +182,6 @@ namespace ClipboardApp
             }
         }
 
-        
-        // Cutフラグ
-        public enum CutFlagEnum {
-            None,
-            Item,
-            Folder
-        }
-        public CutFlagEnum CutFlag { get; set; } = CutFlagEnum.None;
-
-        // 選択中のアイテム(複数選択)
-        private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
-        public ObservableCollection<ClipboardItemViewModel> SelectedItems {
-            get {
-                return _selectedItems;
-
-            }
-            set {
-                _selectedItems = value;
-
-                OnPropertyChanged(nameof(SelectedItems));
-            }
-        }
-
-        // 選択中のアイテム
-        private ClipboardItemViewModel? _selectedItem;
-        public ClipboardItemViewModel? SelectedItem {
-            get {
-                return _selectedItem;
-            }
-            set {
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
-            }
-        }
-
-        // 選択中のフォルダ
-        private ClipboardFolderViewModel? _selectedFolder;
-        public ClipboardFolderViewModel? SelectedFolder {
-            get {
-
-                return _selectedFolder;
-            }
-            set {
-                if (value == null) {
-                    _selectedFolder = null;
-                } else {
-                    _selectedFolder = value;
-                }
-                OnPropertyChanged(nameof(SelectedFolder));
-            }
-        }
-        /// <summary>
-        /// コピーされたアイテム
-        /// </summary>
-        // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
-        public List<object> CopiedObjects { get; set; } = [];
-        // Ctrl + C or X  が押された時のClipboardItemFolder
-        private ClipboardFolderViewModel? _copiedFolder;
-        public ClipboardFolderViewModel? CopiedFolder {
-            get {
-                return _copiedFolder;
-            }
-            set {
-                _copiedFolder = value;
-                OnPropertyChanged(nameof(CopiedFolder));
-            }
-        }
-
-        // プレビューモード　プレビューを表示するかどうか
-        public Visibility PreviewModeVisibility {
-            get {
-                return ClipboardAppConfig.Instance.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        //　プレビューモード表示するかどうか
-        public bool PreviewMode {
-            get {
-                return ClipboardAppConfig.Instance.PreviewMode;
-            }
-            set {
-                ClipboardAppConfig.Instance.PreviewMode = value;
-                // Save
-                ClipboardAppConfig.Instance.Save();
-
-                OnPropertyChanged(nameof(PreviewMode));
-                OnPropertyChanged(nameof(PreviewModeVisibility));
-                // アプリケーション再起動後に反映されるようにメッセージを表示
-                MessageBox.Show(StringResources.DisplayModeWillChangeWhenYouRestartTheApplication, StringResources.Information, MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
         /// <summary>
         /// 外部からプロパティの変更を通知する
         /// </summary>
@@ -254,6 +189,176 @@ namespace ClipboardApp
         public void NotifyPropertyChanged(string propertyName) {
             OnPropertyChanged(propertyName);
         }
+
+        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
+            // Display exit confirmation dialog. If Yes, exit the application
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                Application.Current.Shutdown();
+            }
+        });
+
+        public SimpleDelegateCommand<AppTabContainer> CloseTabCommand => new((tabItem) => {
+            if (tabItem == null) {
+                return;
+            }
+            if (TabItems.Count == 1) {
+                return;
+            }
+            TabItems.Remove(tabItem);
+            OnPropertyChanged(nameof(TabItems));
+        });
+
+        // クリップボード監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
+            Commands.StartStopClipboardMonitorCommand();
+        });
+
+
+        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
+        public static void OpenListPromptTemplateWindowCommandExecute(MainWindowViewModel windowViewModel) {
+            // ListPromptTemplateWindowを開く
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => { });
+        }
+        // メニューの「自動処理ルールを編集」をクリックしたときの処理
+        public void OpenListAutoProcessRuleWindowCommandExecute() {
+            // ListAutoProcessRuleWindowを開く
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+
+        }
+        // メニューの「タグ編集」をクリックしたときの処理
+        public static void OpenTagWindowCommandExecute() {
+            // TagWindowを開く
+            TagWindow.OpenTagWindow(null, () => { });
+
+        }
+        #region 別Windowを開く処理
+
+
+        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
+            OpenListPromptTemplateWindowCommandExecute(this);
+        });
+        // メニューの「自動処理ルールを編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
+            OpenListAutoProcessRuleWindowCommandExecute();
+        });
+        // メニューの「タグ編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
+            OpenTagWindowCommandExecute();
+        });
+        // メニューの「AutoGen定義編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
+            ListAutoGenItemWindow.OpenListAutoGenItemWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+        });
+
+        // バージョン情報画面を開く処理
+        public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
+            VersionWindow.OpenVersionWindow();
+        });
+
+        // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
+        // チャット履歴フォルダーに新規作成
+        public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
+
+            // チャット履歴用のItemの設定
+            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            // チャット履歴用のItemの設定
+            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
+            };
+            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+
+            Commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
+
+        });
+
+
+        // OpenImageChatWindow
+        public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
+            // チャット履歴フォルダーに新規作成
+            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
+            Commands.OpenImageChatWindowCommand(dummyItem, () => {
+                RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
+            });
+        });
+
+        // OpenMergeChatWindow
+        public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
+
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            Commands.OpenMergeChatWindowCommand(folderViewModel, []);
+
+        });
+
+        public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
+            Commands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
+
+        });
+
+
+        // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
+            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            Commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+        });
+
+        // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
+            Commands.OpenRAGManagementWindowCommand();
+        });
+        // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
+            Commands.OpenVectorDBManagementWindowCommand();
+        });
+
+        // メニューの「設定」をクリックしたときの処理
+        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
+            Commands.SettingCommandExecute();
+        });
+
+        #endregion
+
+
+        #region Window全体のInputBinding用のコマンド
+        // Ctrl + F が押された時の処理
+        public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
+            // 子フォルダを作成
+            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild("New Folder");
+
+            // 検索フォルダの親フォルダにこのフォルダを追加
+
+            SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
+
+            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
+                // 保存と再読み込み
+                searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel;
+                searchFolderViewModel.SaveFolderCommand.Execute(null);
+                // 親フォルダを保存
+                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
+                // Load
+                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
+                () => {
+                    Commands.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        Commands.UpdateIndeterminate(false);
+
+                        MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
+                        // SelectedFolder に　SearchFolderViewModelを設定
+                        MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
+                    });
+                });
+
+            });
+        });
+
+        #endregion
 
 
     }

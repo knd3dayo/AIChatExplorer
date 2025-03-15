@@ -1,37 +1,33 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders.Clipboard;
+using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using QAChat.ViewModel.Folder;
-using WpfAppCommon.Utils;
+using LibPythonAI.Model.Content;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Folder;
+using PythonAILibUI.ViewModel.Item;
 
-namespace ClipboardApp.ViewModel.Folders.Mail
-{
-    public class OutlookFolderViewModel(OutlookFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder)
-    {
+namespace ClipboardApp.ViewModel.Folders.Mail {
+    public class OutlookFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
-        public override int DefaultNextLevel { get; } = 0;
+        public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
-        public override ObservableCollection<MenuItem> FolderMenuItems
-        {
-            get
-            {
+        public override ObservableCollection<MenuItem> FolderMenuItems {
+            get {
                 OutlookFolderMenu clipboardItemMenu = new(this);
                 return clipboardItemMenu.MenuItems;
             }
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override OutlookFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder)
-        {
-            if (childFolder is not OutlookFolder)
-            {
+        public override OutlookFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            if (childFolder is not OutlookFolder) {
                 throw new Exception("childFolder is not OutlookFolder");
             }
-            var childFolderViewModel = new OutlookFolderViewModel((OutlookFolder)childFolder)
-            {
+            var childFolderViewModel = new OutlookFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -39,82 +35,27 @@ namespace ClipboardApp.ViewModel.Folders.Mail
         }
 
 
-        // LoadChildren
-        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
-        // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public override async void LoadChildren(int nestLevel = 0)
-        {
-            try
-            {
-                UpdateIndeterminate(true);
-                // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-                List<ContentFolderViewModel> _children = [];
-
-                await Task.Run(() =>
-                {
-                    foreach (var child in Folder.GetChildren<OutlookFolder>())
-                    {
-                        if (child == null)
-                        {
-                            continue;
-                        }
-                        OutlookFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                        // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                        if (nestLevel > 0)
-                        {
-                            childViewModel.LoadChildren(nestLevel - 1);
-                        }
-                        _children.Add(childViewModel);
-                    }
-                });
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
-                OnPropertyChanged(nameof(Children));
-            }
-            finally
-            {
-                UpdateIndeterminate(false);
-            }
-
-        }
         // LoadItems
-        public override async void LoadItems()
-        {
-            Items.Clear();
-            // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<OutlookItem> _items = [];
-            try
-            {
-                UpdateIndeterminate(true);
-                await Task.Run(() =>
-                {
-                    _items = Folder.GetItems<OutlookItem>();
-                });
-                foreach (OutlookItem item in _items)
-                {
-                    Items.Add(CreateItemViewModel(item));
-                }
-            }
-            finally
-            {
-                UpdateIndeterminate(false);
-            }
+        public override void LoadItems() {
+            LoadItems<OutlookItem>();
         }
 
-        public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) =>
-        {
-            try
-            {
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<OutlookFolderViewModel, OutlookFolder>(nestLevel);
+        }
+        public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
+            try {
                 OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
                 folderViewModel.UpdateIndeterminate(true);
-                await Task.Run(() =>
-                {
+                await Task.Run(() => {
                     folder.SyncItems();
                 });
-            }
-            finally
-            {
+            } finally {
                 folderViewModel.UpdateIndeterminate(false);
             }
+            folderViewModel.LoadItems();
+
         });
 
     }

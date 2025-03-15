@@ -1,7 +1,8 @@
-using QAChat.Resource;
+using ClipboardApp.ViewModel.Main;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Help {
-    public class VersionWindowViewModel : ClipboardAppViewModelBase {
+    public class VersionWindowViewModel : AppViewModelBase {
 
         public string Version { get; set; }
 

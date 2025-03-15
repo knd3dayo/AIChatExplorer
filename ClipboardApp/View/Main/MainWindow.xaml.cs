@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Windows;
-using QAChat.Utils;
 
 
 
@@ -12,9 +11,7 @@ namespace ClipboardApp.View.Main {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
-
         }
-
 
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);

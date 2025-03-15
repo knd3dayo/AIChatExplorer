@@ -1,0 +1,76 @@
+<Window
+    x:Class="LibUIPythonAI.View.Chat.QAChatWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="clr-namespace:LibUIPythonAI.View.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:LibUIPythonAI.View.Chat"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:LibUIPythonAI.ViewModel.Chat"
+    Title="{x:Static local:ViewStringResources.QAChatWindowTitle}"
+    Width="800"
+    Height="550"
+    d:DataContext="{d:DesignInstance Type=model:ChatWindowViewModel}"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowState="Maximized"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <!--  メニューバー  -->
+                <Menu
+                    Name="menu1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="True">
+                    <MenuItem />
+                </Menu>
+            </materialDesign:ColorZone>
+        </StackPanel>
+        <local:ChatControl
+            x:Name="QAChtControl"
+            Grid.Row="1"
+            DataContext="{Binding ChatControlViewModel}" />
+        <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
+    </Grid>
+</Window>

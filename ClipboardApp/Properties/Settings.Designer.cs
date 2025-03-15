@@ -12,7 +12,7 @@ namespace ClipboardApp.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -145,18 +145,6 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoMergeItemsBySourceApplicationTitle {
-            get {
-                return ((bool)(this["AutoMergeItemsBySourceApplicationTitle"]));
-            }
-            set {
-                this["AutoMergeItemsBySourceApplicationTitle"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string MonitorTargetAppNames {
             get {
@@ -170,12 +158,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAICompletionBaseURL {
+        public string OpenAIBaseURL {
             get {
-                return ((string)(this["OpenAICompletionBaseURL"]));
+                return ((string)(this["OpenAIBaseURL"]));
             }
             set {
-                this["OpenAICompletionBaseURL"] = value;
+                this["OpenAIBaseURL"] = value;
             }
         }
         
@@ -188,18 +176,6 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["AutoExtractImageWithPyOCR"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIEmbeddingBaseURL {
-            get {
-                return ((string)(this["OpenAIEmbeddingBaseURL"]));
-            }
-            set {
-                this["OpenAIEmbeddingBaseURL"] = value;
             }
         }
         
@@ -236,18 +212,6 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["TesseractExePath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool PreviewMode {
-            get {
-                return ((bool)(this["PreviewMode"]));
-            }
-            set {
-                this["PreviewMode"] = value;
             }
         }
         
@@ -493,13 +457,85 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoDocumentReliabilityCheck {
             get {
                 return ((bool)(this["AutoDocumentReliabilityCheck"]));
             }
             set {
                 this["AutoDocumentReliabilityCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowProperties {
+            get {
+                return ((bool)(this["ShowProperties"]));
+            }
+            set {
+                this["ShowProperties"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2024-02-01")]
+        public string AzureOpenAIAPIVersion {
+            get {
+                return ((string)(this["AzureOpenAIAPIVersion"]));
+            }
+            set {
+                this["AzureOpenAIAPIVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:5000/api")]
+        public string APIServerURL {
+            get {
+                return ((string)(this["APIServerURL"]));
+            }
+            set {
+                this["APIServerURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseInternalAPI {
+            get {
+                return ((bool)(this["UseInternalAPI"]));
+            }
+            set {
+                this["UseInternalAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExternalAPI {
+            get {
+                return ((bool)(this["UseExternalAPI"]));
+            }
+            set {
+                this["UseExternalAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UsePythonNet {
+            get {
+                return ((bool)(this["UsePythonNet"]));
+            }
+            set {
+                this["UsePythonNet"] = value;
             }
         }
     }

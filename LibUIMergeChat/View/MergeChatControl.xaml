@@ -1,0 +1,207 @@
+<UserControl
+    x:Class="LibUIMergeChat.View.MergeChatControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource;assembly=LibUIPythonAI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:LibUIMergeChat.View"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:LibUIMergeChat.ViewModel"
+    xmlns:res="clr-namespace:LibUIMergeChat.View"
+    x:Name="Root"
+    d:DataContext="{d:DesignInstance Type=model:MergeChatControlViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl
+            Grid.Row="0"
+            Margin="10,5,10,5"
+            HorizontalContentAlignment="Left">
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{Binding StringResources.Chat, Mode=OneTime}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <local:MergeChatContextPanel Grid.Column="0" DataContext="{Binding}" />
+                    <GridSplitter Grid.Column="1" Width="5" />
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="300" />
+                        </Grid.RowDefinitions>
+                        <local:MergeTargetSelectedDataGridViewControl Grid.Row="0" DataContext="{Binding MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel}" />
+                        <GridSplitter
+                            Grid.Row="1"
+                            Height="5"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch" />
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <!--  事前処理プロンプトテンプレート  -->
+                            <TextBox
+                                Grid.Row="0"
+                                Margin="10,0,10,0"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PreProcessingPromptHint}"
+                                AcceptsReturn="True"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                Text="{Binding PreProcessPromptText, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <MouseBinding Command="{Binding PreProcessPromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <!--  事後処理プロンプトテンプレート  -->
+                            <TextBox
+                                Grid.Row="1"
+                                Margin="10,0,10,0"
+                                VerticalContentAlignment="Top"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PostProcessingPromptHint}"
+                                AcceptsReturn="True"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                Text="{Binding PostProcessPromptText, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <MouseBinding Command="{Binding PostProcessPromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--  マージ対象アイテム  -->
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.MergeTargetItemSelection}">
+                <local:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
+            </TabItem>
+            <!--  マージ対象データ  -->
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.MergeTargetDataSelection}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  エクスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
+                    <DataGrid
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="False"
+                        ItemsSource="{Binding ExportItems}"
+                        SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.MergeTarget}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TabControl>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.Column="0"
+                HorizontalAlignment="Left"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding SelectOutputFolderCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.OutputFolderSelection}" />
+                <TextBox
+                    MinWidth="300"
+                    Margin="10,0,10,5"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    IsReadOnly="True"
+                    Text="{Binding OutputFolder.FolderPath, Mode=OneWay}" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding SendChatCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Send}" />
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Close}" />
+            </StackPanel>
+        </Grid>
+        <ProgressBar
+            Grid.Row="0"
+            IsIndeterminate="{Binding IsIndeterminate}"
+            Style="{StaticResource MaterialDesignCircularProgressBar}"
+            Value="0" />
+    </Grid>
+</UserControl>

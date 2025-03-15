@@ -1,0 +1,100 @@
+<UserControl
+    x:Class="ClipboardApp.View.Main.MainPanelTreeViewControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource;assembly=LibUIPythonAI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor;assembly=LibUIPythonAI"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Main"
+    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Main"
+    x:Name="Root"
+    d:DataContext="{d:DesignInstance Type=viewModel:MainPanelTreeViewControlViewModel}"
+    mc:Ignorable="d">
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="N"
+            Command="{Binding CreateItemCommand, Mode=OneTime}"
+            Modifiers="Control" />
+        <!--  Paste items into selected folder  -->
+        <KeyBinding
+            Key="V"
+            Command="{Binding PasteCommand, Mode=OneTime}"
+            CommandParameter="{Binding}"
+            Modifiers="Control" />
+    </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <!--  Folder TreeView  -->
+        <TreeView
+            x:Name="FolderTreeView"
+            Grid.Column="0"
+            ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="Margin" Value="3,3,3,3" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
+                    <!--  Tree item  -->
+                    <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                            Kind="Folder" />
+                        <TextBlock
+                            Margin="0,3,0,0"
+                            DockPanel.Dock="Left"
+                            FontSize="12"
+                            Foreground="#616161"
+                            Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
+                            Text="{Binding FolderName}" />
+                        <DockPanel.InputBindings>
+                            <!--  Open folder on left click  -->
+                            <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
+                        </DockPanel.InputBindings>
+                        <DockPanel.ContextMenu>
+                            <!--  Folder context menu  -->
+                            <ContextMenu FontSize="12" ItemsSource="{Binding FolderMenuItems}" />
+                        </DockPanel.ContextMenu>
+                    </DockPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectedItemChanged">
+                    <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <TreeView.InputBindings>
+                <!--  Reload items from LiteDB  -->
+                <KeyBinding
+                    Key="R"
+                    Command="{Binding ReloadCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Paste items into selected folder  -->
+                <KeyBinding
+                    Key="V"
+                    Command="{Binding PasteCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Cut Folder  -->
+                <KeyBinding
+                    Key="X"
+                    Command="{Binding CutFolderCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+            </TreeView.InputBindings>
+        </TreeView>
+    </Grid>
+</UserControl>

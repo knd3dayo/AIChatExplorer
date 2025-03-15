@@ -1,48 +1,39 @@
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Folders.Clipboard;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Content;
-using PythonAILib.Model.Folder;
-using QAChat.ViewModel;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
-using QAChat.View.Folder;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibPythonAI.Model.Content;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Folder;
+using PythonAILibUI.ViewModel.Item;
 
-namespace ClipboardApp.ViewModel.Folders.Chat
-{
-    public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder)
-    {
+namespace ClipboardApp.ViewModel.Folders.Chat {
+    public class ChatFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder)
-        {
-            var chatFolderViewModel = new ChatFolderViewModel(childFolder);
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            var chatFolderViewModel = new ChatFolderViewModel(childFolder, commands);
             // チャットフォルダの親フォルダにこのフォルダを追加
             chatFolderViewModel.ParentFolderViewModel = this;
             return chatFolderViewModel;
         }
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
-        public override void CreateItemCommandExecute()
-        {
-            ClipboardItem clipboardItem = new(Folder.Id);
+        public override void CreateItemCommandExecute() {
+            ClipboardItem clipboardItem = new(Folder.Entity);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
-            OpenItemCommandExecute(clipboardItemViewModel);
-        }
-        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel)
-        {
-            QAChatStartupProps props = new(itemViewModel.ContentItem);
-
-            QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
+            QAChatStartupProps props = new(clipboardItemViewModel.ContentItem);
+            LibUIPythonAI.View.Chat.QAChatWindow.OpenOpenAIChatWindow(props);
         }
 
-        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate)
-        {
+        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            childFolder.FolderType = FolderTypeEnum.Chat;
-            ChatFolderViewModel childFolderViewModel = new(childFolder);
+            childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
+            ChatFolderViewModel childFolderViewModel = new(childFolder, commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
@@ -53,11 +44,19 @@ namespace ClipboardApp.ViewModel.Folders.Chat
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate)
-        {
+        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
         }
 
+        // LoadItems
+        public override void LoadItems() {
+            LoadItems<ClipboardItem>();
+        }
+
+        // LoadChildren
+        public override void LoadChildren(int nestLevel) {
+            LoadChildren<ChatFolderViewModel, ClipboardFolder>(nestLevel);
+        }
     }
 }
 
