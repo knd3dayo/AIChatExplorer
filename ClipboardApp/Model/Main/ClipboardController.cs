@@ -128,7 +128,7 @@ namespace ClipboardApp.Model.Main {
             if (_clipboard == null) {
                 return;
             }
-            FolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
+            ClipboardAppFolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
 
         }
 

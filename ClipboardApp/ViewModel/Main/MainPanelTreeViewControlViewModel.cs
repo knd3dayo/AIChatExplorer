@@ -150,7 +150,7 @@ namespace ClipboardApp.ViewModel.Main {
         public void CreateSearchFolder() {
             // 現在の日付 時刻の文字列を取得
             string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild(now);
+            SearchFolder folder = ClipboardAppFolderManager.SearchRootFolder.CreateChild(now);
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 

@@ -6,6 +6,7 @@ using ClipboardApp.Model.Main;
 using ClipboardApp.ViewModel.Settings;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
 
 namespace ClipboardApp.Model.Folders.Browser {
     public class EdgeBrowseHistoryFolder : ClipboardFolder {
@@ -15,7 +16,7 @@ namespace ClipboardApp.Model.Folders.Browser {
         // コンストラクタ
         public EdgeBrowseHistoryFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected EdgeBrowseHistoryFolder(EdgeBrowseHistoryFolder parent, string folderName) : base(parent, folderName) {
@@ -26,7 +27,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -60,7 +61,16 @@ namespace ClipboardApp.Model.Folders.Browser {
                 Directory.CreateDirectory(CopiedHistoryFilePath);
             }
             string copiedHistoryFilePath = Path.Combine(CopiedHistoryFilePath, "History");
-            File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
+            // System.IO.IOException時のリトライ処理
+            for (int i = 0; i < 3; i++) {
+                try {
+                    File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
+                    break;
+                } catch (IOException e) {
+                    LogWrapper.Info($"IOException:{e.Message}");
+                    Thread.Sleep(1000);
+                }
+            }
 
             // コレクション
             // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
@@ -113,7 +123,7 @@ namespace ClipboardApp.Model.Folders.Browser {
                     CreatedAt = lastVisitTimeDateTime,
 
                 };
-                contentItem.Save(false, false);
+                contentItem.Save();
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
                 // ContentItem result = task.Result;
@@ -131,7 +141,7 @@ namespace ClipboardApp.Model.Folders.Browser {
 
                 if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;
-                    contentItem.Save(false, false);
+                    contentItem.Save();
                 }
             });
 

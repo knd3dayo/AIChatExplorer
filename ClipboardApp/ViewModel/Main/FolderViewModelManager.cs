@@ -39,13 +39,13 @@ namespace ClipboardApp.ViewModel.Main {
 
         // コンストラクタ
         public FolderViewModelManager(ContentItemViewModelCommands commands) :base(commands) {
-            RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder, commands);
-            SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
-            ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
-            FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
-            ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder, commands);
-            RecentFilesFolderViewModel = new RecentFilesFolderViewModel(FolderManager.RecentFilesRootFolder, commands);
-            EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(FolderManager.EdgeBrowseHistoryRootFolder, commands);
+            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardAppFolderManager.RootFolder, commands);
+            SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardAppFolderManager.SearchRootFolder, commands);
+            ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardAppFolderManager.ChatRootFolder, commands);
+            FileSystemFolderViewModel = new FileSystemFolderViewModel(ClipboardAppFolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
+            ShortcutFolderViewModel = new ShortCutFolderViewModel(ClipboardAppFolderManager.ShortcutRootFolder, commands);
+            RecentFilesFolderViewModel = new RecentFilesFolderViewModel(ClipboardAppFolderManager.RecentFilesRootFolder, commands);
+            EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(ClipboardAppFolderManager.EdgeBrowseHistoryRootFolder, commands);
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
@@ -54,7 +54,7 @@ namespace ClipboardApp.ViewModel.Main {
             FolderViewModels.Add(RecentFilesFolderViewModel);
             FolderViewModels.Add(EdgeBrowseHistoryFolderViewModel);
             if (OutlookFolder.OutlookApplicationExists()) {
-                OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
+                OutlookFolderViewModel = new OutlookFolderViewModel(ClipboardAppFolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
                 FolderViewModels.Add(OutlookFolderViewModel);
             }
 

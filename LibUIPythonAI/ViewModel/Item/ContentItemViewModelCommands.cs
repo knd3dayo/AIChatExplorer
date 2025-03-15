@@ -162,11 +162,11 @@ namespace PythonAILibUI.ViewModel.Item {
             }
             UpdateIndeterminate(true);
             Task.Run(() => {
-                ImportExportUtil.ImportFromURLList(itemViewModels.Select(x => x.ContentItem).ToList(), (item) => { });
-            }).ContinueWith((task) => {
-                UpdateIndeterminate(false);
-                StatusText.Instance.UpdateInProgress(false);
-                UpdateView();
+                ImportExportUtil.ImportFromURLList(itemViewModels.Select(x => x.ContentItem).ToList(), (item) => {
+                    UpdateIndeterminate(false);
+                    StatusText.Instance.UpdateInProgress(false);
+                    UpdateView();
+                });
             });
 
 

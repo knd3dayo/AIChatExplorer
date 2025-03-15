@@ -328,7 +328,7 @@ namespace ClipboardApp.ViewModel.Main {
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
             // 子フォルダを作成
-            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild("New Folder");
+            SearchFolder folder = ClipboardAppFolderManager.SearchRootFolder.CreateChild("New Folder");
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 

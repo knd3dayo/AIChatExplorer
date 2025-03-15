@@ -51,10 +51,10 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             FileSystemFolder fileSystemFolder = (FileSystemFolder)folderViewModel.Folder;
             // ショートカット登録
             // ShortCutRootFolderを取得
-            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
+            FileSystemFolder shortCutRootFolder = ClipboardAppFolderManager.ShortcutRootFolder;
             // ショートカットフォルダを作成
             ContentFolderEntity contentFolder = new() {
-                FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
+                FolderTypeString = ClipboardAppFolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
                 ParentId = shortCutRootFolder.Id,

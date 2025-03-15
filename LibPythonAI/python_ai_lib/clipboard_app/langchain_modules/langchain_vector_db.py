@@ -90,7 +90,8 @@ class LangChainVectorDB:
         else:
             print("doc_store_url is None")
 
-        self.db = self._load()
+        # 子クラスで実装
+        self.db: Union[VectorStore, None] = None
 
     def _load(self) -> VectorStore:
         # 未実装例外をスロー
@@ -102,11 +103,16 @@ class LangChainVectorDB:
         raise NotImplementedError("Not implemented")
 
     def _save(self, documents:list=[]):
+        if self.db is None:
+            raise ValueError("db is None")
+        
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
     def _delete(self, doc_ids:list=[]):
         if len(doc_ids) == 0:
             return
+        if self.db is None:
+            raise ValueError("db is None")
 
         self.db.delete(ids=doc_ids)
 

@@ -68,7 +68,7 @@ namespace PythonAILib.Model.Content {
 
                     ContentItemCommands.CreateChatResult(item, promptItem.Name);
                     // Save
-                    item.Save(false);
+                    item.Save();
                 });
                 // Execute if obj is an Action
                 afterAction();
@@ -84,7 +84,7 @@ namespace PythonAILib.Model.Content {
                 ContentItemCommands.UpdateEmbeddings(items);
                 // Save
                 foreach (var item in items) {
-                    item.Save(false);
+                    item.Save();
                 }
                 LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
                 // Execute if obj is an Action
@@ -328,7 +328,7 @@ namespace PythonAILib.Model.Content {
                     }
                     ContentItemCommands.ExtractText(item);
                     // Save the item
-                    item.Save(false);
+                    item.Save();
                 });
                 afterAction();
                 LogWrapper.UpdateInProgress(false);

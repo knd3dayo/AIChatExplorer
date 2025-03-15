@@ -69,6 +69,8 @@ namespace LibPythonAI.Model.Content {
                 Entity.VectorizedAt = value;
             }
         }
+
+        public bool ContentModified { get; set; } = false;
         // クリップボードの内容
         public string Content {
             get {
@@ -76,8 +78,10 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.Content = value;
+                ContentModified = true;
             }
         }
+        public bool DescriptionModified { get; set; } = false;
         //説明
         public string Description {
             get {
@@ -85,6 +89,7 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.Description = value;
+                DescriptionModified = true;
             }
         }
 
@@ -489,20 +494,18 @@ namespace LibPythonAI.Model.Content {
             return GetFolder().GetMainVectorSearchProperty();
         }
 
-        public void Save(bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
-            if (updateLastModifiedTime) {
+        public virtual void Save() {
+            if (ContentModified || DescriptionModified) {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
+                // ベクトルを更新
+                Task.Run(() => {
+                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                });
             }
-            if (applyAutoProcess) {
-                // 自動処理を適用
-            }
+
             ContentItemEntity.SaveItems([Entity]);
 
-            // ベクトルを更新
-            Task.Run(() => {
-                VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
-            });
         }
 
         public void Delete() {

@@ -18,7 +18,7 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         super().__init__(langchain_openai_client, vector_db_props)
-
+        self.db = self._load()
 
     def _load(self) -> VectorStore:
         # VectorDBTypeStringが"PGVector"でない場合は例外をスロー

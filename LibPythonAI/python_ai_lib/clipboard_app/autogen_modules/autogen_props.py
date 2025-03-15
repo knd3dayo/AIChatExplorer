@@ -92,6 +92,9 @@ class AutoGenProps:
         self.main_vector_db_id = props_dict.get("main_vector_db_id", None)
         if self.main_vector_db_id is None:
             raise ValueError("main_vector_db_id is None")
+        
+        # chat_history_folder_id
+        self.chat_history_folder_id = props_dict.get("chat_history_folder_id", None)
 
         # default_tools absoulte path
         import clipboard_app.autogen_modules.default_tools as default_tools

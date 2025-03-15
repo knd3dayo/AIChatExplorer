@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 
@@ -41,6 +42,7 @@ namespace PythonAILib.Model.AutoGen {
         // timeout
         public int Timeout { get; set; } = 120;
 
+
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
@@ -52,7 +54,8 @@ namespace PythonAILib.Model.AutoGen {
                 { "terminate_msg", TerminateMsg },
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
-                { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id }
+                { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id },
+                { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id }, 
             };
             return dict;
         }
@@ -167,6 +170,11 @@ namespace PythonAILib.Model.AutoGen {
             // global_vector_search
             toolName = "global_vector_search";
             toolDescription = "This function searches for the specified vector in the global database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // past_chat_history_vector_search
+            toolName = "past_chat_history_vector_search";
+            toolDescription = "This function searches for the specified vector in the past chat history.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // agentの初期化
@@ -303,21 +311,6 @@ namespace PythonAILib.Model.AutoGen {
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
-            // global_vector_searcher
-            agentName = "global_vector_searcher";
-            agentDescription = "ユーザーが収集したデータを検索するベクトル検索エージェントです。";
-            agentSystemMessage = $"""
-                あなたはグローバルベクトル検索エージェントです。
-                ユーザーからの依頼に基づき、ユーザーが過去に収集したデータを検索します。
-                検索結果をユーザーに提供してください。
-                """;
-            agentCodeExecution = false;
-            agentLLMConfig = "default";
-            agentTools = ["global_vector_search"];
-
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
-
-
             agentName = "tool_agent_register";
             agentDescription = "ツール実行エージェントを登録するエージェントです。";
             agentSystemMessage = $"""
@@ -351,9 +344,9 @@ namespace PythonAILib.Model.AutoGen {
 
             // ベクトル検索エージェント
             agentName = "vector_searcher";
-            agentDescription = "ベクトルを検索するエージェントです。";
+            agentDescription = "ユーザーが指定したフォルダID内のベクトルを検索するエージェントです。";
             agentSystemMessage = $"""
-                あなたはベクトル検索エージェントです。
+                あなたはユーザーが指定したフォルダID内の情報を検索するベクトル検索エージェントです。
                 ユーザーからの依頼に基づきベクトルを検索します。
                 検索結果をユーザーに提供してください。
                 """;
@@ -363,13 +356,44 @@ namespace PythonAILib.Model.AutoGen {
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
+            // global_vector_searcher
+            agentName = "global_vector_searcher";
+            agentDescription = "ユーザーが過去に収集した全データを検索するベクトル検索エージェントです。";
+            agentSystemMessage = $"""
+                あなたはユーザーが過去に収集した全データを検索するベクトル検索エージェントです。
+                ユーザーからの依頼に基づき、ユーザーが過去に収集したデータを検索します。
+                検索結果をユーザーに提供してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["global_vector_search"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+
+            // past_chat_history_vector_searcher
+            agentName = "past_chat_history_vector_searcher";
+            agentDescription = "ユーザーが過去のチャット履歴を検索するベクトル検索エージェントです。";
+            agentSystemMessage = $"""
+                あなたはユーザーが過去のチャット履歴を検索するベクトル検索エージェントです。
+                ユーザーからの依頼に基づき、過去のチャット履歴を検索します。
+                検索結果をユーザーに提供してください。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["past_chat_history_vector_search"];
+
 
             // group_chatの初期化
+
+            // エージェント一覧から適切なエージェントを取得して実行するグループチャット
             var groupName = "default";
-            var groupDescription = "デフォルトのグループチャットです。";
+            var groupDescription = "エージェント一覧から適切なエージェントを取得して実行するグループチャットです。";
             var groupLLMConfig = "default";
+            var groupAgentNames = new List<string> { "auto_generative_planner", "execute_agent" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
             // 全エージェント名のリスト
-            var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_agent_register" };
+            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_agent_register" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
             groupName = "code_execution";
@@ -384,12 +408,6 @@ namespace PythonAILib.Model.AutoGen {
             groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "tool_agent_register" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
-            // エージェント一覧から適切なエージェントを取得して実行するグループチャット
-            groupName = "execute_agent";
-            groupDescription = "エージェント一覧から適切なエージェントを取得して実行するグループチャットです。";
-            groupLLMConfig = "default";
-            groupAgentNames = new List<string> { "auto_generative_planner", "execute_agent" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
 
             Initialized = true;

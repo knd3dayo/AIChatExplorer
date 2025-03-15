@@ -14,9 +14,10 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var chatFolderViewModel = new ChatFolderViewModel(childFolder, commands);
-            // チャットフォルダの親フォルダにこのフォルダを追加
-            chatFolderViewModel.ParentFolderViewModel = this;
+            var chatFolderViewModel = new ChatFolderViewModel(childFolder, commands) {
+                // チャットフォルダの親フォルダにこのフォルダを追加
+                ParentFolderViewModel = this
+            };
             return chatFolderViewModel;
         }
 
@@ -32,7 +33,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
+            childFolder.Entity.FolderTypeString = ClipboardAppFolderManager.CHAT_ROOT_FOLDER_NAME_EN;
             ChatFolderViewModel childFolderViewModel = new(childFolder, commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);

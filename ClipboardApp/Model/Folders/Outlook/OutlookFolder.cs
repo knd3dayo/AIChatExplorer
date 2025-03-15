@@ -14,11 +14,11 @@ namespace ClipboardApp.Model.Folders.Outlook {
         // コンストラクタ
         public OutlookFolder(ContentFolderEntity folder) : base(folder) {
             IsAutoProcessEnabled = false;
-            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
         }
 
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = ClipboardAppFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
             // フォルダ名を設定
             FolderName = folderName;
             // FolderNameに一致するMAPIFolderがある場合は取得

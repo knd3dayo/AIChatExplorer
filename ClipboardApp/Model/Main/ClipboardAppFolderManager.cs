@@ -6,15 +6,15 @@ using ClipboardApp.Model.Folders.Outlook;
 using ClipboardApp.Model.Folders.Search;
 using ClipboardApp.Model.Folders.ShortCut;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Folder;
 using LibUIPythonAI.Resource;
 using PythonAILib.Common;
 
 namespace ClipboardApp.Model.Main {
-    public class FolderManager {
+    public class ClipboardAppFolderManager : FolderManager {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
-        public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME = CommonStringResources.Instance.Shortcut;
@@ -25,7 +25,6 @@ namespace ClipboardApp.Model.Main {
         // 英語名
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardEnglish;
         public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.SearchFolderEnglish;
-        public static readonly string CHAT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ChatHistoryEnglish;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ImageChatEnglish;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ShortcutEnglish;
@@ -147,34 +146,6 @@ namespace ClipboardApp.Model.Main {
         }
         private static ClipboardFolder? chatRootFolder;
 
-        public static ClipboardFolder ChatRootFolder {
-            get {
-                if (chatRootFolder == null) {
-                    using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
-                    if (folderRoot == null) {
-                        folderRoot = new() {
-                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
-                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
-                        };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
-                    }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
-                    if (folder == null) {
-                        folder = new() {
-                            Id = folderRoot.Id,
-                            FolderName = CHAT_ROOT_FOLDER_NAME,
-                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
-                        };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
-                    }
-                    chatRootFolder = new ClipboardFolder(folder);
-                }
-                return chatRootFolder;
-            }
-        }
         // Local File System Root Folder
         private static FileSystemFolder? fileSystemRootFolder;
         public static FileSystemFolder FileSystemRootFolder {
