@@ -12,22 +12,6 @@ namespace PythonAILib.PythonIF {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
-        // Python script for OpenAI
-        public static string OpenAIScript {
-            get {
-                string path = Path.Combine(PythonAILibPath, "ai_app_wrapper.py");
-                return path;
-            }
-        }
-
-        // Python script for Misc
-        public static string MiscScript {
-            get {
-                string devPath = Path.Combine(PythonAILibPath, "dev");
-                string path = Path.Combine(devPath, "misc_app.py");
-                return path;
-            }
-        }
 
         private static IPythonAILibConfigParams? ConfigPrams;
 
@@ -86,8 +70,11 @@ namespace PythonAILib.PythonIF {
             // AIアプリケーションプロセスチェッカーを開始する。
             string url = $"{configPrams.GetAPIServerURL()}/shutdown";
 
-            // プロセスを終了する
-            StartPython(configPrams, $"ai_app_server_shutdown.py {url}", false, (Process) => { });
+            // プロセスを終了するスクリプトを実行
+            string shutdownScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_server_shutdown.py");
+
+
+            StartPython(configPrams, $"{shutdownScriptPath} {url}", false, (Process) => { });
 
 
             LogWrapper.Info("Internal API started");
@@ -95,12 +82,14 @@ namespace PythonAILib.PythonIF {
             // 自分自身のプロセスIDを取得
             int currentProcessId = Process.GetCurrentProcess().Id;
 
-            // StartPython(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", true, (Process) => { });
-            StartPythonConsole(configPrams, $"ai_app_process_checker.py {currentProcessId} {url}", false, (Process) => { });
+            // AIアプリケーションプロセスチェッカーを開始する。
+            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_process_checker.py");
 
-            // AIアプリケーションサーバーを開始する。
-            // StartPython(configPrams, "ai_app_server.py", true, (process) => { });
-            StartPythonConsole(configPrams, "ai_app_server.py", false, (process) => { });
+            StartPythonConsole(configPrams, $"{processCheckerScriptPath} {currentProcessId} {url}", false, (Process) => { });
+
+            // AIアプリケーションサーバーを開始する
+            string serverScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_server.py");
+            StartPythonConsole(configPrams, serverScriptPath,  false, (process) => { });
         }
 
 
@@ -147,8 +136,8 @@ namespace PythonAILib.PythonIF {
                 string venvActivateScript = Path.Combine(pathToVirtualEnv, "Scripts", "activate");
                 cmdLines.Add($"call {venvActivateScript}");
             }
-            string serverScriptPath = Path.Combine(pythonAILibPath, scriptPath);
-            cmdLines.Add($"python {serverScriptPath}");
+
+            cmdLines.Add($"python {scriptPath}");
 
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
 
@@ -217,8 +206,6 @@ namespace PythonAILib.PythonIF {
                 pythonExe = Path.Combine(pathToVirtualEnv, "Scripts", "python.exe");
             }
 
-            string serverScriptPath = Path.Combine(pythonAILibPath, scriptPath);
-
             // PF_TRACE
             envVars["PF_TRACE"] = "true";
 
@@ -227,23 +214,23 @@ namespace PythonAILib.PythonIF {
             bool showConsole = false;
 
             if (background) {
-                ProcessUtil.StartBackgroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => {
+                ProcessUtil.StartBackgroundProcess(pythonExe, scriptPath, envVars, showConsole, (Process process) => {
                     // 5秒待機した後、processが終了したかどうかを確認する
                     Task.Run(() => {
                         // このスレッドを5秒間待機
                         Task.Delay(5000).Wait();
 
                         if (process.HasExited) {
-                            LogWrapper.Error($"Process failed: {process.Id}: {pythonExe} {serverScriptPath} ");
+                            LogWrapper.Error($"Process failed: {process.Id}: {pythonExe} {scriptPath} ");
                         } else {
-                            LogWrapper.Info($"Process started: {process.Id}:  {pythonExe} {serverScriptPath} ");
+                            LogWrapper.Info($"Process started: {process.Id}:  {pythonExe} {scriptPath} ");
                             afterStart(process);
                         }
 
                     });
                 }, ErrorDataReceived: dataReceivedEventHandler);
             } else {
-                ProcessUtil.StartForegroundProcess(pythonExe, serverScriptPath, envVars, showConsole, (Process process) => { },
+                ProcessUtil.StartForegroundProcess(pythonExe, scriptPath, envVars, showConsole, (Process process) => { },
                     OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler);
 
             }

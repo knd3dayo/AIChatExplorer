@@ -41,5 +41,6 @@ python-socketio
 arxiv
 
 # promptflow-core
-# promptflow-devkit
+promptflow-devkit
 # promptflow-tracing
+
