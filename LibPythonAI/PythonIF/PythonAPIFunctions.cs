@@ -343,7 +343,7 @@ namespace PythonAILib.PythonIF {
 
             // vector_search
             // VectorSearchResultのリストを作成
-            List<VectorMetadata> vectorSearchResults = [];
+                List<VectorMetadata> vectorSearchResults = [];
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/vector_search";

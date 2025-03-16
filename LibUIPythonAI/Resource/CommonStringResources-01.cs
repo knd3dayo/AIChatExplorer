@@ -198,7 +198,6 @@ namespace LibUIPythonAI.Resource {
         // ファイルが存在しません
         public virtual string FileNotFound { get; } = "ファイルが存在しません";
 
-        // -- ClipboardApp.MainWindowDataGrid1 --
         // 更新日
         public virtual string UpdateDate { get; } = "更新日";
 
@@ -970,8 +969,6 @@ namespace LibUIPythonAI.Resource {
 
         // 統計
         public virtual string Statistics { get; } = "統計";
-
-        // --- ClipboardAppVectorDBItem
 
         // --- ClipboardFolder.cs ---
         // クリップボード

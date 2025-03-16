@@ -48,8 +48,8 @@ namespace LibPythonAI.Model.VectorDB {
         // VectorDBEntries
         public List<VectorMetadata> VectorMetadataList { get; set; } = new();
 
-        // SearchKWArgs
-        private Dictionary<string, object> GetSearchKWArgs() {
+        // SearchKWargs
+        private Dictionary<string, object> GetSearchKwargs() {
             Dictionary<string, object> dict = new() {
                 ["k"] = TopK
             };
@@ -107,9 +107,9 @@ namespace LibPythonAI.Model.VectorDB {
             if (Folder != null) {
                 dict["FolderId"] = Folder.Id.ToString();
             }
-            var search_kwargs = GetSearchKWArgs();
+            var search_kwargs = GetSearchKwargs();
             if (search_kwargs.Count > 0) {
-                dict["SearchKWArgs"] = search_kwargs;
+                dict["SearchKwargs"] = search_kwargs;
             }
             dict["Description"] = Folder?.Description ?? "";
             // vector_db_entriesを追加
@@ -194,7 +194,8 @@ namespace LibPythonAI.Model.VectorDB {
                 return false;
             }
             VectorDBProperty other = (VectorDBProperty)obj;
-            return VectorDBItem == other.VectorDBItem && Folder == other.Folder;
+            bool result =  VectorDBItem?.Id == other.VectorDBItem?.Id && Folder?.Id == other.Folder?.Id;
+            return result;
         }
         public override int GetHashCode() {
             if (VectorDBItem == null || Folder == null) {

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ClipboardApp": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

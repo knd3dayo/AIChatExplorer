@@ -95,7 +95,6 @@ namespace PythonAILib.Model.Chat {
         public Dictionary<string, object> ToDict() {
             // OpenAIのAPIに送信するJSONを作成
 
-            // ClipboardAppConfigの設定を取得
             // ChatModel
             string model = OpenAIProperties.OpenAICompletionModel;
 

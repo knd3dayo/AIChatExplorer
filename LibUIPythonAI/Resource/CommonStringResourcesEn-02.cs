@@ -33,7 +33,7 @@ namespace LibUIPythonAI.Resource {
         public override string ToggleNotificationWatchToolTop { get; } = "Start: Start Notification Watch. Stop: Stop Notification Watch.";
 
         #endregion
-        #region ClipboardApp MainWindow
+        #region  MainWindow
 
         // Start Clipboard Watch
         public override string StartClipboardWatch { get; } = "Start Clipboard Watch";
