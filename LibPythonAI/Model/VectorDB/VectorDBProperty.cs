@@ -48,8 +48,8 @@ namespace LibPythonAI.Model.VectorDB {
         // VectorDBEntries
         public List<VectorMetadata> VectorMetadataList { get; set; } = new();
 
-        // SearchKWArgs
-        private Dictionary<string, object> GetSearchKWArgs() {
+        // SearchKWargs
+        private Dictionary<string, object> GetSearchKWargs() {
             Dictionary<string, object> dict = new() {
                 ["k"] = TopK
             };
@@ -107,9 +107,9 @@ namespace LibPythonAI.Model.VectorDB {
             if (Folder != null) {
                 dict["FolderId"] = Folder.Id.ToString();
             }
-            var search_kwargs = GetSearchKWArgs();
+            var search_kwargs = GetSearchKWargs();
             if (search_kwargs.Count > 0) {
-                dict["SearchKWArgs"] = search_kwargs;
+                dict["SearchKWargs"] = search_kwargs;
             }
             dict["Description"] = Folder?.Description ?? "";
             // vector_db_entriesを追加

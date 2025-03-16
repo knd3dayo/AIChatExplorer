@@ -1,7 +1,9 @@
 
 import uuid
-from typing import Tuple, List, Any, Union
+from typing import Tuple, List, Any, Union, Optional
+from collections import defaultdict
 import copy
+import logging
 
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
@@ -12,8 +14,6 @@ from langchain_core.runnables import chain
 from langchain_core.callbacks import (
     CallbackManagerForRetrieverRun,
 )
-from collections import defaultdict
-from typing import Optional
 
 from clipboard_app.langchain_modules.langchain_client import LangChainOpenAIClient
 from clipboard_app.langchain_modules.langchain_doc_store import SQLDocStore
@@ -22,6 +22,7 @@ from clipboard_app.openai_modules.openai_util import OpenAIProps
 
 from clipboard_app.db_modules import VectorMetadata, VectorDBItem, VectorSearchParameter
 
+logger = logging.getLogger(__name__)
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
@@ -230,6 +231,7 @@ class LangChainVectorDB:
         for text in text_list:
             doc_id = str(uuid.uuid4())
             folder_id = self.vector_db_props.FolderId
+            logger.debug(f"folder_id:{folder_id}")
             metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
@@ -335,13 +337,15 @@ class LangChainVectorDB:
         for vector_db_item in params.vector_db_props:
 
             # デバッグ出力
-            print(f'検索文字列: {params.query}')
-            print('ベクトルDBの設定')
-            print(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+            logger.info(f'検索文字列: {params.query}')
+            logger.info('ベクトルDBの設定')
+            logger.info(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+            logger.info(f'SearchKwargs:{vector_db_item.SearchKwargs}')
+            logger.info(f'IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}')
             retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwargs)
             documents: list[Document] = retriever.invoke(params.query)
 
-            print(f"documents:\n{documents}")
+            logger.debug(f"documents:\n{documents}")
             for doc in documents:
                 content = doc.page_content
                 doc_dict = cls.create_metadata_from_document(doc)
