@@ -71,7 +71,7 @@ namespace PythonAILib.PythonIF {
             string url = $"{configPrams.GetAPIServerURL()}/shutdown";
 
             // プロセスを終了するスクリプトを実行
-            string shutdownScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_server_shutdown.py");
+            string shutdownScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "ai_app_server_shutdown.py");
 
 
             StartPython(configPrams, $"{shutdownScriptPath} {url}", false, (Process) => { });
@@ -83,12 +83,12 @@ namespace PythonAILib.PythonIF {
             int currentProcessId = Process.GetCurrentProcess().Id;
 
             // AIアプリケーションプロセスチェッカーを開始する。
-            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_process_checker.py");
+            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "ai_app_process_checker.py");
 
             StartPythonConsole(configPrams, $"{processCheckerScriptPath} {currentProcessId} {url}", false, (Process) => { });
 
             // AIアプリケーションサーバーを開始する
-            string serverScriptPath = Path.Combine(PythonAILibPath, "clipboard_app", "ai_app_server.py");
+            string serverScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "ai_app_server.py");
             StartPythonConsole(configPrams, serverScriptPath,  false, (process) => { });
         }
 

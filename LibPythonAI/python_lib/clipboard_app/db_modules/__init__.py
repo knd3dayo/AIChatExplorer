@@ -1,1 +1,0 @@
-from clipboard_app.db_modules.main_db import *

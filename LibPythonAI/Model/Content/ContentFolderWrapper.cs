@@ -237,6 +237,8 @@ namespace LibPythonAI.Model.Content {
 
 
         public virtual void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
+            // itemにFolderIdを設定
+            item.Entity.FolderId = Id;
 
             if (applyGlobalAutoAction) {
                 Task.Run(() => {

@@ -89,7 +89,7 @@ namespace PythonAILib.Model.AutoGen {
             // search_wikipedia_ja
             string toolName = "search_wikipedia_ja";
             string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
-            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "clipboard_app", "autogen", "default_tools.py");
+            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_chat_explorer", "autogen", "default_tools.py");
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // list_files_in_directory

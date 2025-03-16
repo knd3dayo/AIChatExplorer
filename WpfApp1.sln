@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardApp", "ClipboardApp\ClipboardApp.csproj", "{AA0C0A47-FEC1-4D89-A619-F02A79C26773}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AIChatExplorer", "AIChatExplorer\AIChatExplorer.csproj", "{AA0C0A47-FEC1-4D89-A619-F02A79C26773}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{B731EF66-0D96-487E-BE6E-31E477E09715}"
 EndProject

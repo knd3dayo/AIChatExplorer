@@ -118,7 +118,7 @@ namespace LibUIPythonAI.Resource {
         // InternalAPIServerSettings
         public override string InternalAPIServerSettings { get; } = "Internal API Server Settings";
 
-        public override string AppName { get; } = "RAG Clipboard";
+        public override string AppName { get; } = "AIChatExplorer";
         // File
         public override string File { get; } = "File";
 
@@ -482,7 +482,7 @@ namespace LibUIPythonAI.Resource {
 
         public override string FileNotFound { get; } = "File not found";
 
-        // -- ClipboardApp.MainWindowDataGrid1 --
+        // -- MainWindowDataGrid1 --
         public override string UpdateDate { get; } = "Update Date";
 
         // Create Date

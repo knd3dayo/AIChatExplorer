@@ -194,7 +194,8 @@ namespace LibPythonAI.Model.VectorDB {
                 return false;
             }
             VectorDBProperty other = (VectorDBProperty)obj;
-            return VectorDBItem == other.VectorDBItem && Folder == other.Folder;
+            bool result =  VectorDBItem?.Id == other.VectorDBItem?.Id && Folder?.Id == other.Folder?.Id;
+            return result;
         }
         public override int GetHashCode() {
             if (VectorDBItem == null || Folder == null) {

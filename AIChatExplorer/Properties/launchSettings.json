@@ -1,0 +1,8 @@
+{
+    "profiles": {
+        "AIChatExplorer": {
+            "commandName": "Project",
+            "nativeDebugging": true
+        }
+    }
+}

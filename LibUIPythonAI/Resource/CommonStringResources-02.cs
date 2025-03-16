@@ -2,7 +2,7 @@ namespace LibUIPythonAI.Resource {
     public partial class CommonStringResources {
 
         #region RAG Clipboard共通
-        public virtual string AppName { get; } = "RAG Clipboard";
+        public virtual string AppName { get; } = "AIChatExplorer";
 
         #endregion
 
@@ -429,7 +429,7 @@ namespace LibUIPythonAI.Resource {
 
         #endregion
 
-        #region ClipboardApp MainWindow
+        #region  MainWindow
 
         // クリップボード監視開始
         public virtual string StartClipboardWatch { get; } = "クリップボード監視開始";
