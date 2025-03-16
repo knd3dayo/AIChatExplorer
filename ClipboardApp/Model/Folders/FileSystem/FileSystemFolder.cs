@@ -156,7 +156,9 @@ namespace ClipboardApp.Model.Folders.FileSystem {
                 deleteItems.Add(contentItem);
             }
             // 削除対象のアイテムを削除
-            ContentItemWrapper.DeleteItems(deleteItems);
+            if (deleteItems.Count > 0) {
+                ContentItemWrapper.DeleteItems(deleteItems);
+            }
 
             // 追加対象格納用のリスト
             List<ContentItemWrapper> addItems = [];

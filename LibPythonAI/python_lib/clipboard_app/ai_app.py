@@ -166,13 +166,13 @@ def update_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBI
 
 def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.VectorDBMetadataList:
+    for entry in vector_db_props.VectorMetadataList:
         vector_db.delete_document(entry.source_id)
 
 def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     # LangChainVectorDBを生成
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    for entry in vector_db_props.VectorDBMetadataList:
+    for entry in vector_db_props.VectorMetadataList:
         vector_db.update_document(entry)
 
 # export_to_excelを実行する

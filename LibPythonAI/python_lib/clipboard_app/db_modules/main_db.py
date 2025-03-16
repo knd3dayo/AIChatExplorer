@@ -142,7 +142,7 @@ class VectorDBItem:
 
 
         # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
-        self.VectorDBMetadataList = [VectorMetadata(entry) for entry in vector_db_item_dict.get("VectorDBMetadataList", [])]
+        self.VectorMetadataList = [VectorMetadata(entry) for entry in vector_db_item_dict.get("VectorMetadataList", [])]
 
         # search_kwarg
         self.SearchKwargs = vector_db_item_dict.get("SearchKwargs", {})

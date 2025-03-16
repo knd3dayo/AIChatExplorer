@@ -231,7 +231,7 @@ class LangChainVectorDB:
         for text in text_list:
             doc_id = str(uuid.uuid4())
             folder_id = self.vector_db_props.FolderId
-            logger.debug(f"folder_id:{folder_id}")
+            logger.info(f"folder_id:{folder_id}")
             metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
