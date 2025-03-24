@@ -505,6 +505,8 @@ namespace LibPythonAI.Model.Content {
             }
 
             ContentItemEntity.SaveItems([Entity]);
+            ContentModified = false;
+            DescriptionModified = false;
 
         }
 

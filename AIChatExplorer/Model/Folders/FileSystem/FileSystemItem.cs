@@ -31,6 +31,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 Task.Run(() => {
                     VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
                 });
+                ContentModified = false;
+                DescriptionModified = false;
             }
 
             ContentItemEntity.SaveItems([Entity]);

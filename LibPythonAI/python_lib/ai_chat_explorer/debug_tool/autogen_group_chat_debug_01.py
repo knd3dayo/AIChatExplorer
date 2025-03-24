@@ -49,7 +49,7 @@ async def main():
                 raise ValueError("request is not found in props.")
             
             # autogen_props 
-            autogen_props = ai_chat_explorer.openai_modules_app_wrapper.get_autogen_objects(props_dict)
+            autogen_props = ai_chat_explorer.ai_app_wrapper.get_autogen_objects(props_dict)
 
 
             # メッセージを取得
@@ -66,7 +66,7 @@ async def main():
 
     # AutogenGroupChatを実行
     message_count = 0
-    async for message in ai_chat_explorer.openai_modules_app.run_autogen_chat(autogen_props,  input_text):
+    async for message in ai_chat_explorer.ai_app.run_autogen_chat(autogen_props,  input_text):
         if not message:
             break
         message_count += 1

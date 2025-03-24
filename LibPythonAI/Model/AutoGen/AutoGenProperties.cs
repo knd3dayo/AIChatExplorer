@@ -1,7 +1,6 @@
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
@@ -24,7 +23,10 @@ namespace PythonAILib.Model.AutoGen {
         // venv_path
         public string VenvPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
         // work_dir
-        public string WorkDir { get; set; } = "";
+        public string WorkDir { get; set; } = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
+
+        // tool_dir
+        public string ToolDir { get; set; } = PythonAILibManager.Instance.ConfigParams.GetAutoGenToolDir();
 
         // chat_type
         public string ChatType { get; set; } = CHAT_TYPE_GROUP;
@@ -48,6 +50,7 @@ namespace PythonAILib.Model.AutoGen {
             Dictionary<string, object> dict = new() {
                 { "autogen_db_path", AutoGenDBPath },
                 { "work_dir", WorkDir },
+                { "tool_dir", ToolDir },
                 { "venv_path", VenvPath },
                 { "chat_type", ChatType },
                 { "chat_name", ChatName },
@@ -55,7 +58,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
                 { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id },
-                { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id }, 
+                { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id },
             };
             return dict;
         }
@@ -89,7 +92,7 @@ namespace PythonAILib.Model.AutoGen {
             // search_wikipedia_ja
             string toolName = "search_wikipedia_ja";
             string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
-            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_chat_explorer", "autogen", "default_tools.py");
+            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_chat_explorer", "autogen_modules", "default_tools.py");
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // list_files_in_directory
@@ -137,21 +140,6 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function executes the specified agent.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
-            // register_agent
-            toolName = "register_tool_agent";
-            toolDescription = """
-            This function saves the agent that use the specified tool to a sqlite3 database.
-            First argument: tool name.
-            - Tool name: Specify the name of the tool as the Python function name.
-            If the tool not registered, return False.
-            If the tool registration is successful, register the agent.
-            The agent name is [tool_name]_agent, and the agent description is the same as the tool description.
-            If the agent with the same name already exists, return True.
-            If the agent registration is successful, return True.
-            If the agent registration failed, return False.
-            """;
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
-
             // list_agents
             toolName = "list_agents";
             toolDescription = "This function retrieves a list of registered agents from the database.";
@@ -177,6 +165,31 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function searches for the specified vector in the past chat history.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
+            // list_tool_agent
+            toolName = "list_tool_agents";
+            toolDescription = "This function retrieves a list of registered tool agents from the database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // execute_tool_agent
+            toolName = "execute_tool_agent";
+            toolDescription = """
+                This function executes the specified agent with the input text and returns the output text.
+                First argument: agent name, second argument: input text.
+                - Agent name: Specify the name of the agent as the Python function name.
+                - Input text: The text data to be processed by the agent.
+                """;
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // register_tool_agent
+            toolName = "register_tool_agent";
+            toolDescription = """
+                This function creates a FunctionTool object with the specified function name, documentation, and Python code.
+                引数で与えられたPythonコードから関数を作成し、FunctionToolオブジェクトを作成します。
+                作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
+            """;
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+
             // agentの初期化
             var agentName = "planner";
             var agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します";
@@ -184,11 +197,9 @@ namespace PythonAILib.Model.AutoGen {
                 ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します
                 - ユーザーの要求を達成するための計画を作成してタスク一覧を作成します。
                 - タスクの割り当てに問題ないか？もっと効率的な計画およびタスク割り当てがないか？については対象エージェントに確認します。
-                - 情報収集が必要な場合は、ユーザーが専門的な情報やドメイン固有の情報を優先するためベクトル検索、ファイル検索を優先してください。
-                  一般的な情報を得るためのWeb検索はなるべく最後に行ってください。
                 - 計画に基づき、対象のエージェントにタスクを割り当てます。
                 - 計画作成が完了したら[計画作成完了]と返信してください
-                  その後、計画に基づきタスクを実行します。全てのタスクが完了したら、[TERMINATE]と返信してください。
+                その後、計画に基づきタスクを実行します。全てのタスクが完了したら、[TERMINATE]と返信してください。
                 """;
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
@@ -291,12 +302,6 @@ namespace PythonAILib.Model.AutoGen {
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
-            // tool_agent_register
-            var toolsDir = Path.Combine(ConfigPrams.GetPythonLibPath(), "generated_tools");
-            if (!Directory.Exists(toolsDir)) {
-                Directory.CreateDirectory(toolsDir);
-            }
-
             // arxiv_searcher
             agentName = "arxiv_searcher";
             agentDescription = "arXivから論文を検索するエージェントです。";
@@ -311,20 +316,34 @@ namespace PythonAILib.Model.AutoGen {
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
-            agentName = "tool_agent_register";
-            agentDescription = "ツール実行エージェントを登録するエージェントです。";
-            agentSystemMessage = $"""
-                あなたはツール実行エージェントの登録者です。code_writerエージェントが作成したpythonコードをPython関数(ツール)に加工します。
-                Python関数(ツール)をregister_tool_agentツールを用いてDBに保存します。
-                - Python関数(ツール)は. 引数と戻り値はAnnotatedを使用して型を指定する必要があります。
-                - Python関数(ツール)はexecにより動的に呼び出されるため、import文は原則、関数内に記述してください。
-                - Python関数(ツール)は汎用的なものであるべきです。code_writerエージェントが作成したpythonコードが具体的なものである場合は汎用化可能か検討してください。
-                - 例： xxxという文字列をファイルに書き込む -> 引数で指定された文字列をファイルに書き込む
-                - register_tool_agentに渡すfunction_nameは作成したPython関数(ツール)と同じである必要があります。
+            agentName = "tool_agent_selector";
+            agentDescription = "ツールを実行するエージェントを呼び出すエージェント";
+            agentSystemMessage = """
+                ユーザーの要求にマッチする適切なエージェントを検索して呼び出すことができます。以下の処理をステップバイステップで実行します。
+                1. list_tool_agentsで呼び出し可能なツール実行エージェント一覧を取得します。
+                2. ユーザーの要求にマッチするツール実行エージェントが見つかった場合は、execute_tool_agentを実行して、処理を終了します。
+                3. ユーザーの要求にマッチするエージェントがなかった場合のみ、request_tool_agentを使用して新しいツール実行エージェントを作成します。
+                * register_tool_agentの引数：name, doc, code
+                * name: 関数名
+                * doc: 関数の説明 関数の目的、引数、戻り値について記述してください。
+                * code: 関数のPythonコード 関数名はnameと同じにしてください。
+                引数と戻り値はAnnotatedを使用して型を指定してください。忘れずにImport文を追加してください。
+                docstringには関数の説明を記述してください。
+                codeの例：
+                import uuid
+                from typing import Annotated
+                def sample_tool(input_text: Annoteted[str, "入力文字列"]) -> Annotated[str, "出力文字列"]:
+                    \"\"\"
+                    This is a sample tool function.
+                    \"\"\"
+                    return f"Input text: {input_text}"
+
+                4. ツール作成後は、list_tool_agentsでツール一覧を取得し、execute_tool_agentでツールを実行します。
+
                 """;
             agentCodeExecution = false;
             agentLLMConfig = "default";
-            agentTools = ["register_tool_agent"];
+            agentTools = ["list_tool_agents", "execute_tool_agent", "register_tool_agent"];
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
 
@@ -393,7 +412,7 @@ namespace PythonAILib.Model.AutoGen {
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
             // 全エージェント名のリスト
-            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_agent_register" };
+            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_agent_selector" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
             groupName = "code_execution";
@@ -403,9 +422,9 @@ namespace PythonAILib.Model.AutoGen {
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
             groupName = "agent_registration";
-            groupDescription = "ツールとエージェントを登録するためのグループチャットです。";
+            groupDescription = "ツールエージェントの実行と登録するためのグループチャットです。";
             groupLLMConfig = "default";
-            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "tool_agent_register" };
+            groupAgentNames = new List<string> { "planner", "tool_agent_selector", };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
 

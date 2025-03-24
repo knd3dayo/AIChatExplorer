@@ -86,12 +86,6 @@
     <EmbeddedResource Include="python_lib\ai_chat_explorer\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\autogen_group_chat_debug_03.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\autogen_group_chat_debug_02.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\ai_app_langchain_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

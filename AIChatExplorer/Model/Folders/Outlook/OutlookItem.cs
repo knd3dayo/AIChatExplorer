@@ -29,6 +29,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 Task.Run(() => {
                     VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
                 });
+                ContentModified = false;
+                DescriptionModified = false;
             }
 
             ContentItemEntity.SaveItems([Entity]);

@@ -139,8 +139,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             if (item != null) {
 
                 Task.Run(() => {
-                    // ベクトル化
-                    ContentItemCommands.UpdateEmbeddings([item]);
                     // 保存
                     item.Save();
                     MainUITask.Run(() => {

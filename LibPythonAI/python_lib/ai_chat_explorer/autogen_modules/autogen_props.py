@@ -64,6 +64,11 @@ class AutoGenProps:
             raise ValueError("work_dir is None")
         self.work_dir_path = work_dir
 
+        # tool_dir
+        self.tool_dir_path = props_dict.get("tool_dir", None)
+        if self.tool_dir_path is None:
+            raise ValueError("tool_dir is None")
+
         # venv_path
         self.venv_path = props_dict.get("venv_path", None)
 
@@ -128,7 +133,7 @@ class AutoGenProps:
 
     def __prepare_autogen_agent_chat(self):
 
-        agent = self.__create_agent(self.chat_name, self.openai_props)
+        agent = self.__load_agent(self.chat_name, self.openai_props)
         print(f"agent:{agent.name}")
 
         self.chat_object = agent
@@ -143,7 +148,7 @@ class AutoGenProps:
         agent_names = chat_dict.agent_names
         agents = []
         for agent_name in agent_names:
-            agent = self.__create_agent(agent_name, self.openai_props)
+            agent = self.__load_agent(agent_name, self.openai_props)
             agents.append(agent)
 
         # vector_search_agentsがある場合は、agentsに追加
@@ -160,54 +165,11 @@ class AutoGenProps:
         # SelectorGroupChatを作成
         chat = SelectorGroupChat(
             agents, 
-            model_client=self.__create_client(chat_dict.llm_config_name), 
+            model_client=self.__load_client(chat_dict.llm_config_name), 
             termination_condition=termination_condition,
             )
         
         self.chat_object = chat
-
-    # 指定した名前のエージェントを実行する
-    async def run_agent(self, agent_name: str, initial_message: str) -> AsyncGenerator:
-        # agent_nameのAgentを作成
-        agent = self.__create_agent(agent_name, self.openai_props)
-        if agent is None:
-            raise ValueError(f"Agent {agent_name} not found in the database.")
-
-        # session_tokenを登録
-        AutoGenProps.register_session_token(self.session_token)
-        cancel_token: CancellationToken = CancellationToken()
-        async for message in agent.run_stream(task=initial_message, cancellation_token=cancel_token):
-            # session_tokensにsesson_tokenがない場合は、処理を中断
-            if AutoGenProps.session_tokens.get(self.session_token) is None:
-                print("request cancel")
-                cancel_token.cancel()    
-                break
-            if type(message) == TaskResult:
-                break
-            if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
-                message_str = f"{message.source}: {message.content}"
-                yield message_str
-    
-    # 指定したinitial_messageを使って、GroupChatを実行する
-    async def run_autogen_chat(self, initial_message: str) -> AsyncGenerator:
-        if self.chat_object is None:
-            raise ValueError("chat_object is None")
-
-        # session_tokenを登録
-        AutoGenProps.register_session_token(self.session_token)
-        cancel_token: CancellationToken = CancellationToken()
-
-        async for message in self.chat_object.run_stream(task=initial_message, cancellation_token=cancel_token):
-            # session_tokensにsesson_tokenがない場合は、処理を中断
-            if AutoGenProps.session_tokens.get(self.session_token) is None:
-                print("request cancel")
-                cancel_token.cancel()    
-                break
-            if type(message) == TaskResult:
-                break
-            if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
-                message_str = f"{message.source}: {message.content}"
-                yield message_str
 
     # vector_search_agentsを準備する。vector_db_props_listを受け取り、vector_search_agentsを作成する
     def __create_vector_search_agent_list(self, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem]):
@@ -228,7 +190,7 @@ class AutoGenProps:
         params["description"] = vector_db_props.Description
         params["system_message"] = vector_db_props.SystemMessage
         # defaultのllm_config_nameを使って、model_clientを作成
-        params["model_client"] = self.__create_client("default")
+        params["model_client"] = self.__load_client("default")
         # vector_search_toolを作成
         from ai_chat_explorer.autogen_modules.vector_db_tools import create_vector_search_tool
         func = create_vector_search_tool(openai_props, [vector_db_props])
@@ -238,7 +200,7 @@ class AutoGenProps:
         return AssistantAgent(**params)
 
     # 指定したnameのAgentをDBから取得して、Agentを返す
-    def __create_agent(self, name: str, openai_props: OpenAIProps) -> Union[AssistantAgent, CodeExecutorAgent, None]:
+    def __load_agent(self, name: str, openai_props: OpenAIProps) -> Union[AssistantAgent, CodeExecutorAgent, None]:
         main_db = MainDB(self.autogen_db_path)
         agent_dict = main_db.get_autogen_agent(name)
         if not agent_dict:
@@ -258,7 +220,7 @@ class AutoGenProps:
             # code_executionがFalseの場合は、AssistantAgentを作成
             params["system_message"] = agent_dict.system_message
             # llm_config_nameが指定されている場合は、llm_config_dictを作成
-            params["model_client"] = self.__create_client(agent_dict.llm_config_name)
+            params["model_client"] = self.__load_client(agent_dict.llm_config_name)
 
             # tool_namesが指定されている場合は、tool_dictを作成
             tool_dict_list = []
@@ -286,23 +248,33 @@ class AutoGenProps:
             params["tools"] = tool_dict_list
             return AssistantAgent(**params)
 
+    def load_function(self,file_path:str, name: str) -> Callable:
+        """
+        指定されたファイルから関数を読み込む
+        引数:
+        - file_path: ファイルパス
+        - name: 関数名
+        戻り値: 読み込んだ関数
+        """
+        
+        # importlibで{name}を読み込む
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(name, file_path) # type: ignore
+        module = importlib.util.module_from_spec(spec) # type: ignore
+        spec.loader.exec_module(module) # type: ignore
+        func = getattr(module, name)
+        # func内でautogen_propsを使えるようにする
+        func.__globals__["autogen_props"] = self
+
+        return func
     def __create_tool(self, name: str):
         main_db = MainDB(self.autogen_db_path)
         tool_dict = main_db.get_autogen_tool(name)
         if not tool_dict:
             raise ValueError (f"Tool {name} not found in the database.")
-        
-        # source_pathからファイルを読み込む
-        with open(tool_dict.path, "r", encoding="utf-8") as f:
-            content = f.read()
-        locals_copy: dict[str, Any] = {}
-        globals_copy = {}
-        globals_copy["autogen_props"] = self
-        # contentから関数オブジェクトを作成する。
-        exec(content, globals_copy, locals_copy)
-
+ 
         # nameの関数を取得
-        func = locals_copy[name]
+        func = self.load_function(tool_dict.path, tool_dict.name)
 
         return FunctionTool(
             func, description=tool_dict.description, 
@@ -311,7 +283,7 @@ class AutoGenProps:
          )
     
     # 指定したnameのLLMConfigをDBから取得して、llm_configを返す    
-    def __create_client(self, name: str) -> Union[OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient]:
+    def __load_client(self, name: str) -> Union[OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient]:
         main_db = MainDB(self.autogen_db_path)
         llm_config_entry = main_db.get_autogen_llm_config(name)
         if not llm_config_entry:
@@ -374,3 +346,67 @@ class AutoGenProps:
             combined_termination = None  # or some default termination condition if needed
 
         return combined_termination
+
+    # create_agent
+    def create_agent(self,
+            name: str, description: str, system_message:str, 
+            tools: list[FunctionTool] = [], handoffs=[] ) -> AssistantAgent:
+        # AssistantAgentの引数用の辞書を作成
+        params: dict[str, Any] = {}
+        params["name"] = name
+        params["description"] = description
+
+        # code_executionがFalseの場合は、AssistantAgentを作成
+        params["system_message"] = system_message
+        # llm_config_nameが指定されている場合は、llm_config_dictを作成
+        params["model_client"] = self.__load_client("default")
+        if len(tools) > 0:
+            params["tools"] = tools
+        if len(handoffs) > 0:
+            params["handoffs"] = handoffs
+
+        return AssistantAgent(**params)    
+
+    # 指定した名前のエージェントを実行する
+    async def run_agent(self, agent_name: str, initial_message: str) -> AsyncGenerator:
+        # agent_nameのAgentを作成
+        agent = self.__load_agent(agent_name, self.openai_props)
+        if agent is None:
+            raise ValueError(f"Agent {agent_name} not found in the database.")
+
+        # session_tokenを登録
+        AutoGenProps.register_session_token(self.session_token)
+        cancel_token: CancellationToken = CancellationToken()
+        async for message in agent.run_stream(task=initial_message, cancellation_token=cancel_token):
+            # session_tokensにsesson_tokenがない場合は、処理を中断
+            if AutoGenProps.session_tokens.get(self.session_token) is None:
+                print("request cancel")
+                cancel_token.cancel()    
+                break
+            if type(message) == TaskResult:
+                break
+            if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
+                message_str = f"{message.source}: {message.content}"
+                yield message_str
+    
+    # 指定したinitial_messageを使って、GroupChatを実行する
+    async def run_autogen_chat(self, initial_message: str) -> AsyncGenerator:
+        if self.chat_object is None:
+            raise ValueError("chat_object is None")
+
+        # session_tokenを登録
+        AutoGenProps.register_session_token(self.session_token)
+        cancel_token: CancellationToken = CancellationToken()
+
+        async for message in self.chat_object.run_stream(task=initial_message, cancellation_token=cancel_token):
+            # session_tokensにsesson_tokenがない場合は、処理を中断
+            if AutoGenProps.session_tokens.get(self.session_token) is None:
+                print("request cancel")
+                cancel_token.cancel()    
+                break
+            if type(message) == TaskResult:
+                break
+            if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
+                message_str = f"{message.source}: {message.content}"
+                yield message_str
+

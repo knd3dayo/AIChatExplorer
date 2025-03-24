@@ -39,8 +39,4 @@ aiohttp
 python-socketio
 
 arxiv
-
-# promptflow-core
-promptflow-devkit
-# promptflow-tracing
-
+opentelemetry-sdk

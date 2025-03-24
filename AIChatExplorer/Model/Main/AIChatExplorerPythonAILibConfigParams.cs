@@ -90,8 +90,21 @@ namespace AIChatExplorer.Model.Main {
 
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {
-            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen");
+            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen", "work");
+            // Create directory if it does not exist
+            if (!Directory.Exists(workDir)) {
+                Directory.CreateDirectory(workDir);
+            }
             return workDir;
+        }
+        // AutoGenToolDir
+        public string GetAutoGenToolDir() {
+            string toolDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen", "tools");
+            // Create directory if it does not exist
+            if (!Directory.Exists(toolDir)) {
+                Directory.CreateDirectory(toolDir);
+            }
+            return toolDir;
         }
 
         public bool AutoTag() {

@@ -1,4 +1,7 @@
-from typing import Annotated
+from typing import Any, Annotated, Union, Callable
+from autogen_core.code_executor import ImportFromModule
+from autogen_core.tools import FunctionTool
+from autogen_agentchat.messages import BaseChatMessage
 
 def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
     """
@@ -56,6 +59,8 @@ def check_file(file_path: Annotated[str, "File path"]) -> bool:
     check_file = os.path.exists(file_path)
     return check_file
 
+# Edge用のWebドライバーを毎回ダウンロードしなくてもよいようにグローバル変数化
+edge_driver = None # type: ignore
 def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
     """
     This function extracts text and links from the specified URL of a web page.
@@ -72,8 +77,13 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     edge_options.add_argument("--no-sandbox")
     edge_options.add_argument("--disable-dev-shm-usage")
 
-    # Edgeドライバをセットアップ
-    driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
+    global edge_driver
+    if not edge_driver:
+        # Edgeドライバをセットアップ
+        edge_driver = Service(EdgeChromiumDriverManager().install())
+
+    driver = webdriver.Edge(service=edge_driver, options=edge_options)
+    
     # Wait for the page to fully load (set explicit wait conditions if needed)
     driver.implicitly_wait(10)
     # Retrieve HTML of the web page and extract text and links
@@ -249,67 +259,6 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
     result = [doc.get("content", "") for doc in documents]
     return result
 
-# ツール一覧を取得する関数
-def list_tools() -> Annotated[list[dict[str, str]], "List of registered tools, each containing 'name' and 'description'"]:
-    """
-    This function retrieves a list of registered tools from the database.
-    """
-
-    global autogen_props
-    from ai_chat_explorer.db_modules import MainDB
-    from ai_chat_explorer.autogen_modules import AutoGenProps
-    props : AutoGenProps = autogen_props # type: ignore
-    autogen_db_path = props.autogen_db_path
-    main_db = MainDB(autogen_db_path)
-    tools = main_db.get_autogen_tools()
-    tool_list = []
-    for tool in tools:
-        tool_list.append({"name": tool.name, "description": tool.description})
-    return tool_list
-
-
-
-# ツールを登録する関数
-def register_tool(
-        tool_name: Annotated[str, "Tool name"], tool_description: Annotated[str, "Tool description"], 
-        source_path: Annotated[str, "Absolute File Path of the file where the Python function defining the tool is located."], 
-        ) -> tuple[Annotated[bool, "Registration result"], Annotated[str, "result message"]]:
-    """
-    This function saves the specified tools to a sqlite3 database.
-    First argument: tool name, second argument: tool description, third argument: tool path.
-    - Tool name: Specify the name of the tool as the Python function name.
-    - Tool description: Provide a description of what the tool does.
-    - Tool path: The absolute path to the file where the tool is saved.First argument: tool name, second argument: tool description, third argument: tool path.
-    If the tool with the same name already exists, return tuple(True, "The tool with the same name already exists.").
-    If the registration is successful, return tuple(True, "The tool has been successfully registered.").
-    If the registration fails, return tuple(False, "Failed to register the tool.").
-    """
-
-    global autogen_props
-    from ai_chat_explorer.db_modules import MainDB, AutogenTools
-    from ai_chat_explorer.autogen_modules import AutoGenProps
-    props : AutoGenProps = autogen_props # type: ignore
-    autogen_db_path = props.autogen_db_path
-    # 既に同じ名前のツールが登録されているか確認
-    main_db = MainDB(autogen_db_path)
-    tool = main_db.get_autogen_tool(tool_name)
-    if tool is not None:
-        return True, "The tool with the same name already exists."
-
-    # ツールを登録
-    agent_tool_dict = {
-        "name": tool_name,
-        "path": source_path,
-        "description": tool_description
-    }
-    agent_tool_object = AutogenTools(agent_tool_dict)
-    main_db.update_autogen_tool(agent_tool_object)
-
-    # ツール登録結果を確認
-    tool = main_db.get_autogen_tool(tool_name)
-    if tool is None:
-        return False, "Failed to register the tool."
-    return True, "The tool has been successfully registered."
 
 # execute_agent
 # エージェントを実行する関数
@@ -358,70 +307,176 @@ def list_agents() -> Annotated[list[dict[str, str]], "List of registered agents,
         agent_list.append({"name": agent.name, "description": agent.description})
     return agent_list
 
-# register_agent
-# sqlite3のagentsテーブルにエージェントを登録する関数
-# なお、agentsのテーブル定義は以下の通り
-# "CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)"
-def register_tool_agent(
-        function_name: Annotated[str, "登録するpython関数名"], 
-        code: Annotated[str, "登録するpython関数のコード. 引数と戻り値はAnnotatedを使用して型を指定する."],
-        description: Annotated[str, "pythonの関数の説明文"],        
-        ) -> tuple[Annotated[bool, "Registration result"], Annotated[str, "result message"]]:
+import ast
+
+def extract_imports(code) -> list[Union[str, ImportFromModule]]:
     """
-    この関数は、指定されたpython関数のコードをツールとしてsqlite3データベースに保存します。
-    第1引数: ツール名, 第2引数: ツール説明, 第3引数: ツールパス.
-    - ツール名: Python関数名をツール名として指定します。
-    - ツール説明: ツールの機能についての説明を提供します。
-    - ツールパス: ツールが保存されているファイルの絶対パスです。
+    Pythonコードからimport文を抽出する
+    引数:
+    - code: Pythonコード（文字列）
+
+    戻り値: import文のリスト
     """
+    
+    tree = ast.parse(code)
+    imports: list[Union[str, ImportFromModule]] = []
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                imports.append(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            module = node.module if node.module else ""
+            for alias in node.names:
+                imports.append(ImportFromModule(module=module, imports=[alias.name]))
+    return imports
+
+
+def move_imports_to_function(code, function_name):
+    """
+    グローバルなimport文を特定の関数内に移動する
+    引数:
+    - code: Pythonコード（文字列）
+    - function_name: 移動先の関数名
+
+    戻り値: 更新されたコード（文字列）
+    """
+    tree = ast.parse(code)
+
+    # import文を収集
+    imports = []
+    body_without_imports = []
+
+    for node in tree.body:
+        if isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
+            imports.append(node)
+        else:
+            body_without_imports.append(node)
+
+    # 指定した関数を探す
+    function_found = False
+    for node in body_without_imports:
+        if isinstance(node, ast.FunctionDef) and node.name == function_name:
+            # 関数の先頭にimport文を追加
+            node.body = imports + node.body
+            function_found = True
+
+    if not function_found:
+        raise ValueError(f"関数 '{function_name}' が見つかりませんでした。")
+
+    # 残りのコード（importを削除済み）の組み直し
+    tree.body = body_without_imports
+
+    # 再構築されたコードを文字列として返す
+    updated_code = ast.unparse(tree)
+    return updated_code
+
+
+def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered tools, each containing 'name' and 'description'"]:
+    """
+    This function retrieves a list of registered tool agents.
+    """
+    print('start list_tool_agents')
     global autogen_props
-    import os
-    from ai_chat_explorer.db_modules import MainDB, AutogenTools, AutogenAgent
+    from ai_chat_explorer.db_modules import MainDB, AutogenTools
     from ai_chat_explorer.autogen_modules import AutoGenProps
     props : AutoGenProps = autogen_props # type: ignore
     autogen_db_path = props.autogen_db_path
-    # sqlite3のDBを開く
     main_db = MainDB(autogen_db_path)
-    # 既に同じ名前のツールが登録されているか確認
-    tool = main_db.get_autogen_tool(function_name)
-    if tool is not None:
-        return True, "The tool with the same name already exists."
+    tools = main_db.get_autogen_tools()
 
-    # 既に同じ名前のエージェントが登録されているか確認
-    agent_name = f"{function_name}_agent"
-    agent = main_db.get_autogen_agent(agent_name)
-    if agent is not None:
-        return True, "The agent with the same name already exists."
-    
-    # コードをファイルに保存
-    source_path = os.path.join(props.work_dir_path, f"{function_name}.py")
-    with open(source_path, "w", encoding="utf-8") as f:
+    tool_descption_list = []
+    for agent in tools:
+        tool_descption_list.append({"name": agent.name, "description": agent.description, "path": agent.path})
+        print(f"tool name:{agent.name}, description:{agent.description}")
+
+    return tool_descption_list
+
+# FunctionToolを実行するエージェントをwork_agentsに追加
+def register_tool_agent(name: Annotated[str, "Function name"], doc: Annotated[str, "Function documentation"], 
+                         code: Annotated[str, "Python Code"]) -> Annotated[str, "Message indicating that the tool agent has been registered"]:
+    """
+    This function creates a FunctionTool object with the specified function name, documentation, and Python code.
+    引数で与えられたPythonコードからexec関数を使用して関数を作成し、FunctionToolオブジェクトを作成します。
+    作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
+    """
+    global autogen_props
+
+    import os
+    from ai_chat_explorer.db_modules import MainDB, AutogenTools
+    from ai_chat_explorer.autogen_modules import AutoGenProps
+    props : AutoGenProps = autogen_props # type: ignore
+
+    # toolsディレクトリがない場合は作成
+    python_file_path = os.path.join(props.tool_dir_path, f"{name}.py")
+
+    # toolsディレクトリに{name}.pyとして保存
+    with open(python_file_path, "w", encoding="utf-8") as f:
         f.write(code)
-    # ツールを登録
-    tool_dict = {
-        "name": function_name,
-        "description": description,
-        "path": source_path
-    }
-    tool_object = AutogenTools(tool_dict)
-    main_db.update_autogen_tool(tool_object)    
-    # エージェントを登録
-    agent_dict = {
-        "name": agent_name,
-        "description": f"{function_name}を実行するためのエージェントです. {function_name}関数の説明: {description}",
-        "system_message": f"{function_name}を実行するためのエージェントです. {function_name}関数の説明: {description}",
-        "code_execution": False,
-        "llm_config_name": "default",
-        "tool_names": ",".join([function_name])
-    }
-    agent_object = AutogenAgent(agent_dict)
-    main_db.update_autogen_agent(agent_object)
 
-    # エージェント登録結果を確認
-    agent = main_db.get_autogen_agent(agent_name)
-    if agent is None:
-        return False, "Failed to register the agent."
+    # main_dbに登録
+    main_db = MainDB(props.autogen_db_path)
+    main_db.update_autogen_tool(AutogenTools({"name": name, "description": doc, "path": python_file_path}))
+    
+    message = f"Registered tool agent: {name}"
+    print(message)
+    return message
 
-    return True, "The agent has been successfully registered."
+# エージェントを実行する関数
+async def execute_tool_agent(
+        agent_name: Annotated[str, "Agent name"], initial_message: Annotated[str, "Input text"],
+        ) -> Annotated[str, "Output text"]:
+    """
+    This function executes the specified agent with the input text and returns the output text.
+    First argument: agent name, second argument: input text.
+    - Agent name: Specify the name of the agent as the Python function name.
+    - Input text: The text data to be processed by the agent.
+    """
+    try:
+        global autogen_props
+
+        import os
+        from ai_chat_explorer.db_modules import MainDB, AutogenTools
+        from ai_chat_explorer.autogen_modules import AutoGenProps
+        props : AutoGenProps = autogen_props # type: ignore
+
+        # agent_nameに対応するエージェントを取得
+        print('start execute_tool_agent')
+        tool_list = [ tool for tool in list_tool_agents() if tool["name"] == agent_name]
+        tool = tool_list[0] if len(tool_list) > 0 else None
+
+        if tool is None:
+            return f"The specified agent does not exist. Agent name: {agent_name}"
+        name = tool["name"]
+        path = tool["path"]
+        # ファイルから関数を読み込む
+        func = props.load_function(path, name)
+        output_text = ""
+        # エージェントを作成
+        agent = props.create_agent(
+            name=name,
+            description=f"{name}ツール実行エージェント",
+            system_message=f"""
+            あなたは{name}を実行するエージェントです。{name}の説明：{func.__doc__}
+            """,
+            tools=[
+                FunctionTool(func, func.__doc__, name=name) # type: ignore
+            ]
+        )
+
+        import uuid
+        # 識別子を生成
+        trace_id = str(uuid.uuid4())
+        # run_agent関数を使用して、エージェントを実行
+        async for message in agent.run_stream(task=initial_message):
+            if isinstance(message, BaseChatMessage):
+                message_str = f"{message.source}(in tool agent selector:{trace_id}): {message.content}"
+                # print(message_str)
+                output_text += message_str + "\n"
+
+        return output_text
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"Error: {e}"
 
     

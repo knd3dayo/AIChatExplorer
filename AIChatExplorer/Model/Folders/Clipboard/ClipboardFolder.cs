@@ -25,24 +25,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
             FolderTypeString = AIChatExplorerFolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
-
-        // アイテムを追加する処理
-        public override void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
-            base.AddItem(item, applyGlobalAutoAction, afterUpdate);
-
-            // 自動処理を適用
-            if (IsAutoProcessEnabled) {
-                LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
-                ContentItemWrapper? result = AutoProcessRuleController.ApplyFolderAutoAction(item);
-                if (result == null) {
-                    // 自動処理で削除または移動された場合は何もしない
-                    LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
-                    return;
-                }
-                result.Save();
-                LogWrapper.Info(CommonStringResources.Instance.AutoProcessingApplied);
-            }
-        }
+        
 
         public override ClipboardFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
