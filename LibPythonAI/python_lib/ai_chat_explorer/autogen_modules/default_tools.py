@@ -283,10 +283,13 @@ async def execute_agent(
     
     output_text = ""
     # run_agent関数を使用して、エージェントを実行
+    import uuid
+    trace_id = str(uuid.uuid4())
     async for message in props.run_agent(agent_name, input_text):
-        if not message:
-            break
-        output_text += message + "\n"
+        if isinstance(message, BaseChatMessage):
+            message_str = f"{message.source}(in agent selector:{trace_id}): {message.content}" # type: ignore
+            print(message_str)
+            output_text += message_str + "\n"   
     return output_text
 
 # エージェント一覧を取得する関数
@@ -469,8 +472,8 @@ async def execute_tool_agent(
         # run_agent関数を使用して、エージェントを実行
         async for message in agent.run_stream(task=initial_message):
             if isinstance(message, BaseChatMessage):
-                message_str = f"{message.source}(in tool agent selector:{trace_id}): {message.content}"
-                # print(message_str)
+                message_str = f"{message.source}(in tool agent selector:{trace_id}): {message.content}" # type: ignore
+                print(message_str)
                 output_text += message_str + "\n"
 
         return output_text
