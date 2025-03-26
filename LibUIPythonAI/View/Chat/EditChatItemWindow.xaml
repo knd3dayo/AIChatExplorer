@@ -16,6 +16,7 @@
     Height="450"
     d:DataContext="{d:DesignInstance Type=model:EditChatItemWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
