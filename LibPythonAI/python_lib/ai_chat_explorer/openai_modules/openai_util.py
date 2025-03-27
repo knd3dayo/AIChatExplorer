@@ -230,8 +230,10 @@ class OpenAIClient:
         # result_message_listを返す
         return result_message_list
     
-    def pre_process_input(self, request_context:RequestContext, last_message_dict: dict, vector_search_function : Union[Callable, None]) -> list[dict]:
-        # "messages"の最後の要素を取得する       
+    def pre_process_input(
+            self, request_context:RequestContext, last_message_dict: dict, 
+            vector_search_function : Union[Callable, None]) -> list[dict]:
+        # "messages"の最後のtext要素を取得する       
         last_text_content_index = -1
         for i in range(0, len(last_message_dict["content"])):
             if last_message_dict["content"][i]["type"] == "text":
@@ -247,12 +249,13 @@ class OpenAIClient:
         # 結果はresult_messagesに格納する
         result_messages = []
         if request_context.SplitMode != "None":
-            target_messages = self.split_message(original_last_message.split("\n"), request_context.SplitTokenCount)
+            splited_messages = self.split_message(original_last_message.split("\n"), request_context.SplitTokenCount)
         else:
-            target_messages = [original_last_message]
+            splited_messages = [original_last_message]
 
-        for i in range(0, len(target_messages)):
-            target_message = target_messages[i]
+        for i in range(0, len(splited_messages)):
+            # 分割したメッセージを取得する毎に、プロンプトテンプレートと関連情報を取得する
+            target_message = splited_messages[i]
             # ベクトル検索用の文字列としてqueryにtarget_messageを設定する
             query = target_message
             # context_message 
@@ -262,8 +265,15 @@ class OpenAIClient:
             # vector_search_functionがNoneでない場合はベクトル検索を実施
             if vector_search_function:
                 vector_search_result = vector_search_function(query) 
-                vector_search_results = [ document["content"] for document in vector_search_result["documents"]]
-                context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_results)
+                # vector_search_resultのcontentを取得する
+                vector_search_result_contents = [ document["content"] for document in vector_search_result["documents"]]
+                # source_idを取得する
+                source_id_list = [ document["source_id"] for document in vector_search_result["documents"]]
+                # source_pathを取得する
+                source_path_list = [ document["source_path"] for document in vector_search_result["documents"]]
+
+                context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_result_contents)
+
             # last_messageをdeepcopyする
             result_last_message = copy.deepcopy(last_message_dict)
             # result_last_messageのcontentの最後の要素を更新する
@@ -306,11 +316,17 @@ class OpenAIClient:
         
         # RequestContextのSplitModeがNoneの場合はoutput_dictの1つ目の要素を返す
         return chat_result_dict_list[0]
-            
-    def run_openai_chat(self, request_context: RequestContext ,input_dict: dict, vector_search_function : Union[Callable, None]) -> dict:
 
+    def get_last_message(self, input_dict: dict) -> dict:
+        return input_dict["messages"][-1]
+    
+    def run_openai_chat(self, request_context: RequestContext ,input_dict: dict, vector_search_function : Union[Callable, None]) -> dict:
+        # ★TODO 分割モードの場合とそうでない場合で処理を分ける
+        # 分割モードの場合はそれまでのチャット履歴をどうするか？
+        
         # pre_process_inputを実行する
-        last_message_dict = input_dict["messages"][-1]
+        last_message_dict = self.get_last_message(input_dict)
+        # 最後のメッセージの分割処理、ベクトル検索処理を行う
         pre_processed_input_list = self.pre_process_input(request_context, last_message_dict, vector_search_function)
         chat_result_dict_list = []
 
@@ -319,6 +335,7 @@ class OpenAIClient:
             copied_input_dict = copy.deepcopy(input_dict)
 
             # split_modeがNone以外の場合はinput_dictのmessagesの最後の要素のみを取得する
+            # ★TODO split_modeの場合は履歴を無視している。LRU的な仕組みを入れる
             if request_context.SplitMode != "None":
                 copied_input_dict["messages"] = [pre_processed_input]
             else:

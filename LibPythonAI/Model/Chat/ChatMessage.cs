@@ -62,6 +62,10 @@ namespace PythonAILib.Model.Chat {
             };
             return result;
         }
+        // SourcesString
+        public string SourcesString {
+            get => string.Join("\n", Sources);
+        }
 
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {

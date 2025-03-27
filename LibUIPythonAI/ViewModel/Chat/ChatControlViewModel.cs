@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;
@@ -8,9 +10,6 @@ using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Utils.Python;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Content;
-using PythonAILib.PythonIF;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : ChatViewModelBase {
@@ -36,7 +35,10 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
 
+        // ChatRequest
         public ChatRequest ChatRequest { get; set; } = new();
+
+
 
         public bool ChatExecuted { get; set; } = false;
         private void PromptTemplateCommandExecute(object parameter) {
@@ -94,6 +96,42 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
+        // DebugCommandVisibility
+        public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
+
+
+        private int _SelectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return _SelectedTabIndex;
+            }
+            set {
+                _SelectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
+
+
+        // チャット内容のリストを更新するメソッド
+        public void UpdateChatHistoryList() {
+            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange([.. ChatHistory]);
+            OnPropertyChanged(nameof(ChatHistory));
+
+            // ListBoxの一番最後のアイテムに移動
+            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
+            if (userControl != null) {
+
+                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
+                if (listBox != null) {
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
+                    listBox.ScrollIntoView(listBox.SelectedItem);
+                }
+            }
+        }
+
         public string PreviewJson {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
@@ -109,9 +147,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
             }
         }
-
-        // DebugCommandVisibility
-        public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
 
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
@@ -172,24 +207,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         });
 
-        // チャット内容のリストを更新するメソッド
-        public void UpdateChatHistoryList() {
-            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
-            QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange( [.. ChatHistory]);
-            OnPropertyChanged(nameof(ChatHistory));
 
-            // ListBoxの一番最後のアイテムに移動
-            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
-            if (userControl != null) {
-
-                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
-                if (listBox != null) {
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                    listBox.ScrollIntoView(listBox.SelectedItem);
-                }
-            }
-        }
         // AutoGeChatのキャンセルコマンド
         public SimpleDelegateCommand<object> CancelAutoGenChatCommand => new((parameter) => {
             Task.Run(() => {
@@ -221,19 +239,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
             OnPropertyChanged(nameof(PromptText));
 
         });
-
-
-        private int _SelectedTabIndex = 0;
-        public int SelectedTabIndex {
-            get {
-                return _SelectedTabIndex;
-            }
-            set {
-                _SelectedTabIndex = value;
-                OnPropertyChanged(nameof(SelectedTabIndex));
-            }
-        }
-
 
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {

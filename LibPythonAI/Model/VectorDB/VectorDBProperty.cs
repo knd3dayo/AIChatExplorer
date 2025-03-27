@@ -127,29 +127,37 @@ namespace LibPythonAI.Model.VectorDB {
         public static void UpdateEmbeddings(List<VectorDBProperty> items) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = items,
-                OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-
-            };
-            LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            // itemsのサイズが大きいと413エラーが発生するため、分割して送信する
+            int batchSize = 10;
+            for (int i = 0; i < items.Count; i += batchSize) {
+                List<VectorDBProperty> batchItems = items.Skip(i).Take(batchSize).ToList();
+                ChatRequestContext chatRequestContext = new() {
+                    VectorDBProperties = batchItems,
+                    OpenAIProperties = openAIProperties,
+                    SessionToken = Guid.NewGuid().ToString()
+                };
+                LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
+                PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
+                LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            }
         }
 
         public static void DeleteEmbeddings(List<VectorDBProperty> items) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = items,
-                OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-
-            };
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            // itemsのサイズが大きいと413エラーが発生するため、分割して送信する
+            int batchSize = 10;
+            for (int i = 0; i < items.Count; i += batchSize) {
+                List<VectorDBProperty> batchItems = items.Skip(i).Take(batchSize).ToList();
+                ChatRequestContext chatRequestContext = new() {
+                    VectorDBProperties = batchItems,
+                    OpenAIProperties = openAIProperties,
+                    SessionToken = Guid.NewGuid().ToString()
+                };
+                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
+                PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
+                LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            }
         }
 
 

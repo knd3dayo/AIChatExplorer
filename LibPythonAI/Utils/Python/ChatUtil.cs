@@ -133,6 +133,7 @@ namespace PythonAILib.Utils.Python {
             }
             return "";
         }
+
         // VectorSearchを実行してコンテキスト情報を生成する
         public static string GenerateVectorSearchResult(ChatRequestContext chatRequestContext, string query) {
             // ベクトル検索が存在するか否かのフラグ

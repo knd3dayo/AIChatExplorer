@@ -44,6 +44,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -79,7 +80,18 @@
             Text="{Binding ChatItem.Content, Mode=OneWay}"
             TextWrapping="{Binding TextWrapping, Mode=OneWay}"
             VerticalScrollBarVisibility="Auto" />
-        <Grid Grid.Row="2">
+        <editorControl:MyTextBox
+            x:Name="textBox2"
+            Grid.Row="2"
+            Margin="10,10,10,10"
+            VerticalContentAlignment="Top"
+            FontSize="12"
+            HorizontalScrollBarVisibility="Auto"
+            IsReadOnly="True"
+            Text="{Binding ChatItem.SourcesString, Mode=OneWay}"
+            TextWrapping="{Binding TextWrapping, Mode=OneWay}"
+            VerticalScrollBarVisibility="Auto" />
+        <Grid Grid.Row="3">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
                 <Button
                     Width="100"
@@ -90,7 +102,7 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
     </Grid>
 
 </Window>
