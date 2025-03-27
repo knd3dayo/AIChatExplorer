@@ -46,7 +46,7 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // VectorDBEntries
-        public List<VectorMetadata> VectorMetadataList { get; set; } = new();
+        public VectorMetadata VectorMetadata { get; set; } = new();
 
         // SearchKWargs
         private Dictionary<string, object> GetSearchKwargs() {
@@ -113,7 +113,7 @@ namespace LibPythonAI.Model.VectorDB {
             }
             dict["Description"] = Folder?.Description ?? "";
             // vector_db_entriesを追加
-            dict["VectorMetadataList"] = VectorMetadataList;
+            dict["VectorMetadata"] = VectorMetadata;
 
             return dict;
         }
@@ -124,53 +124,32 @@ namespace LibPythonAI.Model.VectorDB {
             return items.Select(item => item.ToDict()).ToList();
         }
 
-        public static void UpdateEmbeddings(List<VectorDBProperty> items) {
+        public static void UpdateEmbeddings(VectorDBProperty item) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            // VectorMetadataListのサイズが大きいと413エラーが発生するため、分割して送信する
-            int batchSize = 10;
-            foreach (var item in items) {
-                for (int i = 0; i < item.VectorMetadataList.Count; i += batchSize) {
-                    List<VectorMetadata> batchItems = item.VectorMetadataList.Skip(i).Take(batchSize).ToList();
-                    // 元のVectorDBPropertyを元にして、新しいVectorDBPropertyを作成
-                    VectorDBProperty newVectorDBProperty = new(item.Entity) {
-                        VectorMetadataList = batchItems
-                    };
+            // Parallelによる並列処理。4並列
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBProperties = [item],
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString(),
+            };
+            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
+            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
 
-                    ChatRequestContext chatRequestContext = new() {
-                        VectorDBProperties = [newVectorDBProperty],
-                        OpenAIProperties = openAIProperties,
-                        SessionToken = Guid.NewGuid().ToString(),
-                    };
-                    LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
-                    PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
-                    LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
-                }
-            }
         }
 
-        public static void DeleteEmbeddings(List<VectorDBProperty> items) {
+        public static void DeleteEmbeddings(VectorDBProperty item) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            // VectorMetadataListのサイズが大きいと413エラーが発生するため、分割して送信する
-            int batchSize = 10;
-            foreach (var item in items) {
-                for (int i = 0; i < item.VectorMetadataList.Count; i += batchSize) {
-                    List<VectorMetadata> batchItems = item.VectorMetadataList.Skip(i).Take(batchSize).ToList();
-                    // 元のVectorDBPropertyを元にして、新しいVectorDBPropertyを作成
-                    VectorDBProperty newVectorDBProperty = new(item.Entity) {
-                        VectorMetadataList = batchItems
-                    };
-                    ChatRequestContext chatRequestContext = new() {
-                        VectorDBProperties = [newVectorDBProperty],
-                        OpenAIProperties = openAIProperties,
-                        SessionToken = Guid.NewGuid().ToString(),
-                    };
-                    LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
-                    PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);
-                    LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
-                }
-            }
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBProperties = [item],
+                OpenAIProperties = openAIProperties,
+                SessionToken = Guid.NewGuid().ToString(),
+            };
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
 
 

@@ -82,10 +82,6 @@ namespace PythonAILib.Model.Content {
             Task.Run(() => {
                 beforeAction();
                 ContentItemCommands.UpdateEmbeddings(items);
-                // Save
-                foreach (var item in items) {
-                    item.Save();
-                }
                 LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
                 // Execute if obj is an Action
                 afterAction();
@@ -352,59 +348,57 @@ namespace PythonAILib.Model.Content {
         // ベクトルを更新する
         public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
 
-            // VectorDBProperty用のHashSetを作成
-            HashSet<VectorDBProperty> vectorDBProperties = [];
-
-            foreach (var item in items) {
-                // VectorDBItemを取得
-                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
-                // VectorDBProperty用のHashSetに存在する場合は取得
-                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
-                    // VectorDBProperty用のHashSetに存在しない場合は追加
-                    vectorDBProperties.Add(folderVectorDBItem);
-                    vectorDBProperty = folderVectorDBItem;
-                }
-            }
-            VectorDBProperty.DeleteEmbeddings([.. vectorDBProperties]);
+            // Parallelによる並列処理。4並列
+            ParallelOptions parallelOptions = new() {
+                MaxDegreeOfParallelism = 4
+            };
+            Task.Run(() => {
+                Parallel.ForEach(items, parallelOptions, (item) => {
+                    // VectorDBItemを取得
+                    VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                    // VectorDBPropertyを削除
+                    VectorDBProperty.DeleteEmbeddings(folderVectorDBItem);
+                });
+            });
         }
 
         // Embeddingを更新する
         public static void UpdateEmbeddings(List<ContentItemWrapper> items) {
-            // VectorDBProperty用のHashSetを作成
-            HashSet<VectorDBProperty> vectorDBProperties = [];
+            // Parallelによる並列処理。4並列
+            ParallelOptions parallelOptions = new() {
+                MaxDegreeOfParallelism = 4
+            };
+            Task.Run(() => {
+                Parallel.ForEach(items, parallelOptions, (item) => {
+                    // VectorDBItemを取得
+                    VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                    // IPythonAIFunctions.ClipboardInfoを作成
+                    VectorMetadata vectorDBEntry = new(item.Id.ToString());
+                    folderVectorDBItem.VectorMetadata = vectorDBEntry;
 
-            foreach (var item in items) {
-                // VectorDBItemを取得
-                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
-                // VectorDBProperty用のHashSetに存在する場合は取得
-                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
-                    // VectorDBProperty用のHashSetに存在しない場合は追加
-                    vectorDBProperties.Add(folderVectorDBItem);
-                    vectorDBProperty = folderVectorDBItem;
-                }
-                // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Id.ToString());
-
-                // タイトルとHeaderTextを追加
-                string description = item.Description + "\n" + item.HeaderText;
-                if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                    string sourcePath = item.SourcePath;
-                    vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
-                } else {
-                    if (item.IsImage()) {
-                        // 画像からテキスト抽出
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
-
+                    // タイトルとHeaderTextを追加
+                    string description = item.Description + "\n" + item.HeaderText;
+                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                        string sourcePath = item.SourcePath;
+                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
                     } else {
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
+                        if (item.IsImage()) {
+                            // 画像からテキスト抽出
+                            vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
+
+                        } else {
+                            vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
+                        }
                     }
-                }
-                vectorDBProperty.VectorMetadataList.Add(vectorDBEntry);
-                // ベクトル化日時を更新
-                item.VectorizedAt = DateTime.Now;
-            }
-            VectorDBProperty.UpdateEmbeddings(vectorDBProperties.ToList());
+                    // VectorDBPropertyを更新
+                    VectorDBProperty.UpdateEmbeddings(folderVectorDBItem);
+                    // ベクトル化日時を更新
+                    item.VectorizedAt = DateTime.Now;
+                });
+            });
+
         }
+
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合
             if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {

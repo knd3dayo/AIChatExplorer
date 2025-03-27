@@ -27,7 +27,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
                 Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                    VectorDBProperty.UpdateEmbeddings(GetFolder().GetMainVectorSearchProperty());
                 });
                 ContentModified = false;
                 DescriptionModified = false;

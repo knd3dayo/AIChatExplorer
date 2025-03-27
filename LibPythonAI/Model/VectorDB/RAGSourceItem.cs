@@ -126,7 +126,7 @@ namespace PythonAILib.Model.VectorDB {
                         VectorDBItemId = VectorDBItem.Id,
                     };
                     VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
-                    vectorDBProperty.VectorMetadataList = [vectorDBEntry];
+                    vectorDBProperty.VectorMetadata = vectorDBEntry;
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty],
@@ -142,7 +142,7 @@ namespace PythonAILib.Model.VectorDB {
                         VectorDBItemId = VectorDBItem.Id,
                     }; VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
                     VectorMetadata vectorDBEntry = new(source_path);
-                    vectorDBProperty.VectorMetadataList = [vectorDBEntry];
+                    vectorDBProperty.VectorMetadata = vectorDBEntry;
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty],

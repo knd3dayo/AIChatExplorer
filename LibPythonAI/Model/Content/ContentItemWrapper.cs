@@ -500,7 +500,7 @@ namespace LibPythonAI.Model.Content {
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
                 Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                    VectorDBProperty.UpdateEmbeddings(GetFolder().GetMainVectorSearchProperty());
                 });
             }
 
