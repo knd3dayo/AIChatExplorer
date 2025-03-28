@@ -3,6 +3,7 @@ using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
+using System.IO;
 
 namespace PythonAILib.Common {
     public class PythonAILibManager {
@@ -44,6 +45,10 @@ namespace PythonAILib.Common {
             PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化
             PythonExecutor.Init(parameters);
+
+            // LogWrapperの初期化
+            string logDirPath = Path.Combine(parameters.GetAppDataPath(), "log");
+            LogWrapper.SetLogFolder(logDirPath);
 
             // LogWrapperのログ出力設定
             LogWrapper.SetActions(parameters.GetLogWrapperAction());
