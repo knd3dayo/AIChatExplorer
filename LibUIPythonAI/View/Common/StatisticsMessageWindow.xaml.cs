@@ -6,14 +6,14 @@ namespace LibUIPythonAI.View.Common {
     /// <summary>
     /// StatusMessageWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class StatusMessageWindow : UserControl {
+    public partial class StatisticsMessageWindow : UserControl {
 
-        public StatusMessageWindow() {
+        public StatisticsMessageWindow() {
             InitializeComponent();
         }
 
-        public static void OpenStatusMessageWindow(string title, StatusMessageWindowViewModel viewModel) {
-            StatusMessageWindow userControl = new() {
+        public static void OpenStatusMessageWindow(string title, StatisticsMessageWindowViewModel viewModel) {
+            StatisticsMessageWindow userControl = new() {
                 DataContext = viewModel
             };
             Window window = new() {

@@ -4,10 +4,12 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
+using PythonAILib.Model.Content;
 using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Main {
@@ -78,8 +80,17 @@ namespace AIChatExplorer.ViewModel.Main {
                                 });
                             });
                         });
+                        OnPropertyChanged(nameof(SelectedItem));
                         **/
                         OnPropertyChanged(nameof(SelectedItem));
+                        // SourceがFileの場合は、ファイルの内容を読み込む
+                        if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                            ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
+                                MainUITask.Run(() => {
+                                    OnPropertyChanged(nameof(SelectedItem));
+                                });
+                            });
+                        }
                     }
                 }
             }
