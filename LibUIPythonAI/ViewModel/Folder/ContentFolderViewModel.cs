@@ -52,7 +52,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel: ContentFolderViewModel where Model: ContentFolderWrapper {
+        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ViewModel> _children = [];
             foreach (var child in Folder.GetChildren<Model>()) {
@@ -78,7 +78,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
 
-        public void LoadItems<Item>() where Item: ContentItemWrapper{
+        public void LoadItems<Item>() where Item : ContentItemWrapper {
             // ClipboardItemFolder.Itemsは別スレッドで実行
             List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() => {
@@ -235,16 +235,15 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
             Task.Run(() => {
-                try {
-                    // MainWindowViewModelのIsIndeterminateをTrueに設定
-                    UpdateIndeterminate(true);
-                    Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
-                    ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>());
-                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
+                // MainWindowViewModelのIsIndeterminateをTrueに設定
+                UpdateIndeterminate(true);
+                Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
+                ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(), () => { }, () => {
 
-                } finally {
+                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
                     UpdateIndeterminate(false);
-                }
+                });
+
             });
 
         });

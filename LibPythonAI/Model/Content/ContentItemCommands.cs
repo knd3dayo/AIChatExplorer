@@ -77,17 +77,6 @@ namespace PythonAILib.Model.Content {
             });
 
         }
-        public static void GenerateVectors(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
-
-            Task.Run(() => {
-                beforeAction();
-                ContentItemCommands.UpdateEmbeddings(items);
-                LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
-                // Execute if obj is an Action
-                afterAction();
-            });
-
-        }
 
         // OpenAIを使用してイメージからテキスト抽出する。
         public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
@@ -363,7 +352,8 @@ namespace PythonAILib.Model.Content {
         }
 
         // Embeddingを更新する
-        public static void UpdateEmbeddings(List<ContentItemWrapper> items) {
+        public static void UpdateEmbeddings(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+            beforeAction();
             // Parallelによる並列処理。4並列
             ParallelOptions parallelOptions = new() {
                 MaxDegreeOfParallelism = 4
@@ -395,9 +385,13 @@ namespace PythonAILib.Model.Content {
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });
+                // Execute if obj is an Action
+                LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
+                afterAction();
             });
 
         }
+
 
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合

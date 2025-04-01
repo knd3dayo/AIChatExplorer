@@ -136,7 +136,7 @@ namespace PythonAILibUI.ViewModel.Item {
 
         // Command to generate vectors
         public void GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
-            ContentItemCommands.GenerateVectors(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+            ContentItemCommands.UpdateEmbeddings(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
         }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
