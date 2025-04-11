@@ -1,5 +1,5 @@
 import os, json
-import ai_chat_explorer.ai_app_wrapper as ai_app_wrapper
+import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
 import logging 
 logging.basicConfig(level=logging.ERROR)
 

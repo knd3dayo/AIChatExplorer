@@ -1,233 +1,20 @@
 import os, json
 from typing import Any
-from collections.abc import Generator, AsyncGenerator
 from io import StringIO
 import sys
 
-from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestContext
-from ai_chat_explorer.db_modules import VectorDBItem, VectorSearchParameter
-from ai_chat_explorer.autogen_modules import AutoGenProps
+from ai_chat_explorer.openai_modules import OpenAIClient
+from ai_chat_explorer.db_modules import VectorSearchParameter
 
-import ai_chat_explorer.ai_app as ai_app
+import ai_chat_explorer.api_modules.ai_app as ai_app
 
+from ai_chat_explorer.api_modules.ai_app_util import *
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
-
-request_context_name = "context"
-openai_props_name = "openai_props"
-vector_db_items_name = "vector_db_items"
-autogen_props_name = "autogen_props"
-chat_request_context_name = "chat_request_context"
-chat_request_name = "chat_request"
-token_count_request_name = "token_count_request"
-autogen_request_name = "autogen_request"
-query_request_name = "query_request"
-excel_request_name = "excel_request"
-file_request_name = "file_request"
-web_request_name = "web_request"
-
-# stdout,stderrを文字列として取得するためラッパー関数を定義
-def capture_stdout_stderr(func):
-    def wrapper(*args, **kwargs) -> str:
-        # strout,stderrorをStringIOでキャプチャする
-        buffer = StringIO()
-        sys.stdout = buffer
-        sys.stderr = buffer
-        result = {}
-        try:
-            # debug用
-            # HTTPS_PROXY環境変数
-            print(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
-            # NO_PROXY環境変数
-            print(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
-
-            result = func(*args, **kwargs)
-            # resultがdictでない場合は例外をスロー
-            if not isinstance(result, dict):
-                raise ValueError("result must be dict")
-        except Exception as e:
-            # エラーが発生した場合はエラーメッセージを出力
-            print(e)
-            import traceback
-            traceback.print_exc()            
-            result["error"] = "\n".join(traceback.format_exception(type(e), e, e.__traceback__))
-
-        # strout,stderrorを元に戻す
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-            
-        # resultにlogを追加して返す
-        result["log"] = buffer.getvalue()
-        # jsonを返す
-        return json.dumps(result, ensure_ascii=False, indent=4)
-
-    return wrapper
-
-# stdout,stderrを文字列として取得するためラッパー関数を定義
-def capture_generator_stdout_stderr(func):
-    def wrapper(*args, **kwargs) -> Generator[str, None, None]:
-
-        # strout,stderrorをStringIOでキャプチャする
-        buffer = StringIO()
-        sys.stdout = buffer
-        sys.stderr = buffer
-        result = None # 初期化
-        for result in func(*args, **kwargs):
-            try:
-                # resultがdictでない場合は例外をスロー
-                if not isinstance(result, dict):
-                    raise ValueError("result must be dict")
-                
-                # strout,stderrorを元に戻す
-                sys.stdout = sys.__stdout__
-                sys.stderr = sys.__stderr__
-                
-                # resultにlogを追加して返す
-                result["log"] = buffer.getvalue()
-                # bufferをクリア
-                buffer.truncate(0)
-
-                json_string = json.dumps(result, ensure_ascii=False, indent=4)
-                print(json_string)
-                yield json_string
-
-            except Exception as e:
-                # エラーが発生した場合はエラーメッセージを出力
-                import traceback
-                traceback.print_exc()
-                result = {}
-                result["error"] = str(e)
-            finally:
-                # strout,stderrorを元に戻す
-                sys.stdout = sys.__stdout__
-                sys.stderr = sys.__stderr__
-                # bufferをクリア
-                buffer.truncate(0)
-
-
-    return wrapper
-
-
-########################
-# parametar関連
-########################
-def get_chat_request_context_objects(request_dict: dict) -> RequestContext:
-    # contextを取得
-    request_context:dict[Any, Any] = request_dict.get(request_context_name, None)
-    if not request_context:
-        raise ValueError("context is not set.")
-
-    chat_request_context_dict: dict[Any, Any] = request_context.get(chat_request_context_name, None)
-    if not chat_request_context_dict:
-        raise ValueError("request_context is not set.")
-
-    result = RequestContext(chat_request_context_dict)
-    return result
-
-def get_openai_objects(request_dict: dict) -> tuple[OpenAIProps, OpenAIClient]:
-    # contextを取得
-    request_context:dict = request_dict.get(request_context_name, None)
-    if not request_context:
-        raise ValueError("context is not set.")
-    
-    # OpenAIPorps, OpenAIClientを生成
-    openai_props_dict = request_context.get(openai_props_name, None)
-    if not openai_props_dict:
-        raise ValueError("openai_props is not set.")
-
-    openai_props = OpenAIProps(openai_props_dict)
-    client = OpenAIClient(openai_props)
-    return openai_props, client
-
-def get_vector_db_objects(request_dict: dict) -> list[VectorDBItem]:
-    # contextを取得
-    request_context:dict = request_dict.get(request_context_name, None)
-    if not request_context:
-        raise ValueError("context is not set.")
-    # VectorDBItemを生成
-    vector_db_items = request_context.get(vector_db_items_name, None)
-    if not vector_db_items:
-        print("vector_db_items is not set")
-        return []
-    
-    vector_db_props = [VectorDBItem(item) for item in vector_db_items]
-    return vector_db_props
-
-def get_autogen_objects(request_dict: dict) -> AutoGenProps:
-    # contextを取得
-    request_context:dict = request_dict.get(request_context_name, None)
-    if not request_context:
-        raise ValueError("context is not set.")
-    # AutoGenPropsを生成
-    props_dict = request_context.get(autogen_props_name, None)
-    if not props_dict:
-        raise ValueError("autogen_props is not set")
-    
-    # get_openai_objectsを使ってOpenAIPropsを取得
-    openai_props, _ = get_openai_objects(request_dict)
-
-    # vector_db_itemsを取得
-    vector_db_items = get_vector_db_objects(request_dict)
-
-    # context_jsonからChatRequestContextを生成
-    chat_request_context = get_chat_request_context_objects(request_dict)
-
-    if not chat_request_context.SessionToken:
-        raise ValueError("SessionToken is not set.")
-
-    autogen_props = AutoGenProps(props_dict, openai_props, vector_db_items, chat_request_context.SessionToken)
-    return autogen_props
-
-def get_token_count_objects(request_dict: dict) -> dict:
-
-    # token_count_request_nameを取得
-    token_count_request = request_dict.get(token_count_request_name, None)
-    if not token_count_request:
-        raise ValueError("token_count_request is not set")
-    return token_count_request
-
-def get_autogen_request_objects(request_dict: dict) -> dict:
-    # contextを取得
-    request:dict = request_dict.get(autogen_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    return request
-
-def get_query_request_objects(request_dict: dict) -> dict:
-    # contextを取得
-    request:dict = request_dict.get(query_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    return request
-
-def get_excel_request_objects(request_dict: dict) -> tuple[str, dict]:
-    # contextを取得
-    request:dict = request_dict.get(excel_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    # file_pathとdata_jsonを取得
-    file_path = request.get("file_path", None)
-    data_json = request.get("data_json", None)
-
-    return file_path, data_json
-
-def get_file_request_objects(request_dict: dict) -> dict:
-    # contextを取得
-    request:dict = request_dict.get(file_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    return request
-
-def get_web_request_objects(request_dict: dict) -> dict:
-    # contextを取得
-    request:dict = request_dict.get(web_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    return request
 
 ########################
 # openai関連
@@ -351,6 +138,26 @@ def langchain_chat( request_json: str):
 ########################
 # ベクトルDB関連
 ########################
+# get_vector_db_by_nameを実行する
+def get_vector_db_by_name(request_json: str):
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_nameを取得
+        vector_db_name = request_dict.get("vector_db_name", None)
+        if not vector_db_name:
+            raise ValueError("vector_db_name is not set")
+        # vector_dbを取得
+        vector_db = ai_app.get_vector_db_by_name(vector_db_name)
+        
+        result: dict = {}
+        result["vector_db"] = vector_db
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 def vector_search(request_json: str):
     # OpenAIチャットを実行する関数を定義

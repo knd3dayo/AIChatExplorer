@@ -35,7 +35,18 @@ namespace LibPythonAI.PythonIF.Request {
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
             if (RequestContextInstance != null) {
-                dict["context"] = RequestContextInstance.ToDict();
+                dict["vector_db_items"] = RequestContextInstance.ToDictVectorDBItemsDict();
+            }
+
+            if (RequestContextInstance != null) {
+                dict["openai_props"] = RequestContextInstance.OpenAIProperties.ToDict();
+            }
+            if (RequestContextInstance != null) {
+                dict["autogen_props"] = RequestContextInstance.AutoGenProperties.ToDict();
+            }
+
+            if (RequestContextInstance != null) {
+                dict["chat_request_context"] = RequestContextInstance.ToChatRequestContextDict();
             }
             if (ChatRequestInstance != null) {
                 dict["chat_request"] = ChatRequestInstance.ToDict();

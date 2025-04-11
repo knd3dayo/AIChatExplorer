@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # 引数の取得
     args = sys.argv
     if len(args) != 3:
-        print("Usage: python ai_app_process_checker.py [pid_file] [url]")
+        print("Usage: python ai_app_process_checker.py [pid] [url]")
         sys.exit(1)
     pid = int(args[1])
     url = args[2]

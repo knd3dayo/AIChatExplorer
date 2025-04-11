@@ -3,7 +3,7 @@ from typing import Any
 from flask_cors import CORS # type: ignore
 from flask import Flask, Response, request, render_template
 from flask_socketio import SocketIO, emit, send # type: ignore
-import ai_chat_explorer.ai_app_wrapper as ai_app_wrapper
+import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
 import asyncio
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
@@ -209,3 +209,5 @@ if __name__ == ('__main__'):
     # pf_trace()
     socketio.run(app, debug=True, host='0.0.0.0', port=flask_port, allow_unsafe_werkzeug=True)
     # app.run(debug=True, host='0.0.0.0', port=flask_port, threaded=True)
+
+    

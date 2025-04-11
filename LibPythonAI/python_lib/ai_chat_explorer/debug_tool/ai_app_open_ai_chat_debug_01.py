@@ -1,6 +1,6 @@
 import os, json
 import logging 
-import ai_chat_explorer.ai_app_wrapper as ai_app_wrapper
+import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
 logging.basicConfig(level=logging.ERROR)
 
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
@@ -17,14 +17,11 @@ if __name__ == '__main__':
     # -r オプションがある場合はVectorDBの検索リクエストを実行する。
     props_file = None
     vector_search_request = False
-    opts, args = getopt.getopt(sys.argv[1:], "p:d")
+    opts, args = getopt.getopt(sys.argv[1:], "p:")
     for opt, arg in opts:
         if opt == "-p":
             props_file = arg
-        elif opt == "-d":
-            from promptflow.tracing import start_trace # type: ignore
-            # instrument OpenAI
-            start_trace()
+
     if not props_file:
         raise ValueError("props_file is not set.")
     

@@ -10,7 +10,7 @@ namespace PythonAILib.Model.Chat {
     // リクエストと共に送信するコンテキスト情報
     public class ChatRequestContext {
 
-        public static JsonSerializerOptions options = new() {
+        private static readonly JsonSerializerOptions options = new() {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
@@ -51,9 +51,7 @@ namespace PythonAILib.Model.Chat {
 
         public string RelatedInformationPromptText = PythonAILib.Resources.PromptStringResource.Instance.RelatedInformationByVectorSearch;
 
-        // CreateEntriesDictList
-        public Dictionary<string, object> ToDict() {
-            // RequestContext
+        public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
                 { "prompt_template_text", PromptTemplateText },
                 { "chat_mode", ChatMode.ToString() },
@@ -64,18 +62,13 @@ namespace PythonAILib.Model.Chat {
                 { "session_token", SessionToken },
 
             };
-            Dictionary<string, object> dict = new() {
-                // VectorSearchProperty UseVectorDBがTrueの場合は追加、Falseの場合は空リスト
-                { "vector_db_items", UseVectorDB ? VectorDBProperty.ToDictList(VectorDBProperties) : [] },
-                { "autogen_props", AutoGenProperties.ToDict() },
-                { "openai_props", OpenAIProperties.ToDict() },
-                { "chat_request_context", requestContext },
-            };
-            return dict;
+            return requestContext;
+
         }
-        // ToJson
-        public string ToJson() {
-            return JsonSerializer.Serialize(ToDict(), options);
+
+        // CreateEntriesDictList
+        public List<Dictionary<string, object>> ToDictVectorDBItemsDict() {
+            return UseVectorDB ? VectorDBProperty.ToDictList(VectorDBProperties) : [];
         }
 
        

@@ -5,7 +5,7 @@ import logging
 from aiohttp import web, WSMsgType
 from aiohttp.web import WebSocketResponse, Request, Response
 import socketio # type: ignore
-import ai_chat_explorer.ai_app_wrapper as ai_app_wrapper
+import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 routes = web.RouteTableDef()
@@ -177,25 +177,17 @@ async def shutdown_server(request: Request) -> Response:
     os.kill(pid, 2)
     return web.Response(body="{}", status=200, content_type='application/json')
 
-def pf_trace():
-    pf_trace = os.getenv("PF_TRACE", "false").upper() == "TRUE"
-    logger.debug(f"pf_trace={pf_trace}")
-    if pf_trace == True:
-        os.environ["PF_DISABLE_TRACING"] = "false"
-        os.environ["NO_PROXY"] = "*"
-        try:
-            from promptflow.tracing import start_trace # type: ignore
-            # instrument OpenAI
-            start_trace(collection="ai_app_server")
-        except Exception as e:
-            logger.error(e.message)
-            print("Failed to start tracing")
-            
-
 if __name__ == ('__main__'):
+    # 第１引数はAPP_DB_PATH
+    if len(sys.argv) > 1:
+        os.environ["APP_DB_PATH"] = sys.argv[1]
+    else:
+        raise ValueError("APP_DB_PATH is required")
+
     logging.basicConfig(level=logging.INFO)
-    port = os.getenv("FLASK_PORT", "5000")
+    port = os.getenv("API_SERVER_PORT", "5000")
     logger.info(f"port={port}")
-    # pf_trace()
+
     app.add_routes(routes)
     web.run_app(app, port=int(port) )
+    

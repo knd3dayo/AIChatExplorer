@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
@@ -156,8 +157,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     OpenAIProperties = openAIProperties,
                     SessionToken = Guid.NewGuid().ToString()
                 };
+                RequestContainer requestContainer = new() {
+                    RequestContextInstance = chatRequestContext,
+                };
 
-                string json = chatRequestContext.ToJson();
+                string json = requestContainer.ToJson();
                 // ChatRequestContextをJson文字列化したものと、検索文字列を結合
                 return $"# ChatRequestContext:\n{json}\n\n# Search Text:\n{InputText}";
             }

@@ -11,13 +11,9 @@ namespace LibPythonAI.Model.VectorDB {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public class VectorDBItem {
+    public class VectorDBItem(VectorDBItemEntity entity) {
 
-        public VectorDBItemEntity Entity { get; set; }
-
-        public VectorDBItem(VectorDBItemEntity entity) {
-            Entity = entity;
-        }
+        public VectorDBItemEntity Entity { get; set; } = entity;
 
         public string Id { get => Entity.Id; }
 
@@ -27,7 +23,6 @@ namespace LibPythonAI.Model.VectorDB {
         public readonly static string DefaultCollectionName = "ai_app_default_collection";
         // フォルダーカタログのコレクション名 
         public readonly static string FolderCatalogCollectionName = "ai_app_folder_catalog_collection";
-
 
         public static void Init() {
             var item = GetItemByName(SystemCommonVectorDBName);
@@ -202,6 +197,16 @@ namespace LibPythonAI.Model.VectorDB {
             return new VectorDBItem(item);
         }
 
+        // GetItemByName
+        public static VectorDBItem? GetItemByName(string? name) {
+            using PythonAILibDBContext db = new();
+            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == name);
+            if (item == null) {
+                return null;
+            }
+            return new VectorDBItem(item);
+        }
+
         // Save
         public void Save() {
             using PythonAILibDBContext db = new();
@@ -256,19 +261,5 @@ namespace LibPythonAI.Model.VectorDB {
             result.AddRange(GetExternalVectorDBItems());
             return result;
         }
-
-        // GetItemByName
-        public static VectorDBItem? GetItemByName(string? name) {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == name);
-            if (item == null) {
-                return null;
-            }
-            return new VectorDBItem(item);
-
-
-        }
-
-
     }
 }

@@ -7,14 +7,13 @@ from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestCo
 from ai_chat_explorer.langchain_modules import LangChainChatParameter, LangChainUtil, LangChainVectorDB, VectorSearchParameter
 from ai_chat_explorer.file_modules import ExcelUtil, FileUtil
 from ai_chat_explorer.autogen_modules import AutoGenProps
-from ai_chat_explorer.db_modules import VectorDBItem, VectorSearchParameter
+from ai_chat_explorer.db_modules import VectorDBItem, VectorSearchParameter, MainDB
 
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from typing import Annotated
-
 
 ########################
 # ファイル関連
@@ -142,14 +141,36 @@ async def run_autogen_chat(autogen_props: AutoGenProps,input_text: str) -> Async
 ########################
 # langchain関連
 ########################
-
-def vector_search(params:VectorSearchParameter) -> dict:
-    result = LangChainVectorDB.vector_search(params)
-    return result
-
 def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], params:LangChainChatParameter) -> dict:
     # langchan_chatを実行
     result = LangChainUtil.langchain_chat(openai_props, vector_db_items, params)
+    return result
+
+########################
+# langchain + vector db関連
+########################
+# idを指定してベクトルDBを取得する
+def get_vector_db_by_id(id: str) -> Union[VectorDBItem, None]:
+    # idからVectorDBItemを取得
+    main_db = MainDB(os.getenv("APP_DB_PATH", None))
+    if main_db is None:
+        raise ValueError("APP_DB_PATH is not set.")
+    
+    vector_db_item = main_db.get_vector_db_by_id(id)
+    return vector_db_item
+
+# nameを指定してベクトルDBを取得する
+def get_vector_db_by_name(name: str) -> Union[VectorDBItem, None]:
+    # nameからVectorDBItemを取得
+    main_db = MainDB(os.getenv("APP_DB_PATH", None))
+    if main_db is None:
+        raise ValueError("APP_DB_PATH is not set.")
+
+    vector_db_item = main_db.get_vector_db_by_name(name)
+    return vector_db_item
+
+def vector_search(params:VectorSearchParameter) -> dict:
+    result = LangChainVectorDB.vector_search(params)
     return result
 
 # vector db関連
@@ -177,6 +198,9 @@ def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     if entry is not None:
         vector_db.update_document(entry)
 
+########################
+# Excel関連
+########################
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):
     # dataJsonをdictに変換

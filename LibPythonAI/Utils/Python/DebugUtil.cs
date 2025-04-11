@@ -41,6 +41,8 @@ namespace PythonAILib.Utils.Python {
             // 事前処理
             cmdLines.Add(beforeExecScriptCommands);
             cmdLines.Add($"set PYTHONPATH={pythonAILibDir}");
+            // APP_DB_PATH
+            cmdLines.Add($"set APP_DB_PATH={PythonAILibManager.Instance.ConfigParams.GetMainDBPath()}");
             cmdLines.Add($"python {pythonScriptPath} {pythonScriptArgs}");
             // 事後処理
             cmdLines.Add(afterExecScriptCommands);
@@ -62,10 +64,14 @@ namespace PythonAILib.Utils.Python {
         // ChatRequestの内容とList<VectorDBItem>からパラメーターJsonを作成する。
         public static string CreateParameterJson(ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
             Dictionary<string, object> parametersDict = [];
-            parametersDict["context"] = chatRequestContext.ToDict();
+            parametersDict["chat_request_context"] = chatRequestContext.ToChatRequestContextDict();
+            parametersDict["openai_props"] = chatRequestContext.OpenAIProperties.ToDict();
+            parametersDict["autogen_props"] = chatRequestContext.AutoGenProperties.ToDict();
+            parametersDict["vector_db_items"] = chatRequestContext.ToDictVectorDBItemsDict();
+
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
-                parametersDict["request"] = chatRequest.ToDict();
+                parametersDict["chat_request"] = chatRequest.ToDict();
             }
 
             string parametersJson = JsonSerializer.Serialize(parametersDict, options);

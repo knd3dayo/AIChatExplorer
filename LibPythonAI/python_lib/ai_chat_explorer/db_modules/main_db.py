@@ -140,17 +140,13 @@ class VectorDBItem:
             else:
                 raise ValueError("VectorDBType must be 0 or 1")
 
-
         # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
         metadata = vector_db_item_dict.get("VectorMetadata" , None)
         self.VectorMetadata = VectorMetadata(metadata) if metadata else None
-
         # search_kwarg
         self.SearchKwargs = vector_db_item_dict.get("SearchKwargs", {})
-
         # system_message
         self.SystemMessage = vector_db_item_dict.get("SystemMessage", self.Description)
-
         # FolderのID
         self.FolderId = vector_db_item_dict.get("FolderId", "")
 
@@ -279,7 +275,11 @@ class MainDB:
 
         return folders
 
-    def get_vector_db_item(self, vector_db_item_id: str) -> Union[VectorDBItem, None]:
+    ########################################
+    # VectorDBItem関連
+    ########################################
+    # Idを指定してVectorDBItemのdictを取得する
+    def get_vector_db_item_dict_by_id(self, vector_db_item_id: str) -> Union[dict, None]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
@@ -289,11 +289,40 @@ class MainDB:
         # データが存在しない場合はNoneを返す
         if row is None:
             return None
-        # debug
-        print(dict(row))
+
         vector_db_item_dict = dict(row)
         conn.close()
 
+        return vector_db_item_dict
+
+    # Idを指定してVectorDBItemを取得する
+    def get_vector_db_by_id(self, vector_db_item_id: str) -> Union[VectorDBItem, None]:
+        vector_db_item_dict = self.get_vector_db_item_dict_by_id(vector_db_item_id)
+        if vector_db_item_dict is None:
+            return None
+        return VectorDBItem(vector_db_item_dict)
+    # nameを指定してVectorDBItemのdictを取得する
+    def get_vector_db_item_dict_by_name(self, vector_db_item_name: str) -> Union[dict, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM VectorDBItems WHERE Name=?", (vector_db_item_name,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None:
+            return None
+
+        vector_db_item_dict = dict(row)
+        conn.close()
+
+        return vector_db_item_dict
+
+    # Nameを指定してVectorDBItemを取得する
+    def get_vector_db_by_name(self, vector_db_item_name: str) -> Union[VectorDBItem, None]:
+        vector_db_item_dict = self.get_vector_db_item_dict_by_name(vector_db_item_name)
+        if vector_db_item_dict is None:
+            return None
         return VectorDBItem(vector_db_item_dict)
     
     def get_vector_db_items(self) -> List[VectorDBItem]:
@@ -306,7 +335,9 @@ class MainDB:
 
         return vector_db_items
 
-
+    #################################################
+    # Autogen関連
+    #################################################
     def get_autogen_llm_config(self, llm_config_name: str) -> Union[AutogentLLMConfig, None]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 

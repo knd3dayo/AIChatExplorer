@@ -1,5 +1,7 @@
-import venv
 from typing import Any, Union, Callable
+import os
+
+import venv
 
 # json
 import json
@@ -46,14 +48,13 @@ class AutoGenProps:
             return True
         return False
 
-    def __init__(self, props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem], session_token: str):
+    def __init__(self, app_db_path: str ,props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem], session_token: str):
 
-        
         # session_token
         self.session_token = session_token
 
         # autogen_db_path
-        autogen_db_path = props_dict.get("autogen_db_path", None)
+        autogen_db_path = app_db_path
         if autogen_db_path is None:
             raise ValueError("autogen_db_path is None")
         self.autogen_db_path = autogen_db_path
@@ -70,7 +71,7 @@ class AutoGenProps:
             raise ValueError("tool_dir is None")
 
         # venv_path
-        self.venv_path = props_dict.get("venv_path", None)
+        self.venv_path = os.getenv("VIRTUAL_ENV", None)
 
         # chat_tpe
         self.chat_type = props_dict.get("chat_type", None)

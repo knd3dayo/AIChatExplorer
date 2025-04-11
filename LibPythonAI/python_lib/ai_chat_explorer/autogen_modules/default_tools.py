@@ -221,7 +221,7 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
 
     props : AutoGenProps = autogen_props # type: ignore
     main_db = main_db = MainDB(props.autogen_db_path) 
-    main_vector_db_item = main_db.get_vector_db_item(props.main_vector_db_id)
+    main_vector_db_item = main_db.get_vector_db_by_id(props.main_vector_db_id)
     vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
     params: VectorSearchParameter = VectorSearchParameter(props.openai_props,vector_db_item_list, query)
     result = LangChainVectorDB.vector_search(params)
@@ -242,7 +242,7 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
 
     props : AutoGenProps = autogen_props # type: ignore
     main_db = main_db = MainDB(props.autogen_db_path) 
-    main_vector_db_item = main_db.get_vector_db_item(props.main_vector_db_id)
+    main_vector_db_item = main_db.get_vector_db_by_id(props.main_vector_db_id)
     if main_vector_db_item is None:
         raise ValueError("main_vector_db_id is not set.")
     if props.chat_history_folder_id is None:
