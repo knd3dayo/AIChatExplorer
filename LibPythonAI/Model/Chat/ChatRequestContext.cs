@@ -16,7 +16,7 @@ namespace PythonAILib.Model.Chat {
         };
         // ベクトルDBアイテム
 
-        [JsonPropertyName("vector_db_items")]
+        [JsonPropertyName("vector_db_props")]
         public List<VectorDBProperty> VectorDBProperties { get; set; } = [];
 
         // AutoGenProperties

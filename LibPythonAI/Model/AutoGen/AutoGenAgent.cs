@@ -32,7 +32,7 @@ namespace LibPythonAI.Model.AutoGen {
         public string LLMConfigName { get; set; } = "";
 
         // List(VectorDBItem)
-        [JsonPropertyName("vector_db_items")]
+        [JsonPropertyName("vector_db_props")]
         public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
@@ -51,7 +51,7 @@ namespace LibPythonAI.Model.AutoGen {
                 { "tool_names", data.ToolNames },
                 { "code_execution", data.CodeExecution },
                 { "llm_config_name", data.LLMConfigName },
-                { "vector_db_items", VectorDBItem.ToDictList(data.VectorDBItems) },
+                { "vector_db_props", VectorDBItem.ToDictList(data.VectorDBItems) },
                 { "vector_db_search_agent", data.VectorDBSearchAgent },
 
             };

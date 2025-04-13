@@ -35,7 +35,7 @@ namespace LibPythonAI.PythonIF.Request {
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
             if (RequestContextInstance != null) {
-                dict["vector_db_items"] = RequestContextInstance.ToDictVectorDBItemsDict();
+                dict["vector_db_props"] = RequestContextInstance.ToDictVectorDBItemsDict();
             }
 
             if (RequestContextInstance != null) {
@@ -58,7 +58,7 @@ namespace LibPythonAI.PythonIF.Request {
                 dict["autogen_request"] = AutogenRequestInstance.ToDict();
             }
             if (QueryRequestInstance != null) {
-                dict["query_request"] = QueryRequestInstance.ToDict();
+                dict["vector_search_request"] = QueryRequestInstance.ToDict();
             }
             if (ExcelRequestInstance != null) {
                 dict["excel_request"] = ExcelRequestInstance.ToDict();

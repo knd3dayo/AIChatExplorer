@@ -170,8 +170,8 @@ def vector_search(request_json: str):
         # ChatRequestContextからVectorDBItemを生成
         vector_db_items = get_vector_db_objects(request_dict)
         # queryを取得
-        query_request = get_query_request_objects(request_dict)
-        query = query_request.get("input_text", "")
+        vector_search_request = get_vector_search_request_objects(request_dict)
+        query = vector_search_request.get("input_text", "")
 
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         result = ai_app.vector_search(params)

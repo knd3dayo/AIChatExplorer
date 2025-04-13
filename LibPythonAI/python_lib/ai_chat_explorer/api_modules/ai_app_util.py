@@ -12,7 +12,7 @@ from ai_chat_explorer.autogen_modules import AutoGenProps
 
 request_context_name = "context"
 openai_props_name = "openai_props"
-vector_db_items_name = "vector_db_items"
+vector_db_items_name = "vector_db_props"
 autogen_props_name = "autogen_props"
 chat_request_context_name = "chat_request_context"
 
@@ -20,7 +20,7 @@ chat_request_name = "chat_request"
 chat_contatenate_request_name = "chat_contatenate_request"
 token_count_request_name = "token_count_request"
 autogen_request_name = "autogen_request"
-query_request_name = "query_request"
+vector_search_request_name = "vector_search_request"
 excel_request_name = "excel_request"
 file_request_name = "file_request"
 web_request_name = "web_request"
@@ -163,12 +163,12 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
 
 def get_vector_db_objects(request_dict: dict) -> list[VectorDBItem]:
     '''
-    {"vector_db_items": []}の形式で渡される
+    {"vector_db_props": []}の形式で渡される
     '''
     # VectorDBItemを生成
     vector_db_items_dict = request_dict.get(vector_db_items_name, None)
     if not vector_db_items_dict:
-        print("vector_db_items is not set")
+        print("vector_db_props is not set")
         return []
     # vector_db_itemsのName一覧を取得
     names = [item.get("Name", None) for item in vector_db_items_dict]
@@ -211,12 +211,12 @@ def get_autogen_request_objects(request_dict: dict) -> dict:
         raise ValueError("request is not set.")
     return request
 
-def get_query_request_objects(request_dict: dict) -> dict:
+def get_vector_search_request_objects(request_dict: dict) -> dict:
     '''
-    {"context": {"query_request": {}}}の形式で渡される
+    {"vector_search_request": {}}の形式で渡される
     '''
     # contextを取得
-    request:dict = request_dict.get(query_request_name, None)
+    request:dict = request_dict.get(vector_search_request_name, None)
     if not request:
         raise ValueError("request is not set.")
     return request

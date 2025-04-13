@@ -231,7 +231,7 @@ class AutogenAgent:
         self.code_execution = agent_dict.get("code_execution", False)
         self.llm_config_name = agent_dict.get("llm_config_name", "")
         self.tool_names = agent_dict.get("tool_names", "")
-        self.vector_db_items = agent_dict.get("vector_db_items", json.dumps([]))
+        self.vector_db_items = agent_dict.get("vector_db_props", json.dumps([]))
 
 class AutogenGroupChat:
     '''

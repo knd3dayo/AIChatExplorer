@@ -67,7 +67,7 @@ namespace PythonAILib.Utils.Python {
             parametersDict["chat_request_context"] = chatRequestContext.ToChatRequestContextDict();
             parametersDict["openai_props"] = chatRequestContext.OpenAIProperties.ToDict();
             parametersDict["autogen_props"] = chatRequestContext.AutoGenProperties.ToDict();
-            parametersDict["vector_db_items"] = chatRequestContext.ToDictVectorDBItemsDict();
+            parametersDict["vector_db_props"] = chatRequestContext.ToDictVectorDBItemsDict();
 
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
