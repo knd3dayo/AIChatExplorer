@@ -20,7 +20,7 @@ from ai_chat_explorer.langchain_modules.langchain_doc_store import SQLDocStore
 
 from ai_chat_explorer.openai_modules.openai_util import OpenAIProps
 
-from ai_chat_explorer.db_modules import VectorMetadata, VectorDBItem, VectorSearchParameter
+from ai_chat_explorer.db_modules import EmbeddingData, VectorDBItem
 
 logger = logging.getLogger(__name__)
 
@@ -316,7 +316,7 @@ class LangChainVectorDB:
             # DBからsourceを指定して既存ドキュメントを削除
             self.__delete_document(source_id)
     
-    def update_document(self, params: VectorMetadata):
+    def update_document(self, params: EmbeddingData):
         
         # 既に存在するドキュメントを削除
         self.delete_document(params.source_id)
@@ -325,25 +325,25 @@ class LangChainVectorDB:
 
     # ベクトル検索を行う
     @classmethod
-    def vector_search(cls, params: VectorSearchParameter):    
+    def vector_search(cls, openai_props: OpenAIProps, vector_db_props: list[VectorDBItem]) -> dict[str, Any]:    
 
-        if not params.openai_props:
+        if not openai_props:
             raise ValueError("openai_props is None")
-        client = LangChainOpenAIClient(params.openai_props)
+        client = LangChainOpenAIClient(openai_props)
 
         # documentsの要素からcontent, source, source_urlを取得
         result = []
         # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-        for vector_db_item in params.vector_db_props:
+        for vector_db_item in vector_db_props:
 
             # デバッグ出力
-            logger.info(f'検索文字列: {params.query}')
+            logger.info(f'検索文字列: {vector_db_item.input_text}')
             logger.info('ベクトルDBの設定')
             logger.info(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
             logger.info(f'SearchKwargs:{vector_db_item.SearchKwargs}')
             logger.info(f'IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}')
             retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwargs)
-            documents: list[Document] = retriever.invoke(params.query)
+            documents: list[Document] = retriever.invoke(vector_db_item.input_text)
 
             logger.debug(f"documents:\n{documents}")
             for doc in documents:

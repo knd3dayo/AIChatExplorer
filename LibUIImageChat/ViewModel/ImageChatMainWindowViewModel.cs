@@ -126,7 +126,6 @@ namespace LibUIImageChat.ViewModel {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 PromptTemplateText = PromptText,
-                SessionToken = Guid.NewGuid().ToString()
 
             };
 

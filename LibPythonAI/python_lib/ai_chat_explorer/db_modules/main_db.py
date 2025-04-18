@@ -141,14 +141,19 @@ class VectorDBItem:
                 raise ValueError("VectorDBType must be 0 or 1")
 
         # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
-        metadata = vector_db_item_dict.get("VectorMetadata" , None)
-        self.VectorMetadata = VectorMetadata(metadata) if metadata else None
+        metadata = vector_db_item_dict.get("Embedding" , None)
+        self.EmbeddingData = EmbeddingData(metadata) if metadata else None
         # search_kwarg
         self.SearchKwargs = vector_db_item_dict.get("SearchKwargs", {})
         # system_message
         self.SystemMessage = vector_db_item_dict.get("SystemMessage", self.Description)
         # FolderのID
         self.FolderId = vector_db_item_dict.get("FolderId", "")
+
+        # input_text
+        self.input_text = vector_db_item_dict.get("input_text", None)
+        # search_kwarg
+        self.search_kwarg = vector_db_item_dict.get("SearchKwarg", None)
 
     @staticmethod
     def get_vector_db_env_variables() -> 'VectorDBItem':
@@ -169,33 +174,17 @@ class VectorDBItem:
         }
         return  VectorDBItem(props)
 
-class VectorMetadata:
-    def __init__(self, vector_db_entry: dict):
+class EmbeddingData:
+    def __init__(self, item: dict):
 
         # request_jsonをdictに変換
-        self.source_id = vector_db_entry["source_id"]
-        self.description = vector_db_entry.get("description", "")
-        self.content = vector_db_entry["content"]
-        self.source_path = vector_db_entry.get("source_path", "")
-        self.git_repository_url = vector_db_entry.get("git_repository_url", "")
-        self.git_relative_path = vector_db_entry.get("git_relative_path", "")
-        self.image_url = vector_db_entry.get("image_url", "")
-
-class VectorSearchParameter:
-    from ai_chat_explorer.openai_modules import OpenAIProps
-    def __init__(self, 
-                 openai_props: Union[OpenAIProps, None] = None, 
-                 vector_db_props: list[VectorDBItem] = [], 
-                 query: str = ""):
-
-        # OpenAIPorpsを生成
-        self.openai_props = openai_props
-
-        # VectorDBItemのリストを取得
-        self.vector_db_props = vector_db_props
-
-        #  openai_props, vector_db_items, query, search_kwargを設定する
-        self.query = query
+        self.source_id = item["source_id"]
+        self.description = item.get("description", "")
+        self.content = item["content"]
+        self.source_path = item.get("source_path", "")
+        self.git_repository_url = item.get("git_repository_url", "")
+        self.git_relative_path = item.get("git_relative_path", "")
+        self.image_url = item.get("image_url", "")
 
 class AutogentLLMConfig:
     '''

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace PythonAILib.Model.VectorDB {
-    public class VectorMetadata {
+    public class VectorDBEmbedding {
 
         public static readonly JsonSerializerOptions Options = new() {
             Converters = { new JsonStringEnumConverter() },
@@ -13,9 +13,9 @@ namespace PythonAILib.Model.VectorDB {
             WriteIndented = true
         };
 
-        public VectorMetadata() { }
+        public VectorDBEmbedding() { }
 
-        public VectorMetadata(string source_id) {
+        public VectorDBEmbedding(string source_id) {
             SourceId = source_id;
         }
 
@@ -53,7 +53,7 @@ namespace PythonAILib.Model.VectorDB {
 
         // sub_docs
         [JsonPropertyName("sub_docs")]
-        public List<VectorMetadata> SubDocs { get; set; } = [];
+        public List<VectorDBEmbedding> SubDocs { get; set; } = [];
 
 
         public void UpdateSourceInfo(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
@@ -66,14 +66,29 @@ namespace PythonAILib.Model.VectorDB {
             ImageURL = image_url;
 
         }
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                ["source_id"] = SourceId,
+                ["source_type"] = SourceType.ToString(),
+                ["description"] = Description,
+                ["content"] = Content,
+                ["source_path"] = SourcePath,
+                ["git_repository_url"] = GitRepositoryUrl,
+                ["git_relative_path"] = GitRelativePath,
+                ["image_url"] = ImageURL,
+                ["doc_id"] = DocId,
+                ["score"] = Score
+            };
+            return dict;
+        }
 
         public string ToJson() {
             return JsonSerializer.Serialize(this, Options);
         }
 
-        public static List<VectorMetadata> FromJson(string json) {
+        public static List<VectorDBEmbedding> FromJson(string json) {
             JsonSerializerOptions options = Options;
-            List<VectorMetadata>? result = System.Text.Json.JsonSerializer.Deserialize<List<VectorMetadata>>(json, options);
+            List<VectorDBEmbedding>? result = System.Text.Json.JsonSerializer.Deserialize<List<VectorDBEmbedding>>(json, options);
             return result ?? [];
         }
 

@@ -381,6 +381,10 @@ namespace PythonAILib.Resources {
 
         public override string GenerateVectorCompleted { get; } = "Generated vector";
 
+        // PropertyNotSet
+        public override string PropertyNotSet(string propertyName) {
+            return $"Property '{propertyName}' is not set";
+        }
         #region Statistics and Logging
 
         // Daily token count

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
@@ -44,6 +45,9 @@ namespace PythonAILib.Model.AutoGen {
         // timeout
         public int Timeout { get; set; } = 120;
 
+        // SessionToken
+        public string SessionToken { get; set; } = Guid.NewGuid().ToString();
+
 
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
@@ -59,6 +63,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "timeout", Timeout },
                 { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id },
                 { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id },
+                { "session_token", SessionToken },
             };
             return dict;
         }

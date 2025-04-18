@@ -195,17 +195,18 @@ def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
     if vector_db_items is empty, return None
     """
     global autogen_props
-    from ai_chat_explorer.db_modules import VectorSearchParameter
     from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
     from ai_chat_explorer.autogen_modules import AutoGenProps
     props : AutoGenProps = autogen_props # type: ignore
     if not props.vector_db_prop_list:
         return []
 
-    params: VectorSearchParameter = VectorSearchParameter(props.openai_props, props.vector_db_prop_list, query)
-    result = LangChainVectorDB.vector_search(params)
+    # vector_db_prop_listの各要素にinput_textを設定
+    for vector_db_props in props.vector_db_prop_list:
+        vector_db_props.input_text = query
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
     # Retrieve documents from result
-    documents = result.get("documents", [])
+    documents = search_results.get("documents", [])
     # Extract content of each document from documents
     result = [doc.get("content", "") for doc in documents]
     return result
@@ -215,7 +216,7 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     メインDBに登録されている全てのデータについて、ベクトル検索を行い、関連するドキュメントを返します。
     """
     global autogen_props
-    from ai_chat_explorer.db_modules import MainDB, VectorSearchParameter
+    from ai_chat_explorer.db_modules import MainDB
     from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
     from ai_chat_explorer.autogen_modules import AutoGenProps
 
@@ -223,10 +224,12 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     main_db = main_db = MainDB(props.autogen_db_path) 
     main_vector_db_item = main_db.get_vector_db_by_id(props.main_vector_db_id)
     vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
-    params: VectorSearchParameter = VectorSearchParameter(props.openai_props,vector_db_item_list, query)
-    result = LangChainVectorDB.vector_search(params)
+    # vector_db_prop_listの各要素にinput_textを設定
+    for vector_db_props in props.vector_db_prop_list:
+        vector_db_props.input_text = query
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
     # Retrieve documents from result
-    documents = result.get("documents", [])
+    documents = search_results.get("documents", [])
     # Extract content of each document from documents
     result = [doc.get("content", "") for doc in documents]
     return result
@@ -236,7 +239,7 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
     過去のチャット履歴に関連するドキュメントを検索します。
     """
     global autogen_props
-    from ai_chat_explorer.db_modules import MainDB, VectorSearchParameter
+    from ai_chat_explorer.db_modules import MainDB
     from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
     from ai_chat_explorer.autogen_modules import AutoGenProps
 
@@ -251,10 +254,12 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
     main_vector_db_item.FolderId = props.chat_history_folder_id
 
     vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
-    params: VectorSearchParameter = VectorSearchParameter(props.openai_props,vector_db_item_list, query)
-    result = LangChainVectorDB.vector_search(params)
+    # vector_db_prop_listの各要素にinput_textを設定
+    for vector_db_props in props.vector_db_prop_list:
+        vector_db_props.input_text = query
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
     # Retrieve documents from result
-    documents = result.get("documents", [])
+    documents = search_results.get("documents", [])
     # Extract content of each document from documents
     result = [doc.get("content", "") for doc in documents]
     return result

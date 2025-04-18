@@ -4,7 +4,6 @@ from io import StringIO
 import sys
 
 from ai_chat_explorer.openai_modules import OpenAIClient
-from ai_chat_explorer.db_modules import VectorSearchParameter
 
 import ai_chat_explorer.api_modules.ai_app as ai_app
 
@@ -27,7 +26,7 @@ def openai_chat(request_json: str):
         # OpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # context_jsonからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
+        vector_db_items = get_vector_search_requests_objects(request_dict)
         # context_jsonからChatRequestContextを生成
         chat_request_context = get_chat_request_context_objects(request_dict)
         # chat_requestを取得
@@ -121,7 +120,7 @@ def langchain_chat( request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
+        vector_db_items = get_vector_search_requests_objects(request_dict)
 
         # chat_requestを取得
         chat_request_dict = request_dict.get(chat_request_name, None)
@@ -167,14 +166,10 @@ def vector_search(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
         # queryを取得
-        vector_search_request = get_vector_search_request_objects(request_dict)
-        query = vector_search_request.get("input_text", "")
+        vector_search_requests: list[VectorDBItem] = get_vector_search_requests_objects(request_dict)
 
-        params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
-        result = ai_app.vector_search(params)
+        result = ai_app.vector_search(openai_props, vector_search_requests)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -190,9 +185,9 @@ def update_collection(request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
+        vector_db_item = get_embedding_request_objects(request_dict)
 
-        ai_app.update_collection(openai_props, vector_db_items)
+        ai_app.update_collection(openai_props, vector_db_item)
 
         return {}
 
@@ -209,9 +204,9 @@ def delete_collection(request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
+        vector_db_item = get_embedding_request_objects(request_dict)
         
-        ai_app.delete_collection(openai_props, vector_db_items)
+        ai_app.delete_collection(openai_props, vector_db_item)
 
         return {}
 
@@ -228,10 +223,10 @@ def delete_embeddings(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
-        for vector_db_item in vector_db_items:
-            ai_app.delete_embeddings(openai_props, vector_db_item)
+
+        # embedding_requestを取得
+        vector_db_item = get_embedding_request_objects(request_dict)
+        ai_app.delete_embeddings(openai_props, vector_db_item)
 
         return {}
 
@@ -248,10 +243,9 @@ def update_embeddings(request_json: str):
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_db_objects(request_dict)
-        for vector_db_item in vector_db_items:
-            ai_app.update_embeddings(openai_props, vector_db_item)
+        # embedding_requestを取得
+        vector_db_item: VectorDBItem = get_embedding_request_objects(request_dict)
+        ai_app.update_embeddings(openai_props, vector_db_item)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成

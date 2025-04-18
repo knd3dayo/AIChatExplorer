@@ -48,10 +48,10 @@ class AutoGenProps:
             return True
         return False
 
-    def __init__(self, app_db_path: str ,props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem], session_token: str):
+    def __init__(self, app_db_path: str ,props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem]):
 
         # session_token
-        self.session_token = session_token
+        self.session_token = props_dict.get("session_token", None)
 
         # autogen_db_path
         autogen_db_path = app_db_path

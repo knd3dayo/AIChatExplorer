@@ -20,8 +20,8 @@ namespace LibPythonAI.PythonIF.Request {
 
         public AutogenRequest? AutogenRequestInstance { get; set; }
 
-        // QueryRequest
-        public QueryRequest? QueryRequestInstance { get; set; }
+        // VectorSearchRequest
+        public List<VectorSearchRequest> VectorSearchRequestsInstance { get; set; } = [];
 
         // ExcelRequest
         public ExcelRequest? ExcelRequestInstance { get; set; }
@@ -31,6 +31,9 @@ namespace LibPythonAI.PythonIF.Request {
 
         // WebRequest
         public WebRequest? WebRequestInstance { get; set; }
+
+        // EmbeddingRequest
+        public EmbeddingRequest? EmbeddingRequestInstance { get; set; }
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
@@ -57,8 +60,11 @@ namespace LibPythonAI.PythonIF.Request {
             if (AutogenRequestInstance != null) {
                 dict["autogen_request"] = AutogenRequestInstance.ToDict();
             }
-            if (QueryRequestInstance != null) {
-                dict["vector_search_request"] = QueryRequestInstance.ToDict();
+            if (VectorSearchRequestsInstance != null) {
+                dict["vector_search_requests"] = VectorSearchRequest.ToDictList(VectorSearchRequestsInstance);
+            }
+            if (EmbeddingRequestInstance != null) {
+                dict["embedding_request"] = EmbeddingRequestInstance.ToDict();
             }
             if (ExcelRequestInstance != null) {
                 dict["excel_request"] = ExcelRequestInstance.ToDict();

@@ -12,6 +12,7 @@
         "terminate_msg": "TERMINATE",
         "max_msg": 15,
         "timeout": 120,
+        "session_token": "5aeb0538-a082-43de-9eb0-cc8452a087d9"
     },
     "openai_props": {
         "OpenAIKey": "str: OpenAIのAPIキー",
@@ -20,16 +21,23 @@
         "AzureOpenAIEndpoint": "str: AureOpenAIのエンドポイントURL",
         "OpenAIBaseURL": "str: カスタムモデル用のBaseURL",
     },
-    "vector_db_request": [
+    "vector_search_requests": [
     {
         "Name": "default",
-        "OpenAIEmbeddingModel": "text-embedding-3-small",
+        "model": "text-embedding-3-small",
+        "input_text": "検索文字列",
         "SearchKwargs": {
             "k": 10,
             "filter": {
                 "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a"
             }
-        },
+        }
+    }
+    ],
+    "embedding_request":
+        {
+        "Name": "default",
+        "model": "text-embedding-3-small",
         "Embedding": {
             "FolderId": "47bbf240-5022-470f-9b8b-0de0e600595a",
             "source_id": "",
@@ -44,8 +52,7 @@
             "score": 0,
             "sub_docs": []
         }
-    }
-    ],
+    },
     "chat_request": {
         "model": "gpt-4o-mini",
         "messages": [
@@ -68,7 +75,6 @@
         "summarize_prompt_text": "単純に結合しただけなので、文章のつながりがよくない箇所があるかもしれません。 文章のつながりがよくなるように整形してください。 出力言語は日本語にしてください。\n",
         "related_information_prompt_text": "------ 以下は本文に関連する情報をベクトルDBから検索した結果です。---\n",
         "split_token_count": 8000,
-        "session_token": "5aeb0538-a082-43de-9eb0-cc8452a087d9"
     },
 
 }

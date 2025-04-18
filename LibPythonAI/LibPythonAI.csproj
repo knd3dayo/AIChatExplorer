@@ -76,9 +76,6 @@
     <EmbeddedResource Include="python_lib\ai_chat_explorer\openai_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\ai_app_server_flask.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\ai_app_server_shutdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -107,9 +104,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\requirements.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\templates\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\ai_app_process_checker.py">

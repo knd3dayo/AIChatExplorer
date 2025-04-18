@@ -14,7 +14,7 @@ namespace PythonAILib.PythonIF {
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
-        public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query);
+        public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
 

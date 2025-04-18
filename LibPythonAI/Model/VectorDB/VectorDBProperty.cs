@@ -46,7 +46,7 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // VectorDBEntries
-        public VectorMetadata VectorMetadata { get; set; } = new();
+        public VectorDBEmbedding VectorMetadata { get; set; } = new();
 
         // SearchKWargs
         private Dictionary<string, object> GetSearchKwargs() {
@@ -131,7 +131,6 @@ namespace LibPythonAI.Model.VectorDB {
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = [item],
                 OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString(),
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
@@ -145,7 +144,6 @@ namespace LibPythonAI.Model.VectorDB {
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = [item],
                 OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString(),
             };
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
             PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);
@@ -154,19 +152,17 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // ベクトル検索を実行する
-        public List<VectorMetadata> VectorSearch(string query) {
+        public List<VectorDBEmbedding> VectorSearch(string query) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = [this],
                 OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-
             };
 
             // ベクトル検索を実行
-            List<VectorMetadata> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
+            List<VectorDBEmbedding> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
             return results;
         }
 
@@ -180,7 +176,6 @@ namespace LibPythonAI.Model.VectorDB {
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = openAIProperties,
                     VectorDBProperties = [this],
-                    SessionToken = Guid.NewGuid().ToString()
                 };
                 PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
 

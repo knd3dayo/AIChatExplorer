@@ -132,7 +132,6 @@ namespace LibUIMergeChat.Common {
                 VectorDBProperties = context.VectorDBProperties,
                 AutoGenProperties = context.AutoGenProperties,
                 OpenAIProperties = context.OpenAIProperties,
-                SessionToken = sessionToken
             };
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,

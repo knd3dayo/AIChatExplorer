@@ -537,6 +537,11 @@ namespace PythonAILib.Resources {
         // "ベクトルを生成しました"
         public virtual string GenerateVectorCompleted { get; } = "ベクトルを生成しました";
 
+        // プロパティが設定されていません
+        public virtual string PropertyNotSet(string propertyName) {
+            return $"{propertyName}が設定されていません";
+        }
+
         #region 統計、ログ関連
 
         // 日次トークン数

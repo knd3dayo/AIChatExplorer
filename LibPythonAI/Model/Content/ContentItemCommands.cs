@@ -132,7 +132,6 @@ namespace PythonAILib.Model.Content {
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
             };
 
             Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new LibPythonAI.Data.PromptItemEntity()) {
@@ -193,8 +192,6 @@ namespace PythonAILib.Model.Content {
                 PromptTemplateText = promptItem.Prompt,
                 ChatMode = promptItem.ChatMode,
                 SplitMode = promptItem.SplitMode,
-                SessionToken = Guid.NewGuid().ToString()
-
             };
 
 
@@ -259,8 +256,6 @@ namespace PythonAILib.Model.Content {
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-
             };
 
 
@@ -363,7 +358,7 @@ namespace PythonAILib.Model.Content {
                     // VectorDBItemを取得
                     VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorMetadata vectorDBEntry = new(item.Id.ToString());
+                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString());
                     folderVectorDBItem.VectorMetadata = vectorDBEntry;
 
                     // タイトルとHeaderTextを追加

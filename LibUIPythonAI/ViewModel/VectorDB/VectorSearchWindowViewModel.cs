@@ -48,10 +48,10 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
 
-        public ObservableCollection<VectorMetadata> MultiVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEmbedding> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorMetadata> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEmbedding> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorDBProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
@@ -102,7 +102,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
             UpdateIndeterminate(true);
             await Task.Run(() => {
-                List<VectorMetadata> vectorSearchResults = [];
+                List<VectorDBEmbedding> vectorSearchResults = [];
                 // ベクトル検索を実行
                 // VectorDBSearchResultMaxをVectorSearchPropertyに設定
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
@@ -118,17 +118,17 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     VectorSearchResults.Clear();
 
                     if (vectorDBItem.IsUseMultiVectorRetriever) {
-                        foreach (VectorMetadata vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorDBEmbedding vectorSearchResult in vectorSearchResults) {
                             MultiVectorSearchResults.Add(vectorSearchResult);
                             // sub_docsを追加
-                            foreach (VectorMetadata subDoc in vectorSearchResult.SubDocs) {
+                            foreach (VectorDBEmbedding subDoc in vectorSearchResult.SubDocs) {
                                 VectorSearchResults.Add(subDoc);
                             }
                         }
                     } else {
                         // VectorSearchResultsを更新
                         VectorSearchResults.Clear();
-                        foreach (VectorMetadata vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorDBEmbedding vectorSearchResult in vectorSearchResults) {
                             VectorSearchResults.Add(vectorSearchResult);
                         }
                     }
@@ -155,7 +155,6 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 ChatRequestContext chatRequestContext = new() {
                     VectorDBProperties = [VectorSearchProperty],
                     OpenAIProperties = openAIProperties,
-                    SessionToken = Guid.NewGuid().ToString()
                 };
                 RequestContainer requestContainer = new() {
                     RequestContextInstance = chatRequestContext,

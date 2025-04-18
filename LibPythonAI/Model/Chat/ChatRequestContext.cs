@@ -35,10 +35,6 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("prompt_template_text")]
         public string PromptTemplateText { get; set; } = "";
 
-        // SessionToken
-        [JsonPropertyName("session_token")]
-        public string SessionToken { get; set; } = "";
-
         // ベクトルDBを使用するかどうか
         [JsonIgnore]
         public bool UseVectorDB { get; set; } = false;
@@ -59,7 +55,6 @@ namespace PythonAILib.Model.Chat {
                 { "summarize_prompt_text", SummarizePromptText },
                 { "related_information_prompt_text", RelatedInformationPromptText },
                 { "split_token_count", SplitTokenCount },
-                { "session_token", SessionToken },
 
             };
             return requestContext;
@@ -88,7 +83,6 @@ namespace PythonAILib.Model.Chat {
                 UseVectorDB = userVectorDB,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
-                SessionToken = sessionToken
             };
             if (autoGenProperties != null) {
                 chatRequestContext.AutoGenProperties = autoGenProperties;

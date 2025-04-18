@@ -117,7 +117,7 @@ namespace PythonAILib.Model.VectorDB {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
                     }
-                    VectorMetadata vectorDBEntry = new(source_path);
+                    VectorDBEmbedding vectorDBEntry = new(source_path);
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
@@ -130,7 +130,6 @@ namespace PythonAILib.Model.VectorDB {
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty],
-                        SessionToken = Guid.NewGuid().ToString()
 
                     };
 
@@ -141,12 +140,11 @@ namespace PythonAILib.Model.VectorDB {
                         TopK = 4,
                         VectorDBItemId = VectorDBItem.Id,
                     }; VectorDBProperty vectorDBProperty = new(searchPropertyEntity);
-                    VectorMetadata vectorDBEntry = new(source_path);
+                    VectorDBEmbedding vectorDBEntry = new(source_path);
                     vectorDBProperty.VectorMetadata = vectorDBEntry;
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty],
-                        SessionToken = Guid.NewGuid().ToString()
 
                     };
 

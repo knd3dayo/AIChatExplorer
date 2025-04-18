@@ -13,7 +13,6 @@ class RequestContext:
     summarize_prompt_text_name = "summarize_prompt_text"
     related_information_prompt_text_name = "related_information_prompt_text"
     split_token_count_name = "split_token_count"
-    session_token_name = "session_token"
     def __init__(self, request_context_dict: dict):
         self.PromptTemplateText = request_context_dict.get(RequestContext.prompt_template_text_name, "")
         self.ChatMode = request_context_dict.get(RequestContext.chat_mode_name, "Normal")
@@ -21,7 +20,6 @@ class RequestContext:
         self.SplitTokenCount = request_context_dict.get(RequestContext.split_token_count_name, 8000)
         self.SummarizePromptText = request_context_dict.get(RequestContext.summarize_prompt_text_name, "")
         self.RelatedInformationPromptText = request_context_dict.get(RequestContext.related_information_prompt_text_name, "")
-        self.SessionToken = request_context_dict.get(RequestContext.session_token_name, "")
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
