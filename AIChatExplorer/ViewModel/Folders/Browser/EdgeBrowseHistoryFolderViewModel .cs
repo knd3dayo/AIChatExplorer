@@ -5,7 +5,7 @@ using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {

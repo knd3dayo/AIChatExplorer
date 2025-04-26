@@ -19,7 +19,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public ChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;
-            VectorSearchProperties = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
+            // VectorSearchProperties = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
             _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();

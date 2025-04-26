@@ -53,6 +53,9 @@
             "sub_docs": []
         }
     },
+    "vector_db_item_request" : {
+
+    },
     "chat_request": {
         "model": "gpt-4o-mini",
         "messages": [

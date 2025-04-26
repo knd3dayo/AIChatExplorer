@@ -8,7 +8,6 @@ using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Utils.Common;
 using LibUIImageChat.View;
@@ -26,11 +25,10 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Resources;
-using PythonAILibUI.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class AppItemViewModelCommands(Action<bool> updateIndeterminate, Action updateView) : ContentItemViewModelCommands(updateIndeterminate, updateView) {
+    public class AppViewModelCommands(Action<bool> updateIndeterminate, Action updateView) : ContentItemViewModelCommands(updateIndeterminate, updateView) {
 
 
         // フォルダを開くコマンド
@@ -109,6 +107,21 @@ namespace AIChatExplorer.ViewModel.Main {
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             QAChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
+
+        public void OpenOpenAIChatWindowCommandExecute() {
+            // チャット履歴用のItemの設定
+            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            // チャット履歴用のItemの設定
+            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
+            };
+            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+
+            OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
+
+        }
+
 
         // Command to open Image Chat
         public void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
@@ -319,29 +332,14 @@ namespace AIChatExplorer.ViewModel.Main {
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
                 CloseCommand = (item, saveChatHistory) => {
-                    bool isChatFolder = clipboardItem.GetFolder().Id == ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id;
-
-                    if (saveChatHistory) {
-                        if (isChatFolder) {
-                            // ChatItemsTextをContentに設定
-                            clipboardItem.Content = clipboardItem.ChatItemsText;
-                            clipboardItem.Save();
-
-                        } else {
-                            clipboardItem.Save();
-                            // チャット履歴用のItemの設定
-                            ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                            ContentItemWrapper chatHistoryItem = clipboardItem.Copy(); // new();
-                            chatHistoryItem.Entity.FolderId = chatFolder.Id;
-
-                            // タイトルを日付 + 元のタイトルにする
-                            chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + chatHistoryItem.Description;
-                            // ChatItemsTextをContentに設定
-                            chatHistoryItem.Content = clipboardItem.ChatItemsText;
-
-                            chatHistoryItem.Save();
-                        }
+                    if (!saveChatHistory) {
+                        return;
                     }
+                    Task.Run(() => {
+                        ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
+                        ContentItemCommands.SaveChatHistory(clipboardItem, chatFolder);
+
+                    });
                 },
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {

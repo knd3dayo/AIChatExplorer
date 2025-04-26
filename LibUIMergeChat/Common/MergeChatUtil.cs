@@ -1,9 +1,9 @@
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Folder;
-using PythonAILib.Utils.Python;
 using WpfAppCommon.Model;
 
 namespace LibUIMergeChat.Common {

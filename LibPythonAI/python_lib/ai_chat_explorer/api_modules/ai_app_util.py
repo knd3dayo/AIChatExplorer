@@ -5,14 +5,14 @@ from io import StringIO
 import sys
 
 from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestContext
-from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData
+from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, init_db, get_main_db_path
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 
 
 request_context_name = "context"
 openai_props_name = "openai_props"
-vector_db_items_name = "vector_db_props"
+vector_db_item_request_name = "vector_db_item_request"
 autogen_props_name = "autogen_props"
 chat_request_context_name = "chat_request_context"
 
@@ -25,6 +25,10 @@ embedding_request_name = "embedding_request"
 excel_request_name = "excel_request"
 file_request_name = "file_request"
 web_request_name = "web_request"
+
+# アプリケーション初期化時に呼び出される関数
+def init_app() -> None:
+    init_db(get_main_db_path())
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_stdout_stderr(func):
@@ -151,9 +155,7 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     # vector_db_itemsを取得
     vector_db_items = get_vector_search_requests_objects(request_dict)
 
-    app_db_path = os.getenv("APP_DB_PATH", None)
-    if not app_db_path:
-        raise ValueError("APP_DB_PATH is not set.")
+    app_db_path = get_main_db_path()
     autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_db_items)
     return autogen_props
 
@@ -179,6 +181,19 @@ def get_autogen_request_objects(request_dict: dict) -> dict:
         raise ValueError("request is not set.")
     return request
 
+def get_vector_db_item_object(request_dict: dict) -> VectorDBItem:
+    '''
+    {"vector_db_item_request": {}}の形式で渡される
+    '''
+    # vector_db_item_requestを取得
+    vector_db_item_request: dict = request_dict.get(vector_db_item_request_name, None)
+    if not vector_db_item_request:
+        raise ValueError("vector_db_item_request is not set.")
+
+    # vector_db_itemを生成
+    vector_db_item = VectorDBItem(vector_db_item_request)
+    return vector_db_item    
+
 def get_vector_search_requests_objects(request_dict: dict) -> list[VectorDBItem]:
     '''
     {"vector_search_request": {}}の形式で渡される
@@ -186,11 +201,11 @@ def get_vector_search_requests_objects(request_dict: dict) -> list[VectorDBItem]
     # contextを取得
     request:list[dict] = request_dict.get(vector_search_requests_name, None)
     if not request:
-        raise ValueError("request is not set.")
+        print("request is not set.", file=sys.stderr)
+        return []
+
     # MainDBを取得
-    app_db_path = os.getenv("APP_DB_PATH", None)
-    if not app_db_path:
-        raise ValueError("APP_DB_PATH is not set.")
+    app_db_path = get_main_db_path()
     main_db = MainDB(app_db_path)
 
     vector_db_items = []
@@ -223,9 +238,7 @@ def get_embedding_request_objects(request_dict: dict) -> VectorDBItem:
     if not request:
         raise ValueError("request is not set.")
     # MainDBを取得
-    app_db_path = os.getenv("APP_DB_PATH", None)
-    if not app_db_path:
-        raise ValueError("APP_DB_PATH is not set.")
+    app_db_path = get_main_db_path()
     main_db = MainDB(app_db_path)
 
     # nameからVectorDBItemを取得
@@ -244,7 +257,6 @@ def get_embedding_request_objects(request_dict: dict) -> VectorDBItem:
     vector_db_item.EmbeddingData = EmbeddingData(embedding)
     
     return vector_db_item
-
 
 def get_excel_request_objects(request_dict: dict) -> tuple[str, dict]:
     '''

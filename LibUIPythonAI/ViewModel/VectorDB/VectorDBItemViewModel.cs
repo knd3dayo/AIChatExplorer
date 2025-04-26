@@ -1,6 +1,5 @@
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorDBItemViewModel(VectorDBItem item) : ChatViewModelBase {

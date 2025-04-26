@@ -85,21 +85,32 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         // VectorDBItemのロード
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
-            // VectorDBItemのリストを初期化
-            VectorDBItems.Clear();
-            foreach (var item in VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB)) {
-                VectorDBItems.Add(new VectorDBItemViewModel(item));
-            }
-            OnPropertyChanged(nameof(VectorDBItems));
+            List<VectorDBItem> items = [];
+            Task.Run(() => {
+                // VectorDBItemのリストを取得
+                items = VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB);
+            }).ContinueWith((task) => {
+                MainUITask.Run(() => {
+                    // VectorDBItemのリストを初期化
+                    VectorDBItems.Clear();
+                    foreach (var item in items) {
+                        VectorDBItems.Add(new VectorDBItemViewModel(item));
+                    }
+                    OnPropertyChanged(nameof(VectorDBItems));
+                });
+            });
         });
 
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
-            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem(new VectorDBItemEntity()));
+            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新
-                LoadVectorItemsCommand.Execute();
+                MainUITask.Run(() => {
+                    // リストを更新
+                    LoadVectorItemsCommand.Execute();
+                });
             });
 
         });
@@ -127,11 +138,20 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedVectorDB, StringResources.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
 
-                // 削除
-                SelectedVectorDBItem.Item.Delete();
+                Task.Run(() => {
+                    // 選択したVectorDBItemを削除
+                    SelectedVectorDBItem.Item.Delete();
+                }).ContinueWith((task) => {
+                    if (task.IsFaulted) {
+                        LogWrapper.Error(task.Exception.Message);
+                    } else {
+                        MainUITask.Run(() => {
+                            // リストを更新
+                            LoadVectorItemsCommand.Execute();
+                        });
+                    }
+                });
 
-                // リストを更新
-                LoadVectorItemsCommand.Execute();
             }
         });
 
@@ -143,8 +163,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;
                 }
-                VectorDBPropertyEntity? entity = new() { VectorDBItemId = SelectedVectorDBItem.Item.Id };
-                callBackup?.Invoke(new VectorDBProperty(entity));
+                VectorDBProperty? prop = new() { VectorDBItemId = SelectedVectorDBItem.Item.Id };
+                callBackup?.Invoke(prop);
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
             else if (SelectedTabIndex == 1) {

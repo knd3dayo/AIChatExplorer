@@ -1,6 +1,5 @@
 using AIChatExplorer.Model.Folders.FileSystem;
 using LibPythonAI.Data;
-using PythonAILib.Model.Content;
 
 namespace AIChatExplorer.Model.Folders.ShortCut {
     public class ShortCutItem : FileSystemItem {

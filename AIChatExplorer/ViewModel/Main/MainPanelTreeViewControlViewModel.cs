@@ -14,10 +14,10 @@ using LibUIPythonAI.ViewModel.Folder;
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelTreeViewControlViewModel : AppViewModelBase {
 
-        private AppItemViewModelCommands Commands { get; set; }
+        private AppViewModelCommands Commands { get; set; }
 
          // constructor
-         public MainPanelTreeViewControlViewModel(AppItemViewModelCommands commands) {
+         public MainPanelTreeViewControlViewModel(AppViewModelCommands commands) {
             Commands = commands;
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };

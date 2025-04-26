@@ -3,7 +3,6 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
-using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {

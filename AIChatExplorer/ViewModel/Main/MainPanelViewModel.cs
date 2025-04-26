@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelViewModel(AppItemViewModelCommands commands) : ObservableObject {
+    public class MainPanelViewModel(AppViewModelCommands commands) : ObservableObject {
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; } = new MainPanelTreeViewControlViewModel(commands);
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new MainPanelDataGridViewControlViewModel(commands);

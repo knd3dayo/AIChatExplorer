@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class EditVectorDBWindowViewModel : ChatViewModelBase {
@@ -78,10 +78,20 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             if (ItemViewModel == null) {
                 return;
             }
-            // RAGSourceItemを更新
-            ItemViewModel.Item.Save();
+            Task.Run(() => {
+                ItemViewModel.Item.Save();
+                // VectorDBの初期化
+                LibPythonAI.Model.VectorDB.VectorDBItem.LoadItems();
 
-            AfterUpdate(ItemViewModel);
+            }).ContinueWith((task) => {
+                if (task.IsFaulted) {
+                    LogWrapper.Error(task.Exception.Message);
+                    return;
+                }
+                // 更新されたアイテムを返す
+                AfterUpdate(ItemViewModel);
+            });
+
 
             // ウィンドウを閉じる
             window.Close();

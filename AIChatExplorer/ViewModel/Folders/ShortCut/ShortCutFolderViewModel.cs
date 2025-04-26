@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.ShortCut;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
     public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(clipboardItemFolder, commands) {

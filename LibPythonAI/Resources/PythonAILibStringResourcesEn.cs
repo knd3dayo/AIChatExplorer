@@ -169,7 +169,22 @@ namespace PythonAILib.Resources {
         public override string ChatHistoryEnglish { get; } = "Chat history (English)";
 
         // UpdateVectorDBIndex実行
-        public override string UpdateVectorDBIndexExecute { get; } = "Execute UpdateVectorDBIndex";
+        public override string UpdateEmbeddingExecute { get; } = "Execute UpdateEmbedding";
+        // DeleteVectorDBIndex実行
+        public override string DeleteEmbeddingExecute { get; } = "Execute DeleteEmbedding";
+
+        // ベクトルDBアイテムを更新
+        public override string UpdateVectorDBItemExecute { get; } = "Execute UpdateVectorDBItem";
+        // ベクトルDBアイテムを削除
+        public override string DeleteVectorDBItemExecute { get; } = "Execute DeleteVectorDBItem";
+
+        // GetVectorDBItemsExecute
+        public override string GetVectorDBItemsExecute { get; } = "Execute GetVectorDBItems";
+
+        // GetVectorDBItemByIdExecute
+        public override string GetVectorDBItemByIdExecute { get; } = "Execute GetVectorDBItemById";
+        // GetVectorDBItemByNameExecute
+        public override string GetVectorDBItemByNameExecute { get; } = "Execute GetVectorDBItemByName";
 
         // ベクトルDBのコレクション削除を実行
         public override string DeleteVectorDBCollectionExecute { get; } = "Execute DeleteVectorDBCollection";
@@ -180,6 +195,7 @@ namespace PythonAILib.Resources {
         public override string GetVectorDBDescription { get; } = "Get VectorDB Description";
         // UpdateVectorDBDescription
         public override string UpdateVectorDBDescription { get; } = "Update VectorDB Description";
+
 
         public override string TextExtracted { get; } = "Extracted Text";
 
@@ -385,6 +401,12 @@ namespace PythonAILib.Resources {
         public override string PropertyNotSet(string propertyName) {
             return $"Property '{propertyName}' is not set";
         }
+
+        // VectorDBNotFound
+        public override string VectorDBNotFound(string vectorDBName) {
+            return $"Vector DB '{vectorDBName}' not found";
+        }
+
         #region Statistics and Logging
 
         // Daily token count

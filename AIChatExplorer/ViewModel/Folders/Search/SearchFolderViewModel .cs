@@ -5,7 +5,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Search {
     public class SearchFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {

@@ -9,7 +9,6 @@ using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
-using PythonAILibUI.ViewModel.Item;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {

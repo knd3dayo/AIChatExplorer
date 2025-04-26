@@ -42,7 +42,7 @@ namespace LibPythonAI.Model.Tag {
             db.SaveChanges();
         }
 
-        public static IEnumerable<TagItem> GetTagList() {
+        public static IEnumerable<TagItem> GetTagItems() {
             using PythonAILibDBContext db = new();
             var tags = db.TagItems;
             foreach (var tag in tags) {

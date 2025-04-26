@@ -21,8 +21,6 @@ namespace LibPythonAI.Data {
 
         public DbSet<RAGSourceItemEntity> RAGSourceItems { get; set; }
 
-        public DbSet<VectorDBItemEntity> VectorDBItems { get; set; }
-
         public DbSet<PromptItemEntity> PromptItems { get; set; }
 
         public DbSet<AutoProcessRuleEntity> AutoProcessRules { get; set; }

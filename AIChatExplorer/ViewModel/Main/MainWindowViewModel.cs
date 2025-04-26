@@ -6,11 +6,9 @@ using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
-using AIChatExplorer.ViewModel.Content;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Settings;
-using LibPythonAI.Data;
+using LibPythonAI.Model.VectorDB;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
@@ -28,11 +26,6 @@ namespace AIChatExplorer.ViewModel.Main {
         public MainWindowViewModel() { }
         public void Init() {
 
-            /**
-#if DEBUG
-            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;
-#endif
-            **/
 
             Instance = this;
 
@@ -49,6 +42,11 @@ namespace AIChatExplorer.ViewModel.Main {
             AIChatExplorerPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
 
+            // VectorDBItemのLoad
+            Task.Run(() => {
+                VectorDBItem.LoadItems();
+            });
+
 
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
@@ -64,7 +62,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             // フォルダの初期化
             RootFolderViewModelContainer = new(Commands);
-            
+
             // ClipboardControllerのOnClipboardChangedに処理をセット
             ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア
@@ -107,7 +105,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         }
 
-        public AppItemViewModelCommands Commands { get; set; }
+        public AppViewModelCommands Commands { get; set; }
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
@@ -199,10 +197,7 @@ namespace AIChatExplorer.ViewModel.Main {
         });
 
         public SimpleDelegateCommand<AppTabContainer> CloseTabCommand => new((tabItem) => {
-            if (tabItem == null) {
-                return;
-            }
-            if (TabItems.Count == 1) {
+            if (tabItem == null || TabItems.Count == 1) {
                 return;
             }
             TabItems.Remove(tabItem);
@@ -262,16 +257,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
-            // チャット履歴用のItemの設定
-            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
-            // チャット履歴用のItemの設定
-            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
-                // タイトルを日付 + 元のタイトルにする
-                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
-            };
-            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
-
-            Commands.OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
+            Commands.OpenOpenAIChatWindowCommandExecute();
 
         });
 

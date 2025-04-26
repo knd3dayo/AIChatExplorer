@@ -1,10 +1,9 @@
 using System.Diagnostics;
-using System.IO;
 using LibPythonAI.Data;
-using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -12,9 +11,8 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Content {
+namespace LibPythonAI.Model.Content {
     public class ContentItemCommands {
 
 
@@ -66,7 +64,7 @@ namespace PythonAILib.Model.Content {
                     LogWrapper.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[index];
 
-                    ContentItemCommands.CreateChatResult(item, promptItem.Name);
+                    CreateChatResult(item, promptItem.Name);
                     // Save
                     item.Save();
                 });
@@ -111,7 +109,7 @@ namespace PythonAILib.Model.Content {
             // システム定義のPromptItemを取得
             PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
             // CreateChatResultを実行
-            ContentItemCommands.CreateChatResult(item, promptItem);
+            CreateChatResult(item, promptItem);
         }
 
         // 文章の信頼度を判定する
@@ -134,7 +132,7 @@ namespace PythonAILib.Model.Content {
                 OpenAIProperties = openAIProperties,
             };
 
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new LibPythonAI.Data.PromptItemEntity()) {
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new PromptItemEntity()) {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 UseVectorDB = true,
@@ -306,7 +304,7 @@ namespace PythonAILib.Model.Content {
                         LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
-                    ContentItemCommands.ExtractText(item);
+                    ExtractText(item);
                     // Save the item
                     item.Save();
                 });
@@ -403,6 +401,34 @@ namespace PythonAILib.Model.Content {
                     item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content;
                 }
             }
+        }
+
+        public static void SaveChatHistory(ContentItemWrapper contentItem, ContentFolderWrapper chatFolder) {
+
+            contentItem.Save();
+            // チャット履歴用のItemの設定
+            ContentItemWrapper chatHistoryItem = contentItem.Copy();
+            chatHistoryItem.Entity.FolderId = chatFolder.Id;
+            // 更新日時を更新
+            chatHistoryItem.Entity.UpdatedAt = DateTime.Now;
+
+            // ChatItemsTextをContentに設定
+            chatHistoryItem.Content = contentItem.ChatItemsText;
+
+            IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
+
+            if (configParams.AutoTitle()) {
+                LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
+                CreateAutoTitle(chatHistoryItem);
+
+            } else if (configParams.AutoTitleWithOpenAI()) {
+
+                LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
+                CreateAutoTitleWithOpenAI(chatHistoryItem);
+            }
+
+            chatHistoryItem.Save();
+
         }
 
     }

@@ -1,7 +1,6 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Content;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.AutoProcess {

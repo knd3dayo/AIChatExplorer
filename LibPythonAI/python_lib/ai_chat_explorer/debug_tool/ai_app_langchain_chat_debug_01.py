@@ -17,14 +17,10 @@ if __name__ == '__main__':
     # -r オプションがある場合はVectorDBの検索リクエストを実行する。
     props_file = None
     vector_search_request = False
-    opts, args = getopt.getopt(sys.argv[1:], "p:d")
+    opts, args = getopt.getopt(sys.argv[1:], "p")
     for opt, arg in opts:
         if opt == "-p":
             props_file = arg
-        elif opt == "-d":
-            from promptflow.tracing import start_trace # type: ignore
-            # instrument OpenAI
-            start_trace()
 
     if not props_file:
         raise ValueError("props_file is not set.")

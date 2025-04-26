@@ -24,7 +24,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 if (value == null) {
                     return;
                 }
-                var item = value.GetVectorDBItem();
+                var item = VectorDBItem.GetItemById(value.VectorDBItemId);
                 if (item == null) {
                     return;
                 }
@@ -69,7 +69,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // MultiVectorRetrieverの場合のVisibility 
         public Visibility MultiVectorRetrieverVisibility {
             get {
-                var item = VectorSearchProperty?.GetVectorDBItem();
+
+                var item = VectorDBItem.GetItemById(VectorSearchProperty?.VectorDBItemId); 
                 if (item == null) {
                     return Visibility.Collapsed;
                 }
@@ -94,7 +95,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            var vectorDBItem = VectorSearchProperty.GetVectorDBItem();
+            var vectorDBItem = VectorDBItem.GetItemById(VectorSearchProperty.VectorDBItemId); 
             if (vectorDBItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;

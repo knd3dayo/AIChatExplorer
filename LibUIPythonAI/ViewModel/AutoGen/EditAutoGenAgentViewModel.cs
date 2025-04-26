@@ -7,6 +7,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenAgentViewModel : ChatViewModelBase {
@@ -150,7 +151,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
-                var item = selectedItem.GetVectorDBItem();
+                var item = VectorDBItem.GetItemById(selectedItem.VectorDBItemId);
                 if (item == null) {
                     return;
                 }

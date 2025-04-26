@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.Statistics;
+using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
@@ -323,6 +324,109 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
+        public void UpdateVectorDBItem(VectorDBItem item) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                VectorDBItemInstance = item
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBItemExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_vector_db_item";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        // ベクトルDBを削除する
+        public void DeleteVectorDBItem(VectorDBItem item) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                VectorDBItemInstance = item
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBItemExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_vector_db_item";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        // public List<VectorDBItem> GetVectorDBItems();
+        public List<VectorDBItem> GetVectorDBItems() {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new();
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_vector_db_items";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // VectorDBItemのリストを取得
+            dynamic dictList = resultDict["vector_db_items"] ?? "[]";
+            List<VectorDBItem> vectorDBItems = [];
+            foreach (var item in dictList) {
+                // VectorDBItemを取得
+                VectorDBItem? vectorDBItem = VectorDBItem.FromDict(item);
+                if (vectorDBItem != null) {
+                    vectorDBItems.Add(vectorDBItem);
+                }
+            }
+            return vectorDBItems;
+        }
+        // public VectorDBItem? GetVectorDBItemById(string id);
+        public VectorDBItem? GetVectorDBItemById(string id) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                VectorDBItemInstance = new VectorDBItem() { Id = id }
+            };
+
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemByIdExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_vector_db_item_by_id";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // VectorDBItemを取得
+            VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
+            return vectorDBItem;
+        }
+        // public VectorDBItem? GetVectorDBItemByName(string name);
+        public VectorDBItem? GetVectorDBItemByName(string name) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                VectorDBItemInstance = new VectorDBItem() { Name = name }
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemByNameExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_vector_db_item_by_name";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // VectorDBItemを取得
+            VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
+            return vectorDBItem;
+        }
 
         public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query) {
             // ベクトルDB更新処理用にUseVectorDB=Trueに設定
@@ -332,11 +436,11 @@ namespace PythonAILib.PythonIF {
             List<VectorSearchRequest> vectorSearchRequests = [];
             foreach (VectorDBProperty vectorDBProperty in chatRequestContext.VectorDBProperties) {
                 // VectorSearchRequestを作成
-                string? name = vectorDBProperty.VectorDBItem?.Name;
+                string? name = VectorDBItem.GetItemById(vectorDBProperty.VectorDBItemId)?.Name;
                 if (string.IsNullOrEmpty(name)) {
                     throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
                 }
-                VectorSearchRequest vectorSearchRequest = new(name, query, vectorDBProperty.TopK, vectorDBProperty.Folder?.Id.ToString(), vectorDBProperty.ContentType);
+                VectorSearchRequest vectorSearchRequest = new(name, query, vectorDBProperty.TopK, vectorDBProperty.FolderId, vectorDBProperty.ContentType);
                 vectorSearchRequests.Add(vectorSearchRequest);
             }
 
@@ -383,7 +487,7 @@ namespace PythonAILib.PythonIF {
             chatRequestContext.UseVectorDB = true;
 
             // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = chatRequestContext.VectorDBProperties[0].VectorDBItem;
+            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
             if (vectorDBItem == null) {
                 throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
             }
@@ -416,7 +520,7 @@ namespace PythonAILib.PythonIF {
 
         private void UpdateEmbeddings(ChatRequestContext chatRequestContext, string function_name) {
             // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = chatRequestContext.VectorDBProperties[0].VectorDBItem;
+            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
             if (vectorDBItem == null) {
                 throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
             }
@@ -437,7 +541,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateEmbeddingExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             // endpointを作成
@@ -452,7 +556,7 @@ namespace PythonAILib.PythonIF {
         public void DeleteEmbeddings(ChatRequestContext chatRequestContext) {
 
             // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = chatRequestContext.VectorDBProperties[0].VectorDBItem;
+            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
             if (vectorDBItem == null) {
                 throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
             }
@@ -472,7 +576,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateEmbeddingExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // delete_embeddings
             // endpointを作成
@@ -487,7 +591,7 @@ namespace PythonAILib.PythonIF {
         public void UpdateEmbeddings(ChatRequestContext chatRequestContext) {
 
             // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = chatRequestContext.VectorDBProperties[0].VectorDBItem;
+            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
             if (vectorDBItem == null) {
                 throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
             }
@@ -508,7 +612,7 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
 
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateEmbeddingExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // update_embeddings
             // endpointを作成
@@ -518,7 +622,6 @@ namespace PythonAILib.PythonIF {
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
         }
-
 
         // ExportToExcelを実行する
         public void ExportToExcel(string filePath, CommonDataTable data) {

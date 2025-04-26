@@ -1,6 +1,8 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.Chat;
 
 namespace LibPythonAI.PythonIF.Request {
@@ -22,6 +24,12 @@ namespace LibPythonAI.PythonIF.Request {
 
         // VectorSearchRequest
         public List<VectorSearchRequest> VectorSearchRequestsInstance { get; set; } = [];
+
+        // VectorDBItemInstance
+        public VectorDBItem? VectorDBItemInstance { get; set; } = null;
+
+        // TagItemInstance
+        public TagItem? TagItemInstance { get; set; } = null;
 
         // ExcelRequest
         public ExcelRequest? ExcelRequestInstance { get; set; }
@@ -59,6 +67,9 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (AutogenRequestInstance != null) {
                 dict["autogen_request"] = AutogenRequestInstance.ToDict();
+            }
+            if (VectorDBItemInstance != null) {
+                dict["vector_db_item_request"] = VectorDBItemInstance.ToDict();
             }
             if (VectorSearchRequestsInstance != null) {
                 dict["vector_search_requests"] = VectorSearchRequest.ToDictList(VectorSearchRequestsInstance);

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
+using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
-using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.Chat {
     /// <summary>

@@ -65,7 +65,7 @@ namespace LibUIPythonAI.ViewModel.Tag {
         // LiteDBから再読み込み
         public void ReloadTagList() {
             TagList.Clear();
-            IEnumerable<TagItem> tagItems = TagItem.GetTagList();
+            IEnumerable<TagItem> tagItems = TagItem.GetTagItems();
             foreach (var item in tagItems) {
                 TagItemViewModel tagItemViewModel = new(item);
                 if (ContentItem != null) {

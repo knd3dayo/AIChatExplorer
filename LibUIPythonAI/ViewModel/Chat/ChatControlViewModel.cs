@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;

@@ -1,9 +1,9 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.AutoProcess {
     public class PromptAutoProcessItem : AutoProcessItem {

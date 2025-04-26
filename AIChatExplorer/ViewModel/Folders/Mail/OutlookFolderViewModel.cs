@@ -7,7 +7,7 @@ using AIChatExplorer.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {
     public class OutlookFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {

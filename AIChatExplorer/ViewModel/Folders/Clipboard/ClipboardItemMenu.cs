@@ -6,20 +6,19 @@ using LibPythonAI.Model.Prompt;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
-using PythonAILibUI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Clipboard {
     public class ClipboardItemMenu : AppViewModelBase {
 
         public ContentItemViewModel ClipboardItemViewModel { get; private set; }
 
-        protected AppItemViewModelCommands AppCommands { get; set; }
+        protected AppViewModelCommands AppCommands { get; set; }
 
         public ClipboardItemMenu(ContentItemViewModel clipboardItemViewModel) {
             ClipboardItemViewModel = clipboardItemViewModel;
             ContentItemViewModelCommands contentCommands = clipboardItemViewModel.Commands;
 
-            if (contentCommands is not AppItemViewModelCommands commands) {
+            if (contentCommands is not AppViewModelCommands commands) {
                 throw new Exception("commands is not AppItemViewModelCommands");
             }
             AppCommands = commands;

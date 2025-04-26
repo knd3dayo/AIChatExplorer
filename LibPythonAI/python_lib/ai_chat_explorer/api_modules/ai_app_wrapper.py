@@ -137,26 +137,108 @@ def langchain_chat( request_json: str):
 ########################
 # ベクトルDB関連
 ########################
-# get_vector_db_by_nameを実行する
-def get_vector_db_by_name(request_json: str):
+# vector_db_itemを更新する
+def update_vector_db(request_json: str):
+    # update_vector_dbを実行する関数を定義
     def func() -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
-        # vector_db_nameを取得
-        vector_db_name = request_dict.get("vector_db_name", None)
-        if not vector_db_name:
-            raise ValueError("vector_db_name is not set")
-        # vector_dbを取得
-        vector_db = ai_app.get_vector_db_by_name(vector_db_name)
-        
+        # vector_db_itemを取得
+        vector_db_item = get_vector_db_item_object(request_dict)
+        # vector_dbを更新
+        ai_app.update_vector_db(vector_db_item)
+
         result: dict = {}
-        result["vector_db"] = vector_db
+        result["vector_db_item"] = vector_db_item.to_dict()
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
+
+# vector_db_itemを削除する
+def delete_vector_db(request_json: str):
+    # delete_vector_dbを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_itemを取得
+        vector_db_item = get_vector_db_item_object(request_dict)
+        # vector_dbを削除
+        ai_app.delete_vector_db(vector_db_item)
+
+        result: dict = {}
+        result["vector_db_item"] = vector_db_item.to_dict()
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+# vector_dbのリストを取得する
+def get_vector_db_items():
+    # get_vector_db_listを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        # vector_db_listを取得
+        vector_db_list = ai_app.get_vector_db_items()
+        
+        result: dict = {}
+        result["vector_db_items"] = [item.to_dict() for item in vector_db_list]
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+# get_vector_db_item_by_idを実行する
+def get_vector_db_item_by_id(request_json: str):
+    # get_vector_db_by_idを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_idを取得
+        vector_db_id =  get_vector_db_item_object(request_dict).Id
+        if not vector_db_id:
+            raise ValueError("vector_db_id is not set")
+        # vector_dbを取得
+        vector_db = ai_app.get_vector_db_by_id(vector_db_id)
+
+        result: dict = {}
+        if vector_db is not None:
+            result["vector_db_item"] = vector_db.to_dict()
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+# get_vector_db_item_by_nameを実行する
+def get_vector_db_item_by_name(request_json: str):
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_nameを取得
+        vector_db_name = get_vector_db_item_object(request_dict).Name
+        if not vector_db_name:
+            raise ValueError("vector_db_name is not set")
+        # vector_dbを取得
+        vector_db = ai_app.get_vector_db_by_name(vector_db_name)
+        
+        result: dict = {}
+        if vector_db is not None:
+            result["vector_db_item"] = vector_db.to_dict()
+        return result
+
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 
 def vector_search(request_json: str):
     # OpenAIチャットを実行する関数を定義

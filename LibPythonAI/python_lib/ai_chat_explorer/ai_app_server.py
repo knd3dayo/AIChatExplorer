@@ -6,6 +6,7 @@ from aiohttp import web, WSMsgType
 from aiohttp.web import WebSocketResponse, Request, Response
 import socketio # type: ignore
 import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
+import ai_chat_explorer.api_modules.ai_app_util as ai_app_util
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 routes = web.RouteTableDef()
@@ -32,6 +33,45 @@ async def get_token_count(request: Request) -> Response:
 async def langchain_chat(request: Request) -> Response:
     request_json = await request.text()
     response = ai_app_wrapper.langchain_chat(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# update_vector_db
+@routes.post('/api/update_vector_db_item')
+async def update_vector_db(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_vector_db(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# delete_vector_db
+@routes.post('/api/delete_vector_db_item')
+async def delete_vector_db(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_vector_db(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_vector_db_items
+@routes.post('/api/get_vector_db_items')
+async def get_vector_db_items(request: Request) -> Response:
+    response = ai_app_wrapper.get_vector_db_items()
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_vector_db_by_id
+@routes.post('/api/get_vector_db_item_by_id')
+async def get_vector_db_by_id(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_vector_db_item_by_id(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_vector_db_by_name
+@routes.post('/api/get_vector_db_item_by_name')
+async def get_vector_db_by_name(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_vector_db_item_by_name(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
@@ -66,6 +106,7 @@ async def update_embeddings(request: Request) -> Response:
     response = ai_app_wrapper.update_embeddings(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
+
 
 # get_mime_type
 @routes.post('/api/get_mime_type')
@@ -178,11 +219,17 @@ async def shutdown_server(request: Request) -> Response:
     return web.Response(body="{}", status=200, content_type='application/json')
 
 if __name__ == ('__main__'):
-    # 第１引数はAPP_DB_PATH
+    # 第１引数はAPP_DATA_PATH
     if len(sys.argv) > 1:
-        os.environ["APP_DB_PATH"] = sys.argv[1]
-    else:
-        raise ValueError("APP_DB_PATH is required")
+        os.environ["APP_DATA_PATH"] = sys.argv[1]
+
+    # APP_DATA_PATHを取得
+    app_data_path = os.getenv("APP_DATA_PATH", None)
+    if not app_data_path:
+        raise ValueError("APP_DATA_PATH is required")
+
+    # アプリケーション初期化
+    ai_app_util.init_app()
 
     logging.basicConfig(level=logging.INFO)
     port = os.getenv("API_SERVER_PORT", "5000")

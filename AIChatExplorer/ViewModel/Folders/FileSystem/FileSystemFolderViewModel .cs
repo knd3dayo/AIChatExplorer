@@ -8,7 +8,7 @@ using AIChatExplorer.ViewModel.Folders.Clipboard;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
     public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {

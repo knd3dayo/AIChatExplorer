@@ -13,7 +13,6 @@ using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.File;
-using PythonAILibUI.ViewModel.Item;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 

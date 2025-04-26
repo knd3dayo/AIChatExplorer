@@ -1,14 +1,14 @@
 using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.Model.Main;
+using AIChatExplorer.ViewModel.Folders.Browser;
 using AIChatExplorer.ViewModel.Folders.Chat;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.Mail;
 using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
-using AIChatExplorer.ViewModel.Folders.Browser;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : RootFolderViewModelContainer {
@@ -38,7 +38,7 @@ namespace AIChatExplorer.ViewModel.Main {
         public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
 
         // コンストラクタ
-        public FolderViewModelManager(ContentItemViewModelCommands commands) :base(commands) {
+        public FolderViewModelManager(ContentItemViewModelCommands commands) : base(commands) {
             RootFolderViewModel = new ClipboardFolderViewModel(AIChatExplorerFolderManager.RootFolder, commands);
             SearchRootFolderViewModel = new SearchFolderViewModel(AIChatExplorerFolderManager.SearchRootFolder, commands);
             ChatRootFolderViewModel = new ChatFolderViewModel(AIChatExplorerFolderManager.ChatRootFolder, commands);

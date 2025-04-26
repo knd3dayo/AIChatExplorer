@@ -99,24 +99,26 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
+        public const string VectorDBPropertiesName = "VectorDBProperties";
         public List<VectorDBProperty> ReferenceVectorSearchProperties {
             get {
-                List<VectorDBProperty> result = [];
-                var items = Entity.VectorDBProperties;
-                foreach (var item in items) {
-                    result.Add(new VectorDBProperty(item));
+                if (Entity.ExtendedProperties.TryGetValue(VectorDBPropertiesName, out var propList) && propList is List<Dictionary<string, object>>) {
+                    List<VectorDBProperty> result = [];
+                    foreach (var item in (List<Dictionary<string, object>>)propList) {
+                        VectorDBProperty vectorDBProperty = new() {
+                            FolderId = item["FolderId"]?.ToString() ?? Id,
+                            VectorDBItemId = item["VectorDBItemId"]?.ToString() ?? VectorDBItem.GetDefaultVectorDB().Id,
+                        };
+                        result.Add(vectorDBProperty);
+                    }
+                    return result;
                 }
-
-                return result;
+                return [];
             }
             set {
-                List<VectorDBPropertyEntity> result = [];
-
-                foreach (var item in value) {
-                    result.Add(item.Entity);
-                }
-                Entity.VectorDBProperties = result;
+                Entity.ExtendedProperties[FileSystemFolderPathName] = value;
             }
+
         }
 
         //　フォルダ名
@@ -144,11 +146,10 @@ namespace LibPythonAI.Model.Content {
 
         public string FileSystemFolderPath {
             get {
-                if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
-                    return (string)path;
-                } else {
-                    return "";
+                if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path) && path is string) {
+                        return (string)path;
                 }
+                return "";
             }
             set {
                 Entity.ExtendedProperties[FileSystemFolderPathName] = value;
@@ -262,12 +263,11 @@ namespace LibPythonAI.Model.Content {
         }
 
         public VectorDBProperty GetMainVectorSearchProperty() {
-            VectorDBPropertyEntity searchPropertyEntity = new() {
+            VectorDBProperty searchProperty = new() {
                 FolderId = Id,
                 TopK = 4,
                 VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Id,
             };
-            VectorDBProperty searchProperty = new(searchPropertyEntity);
             return searchProperty;
         }
 

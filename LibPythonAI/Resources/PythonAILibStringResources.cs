@@ -185,8 +185,26 @@ namespace PythonAILib.Resources {
         public virtual string GetTokenCountExecute { get; } = "GetTokenCount実行";
 
         // UpdateVectorDBIndex実行
-        public virtual string UpdateVectorDBIndexExecute { get; } = "UpdateVectorDBIndex実行";
+        public virtual string UpdateEmbeddingExecute { get; } = "Embeddingを更新します";
 
+        // Embeddingを削除します
+        public virtual string DeleteEmbeddingExecute { get; } = "Embeddingを削除します";
+
+        // ベクトルDBアイテムを更新します
+        public virtual string UpdateVectorDBItemExecute { get; } = "ベクトルDBアイテムを更新します";
+        // ベクトルDBアイテムを削除します
+        public virtual string DeleteVectorDBItemExecute { get; } = "ベクトルDBアイテムを削除します";
+
+        // GetVectorDBItemsExecute
+        public virtual string GetVectorDBItemsExecute { get; } = "ベクトルDBアイテムを取得します";
+
+        // GetVectorDBItemByIdExecute
+        public virtual string GetVectorDBItemByIdExecute { get; } = "ベクトルDBアイテムをIDで取得します";
+
+        // GetVectorDBItemByNameExecute
+        public virtual string GetVectorDBItemByNameExecute { get; } = "ベクトルDBアイテムを名前で取得します";
+
+        // Delete
         // ベクトルDBのコレクション削除を実行
         public virtual string DeleteVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション削除を実行";
         // ベクトルDBのコレクション更新を実行
@@ -540,6 +558,10 @@ namespace PythonAILib.Resources {
         // プロパティが設定されていません
         public virtual string PropertyNotSet(string propertyName) {
             return $"{propertyName}が設定されていません";
+        }
+        // VectorDBNotFound
+        public virtual string VectorDBNotFound(string name) {
+            return $"ベクトルDB[{name}]が見つかりません";
         }
 
         #region 統計、ログ関連

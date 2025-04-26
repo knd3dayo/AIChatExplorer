@@ -8,7 +8,6 @@ using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;

@@ -42,7 +42,7 @@ namespace PythonAILib.Utils.Python {
             cmdLines.Add(beforeExecScriptCommands);
             cmdLines.Add($"set PYTHONPATH={pythonAILibDir}");
             // APP_DB_PATH
-            cmdLines.Add($"set APP_DB_PATH={PythonAILibManager.Instance.ConfigParams.GetMainDBPath()}");
+            cmdLines.Add($"set APP_DATA_PATH={PythonAILibManager.Instance.ConfigParams.GetAppDataPath()}");
             cmdLines.Add($"python {pythonScriptPath} {pythonScriptArgs}");
             // 事後処理
             cmdLines.Add(afterExecScriptCommands);

@@ -1,3 +1,5 @@
+using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -14,6 +16,18 @@ namespace PythonAILib.PythonIF {
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
+
+        public void UpdateVectorDBItem(VectorDBItem item);
+
+        public void DeleteVectorDBItem(VectorDBItem item);
+
+        public List<VectorDBItem> GetVectorDBItems();
+
+        public VectorDBItem? GetVectorDBItemById(string id);
+
+        public VectorDBItem? GetVectorDBItemByName(string name);
+
+        
         public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);

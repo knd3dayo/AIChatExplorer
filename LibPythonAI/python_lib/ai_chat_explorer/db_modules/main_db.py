@@ -2,6 +2,34 @@ import sqlite3
 import json
 from typing import List, Union
 import uuid
+import os
+
+# main_dbへのパスを取得
+def get_main_db_path() -> str:
+    app_data_path = os.getenv("APP_DATA_PATH", None)
+    if not app_data_path:
+        raise ValueError("APP_DATA_PATH is not set.")
+    app_db_path = os.path.join(app_data_path, "main_db", "main.db")
+    return app_db_path
+
+def init_db(db_path: str):
+        # MainDBを取得
+    main_db = MainDB(db_path)
+    # ContentFoldersテーブルを初期化
+    main_db.init_content_folder_table()
+    # ContentItemsテーブルを初期化
+    main_db.init_content_item_table()
+    # VectorDBItemsテーブルを初期化
+    main_db.init_vector_db_item_table()
+    # autogen_llm_configsテーブルを初期化
+    main_db.init_autogen_llm_config_table()
+    # autogen_toolsテーブルを初期化
+    main_db.init_autogen_tools_table()
+    # autogen_agentsテーブルを初期化
+    main_db.init_autogen_agents_table()
+    # autogen_group_chatsテーブルを初期化
+    main_db.init_autogen_group_chats_table()
+
 
 class ContentFolder:
     '''
@@ -13,7 +41,7 @@ class ContentFolder:
     "FolderName" TEXT NOT NULL,
     "Description" TEXT NOT NULL,
     "ExtendedPropertiesJson" TEXT NOT NULL
-)
+    )
     '''
     def __init__(self, content_folder_dict: dict):
         self.Id = content_folder_dict.get("Id", "")
@@ -80,17 +108,6 @@ class VectorDBItem:
     DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
     FOLDER_CATALOG_COLLECTION_NAME = "ai_app_folder_catalog_collection"
 
-    source_id_name = "source_id"
-    source_path_name = "source_path"
-    git_repository_url_name = "git_repository_url"
-    git_relative_path_name = "git_relative_path"
-    image_url_name = "image_url"
-    description_name = "description"
-    system_message_name = "system_message"
-    content_name = "content"
-    folder_id_name = "folder_id"
-
-
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE "VectorDBItems" (
@@ -110,7 +127,11 @@ class VectorDBItem:
     )    
     '''
     def __init__(self, vector_db_item_dict: dict):
-        self.Id = vector_db_item_dict.get("Id", str(uuid.uuid4()))
+        self.Id = vector_db_item_dict.get("Id", "")
+        if not self.Id:
+            # UUIDを生成
+            self.Id = str(uuid.uuid4())
+        
         self.Name = vector_db_item_dict.get("Name", "")
         self.Description = vector_db_item_dict.get("Description", "")
         self.VectorDBURL = vector_db_item_dict.get("VectorDBURL", "")
@@ -138,7 +159,7 @@ class VectorDBItem:
             elif self.VectorDBType == 2:
                 self.VectorDBTypeString = "PGVector"
             else:
-                raise ValueError("VectorDBType must be 0 or 1")
+                raise ValueError("VectorDBType must be 1 or 2")
 
         # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
         metadata = vector_db_item_dict.get("Embedding" , None)
@@ -155,6 +176,23 @@ class VectorDBItem:
         # search_kwarg
         self.search_kwarg = vector_db_item_dict.get("SearchKwarg", None)
 
+    def to_dict(self) -> dict:
+        return {
+            "Id": self.Id,
+            "Name": self.Name,
+            "Description": self.Description,
+            "VectorDBURL": self.VectorDBURL,
+            "IsUseMultiVectorRetriever": self.IsUseMultiVectorRetriever,
+            "DocStoreURL": self.DocStoreURL,
+            "VectorDBType": self.VectorDBType,
+            "CollectionName": self.CollectionName,
+            "CatalogDBURL": self.CatalogDBURL,
+            "ChunkSize": self.ChunkSize,
+            "DefaultSearchResultLimit": self.DefaultSearchResultLimit,
+            "IsEnabled": self.IsEnabled,
+            "IsSystem": self.IsSystem
+        }
+    
     @staticmethod
     def get_vector_db_env_variables() -> 'VectorDBItem':
         from dotenv import load_dotenv
@@ -185,6 +223,31 @@ class EmbeddingData:
         self.git_repository_url = item.get("git_repository_url", "")
         self.git_relative_path = item.get("git_relative_path", "")
         self.image_url = item.get("image_url", "")
+
+class TagItem:
+    '''
+    以下のテーブル定義のデータを格納するクラス
+    CREATE TABLE "TagItems" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_TagItems" PRIMARY KEY,
+    "Tag" TEXT NOT NULL,
+    "IsPinned" INTEGER NOT NULL
+    )
+    '''
+    def __init__(self, tag_item_dict: dict):
+        self.Id = tag_item_dict.get("Id", "")
+        if not self.Id:
+            # UUIDを生成
+            self.Id = str(uuid.uuid4())
+        self.Tag = tag_item_dict.get("Tag", "")
+        self.IsPinned = tag_item_dict.get("IsPinned", 0)
+
+    def to_dict(self) -> dict:
+        return {
+            "Id": self.Id,
+            "Tag": self.Tag,
+            "IsPinned": self.IsPinned
+        }
+    
 
 class AutogentLLMConfig:
     '''
@@ -237,6 +300,176 @@ class AutogenGroupChat:
 class MainDB:
     def __init__(self, db_path):
         self.db_path = db_path
+    def init_content_folder_table(self):
+        # ContentFoldersテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS ContentFolders (
+                Id TEXT NOT NULL PRIMARY KEY,
+                FolderTypeString TEXT NOT NULL,
+                ParentId TEXT NULL,
+                FolderName TEXT NOT NULL,
+                Description TEXT NOT NULL,
+                ExtendedPropertiesJson TEXT NOT NULL
+            )
+        ''')
+        conn.commit()
+        conn.close()
+    
+    def init_content_item_table(self):
+        # ContentItemsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS ContentItems (
+                Id TEXT NOT NULL PRIMARY KEY,
+                FolderId TEXT NULL,
+                CreatedAt TEXT NOT NULL,
+                UpdatedAt TEXT NOT NULL,
+                VectorizedAt TEXT NOT NULL,
+                Content TEXT NOT NULL,
+                Description TEXT NOT NULL,
+                ContentType INTEGER NOT NULL,
+                ChatMessagesJson TEXT NOT NULL,
+                PromptChatResultJson TEXT NOT NULL,
+                TagString TEXT NOT NULL,
+                SourceApplicationName TEXT NOT NULL,
+                SourceApplicationTitle TEXT NOT NULL,
+                SourceApplicationID INTEGER NOT NULL,
+                SourceApplicationPath TEXT NOT NULL,
+                IsPinned INTEGER NOT NULL,
+                DocumentReliability INTEGER NOT NULL,
+                DocumentReliabilityReason TEXT NOT NULL,
+                IsReferenceVectorDBItemsSynced INTEGER NOT NULL,
+                CachedBase64String TEXT NOT NULL,
+                ExtendedPropertiesJson TEXT NOT NULL
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
+    def init_vector_db_item_table(self):
+        # VectorDBItemsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS VectorDBItems (
+                Id TEXT NOT NULL PRIMARY KEY,
+                Name TEXT NOT NULL,
+                Description TEXT NOT NULL,
+                VectorDBURL TEXT NOT NULL,
+                IsUseMultiVectorRetriever INTEGER NOT NULL,
+                DocStoreURL TEXT NOT NULL,
+                VectorDBType INTEGER NOT NULL,
+                CollectionName TEXT NOT NULL,
+                CatalogDBURL TEXT NOT NULL,
+                ChunkSize INTEGER NOT NULL,
+                DefaultSearchResultLimit INTEGER NOT NULL,
+                IsEnabled INTEGER NOT NULL,
+                IsSystem INTEGER NOT NULL
+            )
+        ''')
+        conn.commit()
+        conn.close()
+        self.__init_default_vector_db_item()
+
+    def __init_default_vector_db_item(self):
+        # name="default"のVectorDBItemを取得
+        vector_db_item = self.get_vector_db_by_name("default")
+        # 存在しない場合は初期化処理
+        if not vector_db_item:
+            # VectorDBItemを作成
+            params = {
+                "Name": "default",
+                "Description": "Application default vector db",
+                "VectorDBType": 1,
+                "VectorDBURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_vector_db"),
+                "DocStoreURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_doc_store.db"),
+                "IsUseMultiVectorRetriever": True,
+                "IsEnable": True,
+                "IsSystem": False,
+                "CollectionName": "ai_app_default_collection",
+
+            }
+            vector_db_item = VectorDBItem(params)
+            # VectorDBItemのプロパティを設定
+
+            # MainDBに追加
+            self.update_vector_db_item(vector_db_item)
+
+        else:
+            # 存在する場合は初期化処理を行わない
+            print("VectorDBItem is already exists.")
+
+    def init_autogen_llm_config_table(self):
+        # autogen_llm_configsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS autogen_llm_configs (
+                name TEXT PRIMARY KEY,
+                api_type TEXT,
+                api_version TEXT,
+                model TEXT,
+                api_key TEXT,
+                base_url TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
+    def init_autogen_tools_table(self):
+        # autogen_toolsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS autogen_tools (
+                name TEXT PRIMARY KEY,
+                path TEXT,
+                description TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
+    def init_autogen_agents_table(self):
+        # autogen_agentsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS autogen_agents (
+                name TEXT PRIMARY KEY,
+                description TEXT,
+                system_message TEXT,
+                code_execution BOOLEAN,
+                llm_config_name TEXT,
+                tool_names TEXT,
+                vector_db_items TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+        
+    def init_autogen_group_chats_table(self):
+        # autogen_group_chatsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS autogen_group_chats (
+                name TEXT PRIMARY KEY,
+                description TEXT,
+                llm_config_name TEXT,
+                agent_names TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+    
+
+    #########################################
+    # ContentItem関連
+    #########################################
 
     def get_content_folder(self, folder_id: str) -> Union[ContentFolder, None]:
         conn = sqlite3.connect(self.db_path)
@@ -246,7 +479,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         folder_dict = dict(row)
@@ -276,7 +509,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         vector_db_item_dict = dict(row)
@@ -290,6 +523,7 @@ class MainDB:
         if vector_db_item_dict is None:
             return None
         return VectorDBItem(vector_db_item_dict)
+
     # nameを指定してVectorDBItemのdictを取得する
     def get_vector_db_item_dict_by_name(self, vector_db_item_name: str) -> Union[dict, None]:
         conn = sqlite3.connect(self.db_path)
@@ -299,7 +533,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         vector_db_item_dict = dict(row)
@@ -316,6 +550,7 @@ class MainDB:
     
     def get_vector_db_items(self) -> List[VectorDBItem]:
         conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
         cur.execute("SELECT * FROM VectorDBItems")
         rows = cur.fetchall()
@@ -323,6 +558,66 @@ class MainDB:
         conn.close()
 
         return vector_db_items
+    
+    def update_vector_db_item(self, vector_db_item: VectorDBItem) -> VectorDBItem:
+        '''
+        以下のテーブル定義のデータを格納するクラス
+        CREATE TABLE "VectorDBItems" (
+            "Id" TEXT NOT NULL CONSTRAINT "PK_VectorDBItems" PRIMARY KEY,
+            "Name" TEXT NOT NULL,
+            "Description" TEXT NOT NULL,
+            "VectorDBURL" TEXT NOT NULL,
+            "IsUseMultiVectorRetriever" INTEGER NOT NULL,
+            "DocStoreURL" TEXT NOT NULL,
+            "VectorDBType" INTEGER NOT NULL,
+            "CollectionName" TEXT NOT NULL,
+            "CatalogDBURL" TEXT NOT NULL,
+            "ChunkSize" INTEGER NOT NULL,
+            "DefaultSearchResultLimit" INTEGER NOT NULL,
+            "IsEnabled" INTEGER NOT NULL,
+            "IsSystem" INTEGER NOT NULL
+        )    
+        '''
+        # VectorDBTypeStringからVectorDBTypeを取得
+        if vector_db_item.VectorDBTypeString == "Chroma":
+            vector_db_item.VectorDBType = 1
+        elif vector_db_item.VectorDBTypeString == "PGVector":
+            vector_db_item.VectorDBType = 2
+        else:
+            raise ValueError("VectorDBType must be 1 or 2")
+
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        if self.get_vector_db_by_id(vector_db_item.Id) is None:
+            cur.execute("INSERT INTO VectorDBItems VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                         (vector_db_item.Id, vector_db_item.Name, vector_db_item.Description, 
+                          vector_db_item.VectorDBURL, vector_db_item.IsUseMultiVectorRetriever, 
+                          vector_db_item.DocStoreURL, vector_db_item.VectorDBType, 
+                          vector_db_item.CollectionName, 
+                          vector_db_item.ChunkSize, vector_db_item.DefaultSearchResultLimit, 
+                          vector_db_item.IsEnabled, vector_db_item.IsSystem)
+                          )
+        else:
+            cur.execute("UPDATE VectorDBItems SET Name=?, Description=?, VectorDBURL=?, IsUseMultiVectorRetriever=?, DocStoreURL=?, VectorDBType=?, CollectionName=?, ChunkSize=?, DefaultSearchResultLimit=?, IsEnabled=?, IsSystem=? WHERE Id=?",
+                         (vector_db_item.Name, vector_db_item.Description, vector_db_item.VectorDBURL, 
+                          vector_db_item.IsUseMultiVectorRetriever, vector_db_item.DocStoreURL, 
+                          vector_db_item.VectorDBType, vector_db_item.CollectionName, 
+                          vector_db_item.ChunkSize, 
+                          vector_db_item.DefaultSearchResultLimit, vector_db_item.IsEnabled, 
+                          vector_db_item.IsSystem, vector_db_item.Id)
+                          )
+        conn.commit()
+        conn.close()
+
+        # 更新したVectorDBItemを返す
+        return vector_db_item
+
+    def delete_vector_db_item(self, vector_db_item: VectorDBItem):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM VectorDBItems WHERE Id=?", (vector_db_item.Id,))
+        conn.commit()
+        conn.close()
 
     #################################################
     # Autogen関連
@@ -335,7 +630,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         llm_config_dict = dict(row)
@@ -351,7 +646,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         tool_dict = dict(row)
@@ -387,7 +682,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
         agent_dict = dict(row)
         conn.close()
@@ -423,7 +718,7 @@ class MainDB:
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
-        if row is None:
+        if row is None or len(row) == 0:
             return None
 
         group_chat_dict = dict(row)

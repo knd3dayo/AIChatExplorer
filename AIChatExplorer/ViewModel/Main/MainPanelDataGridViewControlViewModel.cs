@@ -9,13 +9,12 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.Content;
 using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelDataGridViewControlViewModel(AppItemViewModelCommands commands) : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(AppViewModelCommands commands) : ObservableObject {
 
-        private AppItemViewModelCommands Commands { get; set; } = commands;
+        private AppViewModelCommands Commands { get; set; } = commands;
 
 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };

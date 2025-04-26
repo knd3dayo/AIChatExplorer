@@ -8,14 +8,12 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 using WpfAppCommon.Model;
 
-namespace PythonAILibUI.ViewModel.Item {
+namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModelCommands {
 
         public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };

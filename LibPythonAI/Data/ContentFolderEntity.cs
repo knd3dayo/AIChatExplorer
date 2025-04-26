@@ -33,8 +33,7 @@ namespace LibPythonAI.Data {
         // Description
         public string Description { get; set; } = "";
 
-        public List<VectorDBPropertyEntity> VectorDBProperties { get; set; } = new();
-
+        
         public string ExtendedPropertiesJson { get; set; } = "{}";
 
         private Dictionary<string, object?>? _extendedProperties;
@@ -66,7 +65,6 @@ namespace LibPythonAI.Data {
         public List<ContentFolderEntity> GetChildren() {
             using PythonAILibDBContext context = new();
             var items = context.ContentFolders
-                .Include(b => b.VectorDBProperties)
                 .Where(x => x.ParentId == this.Id).ToList();
             return items;
         }
@@ -98,7 +96,6 @@ namespace LibPythonAI.Data {
             }
             using PythonAILibDBContext context = new();
             var folder = context.ContentFolders
-                .Include(b => b.VectorDBProperties)
                 .FirstOrDefault(x => x.Id == id);
             return folder;
         }

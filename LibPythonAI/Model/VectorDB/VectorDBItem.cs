@@ -2,20 +2,14 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using LibPythonAI.Data;
-using PythonAILib.Common;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public class VectorDBItem(VectorDBItemEntity entity) {
+    public class VectorDBItem {
 
-        public VectorDBItemEntity Entity { get; set; } = entity;
-
-        public string Id { get => Entity.Id; }
 
         // システム共通のベクトルDBの名前
         public readonly static string SystemCommonVectorDBName = "default";
@@ -24,33 +18,14 @@ namespace LibPythonAI.Model.VectorDB {
         // フォルダーカタログのコレクション名 
         public readonly static string FolderCatalogCollectionName = "ai_app_folder_catalog_collection";
 
-        public static void Init() {
-            var item = GetItemByName(SystemCommonVectorDBName);
-            if (item == null) {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
-                string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
-                var entity = new VectorDBItemEntity() {
-                    Name = SystemCommonVectorDBName,
-                    Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
-                    VectorDBType = VectorDBTypeEnum.Chroma,
-                    VectorDBURL = vectorDBPath,
-                    DocStoreURL = $"sqlite:///{docDBPath}",
-                    IsUseMultiVectorRetriever = true,
-                    IsEnabled = true,
-                    IsSystem = true,
-                    CollectionName = DefaultCollectionName
-                };
-                item = new(entity);
-                item.Save();
-            }
-        }
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         // システム共通のベクトルDB
         public static VectorDBItem GetDefaultVectorDB() {
             var item = GetItemByName(SystemCommonVectorDBName);
             if (item == null) {
-                Init();
-                item = GetItemByName(SystemCommonVectorDBName);
+                throw new Exception(PythonAILibStringResources.Instance.VectorDBNotFound(SystemCommonVectorDBName));
             }
             return item!;
         }
@@ -62,95 +37,50 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // 名前
-        public string Name {
-            get => Entity.Name;
-            set => Entity.Name = value;
-        }
+        public string Name { get; set; } = "";
         // 説明
-        public string Description {
-            get => Entity.Description;
-            set => Entity.Description = value;
-        }
+        public string Description { get; set; } = "";
 
         // ベクトルDBのURL
-        public string VectorDBURL {
-            get => Entity.VectorDBURL;
-            set => Entity.VectorDBURL = value;
-        }
+        public string VectorDBURL { get; set; } = "";
 
         // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever {
-            get => Entity.IsUseMultiVectorRetriever;
-            set => Entity.IsUseMultiVectorRetriever = value;
-        }
+        public bool IsUseMultiVectorRetriever { get; set; } = false;
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        public string DocStoreURL {
-            get => Entity.DocStoreURL;
-            set => Entity.DocStoreURL = value;
-        }
+        public string DocStoreURL { get; set; } = "";
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
-        public VectorDBTypeEnum Type {
-            get => Entity.VectorDBType;
-            set => Entity.VectorDBType = value;
-        }
+        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
         // ベクトルDBの種類を表す文字列
-        public string VectorDBTypeString {
-            get {
-                return Type.ToString();
-            }
-        }
+        public string VectorDBTypeString { get => Type.ToString(); }
 
         // コレクション名
-        public string CollectionName {
-            get => Entity.CollectionName;
-            set => Entity.CollectionName = value;
-        }
+        public string CollectionName { get; set; } = DefaultCollectionName;
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
-        public int ChunkSize {
-            get => Entity.ChunkSize;
-            set => Entity.ChunkSize = value;
-        }
+        public int ChunkSize { get; set; } = 1024;
 
         // ベクトル検索時の検索結果上限
-        public int DefaultSearchResultLimit {
-            get => Entity.DefaultSearchResultLimit;
-            set => Entity.DefaultSearchResultLimit = value;
-        }
+        public int DefaultSearchResultLimit { get; set; } = 10;
 
         // 有効かどうか
         [JsonIgnore]
-        public bool IsEnabled {
-            get => Entity.IsEnabled;
-            set => Entity.IsEnabled = value;
-        }
+        public bool IsEnabled { get; set; } = false;
 
         // システム用のフラグ
         [JsonIgnore]
-        public bool IsSystem {
-            get => Entity.IsSystem;
-            set => Entity.IsSystem = value;
-        }
-
-        // Equals
-        public override bool Equals(object? obj) {
-            if (obj == null || GetType() != obj.GetType()) {
-                return false;
-            }
-            VectorDBItem other = (VectorDBItem)obj;
-            return VectorDBURL == other.VectorDBURL;
-        }
-        public override int GetHashCode() {
-            return VectorDBURL.GetHashCode();
-        }
+        public bool IsSystem { get; set; } = false;
 
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
+                { "Id", Id },
+                { "VectorDBType", (int)Type },
+                { "IsEnabled", IsEnabled },
+                { "IsSystem", IsSystem },
                 { "Name", Name },
                 { "Description", Description },
                 { "SystemMessage", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
@@ -163,6 +93,20 @@ namespace LibPythonAI.Model.VectorDB {
             };
             return dict;
         }
+
+
+        // Save
+        public void Save() {
+            PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this);
+
+        }
+
+        // Delete
+        public void Delete() {
+            PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this);
+        }
+
+
         // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBItem> items) {
             return items.Select(item => item.ToDict()).ToList();
@@ -177,89 +121,67 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
+        private static List<VectorDBItem> _items = [];
+        public static void LoadItems() {
+            _items = PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItems();
+        }
         public static List<VectorDBItem> GetItems() {
-            List<VectorDBItem> result = [];
-            using PythonAILibDBContext db = new();
-            var items = db.VectorDBItems;
-            foreach (var item in items) {
-                result.Add(new VectorDBItem(item));
+            return _items;
+        }
+
+        public static List<VectorDBItem> GetVectorDBItems(bool includeDefaultVectorDB) {
+            List<VectorDBItem> items = GetItems();
+            if (includeDefaultVectorDB) {
+                return items;
             }
-            return result;
+            // システム共通のベクトルDBは除外する
+            return items.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName).ToList();
+
         }
 
         // GetItemById
         public static VectorDBItem? GetItemById(string? id) {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(id);
-            if (item == null) {
-                return null;
-            }
-            return new VectorDBItem(item);
+            List<VectorDBItem> items = GetItems();
+            // IDが一致するアイテムを取得
+            VectorDBItem? item = items.FirstOrDefault(i => i.Id == id);
+
+            return item;
         }
 
         // GetItemByName
         public static VectorDBItem? GetItemByName(string? name) {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.FirstOrDefault(item => item.Name == name);
-            if (item == null) {
-                return null;
-            }
-            return new VectorDBItem(item);
-        }
-
-        // Save
-        public void Save() {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(Id);
-            if (item == null) {
-                db.VectorDBItems.Add(Entity);
-            } else {
-                db.VectorDBItems.Entry(item).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
-        }
-
-        // Delete
-        public void Delete() {
-            using PythonAILibDBContext db = new();
-            var item = db.VectorDBItems.Find(Id);
-            if (item != null) {
-                db.VectorDBItems.Remove(item);
-            }
-            db.SaveChanges();
-        }
-
-
-        public static VectorDBItem GetFolderVectorDBItem() {
-            VectorDBItem systemVectorItem = GetDefaultVectorDB();
-            // NameとDescriptionとCollectionNameを設定する
-            systemVectorItem.Name = SystemCommonVectorDBName;
-            systemVectorItem.Description = SystemCommonVectorDBName;
-            systemVectorItem.CollectionName = DefaultCollectionName;
-
-            return systemVectorItem;
+            List<VectorDBItem> items = GetItems();
+            // 名前が一致するアイテムを取得
+            VectorDBItem? item = items.FirstOrDefault(i => i.Name == name);
+            return item;
         }
 
         public static List<VectorDBItem> GetExternalVectorDBItems() {
+            List<VectorDBItem> allItems = GetItems();
             List<VectorDBItem> result = [];
-            using PythonAILibDBContext db = new();
-            var items = db.VectorDBItems.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName);
-            if (items == null) {
-                return result;
-            }
-            foreach (var item in items) {
-                result.Add(new VectorDBItem(item));
-            }
+            // システム共通のベクトルDBは除外する
+            result = allItems.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName).ToList();
             return result;
+
         }
 
-        public static List<VectorDBItem> GetVectorDBItems(bool includeDefaultVectorDB) {
-            List<VectorDBItem> result = [];
-            if (includeDefaultVectorDB) {
-                result.Add(GetDefaultVectorDB());
-            }
-            result.AddRange(GetExternalVectorDBItems());
-            return result;
+        public static VectorDBItem FromDict(Dictionary<string, object> dict) {
+            VectorDBItem item = new();
+            item.Id = dict["Id"]?.ToString() ?? "";
+            item.Name = dict["Name"]?.ToString() ?? "";
+            item.Description = dict["Description"]?.ToString() ?? "";
+            item.VectorDBURL = dict["VectorDBURL"]?.ToString() ?? "";
+            item.IsUseMultiVectorRetriever = Convert.ToBoolean(dict["IsUseMultiVectorRetriever"]);
+            item.DocStoreURL = dict["DocStoreURL"]?.ToString() ?? "";
+            item.ChunkSize = Convert.ToInt32(dict["ChunkSize"]);
+            item.CollectionName = dict["CollectionName"]?.ToString() ?? "";
+            item.IsEnabled = Convert.ToBoolean(dict["IsEnabled"]);
+            item.IsSystem = Convert.ToBoolean(dict["IsSystem"]);
+            item.Type = (VectorDBTypeEnum)Int32.Parse(dict["VectorDBType"]?.ToString() ?? "0");
+            item.DefaultSearchResultLimit = Convert.ToInt32(dict["DefaultSearchResultLimit"]);
+
+            return item;
+
         }
     }
 }

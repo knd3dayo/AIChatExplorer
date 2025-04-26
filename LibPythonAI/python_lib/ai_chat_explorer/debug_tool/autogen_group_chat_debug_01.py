@@ -31,10 +31,6 @@ async def main():
             output_file = arg
         elif opt == "-p":
             props_file = arg
-        elif opt == "-d":
-            from promptflow.tracing import start_trace # type: ignore
-            # instrument OpenAI
-            start_trace()
 
     if props_file:
         print(f"props_file:{props_file}")

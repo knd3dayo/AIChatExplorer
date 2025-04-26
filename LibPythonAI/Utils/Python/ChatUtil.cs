@@ -8,7 +8,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Utils.Python {
+namespace LibPythonAI.Utils.Python {
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換
@@ -35,7 +35,7 @@ namespace PythonAILib.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , ChatRequestContext chatRequestContext, List<string> promptList, string content) {
+        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {
@@ -182,7 +182,7 @@ namespace PythonAILib.Utils.Python {
 
         public static string CreateImageURL(string base64String) {
 
-            ( bool isImage, ContentTypes.ImageType imageType) = ContentTypes.GetImageTypeFromBase64(base64String);
+            (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.GetImageTypeFromBase64(base64String);
             if (imageType == ContentTypes.ImageType.unknown) {
                 return "";
             }
@@ -230,7 +230,7 @@ namespace PythonAILib.Utils.Python {
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, chatRequest);
                 // 通常のChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, chatRequest);
+                ChatResult? result = ExecuteChatNormal(chatRequestContext, chatRequest);
                 if (result == null) {
                     return null;
                 }
@@ -255,7 +255,7 @@ namespace PythonAILib.Utils.Python {
             chatRequest.ChatHistory.Add(result);
 
             // AutoGenGroupChatを実行する
-            return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
+            return ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
                 result.Content += message + "\n";
                 iterateAction(message);
             });

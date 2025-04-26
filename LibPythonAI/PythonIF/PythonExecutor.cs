@@ -89,9 +89,9 @@ namespace PythonAILib.PythonIF {
 
             // AIアプリケーションサーバーを開始する
             string serverScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "ai_app_server.py");
-            // DBのパスを取得
-            string app_db_path = configPrams.GetMainDBPath();
-            StartPythonConsole(configPrams, $"{serverScriptPath} {app_db_path}",  false, (process) => { });
+            // APP_DATAのパスを取得
+            string app_data_path = configPrams.GetAppDataPath();
+            StartPythonConsole(configPrams, $"{serverScriptPath} {app_data_path}",  false, (process) => { });
         }
 
 

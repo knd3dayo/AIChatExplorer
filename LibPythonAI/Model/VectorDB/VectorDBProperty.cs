@@ -13,37 +13,16 @@ using PythonAILib.Resources;
 namespace LibPythonAI.Model.VectorDB {
     public class VectorDBProperty {
 
-        public VectorDBPropertyEntity Entity { get; set; }
-        public VectorDBProperty(VectorDBPropertyEntity entity) {
-            Entity = entity;
-        }
 
-        public VectorDBItem? VectorDBItem  {
-            get {
-                VectorDBItem? item = VectorDBItem.GetItemById(Entity.VectorDBItemId);
-                return item;
-            }
-        }
-        public string Id { get => Entity.Id; }
+        public string?  VectorDBItemId  { init; get; } = null;
 
         //TopK
-        public int TopK {
-            get => Entity.TopK;
-            set => Entity.TopK = value;
-        }
+        public int TopK { get; set; } = 5; // デフォルト値
 
         // FolderId
-        public ContentFolderWrapper? Folder {
-            get {
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById(Entity.FolderId);
-                return folder;
-            }
-        }
-        // ContentType
-        public string ContentType {
-            get => Entity.ContentType;
-            set => Entity.ContentType = value;
-        }
+        public string? FolderId { get; set; } = null;
+
+        public string ContentType { init; get; } = string.Empty;
 
         // VectorDBEntries
         public VectorDBEmbedding VectorMetadata { get; set; } = new();
@@ -56,8 +35,8 @@ namespace LibPythonAI.Model.VectorDB {
             // filter 
             Dictionary<string, object> filter = new();
             // folder_idが指定されている場合
-            if (Folder != null) {
-                filter["folder_id"] = Folder.Id.ToString();
+            if (FolderId != null) {
+                filter["folder_id"] = FolderId;
             }
             // content_typeが指定されている場合
             if (ContentType != string.Empty) {
@@ -70,25 +49,25 @@ namespace LibPythonAI.Model.VectorDB {
 
             return dict;
         }
-        // VectorDBItem
-        public VectorDBItem? GetVectorDBItem() {
-            return VectorDBItem;
-        }
+
 
         public string DisplayText {
             get {
-                VectorDBItem? item = GetVectorDBItem();
+                VectorDBItem? item = VectorDBItem.GetItemById(VectorDBItemId);
                 if (item == null) {
                     return "";
                 }
                 if (string.IsNullOrEmpty(item.CollectionName)) {
                     return item.Name;
                 }
-                if (Folder == null) {
+                if (FolderId == null) {
                     return item.Name;
                 }
-
-                return $"{item.Name}:{Folder.ContentFolderPath}";
+                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById(FolderId);
+                if (folder == null) {
+                    return item.Name;
+                }
+                return $"{item.Name}:{folder.ContentFolderPath}";
             }
         }
 
@@ -102,19 +81,15 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         public Dictionary<string, object> ToDict() {
-            Dictionary<string, object> dict = VectorDBItem?.ToDict() ?? [];
-            // FolderId
-            if (Folder != null) {
-                dict["FolderId"] = Folder.Id.ToString();
+            VectorDBItem? item = VectorDBItem.GetItemById(VectorDBItemId);
+            if (item == null) {
+                return new Dictionary<string, object>();
             }
+            Dictionary<string, object> dict = item.ToDict();
             var search_kwargs = GetSearchKwargs();
             if (search_kwargs.Count > 0) {
                 dict["SearchKwargs"] = search_kwargs;
             }
-            dict["Description"] = Folder?.Description ?? "";
-            // vector_db_entriesを追加
-            dict["VectorMetadata"] = VectorMetadata;
-
             return dict;
         }
 
@@ -182,22 +157,5 @@ namespace LibPythonAI.Model.VectorDB {
             });
         }
 
-
-        // Equals
-        public override bool Equals(object? obj) {
-            if (obj == null || GetType() != obj.GetType()) {
-                return false;
-            }
-            VectorDBProperty other = (VectorDBProperty)obj;
-            bool result =  VectorDBItem?.Id == other.VectorDBItem?.Id && Folder?.Id == other.Folder?.Id;
-            return result;
-        }
-        public override int GetHashCode() {
-            if (VectorDBItem == null || Folder == null) {
-                return 0;
-            }
-
-            return VectorDBItem.GetHashCode() ^ Folder.GetHashCode();
-        }
     }
 }
