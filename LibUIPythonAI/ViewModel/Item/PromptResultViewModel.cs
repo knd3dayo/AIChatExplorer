@@ -1,9 +1,10 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
+using PythonAILib.Common;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
@@ -13,13 +14,12 @@ namespace LibUIPythonAI.ViewModel.Item {
 
             PromptName = promptName;
             PromptChatResult = promptChatResult;
-            TableContent = ListToDataTable(PromptChatResult.GetTableContent(promptName));
+            TableContent = PromptChatResult.GetTableContent(promptName);
         }
 
         public string PromptName { get; set; }
         public PromptChatResult PromptChatResult { get; set; }
 
-        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
         public string TextContent {
             get {
                 return PromptChatResult.GetTextContent(PromptName);
@@ -28,71 +28,20 @@ namespace LibUIPythonAI.ViewModel.Item {
                 PromptChatResult.SetTextContent(PromptName, value);
             }
         }
-        // BackgroundInfoが空の場合はCollapsed,それ以外はVisible
-        public Visibility TextContentVisibility {
-            get {
-                if (string.IsNullOrEmpty(TextContent)) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
+
+        public FlowDocument? MarkdownTextContent => MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(TextContent) : null;
+
         public DataTable TableContent { get; set; }
-
-        // List<Dictionary<string, object>>からDataTableに変換
-        private DataTable ListToDataTable(List<Dictionary<string, object>> tableContent) {
-            DataTable dataTable = new();
-            if (tableContent.Count == 0) {
-                return dataTable;
-            }
-            // tableContentの1番目の要素からキーを取得して、DataTableのカラムを作成
-            var firstRow = tableContent[0];
-            foreach (var key in firstRow.Keys) {
-                dataTable.Columns.Add(key, typeof(string));
-            }
-            // tableContentの各要素をDataTableに追加
-            foreach (var row in tableContent) {
-                DataRow dataRow = dataTable.NewRow();
-                foreach (var key in row.Keys) {
-                    dataRow[key] = row[key];
-                }
-                dataTable.Rows.Add(dataRow);
-            }
-            return dataTable;
-        }
-
-
-        // DataTableからList<Dictionary<string, object>>に変換
-        private List<Dictionary<string, object>> DataTableToList(DataTable dataTable) {
-            List<Dictionary<string, object>> tableContent = [];
-            foreach (DataRow row in dataTable.Rows) {
-                Dictionary<string, object> newRow = new Dictionary<string, object>();
-                foreach (DataColumn column in dataTable.Columns) {
-                    ((IDictionary<string, object>)newRow)[column.ColumnName] = row[column];
-                }
-                tableContent.Add(newRow);
-            }
-            return tableContent;
-        }
-        // tableContentを更新する
-        private void UpdateTableContent() {
-            PromptChatResult.SetTableContent(PromptName, DataTableToList(TableContent));
-        }
-
-
-        public Visibility TableContentVisibility {
-            get {
-                if (TableContent.Rows.Count == 0) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
 
         // SelectedTaskItem
         public dynamic? SelectedItem { get; set; }
+
+        
+        public bool MarkdownView {
+            get {
+                return PythonAILibManager.Instance.ConfigParams.IsMarkdownView();
+            }
+        }
 
         // Tasksの削除
         public SimpleDelegateCommand<object> DeleteSelectedItemCommand => new((parameter) => {
@@ -103,7 +52,8 @@ namespace LibUIPythonAI.ViewModel.Item {
             DataRowView rowView = (DataRowView)SelectedItem;
             DataRow row = rowView.Row;
             TableContent.Rows.Remove(row);
-            UpdateTableContent();
+            // PromptChatResultから削除
+            PromptChatResult.SetTableContent(PromptName, TableContent);
             OnPropertyChanged(nameof(TableContent));
         });
 
@@ -117,6 +67,15 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
         });
+
+
+        // TextContentが空の場合はCollapsed,それ以外はVisible
+        public Visibility TextContentVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(TextContent) == false && MarkdownView == false);
+
+        // MarkdownViewがTrueの場合はCollapsed,それ以外はVisible
+        public Visibility MarkdownViewVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(TextContent) == false && MarkdownView == true);
+        // TableContentが空の場合はCollapsed,それ以外はVisible
+        public Visibility TableContentVisibility => Tools.BoolToVisibility(TableContent.Rows.Count != 0);
 
 
     }

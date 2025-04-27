@@ -2,8 +2,6 @@ using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
     public class FileSystemItem : ContentItemWrapper {

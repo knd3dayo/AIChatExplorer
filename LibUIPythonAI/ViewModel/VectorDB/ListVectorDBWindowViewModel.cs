@@ -68,7 +68,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public ContentFolderViewModel? FolderViewModel { get; set; }
 
         // 選択ボタンの表示可否
-        public Visibility SelectModeVisibility => Tools.BoolToVisibility(mode == ActionModeEnum.Select);
+        public Visibility SelectModeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(mode == ActionModeEnum.Select);
 
         // SelectedTabIndex
         private int selectedTabIndex;

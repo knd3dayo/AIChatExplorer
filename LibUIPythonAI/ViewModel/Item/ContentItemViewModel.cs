@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Common;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 
@@ -83,22 +85,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-
-        // GUI関連
-        // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
-        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ContentItem.Description) && ContentItem.Tags.Count() == 0));
-
-        // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
-        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
-
-
-        // ファイルタブの表示可否
-        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
-
-        // ImageVisibility
-        public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
-
-
         public string DescriptionText {
             get {
                 string result = "";
@@ -140,6 +126,16 @@ namespace LibUIPythonAI.ViewModel.Item {
                 OnPropertyChanged(nameof(IsPinned));
             }
         }
+
+
+        public Visibility MarkdownVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+
+        public Visibility TextVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
+
+        public FlowDocument? MarkdownContent => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.Content) : null;
+
+        public FlowDocument? MarkdownChatItemsText => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.ChatItemsText) : null;
+
         // ContentType
         public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
 
@@ -280,6 +276,22 @@ namespace LibUIPythonAI.ViewModel.Item {
                 ContentItemWrapper.DeleteItems(contentItems);
             });
         }
+
+
+
+        // GUI関連
+        // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
+        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ContentItem.Description) && ContentItem.Tags.Count() == 0));
+
+        // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
+        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
+
+
+        // ファイルタブの表示可否
+        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
+
+        // ImageVisibility
+        public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 
 
     }

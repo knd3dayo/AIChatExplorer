@@ -54,7 +54,7 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
         }
         
-        public Visibility NameVisibility => Tools.BoolToVisibility(_isSearchFolder == true);
+        public Visibility NameVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_isSearchFolder == true);
 
 
         // 検索フォルダのパス

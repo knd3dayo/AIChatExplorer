@@ -535,6 +535,21 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.ShowProperties = value;
             }
         }
+        // MarkdownView
+        private bool? _markdownView;
+        public bool MarkdownView {
+            get {
+                if (_markdownView == null) {
+                    _markdownView = Properties.Settings.Default.MarkdownView;
+                }
+                return _markdownView.Value;
+            }
+            set {
+                _markdownView = value;
+                Properties.Settings.Default.MarkdownView = value;
+            }
+        }
+
         // APIServerURL
         private string? _apiServerURL;
         public string APIServerURL {

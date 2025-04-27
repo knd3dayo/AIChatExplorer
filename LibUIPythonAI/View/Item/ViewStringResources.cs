@@ -89,5 +89,8 @@ namespace LibUIPythonAI.View.Item {
         // SourcePath
         public static string SourcePath { get; set; } = CommonStringResources.Instance.SourcePath;
 
+        // MarkdownView
+        public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
+
     }
 }

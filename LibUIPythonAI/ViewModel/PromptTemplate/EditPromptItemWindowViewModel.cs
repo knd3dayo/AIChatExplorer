@@ -82,7 +82,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             }
         }
         // InputTypeItemsVisibility
-        public Visibility InputTypeItemsVisibility => Tools.BoolToVisibility(PromptResultToInput);
+        public Visibility InputTypeItemsVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(PromptResultToInput);
 
         // InputTypeItems
         public ObservableCollection<PromptItem> InputTypeItems {

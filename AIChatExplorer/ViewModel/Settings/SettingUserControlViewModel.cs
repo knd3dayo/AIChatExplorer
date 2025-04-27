@@ -651,16 +651,16 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
 
         // UseInternalAPIVisibility
-        public Visibility UseInternalAPIVisibility => Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility UseInternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // UseExternalAPIVisibility
-        public Visibility UseExternalAPIVisibility => Tools.BoolToVisibility(UseExternalAPI);
+        public Visibility UseExternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI);
 
         // APIServerVisibility
-        public Visibility APIServerVisibility => Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
+        public Visibility APIServerVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
 
         // InternalVisibility
-        public Visibility InternalVisibility => Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility InternalVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
         #endregion
 
         // SaveCommand

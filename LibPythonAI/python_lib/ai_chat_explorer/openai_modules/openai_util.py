@@ -230,7 +230,7 @@ class OpenAIClient:
     
     def pre_process_input(
             self, request_context:RequestContext, last_message_dict: dict, 
-            vector_search_function : Union[Callable, None]) -> list[dict]:
+            vector_search_function : Union[Callable, None]) -> tuple[list[dict], list[dict]]:
         # "messages"の最後のtext要素を取得する       
         last_text_content_index = -1
         for i in range(0, len(last_message_dict["content"])):
@@ -246,6 +246,9 @@ class OpenAIClient:
         # 80KBを超える場合は分割する
         # 結果はresult_messagesに格納する
         result_messages = []
+        # ベクトル検索結果のdocumentを格納するdictを作成する
+        result_documents_dict: dict[str, dict] = {}
+
         if request_context.SplitMode != "None":
             splited_messages = self.split_message(original_last_message.split("\n"), request_context.SplitTokenCount)
         else:
@@ -265,10 +268,11 @@ class OpenAIClient:
                 vector_search_result = vector_search_function(query) 
                 # vector_search_resultのcontentを取得する
                 vector_search_result_contents = [ document["content"] for document in vector_search_result["documents"]]
-                # source_idを取得する
-                source_id_list = [ document["source_id"] for document in vector_search_result["documents"]]
+
                 # source_pathを取得する
-                source_path_list = [ document["source_path"] for document in vector_search_result["documents"]]
+                for document in vector_search_result["documents"]:
+                    print(document)
+                    result_documents_dict[document["source_id"]] = document
 
                 context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_result_contents)
 
@@ -278,14 +282,20 @@ class OpenAIClient:
             result_last_message["content"][last_text_content_index]["text"] = f"{context_message}\n{target_message}"
             # result_messagesに追加する
             result_messages.append(result_last_message)
-        return result_messages
 
-    def post_process_output(self, request_context: RequestContext, input_dict: dict, chat_result_dict_list: list[dict],vector_search_function : Union[Callable, None]) -> dict:
+        return result_messages, [ value for value in result_documents_dict.values()]
+
+    def post_process_output(self, request_context: RequestContext, 
+                            input_dict: dict, chat_result_dict_list: list[dict],
+                            docs_list: list[dict]) -> dict:
+
         # RequestContextのSplitModeがNormalSplitの場合はchat_result_dict_listのoutputを結合した文字列とtotal_tokensを集計した結果を返す
         if request_context.SplitMode == "NormalSplit":
             output = "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
             total_tokens = sum([chat_result_dict["total_tokens"] for chat_result_dict in chat_result_dict_list])
-            return {"output": output, "total_tokens": total_tokens}
+            return {"output": output, "total_tokens": total_tokens, 
+                    "documents": docs_list
+                    }
         
         # RequestContextのSplitModeがSplitAndSummarizeの場合はSummarize用のoutputを作成する
         if request_context.SplitMode == "SplitAndSummarize":
@@ -310,10 +320,13 @@ class OpenAIClient:
             summary_result_dict = self.openai_chat(summary_input_dict)
             # total_tokensを更新する
             summary_result_dict["total_tokens"] = total_tokens + summary_result_dict["total_tokens"]
+            summary_result_dict["documents"] = docs_list
             return summary_result_dict
         
         # RequestContextのSplitModeがNoneの場合はoutput_dictの1つ目の要素を返す
-        return chat_result_dict_list[0]
+        result_dict = chat_result_dict_list[0]
+        result_dict["documents"] = docs_list
+        return result_dict 
 
     def get_last_message(self, input_dict: dict) -> dict:
         return input_dict["messages"][-1]
@@ -325,7 +338,7 @@ class OpenAIClient:
         # pre_process_inputを実行する
         last_message_dict = self.get_last_message(input_dict)
         # 最後のメッセージの分割処理、ベクトル検索処理を行う
-        pre_processed_input_list = self.pre_process_input(request_context, last_message_dict, vector_search_function)
+        pre_processed_input_list, docs_list = self.pre_process_input(request_context, last_message_dict, vector_search_function)
         chat_result_dict_list = []
 
         for pre_processed_input in pre_processed_input_list:
@@ -344,7 +357,7 @@ class OpenAIClient:
             chat_result_dict_list.append(chat_result_dict)
 
         # post_process_outputを実行する
-        result_dict = self.post_process_output(request_context, input_dict, chat_result_dict_list, vector_search_function)
+        result_dict = self.post_process_output(request_context, input_dict, chat_result_dict_list, docs_list)
         return result_dict
     
     def openai_chat(self, input_dict: dict) -> dict:

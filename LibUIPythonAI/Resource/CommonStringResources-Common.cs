@@ -63,6 +63,10 @@ namespace LibUIPythonAI.Resource {
         // プロパティ表示
         public virtual string ShowProperties { get; } = "プロパティ表示";
 
+        // MarkdownView
+        public virtual string MarkdownView { get; } = "マークダウン表示";
+
+
         // 表示
         public virtual string View { get; } = "表示";
 

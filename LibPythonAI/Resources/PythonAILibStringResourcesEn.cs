@@ -93,8 +93,7 @@ namespace PythonAILib.Resources {
 
         // --- ChatItem.cs ---
 
-        // <Source Document Root>
-        public override string SourceDocumentRoot { get; } = "<Source Document Root>";
+        public override string ReferenceDocument { get; } = "Reference Document";
 
         // --- ChatRequest.cs ---
         // \n--------- Below is the main content ------\n

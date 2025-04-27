@@ -128,7 +128,7 @@ namespace PythonAILib.Resources {
         // --- ChatItem.cs ---
 
         // <参照元ドキュメントルート>
-        public virtual string SourceDocumentRoot { get; } = "<参照元ドキュメントルート>";
+        public virtual string ReferenceDocument { get; } = "<参考ドキュメント>";
 
         // --- ChatRequest.cs ---
         // \n---------以下は本文です------\n

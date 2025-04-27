@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;
@@ -11,6 +11,7 @@ using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Utils.Python;
+using System.ComponentModel;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : ChatViewModelBase {
@@ -29,6 +30,15 @@ namespace LibUIPythonAI.ViewModel.Chat {
             // ChatContextPanelViewModelを設定
             ChatContextViewModelInstance = new ChatContextViewModel(QAChatStartupPropsInstance);
 
+            CommonViewModelProperties.PropertyChanged  += OnPropertyChanged;
+
+        }
+
+        // OnPropertyChanged
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
+                OnPropertyChanged(nameof(ChatHistory));
+            }
         }
 
         // ChatContextPanelViewModel
@@ -97,8 +107,16 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
+
+        public Visibility MarkdownVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+
+        public Visibility TextVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
+
+
+
+
         // DebugCommandVisibility
-        public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
+        public Visibility DebugCommandVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
 
 
         private int _SelectedTabIndex = 0;
@@ -295,6 +313,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
             // Chatを実行した場合は 、ContentItemを更新
+            CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
 
             QAChatStartupPropsInstance.CloseCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
             window.Close();

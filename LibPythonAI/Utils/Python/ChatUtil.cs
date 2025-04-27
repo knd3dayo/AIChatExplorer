@@ -170,6 +170,11 @@ namespace LibPythonAI.Utils.Python {
 
         public static ChatResult? ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(chatRequestContext, chat);
+            if (result == null) {
+                return null;
+            }
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            chat.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.SourceDocuments));
             return result;
         }
 
@@ -230,13 +235,7 @@ namespace LibPythonAI.Utils.Python {
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, chatRequest);
                 // 通常のChatを実行する。
-                ChatResult? result = ExecuteChatNormal(chatRequestContext, chatRequest);
-                if (result == null) {
-                    return null;
-                }
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                chatRequest.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
-                return result;
+                return ExecuteChatNormal(chatRequestContext, chatRequest);
             }
             // AutoGenGroupChatを実行する
             if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {

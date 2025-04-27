@@ -1,4 +1,7 @@
 using System.Text.Json.Serialization;
+using System.Windows.Documents;
+using LibPythonAI.Utils.Common;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
@@ -17,10 +20,7 @@ namespace PythonAILib.Model.Chat {
 
         // JSON化しないプロパティ
         [JsonIgnore]
-        public List<Dictionary<string, string>> Sources { get; set; } = [];
-
-        [JsonIgnore]
-        public string SourceDocumentURL { get; set; } = "";
+        public List<VectorDBEmbedding> SourceDocuments { get; set; } = [];
 
         // ImageのURLのリスト
         [JsonIgnore]
@@ -30,16 +30,16 @@ namespace PythonAILib.Model.Chat {
         // SourcePath + Sourcesを返す
         public string ContentWithSources {
             get {
-                if (Sources.Count == 0) {
+                if (SourceDocuments.Count == 0) {
                     return Content;
                 }
-                // sourceDocumentURLが空の場合は<参照元ドキュメントルート>とする。
-                if (string.IsNullOrEmpty(SourceDocumentURL)) {
-                    SourceDocumentURL = PythonAILibStringResources.Instance.SourceDocumentRoot;
-                }
-                // Sourcesの各要素にSourceDocumentURLを付加する。
-                List<string> SourcesWithLink = Sources.ConvertAll(x => SourceDocumentURL + x);
-                return Content + "\n" + string.Join("\n", SourcesWithLink);
+                return Content + "\n\n" + PythonAILibStringResources.Instance.ReferenceDocument + "\n" + string.Join("  \n", SourceDocuments.Select(x => x.SourcePath));
+            }
+        }
+        [JsonIgnore]
+        public FlowDocument? MarkdownContentWithSources {
+            get {
+                return  Tools.CreateFlowDocument(ContentWithSources);
             }
         }
 
@@ -47,24 +47,24 @@ namespace PythonAILib.Model.Chat {
             Role = role;
             Content = text;
         }
-        public ChatMessage(string role, string text, List<Dictionary<string, string>> sources) {
+        public ChatMessage(string role, string text, List<VectorDBEmbedding> sources) {
             Role = role;
             Content = text;
-            Sources = sources;
+            SourceDocuments = sources;
         }
         // Source
 
         // Copy
         public ChatMessage Copy() {
-            ChatMessage result = new(Role, Content, Sources) {
+            ChatMessage result = new(Role, Content, SourceDocuments) {
                 ImageURLs = ImageURLs,
-                SourceDocumentURL = SourceDocumentURL
+                SourceDocuments = SourceDocuments
             };
             return result;
         }
         // SourcesString
         public string SourcesString {
-            get => string.Join("\n", Sources);
+            get => string.Join("\n", SourceDocuments.Select(x => x.SourcePath));
         }
 
         // CreateEntriesDictList
@@ -130,7 +130,7 @@ namespace PythonAILib.Model.Chat {
                     content = (string)value3;
                 }
             }
-            ChatMessage message = new(role, content, sources) {
+            ChatMessage message = new(role, content) {
                 ImageURLs = imageURLs
             };
             return message;

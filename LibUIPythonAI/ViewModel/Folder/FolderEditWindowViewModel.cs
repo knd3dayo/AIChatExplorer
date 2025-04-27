@@ -52,7 +52,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        public Visibility VectorDBItemButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex == 1);
+        public Visibility VectorDBItemButtonVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 1);
 
         private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
         public ObservableCollection<VectorDBProperty> VectorSearchProperties {

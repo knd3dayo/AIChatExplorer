@@ -180,6 +180,14 @@ namespace AIChatExplorer.Model.Main {
         public bool UseExternalAPI() {
             return AIChatExplorerConfig.Instance.UseExternalAPI;
         }
+        // MarkdownView
+        public bool IsMarkdownView() {
+                return AIChatExplorerConfig.Instance.MarkdownView;
+        }
 
+        public void UpdateMarkdownView(bool value) {
+            AIChatExplorerConfig.Instance.MarkdownView = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
     }
 }

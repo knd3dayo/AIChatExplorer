@@ -129,15 +129,23 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button
+                <CheckBox
                     Grid.Column="0"
-                    Width="120"
-                    Margin="10,0,10,0"
-                    Command="{Binding ItemViewModel.Commands.OpenOpenAIChatWindowCommand, Mode=OneTime}"
-                    CommandParameter="{Binding ItemViewModel}"
-                    Content="{x:Static local:ViewStringResources.OpenAIChat}"
-                    DockPanel.Dock="Left" />
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="{x:Static local:ViewStringResources.MarkdownView}"
+                    FontSize="8pt"
+                    IsChecked="{Binding CommonViewModelProperties.MarkdownView}" />
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <Button
+                        Grid.Column="0"
+                        Width="120"
+                        Margin="10,0,10,0"
+                        Command="{Binding ItemViewModel.Commands.OpenOpenAIChatWindowCommand, Mode=OneTime}"
+                        CommandParameter="{Binding ItemViewModel}"
+                        Content="{x:Static local:ViewStringResources.OpenAIChat}"
+                        DockPanel.Dock="Left" />
+
                     <Button
                         Width="100"
                         Margin="10,0,10,0"

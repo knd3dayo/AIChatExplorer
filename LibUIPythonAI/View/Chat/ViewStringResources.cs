@@ -149,5 +149,8 @@ namespace LibUIPythonAI.View.Chat {
 
         // ExcludeFromList
         public static string ExcludeFromList => CommonStringResources.Instance.ExcludeFromList;
+
+        // MarkdownView
+        public static string MarkdownView => CommonStringResources.Instance.MarkdownView;
     }
 }

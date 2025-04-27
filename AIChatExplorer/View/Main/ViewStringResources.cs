@@ -148,5 +148,9 @@ namespace AIChatExplorer.View.Main {
 
         // ShowProperties
         public static string ShowProperties { get; set; } = CommonStringResources.Instance.ShowProperties;
+
+        // MarkdownView
+        public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
+
     }
 }

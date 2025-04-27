@@ -6,6 +6,7 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.View.PromptTemplate;
+using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
@@ -17,7 +18,6 @@ using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIMergeChat.Common;
 using LibUIPythonAI.Utils;
-using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
@@ -228,9 +228,9 @@ namespace LibUIMergeChat.ViewModel {
         }
 
         //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
+        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseVectorDB);
 
-        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
+        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
 
         // チャットを送信するコマンド
@@ -386,7 +386,7 @@ namespace LibUIMergeChat.ViewModel {
 
         #region AutoGen Group Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
+        public Visibility AutoGenGroupChatVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
 
         // AutoGenGroupChatList
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {

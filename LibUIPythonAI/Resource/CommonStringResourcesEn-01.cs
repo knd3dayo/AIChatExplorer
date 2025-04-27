@@ -186,6 +186,10 @@ namespace LibUIPythonAI.Resource {
 
         // ShowProperties
         public override string ShowProperties { get; } = "Show Properties";
+
+        // MarkdownView
+        public override string MarkdownView { get; } = "Markdown View";
+
         // View
         public override string View { get; } = "View";
 

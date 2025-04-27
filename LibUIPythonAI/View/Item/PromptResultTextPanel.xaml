@@ -16,16 +16,29 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="25" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/LibUIPythonAI;component/Resource/Dictionary1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
-    <editorControl:MyTextBox
-        Margin="10,3,10,3"
-        FontSize="10pt"
-        Text="{Binding TextContent, UpdateSourceTrigger=PropertyChanged}" />
+    <Grid>
+        <editorControl:MyTextBox
+            Grid.Row="0"
+            Margin="10,3,10,3"
+            FontSize="10pt"
+            Text="{Binding TextContent, UpdateSourceTrigger=PropertyChanged}"
+            Visibility="{Binding TextContentVisibility}" />
+        <editorControl:BindableRichTextBox
+            Grid.Row="0"
+            Margin="10,10,10,10"
+            VerticalContentAlignment="Top"
+            Document="{Binding MarkdownTextContent, Mode=OneWay}"
+            FontSize="12"
+            HorizontalScrollBarVisibility="Auto"
+            IsReadOnly="True"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding MarkdownViewVisibility}" />
+    </Grid>
 
 </UserControl>

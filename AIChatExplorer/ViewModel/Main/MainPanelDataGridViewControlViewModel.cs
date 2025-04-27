@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Settings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
@@ -53,14 +54,41 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
+        public void UpdateView() {
+            // 前回選択していたTabIndexを取得
+            int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
+
+            // SelectedTabIndexを更新する処理
+            if (SelectedItem != null) {
+                SelectedItem.SelectedTabIndex = lastSelectedTabIndex;
+                /**
+                 * Task.Run(() => {
+                    SelectedItem.ContentItem.Load(() => { }, () => {
+                        MainUITask.Run(() => {
+                            OnPropertyChanged(nameof(SelectedItem));
+                        });
+                    });
+                });
+                OnPropertyChanged(nameof(SelectedItem));
+                **/
+                OnPropertyChanged(nameof(SelectedItem));
+                // SourceがFileの場合は、ファイルの内容を読み込む
+                if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                    ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
+                        MainUITask.Run(() => {
+                            OnPropertyChanged(nameof(SelectedItem));
+                        });
+                    });
+                }
+            }
+        }
+
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid dataGrid) {
-                // 前回選択していたTabIndexを取得
-                int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
                 if (dataGrid.SelectedItem is ContentItemViewModel clipboardItemViewModel) {
                     // SelectedItemsをMainWindowViewModelにセット
@@ -68,29 +96,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
                         SelectedItems.Add(item);
                     }
-                    // SelectedTabIndexを更新する処理
-                    if (SelectedItem != null) {
-                        SelectedItem.SelectedTabIndex = lastSelectedTabIndex;
-                        /**
-                         * Task.Run(() => {
-                            SelectedItem.ContentItem.Load(() => { }, () => {
-                                MainUITask.Run(() => {
-                                    OnPropertyChanged(nameof(SelectedItem));
-                                });
-                            });
-                        });
-                        OnPropertyChanged(nameof(SelectedItem));
-                        **/
-                        OnPropertyChanged(nameof(SelectedItem));
-                        // SourceがFileの場合は、ファイルの内容を読み込む
-                        if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
-                            ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
-                                MainUITask.Run(() => {
-                                    OnPropertyChanged(nameof(SelectedItem));
-                                });
-                            });
-                        }
-                    }
+                    UpdateView();
                 }
             }
 

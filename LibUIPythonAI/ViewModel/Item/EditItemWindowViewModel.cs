@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -6,6 +7,7 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using WpfAppCommon.Model;
 
@@ -25,6 +27,12 @@ namespace LibUIPythonAI.ViewModel.Item {
             OnPropertyChanged(nameof(ItemViewModel));
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(SourcePath));
+
+            // StatusText.Readyにフォルダ名を設定
+            StatusText statusText = StatusText.Instance;
+            statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
+
+            CommonViewModelProperties.PropertyChanged += OnPropertyChanged;
 
         }
 
@@ -47,15 +55,6 @@ namespace LibUIPythonAI.ViewModel.Item {
                 _folderViewModel = value;
                 OnPropertyChanged(nameof(FolderViewModel));
             }
-        }
-
-        public override void OnActivatedAction() {
-            if (FolderViewModel == null) {
-                return;
-            }
-            // StatusText.Readyにフォルダ名を設定
-            StatusText statusText = StatusText.Instance;
-            statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
         }
 
         public string Title {
@@ -108,6 +107,11 @@ namespace LibUIPythonAI.ViewModel.Item {
         public int SelectedImageIndex { get; set; } = 0;
 
         public Action CloseUserControl { get; set; } = () => { };
+
+
+
+        // MarkdownViewVisibility
+        public Visibility MarkdownViewVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
 
 
 
@@ -169,6 +173,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         });
 
         public override SimpleDelegateCommand<object> CloseCommand => new((parameter) => {
+            CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
             // parameterがWindowの場合
             if (parameter is Window window) {
                 // ウィンドウを閉じる
@@ -181,6 +186,10 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         });
 
-
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
+                OnPropertyChanged(nameof(ItemViewModel));
+            }
+        }
     }
 }

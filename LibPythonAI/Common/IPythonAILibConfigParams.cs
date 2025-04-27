@@ -85,5 +85,10 @@ namespace PythonAILib.Common {
 
         // GUI
         public TextWrapping GetTextWrapping();
+
+        // MarkdownView
+        public bool IsMarkdownView();
+
+        public void UpdateMarkdownView(bool value);
     }
 }

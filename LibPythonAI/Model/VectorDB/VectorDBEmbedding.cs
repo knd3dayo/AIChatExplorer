@@ -92,6 +92,27 @@ namespace PythonAILib.Model.VectorDB {
             return result ?? [];
         }
 
+        public static VectorDBEmbedding FromDict(Dictionary<string, object> dict) {
+            VectorDBEmbedding result = new();
+            result.SourceId = dict["source_id"].ToString() ?? "";
+            result.SourceType = (VectorSourceType)Enum.Parse(typeof(VectorSourceType), dict["source_type"].ToString() ?? "");
+            result.Description = dict["description"].ToString() ?? "";
+            result.Content = dict["content"].ToString() ?? "";
+            result.SourcePath = dict["source_path"].ToString() ?? "";
+            result.GitRepositoryUrl = dict["git_repository_url"].ToString() ?? "";
+            result.GitRelativePath = dict["git_relative_path"].ToString() ?? "";
+            result.ImageURL = dict["image_url"].ToString() ?? "";
+            result.DocId = dict["doc_id"].ToString() ?? "";
+            result.Score = Convert.ToDouble(dict["score"]);
+            return result;
+        }
+        public static List<VectorDBEmbedding> FromDictList(List<Dictionary<string, object>> dictList) {
+            List<VectorDBEmbedding> result = new();
+            foreach (var dict in dictList) {
+                result.Add(FromDict(dict));
+            }
+            return result;
+        }
 
     }
 }
