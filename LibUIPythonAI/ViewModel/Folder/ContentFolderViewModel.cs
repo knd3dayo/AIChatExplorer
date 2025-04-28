@@ -11,7 +11,7 @@ using WpfAppCommon.Model;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : ChatViewModelBase {
+    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : CommonViewModelBase {
 
 
         public ContentFolderWrapper Folder { get; set; } = folder;
@@ -122,7 +122,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 //　フォルダを保存
                 this.Folder.Save();
                 LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.FolderEdited);
+                LogWrapper.Info(CommonStringResources.Instance.FolderEdited);
             });
         });
         public void DeleteDisplayedItemCommandExecute(Action beforeAction, Action afterAction) {
@@ -215,7 +215,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
 
             // フォルダ削除するかどうか確認
-            if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteFolder, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             // 親フォルダを取得
@@ -228,18 +228,18 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 parentFolderViewModel.LoadFolderCommand.Execute();
             }
 
-            LogWrapper.Info(StringResources.FolderDeleted);
+            LogWrapper.Info(CommonStringResources.Instance.FolderDeleted);
         });
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
             Task.Run(() => {
                 // MainWindowViewModelのIsIndeterminateをTrueに設定
-                UpdateIndeterminate(true);
+                CommonViewModelProperties.UpdateIndeterminate(true);
                 Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
                 ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(), () => { }, () => {
 
                     ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
-                    UpdateIndeterminate(false);
+                    CommonViewModelProperties.UpdateIndeterminate(false);
                 });
 
             });

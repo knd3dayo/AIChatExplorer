@@ -5,7 +5,7 @@ using LibUIPythonAI.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenToolViewModel : ChatViewModelBase {
+    public class EditAutoGenToolViewModel : CommonViewModelBase {
 
         public EditAutoGenToolViewModel(AutoGenTool autoGenTool, Action afterUpdate) {
             AutoGenTool = autoGenTool;

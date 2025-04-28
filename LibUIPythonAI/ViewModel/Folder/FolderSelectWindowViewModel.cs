@@ -8,7 +8,7 @@ using LibUIPythonAI.View.Folder;
 
 namespace LibUIPythonAI.ViewModel.Folder {
 
-    public class FolderSelectWindowViewModel : ChatViewModelBase {
+    public class FolderSelectWindowViewModel : CommonViewModelBase {
 
         public FolderSelectWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModelList, Action<ContentFolderViewModel, bool> _FolderSelectedAction) {
 

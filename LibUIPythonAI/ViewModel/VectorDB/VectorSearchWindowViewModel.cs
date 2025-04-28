@@ -3,6 +3,7 @@ using System.Windows;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -10,7 +11,7 @@ using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
-    public class VectorSearchWindowViewModel : ChatViewModelBase {
+    public class VectorSearchWindowViewModel : CommonViewModelBase {
 
         public VectorSearchWindowViewModel() {
             InputText = string.Empty;
@@ -101,7 +102,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 return;
             }
 
-            UpdateIndeterminate(true);
+            CommonViewModelProperties.UpdateIndeterminate(true);
             await Task.Run(() => {
                 List<VectorDBEmbedding> vectorSearchResults = [];
                 // ベクトル検索を実行
@@ -111,7 +112,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 try {
                     vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(InputText));
                 } finally {
-                    UpdateIndeterminate(false);
+                    CommonViewModelProperties.UpdateIndeterminate(false);
                 }
                 MainUITask.Run(() => {
                     // VectorSearchResultsを更新
@@ -189,8 +190,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             if (VectorSearchProperty == null) {
                 return;
             }
-            StatusText.Instance.ReadyText = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
-            StatusText.Instance.Text = $"{StringResources.VectorDB}:[{VectorSearchProperty.DisplayText}]";
+            StatusText.Instance.ReadyText = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchProperty.DisplayText}]";
+            StatusText.Instance.Text = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchProperty.DisplayText}]";
         }
 
         // Closed時の処理

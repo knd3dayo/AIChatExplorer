@@ -86,7 +86,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 () => {
                     // フォルダ内のアイテムを再読み込み
                     LoadFolderCommand.Execute();
-                    LogWrapper.Info(StringResources.Edited);
+                    LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
             AppTabContainer container = new("New Item", editItemControl);
@@ -126,7 +126,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             }
             toFolder.LoadFolderCommand.Execute();
 
-            LogWrapper.Info(StringResources.Pasted);
+            LogWrapper.Info(CommonStringResources.Instance.Pasted);
         }
 
         // -----------------------------------------------------------------------------------

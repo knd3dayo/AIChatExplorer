@@ -184,5 +184,8 @@ namespace LibUIMergeChat.View {
 
         // OutputFolderSelection
         public static string OutputFolderSelection => MergeChatStringResources.Instance.OutputFolderSelection;
+
+        // Chat
+        public static string Chat => CommonStringResources.Instance.Chat;
     }
 }

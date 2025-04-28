@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Model.AutoProcess;
+using LibUIPythonAI.Resource;
 using PythonAILib.Model.AutoProcess;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
-    public class AutoProcessItemViewModel(AutoProcessItem autoProcessItem) : ChatViewModelBase {
+    public class AutoProcessItemViewModel(AutoProcessItem autoProcessItem) : CommonViewModelBase {
         public AutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
         public string Name {

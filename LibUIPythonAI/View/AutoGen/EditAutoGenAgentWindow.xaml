@@ -70,7 +70,7 @@
             Grid.Row="1"
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <TabItem Header="{x:Static res:ViewStringResources.BasicSettings}">
                 <ScrollViewer>
                     <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">

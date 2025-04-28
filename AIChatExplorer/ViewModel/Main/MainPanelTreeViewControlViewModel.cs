@@ -3,21 +3,19 @@ using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Main;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
-using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelTreeViewControlViewModel : AppViewModelBase {
+    public class MainPanelTreeViewControlViewModel : CommonViewModelBase {
 
         private AppViewModelCommands Commands { get; set; }
 
-         // constructor
-         public MainPanelTreeViewControlViewModel(AppViewModelCommands commands) {
+        // constructor
+        public MainPanelTreeViewControlViewModel(AppViewModelCommands commands) {
             Commands = commands;
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };

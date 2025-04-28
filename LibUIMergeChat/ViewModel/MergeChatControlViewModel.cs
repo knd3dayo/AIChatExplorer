@@ -26,7 +26,7 @@ using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Python;
 
 namespace LibUIMergeChat.ViewModel {
-    public class MergeChatControlViewModel : ChatViewModelBase {
+    public class MergeChatControlViewModel : CommonViewModelBase {
 
 
         //初期化
@@ -242,7 +242,7 @@ namespace LibUIMergeChat.ViewModel {
             try {
                 ChatResult? result = null;
                 // プログレスバーを表示
-                UpdateIndeterminate(true);
+                CommonViewModelProperties.UpdateIndeterminate(true);
 
                 ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid;
                 // itemViewModelsからContentItemをSelect
@@ -252,8 +252,8 @@ namespace LibUIMergeChat.ViewModel {
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
                     if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
-                        LogWrapper.Error(StringResources.PromptTextIsNeededWhenSplitModeIsEnabled);
-                        UpdateIndeterminate(false);
+                        LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
+                        CommonViewModelProperties.UpdateIndeterminate(false);
                         return;
                     }
                     // MergeChatUtil.MergeChatを実行
@@ -261,8 +261,8 @@ namespace LibUIMergeChat.ViewModel {
                 });
 
                 if (result == null) {
-                    LogWrapper.Error(StringResources.FailedToSendChat);
-                    UpdateIndeterminate(false);
+                    LogWrapper.Error(CommonStringResources.Instance.FailedToSendChat);
+                    CommonViewModelProperties.UpdateIndeterminate(false);
                     return;
                 }
                 // チャット結果をOutputFolderに保存
@@ -276,8 +276,8 @@ namespace LibUIMergeChat.ViewModel {
 
 
                     OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {
-                        UpdateIndeterminate(false);
-                        LogWrapper.Info(StringResources.SavedChatResult);
+                        CommonViewModelProperties.UpdateIndeterminate(false);
+                        LogWrapper.Info(CommonStringResources.Instance.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行
                         OutputFolder.LoadFolderCommand.Execute();
                         // Close
@@ -289,7 +289,7 @@ namespace LibUIMergeChat.ViewModel {
 
 
             } catch (Exception e) {
-                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
+                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
             }
 
         });

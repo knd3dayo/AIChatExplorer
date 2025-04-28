@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.File;
 
@@ -8,7 +9,7 @@ namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class SelectCommitWindowViewModel : ChatViewModelBase {
+    public class SelectCommitWindowViewModel : CommonViewModelBase {
         public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action) {
             this.itemViewModel = itemViewModel;
             // コミット情報を取得
@@ -42,7 +43,7 @@ namespace LibUIPythonAI.ViewModel.RAG {
         public SimpleDelegateCommand<Window> OkCommand => new((window) => {
             // 選択中のコミットハッシュが空の場合はエラー
             if (SelectedCommitInfo == null) {
-                LogWrapper.Error(StringResources.SelectCommitPlease);
+                LogWrapper.Error(CommonStringResources.Instance.SelectCommitPlease);
                 return;
             }
             // 選択中のコミットハッシュを設定

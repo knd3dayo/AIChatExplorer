@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenLLMConfigViewModel : ChatViewModelBase {
+    public class EditAutoGenLLMConfigViewModel : CommonViewModelBase {
         public EditAutoGenLLMConfigViewModel(AutoGenLLMConfig autoGenLLMConfig, Action afterUpdate) {
             AutoGenLLMConfig = autoGenLLMConfig;
             AfterUpdate = afterUpdate;

@@ -12,7 +12,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
-    public class ListPromptTemplateWindowViewModel : ChatViewModelBase {
+    public class ListPromptTemplateWindowViewModel : CommonViewModelBase {
         // 初期化
 
         public enum ActionModeEum {
@@ -88,7 +88,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public string SelectButtonText {
             get {
                 // ActionModeがExecの場合は、"実行"、それ以外は"選択"
-                return ActionMode == ActionModeEum.Exec ? StringResources.Execute : StringResources.Select;
+                return ActionMode == ActionModeEum.Exec ? CommonStringResources.Instance.Execute : CommonStringResources.Instance.Select;
             }
         }
 
@@ -118,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         public SimpleDelegateCommand<object> EditPromptItemCommand => new((parameter) => {
             if (SelectedPromptItem == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             EditPromptItemWindow.OpenEditPromptItemWindow(SelectedPromptItem, (PromptItemViewModel) => {
@@ -142,7 +142,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public SimpleDelegateCommand<Window> SelectPromptItemCommand => new((window) => {
             // 選択されていない場合はメッセージを表示
             if (SelectedPromptItem == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             // ChatMode からOpenAIExecutionModeEnumに変換
@@ -158,15 +158,15 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public void DeletePromptItemCommandExecute(object parameter) {
             PromptItemViewModel? itemViewModel = SelectedPromptItem;
             if (itemViewModel == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             PromptItem? item = SelectedPromptItem?.PromptItem;
             if (item == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
-            if (MessageBox.Show($"{item.Name}{StringResources.ConfirmDelete}", StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show($"{item.Name}{CommonStringResources.Instance.ConfirmDelete}", CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             PromptItems.Remove(itemViewModel);

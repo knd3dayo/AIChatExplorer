@@ -1,11 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.AutoGen;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenGroupChatViewModel : ChatViewModelBase {
+    public class EditAutoGenGroupChatViewModel : CommonViewModelBase {
 
 
         public EditAutoGenGroupChatViewModel(AutoGenGroupChat autoGenGroupChat, Action afterUpdate) {

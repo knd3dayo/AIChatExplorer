@@ -65,7 +65,7 @@
         <TabControl
             Grid.Row="1"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <!--  グループチャット  -->
             <TabItem Header="{x:Static res:ViewStringResources.GroupChat}">
                 <DataGrid

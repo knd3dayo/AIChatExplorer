@@ -12,9 +12,10 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Utils.Python;
 using System.ComponentModel;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.Chat {
-    public class ChatControlViewModel : ChatViewModelBase {
+    public class ChatControlViewModel : CommonViewModelBase {
 
         //初期化
         public ChatControlViewModel(QAChatStartupProps props) {
@@ -183,7 +184,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             try {
                 ChatResult? result = null;
                 // プログレスバーを表示
-                UpdateIndeterminate(true);
+                CommonViewModelProperties.UpdateIndeterminate(true);
 
                 // チャット内容を更新
                 await Task.Run(() => {
@@ -194,7 +195,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
                     SplitOnTokenLimitExceedModeEnum _splitMode = (SplitOnTokenLimitExceedModeEnum)ChatContextViewModelInstance.SplitMode;
                     if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
-                        LogWrapper.Error(StringResources.PromptTextIsNeededWhenSplitModeIsEnabled);
+                        LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         return;
                     }
                     // OpenAIChat or LangChainChatを実行
@@ -206,10 +207,10 @@ namespace LibUIPythonAI.ViewModel.Chat {
                     });
 
                 });
-                UpdateIndeterminate(false);
+                CommonViewModelProperties.UpdateIndeterminate(false);
 
                 if (result == null) {
-                    LogWrapper.Error(StringResources.FailedToSendChat);
+                    LogWrapper.Error(CommonStringResources.Instance.FailedToSendChat);
                     return;
                 }
                 // チャット内容を更新
@@ -221,7 +222,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 ChatExecuted = true;
 
             } catch (Exception e) {
-                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
+                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
             }
 
         });
@@ -232,7 +233,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             Task.Run(() => {
                 ChatUtil.CancelAutoGenChat(SessionToken);
             }).ContinueWith((task) => {
-                UpdateIndeterminate(false);
+                CommonViewModelProperties.UpdateIndeterminate(false);
             });
         });
         // チャット履歴をクリアコマンド

@@ -17,7 +17,7 @@ namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
-    public partial class SettingUserControlViewModel : AppViewModelBase {
+    public partial class SettingUserControlViewModel : CommonViewModelBase {
         // プロパティが変更されたか否か
         private bool isPropertyChanged = false;
         // Lang
@@ -371,58 +371,58 @@ namespace AIChatExplorer.ViewModel.Settings {
         public string CheckSetting() {
             StringBuilder stringBuilder = new();
             bool pythonOK = true;
-            Log(stringBuilder, $"{StringResources.PythonSettingCheck}...");
+            Log(stringBuilder, $"{CommonStringResources.Instance.PythonSettingCheck}...");
 
             if (string.IsNullOrEmpty(PythonDllPath)) {
-                Log(stringBuilder, $"[NG]:{StringResources.PythonDLLPathNotSet}");
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonDLLPathNotSet}");
                 pythonOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{StringResources.PythonDLLPathSet}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonDLLPathSet}");
             }
             if (System.IO.File.Exists(PythonDllPath) == false) {
-                Log(stringBuilder, $"[NG]:{StringResources.PythonDLLNotFound}");
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonDLLNotFound}");
                 pythonOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{StringResources.PythonDLLFileExists}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonDLLFileExists}");
             }
             if (pythonOK == true) {
                 // TestPythonを実行
-                Log(stringBuilder, $"{StringResources.TestRunPythonScript}...");
+                Log(stringBuilder, $"{CommonStringResources.Instance.TestRunPythonScript}...");
                 TestResult result = TestPython();
                 Log(stringBuilder, result.Message);
             }
 
             bool openAIOK = true;
-            Log(stringBuilder, $"{StringResources.OpenAISettingCheck}...");
+            Log(stringBuilder, $"{CommonStringResources.Instance.OpenAISettingCheck}...");
             if (string.IsNullOrEmpty(OpenAIKey)) {
-                Log(stringBuilder, $"[NG]:{StringResources.OpenAIKeyNotSet}");
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAIKeyNotSet}");
                 openAIOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{StringResources.OpenAIKeySet}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.OpenAIKeySet}");
             }
             if (string.IsNullOrEmpty(OpenAICompletionModel)) {
-                Log(stringBuilder, $"[NG]:{StringResources.OpenAICompletionModelNotSet}");
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAICompletionModelNotSet}");
                 openAIOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{StringResources.OpenAICompletionModelSet}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.OpenAICompletionModelSet}");
             }
             if (string.IsNullOrEmpty(OpenAIEmbeddingModel)) {
-                Log(stringBuilder, $"[NG]:{StringResources.OpenAIEmbeddingModelNotSet}");
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAIEmbeddingModelNotSet}");
                 openAIOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{StringResources.OpenAIEmbeddingModelSet}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.OpenAIEmbeddingModelSet}");
             }
 
             if (AzureOpenAI == true) {
 
-                Log(stringBuilder, $"{StringResources.AzureOpenAISettingCheck}...");
+                Log(stringBuilder, $"{CommonStringResources.Instance.AzureOpenAISettingCheck}...");
                 if (string.IsNullOrEmpty(AzureOpenAIEndpoint)) {
 
                     stringBuilder.AppendLine();
-                    Log(stringBuilder, $"{StringResources.AzureOpenAIEndpointNotSet}");
+                    Log(stringBuilder, $"{CommonStringResources.Instance.AzureOpenAIEndpointNotSet}");
                 } else {
                     if (string.IsNullOrEmpty(OpenAIBaseURL) == false) {
-                        Log(stringBuilder, $"[NG]:{StringResources.CannotSetBothAzureOpenAIEndpointAndBaseURL}");
+                        Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.CannotSetBothAzureOpenAIEndpointAndBaseURL}");
                         openAIOK = false;
                     }
                 }
@@ -430,7 +430,7 @@ namespace AIChatExplorer.ViewModel.Settings {
 
             if (openAIOK == true) {
                 // TestOpenAIを実行
-                Log(stringBuilder, $"{StringResources.TestRunOpenAI}...");
+                Log(stringBuilder, $"{CommonStringResources.Instance.TestRunOpenAI}...");
                 TestResult result = TestOpenAI();
                 Log(stringBuilder, result.Message);
             }
@@ -449,15 +449,15 @@ namespace AIChatExplorer.ViewModel.Settings {
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
-                    testResult.Message = $"[NG]:{StringResources.FailedToRunPython}";
+                    testResult.Message = $"[NG]:{CommonStringResources.Instance.FailedToRunPython}";
                     testResult.Result = false;
 
                 } else {
-                    testResult.Message = $"[OK]:{StringResources.PythonRunIsPossible}";
+                    testResult.Message = $"[OK]:{CommonStringResources.Instance.PythonRunIsPossible}";
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = $"[NG]:{StringResources.ErrorOccurredAndMessage} ex.Message  \n[{StringResources.StackTrace}] {ex.StackTrace}";
+                testResult.Message = $"[NG]:{CommonStringResources.Instance.ErrorOccurredAndMessage} ex.Message  \n[{CommonStringResources.Instance.StackTrace}] {ex.StackTrace}";
                 testResult.Result = false;
             }
             return testResult;
@@ -483,54 +483,43 @@ namespace AIChatExplorer.ViewModel.Settings {
 
                 string resultString = ChatUtil.ExecuteChat(chatRequest, chatRequestContext, (message) => { })?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
-                    testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
+                    testResult.Message = $"[NG]:{CommonStringResources.Instance.FailedToRunOpenAI}";
                     testResult.Result = false;
                 } else {
-                    testResult.Message = $"[OK]:{StringResources.OpenAIRunIsPossible}";
+                    testResult.Message = $"[OK]:{CommonStringResources.Instance.OpenAIRunIsPossible}";
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = $"[NG]:{StringResources.ErrorOccurredAndMessage} ex.Message  \n[{StringResources.StackTrace}] {ex.StackTrace}";
+                testResult.Message = $"[NG]:{CommonStringResources.Instance.ErrorOccurredAndMessage} ex.Message  \n[{CommonStringResources.Instance.StackTrace}] {ex.StackTrace}";
                 testResult.Result = false;
             }
             return testResult;
         }
 
-        // プログレスインジケーターを表示するかどうか
-        private bool isIndeterminate = false;
-        public bool IsIndeterminate {
-            get {
-                return isIndeterminate;
-            }
-            set {
-                isIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
-            }
-        }
         // CheckCommand
         public SimpleDelegateCommand<object> CheckCommand => new(async (parameter) => {
             // 実行するか否かメッセージダイアログを表示する、
-            string message = StringResources.ConfirmRun;
+            string message = CommonStringResources.Instance.ConfirmRun;
 
-            MessageBoxResult result = MessageBox.Show(message, StringResources.Confirm, MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(message, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.No) {
                 return;
             }
             try {
-                IsIndeterminate = true;
-                LogWrapper.Info($"{StringResources.CheckingSettings}...");
+                CommonViewModelProperties.UpdateIndeterminate(true);
+                LogWrapper.Info($"{CommonStringResources.Instance.CheckingSettings}...");
                 string resultString = "";
                 await Task.Run(() => {
                     resultString = CheckSetting();
                 });
-                IsIndeterminate = false;
+                CommonViewModelProperties.UpdateIndeterminate(false);
                 StatusText.Instance.Init();
                 // 結果をTestResultWindowで表示
                 // UserControlの設定ウィンドウを開く
                 TestResultUserControl.OpenTestResultWindow(resultString);
 
             } finally {
-                IsIndeterminate = false;
+                CommonViewModelProperties.UpdateIndeterminate(false);
                 StatusText.Instance.Init();
             }
         });
@@ -668,9 +657,9 @@ namespace AIChatExplorer.ViewModel.Settings {
             if (Save()) {
                 //追加設定.言語を変更
                 AIChatExplorerFolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
-                LogWrapper.Info(StringResources.SettingsSaved);
+                LogWrapper.Info(CommonStringResources.Instance.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
-                MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);
+                MessageBox.Show(CommonStringResources.Instance.RestartAppToApplyChanges, CommonStringResources.Instance.Information, MessageBoxButton.OK);
 
             }
             // Windowを閉じる
@@ -680,7 +669,7 @@ namespace AIChatExplorer.ViewModel.Settings {
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             AIChatExplorerConfig.Instance.Reload();
-            LogWrapper.Info(StringResources.Canceled);
+            LogWrapper.Info(CommonStringResources.Instance.Canceled);
             // Windowを閉じる
             window.Close();
         });

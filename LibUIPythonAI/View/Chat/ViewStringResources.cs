@@ -152,5 +152,9 @@ namespace LibUIPythonAI.View.Chat {
 
         // MarkdownView
         public static string MarkdownView => CommonStringResources.Instance.MarkdownView;
+
+        // Chat
+        public static string Chat => CommonStringResources.Instance.Chat;
+
     }
 }

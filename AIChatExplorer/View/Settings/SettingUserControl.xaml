@@ -724,7 +724,7 @@
             VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

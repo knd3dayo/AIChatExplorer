@@ -68,7 +68,7 @@
             Grid.Row="1"
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedIndex}">
+            SelectedIndex="{Binding SelectedIndex, TargetNullValue=-1}">
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -235,7 +235,7 @@
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

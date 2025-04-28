@@ -167,6 +167,11 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.EnableDevFeatures;
         }
 
+        public void UpdateDevFeaturesEnabled(bool value) {
+            AIChatExplorerConfig.Instance.EnableDevFeatures = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
         // APIServerURL
         public string GetAPIServerURL() {
             return AIChatExplorerConfig.Instance.APIServerURL;
@@ -187,6 +192,25 @@ namespace AIChatExplorer.Model.Main {
 
         public void UpdateMarkdownView(bool value) {
             AIChatExplorerConfig.Instance.MarkdownView = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // TextWrapping
+        public bool IsTextWrapping() {
+            return AIChatExplorerConfig.Instance.TextWrapping == TextWrapping.Wrap;
+        }
+        public void UpdateTextWrapping(TextWrapping value) {
+            AIChatExplorerConfig.Instance.TextWrapping = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // AutoTextWrapping
+        public bool IsAutoTextWrapping() {
+            return AIChatExplorerConfig.Instance.AutoTextWrapping;
+        }
+
+        public void UpdateAutoTextWrapping(bool value) {
+            AIChatExplorerConfig.Instance.AutoTextWrapping = value;
             AIChatExplorerConfig.Instance.Save();
         }
     }

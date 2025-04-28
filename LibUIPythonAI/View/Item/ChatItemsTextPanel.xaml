@@ -30,7 +30,7 @@
             FontSize="10pt"
             IsReadOnly="True"
             Text="{Binding ChatItemsText, Mode=OneWay}"
-            TextWrappingMode="{Binding TextWrappingMode}"
+            TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}"
             Visibility="{Binding TextVisibility}">
             <editorControl:MyTextBox.ContextMenu>
                 <ContextMenu>

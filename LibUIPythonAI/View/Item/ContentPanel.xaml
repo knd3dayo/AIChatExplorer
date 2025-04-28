@@ -31,7 +31,7 @@
             materialDesign:HintAssist.Hint="{Binding ContentPanelContentHint}"
             FontSize="10pt"
             Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-            TextWrappingMode="{Binding TextWrappingMode}"
+            TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}"
             Visibility="{Binding TextVisibility}">
             <editorControl:MyTextBox.ContextMenu>
                 <ContextMenu>

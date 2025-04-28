@@ -76,12 +76,13 @@
                         FontSize="10pt"
                         IsReadOnly="True"
                         Text="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
+                    <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
                     <TabControl
                         Grid.Row="1"
                         Margin="10,3,10,3"
                         HorizontalContentAlignment="Left"
-                        ItemsSource="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.TabItems}"
-                        SelectedIndex="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.SelectedTabIndex}" />
+                        ItemsSource="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.TabItems, FallbackValue={x:Null}}"
+                        SelectedIndex="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
                     <TextBlock
                         Name="headerText"
                         Grid.Row="2"

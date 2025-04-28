@@ -12,7 +12,7 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {
+    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : CommonViewModelBase {
 
         // ImportItems
         public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();
@@ -80,7 +80,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
-            UpdateIndeterminate(true);
+            CommonViewModelProperties.UpdateIndeterminate(true);
             // 選択されたインデックスによって処理を分岐
             Task.Run(() => {
                 // Excelインポート処理 ★TODO 自動処理の実装
@@ -108,7 +108,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                         break;
                 }
             }).ContinueWith((task) => {
-                UpdateIndeterminate(false);
+                CommonViewModelProperties.UpdateIndeterminate(false);
                 AfterUpdate();
                 MainUITask.Run(() => {
                     window.Close();

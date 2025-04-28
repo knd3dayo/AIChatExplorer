@@ -22,7 +22,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public partial class MainWindowViewModel : AppViewModelBase {
+    public partial class MainWindowViewModel : CommonViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -50,7 +50,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
-                IsIndeterminate = visible;
+                UpdateIndeterminate(visible);
             };
             // Commandの初期化
             Commands = new(UpdateIndeterminate, () => {
@@ -160,11 +160,8 @@ namespace AIChatExplorer.ViewModel.Main {
         // 
         public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };
 
-        public bool IsIndeterminate { get; private set; } = false;
         public void UpdateIndeterminate(bool visible) {
-            IsIndeterminate = visible;
-            OnPropertyChanged(nameof(IsIndeterminate));
-            // SelectedItemを更新
+            CommonViewModelProperties.UpdateIndeterminate(visible);
             if (visible == false) {
                 OnPropertyChanged(nameof(MainPanelDataGridViewControlViewModel.SelectedItem));
             }
@@ -176,7 +173,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
-                return IsClipboardMonitoringActive ? StringResources.StopClipboardWatch : StringResources.StartClipboardWatch;
+                return IsClipboardMonitoringActive ? CommonStringResources.Instance.StopClipboardWatch : CommonStringResources.Instance.StartClipboardWatch;
             }
         }
 

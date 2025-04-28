@@ -8,9 +8,10 @@ using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.VectorDB;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenAgentViewModel : ChatViewModelBase {
+    public class EditAutoGenAgentViewModel : CommonViewModelBase {
         public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action afterUpdate) {
             AutoGenAgent = autoGenAgent;
             RootFolderViewModels = rootFolderViewModels;

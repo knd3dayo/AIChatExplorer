@@ -3,12 +3,13 @@ using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
-    public class EditPromptItemWindowViewModel : ChatViewModelBase {
+    public class EditPromptItemWindowViewModel : CommonViewModelBase {
 
 
         // 初期化
@@ -235,12 +236,12 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
             // Nameが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Name)) {
-                LogWrapper.Error(StringResources.EnterName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterName);
                 return;
             }
             // Descriptionが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Description)) {
-                LogWrapper.Error(StringResources.EnterDescription);
+                LogWrapper.Error(CommonStringResources.Instance.EnterDescription);
                 return;
             }
             // LogWrapper

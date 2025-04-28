@@ -6,6 +6,7 @@ using AIChatExplorer.Model.Item;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -47,12 +48,12 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
         public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
             try {
                 OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
-                folderViewModel.UpdateIndeterminate(true);
+                CommonViewModelProperties.Instance.UpdateIndeterminate(true);
                 await Task.Run(() => {
                     folder.SyncItems();
                 });
             } finally {
-                folderViewModel.UpdateIndeterminate(false);
+                CommonViewModelProperties.Instance.UpdateIndeterminate(false);
             }
             folderViewModel.LoadItems();
 

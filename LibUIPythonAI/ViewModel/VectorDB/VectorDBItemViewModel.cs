@@ -1,8 +1,9 @@
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
-    public class VectorDBItemViewModel(VectorDBItem item) : ChatViewModelBase {
+    public class VectorDBItemViewModel(VectorDBItem item) : CommonViewModelBase {
         public VectorDBItem Item { get; private set; } = item;
 
 

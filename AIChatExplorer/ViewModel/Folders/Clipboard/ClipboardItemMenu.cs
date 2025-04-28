@@ -3,12 +3,13 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Folders.Clipboard {
-    public class ClipboardItemMenu : AppViewModelBase {
+    public class ClipboardItemMenu : CommonViewModelBase {
 
         public ContentItemViewModel ClipboardItemViewModel { get; private set; }
 
@@ -36,11 +37,11 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // プロンプトメニュー
             MenuItem promptMenuItem = new() {
-                Header = StringResources.PromptMenu,
+                Header = CommonStringResources.Instance.PromptMenu,
             };
             // タイトルを生成
             MenuItem generateTitleMenuItem = new() {
-                Header = StringResources.GenerateTitle,
+                Header = CommonStringResources.Instance.GenerateTitle,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = AppCommands.GenerateTitleCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
@@ -50,7 +51,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // 背景情報生成
             MenuItem generateBackgroundInfoMenuItem = new() {
-                Header = StringResources.GenerateBackgroundInfo,
+                Header = CommonStringResources.Instance.GenerateBackgroundInfo,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = AppCommands.GenerateBackgroundInfoCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
@@ -59,7 +60,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // サマリーを生成
             MenuItem generateSummaryMenuItem = new() {
-                Header = StringResources.GenerateSummary,
+                Header = CommonStringResources.Instance.GenerateSummary,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = AppCommands.GenerateSummaryCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
@@ -68,7 +69,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // 課題リストを生成
             MenuItem generateTasksMenuItem = new() {
-                Header = StringResources.GenerateTasks,
+                Header = CommonStringResources.Instance.GenerateTasks,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = AppCommands.GenerateTasksCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
@@ -77,7 +78,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // 文書信頼度をチェック
             MenuItem checkDocumentTrustMenuItem = new() {
-                Header = StringResources.CheckDocumentReliability,
+                Header = CommonStringResources.Instance.CheckDocumentReliability,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = AppCommands.CheckDocumentReliabilityCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
@@ -86,7 +87,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
             // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
             MenuItem otherPromptMenuItem = new() {
-                Header = StringResources.OtherPrompts,
+                Header = CommonStringResources.Instance.OtherPrompts,
             };
             // DBからプロンプトテンプレートを取得し、選択させる
             List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
@@ -143,7 +144,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem CreateMenuItem {
             get {
                 MenuItem createMenuItem = new() {
-                    Header = StringResources.Copy,
+                    Header = CommonStringResources.Instance.Copy,
                     // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                     Command = AppCommands.CopyItemCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
@@ -157,7 +158,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem OpenMenuItem {
             get {
                 MenuItem openMenuItem = new() {
-                    Header = StringResources.Open,
+                    Header = CommonStringResources.Instance.Open,
                     Command = AppCommands.OpenItemCommand,
                     CommandParameter = ClipboardItemViewModel,
                     InputGestureText = "Ctrl+O"
@@ -169,7 +170,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem OpenContentAsFileMenuItem {
             get {
                 MenuItem openContentAsFileMenuItem = new() {
-                    Header = StringResources.OpenTextAsFile,
+                    Header = CommonStringResources.Instance.OpenTextAsFile,
                     Command = AppCommands.OpenContentAsFileCommand,
                     CommandParameter = ClipboardItemViewModel,
                     InputGestureText = "Ctrl+Shit+O"
@@ -195,7 +196,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 // 削除
                 MenuItem deleteMnuItem = new() {
-                    Header = StringResources.Delete,
+                    Header = CommonStringResources.Instance.Delete,
                     // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                     Command = AppCommands.DeleteItemsCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
@@ -208,7 +209,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem GenerateVectorMenuItem {
             get {
                 MenuItem generateVectorMenuItem = new() {
-                    Header = StringResources.GenerateVector,
+                    Header = CommonStringResources.Instance.GenerateVector,
                     // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                     Command = AppCommands.GenerateVectorCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
@@ -221,7 +222,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem VectorSearchMenuItem {
             get {
                 MenuItem vectorSearchMenuItem = new() {
-                    Header = StringResources.VectorSearch,
+                    Header = CommonStringResources.Instance.VectorSearch,
                     // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
                     Command = AppCommands.VectorSearchCommand,
                     CommandParameter = ClipboardItemViewModel
@@ -233,7 +234,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem ExtractTextMenuItem {
             get {
                 MenuItem extractTextMenuItem = new() {
-                    Header = StringResources.ExtractText,
+                    Header = CommonStringResources.Instance.ExtractText,
                     Command = AppCommands.ExtractTextCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems
                 };
@@ -244,7 +245,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         public MenuItem MergeChatMenuItem {
             get {
                 MenuItem mergeChatMenuItem = new() {
-                    Header = StringResources.MergeChat,
+                    Header = CommonStringResources.Instance.MergeChat,
                     Command = MainWindowViewModel.Instance.OpenSelectedItemsMergeChatWindow,
                     CommandParameter = ClipboardItemViewModel
                 };

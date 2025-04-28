@@ -61,7 +61,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Chat, Mode=OneTime}">
+                    Header="{x:Static res:ViewStringResources.Chat}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -183,7 +183,7 @@
                                     materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                                     AcceptsReturn="True"
                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                                    TextWrappingMode="{Binding TextWrappingMode}" />
+                                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                             </ScrollViewer>
                         </Grid>
                     </Grid>
@@ -197,8 +197,7 @@
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding PreviewJson, Mode=OneWay}"
-                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                            Text="{Binding PreviewJson, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <TabItem
@@ -212,8 +211,7 @@
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}"
-                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <i:Interaction.Triggers>
@@ -282,7 +280,7 @@
             </Grid>
             <ProgressBar
                 Grid.Row="0"
-                IsIndeterminate="{Binding IsIndeterminate}"
+                IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
                 Style="{StaticResource MaterialDesignCircularProgressBar}"
                 Value="0" />
 

@@ -1,8 +1,9 @@
 using System.Windows;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Tag {
-    public class TagSearchWindowViewModel : ChatViewModelBase {
+    public class TagSearchWindowViewModel : CommonViewModelBase {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
         public TagSearchWindowViewModel(Action<string, bool> afterUpdate) {

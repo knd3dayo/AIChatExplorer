@@ -9,7 +9,7 @@ using LibPythonAI.Utils.Common;
 using PythonAILib.Resources;
 
 namespace LibUIMergeChat.ViewModel {
-    public class MergeTargetDataGridViewControlViewModel : ChatViewModelBase {
+    public class MergeTargetDataGridViewControlViewModel : CommonViewModelBase {
 
         public MergeTargetDataGridViewControlViewModel(Action<bool> updateIndeterminateAction) {
             UpdateIndeterminateAction = updateIndeterminateAction;

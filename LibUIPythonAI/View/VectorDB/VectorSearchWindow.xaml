@@ -78,7 +78,7 @@
             Grid.Row="1"
             Margin="10,10,0,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -164,7 +164,7 @@
                         <DataGridTextColumn
                             Width="100"
                             Binding="{Binding SourcePath}"
-                            Header="SourcePath" />                        
+                            Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -205,7 +205,7 @@
                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                 AcceptsReturn="True"
                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                TextWrappingMode="{Binding TextWrappingMode}" />
+                TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
         </ScrollViewer>
         <DockPanel Grid.Row="4" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -256,7 +256,7 @@
         <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

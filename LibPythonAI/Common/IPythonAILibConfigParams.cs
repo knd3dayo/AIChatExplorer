@@ -83,6 +83,8 @@ namespace PythonAILib.Common {
         // DevFeaturesEnabled
         public bool DevFeaturesEnabled();
 
+        public void UpdateDevFeaturesEnabled(bool value);
+
         // GUI
         public TextWrapping GetTextWrapping();
 
@@ -90,5 +92,16 @@ namespace PythonAILib.Common {
         public bool IsMarkdownView();
 
         public void UpdateMarkdownView(bool value);
+
+        // TextWrapping
+        public bool IsTextWrapping();
+        public void UpdateTextWrapping(TextWrapping value);
+
+        // AutoTextWrapping
+        public bool IsAutoTextWrapping();
+
+        public void UpdateAutoTextWrapping(bool value);
+
+
     }
 }

@@ -112,7 +112,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsReadOnly="True"
                 Text="{Binding ChatItem.Content, Mode=OneWay}"
-                TextWrapping="{Binding TextWrapping, Mode=OneWay}"
+                TextWrapping="{Binding CommonViewModelProperties.TextWrapping, Mode=OneWay}"
                 VerticalScrollBarVisibility="Auto" />
             <editorControl:MyTextBox
                 x:Name="textBox2"
@@ -123,7 +123,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsReadOnly="True"
                 Text="{Binding ChatItem.SourcesString, Mode=OneWay}"
-                TextWrapping="{Binding TextWrapping, Mode=OneWay}"
+                TextWrapping="{Binding CommonViewModelProperties.TextWrapping, Mode=OneWay}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">

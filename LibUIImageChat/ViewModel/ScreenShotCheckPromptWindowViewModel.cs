@@ -1,13 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Image;
 
 namespace LibUIImageChat.ViewModel {
 
-    public class ScreenShotCheckPromptWindowViewModel : ChatViewModelBase {
+    public class ScreenShotCheckPromptWindowViewModel : CommonViewModelBase {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 
         public ObservableCollection<ScreenShotCheckCondition> ScreenShotCheckItems { get; set; } = [];

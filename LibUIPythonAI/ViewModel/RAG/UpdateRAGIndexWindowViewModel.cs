@@ -5,9 +5,10 @@ using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.RAG {
-    internal class UpdateRAGIndexWindowViewModel : ChatViewModelBase {
+    internal class UpdateRAGIndexWindowViewModel : CommonViewModelBase {
         public UpdateRAGIndexWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action) {
 
             this.itemViewModel = itemViewModel;
@@ -96,7 +97,7 @@ namespace LibUIPythonAI.ViewModel.RAG {
 
         public string TargetFilesInfo {
             get {
-                return $"{StringResources.IndexingTargetFile}:{addedFilesCount} {StringResources.AddFile} {modifiedFilesCount} {StringResources.UpdateFile} {deletedFilesCount} {StringResources.DeleteFile}";
+                return $"{CommonStringResources.Instance.IndexingTargetFile}:{addedFilesCount} {CommonStringResources.Instance.AddFile} {modifiedFilesCount} {CommonStringResources.Instance.UpdateFile} {deletedFilesCount} {CommonStringResources.Instance.DeleteFile}";
             }
         }
         // インデックス化対象ファイルのリスト
@@ -109,14 +110,14 @@ namespace LibUIPythonAI.ViewModel.RAG {
         // インデックス作成中および完了時の場合はボタン自体を非表示にする
         public string OkButtonText {
             get {
-                return Mode == 0 ? StringResources.GetTargetFile : StringResources.CreateIndex;
+                return Mode == 0 ? CommonStringResources.Instance.GetTargetFile : CommonStringResources.Instance.CreateIndex;
             }
         }
         // キャンセルボタンのテキスト　初期表示は"閉じる"、インデックス作成準備モードの場合は戻る、インデックス作成中の場合は"停止"
         // インデックス作成管理時は初期状態に戻す
         public string CancelButtonText {
             get {
-                return Mode == 0 ? StringResources.Close : Mode == 1 ? StringResources.Back : Mode == 2 ? StringResources.Stop : StringResources.Close;
+                return Mode == 0 ? CommonStringResources.Instance.Close : Mode == 1 ? CommonStringResources.Instance.Back : Mode == 2 ? CommonStringResources.Instance.Stop : CommonStringResources.Instance.Close;
             }
         }
         // 対象ファイル一覧のVisibility
@@ -137,20 +138,12 @@ namespace LibUIPythonAI.ViewModel.RAG {
                 return Mode == 2 || Mode == 3 ? Visibility.Collapsed : Visibility.Visible;
             }
         }
-        // プログレスインジケーターを表示するかどうか
-        private bool isIndeterminate = false;
-        public bool IsIndeterminate {
-            get => isIndeterminate;
-            set {
-                isIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
-            }
-        }
+
 
         // SelectRangeStartCommand
         public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) => {
             if (itemViewModel == null) {
-                LogWrapper.Error(StringResources.RAGSourceItemViewModelNotSet);
+                LogWrapper.Error(CommonStringResources.Instance.RAGSourceItemViewModelNotSet);
                 return;
             }
             // ラジオボタンの選択をIsRangeに変更
@@ -242,16 +235,16 @@ namespace LibUIPythonAI.ViewModel.RAG {
         // OKボタンのコマンド
         public SimpleDelegateCommand<object> OkButtonCommand => new(async (parameter) => {
             if (itemViewModel == null) {
-                LogWrapper.Error(StringResources.RAGSourceItemViewModelNotSet);
+                LogWrapper.Error(CommonStringResources.Instance.RAGSourceItemViewModelNotSet);
                 return;
             }
             if (IsRange) {
                 if (string.IsNullOrEmpty(RangeStart)) {
-                    LogWrapper.Error(StringResources.SpecifyStartCommit);
+                    LogWrapper.Error(CommonStringResources.Instance.SpecifyStartCommit);
                     return;
                 }
             } else if (IsAllCommit == false && IsAfterLastIndexedCommit == false) {
-                LogWrapper.Error(StringResources.SelectTarget);
+                LogWrapper.Error(CommonStringResources.Instance.SelectTarget);
                 return;
             }
             if (Mode == 0) {
@@ -266,21 +259,21 @@ namespace LibUIPythonAI.ViewModel.RAG {
                 try {
                     IndexingStatusText = "";
                     int fileCount = TargetFiles.Count;
-                    IsIndeterminate = true;
+                    CommonViewModelProperties.UpdateIndeterminate(true);
                     int totalTokenCount = 0;
                     for (int i = 0; i < fileCount; i++) {
                         var file = TargetFiles[i];
                         // LangChainでは現在、Embeddingのトークンが取得できない.(https://github.com/langchain-ai/langchain/issues/20799)
                         // IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}] トークン数:[{totalTokenCount}]";
-                        IndexingStatusSummaryText = $"{StringResources.ProcessedFileCount}:[{i + 1}/{fileCount}]";
+                        IndexingStatusSummaryText = $"{CommonStringResources.Instance.ProcessedFileCount}:[{i + 1}/{fileCount}]";
 
                         // 更新処理を開始
                         UpdateIndexResult result = new();
-                        IndexingStatusText += $"[{i + 1}/{fileCount}] {file.Path} {StringResources.CreatingIndex}...";
+                        IndexingStatusText += $"[{i + 1}/{fileCount}] {file.Path} {CommonStringResources.Instance.CreatingIndex}...";
                         Task task = new(() => {
                             // キャンセル用タスクの実行
                             Task.Run(() => {
-                                while (IsIndeterminate) {
+                                while (CommonViewModelProperties.IsIndeterminate) {
 
                                     if (tokenSource.Token.IsCancellationRequested) {
                                         tokenSource.Token.ThrowIfCancellationRequested();
@@ -296,18 +289,18 @@ namespace LibUIPythonAI.ViewModel.RAG {
 
                         // resultがSuccessの場合
                         if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Success) {
-                            IndexingStatusText += $"{StringResources.Completed}\n";
+                            IndexingStatusText += $"{CommonStringResources.Instance.Completed}\n";
                         } else if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType) {
-                            IndexingStatusText += StringResources.SkipUnsupportedFileType;
+                            IndexingStatusText += CommonStringResources.Instance.SkipUnsupportedFileType;
                         } else {
-                            IndexingStatusText += $"{StringResources.Failed}:{result.Message}\n";
+                            IndexingStatusText += $"{CommonStringResources.Instance.Failed}:{result.Message}\n";
                         }
 
                         // IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}] トークン数:[{totalTokenCount}]";
-                        IndexingStatusSummaryText = $"{StringResources.ProcessedFileCount}:[{i + 1}/{fileCount}]";
+                        IndexingStatusSummaryText = $"{CommonStringResources.Instance.ProcessedFileCount}:[{i + 1}/{fileCount}]";
 
                     }
-                    IsIndeterminate = false;
+                    CommonViewModelProperties.UpdateIndeterminate(false);
                     SetMode(3);
                     // LastIndexCommitHashを更新
                     itemViewModel.Item.SetLastIndexCommitHash();
@@ -316,20 +309,20 @@ namespace LibUIPythonAI.ViewModel.RAG {
                     itemViewModel.Item.Save();
 
                     // 完了通知のメッセージボックス
-                    MessageBox.Show(StringResources.IndexCreationCompleted, StringResources.Completed, MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(CommonStringResources.Instance.IndexCreationCompleted, CommonStringResources.Instance.Completed, MessageBoxButton.OK, MessageBoxImage.Information);
                     afterUpdate(itemViewModel);
                     if (parameter is not Window window) {
                         return;
                     }
                 } catch (OperationCanceledException) {
-                    LogWrapper.Info(StringResources.IndexCreationInterrupted);
+                    LogWrapper.Info(CommonStringResources.Instance.IndexCreationInterrupted);
                     SetMode(1);
                 } catch (Exception e) {
-                    LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage} {e.Message}\n[{StringResources.StackTrace}]\n{e.StackTrace}");
+                    LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage} {e.Message}\n[{CommonStringResources.Instance.StackTrace}]\n{e.StackTrace}");
                     SetMode(1);
 
                 } finally {
-                    IsIndeterminate = false;
+                    CommonViewModelProperties.UpdateIndeterminate(false);
                 }
             }
         });

@@ -5,15 +5,15 @@ using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Common;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
-    public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {
+    public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : CommonViewModelBase {
         public ContentItemWrapper ContentItem { get; set; } = contentItemBase;
 
         // FolderViewModel
@@ -45,8 +45,8 @@ namespace LibUIPythonAI.ViewModel.Item {
         }
 
         // Tags
-        public HashSet<string> Tags { 
-            get => ContentItem.Tags; 
+        public HashSet<string> Tags {
+            get => ContentItem.Tags;
             set => ContentItem.Tags = value;
         }
 
@@ -143,15 +143,15 @@ namespace LibUIPythonAI.ViewModel.Item {
         public string ContentPanelContentHint {
             get {
                 if (ContentItem.SourceType == ContentSourceType.File) {
-                    return StringResources.ExecuteExtractTextToViewFileContent;
+                    return CommonStringResources.Instance.ExecuteExtractTextToViewFileContent;
                 }
                 // URLの場合
                 if (ContentItem.SourceType == ContentSourceType.Url) {
-                    return StringResources.ExecuteDownloadWebPageToViewContent;
+                    return CommonStringResources.Instance.ExecuteDownloadWebPageToViewContent;
                 }
                 // 画像の場合
                 if (ContentItem.ContentType == ContentTypes.ContentItemTypes.Image) {
-                    return StringResources.ExecuteExtractTextToViewFileContent;
+                    return CommonStringResources.Instance.ExecuteExtractTextToViewFileContent;
                 }
 
                 return "";
@@ -159,15 +159,17 @@ namespace LibUIPythonAI.ViewModel.Item {
         }
 
         // TabItems 
+        private readonly ObservableCollection<TabItem> tabItems = [];
         public ObservableCollection<TabItem> TabItems {
             get {
-                ObservableCollection<TabItem> tabItems = [];
+                tabItems.Clear();
+
                 // SourcePath 
                 ContentPanel contentPanel = new() {
                     DataContext = this,
                 };
                 TabItem contentTabItem = new() {
-                    Header = StringResources.Text,
+                    Header = CommonStringResources.Instance.Text,
                     Content = contentPanel,
                     Height = double.NaN,
                     Width = double.NaN,
@@ -182,7 +184,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                     DataContext = this,
                 };
                 TabItem fileTabItem = new() {
-                    Header = StringResources.FileOrImage,
+                    Header = CommonStringResources.Instance.FileOrImage,
                     Content = filePanel,
                     Height = double.NaN,
                     Width = double.NaN,
@@ -194,7 +196,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 tabItems.Add(fileTabItem);
                 // ChatItemsTextのタブ
                 TabItem chatItemsText = new() {
-                    Header = StringResources.ChatContent,
+                    Header = CommonStringResources.Instance.ChatContent,
                     Content = new ChatItemsTextPanel() { DataContext = this },
                     Height = double.NaN,
                     Width = double.NaN,
@@ -210,6 +212,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
                     tabItems.Add(promptTabItem);
                 }
+
                 return tabItems;
             }
 

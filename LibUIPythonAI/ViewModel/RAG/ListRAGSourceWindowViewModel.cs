@@ -6,12 +6,13 @@ using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Data;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListRAGSourceWindowViewModel : ChatViewModelBase {
+    public class ListRAGSourceWindowViewModel : CommonViewModelBase {
 
         public ListRAGSourceWindowViewModel() {
             // RagSourceItemのリストを初期化
@@ -61,7 +62,7 @@ namespace LibUIPythonAI.ViewModel.RAG {
         // RAG Sourceの編集
         public SimpleDelegateCommand<object> EditRagSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
-                LogWrapper.Error(StringResources.SelectRAGSourceToEdit);
+                LogWrapper.Error(CommonStringResources.Instance.SelectRAGSourceToEdit);
                 return;
             }
             // RAG Sourceの編集Windowを開く
@@ -82,11 +83,11 @@ namespace LibUIPythonAI.ViewModel.RAG {
         // DeleteRAGSourceCommand
         public SimpleDelegateCommand<object> DeleteRAGSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
-                LogWrapper.Error(StringResources.SelectRAGSourceToDelete);
+                LogWrapper.Error(CommonStringResources.Instance.SelectRAGSourceToDelete);
                 return;
             }
             // 確認ダイアログを表示
-            MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedRAGSource, StringResources.Confirm, MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedRAGSource, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
 
                 // 削除

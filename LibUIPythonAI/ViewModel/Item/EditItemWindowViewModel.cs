@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.ViewModel.Folder;
@@ -15,7 +16,7 @@ namespace LibUIPythonAI.ViewModel.Item {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : ChatViewModelBase {
+    public class EditItemWindowViewModel : CommonViewModelBase {
 
         public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action afterUpdate) {
 
@@ -30,7 +31,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
             // StatusText.Readyにフォルダ名を設定
             StatusText statusText = StatusText.Instance;
-            statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
+            statusText.ReadyText = $"{CommonStringResources.Instance.Folder}:[{FolderViewModel.FolderName}]";
 
             CommonViewModelProperties.PropertyChanged += OnPropertyChanged;
 

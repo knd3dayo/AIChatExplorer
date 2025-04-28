@@ -1,7 +1,8 @@
 using LibPythonAI.Model.Tag;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.Tag {
-    public class TagItemViewModel : ChatViewModelBase {
+    public class TagItemViewModel : CommonViewModelBase {
 
         // コンストラクタ
         public TagItemViewModel(TagItem tagItem) {

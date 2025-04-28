@@ -3,6 +3,7 @@ using System.Windows;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
@@ -11,7 +12,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListVectorDBWindowViewModel : ChatViewModelBase {
+    public class ListVectorDBWindowViewModel : CommonViewModelBase {
 
         public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBProperty> callBackup) {
 
@@ -117,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // Vector DB編集
         public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error(StringResources.SelectVectorDBToEdit);
+                LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBToEdit);
                 return;
             }
             // ベクトルDBの編集Windowを開く
@@ -131,11 +132,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // DeleteVectorDBCommand
         public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error(StringResources.SelectVectorDBToDelete);
+                LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBToDelete);
                 return;
             }
             // 確認ダイアログを表示
-            MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedVectorDB, StringResources.Confirm, MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedVectorDB, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
 
                 Task.Run(() => {
@@ -160,7 +161,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
             if (SelectedTabIndex == 0) {
                 if (SelectedVectorDBItem == null) {
-                    LogWrapper.Error(StringResources.SelectVectorDBPlease);
+                    LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
                 VectorDBProperty? prop = new() { VectorDBItemId = SelectedVectorDBItem.Item.Id };
@@ -170,7 +171,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             else if (SelectedTabIndex == 1) {
                 VectorDBProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
                 if (item == null) {
-                    LogWrapper.Error(StringResources.SelectVectorDBPlease);
+                    LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
                 callBackup?.Invoke(item);

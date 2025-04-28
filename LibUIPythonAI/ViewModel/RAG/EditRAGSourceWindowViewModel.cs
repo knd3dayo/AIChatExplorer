@@ -1,10 +1,11 @@
 using System.Windows;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.RAG;
 
 namespace LibUIPythonAI.ViewModel.RAG {
-    public class EditRAGSourceWindowViewModel : ChatViewModelBase {
+    public class EditRAGSourceWindowViewModel : CommonViewModelBase {
 
         // 初期化
         public EditRAGSourceWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
@@ -68,7 +69,7 @@ namespace LibUIPythonAI.ViewModel.RAG {
         public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) => {
             try {
                 if (ItemViewModel == null) {
-                    LogWrapper.Error(StringResources.ItemViewModelIsNull);
+                    LogWrapper.Error(CommonStringResources.Instance.ItemViewModelIsNull);
                     return;
                 }
                 ItemViewModel.SourceURL = "";

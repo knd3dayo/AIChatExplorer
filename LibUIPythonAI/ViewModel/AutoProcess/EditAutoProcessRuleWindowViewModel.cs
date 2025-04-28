@@ -7,6 +7,7 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.PromptTemplate;
@@ -17,7 +18,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
-    public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {
+    public class EditAutoProcessRuleWindowViewModel : CommonViewModelBase {
 
         // 初期化
         public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<AutoProcessRule> afterUpdate) {
@@ -235,7 +236,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(StringResources.EnterANumber);
+                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
                     return;
                 }
                 _MinTextLineCount = intValue;
@@ -267,7 +268,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(StringResources.EnterANumber);
+                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
                     return;
                 }
 
@@ -377,24 +378,24 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
-                LogWrapper.Error(StringResources.FolderNotSelected);
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             // RuleNameが空の場合はエラー
             if (string.IsNullOrEmpty(RuleName)) {
-                LogWrapper.Error(StringResources.EnterRuleName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterRuleName);
                 return;
             }
             // SelectedAutoProcessItemが空の場合はエラー
             if (SelectedAutoProcessItem == null) {
-                LogWrapper.Error(StringResources.SelectAction);
+                LogWrapper.Error(CommonStringResources.Instance.SelectAction);
                 return;
             }
 
             // 編集
             else {
                 if (TargetAutoProcessRule == null) {
-                    LogWrapper.Error(StringResources.RuleNotFound);
+                    LogWrapper.Error(CommonStringResources.Instance.RuleNotFound);
                     return;
                 }
                 TargetAutoProcessRule.Conditions.Clear();
@@ -486,26 +487,26 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
                 if (SelectedAutoProcessItem.IsCopyOrMoveAction()) {
                     if (DestinationFolder == null) {
-                        LogWrapper.Error(StringResources.SelectCopyOrMoveTargetFolder);
+                        LogWrapper.Error(CommonStringResources.Instance.SelectCopyOrMoveTargetFolder);
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
                     if (TargetFolder.Id == DestinationFolder.Id) {
-                        LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
+                        LogWrapper.Error(CommonStringResources.Instance.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
                     TargetAutoProcessRule.DestinationFolder = DestinationFolder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
-                    LogWrapper.Error(StringResources.DetectedAnInfiniteLoopInCopyMoveProcessing);
+                    LogWrapper.Error(CommonStringResources.Instance.DetectedAnInfiniteLoopInCopyMoveProcessing);
                     return;
                 }
             }
             // IsPromptTemplateCheckedがTrueの場合はSelectedPromptItemを追加
             else if (IsPromptTemplateChecked) {
                 if (SelectedPromptItem == null) {
-                    LogWrapper.Error(StringResources.SelectPromptTemplate);
+                    LogWrapper.Error(CommonStringResources.Instance.SelectPromptTemplate);
                     return;
                 }
                 // キャスト
@@ -537,7 +538,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
             // コピーor移動先が同じフォルダの場合はエラー
             if (folder.Id == TargetFolder?.Id) {
-                LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
+                LogWrapper.Error(CommonStringResources.Instance.CannotCopyOrMoveToTheSameFolder);
                 return;
             }
             DestinationFolder = folder;

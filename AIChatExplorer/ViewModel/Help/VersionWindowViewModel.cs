@@ -2,7 +2,7 @@ using AIChatExplorer.ViewModel.Main;
 using LibUIPythonAI.Resource;
 
 namespace AIChatExplorer.ViewModel.Help {
-    public class VersionWindowViewModel : AppViewModelBase {
+    public class VersionWindowViewModel : CommonViewModelBase {
 
         public string Version { get; set; }
 

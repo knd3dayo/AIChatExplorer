@@ -2,13 +2,14 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.AutoGen;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
 using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class ListAutoGenItemWindowViewModel : ChatViewModelBase {
+    public class ListAutoGenItemWindowViewModel : CommonViewModelBase {
 
         public ObservableCollection<AutoGenAgent> AutoGenAgents { get; set; } = [];
 

@@ -3,9 +3,10 @@ using PythonAILib.Model.Chat;
 using LibUIPythonAI.Utils;
 using System.Windows;
 using System.ComponentModel;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.Chat {
-    public class EditChatItemWindowViewModel : ChatViewModelBase {
+    public class EditChatItemWindowViewModel : CommonViewModelBase {
 
         public ChatMessage ChatItem { get; set; }
 

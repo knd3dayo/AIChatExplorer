@@ -15,9 +15,10 @@ using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Image;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Python;
+using LibUIPythonAI.Resource;
 
 namespace LibUIImageChat.ViewModel {
-    public class ImageChatWindowViewModel : ChatViewModelBase {
+    public class ImageChatWindowViewModel : CommonViewModelBase {
         // コンストラクタ
         public ImageChatWindowViewModel(ContentItemWrapper clipboardItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
@@ -108,7 +109,7 @@ namespace LibUIImageChat.ViewModel {
                 ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
 
                 // ScreenShotCheckItemsを文字列に変換
-                string result = StringResources.ConfirmTheFollowingSentencesAreCorrectOrNot;
+                string result = CommonStringResources.Instance.ConfirmTheFollowingSentencesAreCorrectOrNot;
                 foreach (ScreenShotCheckCondition item in Conditions) {
                     result += "- " + item.ToPromptString() + "\n";
                 }
@@ -131,13 +132,13 @@ namespace LibUIImageChat.ViewModel {
 
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
-                LogWrapper.Error(StringResources.NoImageFileSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoImageFileSelected);
                 return;
             }
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // プログレスバーを表示
-                UpdateIndeterminate( true);
+                CommonViewModelProperties.UpdateIndeterminate( true);
 
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信
@@ -158,16 +159,16 @@ namespace LibUIImageChat.ViewModel {
                 });
                 // 結果を表示
                 if (result == null) {
-                    LogWrapper.Error(StringResources.ErrorOccurred);
+                    LogWrapper.Error(CommonStringResources.Instance.ErrorOccurred);
                     return;
                 }
                 ResultText = result.Output;
 
 
             } catch (Exception e) {
-                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
+                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
             } finally {
-                UpdateIndeterminate(false);
+                CommonViewModelProperties.UpdateIndeterminate(false);
             }
 
         });
@@ -178,12 +179,12 @@ namespace LibUIImageChat.ViewModel {
             //ファイルダイアログを表示
             // 画像ファイルを選択して画像ファイル名一覧に追加
             CommonOpenFileDialog dialog = new() {
-                Title = StringResources.SelectImageFilePlease,
+                Title = CommonStringResources.Instance.SelectImageFilePlease,
                 InitialDirectory = lastSelectedImageFolder,
                 Multiselect = true,
                 Filters = {
-                    new CommonFileDialogFilter(StringResources.ImageFile, "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
-                    new CommonFileDialogFilter(StringResources.AllFiles, "*.*"),
+                    new CommonFileDialogFilter(CommonStringResources.Instance.ImageFile, "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
+                    new CommonFileDialogFilter(CommonStringResources.Instance.AllFiles, "*.*"),
                 }
             };
             var currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
@@ -226,7 +227,7 @@ namespace LibUIImageChat.ViewModel {
                 };
                 Process.Start(psi);
             } else {
-                LogWrapper.Error(StringResources.FileDoesNotExist);
+                LogWrapper.Error(CommonStringResources.Instance.FileDoesNotExist);
             }
         });
 

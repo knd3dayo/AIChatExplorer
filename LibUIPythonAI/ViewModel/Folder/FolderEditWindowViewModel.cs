@@ -2,12 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class FolderEditWindowViewModel : ChatViewModelBase {
+    public class FolderEditWindowViewModel : CommonViewModelBase {
 
         // 起動時の処理
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
@@ -101,12 +102,12 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
-                LogWrapper.Error(StringResources.EnterFolderName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterFolderName);
                 return;
             }
             //　説明がない場合はエラー
             if (FolderViewModel.Description == "") {
-                LogWrapper.Error(StringResources.EnterDescription);
+                LogWrapper.Error(CommonStringResources.Instance.EnterDescription);
                 return;
             }
             // VectorSearchPropertiesを設定

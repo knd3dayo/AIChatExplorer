@@ -5,9 +5,10 @@ using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.Content;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.Search {
-    public class SearchWindowViewModel : ChatViewModelBase {
+    public class SearchWindowViewModel : CommonViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
             ContentFolderWrapper searchFolder, 
@@ -111,7 +112,7 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
             set {
                 if (SearchConditionRule == null) {
-                    LogWrapper.Error(StringResources.SearchConditionRuleIsNull);
+                    LogWrapper.Error(CommonStringResources.Instance.SearchConditionRuleIsNull);
                     return;
                 }
                 SearchConditionRule.Name = value;
@@ -129,7 +130,7 @@ namespace LibUIPythonAI.ViewModel.Search {
 
         public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {
-                LogWrapper.Error(StringResources.NoSearchConditions);
+                LogWrapper.Error(CommonStringResources.Instance.NoSearchConditions);
                 return;
             }
             if (_isSearchFolder) {

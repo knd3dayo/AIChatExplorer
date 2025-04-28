@@ -4,11 +4,12 @@ using System.Windows.Controls;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Tag;
 
 namespace LibUIPythonAI.ViewModel.Tag {
-    public class TagWindowViewModel : ChatViewModelBase {
+    public class TagWindowViewModel : CommonViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
@@ -41,13 +42,13 @@ namespace LibUIPythonAI.ViewModel.Tag {
         // タグを追加したときの処理
         public SimpleDelegateCommand<string> AddTagCommand => new((tag) => {
             if (string.IsNullOrEmpty(tag)) {
-                LogWrapper.Error(StringResources.TagIsEmpty);
+                LogWrapper.Error(CommonStringResources.Instance.TagIsEmpty);
                 return;
             }
             //tagが既に存在するかチェック
             foreach (var item in TagList) {
                 if (item.Tag == tag) {
-                    LogWrapper.Error(StringResources.TagAlreadyExists);
+                    LogWrapper.Error(CommonStringResources.Instance.TagAlreadyExists);
                     return;
                 }
             }

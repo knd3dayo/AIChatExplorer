@@ -1,12 +1,10 @@
 using System.Windows;
 using AIChatExplorer.ViewModel.Settings;
-using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Common;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelViewModel: CommonViewModelBase {
+    public class MainPanelViewModel : CommonViewModelBase {
 
         public MainPanelViewModel(AppViewModelCommands commands) : base() {
             Commands = commands;
@@ -21,7 +19,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         public AppViewModelCommands Commands { get; set; }
-        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; } 
+        public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
 

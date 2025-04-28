@@ -68,7 +68,7 @@
         <TabControl
             Grid.Row="1"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <TabItem Header="{x:Static res:ViewStringResources.VectorDBList}">
                 <Grid>
                     <Grid.RowDefinitions>

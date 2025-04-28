@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource;assembly=LibUIPythonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor"
+    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor;assembly=LibUIPythonAI"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:LibUIMergeChat.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -54,7 +54,7 @@
                 Margin="10,0,10,0"
                 Padding="0"
                 FontSize="10"
-                Header="{Binding StringResources.Chat, Mode=OneTime}">
+                Header="{x:Static res:ViewStringResources.Chat}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="280" />
@@ -200,7 +200,7 @@
         </Grid>
         <ProgressBar
             Grid.Row="0"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>
