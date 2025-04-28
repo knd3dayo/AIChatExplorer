@@ -5,7 +5,7 @@ using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -26,7 +26,7 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
             ClipboardItem clipboardItem = new(Folder.Entity);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             QAChatStartupProps props = new(clipboardItemViewModel.ContentItem);
-            LibUIPythonAI.View.Chat.QAChatWindow.OpenOpenAIChatWindow(props);
+            LibUIPythonAI.View.Chat.ChatWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {

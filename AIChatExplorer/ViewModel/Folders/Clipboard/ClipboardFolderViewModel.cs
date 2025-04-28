@@ -89,16 +89,13 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
-            AppTabContainer container = new("New Item", editItemControl);
+            MainTabContent container = new("New Item", editItemControl);
 
             // UserControlをクローズする場合の処理を設定
-            editItemControl.SetCloseUserControl(() => {
-                MainWindowViewModel.Instance.RemoveTabItem(container);
+            editItemControl.SetCloseUserControl(() => { 
+                MainWindowViewModel.Instance.MainTabManager.RemoveTabItem(container);
             });
-
-            MainWindowViewModel.Instance.AddTabItem(container);
-
-
+           MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
         public virtual void PasteClipboardItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,

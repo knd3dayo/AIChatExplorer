@@ -13,4 +13,14 @@
     <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\Chat\AutoGenChatContextPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

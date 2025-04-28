@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class AppTabContainer : ObservableObject {
+    public class MainTabContent : ObservableObject {
 
         public static double HeaderWidthStatic { get; set; } = 200;
 
@@ -16,7 +16,7 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        public AppTabContainer(string tabName, UserControl tabContent) {
+        public MainTabContent(string tabName, UserControl tabContent) {
             _tabName = tabName;
             _tabContent = tabContent;
         }
@@ -49,8 +49,8 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // CloseTabCommand
         public SimpleDelegateCommand<object> CloseTabCommand => new((param) => {
-            if (param is AppTabContainer tabContainer) {
-                MainWindowViewModel.Instance.RemoveTabItem(tabContainer);
+            if (param is MainTabContent tabContainer) {
+                MainWindowViewModel.Instance.MainTabManager.RemoveTabItem(tabContainer);
             }
         });
     }

@@ -29,29 +29,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
             Instance = this;
 
-            //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
-            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.ProxyURL)) {
-                Environment.SetEnvironmentVariable("HTTP_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
-                Environment.SetEnvironmentVariable("HTTPS_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
-            }
-            // 環境変数NO_PROXYの設定
-            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.NoProxyList)) {
-                Environment.SetEnvironmentVariable("NO_PROXY", AIChatExplorerConfig.Instance.NoProxyList);
-            }
+            // PythonAILibManagerの初期化
+            InitPythonAILibManager();
 
-            AIChatExplorerPythonAILibConfigParams configParams = new();
-            PythonAILibManager.Init(configParams);
-
-            // VectorDBItemのLoad
-            Task.Run(() => {
-                VectorDBItem.LoadItems();
-            });
-
-
-            // ProgressIndicatorの表示更新用のアクションをセット
-            UpdateProgressCircleVisibility = (visible) => {
-                UpdateIndeterminate(visible);
-            };
             // Commandの初期化
             Commands = new(UpdateIndeterminate, () => {
                 // 現在選択中のフォルダをReload
@@ -75,6 +55,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 UpdateIndeterminateAction = UpdateIndeterminate,
 
             };
+            
             // MainPanelTreeViewControlViewModelの初期化
             MainPanelTreeViewControlViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
@@ -94,10 +75,10 @@ namespace AIChatExplorer.ViewModel.Main {
                 DataContext = mainPanelViewModel
             };
 
-            AppTabContainer container = new("main", mainPanel) {
+            MainTabContent container = new("main", mainPanel) {
                 CloseButtonVisibility = Visibility.Collapsed
             };
-            TabItems.Add(container);
+            MainTabManager.TabItems.Add(container);
 
 
             // AutoGenPropertiesの初期化
@@ -110,45 +91,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
 
-        public ObservableCollection<AppTabContainer> TabItems { get; set; } = [];
 
-
-        // メインウィンドウにアイテムのタブを追加
-        public void AddTabItem(AppTabContainer tabItem) {
-            if (ThisWindow == null) {
-                return;
-            }
-            // HeaderWidthを設定. 現在のタブ数 * AIChatExplorerTabContainerのHeaderWidth > ThisWindow.Widthの場合はThisWindow.Widthを超えないようにする
-            double tabControlWidth = ThisWindow.ActualWidth - 500;
-            if ((TabItems.Count + 1) * AppTabContainer.HeaderWidthStatic > tabControlWidth) {
-                AppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
-                for (int i = 1; i < TabItems.Count; i++) {
-                    TabItems[i].HeaderWidth = AppTabContainer.HeaderWidthStatic;
-                }
-            }
-
-            TabItems.Add(tabItem);
-            OnPropertyChanged(nameof(TabItems));
-            SelectedTabItem = tabItem;
-        }
-        // メインウィンドウからアイテムのタブを削除
-
-        public void RemoveTabItem(AppTabContainer tabItem) {
-            TabItems.Remove(tabItem);
-            OnPropertyChanged(nameof(TabItems));
-        }
-
-        // SelectedTabItem
-        private AppTabContainer? _selectedTabItem;
-        public AppTabContainer? SelectedTabItem {
-            get {
-                return _selectedTabItem;
-            }
-            set {
-                _selectedTabItem = value;
-                OnPropertyChanged(nameof(SelectedTabItem));
-            }
-        }
 
         // Null許容型
         [AllowNull]
@@ -156,9 +99,27 @@ namespace AIChatExplorer.ViewModel.Main {
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
 
+        // PythonAILibManagerの初期化
+        private void InitPythonAILibManager() {
+            //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
+            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.ProxyURL)) {
+                Environment.SetEnvironmentVariable("HTTP_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
+                Environment.SetEnvironmentVariable("HTTPS_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
+            }
+            // 環境変数NO_PROXYの設定
+            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.NoProxyList)) {
+                Environment.SetEnvironmentVariable("NO_PROXY", AIChatExplorerConfig.Instance.NoProxyList);
+            }
+
+            AIChatExplorerPythonAILibConfigParams configParams = new();
+            PythonAILibManager.Init(configParams);
+
+            // VectorDBItemのLoad
+            Task.Run(() => {
+                VectorDBItem.LoadItems();
+            });
+        }
         // プログレスインジケータ表示更新用のアクション
-        // 
-        public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };
 
         public void UpdateIndeterminate(bool visible) {
             CommonViewModelProperties.UpdateIndeterminate(visible);
@@ -166,6 +127,8 @@ namespace AIChatExplorer.ViewModel.Main {
                 OnPropertyChanged(nameof(MainPanelDataGridViewControlViewModel.SelectedItem));
             }
         }
+
+        public MainTabManager MainTabManager { get; } = new ();
 
         // クリップボード監視が実行中であるかどうか
         public bool IsClipboardMonitoringActive { get; set; } = false;
@@ -185,27 +148,6 @@ namespace AIChatExplorer.ViewModel.Main {
             OnPropertyChanged(propertyName);
         }
 
-        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            // Display exit confirmation dialog. If Yes, exit the application
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                Application.Current.Shutdown();
-            }
-        });
-
-        public SimpleDelegateCommand<AppTabContainer> CloseTabCommand => new((tabItem) => {
-            if (tabItem == null || TabItems.Count == 1) {
-                return;
-            }
-            TabItems.Remove(tabItem);
-            OnPropertyChanged(nameof(TabItems));
-        });
-
-        // クリップボード監視開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            Commands.StartStopClipboardMonitorCommand();
-        });
 
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
@@ -250,7 +192,7 @@ namespace AIChatExplorer.ViewModel.Main {
             VersionWindow.OpenVersionWindow();
         });
 
-        // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
+        // メニューの「OpenAIチャット」をクリックしたときの処理。
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
@@ -258,6 +200,13 @@ namespace AIChatExplorer.ViewModel.Main {
 
         });
 
+        // メニューの「AutoGenチャット」をクリックしたときの処理。
+        // チャット履歴フォルダーに新規作成
+        public SimpleDelegateCommand<object> OpenAutoGenChatWindow => new((parameter) => {
+
+            Commands.OpenAutoGenChatWindowCommandExecute();
+
+        });
 
         // OpenImageChatWindow
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {

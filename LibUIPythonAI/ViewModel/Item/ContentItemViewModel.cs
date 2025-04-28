@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Model.Content;
@@ -13,13 +14,20 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
-    public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : CommonViewModelBase {
-        public ContentItemWrapper ContentItem { get; set; } = contentItemBase;
+    public class ContentItemViewModel : CommonViewModelBase {
+
+        public ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) {
+            ContentItem = contentItemBase;
+            FolderViewModel = folderViewModel;
+            Commands = FolderViewModel.Commands;
+
+        }
+        public ContentItemWrapper ContentItem { get; set; }
 
         // FolderViewModel
-        public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
+        public ContentFolderViewModel FolderViewModel { get; set; }
 
-        public ContentItemViewModelCommands Commands { get; set; } = folderViewModel.Commands;
+        public ContentItemViewModelCommands Commands { get; set; }
 
         // IsSelected
         private bool isSelected = false;
@@ -49,16 +57,20 @@ namespace LibUIPythonAI.ViewModel.Item {
             get => ContentItem.Tags;
             set => ContentItem.Tags = value;
         }
+        // LastSelectedTabIndex
+        public int LastSelectedTabIndex { get; set; } = 0;
 
         // SelectedTabIndex
-        private int selectedTabIndex = 0;
+        private int selectedTabIndex = -1;
         public int SelectedTabIndex {
             get {
                 return selectedTabIndex;
             }
             set {
+                if (value >= TabItems.Count - 1) {
+                    value = TabItems.Count - 1;
+                }
                 selectedTabIndex = value;
-                // LastSelectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
@@ -158,117 +170,122 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
+        public void UpdateView() {
+            // 選択中のタブを更新する処理
+            UpdateTabItems();
+        }
         // TabItems 
-        private readonly ObservableCollection<TabItem> tabItems = [];
-        public ObservableCollection<TabItem> TabItems {
-            get {
-                tabItems.Clear();
+        public ObservableCollection<TabItem> TabItems { get; set; } = [];
 
-                // SourcePath 
-                ContentPanel contentPanel = new() {
-                    DataContext = this,
-                };
-                TabItem contentTabItem = new() {
-                    Header = CommonStringResources.Instance.Text,
-                    Content = contentPanel,
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = Visibility.Visible
-                };
-                tabItems.Add(contentTabItem);
-                // FileOrImage
-                FilePanel filePanel = new() {
-                    DataContext = this,
-                };
-                TabItem fileTabItem = new() {
-                    Header = CommonStringResources.Instance.FileOrImage,
-                    Content = filePanel,
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = FileTabVisibility
-                };
-                tabItems.Add(fileTabItem);
-                // ChatItemsTextのタブ
-                TabItem chatItemsText = new() {
-                    Header = CommonStringResources.Instance.ChatContent,
-                    Content = new ChatItemsTextPanel() { DataContext = this },
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = ChatItemsTextTabVisibility
-                };
+        private void UpdateTabItems() {
+            TabItems.Clear();
+            // SourcePath 
+            ContentPanel contentPanel = new() {
+                DataContext = this,
+            };
+            Binding binding = new() {
+                Source = ThisUserControl
+            };
 
-                tabItems.Add(chatItemsText);
+            TabItem contentTabItem = new();
+            TabItems.Add(contentTabItem);
 
-                // PromptResultのタブ
-                foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
-                    tabItems.Add(promptTabItem);
-                }
+            contentTabItem.Header = CommonStringResources.Instance.Text;
+            contentTabItem.Content = contentPanel;
+            contentTabItem.Height = double.NaN;
+            contentTabItem.Width = double.NaN;
+            contentTabItem.Margin = new Thickness(3, 0, 3, 0);
+            contentTabItem.Padding = new Thickness(0, 0, 0, 0);
+            contentTabItem.FontSize = 10;
+            contentTabItem.Visibility = Visibility.Visible;
 
-                return tabItems;
-            }
+
+
+            // FileOrImage
+            FilePanel filePanel = new() {
+                DataContext = this,
+            };
+            TabItem fileTabItem = new();
+            TabItems.Add(fileTabItem);
+
+            fileTabItem.Header = CommonStringResources.Instance.FileOrImage;
+            fileTabItem.Content = filePanel;
+            fileTabItem.Height = double.NaN;
+            fileTabItem.Width = double.NaN;
+            fileTabItem.Margin = new Thickness(3, 0, 3, 0);
+            fileTabItem.Padding = new Thickness(0, 0, 0, 0);
+            fileTabItem.FontSize = 10;
+            fileTabItem.Visibility = FileTabVisibility;
+
+
+            // ChatItemsTextのタブ
+            TabItem chatItemsText = new();
+            TabItems.Add(chatItemsText);
+
+            chatItemsText.Header = CommonStringResources.Instance.ChatContent;
+            chatItemsText.Content = new ChatItemsTextPanel() { DataContext = this };
+            chatItemsText.Height = double.NaN;
+            chatItemsText.Width = double.NaN;
+            chatItemsText.Margin = new Thickness(3, 0, 3, 0);
+            chatItemsText.Padding = new Thickness(0, 0, 0, 0);
+            chatItemsText.FontSize = 10;
+            chatItemsText.Visibility = ChatItemsTextTabVisibility;
+
+
+            // PromptResultのタブ
+            UpdateSystemPromptResultTabItems();
+
+            SelectedTabIndex = LastSelectedTabIndex;
+            OnPropertyChanged(nameof(TabItems));
 
         }
 
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
-        private ObservableCollection<TabItem> SystemPromptResultTabItems {
-            get {
-                ObservableCollection<TabItem> tabItems = [];
-                // PromptResultのタブ
-                List<string> promptNames = [
-                    SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
+        private void UpdateSystemPromptResultTabItems() {
+            // PromptResultのタブ
+            List<string> promptNames = [
+                SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     SystemDefinedPromptNames.TasksGeneration.ToString(),
                     SystemDefinedPromptNames.SummaryGeneration.ToString()
-                    ];
-                // PromptChatResultのエントリからPromptItemの名前を取得
-                foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
-                    if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
-                        continue;
-                    }
-                    promptNames.Add(name);
+                ];
+            // PromptChatResultのエントリからPromptItemの名前を取得
+            foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
+                if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                    continue;
+                }
+                promptNames.Add(name);
+            }
+
+            foreach (string promptName in promptNames) {
+                PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
+                PromptItem? item = PromptItem.GetPromptItemByName(promptName);
+                if (item == null) {
+                    continue;
                 }
 
-                foreach (string promptName in promptNames) {
-                    PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
-                    PromptItem? item = PromptItem.GetPromptItemByName(promptName);
-                    if (item == null) {
-                        continue;
-                    }
+                object content = item.PromptResultType switch {
+                    PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    _ => ""
+                };
+                Visibility visibility = item.PromptResultType switch {
+                    PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
+                    PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
+                    _ => Visibility.Collapsed
+                };
 
-                    object content = item.PromptResultType switch {
-                        PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
-                        PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
-                        _ => ""
-                    };
-                    Visibility visibility = item.PromptResultType switch {
-                        PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
-                        PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
-                        _ => Visibility.Collapsed
-                    };
+                TabItem promptTabItem = new();
+                TabItems.Add(promptTabItem);
 
-                    TabItem promptTabItem = new() {
-                        Header = item.Description,
-                        Content = content,
-                        Height = double.NaN,
-                        Width = double.NaN,
-                        Margin = new Thickness(3, 0, 3, 0),
-                        Padding = new Thickness(0, 0, 0, 0),
-                        FontSize = 10,
-                        Visibility = visibility
-                    };
-                    tabItems.Add(promptTabItem);
-                }
-
-                return tabItems;
+                promptTabItem.Header = item.Description;
+                promptTabItem.Content = content;
+                promptTabItem.Height = double.NaN;
+                promptTabItem.Width = double.NaN;
+                promptTabItem.Margin = new Thickness(3, 0, 3, 0);
+                promptTabItem.Padding = new Thickness(0, 0, 0, 0);
+                promptTabItem.FontSize = 10;
+                promptTabItem.Visibility = visibility;
             }
 
         }

@@ -90,6 +90,9 @@ namespace LibUIPythonAI.Resource {
         // マージチャット
         public override string MergeChat { get; } = "Merge Chat";
 
+        // AutoGenChat
+        public override string AutoGenChat { get; } = "AutoGen Chat";
+
         // Local FileSystem
         public override string FileSystem { get; } = "Local FileSystem";
 

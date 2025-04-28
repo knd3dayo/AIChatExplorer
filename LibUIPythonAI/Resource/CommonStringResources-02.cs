@@ -477,6 +477,11 @@ namespace LibUIPythonAI.Resource {
         // マージチャット
         public virtual string MergeChat { get; } = "マージチャット";
 
+        // AutoGenChat
+        public virtual string AutoGenChat { get; } = "AutoGenチャット";
+
+
+
         // ローカルファイルシステム
         public virtual string FileSystem { get; } = "ファイルシステム";
 

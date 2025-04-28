@@ -7,9 +7,11 @@ using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
+using LibGit2Sharp;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Utils.Common;
+using LibUIAutoGenChat.View.Chat;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
@@ -20,7 +22,7 @@ using LibUIPythonAI.View.Item;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.View.VectorDB;
-using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
@@ -91,21 +93,21 @@ namespace AIChatExplorer.ViewModel.Main {
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
-            AppTabContainer container = new(itemViewModel.ContentItem.Description, editItemControl);
+            MainTabContent container = new(itemViewModel.ContentItem.Description, editItemControl);
 
             // UserControlをクローズする場合の処理を設定
             editItemControl.SetCloseUserControl(() => {
-                MainWindowViewModel.Instance.RemoveTabItem(container);
+                MainWindowViewModel.Instance.MainTabManager.RemoveTabItem(container);
             });
 
-            MainWindowViewModel.Instance.AddTabItem(container);
+            MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
         // Command to open OpenAI Chat
         public void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
-            QAChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
+            ChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
         public void OpenOpenAIChatWindowCommandExecute() {
@@ -122,6 +124,25 @@ namespace AIChatExplorer.ViewModel.Main {
 
         }
 
+        public void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
+
+            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
+            AutoGenChatWindow.OpenWindow(qAChatStartupProps);
+        }
+
+        public void OpenAutoGenChatWindowCommandExecute() {
+            // チャット履歴用のItemの設定
+            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            // チャット履歴用のItemの設定
+            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
+            };
+            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+
+            OpenAutoGenChatWindowCommandExecute(clipboardItemViewModel);
+
+        }
 
         // Command to open Image Chat
         public void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
@@ -244,6 +265,13 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         });
 
+        // クリップボード監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
+            StartStopClipboardMonitorCommand();
+        });
+
+
         // Command to start/stop clipboard monitoring
         public void StartStopClipboardMonitorCommand() {
             MainWindowViewModel model = MainWindowViewModel.Instance;
@@ -270,6 +298,15 @@ namespace AIChatExplorer.ViewModel.Main {
             // Change button text
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
         }
+
+
+        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
+            // Display exit confirmation dialog. If Yes, exit the application
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                Application.Current.Shutdown();
+            }
+        });
 
 
         // -----------------------------------------------------------------------------------

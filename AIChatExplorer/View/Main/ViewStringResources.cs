@@ -152,5 +152,7 @@ namespace AIChatExplorer.View.Main {
         // MarkdownView
         public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
 
+        // AutoGenChat
+        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChat;
     }
 }

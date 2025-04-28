@@ -112,9 +112,9 @@ namespace LibUIMergeChat.ViewModel {
 
                 // SelectedTabIndexを更新する処理
                 if (SelectedItem != null) {
+                    OnPropertyChanged(nameof(SelectedItem));
                     SelectedItem.SelectedTabIndex = lastSelectedIndex;
                 }
-                OnPropertyChanged(nameof(SelectedItem));
             }
 
         });

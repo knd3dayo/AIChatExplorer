@@ -58,7 +58,6 @@ namespace AIChatExplorer.ViewModel.Main {
 
             // SelectedTabIndexを更新する処理
             if (SelectedItem != null) {
-                SelectedItem.SelectedTabIndex = lastSelectedTabIndex;
                 /**
                  * Task.Run(() => {
                     SelectedItem.ContentItem.Load(() => { }, () => {
@@ -73,11 +72,16 @@ namespace AIChatExplorer.ViewModel.Main {
                 if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
                     ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
                         MainUITask.Run(() => {
+                            SelectedItem.UpdateView();
                             OnPropertyChanged(nameof(SelectedItem));
                         });
                     });
                 }
+                // 選択中のアイテムのSelectedTabIndexを更新する
+                SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
+                SelectedItem.UpdateView();
                 OnPropertyChanged(nameof(SelectedItem));
+
             }
         }
 

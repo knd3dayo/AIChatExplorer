@@ -1,10 +1,7 @@
-using System.Collections.ObjectModel;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.VectorDB;
-using LibUIPythonAI.ViewModel.Folder;
 using LibPythonAI.Model.Content;
+using PythonAILib.Model.Chat;
 
-namespace LibUIPythonAI.ViewModel {
+namespace LibUIPythonAI.ViewModel.Chat {
     public class QAChatStartupProps {
         public QAChatStartupProps(ContentItemWrapper clipboardItem) {
             ContentItem = clipboardItem;

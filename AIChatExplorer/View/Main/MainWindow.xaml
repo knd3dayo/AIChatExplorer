@@ -72,7 +72,7 @@
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ToggleClipboardMonitor, Mode=OneTime}"
+                            Command="{Binding Commands.ToggleClipboardMonitor, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding ClipboardMonitorButtonText}"
@@ -82,7 +82,7 @@
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ExitCommand, Mode=OneTime}"
+                            Command="{Binding Commands.ExitCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.Exit}"
@@ -211,6 +211,14 @@
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenAutoGenChatWindow, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{x:Static res:ViewStringResources.AutoGenChat}" />
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
@@ -256,8 +264,8 @@
         <TabControl
             Grid.Row="1"
             HorizontalContentAlignment="Left"
-            ItemsSource="{Binding TabItems, FallbackValue={x:Null}}"
-            SelectedItem="{Binding SelectedTabItem, TargetNullValue=-1}">
+            ItemsSource="{Binding MainTabManager.TabItems, FallbackValue={x:Null}}"
+            SelectedIndex="{Binding MainTabManager.SelectedTabIndex, TargetNullValue=-1}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="BorderThickness" Value="10,2,10,2" />

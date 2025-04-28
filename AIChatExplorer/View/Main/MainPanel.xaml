@@ -78,6 +78,7 @@
                         Text="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
                     <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
                     <TabControl
+                        x:Name="MyTabControl"
                         Grid.Row="1"
                         Margin="10,3,10,3"
                         HorizontalContentAlignment="Left"
