@@ -18,8 +18,8 @@ namespace LibUIPythonAI.ViewModel.Common {
                 OnPropertyChanged(nameof(MarkdownView));
             }
         }
-        private static MyTextBox.TextWrappingModeEnum _textWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
-        public static MyTextBox.TextWrappingModeEnum TextWrappingMode {
+        private  MyTextBox.TextWrappingModeEnum _textWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
+        public  MyTextBox.TextWrappingModeEnum TextWrappingMode {
             get { return _textWrappingMode; }
             set { _textWrappingMode = value; }
         }

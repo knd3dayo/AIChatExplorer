@@ -67,9 +67,6 @@ namespace LibUIPythonAI.ViewModel.Item {
                 return selectedTabIndex;
             }
             set {
-                if (value >= TabItems.Count - 1) {
-                    value = TabItems.Count - 1;
-                }
                 selectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
@@ -170,15 +167,17 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-        public void UpdateView() {
+        public void UpdateView(TabControl? tabControl) {
             // 選択中のタブを更新する処理
-            UpdateTabItems();
+            UpdateTabItems(tabControl);
         }
-        // TabItems 
-        public ObservableCollection<TabItem> TabItems { get; set; } = [];
+        
+        private void UpdateTabItems(TabControl? tabControl) {
+            if (tabControl == null) {
+                return;
+            }
 
-        private void UpdateTabItems() {
-            TabItems.Clear();
+            tabControl.Items.Clear();
             // SourcePath 
             ContentPanel contentPanel = new() {
                 DataContext = this,
@@ -188,7 +187,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             };
 
             TabItem contentTabItem = new();
-            TabItems.Add(contentTabItem);
+            tabControl.Items.Add(contentTabItem);
 
             contentTabItem.Header = CommonStringResources.Instance.Text;
             contentTabItem.Content = contentPanel;
@@ -206,7 +205,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 DataContext = this,
             };
             TabItem fileTabItem = new();
-            TabItems.Add(fileTabItem);
+            tabControl.Items.Add(fileTabItem);
 
             fileTabItem.Header = CommonStringResources.Instance.FileOrImage;
             fileTabItem.Content = filePanel;
@@ -220,7 +219,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
             // ChatItemsTextのタブ
             TabItem chatItemsText = new();
-            TabItems.Add(chatItemsText);
+            tabControl.Items.Add(chatItemsText);
 
             chatItemsText.Header = CommonStringResources.Instance.ChatContent;
             chatItemsText.Content = new ChatItemsTextPanel() { DataContext = this };
@@ -233,16 +232,15 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
             // PromptResultのタブ
-            UpdateSystemPromptResultTabItems();
+            UpdateSystemPromptResultTabItems(tabControl);
 
             SelectedTabIndex = LastSelectedTabIndex;
-            OnPropertyChanged(nameof(TabItems));
 
         }
 
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
-        private void UpdateSystemPromptResultTabItems() {
+        private void UpdateSystemPromptResultTabItems(TabControl tabControl) {
             // PromptResultのタブ
             List<string> promptNames = [
                 SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
@@ -276,7 +274,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 };
 
                 TabItem promptTabItem = new();
-                TabItems.Add(promptTabItem);
+                tabControl.Items.Add(promptTabItem);
 
                 promptTabItem.Header = item.Description;
                 promptTabItem.Content = content;

@@ -22,7 +22,7 @@
         <!--  Exit application  -->
         <KeyBinding
             Key="Q"
-            Command="{Binding ExitCommand, Mode=OneTime}"
+            Command="{Binding Commands.ExitCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Show search dialog  -->
         <KeyBinding

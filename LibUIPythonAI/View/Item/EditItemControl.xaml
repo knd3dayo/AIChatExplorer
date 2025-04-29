@@ -118,10 +118,10 @@
             </Grid>
             <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
             <TabControl
+                x:Name="MyTabControl"
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding ItemViewModel.TabItems, FallbackValue={x:Null}}"
                 SelectedIndex="{Binding ItemViewModel.SelectedTabIndex, TargetNullValue=-1}" />
         </Grid>
         <Grid Grid.Row="1">

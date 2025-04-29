@@ -16,11 +16,11 @@ namespace AIChatExplorer.ViewModel.Main {
         // メインウィンドウにアイテムのタブを追加
         public void AddTabItem(MainTabContent tabItem) {
 
-            if (ThisWindow == null) {
+            if (MainWindowViewModel.Instance.ThisWindow == null) {
                 return;
             }
             // HeaderWidthを設定. 現在のタブ数 * AIChatExplorerTabContainerのHeaderWidth > ThisWindow.Widthの場合はThisWindow.Widthを超えないようにする
-            double tabControlWidth = ThisWindow.ActualWidth - 500;
+            double tabControlWidth = MainWindowViewModel.Instance.ThisWindow.ActualWidth - 500;
             if ((TabItems.Count + 1) * MainTabContent.HeaderWidthStatic > tabControlWidth) {
                 MainTabContent.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
                 for (int i = 1; i < TabItems.Count; i++) {

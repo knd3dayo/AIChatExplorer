@@ -25,6 +25,14 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
     </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <!--  TreeView, ListBox  -->
         <Grid.ColumnDefinitions>
@@ -82,7 +90,6 @@
                         Grid.Row="1"
                         Margin="10,3,10,3"
                         HorizontalContentAlignment="Left"
-                        ItemsSource="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.TabItems, FallbackValue={x:Null}}"
                         SelectedIndex="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
                     <TextBlock
                         Name="headerText"

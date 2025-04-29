@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Settings;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -16,7 +17,14 @@ namespace AIChatExplorer.ViewModel.Main {
                 }
             };
         }
+        private TabControl? MyTabControl { get; set; }
 
+        public override void OnLoadedAction() {
+            base.OnLoadedAction();
+            MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+            MainPanelDataGridViewControlViewModel.MyTabControl = MyTabControl;
+
+        }
 
         public AppViewModelCommands Commands { get; set; }
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }

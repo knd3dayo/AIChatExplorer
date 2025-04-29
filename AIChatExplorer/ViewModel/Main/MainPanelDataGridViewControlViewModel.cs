@@ -15,7 +15,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         private AppViewModelCommands Commands { get; set; } = commands;
 
-
+        public TabControl? MyTabControl { get; set; } 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
         private ContentFolderViewModel? _selectedFolder;
@@ -72,14 +72,14 @@ namespace AIChatExplorer.ViewModel.Main {
                 if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
                     ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
                         MainUITask.Run(() => {
-                            SelectedItem.UpdateView();
+                            SelectedItem.UpdateView(MyTabControl);
                             OnPropertyChanged(nameof(SelectedItem));
                         });
                     });
                 }
                 // 選択中のアイテムのSelectedTabIndexを更新する
                 SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
-                SelectedItem.UpdateView();
+                SelectedItem.UpdateView(MyTabControl);
                 OnPropertyChanged(nameof(SelectedItem));
 
             }

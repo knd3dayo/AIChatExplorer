@@ -36,6 +36,15 @@ namespace LibUIPythonAI.ViewModel.Item {
             CommonViewModelProperties.PropertyChanged += OnPropertyChanged;
 
         }
+        private TabControl? MyTabControl { get; set; }
+
+        public override void OnLoadedAction() {
+            base.OnLoadedAction();
+            if (MyTabControl == null) {
+                MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+                ItemViewModel.UpdateView(MyTabControl);
+            }
+        }
 
         private ContentItemViewModel itemViewModel;
         public ContentItemViewModel ItemViewModel {
@@ -189,7 +198,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
-                OnPropertyChanged(nameof(ItemViewModel));
+                ItemViewModel.UpdateView(MyTabControl);
             }
         }
     }
