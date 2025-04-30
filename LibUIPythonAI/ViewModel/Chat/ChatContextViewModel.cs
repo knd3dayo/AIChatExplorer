@@ -26,8 +26,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
             _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
             _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
 
-            // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
         }
 
         // Temperature
