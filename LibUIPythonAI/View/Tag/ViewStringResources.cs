@@ -59,5 +59,10 @@ namespace LibUIPythonAI.View.Tag {
 
         // NewTag
         public static string NewTag => CommonStringResources.Instance.NewTag;
+
+
+        // Search
+        public static string Search => CommonStringResources.Instance.Search;
+
     }
 }

@@ -7,7 +7,6 @@ using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
-using LibGit2Sharp;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Utils.Common;
@@ -16,15 +15,19 @@ using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
+using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.View.Search;
+using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Resources;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
@@ -79,8 +82,59 @@ namespace AIChatExplorer.ViewModel.Main {
             OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CutItemCommand => new((itemViewModels) => {
+            CutItemCommandExecute(itemViewModels);
+        });
 
-        public void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
+
+        // ピン留めの切り替えコマンド (複数選択可能)
+        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
+            foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
+                if (item is ClipboardItemViewModel clipboardItemViewModel) {
+                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
+                    // ピン留めの時は更新日時を変更しない
+                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
+                }
+            }
+        });
+
+        // クリップボード監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
+            StartStopClipboardMonitorCommandExecute();
+        });
+
+        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
+            // Display exit confirmation dialog. If Yes, exit the application
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                Application.Current.Shutdown();
+            }
+        });
+
+
+        //---------------------
+
+
+        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
+        public static void OpenListPromptTemplateWindowCommandExecute() {
+            // ListPromptTemplateWindowを開く
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => { });
+        }
+        // メニューの「自動処理ルールを編集」をクリックしたときの処理
+        public static void OpenListAutoProcessRuleWindowCommandExecute() {
+            // ListAutoProcessRuleWindowを開く
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+
+        }
+        // メニューの「タグ編集」をクリックしたときの処理
+        public static void OpenTagWindowCommandExecute() {
+            // TagWindowを開く
+            TagWindow.OpenTagWindow(null, () => { });
+
+        }
+
+        public static void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
             if (itemViewModel == null) {
                 return;
             }
@@ -104,13 +158,13 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Command to open OpenAI Chat
-        public void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
+        public static void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             ChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
-        public void OpenOpenAIChatWindowCommandExecute() {
+        public static void OpenOpenAIChatWindowCommandExecute() {
             // チャット履歴用のItemの設定
             ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
@@ -124,13 +178,13 @@ namespace AIChatExplorer.ViewModel.Main {
 
         }
 
-        public void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
+        public static void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             AutoGenChatWindow.OpenWindow(qAChatStartupProps);
         }
 
-        public void OpenAutoGenChatWindowCommandExecute() {
+        public static void OpenAutoGenChatWindowCommandExecute() {
             // チャット履歴用のItemの設定
             ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
@@ -145,29 +199,31 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Command to open Image Chat
-        public void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
+        public static void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
             ImageChatWindow.OpenMainWindow(item, action);
         }
 
         // Command to Open Merge Chat
-        public void OpenMergeChatWindowCommand(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
+        public static void OpenMergeChatWindowCommand(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
             MergeChatWindow.OpenWindow(folderViewModel, selectedItems);
         }
 
         // Process when "RAG Management" is clicked in the menu
-        public void OpenRAGManagementWindowCommand() {
+        public static void OpenRAGManagementWindowCommand() {
             // Open RARManagementWindow
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
 
         // Process when "Vector DB Management" is clicked in the menu
-        public void OpenVectorDBManagementWindowCommand() {
+        public static void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, RootFolderViewModelContainer.FolderViewModels, (vectorDBItem) => { });
         }
 
+
+
         // Process when "Settings" is clicked in the menu
-        public void SettingCommandExecute() {
+        public static void SettingCommandExecute() {
             // Open UserControl settings window
             SettingsUserControl settingsControl = new();
             Window window = new() {
@@ -179,7 +235,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Process to display the search window
-        public void OpenSearchWindowCommand(SearchFolderViewModel searchFolderViewModel, System.Action action) {
+        public static void OpenSearchWindowCommandExecute(SearchFolderViewModel searchFolderViewModel, System.Action action) {
             SearchRule? searchConditionRule = new(
                 new LibPythonAI.Data.SearchRuleEntity() {
                     SearchFolderId = searchFolderViewModel.Folder.Id,
@@ -190,7 +246,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // Process when Ctrl + X is pressed on a folder
-        public void CutFolderCommandExecute(MainPanelTreeViewControlViewModel model) {
+        public static void CutFolderCommandExecute(MainPanelTreeViewControlViewModel model) {
             // Do not process if no folder is selected
             if (model.SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
@@ -204,12 +260,8 @@ namespace AIChatExplorer.ViewModel.Main {
             LogWrapper.Info(CommonStringResources.Instance.Cut);
         }
 
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CutItemCommand => new((itemViewModels) => {
-            CutItemCommandExecute(itemViewModels);
-        });
-
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
-        public void CutItemCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
+        public static void CutItemCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
             // Do not process if no items are selected
             if (itemViewModels.Count == 0) {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
@@ -230,7 +282,7 @@ namespace AIChatExplorer.ViewModel.Main {
         });
 
         // Process when Ctrl + C is pressed
-        public void CopyToClipboardCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
+        public static void CopyToClipboardCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
 
             // Do not process if no items are selected
             if (itemViewModels.Count == 0) {
@@ -252,28 +304,8 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(message);
             }
         }
-
-
-        // ピン留めの切り替えコマンド (複数選択可能)
-        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
-            foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
-                if (item is ClipboardItemViewModel clipboardItemViewModel) {
-                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
-                    // ピン留めの時は更新日時を変更しない
-                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
-                }
-            }
-        });
-
-        // クリップボード監視開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            StartStopClipboardMonitorCommand();
-        });
-
-
         // Command to start/stop clipboard monitoring
-        public void StartStopClipboardMonitorCommand() {
+        public static void StartStopClipboardMonitorCommandExecute() {
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
             if (model.IsClipboardMonitoringActive) {
@@ -300,17 +332,8 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
-        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            // Display exit confirmation dialog. If Yes, exit the application
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                Application.Current.Shutdown();
-            }
-        });
-
-
         // -----------------------------------------------------------------------------------
-        #region プログレスインジケーター表示の処理
+        // プログレスインジケーター表示の処理
 
         // Process when Ctrl + V is pressed
         public void PasteFromClipboardCommandExecute() {
@@ -360,7 +383,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 });
         }
 
-        #endregion
         // -----------------------------------------------------------------------------------
 
         public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper clipboardItem) {

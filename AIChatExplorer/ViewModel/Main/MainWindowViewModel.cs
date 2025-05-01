@@ -23,8 +23,7 @@ using PythonAILib.Model.AutoGen;
 
 namespace AIChatExplorer.ViewModel.Main {
     public partial class MainWindowViewModel : CommonViewModelBase {
-        public MainWindowViewModel() { }
-        public void Init() {
+        public MainWindowViewModel() {
 
 
             Instance = this;
@@ -36,7 +35,7 @@ namespace AIChatExplorer.ViewModel.Main {
             Commands = new(UpdateIndeterminate, () => {
                 // 現在選択中のフォルダをReload
                 MainUITask.Run(() => {
-                    MainPanelTreeViewControlViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                    MainPanelTreeViewControlViewModel?.SelectedFolder?.LoadFolderCommand.Execute();
                 });
             });
 
@@ -97,10 +96,31 @@ namespace AIChatExplorer.ViewModel.Main {
         [AllowNull]
         public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
-        public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
+        [AllowNull]
+        public static MainWindowViewModel Instance { get; set; } 
+
+        public MainTabManager MainTabManager { get; } = new ();
+
+        // クリップボード監視が実行中であるかどうか
+        public bool IsClipboardMonitoringActive { get; set; } = false;
+
+        // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string ClipboardMonitorButtonText {
+            get {
+                return IsClipboardMonitoringActive ? CommonStringResources.Instance.StopClipboardWatch : CommonStringResources.Instance.StartClipboardWatch;
+            }
+        }
+
+        /// <summary>
+        /// 外部からプロパティの変更を通知する
+        /// </summary>
+        /// <param name="propertyName"></param>
+        public void NotifyPropertyChanged(string propertyName) {
+            OnPropertyChanged(propertyName);
+        }
 
         // PythonAILibManagerの初期化
-        private void InitPythonAILibManager() {
+        private static void InitPythonAILibManager() {
             //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
             if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.ProxyURL)) {
                 Environment.SetEnvironmentVariable("HTTP_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
@@ -128,59 +148,20 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        public MainTabManager MainTabManager { get; } = new ();
-
-        // クリップボード監視が実行中であるかどうか
-        public bool IsClipboardMonitoringActive { get; set; } = false;
-
-        // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
-        public string ClipboardMonitorButtonText {
-            get {
-                return IsClipboardMonitoringActive ? CommonStringResources.Instance.StopClipboardWatch : CommonStringResources.Instance.StartClipboardWatch;
-            }
-        }
-
-        /// <summary>
-        /// 外部からプロパティの変更を通知する
-        /// </summary>
-        /// <param name="propertyName"></param>
-        public void NotifyPropertyChanged(string propertyName) {
-            OnPropertyChanged(propertyName);
-        }
-
-
-
-        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
-        public static void OpenListPromptTemplateWindowCommandExecute(MainWindowViewModel windowViewModel) {
-            // ListPromptTemplateWindowを開く
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => { });
-        }
-        // メニューの「自動処理ルールを編集」をクリックしたときの処理
-        public void OpenListAutoProcessRuleWindowCommandExecute() {
-            // ListAutoProcessRuleWindowを開く
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
-
-        }
-        // メニューの「タグ編集」をクリックしたときの処理
-        public static void OpenTagWindowCommandExecute() {
-            // TagWindowを開く
-            TagWindow.OpenTagWindow(null, () => { });
-
-        }
-        #region 別Windowを開く処理
 
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
-            OpenListPromptTemplateWindowCommandExecute(this);
+            AppViewModelCommands.OpenListPromptTemplateWindowCommandExecute();
         });
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
-            OpenListAutoProcessRuleWindowCommandExecute();
+            AppViewModelCommands.OpenListAutoProcessRuleWindowCommandExecute();
         });
+
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
-            OpenTagWindowCommandExecute();
+            AppViewModelCommands.OpenTagWindowCommandExecute();
         });
         // メニューの「AutoGen定義編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
@@ -196,7 +177,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
-            Commands.OpenOpenAIChatWindowCommandExecute();
+            AppViewModelCommands.OpenOpenAIChatWindowCommandExecute();
 
         });
 
@@ -204,7 +185,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenAutoGenChatWindow => new((parameter) => {
 
-            Commands.OpenAutoGenChatWindowCommandExecute();
+            AppViewModelCommands.OpenAutoGenChatWindowCommandExecute();
 
         });
 
@@ -212,7 +193,7 @@ namespace AIChatExplorer.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
             ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
-            Commands.OpenImageChatWindowCommand(dummyItem, () => {
+            AppViewModelCommands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
         });
@@ -221,14 +202,14 @@ namespace AIChatExplorer.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
 
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            Commands.OpenMergeChatWindowCommand(folderViewModel, []);
+            AppViewModelCommands.OpenMergeChatWindowCommand(folderViewModel, []);
 
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
-            Commands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
+            AppViewModelCommands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
 
         });
 
@@ -236,24 +217,22 @@ namespace AIChatExplorer.ViewModel.Main {
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            Commands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+            AppViewModelCommands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
-            Commands.OpenRAGManagementWindowCommand();
+            AppViewModelCommands.OpenRAGManagementWindowCommand();
         });
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
-            Commands.OpenVectorDBManagementWindowCommand();
+            AppViewModelCommands.OpenVectorDBManagementWindowCommand();
         });
 
         // メニューの「設定」をクリックしたときの処理
         public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            Commands.SettingCommandExecute();
+            AppViewModelCommands.SettingCommandExecute();
         });
-
-        #endregion
 
 
         #region Window全体のInputBinding用のコマンド
@@ -266,7 +245,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
 
-            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
+            AppViewModelCommands.OpenSearchWindowCommandExecute(searchFolderViewModel, () => {
                 // 保存と再読み込み
                 searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel;
                 searchFolderViewModel.SaveFolderCommand.Execute(null);

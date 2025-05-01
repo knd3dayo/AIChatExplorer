@@ -60,7 +60,7 @@ namespace AIChatExplorer.ViewModel.Main {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            Commands.ReloadFolderCommandExecute(this.SelectedFolder,
+            AppViewModelCommands.ReloadFolderCommandExecute(this.SelectedFolder,
                 () => {
                     UpdateIndeterminateAction(true);
                 },
@@ -89,7 +89,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            Commands.CutFolderCommandExecute(this);
+            AppViewModelCommands.CutFolderCommandExecute(this);
         });
 
 
@@ -154,7 +154,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
 
-            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
+            AppViewModelCommands.OpenSearchWindowCommandExecute(searchFolderViewModel, () => {
                 // 保存と再読み込み
                 searchFolderViewModel.ParentFolderViewModel = RootFolderViewModelContainer.SearchRootFolderViewModel;
                 searchFolderViewModel.SaveFolderCommand.Execute(null);

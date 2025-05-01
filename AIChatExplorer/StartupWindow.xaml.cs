@@ -21,7 +21,7 @@ namespace AIChatExplorer {
             MainWindow mainWindow = new() {
                 DataContext = mainWindowViewModel
             };
-            mainWindowViewModel.Init();
+            // mainWindowViewModel.Init();
 
             mainWindow.Show();
 

@@ -149,17 +149,17 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            Commands.CutItemCommand.Execute(this.SelectedItems);
+            AppViewModelCommands.CutItemCommandExecute(this.SelectedItems);
         });
 
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            Commands.CopyToClipboardCommandExecute(this.SelectedItems);
+            AppViewModelCommands.CopyToClipboardCommandExecute(this.SelectedItems);
         });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            Commands.OpenItemCommand.Execute(this.SelectedItem);
+            AppViewModelCommands.OpenItemCommandExecute(this.SelectedItem);
 
         });
 
