@@ -35,7 +35,7 @@ namespace LibPythonAI.Model.AutoGen {
             UpdateAutoGenGroupChat(Name, Description, LLMConfigName, AgentNames, allow_override);
         }
 
-        // Delete
+        // DeleteAsync
         public void Delete() {
             DeleteAutoGenGroupChat(Name);
         }

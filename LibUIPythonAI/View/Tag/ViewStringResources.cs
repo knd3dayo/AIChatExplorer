@@ -10,7 +10,7 @@ namespace LibUIPythonAI.View.Tag {
         // Save
         public static string Save => CommonStringResources.Instance.Save;
 
-        // Delete
+        // DeleteAsync
         public static string Delete => CommonStringResources.Instance.Delete;
 
         // ChatItem

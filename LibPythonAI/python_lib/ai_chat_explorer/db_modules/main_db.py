@@ -17,6 +17,8 @@ def init_db(db_path: str):
     main_db = MainDB(db_path)
     # ContentFoldersテーブルを初期化
     main_db.init_content_folder_table()
+    # TagItemsテーブルを初期化
+    main_db.init_tag_item_table()
     # ContentItemsテーブルを初期化
     main_db.init_content_item_table()
     # VectorDBItemsテーブルを初期化
@@ -32,6 +34,7 @@ def init_db(db_path: str):
 
 
 class ContentFolder:
+
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE "ContentFolders" (
@@ -51,6 +54,15 @@ class ContentFolder:
         self.Description = content_folder_dict.get("Description", "")
         self.ExtendedPropertiesJson = content_folder_dict.get("ExtendedPropertiesJson", "")
  
+    def to_dict(self) -> dict:
+        return {
+            "Id": self.Id,
+            "FolderTypeString": self.FolderTypeString,
+            "ParentId": self.ParentId,
+            "FolderName": self.FolderName,
+            "Description": self.Description,
+            "ExtendedPropertiesJson": self.ExtendedPropertiesJson
+        }
 
 class ContentItem:
     '''
@@ -239,7 +251,15 @@ class TagItem:
             # UUIDを生成
             self.Id = str(uuid.uuid4())
         self.Tag = tag_item_dict.get("Tag", "")
-        self.IsPinned = tag_item_dict.get("IsPinned", 0)
+        is_pinned = tag_item_dict.get("IsPinned", 0)
+        if type(is_pinned) == int:
+            self.IsPinned = bool(is_pinned)
+        elif type(is_pinned) == bool:
+            self.IsPinned = is_pinned
+        elif type(is_pinned) == str and is_pinned.upper() == "TRUE":
+            self.IsPinned = True
+        else:
+            self.IsPinned = False
 
     def to_dict(self) -> dict:
         return {
@@ -317,6 +337,21 @@ class MainDB:
         conn.commit()
         conn.close()
     
+    def init_tag_item_table(self):
+        # TagItemsテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS TagItems (
+                Id TEXT NOT NULL PRIMARY KEY,
+                Tag TEXT NOT NULL,
+                IsPinned INTEGER NOT NULL
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
+
     def init_content_item_table(self):
         # ContentItemsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
@@ -489,6 +524,7 @@ class MainDB:
     
     def get_content_folders(self) -> List[ContentFolder]:
         conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         cur.execute("SELECT * FROM ContentFolders")
         rows = cur.fetchall()
@@ -496,6 +532,92 @@ class MainDB:
         conn.close()
 
         return folders
+    
+    # FolderTypeStringを指定してContentFolderのRootFolderを取得する
+    def get_root_content_folder(self, folder_type_string: str) -> Union[ContentFolder, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM ContentFolders WHERE FolderTypeString=? AND ParentId IS NULL", (folder_type_string,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None or len(row) == 0:
+            return None
+
+        folder_dict = dict(row)
+        conn.close()
+
+        return ContentFolder(folder_dict)
+    
+    def update_content_folder(self, folder: ContentFolder):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        if self.get_content_folder(folder.Id) is None:
+            cur.execute("INSERT INTO ContentFolders VALUES (?, ?, ?, ?, ?, ?)", (folder.Id, folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson))
+        else:
+            cur.execute("UPDATE ContentFolders SET FolderTypeString=?, ParentId=?, FolderName=?, Description=?, ExtendedPropertiesJson=? WHERE Id=?", (folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson, folder.Id))
+        conn.commit()
+        conn.close()
+
+    def delete_content_folder(self, folder: ContentFolder):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM ContentFolders WHERE Id=?", (folder.Id,))
+        conn.commit()
+        conn.close()
+
+    ########################################
+    # TagItem関連
+    ########################################
+    def get_tag_item(self, tag_id: str) -> Union[TagItem, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM TagItems WHERE Id=?", (tag_id,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None or len(row) == 0:
+            return None
+
+        tag_item_dict = dict(row)
+        conn.close()
+
+        return TagItem(tag_item_dict)
+    
+    def get_tag_items(self) -> List[TagItem]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM TagItems")
+        rows = cur.fetchall()
+        tag_items = [TagItem(dict(row)) for row in rows]
+        conn.close()
+
+        return tag_items
+    
+    def update_tag_item(self, tag_item: TagItem) -> TagItem:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        if self.get_tag_item(tag_item.Id) is None:
+            cur.execute("INSERT INTO TagItems VALUES (?, ?, ?)", (tag_item.Id, tag_item.Tag, tag_item.IsPinned))
+        else:
+            cur.execute("UPDATE TagItems SET Tag=?, IsPinned=? WHERE Id=?", (tag_item.Tag, tag_item.IsPinned, tag_item.Id))
+        conn.commit()
+        conn.close()
+
+        # 更新したTagItemを返す
+        return tag_item
+    
+    def delete_tag_item(self, tag_item: TagItem):
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("DELETE FROM TagItems WHERE Id=?", (tag_item.Id,))
+        conn.commit()
+        conn.close()
 
     ########################################
     # VectorDBItem関連

@@ -139,20 +139,18 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedVectorDB, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
 
-                Task.Run(() => {
-                    // 選択したVectorDBItemを削除
-                    SelectedVectorDBItem.Item.Delete();
-                }).ContinueWith((task) => {
-                    if (task.IsFaulted) {
-                        LogWrapper.Error(task.Exception.Message);
-                    } else {
+                Task.Run(async () => {
+                    try {
+                        // 選択したVectorDBItemを削除
+                        await SelectedVectorDBItem.Item.DeleteAsync();
                         MainUITask.Run(() => {
                             // リストを更新
                             LoadVectorItemsCommand.Execute();
                         });
+                    } catch (Exception ex) {
+                        LogWrapper.Error(ex.Message);
                     }
                 });
-
             }
         });
 

@@ -1,3 +1,4 @@
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.Chat;
@@ -6,6 +7,16 @@ using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
+
+
+        public List<ContentFolderWrapper> GetRootContentFolders(List<string> folderTypeStrings);
+
+
+        public void UpdateTagItems(List<TagItem> tagItems);
+
+        public void DeleteTagItems(List<TagItem> tagItems);
+
+        public List<TagItem> GetTagItems();
 
         public string ExtractFileToText(string path);
 
@@ -26,7 +37,6 @@ namespace PythonAILib.PythonIF {
         public VectorDBItem? GetVectorDBItemById(string id);
 
         public VectorDBItem? GetVectorDBItemByName(string name);
-
         
         public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query);
 

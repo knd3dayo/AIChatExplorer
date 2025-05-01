@@ -5,17 +5,16 @@ from io import StringIO
 import sys
 
 from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestContext
-from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, init_db, get_main_db_path
+from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, ContentFolder, init_db, get_main_db_path
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 
 
-request_context_name = "context"
 openai_props_name = "openai_props"
 vector_db_item_request_name = "vector_db_item_request"
 autogen_props_name = "autogen_props"
 chat_request_context_name = "chat_request_context"
-
+get_content_folder_requelsts_name = "content_folder_requests"
 chat_request_name = "chat_request"
 chat_contatenate_request_name = "chat_contatenate_request"
 token_count_request_name = "token_count_request"
@@ -115,6 +114,40 @@ def capture_generator_stdout_stderr(func):
 ########################
 # parametar関連
 ########################
+def get_content_folder_requelst_objects(request_dict: dict) -> list[ContentFolder]:
+    '''
+    {"content_folder_requsts": [] }の形式で渡される
+    '''
+    # contextを取得
+    content_folders: list[dict] = request_dict.get(get_content_folder_requelsts_name, None)
+    if not content_folders:
+        raise ValueError("content_folder is not set.")
+    
+    # content_folderを生成
+    result = []
+    for item in content_folders:
+        content_folder = ContentFolder(item)
+        result.append(content_folder)
+
+    return result
+
+
+def get_tag_item_objects(request_dict: dict) -> list[TagItem]:
+    '''
+    {"tag_item_requests": []}の形式で渡される
+    '''
+    # contextを取得
+    tag_items: list[dict] = request_dict.get("tag_item_requests", None)
+    if not tag_items:
+        raise ValueError("tag_items is not set.")
+    
+    # TagItemを生成
+    tag_items_list = []
+    for item in tag_items:
+        tag_item = TagItem(item)
+        tag_items_list.append(tag_item)
+
+    return tag_items_list
 def get_chat_request_context_objects(request_dict: dict) -> RequestContext:
     '''
     {"chat_request_context": {}}の形式で渡される

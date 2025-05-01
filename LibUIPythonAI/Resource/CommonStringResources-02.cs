@@ -425,7 +425,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string AddVectorDBForSaveToReferenceVectorDB { get; } = "参照先ベクトルDBに保存用ベクトルDBも追加する";
 
         // こにフォルダの説明を入力
-        public virtual string InputDescriptionOfThisFolder { get; } = "こにフォルダの説明を入力";
+        public virtual string InputDescriptionOfThisFolder { get; } = "ここにフォルダの説明を入力";
 
         #endregion
 
@@ -480,6 +480,8 @@ namespace LibUIPythonAI.Resource {
         // AutoGenChat
         public virtual string AutoGenChat { get; } = "AutoGenチャット";
 
+        // Monitor
+        public virtual string Monitor { get; } = "監視";
 
 
         // ローカルファイルシステム

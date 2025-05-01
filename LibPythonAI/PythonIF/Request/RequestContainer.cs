@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Model.Chat;
@@ -22,6 +23,9 @@ namespace LibPythonAI.PythonIF.Request {
 
         public AutogenRequest? AutogenRequestInstance { get; set; }
 
+        // ContentFolderRequests
+        public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
+
         // VectorSearchRequest
         public List<VectorSearchRequest> VectorSearchRequestsInstance { get; set; } = [];
 
@@ -29,7 +33,7 @@ namespace LibPythonAI.PythonIF.Request {
         public VectorDBItem? VectorDBItemInstance { get; set; } = null;
 
         // TagItemInstance
-        public TagItem? TagItemInstance { get; set; } = null;
+        public List<TagItem> TagItemsInstance { get; set; } = [];
 
         // ExcelRequest
         public ExcelRequest? ExcelRequestInstance { get; set; }
@@ -45,6 +49,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
+
             if (RequestContextInstance != null) {
                 dict["vector_db_props"] = RequestContextInstance.ToDictVectorDBItemsDict();
             }
@@ -88,6 +93,12 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (SessionToken != "") {
                 dict["session_token"] = SessionToken;
+            }
+            if (TagItemsInstance.Count > 0) {
+                dict["tag_item_requests"] = TagItem.ToDictList(TagItemsInstance);
+            }
+            if (ContentFolderRequestsInstance.Count > 0) {
+                dict["content_folder_requests"] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
             }
 
             return dict;

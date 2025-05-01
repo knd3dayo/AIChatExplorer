@@ -137,7 +137,7 @@ namespace AIChatExplorer.ViewModel.Main {
         #endregion
 
         #region クリップボードアイテムのInputBinding用のコマンド
-        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             SelectedFolder?.DeleteDisplayedItemCommand.Execute();
         });
@@ -160,7 +160,6 @@ namespace AIChatExplorer.ViewModel.Main {
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
             AppViewModelCommands.OpenItemCommandExecute(this.SelectedItem);
-
         });
 
 

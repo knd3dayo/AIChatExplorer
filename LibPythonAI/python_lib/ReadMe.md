@@ -56,6 +56,16 @@
     "vector_db_item_request" : {
 
     },
+    "content_folder_requsts" : {
+
+    },
+    "tag_item_requests" : [
+      {  "Id" : "タグID",
+        "Tag" : "タグ名",
+        "IsPinned" : "ピン留め状態"
+        }
+    ],
+
     "chat_request": {
         "model": "gpt-4o-mini",
         "messages": [

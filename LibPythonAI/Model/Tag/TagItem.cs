@@ -1,73 +1,74 @@
+using System.Text.Json.Serialization;
 using LibPythonAI.Data;
+using PythonAILib.Common;
+using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.Tag {
     public class TagItem {
 
-        public TagItemEntity Entity { get; set; }
-
-        public TagItem(TagItemEntity entity) {
-            Entity = entity;
-        }
-
         // Id
-        public string Id {
-            get => Entity.Id;
+        public string Id { get; set; } = "";
+
+        public string Tag { get; set; } = "";
+
+        public bool IsPinned { get; set; } = false;
+
+        public async Task DeleteAsync() {
+            await Task.Run(() => {
+                PythonExecutor.PythonAIFunctions.DeleteTagItems(new List<TagItem> { this });
+            });
         }
 
-        public string Tag {
-            get => Entity.Tag;
-            set => Entity.Tag = value;
+        public async Task SaveAsync() { // 修正: 非同期メソッドは async Task に変更
+            await Task.Run(() => {
+                PythonExecutor.PythonAIFunctions.UpdateTagItems(new List<TagItem> { this });
+            });
         }
 
-        public bool IsPinned {
-            get => Entity.IsPinned;
-            set => Entity.IsPinned = value;
+        public static async Task<List<TagItem>> GetTagItemsAsync() { // 修正: メソッド名を非同期に合わせて変更
+            return await Task.Run(() => {
+                return PythonExecutor.PythonAIFunctions.GetTagItems();
+            });
         }
 
-        public void Delete() {
-            using PythonAILibDBContext db = new();
-            var item = db.TagItems.Find(Id);
-            if (item != null) {
-                db.Remove(item);
-            }
-        }
-        public void Save() {
-            using PythonAILibDBContext db = new();
-            var item = db.TagItems.Find(Id);
-            if (item == null) {
-                db.TagItems.Add(Entity);
-            } else {
-                db.TagItems.Entry(item).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
-        }
-
-        public static IEnumerable<TagItem> GetTagItems() {
-            using PythonAILibDBContext db = new();
-            var tags = db.TagItems;
-            foreach (var tag in tags) {
-                yield return new TagItem(tag);
-            }
-        }
         // タグを検索
-        public static IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
-            using PythonAILibDBContext db = new();
-            var items = db.TagItems.Where(x => x.Tag.Contains(tag) == !exclude);
+        public static async Task<List<TagItem>> FilterTagAsync(string tag, bool exclude) { // 修正: 非同期メソッドに変更
+            var items = await GetTagItemsAsync(); // 修正: 非同期メソッド呼び出し
+            return items.Where(x => x.Tag.Contains(tag) == !exclude).ToList();
+        }
+
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new();
+            dict["Id"] = Id;
+            dict["Tag"] = Tag;
+            dict["IsPinned"] = IsPinned.ToString();
+            return dict;
+        }
+
+        public static List<Dictionary<string, object>> ToDictList(List<TagItem> items) {
+            List<Dictionary<string, object>> dictList = new();
             foreach (var item in items) {
-                yield return new TagItem(item);
+                dictList.Add(item.ToDict());
             }
+            return dictList;
         }
 
-        public static TagItem? GetTagItemByName(string tag) {
-
-            using PythonAILibDBContext db = new();
-            var item = db.TagItems.FirstOrDefault(x => x.Tag == tag);
-            if (item != null) {
-                return new TagItem(item);
-            }
-            return null;
+        public static TagItem FromDict(Dictionary<string, object> dict) {
+            TagItem item = new() {
+                Id = dict["Id"]?.ToString() ?? "",
+                Tag = dict["Tag"]?.ToString() ?? "",
+                IsPinned = bool.Parse(dict["IsPinned"]?.ToString() ?? "false")
+            };
+            return item;
         }
 
+        public static List<TagItem> FromDictList(List<Dictionary<string, object>> dictList) {
+            List<TagItem> items = new();
+            foreach (var dict in dictList) {
+                items.Add(FromDict(dict));
+            }
+            return items;
+        }
     }
 
 }

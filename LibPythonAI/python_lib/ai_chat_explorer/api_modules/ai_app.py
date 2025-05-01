@@ -7,7 +7,7 @@ from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestCo
 from ai_chat_explorer.langchain_modules import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_chat_explorer.file_modules import ExcelUtil, FileUtil
 from ai_chat_explorer.autogen_modules import AutoGenProps
-from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData, TagItem
+from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData, TagItem, ContentFolder
 from ai_chat_explorer.api_modules.ai_app_util import get_main_db_path
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -60,6 +60,47 @@ def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDB
     # langchan_chatを実行
     result = LangChainUtil.langchain_chat(openai_props, vector_db_items, params)
     return result
+
+########################
+# ContentFolder関連
+########################
+def get_root_content_folder(folderType: str) -> Union[ContentFolder, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # ContentFolderを取得
+    content_folder = main_db.get_root_content_folder(folderType)
+    return content_folder
+
+########################
+# tag関連
+########################
+def get_tag_items() -> list[TagItem]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # タグの一覧を取得
+    tags = main_db.get_tag_items()
+    return tags
+
+def get_tag_item(tag_id: str) -> Union[TagItem, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # タグを取得
+    tag = main_db.get_tag_item(tag_id)
+    return tag
+
+def update_tag_items(tag: list[TagItem]):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # タグを更新
+    for tag_item in tag:
+        main_db.update_tag_item(tag_item)
+
+def delete_tag_items(tag: list[TagItem]):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # タグを削除
+    for tag_item in tag:
+        main_db.delete_tag_item(tag_item)
 
 ########################
 # langchain + vector db関連

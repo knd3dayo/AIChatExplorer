@@ -93,6 +93,9 @@ namespace LibUIPythonAI.Resource {
         // AutoGenChat
         public override string AutoGenChat { get; } = "AutoGen Chat";
 
+        // Monitor
+        public override string Monitor { get; } = "Monitor";
+
         // Local FileSystem
         public override string FileSystem { get; } = "Local FileSystem";
 

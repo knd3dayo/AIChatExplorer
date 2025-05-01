@@ -134,7 +134,7 @@ namespace LibUIMergeChat.ViewModel {
 
 
         #region クリップボードアイテムのInputBinding用のコマンド
-        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             Items.Clear();
         });

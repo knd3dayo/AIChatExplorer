@@ -20,7 +20,7 @@ namespace LibUIPythonAI.View.Item {
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Save { get; set; } = CommonStringResources.Instance.Save;

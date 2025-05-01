@@ -147,7 +147,7 @@ namespace LibPythonAI.Model.Content {
         public string FileSystemFolderPath {
             get {
                 if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path) && path is string) {
-                        return (string)path;
+                    return (string)path;
                 }
                 return "";
             }
@@ -305,5 +305,47 @@ namespace LibPythonAI.Model.Content {
             return new ContentFolderWrapper(folder);
         }
 
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            // ExtendedPropertiesをJsonに変換
+            Entity.SaveExtendedPropertiesJson();
+            Dictionary<string, object> dict = new() {
+                { "Id", Id },
+                { "FolderName", FolderName },
+                { "Description", Description },
+                { "IsRootFolder", IsRootFolder },
+                { "FolderTypeString", FolderTypeString },
+                { "ExtendedPropertiesJson", Entity.ExtendedPropertiesJson },
+            };
+            if (Parent != null) {
+                dict["Parent"] = Parent.ToDict();
+            }
+
+            return dict;
+        }
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<ContentFolderWrapper> items) {
+            return items.Select(item => item.ToDict()).ToList();
+        }
+
+        // FromDict
+        public static ContentFolderWrapper FromDict(Dictionary<string, object> dict) {
+            ContentFolderEntity folderEntity = new() {
+                Id = dict["Id"]?.ToString() ?? "",
+                ParentId = dict["ParentId"]?.ToString() ?? null,
+                FolderName = dict["FolderName"]?.ToString() ?? "",
+                Description = dict["Description"]?.ToString() ?? "",
+                FolderTypeString = dict["FolderTypeString"]?.ToString() ?? "",
+                ExtendedPropertiesJson = dict["ExtendedPropertiesJson"].ToString() ?? "{}",
+            };
+            ContentFolderWrapper folder = new(folderEntity);
+            return folder;
+
+        }
+
+        // FromDictList
+        public static List<ContentFolderWrapper> FromDictList(IEnumerable<Dictionary<string, object>> dicts) {
+            return dicts.Select(dict => FromDict(dict)).ToList();
+        }
     }
 }

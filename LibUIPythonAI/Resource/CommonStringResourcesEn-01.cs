@@ -132,6 +132,10 @@ namespace LibUIPythonAI.Resource {
         public override string Create { get; } = "Create";
         // Create Item
         public override string CreateItem { get; } = "Create Item";
+
+        // Create Folder
+        public override string CreateFolder { get; } = "Create Folder";
+
         // Exit
         public override string Exit { get; } = "Exit";
         // Edit
@@ -197,7 +201,7 @@ namespace LibUIPythonAI.Resource {
         public override string Search { get; } = "Search";
         // Setting
         public override string Setting { get; } = "Setting";
-        // Delete
+        // DeleteAsync
         public override string Delete { get; } = "Delete";
         // Add
         public override string Add { get; } = "Add";
@@ -310,7 +314,7 @@ namespace LibUIPythonAI.Resource {
         // Edit tags.
         public override string EditTagToolTip { get; } = "Edit tags.";
 
-        // Delete selected tags.
+        // DeleteAsync selected tags.
         public override string DeleteSelectedTag { get; } = "Delete selected tags";
         // Select all.
         public override string SelectAll { get; } = "Select all";

@@ -23,8 +23,7 @@ namespace LibUIPythonAI.ViewModel.Tag {
             ContentItem = contentItem;
             AfterUpdate = afterUpdate;
 
-            ReloadTagList();
-
+            _ = ReloadTagListAsync(); // CS4014エラーを防ぐために、非同期メソッドの呼び出しを明示的に無視します。
         }
 
         //新規タグのテキスト
@@ -40,7 +39,7 @@ namespace LibUIPythonAI.ViewModel.Tag {
         }
 
         // タグを追加したときの処理
-        public SimpleDelegateCommand<string> AddTagCommand => new((tag) => {
+        public SimpleDelegateCommand<string> AddTagCommand => new(async (tag) => {
             if (string.IsNullOrEmpty(tag)) {
                 LogWrapper.Error(CommonStringResources.Instance.TagIsEmpty);
                 return;
@@ -53,20 +52,21 @@ namespace LibUIPythonAI.ViewModel.Tag {
                 }
             }
 
-            TagItem tagItem = new(new LibPythonAI.Data.TagItemEntity()) { Tag = tag };
-            tagItem.Save();
+            TagItem tagItem = new() { Tag = tag };
+            await tagItem.SaveAsync();
 
             TagList.Add(new TagItemViewModel(tagItem));
             NewTag = "";
             // LiteDBから再読み込み
-            ReloadTagList();
+            await ReloadTagListAsync();
 
         });
 
         // LiteDBから再読み込み
-        public void ReloadTagList() {
+        public async Task ReloadTagListAsync() {
             TagList.Clear();
-            IEnumerable<TagItem> tagItems = TagItem.GetTagItems();
+            List<TagItem> tagItems = await TagItem.GetTagItemsAsync();
+
             foreach (var item in tagItems) {
                 TagItemViewModel tagItemViewModel = new(item);
                 if (ContentItem != null) {
@@ -79,15 +79,15 @@ namespace LibUIPythonAI.ViewModel.Tag {
         }
 
         // 選択したタグを削除する。
-        public SimpleDelegateCommand<object> DeleteSelectedTagCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteSelectedTagCommand => new(async (parameter) => {
             // 選択中のアイテムを削除
 
             foreach (var item in SelectedTagList) {
                 // LiteDBから削除
-                item.TagItem.Delete();
+                await item.TagItem.DeleteAsync();
             }
             // LiteDBから再読み込み
-            ReloadTagList();
+            await ReloadTagListAsync();
         });
 
 
@@ -141,17 +141,17 @@ namespace LibUIPythonAI.ViewModel.Tag {
 
         // 検索ウィンドウを開く
         public SimpleDelegateCommand<object> OpenSearchWindowCommand => new((parameter) => {
-            TagSearchWindow.OpenTagSearchWindow((tag, exclude) => {
-                // タグを検索
+            TagSearchWindow.OpenTagSearchWindow(async (tag, exclude) => {
+                // タグを検索  
                 TagList.Clear();
-                foreach (var item in TagItem.FilterTag(tag, exclude)) {
+                var tagItems = await TagItem.FilterTagAsync(tag, exclude);
+                foreach (var item in tagItems) {
                     TagList.Add(new TagItemViewModel(item));
                     if (ContentItem != null) {
                         var tagString = item.Tag;
                         TagList.Last().IsChecked = ContentItem.Tags.Contains(tagString);
                     }
                 }
-
             });
         });
     }

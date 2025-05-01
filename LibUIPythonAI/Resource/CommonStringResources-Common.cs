@@ -44,6 +44,10 @@ namespace LibUIPythonAI.Resource {
         public virtual string Create { get; } = "作成";
         // アイテム作成
         public virtual string CreateItem { get; } = "アイテム作成";
+
+        // フォルダ作成
+        public virtual string CreateFolder { get; } = "フォルダ作成";
+
         // 終了
         public virtual string Exit { get; } = "終了";
         // 編集

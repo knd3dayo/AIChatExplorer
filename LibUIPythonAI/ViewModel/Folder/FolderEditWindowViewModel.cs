@@ -105,11 +105,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 LogWrapper.Error(CommonStringResources.Instance.EnterFolderName);
                 return;
             }
-            //　説明がない場合はエラー
-            if (FolderViewModel.Description == "") {
-                LogWrapper.Error(CommonStringResources.Instance.EnterDescription);
-                return;
-            }
+
             // VectorSearchPropertiesを設定
             FolderViewModel.Folder.ReferenceVectorSearchProperties = [.. VectorSearchProperties];
 

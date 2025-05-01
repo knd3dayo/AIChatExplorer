@@ -76,7 +76,7 @@ namespace LibPythonAI.Model.AutoGen {
 
             UpdateAutoGenAgent(Name, Description, SystemMessage, CodeExecution, LLMConfigName, ToolNames, vector_db_items, allow_override);
         }
-        // Delete
+        // DeleteAsync
         public void Delete() {
             DeleteAutoGenAgent(Name);
         }

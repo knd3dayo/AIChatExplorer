@@ -67,16 +67,24 @@
                         FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.File}">
-                        <!--  Toggle Clipbord Monitoring  -->
+                        <!--  CreateItem  -->
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding Commands.ToggleClipboardMonitor, Mode=OneTime}"
+                            Command="{Binding CreateItemCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding ClipboardMonitorButtonText}"
-                            ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
+                            Header="{x:Static res:ViewStringResources.CreateItem}" />
+                        <!--  CreateFolderCommand  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding CreateFolderCommand, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{x:Static res:ViewStringResources.CreateFolder}" />
 
                         <MenuItem
                             Margin="0,0,0,0"
@@ -224,7 +232,7 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.VectorSearch}" />
                     </MenuItem>
-
+                    <!--  Search  -->
                     <MenuItem
                         Margin="0,0,0,0"
                         Padding="10,0,10,0"
@@ -233,6 +241,26 @@
                         FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Search}" />
+                    <!--  Monitor  -->
+                    <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="{x:Static res:ViewStringResources.Monitor}">
+                        <!--  Clipboard Monitor  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding Commands.ToggleClipboardMonitor, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding ClipboardMonitorButtonText}"
+                            ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
+                    </MenuItem>
+                    <!--  Setting  -->
                     <MenuItem
                         Margin="0,0,0,0"
                         Padding="10,0,10,0"

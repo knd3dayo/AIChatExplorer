@@ -12,12 +12,8 @@ using LibPythonAI.Model.VectorDB;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
-using LibUIPythonAI.View.AutoProcessRule;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 
@@ -54,7 +50,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 UpdateIndeterminateAction = UpdateIndeterminate,
 
             };
-            
+
             // MainPanelTreeViewControlViewModelの初期化
             MainPanelTreeViewControlViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
@@ -97,9 +93,9 @@ namespace AIChatExplorer.ViewModel.Main {
         public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         [AllowNull]
-        public static MainWindowViewModel Instance { get; set; } 
+        public static MainWindowViewModel Instance { get; set; }
 
-        public MainTabManager MainTabManager { get; } = new ();
+        public MainTabManager MainTabManager { get; } = new();
 
         // クリップボード監視が実行中であるかどうか
         public bool IsClipboardMonitoringActive { get; set; } = false;
@@ -133,10 +129,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
             AIChatExplorerPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
-
             // VectorDBItemのLoad
-            Task.Run(() => {
-                VectorDBItem.LoadItems();
+            Task.Run(async () => {
+                await VectorDBItem.LoadItemsAsync();
             });
         }
         // プログレスインジケータ表示更新用のアクション
@@ -149,6 +144,13 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
+        // クリップボードアイテムを作成する。
+        // Ctrl + N が押された時の処理
+        // メニューの「アイテム作成」をクリックしたときの処理
+        public SimpleDelegateCommand<object> CreateItemCommand => MainPanelTreeViewControlViewModel.CreateItemCommand;
+
+        // メニューの「フォルダ作成」をクリックしたときの処理
+        public SimpleDelegateCommand<object> CreateFolderCommand => MainPanelTreeViewControlViewModel.CreateFolderCommand;
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {

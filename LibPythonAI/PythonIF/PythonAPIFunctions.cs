@@ -3,7 +3,9 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Statistics;
+using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
@@ -75,6 +77,128 @@ namespace PythonAILib.PythonIF {
 
         }
 
+        // ContentFolder
+        public List<ContentFolderWrapper> GetRootContentFolders(List<string> folderTypeStrings) {
+
+            List<ContentFolderRequest> contentFolderRequests = [];
+            foreach (string folderTypeString in folderTypeStrings) {
+                // ContentFolderRequestを作成
+                ContentFolderRequest contentFolderRequest = new() {
+                    FolderTypeString = folderTypeString
+                };
+
+                contentFolderRequests.Add(contentFolderRequest);
+            }
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = contentFolderRequests
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetRootContentFoldersExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_root_content_folders";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // ContentFolderWrapperのリストを取得
+            dynamic dictList = resultDict["content_folders"] ?? "[]";
+            List<ContentFolderWrapper> contentFolders = [];
+            foreach (var item in dictList) {
+                // ContentFolderWrapperを取得
+                ContentFolderWrapper? contentFolder = ContentFolderWrapper.FromDict(item);
+                if (contentFolder != null) {
+                    contentFolders.Add(contentFolder);
+                }
+            }
+            return contentFolders;
+
+        }
+
+        // GetTagItems
+        public List<TagItem> GetTagItems() {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new();
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetTagItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_tag_items";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // tag_itemsを取得
+            dynamic dictList = resultDict["tag_items"] ?? "[]";
+            List<TagItem> tagItems = [];
+            foreach (var item in dictList) {
+                // TagItemを取得
+                TagItem? tagItem = TagItem.FromDict(item);
+                if (tagItem != null) {
+                    tagItems.Add(tagItem);
+                }
+            }
+
+            return tagItems;
+        }
+        // UpdateTagItems
+        public void UpdateTagItems(List<TagItem> tagItems) {
+
+            RequestContainer requestContainer = new() {
+                TagItemsInstance = tagItems
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateTagItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_tag_items";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+        }
+
+        // DeleteTagItems
+        public void DeleteTagItems(List<TagItem> tagItems) {
+            RequestContainer requestContainer = new() {
+                TagItemsInstance = tagItems
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteTagItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_tag_items";
+            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+        }
+
         // GetTokenCount
         public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
 
@@ -98,6 +222,10 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
             // total_tokensを取得
             if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
                 if (totalTokensValue is decimal totalTokensDecimal) {
@@ -144,6 +272,10 @@ namespace PythonAILib.PythonIF {
 
             chatResult.LoadFromJson(resultString);
 
+            // Errorがある場合は例外をスローする
+            if ( ! string.IsNullOrEmpty(chatResult.Error)) {
+                throw new Exception(chatResult.Error);
+            }
             // StatisticManagerにトークン数を追加
             MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
             return chatResult;
@@ -256,6 +388,12 @@ namespace PythonAILib.PythonIF {
             string endpoint = $"{this.base_url}/cancel_autogen_chat";
             string resultString = PostAsync(endpoint, sessionTokenJson).Result;
 
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
 
         }
         public string ExtractFileToText(string path) {
@@ -281,7 +419,7 @@ namespace PythonAILib.PythonIF {
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
             if (!string.IsNullOrEmpty(result.Error)) {
-                LogWrapper.Error(result.Error);
+                throw new Exception(result.Error);
             }
             return result.Output;
         }
@@ -314,7 +452,7 @@ namespace PythonAILib.PythonIF {
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
             if (!string.IsNullOrEmpty(result.Error)) {
-                LogWrapper.Error(result.Error);
+                throw new Exception(result.Error);
             }
             return result.Output;
         }
@@ -333,6 +471,13 @@ namespace PythonAILib.PythonIF {
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
         }
 
         // ベクトルDBを削除する
@@ -350,6 +495,13 @@ namespace PythonAILib.PythonIF {
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
         }
 
         // public List<VectorDBItem> GetVectorDBItems();
@@ -367,6 +519,12 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+
             // VectorDBItemのリストを取得
             dynamic dictList = resultDict["vector_db_items"] ?? "[]";
             List<VectorDBItem> vectorDBItems = [];
@@ -397,6 +555,12 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+
             // VectorDBItemを取得
             VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
             return vectorDBItem;
@@ -418,6 +582,13 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+
+
             // VectorDBItemを取得
             VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
             return vectorDBItem;
@@ -458,16 +629,24 @@ namespace PythonAILib.PythonIF {
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
             // resultStringからDictionaryに変換する。
-            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+
             if (resultDict == null) {
                 throw new Exception(StringResources.OpenAIResponseEmpty);
             }
+
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {
-                JsonElement? documentsObject = (JsonElement)resultDict["documents"];
+                var documents = resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorDBEmbedding.FromJson(documentsObject.ToString() ?? "[]");
+                vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
             }
 
             return vectorSearchResults;
@@ -509,6 +688,12 @@ namespace PythonAILib.PythonIF {
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
         }
 
 
@@ -545,6 +730,12 @@ namespace PythonAILib.PythonIF {
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
         }
 
         public void UpdateEmbeddings(ChatRequestContext chatRequestContext) {
@@ -580,6 +771,12 @@ namespace PythonAILib.PythonIF {
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
         }
 
         // ExportToExcelを実行する
@@ -600,8 +797,15 @@ namespace PythonAILib.PythonIF {
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/export_to_excel";
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
 
         }
 
@@ -632,6 +836,11 @@ namespace PythonAILib.PythonIF {
             if (resultDict == null) {
                 throw new Exception(StringResources.OpenAIResponseEmpty);
             }
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+
             // documents を取得
             JsonElement? documentsObject = (JsonElement)resultDict["rows"];
             if (documentsObject == null) {
@@ -668,7 +877,7 @@ namespace PythonAILib.PythonIF {
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
             if (!string.IsNullOrEmpty(result.Error)) {
-                LogWrapper.Error(result.Error);
+                throw new Exception(result.Error);
             }
             return result.Output;
         }
@@ -699,7 +908,7 @@ namespace PythonAILib.PythonIF {
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
             if (!string.IsNullOrEmpty(result.Error)) {
-                LogWrapper.Error(result.Error);
+                throw new Exception(result.Error);
             }
             return result.Output;
         }

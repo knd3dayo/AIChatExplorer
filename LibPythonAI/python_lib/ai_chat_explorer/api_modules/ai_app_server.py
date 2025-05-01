@@ -15,6 +15,34 @@ sio = socketio.AsyncServer(async_mode='aiohttp')
 sio.attach(app)
 logger = logging.getLogger(__name__)
 
+@routes.post('/api/get_tag_items')
+async def get_tag_items(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_tag_items(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+@routes.post('/api/update_tag_items')
+async def update_tag_items(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_tag_items(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+@routes.post('/api/delete_tag_items')
+async def delete_tag_items(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_tag_items(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+@routes.post('/api/get_root_content_folders')
+async def get_root_content_folders(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_root_content_folders(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
 @routes.post('/api/openai_chat')
 async def openai_chat(request: Request) -> Response:
     request_json = await request.text()

@@ -79,14 +79,14 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             if (ItemViewModel == null) {
                 return;
             }
-            Task.Run(() => {
-                ItemViewModel.Item.Save();
-                // VectorDBの初期化
-                LibPythonAI.Model.VectorDB.VectorDBItem.LoadItems();
+            Task.Run(async () => {
+                await ItemViewModel.Item.SaveAsync(); // Saveメソッドを非同期に変更
+                                                      // VectorDBの初期化
+                await LibPythonAI.Model.VectorDB.VectorDBItem.LoadItemsAsync(); // awaitを追加
 
             }).ContinueWith((task) => {
                 if (task.IsFaulted) {
-                    LogWrapper.Error(task.Exception.Message);
+                    LogWrapper.Error(task.Exception?.Message ?? "An error occurred.");
                     return;
                 }
                 // 更新されたアイテムを返す

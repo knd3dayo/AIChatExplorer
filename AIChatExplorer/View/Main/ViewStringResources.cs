@@ -20,7 +20,7 @@ namespace AIChatExplorer.View.Main {
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Save { get; set; } = CommonStringResources.Instance.Save;
@@ -113,6 +113,10 @@ namespace AIChatExplorer.View.Main {
         // CreateItem
         public static string CreateItem { get; set; } = CommonStringResources.Instance.CreateItem;
 
+        // CreateFolder
+        public static string CreateFolder { get; set; } = CommonStringResources.Instance.CreateFolder;
+
+
         // Create
         public static string Create { get; set; } = CommonStringResources.Instance.Create;
 
@@ -154,5 +158,9 @@ namespace AIChatExplorer.View.Main {
 
         // AutoGenChat
         public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChat;
+
+        // Monitor
+        public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;
+
     }
 }

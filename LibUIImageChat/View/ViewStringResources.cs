@@ -9,7 +9,7 @@ namespace LibUIImageChat.View {
 
         // Open
         public static string Open => CommonStringResources.Open;
-        // Delete
+        // DeleteAsync
         public static string Delete => CommonStringResources.Delete;
 
         // TheAnswerWillBeDisplayedHere

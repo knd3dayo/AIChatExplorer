@@ -96,14 +96,13 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // Save
-        public void Save() {
-            PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this);
-
+        public async Task SaveAsync() {
+            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this));
         }
 
-        // Delete
-        public void Delete() {
-            PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this);
+        // DeleteAsync
+        public async Task DeleteAsync() {
+            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this));
         }
 
 
@@ -121,10 +120,12 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
-        private static List<VectorDBItem> _items = [];
-        public static void LoadItems() {
-            _items = PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItems();
+        private static List<VectorDBItem> _items = new(); // 修正: 空のリストを初期化
+        public static async Task LoadItemsAsync() {
+            // 修正: 非同期メソッドで 'await' を使用
+            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItems());
         }
+
         public static List<VectorDBItem> GetItems() {
             return _items;
         }

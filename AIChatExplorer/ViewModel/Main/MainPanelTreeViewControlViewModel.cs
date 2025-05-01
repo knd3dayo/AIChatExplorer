@@ -145,7 +145,18 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        public void CreateSearchFolder() {
+        // CreateFolderCommand
+        public SimpleDelegateCommand<object> CreateFolderCommand => new((parameter) => {
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            // フォルダを作成する
+            SelectedFolder.CreateFolderCommand.Execute();
+        });
+
+        private void CreateSearchFolder() {
             // 現在の日付 時刻の文字列を取得
             string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             SearchFolder folder = AIChatExplorerFolderManager.SearchRootFolder.CreateChild(now);

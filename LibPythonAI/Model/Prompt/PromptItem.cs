@@ -90,7 +90,7 @@ namespace LibPythonAI.Model.Prompt {
             db.SaveChanges();
         }
 
-        // Delete
+        // DeleteAsync
         public void Delete() {
             using PythonAILibDBContext db = new();
             var item = db.PromptItems.Find(Id);

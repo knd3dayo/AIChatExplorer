@@ -65,7 +65,7 @@ namespace LibUIPythonAI.View.Folder {
         // Add
         public static string Add { get; set; } = CommonStringResources.Instance.Add;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Save { get; set; } = CommonStringResources.Instance.Save;

@@ -16,6 +16,92 @@ if "HTTPS_PROXY" not in os.environ:
 os.environ["PYTHONUTF8"] = "1"
 
 ########################
+# ContentFolder関連
+########################
+def get_root_content_folders(request_json: str):
+    # get_root_content_folderを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # content_foldersを取得
+        content_folders = get_content_folder_requelst_objects(request_dict)
+        
+        
+        # root_content_folderを取得
+        root_content_folders: list[ContentFolder] = []
+        for content_folder in content_folders:
+            root_content_folder = ai_app.get_root_content_folder(content_folder.FolderTypeString)
+            if root_content_folder is not None:
+                root_content_folders.append(root_content_folder)
+
+        
+        result: dict = {}
+        result["content_folders"] = [folder.to_dict() for folder in root_content_folders]
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+########################
+# tag関連
+########################
+def get_tag_items(request_json: str):
+    # get_tag_itemsを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        # request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        tag_items = ai_app.get_tag_items()
+        
+        result: dict = {}
+        result["tag_items"] = [item.to_dict() for item in tag_items]
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_tag_items(request_json: str):
+    # update_tag_itemsを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        tag_items = get_tag_item_objects(request_dict)
+        # tag_itemsを更新
+        ai_app.update_tag_items(tag_items)
+
+        result: dict = {}
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_tag_items(request_json: str):
+    # delete_tag_itemsを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        tag_items = get_tag_item_objects(request_dict)
+        # tag_itemsを削除
+        ai_app.delete_tag_items(tag_items)
+
+        result: dict = {}
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+########################
 # openai関連
 ########################
 def openai_chat(request_json: str):

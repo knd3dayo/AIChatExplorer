@@ -34,7 +34,7 @@ namespace LibUIPythonAI.View.AutoGen {
         // Enabled
         public static string Enabled { get; set; } = CommonStringResources.Instance.Enabled;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         // BasicSettings

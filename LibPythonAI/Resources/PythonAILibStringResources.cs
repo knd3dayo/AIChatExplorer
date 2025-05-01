@@ -181,6 +181,17 @@ namespace PythonAILib.Resources {
         // チャット履歴(英語)
         public virtual string ChatHistoryEnglish { get; } = "ChatHistory";
 
+        // GetRootContentFoldersExecute
+        public virtual string GetRootContentFoldersExecute { get; } = "ルートフォルダを取得します";
+
+        // GetTagItemsExecute
+        public virtual string GetTagItemsExecute { get; } = "タグアイテムを取得します";
+
+        // UpdateTagItemsExecute
+        public virtual string UpdateTagItemsExecute { get; } = "タグアイテムを更新します";
+        // DeleteTagItemsExecute
+        public virtual string DeleteTagItemsExecute { get; } = "タグアイテムを削除します";
+
         // GetTokenCountExecute
         public virtual string GetTokenCountExecute { get; } = "GetTokenCount実行";
 
@@ -204,7 +215,7 @@ namespace PythonAILib.Resources {
         // GetVectorDBItemByNameExecute
         public virtual string GetVectorDBItemByNameExecute { get; } = "ベクトルDBアイテムを名前で取得します";
 
-        // Delete
+        // DeleteAsync
         // ベクトルDBのコレクション削除を実行
         public virtual string DeleteVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション削除を実行";
         // ベクトルDBのコレクション更新を実行
