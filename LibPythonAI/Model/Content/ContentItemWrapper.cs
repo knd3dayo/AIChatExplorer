@@ -37,12 +37,11 @@ namespace LibPythonAI.Model.Content {
 
         // Folder
         public virtual ContentFolderWrapper GetFolder() {
-            using PythonAILibDBContext db = new PythonAILibDBContext();
-            var folder = db.ContentFolders.Find(Entity.FolderId);
+            var folder = ContentFolderWrapper.GetFolderById< ContentFolderWrapper>(Entity.FolderId);
             if (folder == null) {
-                throw new Exception("Folder is null");
+                throw new Exception("Folder not found");
             }
-            return new(folder);
+            return folder;
 
         }
 

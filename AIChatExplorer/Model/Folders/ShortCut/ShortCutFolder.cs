@@ -10,7 +10,7 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
     public class ShortCutFolder : FileSystemFolder {
 
         // コンストラクタ
-        public ShortCutFolder(ContentFolderEntity folder) : base(folder) {
+        public ShortCutFolder() : base() {
             FolderTypeString = AIChatExplorerFolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
         }
 
@@ -51,7 +51,7 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected override Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
-            var folders = Entity.GetChildren().Select(x => new ShortCutFolder(x)).ToList();
+            var folders = Entity.GetChildren().Select(x => new ShortCutFolder() { Entity =x}).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {

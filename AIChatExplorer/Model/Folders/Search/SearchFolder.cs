@@ -8,7 +8,7 @@ namespace AIChatExplorer.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
 
         // コンストラクタ
-        public SearchFolder(ContentFolderEntity folder) : base(folder) {
+        public SearchFolder() : base() {
             IsAutoProcessEnabled = true;
             FolderTypeString = AIChatExplorerFolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
@@ -51,7 +51,7 @@ namespace AIChatExplorer.Model.Folders.Search {
                 ParentId = Id,
                 FolderName = folderName,
             };
-            SearchFolder child = new(childFolder);
+            SearchFolder child = new() { Entity = childFolder };
             return child;
         }
 

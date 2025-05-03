@@ -11,7 +11,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
     public class FileSystemFolder : ClipboardFolder {
 
         // コンストラクタ
-        public FileSystemFolder(ContentFolderEntity folder) : base(folder) {
+        public FileSystemFolder() : base() {
             IsAutoProcessEnabled = false;
             FolderTypeString = AIChatExplorerFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
         }
@@ -66,7 +66,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
-            var folders = Entity.GetChildren().Select(x => new FileSystemFolder(x)).ToList();
+            var folders = Entity.GetChildren().Select(x => new FileSystemFolder() { Entity = x}).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {

@@ -29,27 +29,23 @@ namespace LibPythonAI.Model.Folder {
         public static ContentFolderWrapper ChatRootFolder {
             get {
                 if (chatRootFolder == null) {
-                    using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CHAT_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById< ContentFolderWrapper>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = CHAT_ROOT_FOLDER_NAME,
                             FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
-                    chatRootFolder = new ContentFolderWrapper(folder);
+                    chatRootFolder = folder;
                 }
                 return chatRootFolder;
             }

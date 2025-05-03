@@ -65,7 +65,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         public ContentFolderWrapper? DestinationFolder {
             get {
-                return ContentFolderWrapper.GetFolderById(Entity.DestinationFolderId);
+                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.DestinationFolderId);
             }
             set {
                 Entity.DestinationFolderId = value?.Id;
@@ -74,7 +74,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         public ContentFolderWrapper? TargetFolder {
             get {
-                return ContentFolderWrapper.GetFolderById(Entity.TargetFolderId);
+                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.TargetFolderId);
             }
             set {
                 Entity.TargetFolderId = value?.Id;

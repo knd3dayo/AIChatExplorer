@@ -18,7 +18,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder(ContentFolderEntity folder) : base(folder) {
+        public ClipboardFolder() : base() {
             FolderTypeString = AIChatExplorerFolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
@@ -32,7 +32,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
                 ParentId = Id,
                 FolderName = folderName,
             };
-            ClipboardFolder child = new(childFolder);
+            ClipboardFolder child = new() { Entity = childFolder };
             return child;
         }
 

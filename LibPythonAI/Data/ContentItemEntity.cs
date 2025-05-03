@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibGit2Sharp;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;

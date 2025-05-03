@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibGit2Sharp;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Utils.Common;
 
@@ -11,7 +10,7 @@ namespace LibPythonAI.Data {
 
     public class AutoProcessRuleEntity {
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };
@@ -31,7 +30,7 @@ namespace LibPythonAI.Data {
 
         private List<AutoProcessRuleConditionEntity>? _conditions { get; set; }
 
-        [NotMapped]        
+        [NotMapped]
         public List<AutoProcessRuleConditionEntity> Conditions {
             get {
                 if (_conditions == null) {

@@ -6,8 +6,10 @@ using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Folders.ShortCut;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Folder;
 using LibUIPythonAI.Resource;
+using NetOffice.OutlookApi;
 using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
@@ -90,26 +92,23 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (clipboardRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CLIPBOARD_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    ClipboardFolder? folder = ContentFolderWrapper.GetFolderById<ClipboardFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                             FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
-                    clipboardRootFolder = new ClipboardFolder(folder);
+                    clipboardRootFolder = folder;
 
                 }
                 return clipboardRootFolder;
@@ -119,27 +118,23 @@ namespace AIChatExplorer.Model.Main {
         public static SearchFolder SearchRootFolder {
             get {
                 if (searchRootFolder == null) {
-                    using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(SEARCH_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SEARCH_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    SearchFolder? folder = ContentFolderWrapper.GetFolderById<SearchFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
                             FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
-                    searchRootFolder = new SearchFolder(folder);
+                    searchRootFolder = folder;
                 }
                 return searchRootFolder;
             }
@@ -151,28 +146,24 @@ namespace AIChatExplorer.Model.Main {
         public static FileSystemFolder FileSystemRootFolder {
             get {
                 if (fileSystemRootFolder == null) {
-                    using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(FILESYSTEM_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), FILESYSTEM_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    FileSystemFolder? folder = ContentFolderWrapper.GetFolderById<FileSystemFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
                             FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
 
-                    fileSystemRootFolder = new FileSystemFolder(folder);
+                    fileSystemRootFolder = folder;
                 }
                 return fileSystemRootFolder;
             }
@@ -183,27 +174,24 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (shortcutRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(SHORTCUT_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SHORTCUT_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    ShortCutFolder? folder = ContentFolderWrapper.GetFolderById<ShortCutFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
                             FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
 
-                    shortcutRootFolder = new ShortCutFolder(folder);
+                    shortcutRootFolder = folder;
                 }
                 return shortcutRootFolder;
             }
@@ -214,27 +202,24 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (outlookRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(OUTLOOK_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), OUTLOOK_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    OutlookFolder? folder = ContentFolderWrapper.GetFolderById<OutlookFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
                             FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
 
-                    outlookRootFolder = new OutlookFolder(folder);
+                    outlookRootFolder = folder;
                 }
                 return outlookRootFolder;
                 #endregion
@@ -248,27 +233,24 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (edgeBrowseHistoryRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    EdgeBrowseHistoryFolder? folder = ContentFolderWrapper.GetFolderById<EdgeBrowseHistoryFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
                             FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
 
-                    edgeBrowseHistoryRootFolder = new EdgeBrowseHistoryFolder(folder);
+                    edgeBrowseHistoryRootFolder = folder;
                 }
                 return edgeBrowseHistoryRootFolder;
             }
@@ -280,28 +262,25 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (recentFilesRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRootEntity? folderRoot = db.ContentFolderRoots.Where(x => x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN).FirstOrDefault();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(RECENT_FILES_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
                             FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                             ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), RECENT_FILES_ROOT_FOLDER_NAME_EN)
                         };
-                        db.ContentFolderRoots.Add(folderRoot);
-                        db.SaveChanges();
+                        folderRoot.Save();
                     }
-                    ContentFolderEntity? folder = db.ContentFolders.Where(x => x.Id == folderRoot.Id).FirstOrDefault();
+                    RecentFilesFolder? folder = ContentFolderWrapper.GetFolderById<RecentFilesFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            Id = folderRoot.Id,
                             FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
                             FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                         };
-                        db.ContentFolders.Add(folder);
-                        db.SaveChanges();
+                        folder.Save();
                     }
-
-                    recentFilesRootFolder = new RecentFilesFolder(folder);
+                    recentFilesRootFolder = folder;
                 }
+
                 return recentFilesRootFolder;
             }
         }

@@ -63,7 +63,7 @@ namespace LibPythonAI.Model.VectorDB {
                 if (FolderId == null) {
                     return item.Name;
                 }
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById(FolderId);
+                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
                 if (folder == null) {
                     return item.Name;
                 }

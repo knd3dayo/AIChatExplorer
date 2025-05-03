@@ -27,7 +27,7 @@ namespace LibPythonAI.Model.Search {
                 if (Entity.TargetFolderId == null) {
                     return null;
                 }
-                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById(Entity.TargetFolderId);
+                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.TargetFolderId);
                 return folder;
             }
             set {
@@ -40,7 +40,7 @@ namespace LibPythonAI.Model.Search {
                 if (Entity.SearchFolderId == null) {
                     return null;
                 }
-                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById(Entity.SearchFolderId);
+                ContentFolderWrapper? folder =  ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.SearchFolderId);
                 return folder;
             }
             set {

@@ -12,7 +12,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
-        public OutlookFolder(ContentFolderEntity folder) : base(folder) {
+        public OutlookFolder() : base() {
             IsAutoProcessEnabled = false;
             FolderTypeString = AIChatExplorerFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
         }
@@ -57,7 +57,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 ParentId = Id,
                 FolderName = folderName,
             };
-            OutlookFolder child = new(childFolder);
+            OutlookFolder child = new() { Entity = childFolder};
             return child;
         }
 

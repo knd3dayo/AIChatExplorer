@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using Microsoft.EntityFrameworkCore;
 using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class ContentFolderEntity {
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };
@@ -33,7 +32,7 @@ namespace LibPythonAI.Data {
         // Description
         public string Description { get; set; } = "";
 
-        
+
         public string ExtendedPropertiesJson { get; set; } = "{}";
 
         private Dictionary<string, object?>? _extendedProperties;

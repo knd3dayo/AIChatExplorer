@@ -7,18 +7,14 @@ using PythonAILib.Resources;
 namespace LibPythonAI.Model.Content {
     public class ContentFolderWrapper {
 
-        public ContentFolderWrapper(ContentFolderEntity contentFolder) {
-            Entity = contentFolder;
-        }
+        public ContentFolderWrapper() { }
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
-            Entity = new ContentFolderEntity() {
-                ParentId = parent?.Id,
-                FolderName = folderName,
-            };
+            Entity.ParentId = parent?.Id;
+            Entity.FolderName = folderName;
         }
 
-        public ContentFolderEntity Entity { get; set; }
+        public ContentFolderEntity Entity { get; protected set; } = new ContentFolderEntity();
 
         public string Id {
             get {
@@ -35,7 +31,7 @@ namespace LibPythonAI.Model.Content {
                 if (parentFolder == null) {
                     return null;
                 }
-                return new ContentFolderWrapper(parentFolder);
+                return new ContentFolderWrapper() { Entity = parentFolder };
             }
             set {
                 Entity.ParentId = value?.Entity.Id;
@@ -156,8 +152,6 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-
-
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
@@ -169,7 +163,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual List<T> GetItems<T>(bool isSync = true ) where T : ContentItemWrapper {
+        public virtual List<T> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
             if (isSync) {
                 // SyncItems
                 SyncItems();
@@ -178,10 +172,18 @@ namespace LibPythonAI.Model.Content {
             return items;
         }
 
-        public virtual void SyncItems() {}
+        public virtual void SyncItems() { }
 
         public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
-            return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
+            List<T> children = [];
+            foreach (var child in Entity.GetChildren()) {
+                T? childFolder = (T?)Activator.CreateInstance(typeof(T));
+                if (childFolder != null) {
+                    childFolder.Entity = child;
+                    children.Add(childFolder);
+                }
+            }
+            return children;
         }
 
         // 親フォルダ
@@ -233,7 +235,7 @@ namespace LibPythonAI.Model.Content {
                 ParentId = Id,
                 FolderName = folderName,
             };
-            return new ContentFolderWrapper(childFolder);
+            return new ContentFolderWrapper() { Entity = childFolder };
         }
 
         // ステータス用の文字列
@@ -299,7 +301,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static ContentFolderWrapper? GetFolderById(string? id) {
+        public static T? GetFolderById<T>(string? id) where T: ContentFolderWrapper{
             if (string.IsNullOrEmpty(id)) {
                 return null;
             }
@@ -308,7 +310,12 @@ namespace LibPythonAI.Model.Content {
             if (folder == null) {
                 return null;
             }
-            return new ContentFolderWrapper(folder);
+            T? result = (T?)Activator.CreateInstance(typeof(T));
+            if (result == null) {
+                throw new Exception("Failed to create instance of ContentFolderWrapper");
+            }
+            result.Entity = folder;
+            return result;
         }
 
         // ToDict
@@ -344,7 +351,7 @@ namespace LibPythonAI.Model.Content {
                 FolderTypeString = dict["FolderTypeString"]?.ToString() ?? "",
                 ExtendedPropertiesJson = dict["ExtendedPropertiesJson"].ToString() ?? "{}",
             };
-            ContentFolderWrapper folder = new(folderEntity);
+            ContentFolderWrapper folder = new() { Entity = folderEntity };
             return folder;
 
         }

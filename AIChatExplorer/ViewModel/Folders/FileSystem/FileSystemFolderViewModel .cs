@@ -53,16 +53,14 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
             // ShortCutRootFolderを取得
             FileSystemFolder shortCutRootFolder = AIChatExplorerFolderManager.ShortcutRootFolder;
             // ショートカットフォルダを作成
-            ContentFolderEntity contentFolder = new() {
+            ShortCutFolder contentFolder = new() {
                 FolderTypeString = AIChatExplorerFolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
-                ParentId = shortCutRootFolder.Id,
-            };
-            ShortCutFolder subFolder = new(contentFolder) {
+                Parent = shortCutRootFolder,
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
-            subFolder.Save();
+            contentFolder.Save();
 
         });
 
