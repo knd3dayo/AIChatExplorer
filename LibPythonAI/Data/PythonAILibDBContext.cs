@@ -1,5 +1,6 @@
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PythonAILib.Common;
 
 namespace LibPythonAI.Data {
@@ -34,7 +35,7 @@ namespace LibPythonAI.Data {
             // var logFilePath = "logfile.txt";
             // logStream = new StreamWriter(logFilePath, append: true);
             // logStream.AutoFlush = true; // 自動的にバッファをフラッシュするように設定
-
+           
             string dbPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
             // optionsBuilder.EnableSensitiveDataLogging().LogTo(logStream.WriteLine, LogLevel.Information).UseSqlite($"Data Source={dbPath}");
             optionsBuilder.UseSqlite($"Data Source={dbPath}");

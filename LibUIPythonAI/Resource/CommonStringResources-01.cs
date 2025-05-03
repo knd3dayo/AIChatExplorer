@@ -7,6 +7,9 @@ namespace LibUIPythonAI.Resource {
         // タイトルを生成
         public virtual string GenerateTitle { get; } = "タイトルを生成";
 
+        // タグを生成
+        public virtual string GenerateTag { get; } = "タグを生成";
+
         // 背景情報を生成
         public virtual string GenerateBackgroundInfo { get; } = "背景情報を生成";
 

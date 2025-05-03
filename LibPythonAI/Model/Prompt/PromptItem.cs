@@ -1,4 +1,6 @@
 using LibPythonAI.Data;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Tag;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
@@ -6,13 +8,7 @@ using PythonAILib.Resources;
 namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
 
-
-        // コンストラクタ
-        public PromptItem(PromptItemEntity entity) {
-            Entity = entity;
-        }
-
-        public PromptItemEntity Entity { get; set; }
+        public PromptItemEntity Entity { get; private set; } = new();
 
         // ID
         public string Id {
@@ -36,6 +32,7 @@ namespace LibPythonAI.Model.Prompt {
             set => Entity.Prompt = value;
         }
 
+
         // プロンプトテンプレートの種類
         public PromptTemplateTypeEnum PromptTemplateType {
             get => Entity.PromptTemplateType;
@@ -44,51 +41,114 @@ namespace LibPythonAI.Model.Prompt {
 
         // プロンプト結果の種類
         public PromptResultTypeEnum PromptResultType {
-            get => Entity.PromptResultType;
-            set => Entity.PromptResultType = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("PromptResultType", out object? value);
+                if (value is int intValue) {
+                    return (PromptResultTypeEnum)intValue;
+                }
+                return PromptResultTypeEnum.TextContent;
+            }
+            set {
+                Entity.ExtendedProperties["PromptResultType"] = (int)value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // チャットタイプ
         public OpenAIExecutionModeEnum ChatMode {
-            get => Entity.ChatMode;
-            set => Entity.ChatMode = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("ChatMode", out object? value);
+                if (value is int intValue) {
+                    return (OpenAIExecutionModeEnum)intValue;
+                }
+                return OpenAIExecutionModeEnum.Normal;
+            }
+            set {
+                Entity.ExtendedProperties["ChatMode"] = (int)value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // 分割モード
         public SplitOnTokenLimitExceedModeEnum SplitMode {
-            get => Entity.SplitMode;
-            set => Entity.SplitMode = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("SplitMode", out object? value);
+                if (value is int intValue) {
+                    return (SplitOnTokenLimitExceedModeEnum)intValue;
+                }
+                return SplitOnTokenLimitExceedModeEnum.None;
+            }
+            set {
+                Entity.ExtendedProperties["SplitMode"] = (int)value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // ベクトルDBを使用する
         public bool UseVectorDB {
-            get => Entity.UseVectorDB;
-            set => Entity.UseVectorDB = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("UseVectorDB", out object? value);
+                if (value is bool boolValue) {
+                    return boolValue;
+                }
+                return false;
+            }
+            set {
+                Entity.ExtendedProperties["UseVectorDB"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+
+        // タグ一覧を参照する
+        public bool UseTagList {
+            get {
+                Entity.ExtendedProperties.TryGetValue("UseTagList", out object? value);
+                if (value is bool boolValue) {
+                    return boolValue;
+                }
+                return false;
+            }
+            set {
+                Entity.ExtendedProperties["UseTagList"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // プロンプトの出力タイプ
         public PromptOutputTypeEnum PromptOutputType {
-            get => Entity.PromptOutputType;
-            set => Entity.PromptOutputType = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("PromptOutputType", out object? value);
+                if (value is int intValue) {
+                    return (PromptOutputTypeEnum)intValue;
+                }
+                return PromptOutputTypeEnum.NewContent;
+            }
+            set {
+                Entity.ExtendedProperties["PromptOutputType"] = (int)value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // PromptInputName
         public string PromptInputName {
-            get => Entity.PromptInputName;
-            set => Entity.PromptInputName = value;
+            get {
+                Entity.ExtendedProperties.TryGetValue("PromptInputName", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
+            }
+            set {
+                Entity.ExtendedProperties["PromptInputName"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
         }
 
         // Save
         public void Save() {
-            using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Id);
-            if (item == null) {
-                db.PromptItems.Add(Entity);
-            } else {
-                db.PromptItems.Entry(item).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
+            PromptItemEntity.SaveItems([this.Entity]);
         }
+
 
         // DeleteAsync
         public void Delete() {
@@ -99,6 +159,16 @@ namespace LibPythonAI.Model.Prompt {
                 db.SaveChanges();
             }
         }
+        // タグ一覧を参照するプロンプトを生成する.
+        public static async Task<string> GenerateTagListPrompt() {
+            // タグ一覧を取得
+            List<TagItem> tagItems = await TagItem.GetTagItemsAsync();
+            // タグ一覧をカンマ区切りで取得
+            string tagList = string.Join(", ", tagItems.Select(x => x.Tag));
+
+            string prompt = PromptStringResource.Instance.TagListPrompt(tagList);
+            return prompt;
+        }
 
         // PromptItemを取得
         public static PromptItem? GetPromptItemById(string id) {
@@ -107,7 +177,7 @@ namespace LibPythonAI.Model.Prompt {
             if (item == null) {
                 return null;
             }
-            return new PromptItem(item);
+            return new PromptItem() { Entity = item};
 
         }
         // 名前を指定してPromptItemを取得
@@ -117,25 +187,25 @@ namespace LibPythonAI.Model.Prompt {
             if (item == null) {
                 return null;
             }
-            return new PromptItem(item);
+            return new PromptItem() { Entity = item };
         }
 
         // 名前を指定してシステム定義のPromptItemを取得
-        public static PromptItem GetSystemPromptItemByName(SystemDefinedPromptNames name) {
+        public static List<PromptItem> GetSystemPromptItems() {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.FirstOrDefault(x => x.Name == name.ToString() && (
-                x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
-                x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
-                ) ?? throw new Exception("PromptItem not found");
-
-            return new PromptItem(item);
+            var items = db.PromptItems.Where(x => ( x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined));
+            List<PromptItem> promptItems = [];
+            foreach (var item in items) {
+                promptItems.Add(new PromptItem() { Entity = item });
+            }
+            return promptItems;
         }
         // List<PromptItem>を取得
         public static List<PromptItem> GetPromptItems() {
             using PythonAILibDBContext db = new();
             List<PromptItem> promptItems = [];
             foreach (var item in db.PromptItems) {
-                promptItems.Add(new PromptItem(item));
+                promptItems.Add(new PromptItem() { Entity = item });
             }
             return promptItems;
         }
@@ -147,10 +217,10 @@ namespace LibPythonAI.Model.Prompt {
 
             // TitleGenerationをDBから取得
             string name1 = SystemDefinedPromptNames.TitleGeneration.ToString();
-            var titleGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name1);
+            var titleGeneration = GetPromptItemByName(name1);
 
             if (titleGeneration == null) {
-                titleGeneration = new PromptItemEntity() {
+                titleGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
                     Description = PromptStringResource.Instance.TitleGeneration,
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
@@ -162,15 +232,13 @@ namespace LibPythonAI.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
 
                 };
-                db.PromptItems.Add(titleGeneration);
-                db.SaveChanges();
+                titleGeneration.Save();
             }
             // BackgroundInformationGenerationをDBから取得
             string name2 = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-            var backgroundInformationGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name2);
-
+            var backgroundInformationGeneration = GetPromptItemByName(name1);
             if (backgroundInformationGeneration == null) {
-                backgroundInformationGeneration = new PromptItemEntity() {
+                backgroundInformationGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     Description = PromptStringResource.Instance.BackgroundInformationGeneration,
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
@@ -181,17 +249,15 @@ namespace LibPythonAI.Model.Prompt {
                     UseVectorDB = true,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
-                db.PromptItems.Add(backgroundInformationGeneration);
-                db.SaveChanges();
+                backgroundInformationGeneration.Save();
 
             }
             // SummaryGenerationをDBから取得
             string name3 = SystemDefinedPromptNames.SummaryGeneration.ToString();
-            var summaryGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name3);
-
+            var summaryGeneration = GetPromptItemByName(name3);
 
             if (summaryGeneration == null) {
-                summaryGeneration = new PromptItemEntity() {
+                summaryGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
                     Description = PromptStringResource.Instance.SummaryGeneration,
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
@@ -203,15 +269,14 @@ namespace LibPythonAI.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
-                db.PromptItems.Add(summaryGeneration);
-                db.SaveChanges();
+                summaryGeneration.Save();
             }
             // TasksGenerationをDBから取得
             string name4 = SystemDefinedPromptNames.TasksGeneration.ToString();
-            var tasksGeneration = db.PromptItems.FirstOrDefault(x => x.Name == name4);
+            var tasksGeneration = GetPromptItemByName(name4);
 
             if (tasksGeneration == null) {
-                tasksGeneration = new PromptItemEntity() {
+                tasksGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.TasksGeneration.ToString(),
                     Description = PromptStringResource.Instance.TasksGeneration,
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
@@ -223,16 +288,15 @@ namespace LibPythonAI.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
-                db.PromptItems.Add(tasksGeneration);
-                db.SaveChanges();
+                tasksGeneration.Save();
             }
 
             // DocumentReliabilityCheckをDBから取得
             string name5 = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
-            var documentReliabilityCheck = db.PromptItems.FirstOrDefault(x => x.Name == name5);
+            var documentReliabilityCheck = GetPromptItemByName(name5);
 
             if (documentReliabilityCheck == null) {
-                documentReliabilityCheck = new PromptItemEntity() {
+                documentReliabilityCheck = new PromptItem() {
                     Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
                     Description = PromptStringResource.Instance.DocumentReliability,
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
@@ -244,8 +308,43 @@ namespace LibPythonAI.Model.Prompt {
                     PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };
-                db.PromptItems.Add(documentReliabilityCheck);
-                db.SaveChanges();
+                documentReliabilityCheck.Save();
+            }
+
+            // TagGenerationをDBから取得
+            string name6 = SystemDefinedPromptNames.TagGeneration.ToString();
+            var tagGeneration = GetPromptItemByName(name6);
+            if (tagGeneration == null) {
+                tagGeneration = new PromptItem() {
+                    Name = SystemDefinedPromptNames.TagGeneration.ToString(),
+                    Description = PromptStringResource.Instance.TagGeneration,
+                    Prompt = PromptStringResource.Instance.TagGenerationPrompt,
+                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
+                    PromptResultType = PromptResultTypeEnum.ListContent,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBを使用しない
+                    UseVectorDB = false,
+                    PromptOutputType = PromptOutputTypeEnum.AppendTags,
+                };
+                tagGeneration.Save();
+            }
+            // SelectExistingTagsをDBから取得
+            string name7 = SystemDefinedPromptNames.SelectExistingTags.ToString();
+            var selectExistedTags = GetPromptItemByName(name7);
+            if (selectExistedTags == null) {
+                selectExistedTags = new PromptItem() {
+                    Name = SystemDefinedPromptNames.SelectExistingTags.ToString(),
+                    Description = PromptStringResource.Instance.SelectExistingTags,
+                    Prompt = PromptStringResource.Instance.SelectExistingTagsPrompt,
+                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
+                    PromptResultType = PromptResultTypeEnum.ListContent,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
+                    UseTagList = true,
+                    // ベクトルDBを使用しない
+                    UseVectorDB = false,
+                    PromptOutputType = PromptOutputTypeEnum.AppendTags,
+                };
+                selectExistedTags.Save();
             }
         }
 

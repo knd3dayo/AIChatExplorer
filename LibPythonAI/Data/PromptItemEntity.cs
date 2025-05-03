@@ -1,9 +1,19 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class PromptItemEntity {
+
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -18,23 +28,43 @@ namespace LibPythonAI.Data {
         // プロンプトテンプレートの種類
         public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
 
-        // プロンプト結果の種類
-        public PromptResultTypeEnum PromptResultType { get; set; } = PromptResultTypeEnum.TextContent;
 
-        // チャットタイプ
-        public OpenAIExecutionModeEnum ChatMode { get; set; } = OpenAIExecutionModeEnum.Normal;
+        public string ExtendedPropertiesJson { get; set; } = "{}";
 
-        // 分割モード
-        public SplitOnTokenLimitExceedModeEnum SplitMode { get; set; } = SplitOnTokenLimitExceedModeEnum.None;
+        private Dictionary<string, object?>? _extendedProperties;
+        // 拡張プロパティ (Dictionary<string, object> は EF でサポートされないため、Json で保存)
+        [NotMapped]
+        public Dictionary<string, object?> ExtendedProperties {
+            get {
+                if (_extendedProperties == null) {
+                    _extendedProperties = JsonUtil.ParseJson(ExtendedPropertiesJson);
+                }
+                return _extendedProperties ?? [];
+            }
+        }
 
-        // ベクトルDBを使用する
-        public bool UseVectorDB { get; set; } = false;
+        public void SaveExtendedPropertiesJson() {
+            if (_extendedProperties != null) {
+                ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+            }
+        }
 
-        // プロンプトの出力タイプ
-        public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
+        // 複数アイテムのSave
+        public static void SaveItems(List<PromptItemEntity> items) {
+            using PythonAILibDBContext context = new();
+            foreach (var item in items) {
+                item.SaveExtendedPropertiesJson();
+                var ExistingItem = context.PromptItems.FirstOrDefault(x => x.Id == item.Id);
+                if (ExistingItem == null) {
+                    context.PromptItems.Add(item);
+                } else {
+                    context.Entry(ExistingItem).CurrentValues.SetValues(item);
+                }
+            }
+            context.SaveChanges();
+        }
 
-        // PromptInputName
-        public string PromptInputName { get; set; } = string.Empty;
+
 
         // Equals , GetHashCodeのオーバーライド
         public override bool Equals(object? obj) {

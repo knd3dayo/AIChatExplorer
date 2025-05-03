@@ -12,7 +12,7 @@ using PythonAILib.Utils.Common;
 namespace LibPythonAI.Data {
     public class ContentItemEntity {
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };

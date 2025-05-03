@@ -11,6 +11,7 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
+using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemCommands {
@@ -41,6 +42,7 @@ namespace LibPythonAI.Model.Content {
             LogWrapper.Info(message);
 
         }
+
         public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
 
             // promptNameからDescriptionを取得
@@ -104,6 +106,7 @@ namespace LibPythonAI.Model.Content {
             item.Description = "Image";
         }
 
+
         // ExecuteSystemDefinedPromptを実行する
         public static void CreateChatResult(ContentItemWrapper item, string promptName) {
             // システム定義のPromptItemを取得
@@ -132,7 +135,7 @@ namespace LibPythonAI.Model.Content {
                 OpenAIProperties = openAIProperties,
             };
 
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new PromptItemEntity()) {
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 UseVectorDB = true,
@@ -157,7 +160,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
-        public static void CreateChatResult(ContentItemWrapper item, PromptItem promptItem) {
+        private static void CreateChatResult(ContentItemWrapper item, PromptItem promptItem) {
 
             // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
             string contentText;
@@ -237,6 +240,13 @@ namespace LibPythonAI.Model.Content {
             // PromptResultTypeがListの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
                 List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
+                // PromptOutputTypeがOverwriteTagsの場合はTagsに結果を保存
+                if (promptItem.PromptOutputType == PromptOutputTypeEnum.AppendTags) {
+                    foreach (var tag in response) {
+                        item.Tags.Add(tag);
+                    }
+                    return;
+                }
                 if (response.Count > 0) {
                     // PromptChatResultに結果を保存
                     item.PromptChatResult.SetListContent(promptItem.Name, response);
@@ -314,7 +324,34 @@ namespace LibPythonAI.Model.Content {
             });
         }
 
+        // 生成AIを使用して既存のタグ一覧からマッチするタグを選択して、タグを付与する。
 
+        public static void CreateAutoTagsInExistedTags(ContentItemWrapper item) {
+            // ContentTypeがTextの場合
+            using PythonAILibDBContext db = new();
+            PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TagGeneration.ToString());
+            if (promptItem == null) {
+                LogWrapper.Error("PromptItem not found");
+                return;
+            }
+            CreateChatResult(item, promptItem.Name);
+            return;
+        }
+
+
+        // 生成AIを使用してタグを生成する
+        public static void CreateAutoTags(ContentItemWrapper item) {
+            // ContentTypeがTextの場合
+            using PythonAILibDBContext db = new();
+            PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TagGeneration.ToString());
+            if (promptItem == null) {
+                LogWrapper.Error("PromptItem not found");
+                return;
+            }
+            CreateChatResult(item, promptItem.Name);
+            return;
+
+        }
 
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ContentItemWrapper item) {
@@ -384,7 +421,6 @@ namespace LibPythonAI.Model.Content {
             });
 
         }
-
 
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合

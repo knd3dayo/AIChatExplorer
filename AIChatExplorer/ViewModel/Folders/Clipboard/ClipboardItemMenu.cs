@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
 using LibUIPythonAI.Resource;
@@ -46,8 +45,17 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 Command = AppCommands.GenerateTitleCommand,
                 CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
             };
-
             promptMenuItem.Items.Add(generateTitleMenuItem);
+
+            // タグを生成
+            MenuItem generateTagMenuItem = new() {
+                Header = CommonStringResources.Instance.GenerateTag,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = AppCommands.GenerateTagsCommand,
+                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
+            };
+
+            promptMenuItem.Items.Add(generateTagMenuItem);
 
             // 背景情報生成
             MenuItem generateBackgroundInfoMenuItem = new() {

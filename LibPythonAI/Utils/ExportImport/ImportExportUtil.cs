@@ -42,7 +42,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (row.Count == 0) {
                     continue;
                 }
-                PromptItemEntity promptItemEntity = new() {
+                PromptItem promptItem = new() {
                     Name = row[0],
                     Description = row[1],
                     Prompt = row[2],
@@ -50,7 +50,6 @@ namespace LibPythonAI.Utils.ExportImport {
                     SplitMode = (SplitOnTokenLimitExceedModeEnum)Enum.Parse(typeof(SplitOnTokenLimitExceedModeEnum), row[4]),
                     UseVectorDB = bool.Parse(row[5])
                 };
-                PromptItem promptItem = new(promptItemEntity);
                 promptItem.Save();
             }
         }

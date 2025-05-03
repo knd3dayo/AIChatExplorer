@@ -113,6 +113,18 @@ namespace LibUIPythonAI.ViewModel.Item {
             ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
         });
 
+        // タグを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTagsCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.TagGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+
         // 背景情報を生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateBackgroundInfoCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();

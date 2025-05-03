@@ -416,8 +416,6 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        #region ファイル/画像関連
-
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty(FileName)) {
@@ -486,7 +484,6 @@ namespace LibPythonAI.Model.Content {
             }
             return false;
         }
-        #endregion
 
 
         public virtual VectorDBProperty GetMainVectorSearchProperty() {

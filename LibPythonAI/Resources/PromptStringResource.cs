@@ -115,6 +115,26 @@ namespace PythonAILib.Resources {
             "  *  一般的な社会学的法則、慣習などによりある程度正しいと判定可能は情報は信頼度をレベル内での中間値にする。\n" +
             "  * 正しさが判断できない、検証が必要な情報は信頼度をレベル内での下限値にする。\n";
 
+        // タグ生成
+        public virtual string TagGeneration { get; } = "タグ生成";
+
+        // タグ生成のプロンプト
+        public virtual string TagGenerationPrompt { get; } = "以下の文章からタグを生成してください。\n" +
+            "出力はJSON形式で{result:['tag1', 'tag2', 'tag3']}でお願いします。\n";
+
+        // // 文章に既存のタグを付与する
+        public virtual string SelectExistingTags { get; } = "既存のタグを選択";
+
+        // 文章に既存のタグを付与するプロンプト
+        public virtual string SelectExistingTagsPrompt { get; } = "既存のタグ一覧の中から以下の文章にマッチするタグを選択してください。\n" +
+            "出力はJSON形式で{result:['tag1', 'tag2', 'tag3']}でお願いします。\n" +
+            "既存のタグ一覧は以下のとおりです。\n";
+
+        // 既存のタグ一覧は以下の通りです
+        public virtual string TagListPrompt(string tags) {
+            return $"既存のタグ一覧は以下のとおりです。\n{tags}\n";
+        }
+
         #endregion
     }
 }

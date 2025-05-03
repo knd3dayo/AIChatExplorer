@@ -114,8 +114,8 @@
             <!--  コンテキストメニュー  -->
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding EditPromptItemCommand}" Header="{Binding StringResources.Edit}" />
-                    <MenuItem Command="{Binding DeletePromptItemCommand}" Header="{Binding StringResources.Delete}" />
+                    <MenuItem Command="{Binding EditPromptItemCommand}" Header="{x:Static res:ViewStringResources.Edit}" />
+                    <MenuItem Command="{Binding DeletePromptItemCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>

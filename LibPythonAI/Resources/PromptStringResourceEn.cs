@@ -10,6 +10,28 @@ namespace PythonAILib.Resources {
             }
         }
 
+        // Tag generation  
+        public override string TagGeneration { get; } = "Tag Generation";
+
+        // Prompt for tag generation  
+        public override string TagGenerationPrompt { get; } = "Please generate tags from the following text.\n" +
+           "The output should be in JSON format as {result:['tag1', 'tag2', 'tag3']}.\n";
+
+        // SelectExistingTags
+        public override string SelectExistingTags { get; } = "Select Existing Tags";
+
+        // Prompt for assigning existing tags to text  
+        public override string SelectExistingTagsPrompt { get; } = "From the list of existing tags, please select the tags that match the following text.\n" +
+           "The output should be in JSON format as {result:['tag1', 'tag2', 'tag3']}.\n" +
+           "The list of existing tags is as follows:\n";
+
+        // List of existing tags  
+        public override string TagListPrompt(string tags) {
+            return $"The list of existing tags is as follows:\n{tags}\n";
+        }
+
+
+
         // ベクトルDBシステムメッセージ。 
         public override string VectorDBSystemMessage(string description) {
             string message = $"The following information is stored in the vector DB. It searches for data that matches the string specified by the user\n\n {description}";

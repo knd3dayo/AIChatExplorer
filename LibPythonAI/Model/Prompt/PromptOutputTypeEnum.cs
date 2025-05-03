@@ -6,5 +6,7 @@ namespace PythonAILib.Model.Prompt {
         OverwriteContent = 1,
         // タイトルを上書き
         OverwriteTitle = 2,
+        // タグを追加
+        AppendTags = 3,
     }
 }

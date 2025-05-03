@@ -9,6 +9,13 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string Clear { get; set; } = CommonStringResources.Instance.Clear;
 
         // Close
+
+        // Edit
+        public static string Edit { get; set; } = CommonStringResources.Instance.Edit;
+
+        // Delete
+        public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
+
         public static string Close { get; set; } = CommonStringResources.Instance.Close;
 
         // SelectFolder

@@ -100,16 +100,15 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
             // PromptItemsを更新
             PromptItems.Clear();
-            using PythonAILibDBContext db = new();
+            var promptItems = PromptItem.GetPromptItems();
 
-            foreach (var itemEntity in db.PromptItems) {
-                // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
-                if (!IsShowSystemPromptItems &&
-                    (itemEntity.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
-                       itemEntity.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+            foreach (var item in promptItems) {
+                if ( !IsShowSystemPromptItems &&
+                    (item.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
+                       item.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
                     continue;
                 }
-                PromptItemViewModel itemViewModel = new(new PromptItem(itemEntity));
+                PromptItemViewModel itemViewModel = new(item);
                 PromptItems.Add(itemViewModel);
             }
             OnPropertyChanged(nameof(PromptItems));
@@ -129,7 +128,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
-            PromptItem item = new(new LibPythonAI.Data.PromptItemEntity());
+            PromptItem item = new();
 
             PromptItemViewModel itemViewModel = new(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
