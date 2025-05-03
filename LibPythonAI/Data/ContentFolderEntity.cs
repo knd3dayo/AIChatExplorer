@@ -55,13 +55,6 @@ namespace LibPythonAI.Data {
         }
 
 
-        public List<ContentItemEntity> GetContentItems() {
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems
-                .Where(x => x.FolderId == this.Id).ToList();
-            return items;
-        }
-
         public List<ContentFolderEntity> GetChildren() {
             using PythonAILibDBContext context = new();
             var items = context.ContentFolders

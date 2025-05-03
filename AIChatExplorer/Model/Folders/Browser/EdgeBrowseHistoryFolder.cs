@@ -39,12 +39,6 @@ namespace AIChatExplorer.Model.Folders.Browser {
             return child;
         }
 
-        public override List<T> GetItems<T>() {
-            // SyncItems
-            SyncItems();
-            return base.GetItems<T>();
-        }
-
         // 子フォルダ
         public override List<T> GetChildren<T>() {
             return []; ;
@@ -71,9 +65,8 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 }
             }
 
-            // コレクション
-            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
-            var items = Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
+            // SyncItemsを呼び出すと無限ループになるため、IsSyncをFalseにする
+            List<ContentItemWrapper> items = GetItems<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];

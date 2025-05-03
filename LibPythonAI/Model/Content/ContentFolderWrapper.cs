@@ -169,10 +169,16 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual List<T> GetItems<T>() where T : ContentItemWrapper {
-
-            return [.. Entity.GetContentItems().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
+        public virtual List<T> GetItems<T>(bool isSync = true ) where T : ContentItemWrapper {
+            if (isSync) {
+                // SyncItems
+                SyncItems();
+            }
+            List<T> items = ContentItemWrapper.GetItems<T>(this);
+            return items;
         }
+
+        public virtual void SyncItems() {}
 
         public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
             return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];

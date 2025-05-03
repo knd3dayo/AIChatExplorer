@@ -14,12 +14,12 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         ];
 
         // コンストラクタ
-        public FileSystemItem(ContentItemEntity item) : base(item) { }
+        public FileSystemItem() : base() { }
 
         public FileSystemItem(ContentFolderEntity folder) : base(folder) { }
 
         public override FileSystemItem Copy() {
-            return new(Entity.Copy());
+            return new() { Entity = Entity.Copy() };
         }
 
         public override void Save() {

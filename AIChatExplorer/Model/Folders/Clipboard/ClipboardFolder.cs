@@ -141,7 +141,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(GetItems<ClipboardItem>(), jsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(GetItems<ClipboardItem>(isSync: false), jsonSerializerOptions);
 
             System.IO.File.WriteAllText(fileName, jsonString);
 

@@ -7,12 +7,12 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryItem : ContentItemWrapper {
 
         // コンストラクタ
-        public EdgeBrowseHistoryItem(ContentItemEntity item) : base(item) { }
+        public EdgeBrowseHistoryItem() : base() { }
 
         public EdgeBrowseHistoryItem(ContentFolderEntity folder) : base(folder) { }
 
         public override EdgeBrowseHistoryItem Copy() {
-            return new(Entity.Copy());
+            return new() { Entity = Entity.Copy() };
         }
         public override void Save() {
             if (ContentModified || DescriptionModified) {

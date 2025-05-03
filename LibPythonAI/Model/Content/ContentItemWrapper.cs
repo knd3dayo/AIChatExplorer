@@ -14,21 +14,26 @@ using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
+        public ContentItemWrapper() {}
 
-        public ContentItemWrapper(ContentItemEntity contentItem) {
-            Entity = contentItem;
-
-        }
         public ContentItemWrapper(ContentFolderEntity folder) {
-            Entity = new() {
-                FolderId = folder.Id,
-            };
+            FolderId = folder.Id;
         }
 
-        public ContentItemEntity Entity { get; set; }
+        public ContentItemEntity Entity { get; protected set; }　= new ContentItemEntity();
 
         // ID
         public string Id { get => Entity.Id; }
+
+        // FolderId
+        public string? FolderId {
+            get {
+                return Entity.FolderId;
+            }
+            set {
+                Entity.FolderId = value;
+            }
+        }
 
         // Folder
         public virtual ContentFolderWrapper GetFolder() {
@@ -291,7 +296,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         public virtual ContentItemWrapper Copy() {
-            return new ContentItemWrapper(Entity.Copy());
+            return new ContentItemWrapper() { Entity = Entity.Copy() };
         }
 
 
@@ -490,6 +495,7 @@ namespace LibPythonAI.Model.Content {
             return GetFolder().GetMainVectorSearchProperty();
         }
 
+
         public virtual void Save() {
             if (ContentModified || DescriptionModified) {
                 // 更新日時を設定
@@ -510,6 +516,21 @@ namespace LibPythonAI.Model.Content {
             ContentItemCommands.DeleteEmbeddings([this]);
             ContentItemEntity.DeleteItems([Entity]);
         }
+
+        // FolderIdが一致するContentItemWrapperを取得
+        public static List<T> GetItems<T>(ContentFolderWrapper folder) where T: ContentItemWrapper {
+            using PythonAILibDBContext db = new();
+            var items = db.ContentItems.Where(x => x.FolderId == folder.Id);
+            List<T> result = [];
+            foreach (var item in items) {
+                if (Activator.CreateInstance(typeof(T)) is T newItem) {
+                    newItem.Entity = item;
+                    result.Add(newItem);
+                }
+            }
+            return result;
+        }
+
 
         public static void DeleteItems(List<ContentItemWrapper> items) {
             ContentItemCommands.DeleteEmbeddings(items);
@@ -625,7 +646,7 @@ namespace LibPythonAI.Model.Content {
             }
             results = results.OrderByDescending(x => x.UpdatedAt);
 
-            return results.Select(x => new ContentItemWrapper(x));
+            return results.Select(x => new ContentItemWrapper() { Entity = x });
         }
 
 

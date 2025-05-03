@@ -78,7 +78,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public void LoadItems<Item>() where Item : ContentItemWrapper {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
+            List<Item> _items = Folder.GetItems<Item>(isSync: false).OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (Item item in _items) {
@@ -236,9 +236,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 // MainWindowViewModelのIsIndeterminateをTrueに設定
                 CommonViewModelProperties.UpdateIndeterminate(true);
                 Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
-                ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(), () => { }, () => {
+                ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
 
-                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
+                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));
                     CommonViewModelProperties.UpdateIndeterminate(false);
                 });
 

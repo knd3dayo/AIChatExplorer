@@ -59,7 +59,7 @@ namespace LibPythonAI.Utils.ExportImport {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in fromFolder.GetItems<ContentItemWrapper>()) {
+            foreach (var clipboardItem in fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {

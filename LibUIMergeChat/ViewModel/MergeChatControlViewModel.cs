@@ -267,10 +267,8 @@ namespace LibUIMergeChat.ViewModel {
                 }
                 // チャット結果をOutputFolderに保存
                 if (OutputFolder != null) {
-                    ContentItemEntity contentItem = new() {
+                    ContentItemWrapper contentItemWrapper = new() {
                         Content = result.Output,
-                    };
-                    ContentItemWrapper contentItemWrapper = new(contentItem) {
                         SourceType = ContentSourceType.Application
                     };
 

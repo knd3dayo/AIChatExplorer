@@ -33,12 +33,6 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             return child;
         }
 
-        public override List<T> GetItems<T>() {
-            // SyncItems
-            SyncItems();
-            return base.GetItems<T>();
-        }
-
         // 子フォルダ
         public override List<T> GetChildren<T>() {
             // SyncFolders
@@ -137,8 +131,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
 
-            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
-            var items = Entity.GetContentItems().Select(x => new FileSystemItem(x)).ToList();
+            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
+            var items = base.GetItems<ContentItemWrapper>(false);
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];

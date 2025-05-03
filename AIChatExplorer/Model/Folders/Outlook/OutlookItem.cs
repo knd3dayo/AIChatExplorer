@@ -10,7 +10,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         public const string EntryIDName = "EntryID";
 
         // コンストラクタ
-        public OutlookItem(ContentItemEntity item) : base(item) { }
+        public OutlookItem() : base() { }
 
         public OutlookItem(ContentFolderEntity folder) : base(folder) { }
 
@@ -19,8 +19,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             EntryID = entryID;
         }
 
-        public override FileSystemItem Copy() {
-            return new(Entity.Copy());
+        public override OutlookItem Copy() {
+            return new() { Entity = Entity.Copy() };
         }
 
         public override void Save() {

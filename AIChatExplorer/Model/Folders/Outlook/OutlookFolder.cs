@@ -61,7 +61,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return child;
         }
 
-        public void SyncItems() {
+        public override void SyncItems() {
             // MAPIFolderが存在しない場合は終了
             if (MAPIFolder == null) {
                 return;
@@ -69,7 +69,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
 
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
-            foreach (var item in GetItems< OutlookItem>()) {
+            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
+            foreach (var item in GetItems< OutlookItem>(false)) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }

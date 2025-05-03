@@ -23,11 +23,6 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
             return child;
         }
 
-        public override List<T> GetItems<T>() {
-            SyncItems();
-            return base.GetItems<T>();
-        }
-
         // 子フォルダ
         public override List<T> GetChildren<T>() {
             // RootFolder以外の場合はSyncFoldersを実行
