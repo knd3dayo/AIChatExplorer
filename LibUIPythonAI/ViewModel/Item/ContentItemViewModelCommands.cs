@@ -218,7 +218,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // Command to execute a prompt template (複数選択可能)
         public static void ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem, Action beforeAction, Action afterAction) {
-            ContentItemCommands.ExecutePromptTemplate(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
+            PromptItem.ExecutePromptTemplate(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
         }
 
         // Command to perform vector search

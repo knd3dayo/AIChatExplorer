@@ -87,7 +87,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 Action<ContentItemWrapper> afterImport = (item) => { };
                 if (IsAutoProcessEnabled) {
                     afterImport = (item) => {
-                        AutoProcessRuleController.ApplyGlobalAutoAction(item).Result.Save();
+                        AutoProcessRuleController.ApplyGlobalAutoActionAsync(item).Result.Save();
                     };
                 }
 

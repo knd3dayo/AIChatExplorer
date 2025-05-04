@@ -77,6 +77,5 @@ namespace LibUIPythonAI.ViewModel.Item {
         // TableContentが空の場合はCollapsed,それ以外はVisible
         public Visibility TableContentVisibility => Tools.BoolToVisibility(TableContent.Rows.Count != 0);
 
-
     }
 }

@@ -38,67 +38,24 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             MenuItem promptMenuItem = new() {
                 Header = CommonStringResources.Instance.PromptMenu,
             };
-            // タイトルを生成
-            MenuItem generateTitleMenuItem = new() {
-                Header = CommonStringResources.Instance.GenerateTitle,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.GenerateTitleCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-            promptMenuItem.Items.Add(generateTitleMenuItem);
-
-            // タグを生成
-            MenuItem generateTagMenuItem = new() {
-                Header = CommonStringResources.Instance.GenerateTag,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.GenerateTagsCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-
-            promptMenuItem.Items.Add(generateTagMenuItem);
-
-            // 背景情報生成
-            MenuItem generateBackgroundInfoMenuItem = new() {
-                Header = CommonStringResources.Instance.GenerateBackgroundInfo,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.GenerateBackgroundInfoCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-            promptMenuItem.Items.Add(generateBackgroundInfoMenuItem);
-
-            // サマリーを生成
-            MenuItem generateSummaryMenuItem = new() {
-                Header = CommonStringResources.Instance.GenerateSummary,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.GenerateSummaryCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-            promptMenuItem.Items.Add(generateSummaryMenuItem);
-
-            // 課題リストを生成
-            MenuItem generateTasksMenuItem = new() {
-                Header = CommonStringResources.Instance.GenerateTasks,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.GenerateTasksCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-            promptMenuItem.Items.Add(generateTasksMenuItem);
-
-            // 文書信頼度をチェック
-            MenuItem checkDocumentTrustMenuItem = new() {
-                Header = CommonStringResources.Instance.CheckDocumentReliability,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = AppCommands.CheckDocumentReliabilityCommand,
-                CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems
-            };
-            promptMenuItem.Items.Add(checkDocumentTrustMenuItem);
-
+            // システムプロンプト
+            List<PromptItem> systemPromptItems = PromptItem.GetSystemPromptItems();
+            foreach (var promptItem in systemPromptItems) {
+                MenuItem promptItemMenuItem = new() {
+                    Header = promptItem.Description,
+                    Command = AppCommands.ExecutePromptTemplateCommand,
+                    CommandParameter = new ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>([.. MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems], promptItem)
+                };
+                promptMenuItem.Items.Add(promptItemMenuItem);
+            }
+ 
             // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
             MenuItem otherPromptMenuItem = new() {
                 Header = CommonStringResources.Instance.OtherPrompts,
             };
+
             // DBからプロンプトテンプレートを取得し、選択させる
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
+            List<PromptItem> promptItems = PromptItem.GetUserDefinedPromptItems();
             var itemViewModels = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems;
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {

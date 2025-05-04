@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.Prompt;
@@ -29,7 +30,7 @@ namespace PythonAILib.Model.AutoProcess {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        public static async Task<ContentItemWrapper> ApplyGlobalAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItemWrapper> ApplyGlobalAutoActionAsync(ContentItemWrapper item) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
@@ -62,7 +63,7 @@ namespace PythonAILib.Model.AutoProcess {
                     // ClipboardItem.CreateAutoTags(item);
                 }
             });
-            var task2 = Task.Run(() => {
+            var task2 = Task.Run( async () => {
                 // If AUTO_DESCRIPTION is set, automatically set the DisplayText
                 if (configParams.AutoTitle()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
@@ -71,35 +72,35 @@ namespace PythonAILib.Model.AutoProcess {
                 } else if (configParams.AutoTitleWithOpenAI()) {
 
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
-                    ContentItemCommands.CreateAutoTitleWithOpenAI(item);
+                    await PromptItem.CreateAutoTitleWithOpenAIAsync(item);
                 }
             });
-            var task3 = Task.Run(() => {
+            var task3 = Task.Run(async () => {
                 // 背景情報
                 if (configParams.AutoBackgroundInfo()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetBackgroundInfo);
-                    ContentItemCommands.CreateAutoBackgroundInfo(item);
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
                 }
             });
-            var task4 = Task.Run(() => {
+            var task4 = Task.Run(async () => {
                 // サマリー
                 if (configParams.AutoSummary()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoCreateSummary);
-                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
-            var task5 = Task.Run(() => {
+            var task5 = Task.Run(async () => {
                 // Tasks
                 if (configParams.AutoGenerateTasks()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoCreateTaskList);
-                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.TasksGeneration.ToString());
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
-            var task6 = Task.Run(() => {
+            var task6 = Task.Run(async () => {
                 // Tasks
                 if (configParams.AutoDocumentReliabilityCheck()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoCheckDocumentReliability);
-                    ContentItemCommands.CheckDocumentReliability(item);
+                    await PromptItem.CheckDocumentReliability(item);
                 }
             });
 

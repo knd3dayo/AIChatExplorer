@@ -26,20 +26,30 @@ namespace PythonAILib.Model.Prompt {
         public DataTable GetTableContent(string promptName) {
             Results.TryGetValue(promptName, out object? values);
             if (values == null) {
-                return ListToDataTable([]);
+                return DictionaryListToDataTable([]);
+            }
+
+            if (values is List<object> objectList) {
+                List<string> stringList = [];
+                foreach (var item in objectList) {
+                    if (item.ToString() is string strValue) {
+                        stringList.Add(strValue);
+                    }
+                }
+                return ListToDataTable(stringList);
             }
 
             if (values is List<Dictionary<string, object>> list) {
-                return ListToDataTable(list);
+                return DictionaryListToDataTable(list);
             }
 
             if (values is Object[] list2) {
                 var items =  list2.Select(x => (Dictionary<string, object>)x).ToList();
-                return ListToDataTable(items);
+                return DictionaryListToDataTable(items);
 
             }
 
-            return ListToDataTable([]);
+            return DictionaryListToDataTable([]);
         }
         public void SetTableContent(string promptName, DataTable dataTable) {
             Results[promptName] = DataTableToList(dataTable);
@@ -48,8 +58,20 @@ namespace PythonAILib.Model.Prompt {
             Results[promptName] = dataTable;
         }
 
+        // stringのListをDataTableに変換
+        private static DataTable ListToDataTable(List<string> list) {
+            DataTable dataTable = new();
+            dataTable.Columns.Add("Value", typeof(string));
+            foreach (var item in list) {
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["Value"] = item;
+                dataTable.Rows.Add(dataRow);
+            }
+            return dataTable;
+        }
+
         // List<Dictionary<string, object>>からDataTableに変換
-        private DataTable ListToDataTable(List<Dictionary<string, object>> tableContent) {
+        private static DataTable DictionaryListToDataTable(List<Dictionary<string, object>> tableContent) {
             DataTable dataTable = new();
             if (tableContent.Count == 0) {
                 return dataTable;

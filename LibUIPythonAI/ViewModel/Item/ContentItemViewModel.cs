@@ -265,11 +265,15 @@ namespace LibUIPythonAI.ViewModel.Item {
                 object content = item.PromptResultType switch {
                     PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
                     PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.ListContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.DictionaryContent => new PromptResultTablePanel() { DataContext = promptViewModel },
                     _ => ""
                 };
                 Visibility visibility = item.PromptResultType switch {
                     PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
                     PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
+                    PromptResultTypeEnum.ListContent => promptViewModel.TableContentVisibility,
+                    PromptResultTypeEnum.DictionaryContent => promptViewModel.TableContentVisibility,
                     _ => Visibility.Collapsed
                 };
 

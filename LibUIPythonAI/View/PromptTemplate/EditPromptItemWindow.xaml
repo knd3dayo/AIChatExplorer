@@ -122,7 +122,6 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsEnabled="True"
                 Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="{Binding TextWrapping, Mode=OneWay}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">

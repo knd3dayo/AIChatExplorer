@@ -89,7 +89,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 };
                 contentItem.Save();
                 // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
                 // result.Save();
             });

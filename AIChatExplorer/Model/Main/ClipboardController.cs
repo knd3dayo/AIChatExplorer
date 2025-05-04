@@ -166,7 +166,7 @@ namespace AIChatExplorer.Model.Main {
                 });
                 try {
                     // Apply automatic processing
-                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                     if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;

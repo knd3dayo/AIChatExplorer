@@ -1,7 +1,12 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
@@ -43,7 +48,9 @@ namespace LibPythonAI.Model.Prompt {
         public PromptResultTypeEnum PromptResultType {
             get {
                 Entity.ExtendedProperties.TryGetValue("PromptResultType", out object? value);
-                if (value is int intValue) {
+                // valueのtypeを確認
+                LogWrapper.Debug($"PromptResultType: {value?.GetType()}");
+                if (value is Decimal intValue) {
                     return (PromptResultTypeEnum)intValue;
                 }
                 return PromptResultTypeEnum.TextContent;
@@ -58,7 +65,7 @@ namespace LibPythonAI.Model.Prompt {
         public OpenAIExecutionModeEnum ChatMode {
             get {
                 Entity.ExtendedProperties.TryGetValue("ChatMode", out object? value);
-                if (value is int intValue) {
+                if (value is Decimal intValue) {
                     return (OpenAIExecutionModeEnum)intValue;
                 }
                 return OpenAIExecutionModeEnum.Normal;
@@ -73,7 +80,7 @@ namespace LibPythonAI.Model.Prompt {
         public SplitOnTokenLimitExceedModeEnum SplitMode {
             get {
                 Entity.ExtendedProperties.TryGetValue("SplitMode", out object? value);
-                if (value is int intValue) {
+                if (value is Decimal intValue) {
                     return (SplitOnTokenLimitExceedModeEnum)intValue;
                 }
                 return SplitOnTokenLimitExceedModeEnum.None;
@@ -118,7 +125,7 @@ namespace LibPythonAI.Model.Prompt {
         public PromptOutputTypeEnum PromptOutputType {
             get {
                 Entity.ExtendedProperties.TryGetValue("PromptOutputType", out object? value);
-                if (value is int intValue) {
+                if (value is Decimal intValue) {
                     return (PromptOutputTypeEnum)intValue;
                 }
                 return PromptOutputTypeEnum.NewContent;
@@ -177,7 +184,7 @@ namespace LibPythonAI.Model.Prompt {
             if (item == null) {
                 return null;
             }
-            return new PromptItem() { Entity = item};
+            return new PromptItem() { Entity = item };
 
         }
         // 名前を指定してPromptItemを取得
@@ -190,16 +197,28 @@ namespace LibPythonAI.Model.Prompt {
             return new PromptItem() { Entity = item };
         }
 
-        // 名前を指定してシステム定義のPromptItemを取得
+        // システム定義のPromptItemを取得
         public static List<PromptItem> GetSystemPromptItems() {
             using PythonAILibDBContext db = new();
-            var items = db.PromptItems.Where(x => ( x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined));
+            var items = db.PromptItems.Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined));
             List<PromptItem> promptItems = [];
             foreach (var item in items) {
                 promptItems.Add(new PromptItem() { Entity = item });
             }
             return promptItems;
         }
+
+        // システム定義以外のPromptItemを取得
+        public static List<PromptItem> GetUserDefinedPromptItems() {
+            using PythonAILibDBContext db = new();
+            var items = db.PromptItems.Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined);
+            List<PromptItem> promptItems = [];
+            foreach (var item in items) {
+                promptItems.Add(new PromptItem() { Entity = item });
+            }
+            return promptItems;
+        }
+
         // List<PromptItem>を取得
         public static List<PromptItem> GetPromptItems() {
             using PythonAILibDBContext db = new();
@@ -361,5 +380,226 @@ namespace LibPythonAI.Model.Prompt {
         public override int GetHashCode() {
             return Entity.GetHashCode();
         }
+
+        public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
+
+            // promptNameからDescriptionを取得
+            string description = promptItem.Description;
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
+            int count = items.Count;
+            Task.Run(() => {
+                beforeAction();
+                object lockObject = new();
+                int start_count = 0;
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 4
+                };
+                Parallel.For(0, count, parallelOptions, async (i) => {
+                    lock (lockObject) {
+                        start_count++;
+                    }
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
+                    LogWrapper.UpdateInProgress(true, message);
+                    ContentItemWrapper item = items[index];
+
+                    await CreateChatResultAsync(item, promptItem.Name);
+                    // Save
+                    item.Save();
+                });
+                // Execute if obj is an Action
+                afterAction();
+                LogWrapper.UpdateInProgress(false);
+                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
+            });
+
+        }
+        // ExecuteSystemDefinedPromptを実行する
+        public static async Task CreateChatResultAsync(ContentItemWrapper item, string promptName) {
+            // システム定義のPromptItemを取得
+            PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
+            // CreateChatResultを実行
+            await CreateChatResultAsync(item, promptItem);
+        }
+
+        // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
+        public static async Task CreateChatResultAsync(ContentItemWrapper item, PromptItem promptItem) {
+
+            // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
+            string contentText;
+            if (string.IsNullOrEmpty(promptItem.PromptInputName)) {
+                contentText = item.Content;
+            } else {
+                // PromptInputNameのContentを取得
+                contentText = item.PromptChatResult.GetTextContent(promptItem.PromptInputName);
+                // inputContentがない場合は処理しない
+                if (string.IsNullOrEmpty(contentText)) {
+                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                    return;
+                }
+            }
+            // Contentがない場合は処理しない
+            if (string.IsNullOrEmpty(item.Content)) {
+                LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                return;
+            }
+            // ヘッダー情報とコンテンツ情報を結合
+            // ★TODO タグ情報を追加するか否かはPromptItemの設定にする
+            contentText = item.HeaderText + "\n" + contentText;
+
+            // PromptTemplateTextの設定。 UseTagListがTrueの場合は、全タグ情報を追加する
+            if (promptItem.UseTagList) {
+                string tagListPrompt = await GenerateTagListPrompt();
+                contentText = contentText + "\n" + tagListPrompt;
+            }
+
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder().GetVectorSearchProperties() : [];
+
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBProperties = vectorSearchProperties,
+                OpenAIProperties = openAIProperties,
+                PromptTemplateText = promptItem.Prompt,
+                ChatMode = promptItem.ChatMode,
+                SplitMode = promptItem.SplitMode,
+            };
+
+
+            // PromptResultTypeがTextContentの場合
+            if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
+                string result = ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
+                if (string.IsNullOrEmpty(result)) {
+                    return;
+                }
+                // PromptOutputTypeがOverwriteContentの場合はContentに結果を保存
+                if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteContent) {
+                    item.Content = result;
+                    return;
+                }
+                // PromptChatResultに結果を保存
+                item.PromptChatResult.SetTextContent(promptItem.Name, result);
+                // PromptOutputTypeがOverwriteTitleの場合はDescriptionに結果を保存
+                if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteTitle) {
+                    item.Description = result;
+                }
+                return;
+            }
+
+            // PromptResultTypeがTableContentの場合
+            if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
+                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
+                // resultからキー:resultを取得
+                if (response.ContainsKey("result") == false) {
+                    return;
+                }
+                dynamic? results = response["result"];
+                // resultがない場合は処理しない
+                if (results == null) {
+                    return;
+                }
+                if (results.Count == 0) {
+                    return;
+                }
+                // resultからDynamicDictionaryObjectを作成
+                List<Dictionary<string, object>> resultDictList = [];
+                foreach (var result in results) {
+                    resultDictList.Add(result);
+                }
+                // PromptChatResultに結果を保存
+                return;
+            }
+
+            // PromptResultTypeがListの場合
+            if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
+                List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
+                // PromptOutputTypeがOverwriteTagsの場合はTagsに結果を保存
+                if (promptItem.PromptOutputType == PromptOutputTypeEnum.AppendTags) {
+                    foreach (var tag in response) {
+                        item.Tags.Add(tag);
+                    }
+                    return;
+                }
+                if (response.Count > 0) {
+                    // PromptChatResultに結果を保存
+                    item.PromptChatResult.SetListContent(promptItem.Name, response);
+                }
+                return;
+            }
+        }
+        // OpenAIを使用してタイトルを生成する
+        public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
+            // ContentTypeがTextの場合
+            if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                using PythonAILibDBContext db = new();
+                PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
+                if (promptItem == null) {
+                    LogWrapper.Error("PromptItem not found");
+                    return;
+                }
+                await CreateChatResultAsync(item, promptItem.Name);
+                return;
+            }
+            // ContentTypeがFiles,の場合
+            if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+                // ファイル名をタイトルとして使用
+                item.Description += item.FileName;
+                return;
+            }
+            // ContentTypeがImageの場合
+            item.Description = "Image";
+        }
+
+
+
+        // 文章の信頼度を判定する
+        public async static Task CheckDocumentReliability(ContentItemWrapper item) {
+
+            await CreateChatResultAsync(item, SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得
+            string result = item.PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            // resultがない場合は処理しない
+            if (string.IsNullOrEmpty(result)) {
+                return;
+            }
+            // ChatUtl.CreateDictionaryChatResultを実行
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
+                OpenAIProperties = openAIProperties,
+            };
+
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                // ベクトルDBを使用する
+                UseVectorDB = true,
+                Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
+            }, result);
+            // responseからキー：reliabilityを取得
+            if (response.ContainsKey("reliability") == false) {
+                return;
+            }
+            dynamic? reliability = response["reliability"];
+
+            int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
+
+            // DocumentReliabilityにReliabilityを設定
+            item.DocumentReliability = reliabilityValue;
+            // responseからキー：reasonを取得
+            if (response.ContainsKey("reason")) {
+                dynamic? reason = response["reason"];
+                // DocumentReliabilityReasonにreasonを設定
+                item.DocumentReliabilityReason = reason?.ToString() ?? "";
+            }
+        }
+
+
+
+
     }
 }
