@@ -106,13 +106,7 @@ namespace PythonAILib.Model.VectorDB {
             result.Score = Convert.ToDouble(dict["score"]);
             return result;
         }
-        public static List<VectorDBEmbedding> FromDictList(List<Dictionary<string, object>> dictList) {
-            List<VectorDBEmbedding> result = new();
-            foreach (var dict in dictList) {
-                result.Add(FromDict(dict));
-            }
-            return result;
-        }
+
 
     }
 }

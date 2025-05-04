@@ -645,8 +645,15 @@ namespace PythonAILib.PythonIF {
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {
                 var documents = resultDict["documents"];
+                foreach (var item in documents) {
+                    // VectorDBEmbeddingを取得
+                    VectorDBEmbedding? vectorDBEmbedding = VectorDBEmbedding.FromDict(item);
+                    if (vectorDBEmbedding != null) {
+                        vectorSearchResults.Add(vectorDBEmbedding);
+                    }
+                }
                 // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
+               //  vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
             }
 
             return vectorSearchResults;

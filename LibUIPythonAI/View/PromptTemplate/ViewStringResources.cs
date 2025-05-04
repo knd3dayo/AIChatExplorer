@@ -76,6 +76,10 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string ListType { get; set; } = CommonStringResources.Instance.ListType;
         // テーブル
         public static string TableType { get; set; } = CommonStringResources.Instance.TableType;
+
+        // Dictionary
+        public static string DictionaryType { get; set; } = CommonStringResources.Instance.DictionaryType;
+
         // 出力先
         public static string OutputDestination { get; set; } = CommonStringResources.Instance.OutputDestination;
         // 新規タブ
@@ -84,6 +88,9 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string OverwriteContent { get; set; } = CommonStringResources.Instance.OverwriteContent;
         // タイトルを上書き
         public static string OverwriteTitle { get; set; } = CommonStringResources.Instance.OverwriteTitle;
+
+        // タグ追加
+        public static string AppendTags { get; set; } = CommonStringResources.Instance.AppendTags;
         // OK
         public static string OK { get; set; } = CommonStringResources.Instance.OK;
         // ExperimentalFunction1

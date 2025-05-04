@@ -657,6 +657,9 @@ namespace LibUIPythonAI.Resource {
         public override string ListType { get; } = "List";
         // テーブル
         public override string TableType { get; } = "Table";
+
+        // Dictionary
+        public override string DictionaryType { get; } = "Dictionary";
         // 出力先
         public override string OutputDestination { get; } = "Output Destination";
         // 新規タブ
@@ -666,6 +669,8 @@ namespace LibUIPythonAI.Resource {
         // タイトルを上書き
         public override string OverwriteTitle { get; } = "Overwrite Title";
 
+        // タグ追加
+        public override string AppendTags { get; } = "Add Tag";
         public override string SelectFolder { get; } = "Select Folder";
 
         public override string SelectFile { get; } = "Select File";

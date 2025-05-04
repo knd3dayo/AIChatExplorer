@@ -323,6 +323,9 @@ namespace LibUIPythonAI.Resource {
         // タイトルを上書き
         public virtual string OverwriteTitle { get; } = "タイトルを上書き";
 
+        // タグ追加
+        public virtual string AppendTags { get; } = "タグ追加";
+
         // フォルダ選択
         public virtual string SelectFolder { get; } = "フォルダ選択";
 

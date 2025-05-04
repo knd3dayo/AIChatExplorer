@@ -14,8 +14,10 @@ namespace PythonAILib.Resources {
         public override string TagGeneration { get; } = "Tag Generation";
 
         // Prompt for tag generation  
-        public override string TagGenerationPrompt { get; } = "Please generate tags from the following text.\n" +
-           "The output should be in JSON format as {result:['tag1', 'tag2', 'tag3']}.\n";
+        public override string TagGenerationPrompt { get; } = "Please generate tags that match the following text. If there are existing tags, please select them.\n" +
+            "If there are no existing tags, please create new tags.\n" +
+            "The output should be in JSON format as {result:['tag1', 'tag2', 'tag3']}.\n" +
+            "If you have any questions, please ask.\n";
 
         // SelectExistingTags
         public override string SelectExistingTags { get; } = "Select Existing Tags";

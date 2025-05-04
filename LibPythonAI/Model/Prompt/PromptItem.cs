@@ -341,6 +341,7 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.ListContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    UseTagList = true,
                     // ベクトルDBを使用しない
                     UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.AppendTags,
@@ -517,8 +518,19 @@ namespace LibPythonAI.Model.Prompt {
                 List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
                 // PromptOutputTypeがOverwriteTagsの場合はTagsに結果を保存
                 if (promptItem.PromptOutputType == PromptOutputTypeEnum.AppendTags) {
+                    // タグ一覧を取得
+                    List<TagItem> tagItems = await TagItem.GetTagItemsAsync();
                     foreach (var tag in response) {
                         item.Tags.Add(tag);
+                        // タグ一覧に存在しない場合は追加
+                        if (tagItems.Any(x => x.Tag == tag) == false) {
+                            // タグ一覧に追加
+                            TagItem tagItemEntity = new() {
+                                Tag = tag,
+                                IsPinned = false,
+                            };
+                            await tagItemEntity.SaveAsync();
+                        }
                     }
                     return;
                 }

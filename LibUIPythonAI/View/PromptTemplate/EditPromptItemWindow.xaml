@@ -226,6 +226,7 @@
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.StringType}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.ListType}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.TableType}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.DictionaryType}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding PromptResultTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -247,6 +248,7 @@
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.NewTab}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.OverwriteContent}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.OverwriteTitle}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.AppendTags}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding PromptOutputTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

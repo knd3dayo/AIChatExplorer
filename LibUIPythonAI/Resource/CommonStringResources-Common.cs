@@ -194,6 +194,9 @@ namespace LibUIPythonAI.Resource {
         public virtual string ListType { get; } = "リスト";
         // テーブル
         public virtual string TableType { get; } = "テーブル";
+
+        // Dictionary
+        public virtual string DictionaryType { get; } = "ディクショナリ";
         // 出力先
         public virtual string OutputDestination { get; } = "出力先";
 
