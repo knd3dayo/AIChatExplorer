@@ -1,5 +1,5 @@
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using PythonAILib.Model.Chat;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class QAChatStartupProps {

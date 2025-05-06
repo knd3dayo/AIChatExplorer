@@ -4,10 +4,10 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
@@ -33,16 +33,6 @@ namespace LibPythonAI.Model.Content {
             set {
                 Entity.FolderId = value;
             }
-        }
-
-        // Folder
-        public virtual ContentFolderWrapper GetFolder() {
-            var folder = ContentFolderWrapper.GetFolderById< ContentFolderWrapper>(Entity.FolderId);
-            if (folder == null) {
-                throw new Exception("Folder not found");
-            }
-            return folder;
-
         }
 
         // 生成日時
@@ -106,6 +96,7 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
+
         // OpenAIチャットのChatItemコレクション
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatMessage> ChatItems {
@@ -130,49 +121,6 @@ namespace LibPythonAI.Model.Content {
                 Entity.Tags = value;
             }
         }
-
-        //　貼り付け元のアプリケーション名
-        public string? SourceApplicationName {
-            get {
-                return Entity.SourceApplicationName;
-            }
-            set {
-                if (value != null) {
-                    Entity.SourceApplicationName = value;
-                }
-            }
-        }
-        //　貼り付け元のアプリケーションのタイトル
-        public string SourceApplicationTitle {
-            get {
-                return Entity.SourceApplicationTitle;
-            }
-            set {
-                if (value != null) {
-                    Entity.SourceApplicationTitle = value;
-                }
-            }
-        }
-        //　貼り付け元のアプリケーションのID
-        public int SourceApplicationID {
-            get {
-                return Entity.SourceApplicationID;
-            }
-            set {
-                Entity.SourceApplicationID = value;
-            }
-        }
-        //　貼り付け元のアプリケーションのパス
-        public string SourceApplicationPath {
-            get {
-                return Entity.SourceApplicationPath;
-            }
-            set {
-                if (value != null) {
-                    Entity.SourceApplicationPath = value;
-                }
-            }
-        }
         // ピン留め
         public bool IsPinned {
             get {
@@ -183,44 +131,266 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
+        // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
+        public string Base64Image {
+            get {
+                if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
+                    // IOExceptionが発生する可能性があるため、try-catchで囲む
+                    try {
+                        (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+                        if (isImage) {
+                            byte[] imageBytes = File.ReadAllBytes(SourcePath);
+                            return Convert.ToBase64String(imageBytes);
+                        }
+                    } catch (IOException e) {
+                        LogWrapper.Info($"access error: {e.Message}");
+                        return "";
+                    }
+                }
+                if (string.IsNullOrEmpty(Entity.CachedBase64String) == false) {
+                    return Entity.CachedBase64String;
+                }
+                return "";
+            }
+            set {
+                Entity.CachedBase64String = value;
+            }
+        }
+
+        public string ChatItemsText {
+            get {
+                // chatHistoryItemの内容をテキスト化
+                string chatHistoryText = "";
+                foreach (var item in Entity.ChatItems) {
+                    chatHistoryText += $"--- {item.Role} ---\n";
+                    chatHistoryText += item.ContentWithSources + "\n\n";
+                }
+                return chatHistoryText;
+            }
+        }
+
+        public string UpdatedAtString {
+            get {
+                return Entity.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            }
+        }
+
+        public string CreatedAtString {
+            get {
+                return Entity.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            }
+        }
+
+
+        public string ContentTypeString {
+            get {
+                ContentTypes.ContentItemTypes ContentType = Entity.ContentType;
+                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                    return "Text";
+                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
+                    return "File";
+                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
+                    return "Image";
+                } else {
+                    return "Unknown";
+                }
+            }
+        }
+
+
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty(FileName)) {
+                    return "No Name";
+                }
+                return FileName;
+            }
+        }
+
+
+        // フォルダ名
+        public string FolderName  => Path.GetDirectoryName(SourcePath) ?? "";
+
+        // ファイル名
+        public string FileName => Path.GetFileName(SourcePath) ?? "";
+
+        // フォルダ名 + \n + ファイル名
+        public string FolderAndFileName => FolderName + Path.PathSeparator + FileName;
+
+        // 画像イメージ
+        public BitmapImage? BitmapImage {
+            get {
+                if (!IsImage()) {
+                    return null;
+                }
+                byte[] imageBytes = Convert.FromBase64String(Base64Image);
+                return ContentTypes.GetBitmapImage(imageBytes);
+            }
+        }
+        public System.Drawing.Image? Image {
+            get {
+                if (!IsImage()) {
+                    return null;
+                }
+                return ContentTypes.GetImageFromBase64(Base64Image);
+            }
+        }
+
+
+        // ベクトル化日時の文字列
+        public string VectorizedAtString {
+            get {
+                Entity.ExtendedProperties.TryGetValue("VectorizedAtString", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
+            }
+            set {
+                Entity.ExtendedProperties["VectorizedAtString"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+        // フォルダに設定されたVerctorDBPropertyを使うかどうか
+        public bool UseFolderVectorDBProperty {
+            get {
+                Entity.ExtendedProperties.TryGetValue("UseFolderVectorDBProperty", out object? value);
+                if (value is bool boolValue) {
+                    return boolValue;
+                }
+                return true;
+            }
+            set {
+                Entity.ExtendedProperties["UseFolderVectorDBProperty"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+        // このアイテムに紐付けらされたVectorDBProperty
+        // UseFolderVectorDBPropertyがtrueの場合は、フォルダに設定されたVectorDBPropertyを使用する
+        public List<VectorDBProperty> VectorDBProperties {
+            get {
+                if (UseFolderVectorDBProperty) {
+                    return GetFolder().GetVectorSearchProperties();
+                }
+
+                Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value);
+                if (value is string strValue) {
+                    return VectorDBProperty.FromListJson(strValue) ?? [];
+                }
+                return [];
+            }
+            set {
+                Entity.ExtendedProperties["VectorDBProperties"] = VectorDBProperty.ToListJson(value);
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+
+        //　貼り付け元のアプリケーション名
+        public string? SourceApplicationName {
+            get {
+                Entity.ExtendedProperties.TryGetValue("SourceApplicationName", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
+            }
+            set {
+                Entity.ExtendedProperties["SourceApplicationName"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+        //　貼り付け元のアプリケーションのタイトル
+        public string SourceApplicationTitle {
+            get {
+                Entity.ExtendedProperties.TryGetValue("SourceApplicationTitle", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
+            }
+            set {
+                Entity.ExtendedProperties["SourceApplicationTitle"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+        //　貼り付け元のアプリケーションのID
+        public int SourceApplicationID {
+            get {
+                Entity.ExtendedProperties.TryGetValue("SourceApplicationID", out object? value);
+                if (value is Decimal intValue) {
+                    return Decimal.ToInt32(intValue);
+                }
+                if (value is int intValue2) {
+                    return intValue2;
+                }
+                return 0;
+            }
+            set {
+                Entity.ExtendedProperties["SourceApplicationID"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+        //　貼り付け元のアプリケーションのパス
+        public string SourceApplicationPath {
+            get {
+                Entity.ExtendedProperties.TryGetValue("SourceApplicationPath", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
+            }
+            set {
+                Entity.ExtendedProperties["SourceApplicationPath"] = value;
+                Entity.SaveExtendedPropertiesJson();
+            }
+        }
+
         // 文書の信頼度(0-100)
         public int DocumentReliability {
             get {
-                return Entity.DocumentReliability;
+                Entity.ExtendedProperties.TryGetValue("DocumentReliability", out object? value);
+                if (value is Decimal intValue) {
+                    return Decimal.ToInt32(intValue);
+                }
+                if (value is int intValue2) {
+                    return intValue2;
+                }
+                return 0;
             }
             set {
-                Entity.DocumentReliability = value;
+                Entity.ExtendedProperties["DocumentReliability"] = value;
+                Entity.SaveExtendedPropertiesJson();
             }
         }
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason {
             get {
-                return Entity.DocumentReliabilityReason;
+                Entity.ExtendedProperties.TryGetValue("DocumentReliabilityReason", out object? value);
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
             }
             set {
-                Entity.DocumentReliabilityReason = value;
+                Entity.ExtendedProperties["DocumentReliabilityReason"] = value;
+                Entity.SaveExtendedPropertiesJson();
             }
         }
 
-        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
-        public bool IsReferenceVectorDBItemsSynced {
-            get {
-                return Entity.IsReferenceVectorDBItemsSynced;
-            }
-            set {
-                Entity.IsReferenceVectorDBItemsSynced = value;
-            }
-        }
         // SourcePath
         public string SourcePath {
             get {
                 Entity.ExtendedProperties.TryGetValue("SourcePath", out object? value);
-                return value?.ToString() ?? "";
+                if (value is string strValue) {
+                    return strValue;
+                }
+                return string.Empty;
             }
             set {
                 Entity.ExtendedProperties["SourcePath"] = value;
+                Entity.SaveExtendedPropertiesJson();
             }
-        }
+       }
 
         // SourceType 
         public string SourceType {
@@ -249,30 +419,15 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
-        public string Base64Image {
-            get {
-                if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
-                    // IOExceptionが発生する可能性があるため、try-catchで囲む
-                    try {
-                        (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
-                        if (isImage) {
-                            byte[] imageBytes = File.ReadAllBytes(SourcePath);
-                            return Convert.ToBase64String(imageBytes);
-                        }
-                    } catch (IOException e) {
-                        LogWrapper.Info($"access error: {e.Message}");
-                        return "";
-                    }
-                }
-                if (string.IsNullOrEmpty(Entity.CachedBase64String) == false) {
-                    return Entity.CachedBase64String;
-                }
-                return "";
+
+        // Folder
+        public virtual ContentFolderWrapper GetFolder() {
+            var folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.FolderId);
+            if (folder == null) {
+                throw new Exception("Folder not found");
             }
-            set {
-                Entity.CachedBase64String = value;
-            }
+            return folder;
+
         }
 
         // タグ表示用の文字列
@@ -367,105 +522,6 @@ namespace LibPythonAI.Model.Content {
                 // Tags
                 header1 += $"[{PythonAILibStringResources.Instance.Tag}]" + TagsString() + "\n";
                 return header1;
-            }
-        }
-
-        public string ChatItemsText {
-            get {
-                // chatHistoryItemの内容をテキスト化
-                string chatHistoryText = "";
-                foreach (var item in Entity.ChatItems) {
-                    chatHistoryText += $"--- {item.Role} ---\n";
-                    chatHistoryText += item.ContentWithSources + "\n\n";
-                }
-                return chatHistoryText;
-            }
-        }
-
-        public string UpdatedAtString {
-            get {
-                return Entity.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
-            }
-        }
-
-        public string CreatedAtString {
-            get {
-                return Entity.CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
-            }
-        }
-
-        // ベクトル化日時の文字列
-        public string VectorizedAtString {
-            get {
-                if (Entity.VectorizedAt <= ContentItemEntity.InitialDateTime) {
-                    return "";
-                }
-                return Entity.VectorizedAt.ToString("yyyy/MM/dd HH:mm:ss");
-            }
-        }
-
-        public string ContentTypeString {
-            get {
-                ContentTypes.ContentItemTypes ContentType = Entity.ContentType;
-                if (ContentType == ContentTypes.ContentItemTypes.Text) {
-                    return "Text";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
-                    return "File";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
-                    return "Image";
-                } else {
-                    return "Unknown";
-                }
-            }
-        }
-
-
-        public string DisplayName {
-            get {
-                if (string.IsNullOrEmpty(FileName)) {
-                    return "No Name";
-                }
-                return FileName;
-            }
-        }
-
-        // フォルダ名
-        public string FolderName {
-            get {
-                string FilePath = SourcePath;
-                return Path.GetDirectoryName(FilePath) ?? "";
-            }
-        }
-        // ファイル名
-        public string FileName {
-            get {
-                string FilePath = SourcePath;
-                return Path.GetFileName(FilePath) ?? "";
-            }
-        }
-        // フォルダ名 + \n + ファイル名
-        public string FolderAndFileName {
-            get {
-                return FolderName + Path.PathSeparator + FileName;
-            }
-        }
-
-        // 画像イメージ
-        public BitmapImage? BitmapImage {
-            get {
-                if (!IsImage()) {
-                    return null;
-                }
-                byte[] imageBytes = Convert.FromBase64String(Base64Image);
-                return ContentTypes.GetBitmapImage(imageBytes);
-            }
-        }
-        public System.Drawing.Image? Image {
-            get {
-                if (!IsImage()) {
-                    return null;
-                }
-                return ContentTypes.GetImageFromBase64(Base64Image);
             }
         }
 
@@ -576,7 +632,7 @@ namespace LibPythonAI.Model.Content {
                 return [];
             }
             using PythonAILibDBContext db = new();
-            var items = db.ContentItems;
+            var items = db.ContentItems.Select(x => new ContentItemWrapper() { Entity = x });
             return Search(searchCondition, items).ToList();
         }
 
@@ -591,15 +647,15 @@ namespace LibPythonAI.Model.Content {
                 folderIds.AddRange(targetFolder.Entity.GetChildrenAll().Select(x => x.Id));
             }
             using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.FolderId != null && folderIds.Contains(x.FolderId));
+            var items = db.ContentItems.Where(x => x.FolderId != null && folderIds.Contains(x.FolderId)).Select(x => new ContentItemWrapper() { Entity = x });
 
             return Search(searchCondition, items).ToList();
 
 
         }
 
-        private static IEnumerable<ContentItemWrapper> Search(SearchCondition searchCondition, IEnumerable<ContentItemEntity> items) {
-            IEnumerable<ContentItemEntity> results = items;
+        private static IEnumerable<ContentItemWrapper> Search(SearchCondition searchCondition, IEnumerable<ContentItemWrapper> items) {
+            IEnumerable<ContentItemWrapper> results = items;
 
             // SearchConditionの内容に従ってフィルタリング
             if (string.IsNullOrEmpty(searchCondition.Description) == false) {
@@ -645,7 +701,7 @@ namespace LibPythonAI.Model.Content {
             }
             results = results.OrderByDescending(x => x.UpdatedAt);
 
-            return results.Select(x => new ContentItemWrapper() { Entity = x });
+            return results;
         }
 
 

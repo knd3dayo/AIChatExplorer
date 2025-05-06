@@ -80,6 +80,44 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(this, options);
         }
 
+        public static string ToListJson(List<VectorDBProperty> items) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            JsonSerializerOptions options = jsonSerializerOptions;
+            return JsonSerializer.Serialize(items, options);
+        }
+
+        public static VectorDBProperty? FromJson(string json) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            JsonSerializerOptions options = jsonSerializerOptions;
+            return JsonSerializer.Deserialize<VectorDBProperty>(json, options);
+        }
+
+        public static List<VectorDBProperty>? FromListJson(string json) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            JsonSerializerOptions options = jsonSerializerOptions;
+            return JsonSerializer.Deserialize<List<VectorDBProperty>>(json, options);
+        }
+
+        public static VectorDBProperty? FromDict(Dictionary<string, dynamic?> dict) {
+            VectorDBProperty item = new() {
+                VectorDBItemId = dict["VectorDBItemId"]?.ToString(),
+                TopK = Int32.Parse(dict["TopK"]() ?? "5"),
+                FolderId = dict["FolderId"](),
+                ContentType = dict["ContentType"]() ?? "",
+            };
+            item.VectorMetadata = VectorDBEmbedding.FromDict(dict["VectorMetadata"]);
+            return item;
+        }
+
         public Dictionary<string, object> ToDict() {
             VectorDBItem? item = VectorDBItem.GetItemById(VectorDBItemId);
             if (item == null) {
@@ -92,7 +130,6 @@ namespace LibPythonAI.Model.VectorDB {
             }
             return dict;
         }
-
 
         // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBProperty> items) {

@@ -5,7 +5,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.Model.Chat {
     public class ChatMessage {
 
         public static string SystemRole { get; } = "system";

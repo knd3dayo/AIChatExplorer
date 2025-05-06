@@ -24,6 +24,7 @@ using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Python;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {

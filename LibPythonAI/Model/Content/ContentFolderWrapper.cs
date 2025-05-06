@@ -192,7 +192,13 @@ namespace LibPythonAI.Model.Content {
             if (folder == null) {
                 return null;
             }
-            return (T?)Activator.CreateInstance(typeof(T), [folder]);
+            T? result = (T?)Activator.CreateInstance(typeof(T));
+            if (result == null) {
+                throw new Exception("Failed to create instance of ContentFolderWrapper");
+            }
+            result.Entity = folder;
+
+            return result;
 
         }
 

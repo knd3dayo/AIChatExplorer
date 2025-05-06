@@ -39,7 +39,7 @@ namespace PythonAILib.Model.Chat {
         [JsonIgnore]
         public bool UseVectorDB { get; set; } = false;
 
-        public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
+        public OpenAIExecutionModeEnum ChatMode { get; set; } = OpenAIExecutionModeEnum.Normal;
 
         public SplitOnTokenLimitExceedModeEnum SplitMode = SplitOnTokenLimitExceedModeEnum.None;
 

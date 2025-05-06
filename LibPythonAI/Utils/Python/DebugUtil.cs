@@ -71,7 +71,12 @@ namespace PythonAILib.Utils.Python {
 
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
-                parametersDict["chat_request"] = chatRequest.ToDict();
+                if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+                    parametersDict["chat_request"] = chatRequest.ToDict();
+                }
+                if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+                    parametersDict["autogen_request"] = chatRequest.ToDict();
+                }
             }
 
             string parametersJson = JsonSerializer.Serialize(parametersDict, options);

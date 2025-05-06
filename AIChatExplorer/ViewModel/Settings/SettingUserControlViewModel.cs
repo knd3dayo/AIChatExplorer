@@ -12,6 +12,7 @@ using PythonAILib.Resources;
 using WpfAppCommon.Model;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
+using LibPythonAI.Model.Chat;
 
 namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>

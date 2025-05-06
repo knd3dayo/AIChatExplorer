@@ -649,6 +649,9 @@ namespace LibUIPythonAI.Resource {
         // ベクトルDBを使用する
         public override string UseVectorDB { get; } = "Use Vector DB";
 
+        // フォルダに設定されたベクトルDB設定を使用
+        public override string UseVectorDBSettingInFolder { get; } = "Use Vector DB setting in folder";
+
         // 出力形式
         public override string OutputType { get; } = "Output Type";
         // 文字列

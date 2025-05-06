@@ -1,6 +1,6 @@
 using System.Windows;
+using LibPythonAI.Model.Chat;
 using LibUIPythonAI.ViewModel.Chat;
-using PythonAILib.Model.Chat;
 
 namespace LibUIPythonAI.View.Chat {
     /// <summary>

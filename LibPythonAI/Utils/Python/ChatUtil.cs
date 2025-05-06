@@ -1,6 +1,9 @@
 using System.Text;
 using System.Text.Json;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -27,7 +30,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.ChatMode = promptText.ChatMode;
             chatRequestContext.SplitMode = promptText.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -35,7 +38,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<string> promptList, string content) {
+        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorDBProperty> vectorDBProperties, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {
@@ -46,7 +49,7 @@ namespace LibPythonAI.Utils.Python {
                 chatRequestContext.PromptTemplateText = prompt;
 
 
-                ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+                ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
                 if (result != null) {
                     resultString = result.Output;
                 }
@@ -67,7 +70,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];

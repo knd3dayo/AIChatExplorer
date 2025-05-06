@@ -1,9 +1,9 @@
 using System.Windows.Documents;
-using PythonAILib.Model.Chat;
 using LibUIPythonAI.Utils;
 using System.Windows;
 using System.ComponentModel;
 using LibUIPythonAI.Resource;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIAutoGenChat.ViewModel.Chat {
     public class EditAutoGenChatItemWindowViewModel : CommonViewModelBase {

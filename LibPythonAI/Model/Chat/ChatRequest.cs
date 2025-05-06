@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
 

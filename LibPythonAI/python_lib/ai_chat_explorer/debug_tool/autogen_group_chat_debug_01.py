@@ -36,11 +36,8 @@ async def main():
         print(f"props_file:{props_file}")
         with open(props_file, "r", encoding="utf-8") as f:
             props_dict = json.load(f)
-            context_dict = props_dict.get("context", None)
-            if not context_dict:
-                raise ValueError("context is not found in props.")
 
-            request_dict = props_dict.get("request", None)
+            request_dict = props_dict.get("chat_request", None)
             if not request_dict:
                 raise ValueError("request is not found in props.")
             

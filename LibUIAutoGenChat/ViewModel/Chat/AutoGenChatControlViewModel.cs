@@ -14,6 +14,7 @@ using PythonAILib.Utils.Python;
 using System.ComponentModel;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Chat;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIAutoGenChat.ViewModel.Chat {
     public class AutoGenChatControlViewModel : CommonViewModelBase {

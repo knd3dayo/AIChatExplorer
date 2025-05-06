@@ -33,7 +33,7 @@ namespace PythonAILib.Model.AutoProcess {
                 chatRequestContent.VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()];
             }
 
-            ChatResult? result = ChatUtil.ExecuteChat(chatRequest, chatRequestContent, (message) => { });
+            ChatResult? result = ChatUtil.ExecuteChat(chatRequest, chatRequestContent , (message) => { });
             if (result == null) {
                 return;
             }

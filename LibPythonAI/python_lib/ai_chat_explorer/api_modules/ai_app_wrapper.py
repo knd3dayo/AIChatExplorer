@@ -163,8 +163,8 @@ async def autogen_chat( request_json: str):
     # request_jsonからrequestを作成
     request_dict: dict = json.loads(request_json)
     autogen_props = get_autogen_objects( request_dict)
-    autogen_request = get_autogen_request_objects(request_dict)
-    input_text = autogen_request.get("input_text", "")
+    chat_request_dict = request_dict.get(chat_request_name, None)
+    input_text = chat_request_dict.get("input_text", "")
     if not input_text:
         raise ValueError("input_text is not set")
 

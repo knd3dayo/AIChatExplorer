@@ -13,6 +13,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Utils.Python;
 using System.ComponentModel;
 using LibUIPythonAI.Resource;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : CommonViewModelBase {
@@ -199,7 +200,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                         return;
                     }
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext, (message) => {
+                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext,  (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

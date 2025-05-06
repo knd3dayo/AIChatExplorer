@@ -1,5 +1,5 @@
 using System.Windows;
-using LibUIPythonAI.ViewModel.Chat;
+using LibUIAutoGenChat.ViewModel.Chat;
 
 namespace LibUIAutoGenChat.View.Chat {
     /// <summary>
@@ -10,9 +10,9 @@ namespace LibUIAutoGenChat.View.Chat {
             InitializeComponent();
         }
 
-        public static void OpenWindow(QAChatStartupProps props) {
+        public static void OpenWindow(LibUIPythonAI.ViewModel.Chat.QAChatStartupProps props) {
             AutoGenChatWindow openAIChatWindow = new();
-            ChatWindowViewModel mainWindowViewModel = new(props);
+            AutoGenChatWindowViewModel mainWindowViewModel = new(props);
             openAIChatWindow.DataContext = mainWindowViewModel;
 
             openAIChatWindow.Show();

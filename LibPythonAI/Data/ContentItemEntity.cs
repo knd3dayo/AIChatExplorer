@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Model.Chat;
+using LibPythonAI.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Utils.Common;
@@ -85,25 +85,8 @@ namespace LibPythonAI.Data {
             }
         }
 
-        //　貼り付け元のアプリケーション名
-        public string SourceApplicationName { get; set; } = "";
-        //　貼り付け元のアプリケーションのタイトル
-        public string SourceApplicationTitle { get; set; } = "";
-        //　貼り付け元のアプリケーションのID
-        public int SourceApplicationID { get; set; }
-        //　貼り付け元のアプリケーションのパス
-        public string SourceApplicationPath { get; set; } = "";
-
         // ピン留め
         public bool IsPinned { get; set; }
-
-        // 文書の信頼度(0-100)
-        public int DocumentReliability { get; set; } = 0;
-        // 文書の信頼度の判定理由
-        public string DocumentReliabilityReason { get; set; } = "";
-
-        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
-        public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
 
         public string CachedBase64String { get; set; } = "";
 
@@ -157,14 +140,7 @@ namespace LibPythonAI.Data {
                 ChatMessagesJson = ChatMessagesJson,
                 PromptChatResultJson = PromptChatResultJson,
                 TagString = TagString,
-                SourceApplicationName = SourceApplicationName,
-                SourceApplicationTitle = SourceApplicationTitle,
-                SourceApplicationID = SourceApplicationID,
-                SourceApplicationPath = SourceApplicationPath,
                 IsPinned = IsPinned,
-                DocumentReliability = DocumentReliability,
-                DocumentReliabilityReason = DocumentReliabilityReason,
-                IsReferenceVectorDBItemsSynced = IsReferenceVectorDBItemsSynced,
                 CachedBase64String = CachedBase64String,
                 ExtendedPropertiesJson = ExtendedPropertiesJson
             };

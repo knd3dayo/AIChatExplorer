@@ -156,5 +156,8 @@ namespace LibUIPythonAI.View.Chat {
         // Chat
         public static string Chat => CommonStringResources.Instance.Chat;
 
+        // フォルダに設定されたベクトルを使用
+        public static string UseVectorDBSettingInFolder => CommonStringResources.Instance.UseVectorDBSettingInFolder;
+
     }
 }
