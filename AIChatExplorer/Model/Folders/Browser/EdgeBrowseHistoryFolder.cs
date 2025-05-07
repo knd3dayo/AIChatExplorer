@@ -34,6 +34,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString,
             };
             EdgeBrowseHistoryFolder child = new() { Entity = childFolder };
             return child;

@@ -31,6 +31,8 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString,
+
             };
             ClipboardFolder child = new() { Entity = childFolder };
             return child;

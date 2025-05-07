@@ -56,6 +56,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString
             };
             OutlookFolder child = new() { Entity = childFolder};
             return child;

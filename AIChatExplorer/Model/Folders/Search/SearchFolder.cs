@@ -50,6 +50,7 @@ namespace AIChatExplorer.Model.Folders.Search {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString
             };
             SearchFolder child = new() { Entity = childFolder };
             return child;

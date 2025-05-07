@@ -240,6 +240,7 @@ namespace LibPythonAI.Model.Content {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString,
             };
             return new ContentFolderWrapper() { Entity = childFolder };
         }
