@@ -457,14 +457,13 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder().GetVectorSearchProperties() : [];
+            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorDBProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties,
                 PromptTemplateText = promptItem.Prompt,
-                ChatMode = promptItem.ChatMode,
                 SplitMode = promptItem.SplitMode,
             };
 

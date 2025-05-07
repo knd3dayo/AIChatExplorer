@@ -136,11 +136,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
-            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
-            QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange([.. ChatHistory]);
             OnPropertyChanged(nameof(ChatHistory));
-
             // ListBoxの一番最後のアイテムに移動
             UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
             if (userControl != null) {
@@ -157,7 +153,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
+                return DebugUtil.CreateParameterJson((OpenAIExecutionModeEnum) ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest);
             }
         }
         // GeneratedDebugCommand
@@ -165,7 +161,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
+                return string.Join("\n\n", DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
             }
         }
 
@@ -173,7 +169,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
             ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
             ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
+            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
         });
 
         // チャットを送信するコマンド
@@ -199,8 +195,9 @@ namespace LibUIPythonAI.ViewModel.Chat {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         return;
                     }
+                    OpenAIExecutionModeEnum openAIExecutionModeEnum = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext,  (message) => {
+                    result = ChatUtil.ExecuteChat(openAIExecutionModeEnum, ChatRequest, chatRequestContext,  (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

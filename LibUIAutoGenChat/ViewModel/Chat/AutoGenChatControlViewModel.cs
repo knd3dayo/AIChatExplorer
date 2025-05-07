@@ -158,7 +158,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
+                return DebugUtil.CreateParameterJson((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest);
             }
         }
         // GeneratedDebugCommand
@@ -166,7 +166,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
+                return string.Join("\n\n", DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
             }
         }
 
@@ -174,7 +174,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
             ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
             ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
-            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
+            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
         });
 
         // チャットを送信するコマンド
@@ -200,8 +200,10 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         return;
                     }
+                    // ChatMode
+                    OpenAIExecutionModeEnum chatMode = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext, (message) => {
+                    result = ChatUtil.ExecuteChat(chatMode, ChatRequest, chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

@@ -26,14 +26,13 @@ namespace PythonAILib.Model.AutoProcess {
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = PromptItemEntity.Prompt,
-                ChatMode = Mode,
             };
             if (clipboardFolder != null) {
                 chatRequestContent.UseVectorDB = true;
                 chatRequestContent.VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()];
             }
 
-            ChatResult? result = ChatUtil.ExecuteChat(chatRequest, chatRequestContent , (message) => { });
+            ChatResult? result = ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
             if (result == null) {
                 return;
             }

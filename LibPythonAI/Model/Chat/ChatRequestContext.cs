@@ -39,7 +39,6 @@ namespace PythonAILib.Model.Chat {
         [JsonIgnore]
         public bool UseVectorDB { get; set; } = false;
 
-        public OpenAIExecutionModeEnum ChatMode { get; set; } = OpenAIExecutionModeEnum.Normal;
 
         public SplitOnTokenLimitExceedModeEnum SplitMode = SplitOnTokenLimitExceedModeEnum.None;
 
@@ -50,7 +49,6 @@ namespace PythonAILib.Model.Chat {
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
                 { "prompt_template_text", PromptTemplateText },
-                { "chat_mode", ChatMode.ToString() },
                 { "split_mode", SplitMode.ToString() },
                 { "summarize_prompt_text", SummarizePromptText },
                 { "related_information_prompt_text", RelatedInformationPromptText },
@@ -79,7 +77,6 @@ namespace PythonAILib.Model.Chat {
                 VectorDBProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = promptTemplateText,
-                ChatMode = chatMode,
                 UseVectorDB = userVectorDB,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,

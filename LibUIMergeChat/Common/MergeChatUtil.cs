@@ -67,7 +67,6 @@ namespace LibUIMergeChat.Common {
                     ContentItemWrapper item = items[i];
                     ChatRequestContext preProcessRequestContext = new() {
                         PromptTemplateText = preProcessPrompt,
-                        ChatMode = context.ChatMode,
                         SplitMode = context.SplitMode,
                         SplitTokenCount = context.SplitTokenCount,
                         UseVectorDB = context.UseVectorDB,
@@ -83,7 +82,7 @@ namespace LibUIMergeChat.Common {
                     ChatRequest preProcessRequest = new() {
                         ContentText = contentText,
                     };
-                    ChatResult? preProcessResult = ChatUtil.ExecuteChat(preProcessRequest, preProcessRequestContext, (text) => { });
+                    ChatResult? preProcessResult = ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, preProcessRequest, preProcessRequestContext, (text) => { });
                     if (preProcessResult == null) {
                         return;
                     }
@@ -125,7 +124,6 @@ namespace LibUIMergeChat.Common {
 
             ChatRequestContext postProcessRequestContext = new() {
                 PromptTemplateText = postProcessPrompt,
-                ChatMode = context.ChatMode,
                 SplitMode = context.SplitMode,
                 SplitTokenCount = context.SplitTokenCount,
                 UseVectorDB = context.UseVectorDB,
@@ -136,7 +134,7 @@ namespace LibUIMergeChat.Common {
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,
             };
-            ChatResult? postProcessResult = ChatUtil.ExecuteChat(postProcessRequest, postProcessRequestContext, (text) => { });
+            ChatResult? postProcessResult = ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, postProcessRequest, postProcessRequestContext, (text) => { });
             return postProcessResult;
         }
 

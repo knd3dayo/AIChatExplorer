@@ -125,7 +125,6 @@ namespace LibUIImageChat.ViewModel {
             // ChatRequestContextを生成
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                ChatMode = OpenAIExecutionModeEnum.Normal,
                 PromptTemplateText = PromptText,
 
             };
@@ -153,8 +152,9 @@ namespace LibUIImageChat.ViewModel {
 
                     ChatRequest.ImageURLs = imageBase64Strings;
                     ChatRequest.ContentText = InputText;
+
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatUtil.ExecuteChat(ChatRequest, chatRequestContext, (message) => { });
+                    result = ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, ChatRequest, chatRequestContext, (message) => { });
 
                 });
                 // 結果を表示

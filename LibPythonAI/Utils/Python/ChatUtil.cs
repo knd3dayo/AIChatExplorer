@@ -27,10 +27,9 @@ namespace LibPythonAI.Utils.Python {
             };
 
             chatRequestContext.PromptTemplateText = promptText.Prompt;
-            chatRequestContext.ChatMode = promptText.ChatMode;
             chatRequestContext.SplitMode = promptText.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
+            ChatResult? result = ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext,  (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -45,11 +44,10 @@ namespace LibPythonAI.Utils.Python {
                     ContentText = resultString,
                 };
 
-                chatRequestContext.ChatMode = chatMode;
                 chatRequestContext.PromptTemplateText = prompt;
 
 
-                ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
+                ChatResult? result = ExecuteChat(chatMode, chatRequest, chatRequestContext,  (message) => { });
                 if (result != null) {
                     resultString = result.Output;
                 }
@@ -67,10 +65,9 @@ namespace LibPythonAI.Utils.Python {
                 JsonMode = true
             };
             chatRequestContext.PromptTemplateText = promptText;
-            chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext,  (message) => { });
+            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext,  (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
@@ -87,11 +84,11 @@ namespace LibPythonAI.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.ChatMode = promptItem.ChatMode;
+
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 return JsonUtil.ParseJson(result.Output);
             }
@@ -106,11 +103,10 @@ namespace LibPythonAI.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
                 return JsonUtil.ParseJson(result.Output);
@@ -122,7 +118,6 @@ namespace LibPythonAI.Utils.Python {
         public static string ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
             ChatRequest chatRequest = new();
             // Normal Chatを実行
-            chatRequestContext.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatRequestContext.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
             chatRequest.ContentText = "";
             chatRequest.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
@@ -130,7 +125,7 @@ namespace LibPythonAI.Utils.Python {
                 return "";
             }
 
-            ChatResult? result = ExecuteChat(chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -231,9 +226,9 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行する
-        public static ChatResult? ExecuteChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+        public static ChatResult? ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // 通常のOpenAI Chatを実行する
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+            if (chatMode == OpenAIExecutionModeEnum.Normal) {
 
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, chatRequest);
@@ -241,7 +236,7 @@ namespace LibPythonAI.Utils.Python {
                 return ExecuteChatNormal(chatRequestContext, chatRequest);
             }
             // AutoGenGroupChatを実行する
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+            if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // AutoGenGroupChatを実行する
                 return ExecuteAutoGenGroupChat(chatRequest, chatRequestContext, iterateAction);
             }

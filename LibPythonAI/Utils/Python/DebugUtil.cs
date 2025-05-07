@@ -52,9 +52,9 @@ namespace PythonAILib.Utils.Python {
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターファイルを作成する。
-        public static string CreateParameterJsonFile(ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
+        public static string CreateParameterJsonFile(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
             // JSONファイルに保存
-            string parametersJson = CreateParameterJson(chatRequestContext, chatRequest);
+            string parametersJson = CreateParameterJson(chatMode, chatRequestContext, chatRequest);
             string parametersJsonFile = Path.GetTempFileName();
             File.WriteAllText(parametersJsonFile, parametersJson);
 
@@ -62,7 +62,7 @@ namespace PythonAILib.Utils.Python {
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターJsonを作成する。
-        public static string CreateParameterJson(ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
+        public static string CreateParameterJson(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
             Dictionary<string, object> parametersDict = [];
             parametersDict["chat_request_context"] = chatRequestContext.ToChatRequestContextDict();
             parametersDict["openai_props"] = chatRequestContext.OpenAIProperties.ToDict();
@@ -71,10 +71,10 @@ namespace PythonAILib.Utils.Python {
 
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
-                if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+                if (chatMode == OpenAIExecutionModeEnum.Normal) {
                     parametersDict["chat_request"] = chatRequest.ToDict();
                 }
-                if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+                if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                     parametersDict["autogen_request"] = chatRequest.ToDict();
                 }
             }
@@ -110,18 +110,18 @@ namespace PythonAILib.Utils.Python {
         }
 
         // Chatを実行するコマンド文字列を生成する。
-        public static List<string> CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+        public static List<string> CreateChatCommandLine(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
             // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+            if (chatMode == OpenAIExecutionModeEnum.Normal) {
                 // パラメーターファイルを作成
-                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                string parametersJson = DebugUtil.CreateParameterJson(chatMode, chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
                 return DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile);
             }
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+            if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // パラメーターファイルを作成
-                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                string parametersJson = DebugUtil.CreateParameterJson(chatMode, chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
                 return DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null);
