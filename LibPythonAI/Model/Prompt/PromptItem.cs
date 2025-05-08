@@ -476,7 +476,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
-                string result = ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
+                string result = await ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
                 if (string.IsNullOrEmpty(result)) {
                     return;
                 }
@@ -496,7 +496,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがTableContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
-                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
+                Dictionary<string, dynamic?> response = await ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
                 // resultからキー:resultを取得
                 if (response.ContainsKey("result") == false) {
                     return;
@@ -520,7 +520,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがListの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
-                List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
+                List<string> response = await ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
                 // PromptOutputTypeがOverwriteTagsの場合はTagsに結果を保存
                 if (promptItem.PromptOutputType == PromptOutputTypeEnum.AppendTags) {
                     // タグ一覧を取得
@@ -591,7 +591,7 @@ namespace LibPythonAI.Model.Prompt {
                 OpenAIProperties = openAIProperties,
             };
 
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
+            Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 UseVectorDB = true,

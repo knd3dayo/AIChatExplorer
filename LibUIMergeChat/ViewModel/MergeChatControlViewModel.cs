@@ -249,7 +249,7 @@ namespace LibUIMergeChat.ViewModel {
                 // itemViewModelsからContentItemをSelect
                 List<ContentItemWrapper> items = itemViewModels.Select(x => x.ContentItem).ToList();
                 // チャット内容を更新
-                await Task.Run(() => {
+                await Task.Run(async () => {
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
                     if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
@@ -258,7 +258,7 @@ namespace LibUIMergeChat.ViewModel {
                         return;
                     }
                     // MergeChatUtil.MergeChatを実行
-                    result = MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, SessionToken, [.. ExportItems]);
+                    result = await MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, SessionToken, [.. ExportItems]);
                 });
 
                 if (result == null) {

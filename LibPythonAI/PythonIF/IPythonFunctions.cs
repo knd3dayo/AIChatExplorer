@@ -9,7 +9,7 @@ namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
 
-        public List<ContentFolderWrapper> GetRootContentFolders(List<string> folderTypeStrings);
+        public Task<List<ContentFolderWrapper>> GetRootContentFolders(List<string> folderTypeStrings);
 
 
         public void UpdateTagItems(List<TagItem> tagItems);
@@ -22,9 +22,9 @@ namespace PythonAILib.PythonIF {
 
         public string ExtractBase64ToText(string base64, string extension);
 
-        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+        public Task<ChatResult> OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
-        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+        public Task<ChatResult> AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
 
@@ -32,7 +32,7 @@ namespace PythonAILib.PythonIF {
 
         public void DeleteVectorDBItem(VectorDBItem item);
 
-        public List<VectorDBItem> GetVectorDBItems();
+        public Task<List<VectorDBItem>> GetVectorDBItemsAsync();
 
         public VectorDBItem? GetVectorDBItemById(string id);
 

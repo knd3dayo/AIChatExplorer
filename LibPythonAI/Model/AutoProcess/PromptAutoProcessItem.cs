@@ -14,7 +14,7 @@ namespace PythonAILib.Model.AutoProcess {
 
         public PromptItemEntity PromptItemEntity { get; set; }
 
-        public override void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
+        public override async Task Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
 
 
             ChatRequest chatRequest = new();
@@ -32,7 +32,7 @@ namespace PythonAILib.Model.AutoProcess {
                 chatRequestContent.VectorDBProperties = [clipboardFolder.GetMainVectorSearchProperty()];
             }
 
-            ChatResult? result = ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
+            ChatResult? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
             if (result == null) {
                 return;
             }

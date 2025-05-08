@@ -189,7 +189,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 CommonViewModelProperties.UpdateIndeterminate(true);
 
                 // チャット内容を更新
-                await Task.Run(() => {
+                await Task.Run(async () => {
 
                     ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
 
@@ -203,7 +203,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                     // ChatMode
                     OpenAIExecutionModeEnum chatMode = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatUtil.ExecuteChat(chatMode, ChatRequest, chatRequestContext, (message) => {
+                    result = await ChatUtil.ExecuteChat(chatMode, ChatRequest, chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

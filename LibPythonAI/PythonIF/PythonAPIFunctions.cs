@@ -78,7 +78,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // ContentFolder
-        public List<ContentFolderWrapper> GetRootContentFolders(List<string> folderTypeStrings) {
+        public async Task<List<ContentFolderWrapper>> GetRootContentFolders(List<string> folderTypeStrings) {
 
             List<ContentFolderRequest> contentFolderRequests = [];
             foreach (string folderTypeString in folderTypeStrings) {
@@ -97,9 +97,11 @@ namespace PythonAILib.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
             LogWrapper.Info(PythonAILibStringResources.Instance.GetRootContentFoldersExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/get_root_content_folders";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -236,7 +238,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+        public async Task<ChatResult> OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
 
             // VectorSearchRequestsを作成
             List<VectorSearchRequest> vectorSearchRequests = [];
@@ -266,14 +268,14 @@ namespace PythonAILib.PythonIF {
             ChatResult chatResult = new();
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/openai_chat";
-            string resultString = PostAsync(endpoint, requestContextJson).Result;
+            string resultString = await PostAsync(endpoint, requestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
             chatResult.LoadFromJson(resultString);
 
             // Errorがある場合は例外をスローする
-            if ( ! string.IsNullOrEmpty(chatResult.Error)) {
+            if (!string.IsNullOrEmpty(chatResult.Error)) {
                 throw new Exception(chatResult.Error);
             }
             // StatisticManagerにトークン数を追加
@@ -282,7 +284,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // AutoGenのGroupChatを実行する
-        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+        public async Task<ChatResult> AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
             // ChatRequestから最後のユーザー発言を取得
             ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
@@ -312,68 +314,65 @@ namespace PythonAILib.PythonIF {
                 AutoUpgrade = false,
             };
 
-            Task.Run(async () => {
-                bool finished = false;
-                var client = new SocketIOClient.SocketIO(host, options);
+            bool finished = false;
+            var client = new SocketIOClient.SocketIO(host, options);
 
-                // responseイベントを受信した場合
-                client.On("response", response => {
-                    // responseをログに出力
-                    string resultString = response.GetValue<string>();
-                    LogWrapper.Debug(resultString);
+            // responseイベントを受信した場合
+            client.On("response", response => {
+                // responseをログに出力
+                string resultString = response.GetValue<string>();
+                LogWrapper.Debug(resultString);
 
-                    // responseをDictionaryに変換
-                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // responseをDictionaryに変換
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
-                    // messageを取得
-                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
-                        iteration(messageValue);
-                    }
-
-                    // logを取得
-                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
-                        LogWrapper.Debug(logValue);
-                    }
-
-                    // total_tokensを取得
-                    if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                        if (totalTokensValue is decimal totalTokens) {
-                            chatResult.TotalTokens = decimal.ToInt64(totalTokens);
-                        }
-                    }
-
-                    // Errorがある場合はLogWrapper.Errorを呼び出す
-                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
-                        LogWrapper.Error(errorValue?.ToString());
-                    }
-                });
-
-                //Errorイベントを受信した場合
-                client.On("error", response => {
-                    LogWrapper.Error(response.GetValue<string>());
-                    // 切断
-                    client.DisconnectAsync();
-                    finished = true;
-                });
-
-                // closeイベントを受信した場合
-                client.On("close", response => {
-                    LogWrapper.Info("Connection closed");
-                    client.DisconnectAsync();
-                    finished = true;
-                });
-                client.OnConnected += async (sender, e) => {
-                    await client.EmitAsync("autogen_chat", requestContextJson);
-                };
-                // サーバーに接続
-                await client.ConnectAsync();
-                // 終了するまで待機
-                while (!finished) {
-                    await Task.Delay(1000);
+                // messageを取得
+                if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
+                    iteration(messageValue);
                 }
 
+                // logを取得
+                if (resultDict.TryGetValue("log", out dynamic? logValue)) {
+                    LogWrapper.Debug(logValue);
+                }
 
-            }).Wait();
+                // total_tokensを取得
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
+                }
+            });
+
+            //Errorイベントを受信した場合
+            client.On("error", response => {
+                LogWrapper.Error(response.GetValue<string>());
+                // 切断
+                client.DisconnectAsync();
+                finished = true;
+            });
+
+            // closeイベントを受信した場合
+            client.On("close", response => {
+                LogWrapper.Info("Connection closed");
+                client.DisconnectAsync();
+                finished = true;
+            });
+            client.OnConnected += async (sender, e) => {
+                await client.EmitAsync("autogen_chat", requestContextJson);
+            };
+            // サーバーに接続
+            await client.ConnectAsync();
+            // 終了するまで待機
+            while (!finished) {
+                await Task.Delay(1000);
+            }
+
             return chatResult;
 
         }
@@ -504,8 +503,8 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        // public List<VectorDBItem> GetVectorDBItems();
-        public List<VectorDBItem> GetVectorDBItems() {
+        // public List<VectorDBItem> GetVectorDBItemsAsync();
+        public async Task<List<VectorDBItem>> GetVectorDBItemsAsync() {
             // RequestContainerを作成
             RequestContainer requestContainer = new();
             // RequestContainerをJSON文字列に変換
@@ -514,7 +513,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/get_vector_db_items";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -653,7 +652,7 @@ namespace PythonAILib.PythonIF {
                     }
                 }
                 // List<VectorSearchResult>に変換
-               //  vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
+                //  vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
             }
 
             return vectorSearchResults;

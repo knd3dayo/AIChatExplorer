@@ -369,7 +369,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             LogWrapper.Info(message);
         }
 
-        public string CheckSetting() {
+        public async Task<string> CheckSetting() {
             StringBuilder stringBuilder = new();
             bool pythonOK = true;
             Log(stringBuilder, $"{CommonStringResources.Instance.PythonSettingCheck}...");
@@ -432,7 +432,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             if (openAIOK == true) {
                 // TestOpenAIを実行
                 Log(stringBuilder, $"{CommonStringResources.Instance.TestRunOpenAI}...");
-                TestResult result = TestOpenAI();
+                TestResult result = await TestOpenAI();
                 Log(stringBuilder, result.Message);
             }
 
@@ -463,7 +463,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
             return testResult;
         }
-        private TestResult TestOpenAI() {
+        private async Task<TestResult> TestOpenAI() {
             TestResult testResult = new();
             PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
 
@@ -481,7 +481,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                     OpenAIProperties = AIChatExplorerConfig.Instance.CreateOpenAIProperties(),
                 };
 
-                string resultString = ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { })?.Output ?? "";
+                ChatResult? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+                string resultString = result?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{CommonStringResources.Instance.FailedToRunOpenAI}";
                     testResult.Result = false;
@@ -509,8 +510,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                 CommonViewModelProperties.UpdateIndeterminate(true);
                 LogWrapper.Info($"{CommonStringResources.Instance.CheckingSettings}...");
                 string resultString = "";
-                await Task.Run(() => {
-                    resultString = CheckSetting();
+                await Task.Run(async () => {
+                    resultString = await CheckSetting();
                 });
                 CommonViewModelProperties.UpdateIndeterminate(false);
                 StatusText.Instance.Init();

@@ -3,7 +3,6 @@ using System.Text.Json;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
-using LibPythonAI.PythonIF.Request;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
@@ -19,7 +18,7 @@ namespace LibPythonAI.Utils.Python {
         };
 
         // Chatを実行して文字列の結果を取得する
-        public static string CreateTextChatResult(ChatRequestContext chatRequestContext, PromptItem promptText, string content) {
+        public static async Task<string> CreateTextChatResult(ChatRequestContext chatRequestContext, PromptItem promptText, string content) {
             ChatRequest chatRequest = new() {
                 // NormalChat, OpenAI+RAG Chat, LangChainChatを実行
                 ContentText = content,
@@ -28,7 +27,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.PromptTemplateText = promptText.Prompt;
             chatRequestContext.SplitMode = promptText.SplitMode;
 
-            ChatResult? result = ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext,  (message) => { });
+            ChatResult? result = await ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -36,7 +35,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorDBProperty> vectorDBProperties, List<string> promptList, string content) {
+        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorDBProperty> vectorDBProperties, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {
@@ -46,7 +45,7 @@ namespace LibPythonAI.Utils.Python {
                 chatRequestContext.PromptTemplateText = prompt;
 
 
-                ChatResult? result = ExecuteChat(chatMode, chatRequest, chatRequestContext,  (message) => { });
+                ChatResult? result = await ExecuteChat(chatMode, chatRequest, chatRequestContext, (message) => { });
                 if (result != null) {
                     resultString = result.Output;
                 }
@@ -55,7 +54,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行してリストの結果を取得する
-        public static List<string> CreateListChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<List<string>> CreateListChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
 
             string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
             ChatRequest chatRequest = new() {
@@ -66,7 +65,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.PromptTemplateText = promptText;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext,  (message) => { });
+            ChatResult? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
@@ -77,7 +76,7 @@ namespace LibPythonAI.Utils.Python {
             return [];
         }
         // CHatを実行してDictionary<string, object>の結果を取得する
-        public static Dictionary<string, dynamic?> CreateDictionaryChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<Dictionary<string, dynamic?>> CreateDictionaryChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
             ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
@@ -87,7 +86,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 return JsonUtil.ParseJson(result.Output);
             }
@@ -96,7 +95,7 @@ namespace LibPythonAI.Utils.Python {
 
 
         // Chatを実行して複雑な結果を取得する
-        public static Dictionary<string, dynamic?> CreateTableChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<Dictionary<string, dynamic?>> CreateTableChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
             ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
@@ -105,7 +104,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
             chatRequestContext.SplitMode = promptItem.SplitMode;
 
-            ChatResult? result = ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
                 return JsonUtil.ParseJson(result.Output);
@@ -114,7 +113,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // 画像からテキストを抽出する
-        public static string ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
+        public static async Task<string> ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
             ChatRequest chatRequest = new();
             // Normal Chatを実行
             chatRequestContext.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
@@ -124,7 +123,7 @@ namespace LibPythonAI.Utils.Python {
                 return "";
             }
 
-            ChatResult? result = ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+            ChatResult? result = await ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -160,16 +159,22 @@ namespace LibPythonAI.Utils.Python {
             PythonExecutor.PythonAIFunctions?.CancelAutoGenChat(sessionToken);
         }
 
-        public static ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(chatRequestContext, chat, iteration);
+        public static async Task<ChatResult?> ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
+            ChatResult? result = await PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(chatRequestContext, chat, iteration);
             return result;
         }
 
-        public static ChatResult? ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(chatRequestContext, chat);
+        public static async Task<ChatResult?> ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
+            // Ensure PythonAIFunctions is not null before calling OpenAIChat
+            if (PythonExecutor.PythonAIFunctions == null) {
+                return null;
+            }
+
+            ChatResult? result = await PythonExecutor.PythonAIFunctions.OpenAIChat(chatRequestContext, chat);
             if (result == null) {
                 return null;
             }
+
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
             chat.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.SourceDocuments));
             return result;
@@ -225,25 +230,25 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行する
-        public static ChatResult? ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+        public static async Task<ChatResult?> ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // 通常のOpenAI Chatを実行する
             if (chatMode == OpenAIExecutionModeEnum.Normal) {
 
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, chatRequest);
                 // 通常のChatを実行する。
-                return ExecuteChatNormal(chatRequestContext, chatRequest);
+                return await ExecuteChatNormal(chatRequestContext, chatRequest);
             }
             // AutoGenGroupChatを実行する
             if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // AutoGenGroupChatを実行する
-                return ExecuteAutoGenGroupChat(chatRequest, chatRequestContext, iterateAction);
+                return await ExecuteAutoGenGroupChat(chatRequest, chatRequestContext, iterateAction);
             }
             return null;
         }
 
         // AutoGenGroupChatを実行する
-        public static ChatResult? ExecuteAutoGenGroupChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+        public static async Task<ChatResult?> ExecuteAutoGenGroupChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
             PrepareNormalRequest(chatRequestContext, chatRequest);
             // 結果
@@ -251,7 +256,7 @@ namespace LibPythonAI.Utils.Python {
             chatRequest.ChatHistory.Add(result);
 
             // AutoGenGroupChatを実行する
-            return ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
+            return await ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
                 result.Content += message + "\n";
                 iterateAction(message);
             });

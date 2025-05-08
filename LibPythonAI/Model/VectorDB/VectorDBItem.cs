@@ -123,7 +123,7 @@ namespace LibPythonAI.Model.VectorDB {
         private static List<VectorDBItem> _items = new(); // 修正: 空のリストを初期化
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
-            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItems());
+            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItemsAsync());
         }
 
         public static List<VectorDBItem> GetItems() {

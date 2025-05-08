@@ -53,7 +53,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // テキストを抽出する
-        public static void ExtractText(ContentItemWrapper item) {
+        public static  async Task ExtractText(ContentItemWrapper item) {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
@@ -66,7 +66,7 @@ namespace LibPythonAI.Model.Content {
             try {
                 if (item.IsImage()) {
                     string base64 = item.Base64Image;
-                    string result = ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
+                    string result = await ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         item.Content = result;
                     }

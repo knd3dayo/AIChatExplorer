@@ -184,7 +184,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 CommonViewModelProperties.UpdateIndeterminate(true);
 
                 // チャット内容を更新
-                await Task.Run(() => {
+                await Task.Run(async () => {
 
                     ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
 
@@ -197,7 +197,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                     }
                     OpenAIExecutionModeEnum openAIExecutionModeEnum = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatUtil.ExecuteChat(openAIExecutionModeEnum, ChatRequest, chatRequestContext,  (message) => {
+                    result = await ChatUtil.ExecuteChat(openAIExecutionModeEnum, ChatRequest, chatRequestContext,  (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

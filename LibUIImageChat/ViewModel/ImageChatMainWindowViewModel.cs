@@ -142,7 +142,7 @@ namespace LibUIImageChat.ViewModel {
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信
                 ChatResult? result = null;
-                await Task.Run(() => {
+                await Task.Run(async () => {
 
                     // ScreenShotImageのリストからファイル名のリストを取得
                     List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
@@ -154,7 +154,7 @@ namespace LibUIImageChat.ViewModel {
                     ChatRequest.ContentText = InputText;
 
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, ChatRequest, chatRequestContext, (message) => { });
+                    result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, ChatRequest, chatRequestContext, (message) => { });
 
                 });
                 // 結果を表示
