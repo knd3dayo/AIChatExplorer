@@ -56,7 +56,7 @@ namespace LibPythonAI.Model.Prompt {
                 return PromptResultTypeEnum.TextContent;
             }
             set {
-                Entity.ExtendedProperties["PromptResultType"] = (int)value;
+                Entity.ExtendedProperties["PromptResultType"] = (Decimal)value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -71,7 +71,7 @@ namespace LibPythonAI.Model.Prompt {
                 return OpenAIExecutionModeEnum.Normal;
             }
             set {
-                Entity.ExtendedProperties["ChatMode"] = (int)value;
+                Entity.ExtendedProperties["ChatMode"] = (Decimal)value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -80,13 +80,13 @@ namespace LibPythonAI.Model.Prompt {
         public SplitOnTokenLimitExceedModeEnum SplitMode {
             get {
                 Entity.ExtendedProperties.TryGetValue("SplitMode", out object? value);
-                if (value is Decimal intValue) {
-                    return (SplitOnTokenLimitExceedModeEnum)intValue;
+                if (value is Decimal decValue) {
+                    return (SplitOnTokenLimitExceedModeEnum)decValue;
                 }
                 return SplitOnTokenLimitExceedModeEnum.None;
             }
             set {
-                Entity.ExtendedProperties["SplitMode"] = (int)value;
+                Entity.ExtendedProperties["SplitMode"] = (Decimal)value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -131,7 +131,7 @@ namespace LibPythonAI.Model.Prompt {
                 return PromptOutputTypeEnum.NewContent;
             }
             set {
-                Entity.ExtendedProperties["PromptOutputType"] = (int)value;
+                Entity.ExtendedProperties["PromptOutputType"] = (Decimal)value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -246,9 +246,10 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     // ベクトルDBは使用しない
                     UseVectorDB = false,
-                    PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
+                    PromptOutputType = PromptOutputTypeEnum.OverwriteTitle,
 
                 };
                 titleGeneration.Save();
@@ -264,6 +265,7 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用する
                     UseVectorDB = true,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
@@ -283,6 +285,7 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用しない
                     UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
@@ -321,6 +324,7 @@ namespace LibPythonAI.Model.Prompt {
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
                     // ベクトルDBを使用しない
                     UseVectorDB = false,
@@ -342,6 +346,7 @@ namespace LibPythonAI.Model.Prompt {
                     PromptResultType = PromptResultTypeEnum.ListContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
                     UseTagList = true,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用しない
                     UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.AppendTags,
@@ -359,6 +364,7 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.ListContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
                     UseTagList = true,
                     // ベクトルDBを使用しない
                     UseVectorDB = false,
