@@ -118,7 +118,7 @@ namespace LibUIPythonAI.Resource {
         // GitRepositoryURL
         public override string GitRepositoryURL { get; } = "Git Repository URL";
 
-        // UpdateEmbeddings
+        // UpdateEmbeddingsAsync
         public override string UpdateIndex { get; } = "Update Index";
 
         // IndexAllFilesFromFirstCommitToLatestCommit

@@ -47,7 +47,7 @@ namespace LibUIPythonAI.View.Item {
         // ClickHereToOpenTheTagEditScreen
         public static string ClickHereToOpenTheTagEditScreen { get; set; } = CommonStringResources.Instance.ClickHereToOpenTheTagEditScreen;
 
-        // OpenAIChat
+        // OpenAIChatAsync
         public static string OpenAIChat { get; set; } = CommonStringResources.Instance.OpenAIChat;
 
         // OpenTextAsFile

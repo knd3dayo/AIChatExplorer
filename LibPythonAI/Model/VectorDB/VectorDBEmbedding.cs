@@ -132,7 +132,7 @@ namespace LibPythonAI.Model.VectorDB {
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext, embeddingRequestContext);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
 
         }
@@ -147,11 +147,11 @@ namespace LibPythonAI.Model.VectorDB {
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
-            PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext, embeddingRequestContext);
+            PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
 
-        // DeleteEmbeddingsByFolder
+        // DeleteEmbeddingsByFolderAsync
         public static void DeleteEmbeddingsByFolder(string vectorDBItemName, string folderId) {
             Task.Run(() => {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -163,7 +163,7 @@ namespace LibPythonAI.Model.VectorDB {
                     FolderId = folderId,
                 };
                 EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
-                PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolder(chatRequestContext, embeddingRequestContext);
+                PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);
             });
         }
 

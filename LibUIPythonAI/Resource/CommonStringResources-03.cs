@@ -134,7 +134,7 @@ namespace LibUIPythonAI.Resource {
         // GitRepositoryURL
         public virtual string GitRepositoryURL { get; } = "GitリポジトリURL";
 
-        // UpdateEmbeddings
+        // UpdateEmbeddingsAsync
         public virtual string UpdateIndex { get; } = "インデックス更新";
 
         // 最初のコミットから最新のコミットまでの全ファイルをインデックス化

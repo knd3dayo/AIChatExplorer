@@ -41,7 +41,7 @@ namespace LibUIPythonAI.View.Folder {
         // ImportFromRULList
         public static string ImportFromRULList { get; set; } = CommonStringResources.Instance.ImportFromRULList;
 
-        // ExportToExcel
+        // ExportToExcelAsync
         public static string ExportTarget { get; set; } = CommonStringResources.Instance.ExportTarget;
 
         // 新規アイテムとしてエクスポート

@@ -15,19 +15,19 @@ namespace LibPythonAI.Model.Tag {
 
         public async Task DeleteAsync() {
             await Task.Run(() => {
-                PythonExecutor.PythonAIFunctions.DeleteTagItems(new List<TagItem> { this });
+                PythonExecutor.PythonAIFunctions.DeleteTagItemsAsync(new List<TagItem> { this });
             });
         }
 
         public async Task SaveAsync() { // 修正: 非同期メソッドは async Task に変更
             await Task.Run(() => {
-                PythonExecutor.PythonAIFunctions.UpdateTagItems(new List<TagItem> { this });
+                PythonExecutor.PythonAIFunctions.UpdateTagItemsAsync(new List<TagItem> { this });
             });
         }
 
         public static async Task<List<TagItem>> GetTagItemsAsync() { // 修正: メソッド名を非同期に合わせて変更
             return await Task.Run(() => {
-                return PythonExecutor.PythonAIFunctions.GetTagItems();
+                return PythonExecutor.PythonAIFunctions.GetTagItemsAsync();
             });
         }
 

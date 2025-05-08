@@ -89,7 +89,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         });
 
         // SendCommand
-        public SimpleDelegateCommand<object> SendCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> SendCommand => new( (parameter) => {
             // VectorDBItemがnullの場合は何もしない
             if (VectorSearchProperty == null) {
                 LogWrapper.Error("VectorDBItem is null.");
@@ -102,14 +102,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             }
 
             CommonViewModelProperties.UpdateIndeterminate(true);
-            await Task.Run(() => {
+            Task.Run(async () => {
                 List<VectorDBEmbedding> vectorSearchResults = [];
                 // ベクトル検索を実行
                 // VectorDBSearchResultMaxをVectorSearchPropertyに設定
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
 
                 try {
-                    vectorSearchResults.AddRange(VectorSearchProperty.VectorSearch(InputText));
+                    var searchResults = await VectorSearchProperty.VectorSearch(InputText);
+                    vectorSearchResults.AddRange(searchResults);
                 } finally {
                     CommonViewModelProperties.UpdateIndeterminate(false);
                 }

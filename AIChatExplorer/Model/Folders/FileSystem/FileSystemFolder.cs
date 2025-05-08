@@ -116,7 +116,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
 
-        public virtual void SyncItems() {
+        public override void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;

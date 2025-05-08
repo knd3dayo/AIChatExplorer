@@ -28,13 +28,13 @@ namespace LibPythonAI.Utils.ExportImport {
                 data.Add(row);
             }
             CommonDataTable dataTable = new(data);
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+            PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
 
         // ImportPromptItemsFromExcel
-        public static void ImportPromptItemsFromExcel(string fileName) {
+        public static async Task ImportPromptItemsFromExcel(string fileName) {
             // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
                 return;
             }
@@ -87,12 +87,12 @@ namespace LibPythonAI.Utils.ExportImport {
             }
             CommonDataTable dataTable = new(data);
 
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+            PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
-        public static void ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
+        public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
 
             // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
                 return;
             }
@@ -162,7 +162,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // 成功メッセージを表示します
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
                     // 一時ファイルからテキスト抽出
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
                     // itemのContentにTextを設定
                     item.Content = text;
 
@@ -197,7 +197,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // 成功メッセージを表示します
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
                     // 一時ファイルからテキスト抽出
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
 
                     // アイテムの作成
                     ContentItemWrapper item = new(fromFolder.Entity) {

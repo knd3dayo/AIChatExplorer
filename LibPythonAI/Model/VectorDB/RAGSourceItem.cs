@@ -102,7 +102,7 @@ namespace PythonAILib.Model.VectorDB {
             LastIndexCommitHash = GetHeadCommitHash();
         }
 
-        public UpdateIndexResult UpdateIndex(File.FileStatus fileStatus, UpdateIndexResult result, string description, int reliability) {
+        public async Task<UpdateIndexResult> UpdateIndex(File.FileStatus fileStatus, UpdateIndexResult result, string description, int reliability) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             if (VectorDBItem == null) {
@@ -113,7 +113,7 @@ namespace PythonAILib.Model.VectorDB {
                 // GitFileInfoの作成
                 string source_path = Path.Combine(WorkingDirectory, fileStatus.Path);
                 if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
-                    string content = PythonExecutor.PythonAIFunctions.ExtractFileToText(source_path);
+                    string content = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(source_path);
                     if (string.IsNullOrEmpty(content)) {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
@@ -134,7 +134,7 @@ namespace PythonAILib.Model.VectorDB {
                     };
 
                     EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
-                    PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext, embeddingRequestContext);
+                    PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
                     VectorDBProperty vectorDBProperty = new() {
@@ -152,7 +152,7 @@ namespace PythonAILib.Model.VectorDB {
                     };
 
                     EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
-                    PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext, embeddingRequestContext);
+                    PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
                 }
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合

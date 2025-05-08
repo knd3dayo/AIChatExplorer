@@ -124,8 +124,8 @@ namespace PythonAILib.PythonIF {
 
         }
 
-        // GetTagItems
-        public List<TagItem> GetTagItems() {
+        // GetTagItemsAsync
+        public async Task<List<TagItem>> GetTagItemsAsync() {
             // RequestContainerを作成
             RequestContainer requestContainer = new();
             // RequestContainerをJSON文字列に変換
@@ -134,7 +134,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/get_tag_items";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -156,8 +156,8 @@ namespace PythonAILib.PythonIF {
 
             return tagItems;
         }
-        // UpdateTagItems
-        public void UpdateTagItems(List<TagItem> tagItems) {
+        // UpdateTagItemsAsync
+        public async Task UpdateTagItemsAsync(List<TagItem> tagItems) {
 
             RequestContainer requestContainer = new() {
                 TagItemsInstance = tagItems
@@ -168,7 +168,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/update_tag_items";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -179,8 +179,8 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        // DeleteTagItems
-        public void DeleteTagItems(List<TagItem> tagItems) {
+        // DeleteTagItemsAsync
+        public async Task DeleteTagItemsAsync(List<TagItem> tagItems) {
             RequestContainer requestContainer = new() {
                 TagItemsInstance = tagItems
             };
@@ -190,7 +190,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/delete_tag_items";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -202,7 +202,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // GetTokenCount
-        public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
+        public async Task<long> GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
 
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
@@ -218,7 +218,7 @@ namespace PythonAILib.PythonIF {
             long totalTokens = 0;
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/get_token_count";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
 
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
@@ -238,7 +238,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // 通常のOpenAIChatを実行する
-        public async Task<ChatResult> OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+        public async Task<ChatResult> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
 
             // VectorSearchRequestsを作成
             List<VectorSearchRequest> vectorSearchRequests = [];
@@ -284,7 +284,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // AutoGenのGroupChatを実行する
-        public async Task<ChatResult> AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+        public async Task<ChatResult> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
             // ChatRequestから最後のユーザー発言を取得
             ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
@@ -395,7 +395,7 @@ namespace PythonAILib.PythonIF {
             }
 
         }
-        public string ExtractFileToText(string path) {
+        public async Task<string> ExtractFileToTextAsync(string path) {
 
             // FileRequestを作成
             FileRequest fileRequest = new() {
@@ -412,7 +412,7 @@ namespace PythonAILib.PythonIF {
             PythonScriptResult result = new();
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/extract_text_from_file";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             result.LoadFromJson(resultString);
@@ -423,7 +423,7 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
-        public string ExtractBase64ToText(string base64, string extension) {
+        public async Task<string> ExtractBase64ToText(string base64, string extension) {
             // FileRequestを作成
             FileRequest fileRequest = new() {
                 Base64Data = base64,
@@ -443,7 +443,7 @@ namespace PythonAILib.PythonIF {
             PythonScriptResult result = new();
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/extract_base64_to_text";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -456,7 +456,7 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
-        public void UpdateVectorDBItem(VectorDBItem item) {
+        public async Task UpdateVectorDBItem(VectorDBItem item) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 VectorDBItemInstance = item
@@ -467,7 +467,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/update_vector_db_item";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -480,7 +480,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // ベクトルDBを削除する
-        public void DeleteVectorDBItem(VectorDBItem item) {
+        public async Task DeleteVectorDBItem(VectorDBItem item) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 VectorDBItemInstance = item
@@ -491,7 +491,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/delete_vector_db_item";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -593,7 +593,7 @@ namespace PythonAILib.PythonIF {
             return vectorDBItem;
         }
 
-        public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query) {
+        public async Task<List<VectorDBEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
 
             // VectorSearchRequestsを作成
             List<VectorSearchRequest> vectorSearchRequests = [];
@@ -625,7 +625,7 @@ namespace PythonAILib.PythonIF {
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/vector_search";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -660,7 +660,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public void DeleteEmbeddingsByFolder(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
+        public async Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
@@ -675,7 +675,7 @@ namespace PythonAILib.PythonIF {
             // endpointを作成
             string endpoint = $"{this.base_url}/delete_embeddings_by_folder";
             // PostAsyncを実行する
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
@@ -686,7 +686,7 @@ namespace PythonAILib.PythonIF {
 
         }
 
-        public void DeleteEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
+        public async Task DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
             // RequestContainerを作成
 
@@ -704,7 +704,7 @@ namespace PythonAILib.PythonIF {
             // endpointを作成
             string endpoint = $"{this.base_url}/delete_embeddings";
             // PostAsyncを実行する
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -716,7 +716,7 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        public void UpdateEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
+        public async Task UpdateEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
             // RequestContainerを作成
 
@@ -735,7 +735,7 @@ namespace PythonAILib.PythonIF {
             // endpointを作成
             string endpoint = $"{this.base_url}/update_embeddings";
             // PostAsyncを実行する
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
@@ -747,7 +747,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // ExportToExcelを実行する
-        public void ExportToExcel(string filePath, CommonDataTable data) {
+        public async Task ExportToExcelAsync(string filePath, CommonDataTable data) {
             // ExcelRequestを作成
             ExcelRequest excelRequest = new(filePath, data);
             // RequestContainerを作成
@@ -763,7 +763,7 @@ namespace PythonAILib.PythonIF {
             // export_to_excel
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/export_to_excel";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
 
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
@@ -777,7 +777,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // ImportFromExcelを実行する
-        public CommonDataTable ImportFromExcel(string filePath) {
+        public async Task<CommonDataTable> ImportFromExcel(string filePath) {
             // FileRequestを作成
             FileRequest fileRequest = new() {
                 FilePath = filePath
@@ -795,7 +795,7 @@ namespace PythonAILib.PythonIF {
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/import_from_excel";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -822,7 +822,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // GetMimeType
-        public string GetMimeType(string filePath) {
+        public async Task<string> GetMimeType(string filePath) {
 
             FileRequest fileRequest = new() {
                 FilePath = filePath
@@ -839,7 +839,7 @@ namespace PythonAILib.PythonIF {
             // get_mime_type
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/get_mime_type";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
             // resultStringからDictionaryに変換する。
             result.LoadFromJson(resultString);
             // Errorがある場合はLogWrapper.Errorを呼び出す
@@ -850,7 +850,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // public string ExtractWebPage(string url);
-        public string ExtractWebPage(string url) {
+        public async Task<string> ExtractWebPage(string url) {
             // FileRequestを作成
             WebRequest webRequest = new(url);
             // RequestContainerを作成
@@ -867,7 +867,7 @@ namespace PythonAILib.PythonIF {
             // extract_webpage
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/extract_webpage";
-            string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
 
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");

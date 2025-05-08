@@ -62,7 +62,7 @@ namespace AIChatExplorer.View.Main {
         // SourceTitle
         public static string SourceTitle { get; set; } = CommonStringResources.Instance.SourceTitle;
 
-        // OpenAIChat
+        // OpenAIChatAsync
         public static string OpenAIChat { get; set; } = CommonStringResources.Instance.OpenAIChat;
 
         // ChatMode
@@ -138,7 +138,7 @@ namespace AIChatExplorer.View.Main {
         // Tool
         public static string Tool { get; set; } = CommonStringResources.Instance.Tool;
 
-        // VectorSearch
+        // VectorSearchAsync
         public static string VectorSearch { get; set; } = CommonStringResources.Instance.VectorSearch;
 
         // Search

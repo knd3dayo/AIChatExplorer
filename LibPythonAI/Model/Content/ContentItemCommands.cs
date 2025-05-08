@@ -72,7 +72,7 @@ namespace LibPythonAI.Model.Content {
                     }
                 } else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
                     // ファイル名から拡張子を取得
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(item.SourcePath);
                     item.Content = text;
                 }
 
@@ -110,7 +110,7 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
-                    ExtractText(item);
+                    ExtractText(item).Wait();
                     // Save the item
                     item.Save();
                 });

@@ -131,11 +131,14 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // VectorSearchを実行してコンテキスト情報を生成する
-        public static string GenerateVectorSearchResult(ChatRequestContext chatRequestContext, string query) {
+        public static async Task<string> GenerateVectorSearchResult(ChatRequestContext chatRequestContext, string query) {
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
             StringBuilder sb = new();
-            List<VectorDBEmbedding> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, query) ?? [];
+            if (PythonExecutor.PythonAIFunctions == null) {
+                throw new Exception("PythonAIFunctions is null");
+            }
+            List<VectorDBEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query) ?? [];
             sb.AppendLine();
             for (int i = 0; i < results.Count; i++) {
                 VectorDBEmbedding vectorSearchResult = results[i];
@@ -160,17 +163,17 @@ namespace LibPythonAI.Utils.Python {
         }
 
         public static async Task<ChatResult?> ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
-            ChatResult? result = await PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(chatRequestContext, chat, iteration);
+            ChatResult? result = await PythonExecutor.PythonAIFunctions?.AutoGenGroupChatAsync(chatRequestContext, chat, iteration);
             return result;
         }
 
         public static async Task<ChatResult?> ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
-            // Ensure PythonAIFunctions is not null before calling OpenAIChat
+            // Ensure PythonAIFunctions is not null before calling OpenAIChatAsync
             if (PythonExecutor.PythonAIFunctions == null) {
                 return null;
             }
 
-            ChatResult? result = await PythonExecutor.PythonAIFunctions.OpenAIChat(chatRequestContext, chat);
+            ChatResult? result = await PythonExecutor.PythonAIFunctions.OpenAIChatAsync(chatRequestContext, chat);
             if (result == null) {
                 return null;
             }

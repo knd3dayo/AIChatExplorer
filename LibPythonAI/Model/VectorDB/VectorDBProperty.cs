@@ -134,7 +134,7 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // ベクトル検索を実行する
-        public List<VectorDBEmbedding> VectorSearch(string query) {
+        public async Task<List<VectorDBEmbedding>> VectorSearch(string query) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
@@ -144,7 +144,7 @@ namespace LibPythonAI.Model.VectorDB {
             };
 
             // ベクトル検索を実行
-            List<VectorDBEmbedding> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, query);
+            List<VectorDBEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query);
             return results;
         }
 

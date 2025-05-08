@@ -402,7 +402,7 @@ namespace LibPythonAI.Model.Prompt {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.For(0, count, parallelOptions, async (i) => {
+                Parallel.For(0, count, parallelOptions,  (i) => {
                     lock (lockObject) {
                         start_count++;
                     }
@@ -411,7 +411,7 @@ namespace LibPythonAI.Model.Prompt {
                     LogWrapper.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[index];
 
-                    await CreateChatResultAsync(item, promptItem.Name);
+                    CreateChatResultAsync(item, promptItem.Name).Wait();
                     // Save
                     item.Save();
                 });

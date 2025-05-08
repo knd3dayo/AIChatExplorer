@@ -202,7 +202,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                     }
                     // ChatMode
                     OpenAIExecutionModeEnum chatMode = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
-                    // OpenAIChat or LangChainChatを実行
+                    // OpenAIChatAsync or LangChainChatを実行
                     result = await ChatUtil.ExecuteChat(chatMode, ChatRequest, chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新

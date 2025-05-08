@@ -12,25 +12,25 @@ namespace PythonAILib.PythonIF {
         public Task<List<ContentFolderWrapper>> GetRootContentFolders(List<string> folderTypeStrings);
 
 
-        public void UpdateTagItems(List<TagItem> tagItems);
+        public Task UpdateTagItemsAsync(List<TagItem> tagItems);
 
-        public void DeleteTagItems(List<TagItem> tagItems);
+        public Task DeleteTagItemsAsync(List<TagItem> tagItems);
 
-        public List<TagItem> GetTagItems();
+        public Task<List<TagItem>> GetTagItemsAsync();
 
-        public string ExtractFileToText(string path);
+        public Task<string> ExtractFileToTextAsync(string path);
 
-        public string ExtractBase64ToText(string base64, string extension);
+        public Task<string> ExtractBase64ToText(string base64, string extension);
 
-        public Task<ChatResult> OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+        public Task<ChatResult> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
-        public Task<ChatResult> AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+        public Task<ChatResult> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
 
-        public void UpdateVectorDBItem(VectorDBItem item);
+        public Task UpdateVectorDBItem(VectorDBItem item);
 
-        public void DeleteVectorDBItem(VectorDBItem item);
+        public Task DeleteVectorDBItem(VectorDBItem item);
 
         public Task<List<VectorDBItem>> GetVectorDBItemsAsync();
 
@@ -38,29 +38,29 @@ namespace PythonAILib.PythonIF {
 
         public VectorDBItem? GetVectorDBItemByName(string name);
         
-        public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query);
+        public  Task<List<VectorDBEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
 
         // delete_embeddings_by_folder
-        public void DeleteEmbeddingsByFolder(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public void DeleteEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public Task DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public void UpdateEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public Task UpdateEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
-        public void ExportToExcel(string filePath, CommonDataTable data);
+        public Task ExportToExcelAsync(string filePath, CommonDataTable data);
 
         // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
-        public CommonDataTable ImportFromExcel(string filePath);
+        public Task<CommonDataTable> ImportFromExcel(string filePath);
 
         // GetMimeType
-        public string GetMimeType(string filePath);
+        public Task<string> GetMimeType(string filePath);
 
         // GetTokenCount
-        public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText);
+        public Task<long> GetTokenCount(ChatRequestContext chatRequestContext, string inputText);
 
         // extract_webpage
-        public string ExtractWebPage(string url);
+        public Task<string> ExtractWebPage(string url);
 
         //テスト用
         public string HelloWorld();
