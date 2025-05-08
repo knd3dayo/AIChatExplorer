@@ -7,7 +7,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
@@ -25,7 +24,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 if (value == null) {
                     return;
                 }
-                var item = VectorDBItem.GetItemById(value.VectorDBItemId);
+                var item = VectorDBItem.GetItemByName(value.VectorDBItemName);
                 if (item == null) {
                     return;
                 }
@@ -71,7 +70,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public Visibility MultiVectorRetrieverVisibility {
             get {
 
-                var item = VectorDBItem.GetItemById(VectorSearchProperty?.VectorDBItemId); 
+                var item = VectorDBItem.GetItemByName(VectorSearchProperty?.VectorDBItemName); 
                 if (item == null) {
                     return Visibility.Collapsed;
                 }
@@ -96,7 +95,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            var vectorDBItem = VectorDBItem.GetItemById(VectorSearchProperty.VectorDBItemId); 
+            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchProperty.VectorDBItemName); 
             if (vectorDBItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;

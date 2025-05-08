@@ -181,6 +181,10 @@ namespace PythonAILib.Resources {
 
         // UpdateVectorDBIndex実行
         public override string UpdateEmbeddingExecute { get; } = "Execute UpdateEmbedding";
+
+        // DeleteEmbeddingsByFolderExecute
+        public override string DeleteEmbeddingsByFolderExecute { get; } = "Execute DeleteEmbeddingsByFolder";
+
         // DeleteVectorDBIndex実行
         public override string DeleteEmbeddingExecute { get; } = "Execute DeleteEmbedding";
 

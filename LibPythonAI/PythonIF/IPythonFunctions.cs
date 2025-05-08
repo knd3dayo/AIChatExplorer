@@ -1,9 +1,9 @@
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
@@ -40,11 +40,12 @@ namespace PythonAILib.PythonIF {
         
         public List<VectorDBEmbedding> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
-        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
+        // delete_embeddings_by_folder
+        public void DeleteEmbeddingsByFolder(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
+        public void DeleteEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public void UpdateEmbeddings(ChatRequestContext chatRequestContext);
+        public void UpdateEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
         public void ExportToExcel(string filePath, CommonDataTable data);

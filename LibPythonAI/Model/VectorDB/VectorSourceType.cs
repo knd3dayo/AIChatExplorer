@@ -4,5 +4,7 @@ namespace PythonAILib.Model.VectorDB {
         Clipboard,
         Git,
         File,
+        Web,
+        Mail,
     }
 }

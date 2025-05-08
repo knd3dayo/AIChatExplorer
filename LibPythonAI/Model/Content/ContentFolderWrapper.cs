@@ -103,7 +103,7 @@ namespace LibPythonAI.Model.Content {
                     foreach (var item in (List<Dictionary<string, object>>)propList) {
                         VectorDBProperty vectorDBProperty = new() {
                             FolderId = item["FolderId"]?.ToString() ?? Id,
-                            VectorDBItemId = item["VectorDBItemId"]?.ToString() ?? VectorDBItem.GetDefaultVectorDB().Id,
+                            VectorDBItemName = item["VectorDBItemName"]?.ToString() ?? VectorDBItem.GetDefaultVectorDB().Name,
                         };
                         result.Add(vectorDBProperty);
                     }
@@ -155,7 +155,7 @@ namespace LibPythonAI.Model.Content {
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
-            GetMainVectorSearchProperty().DeleteVectorDBCollection();
+            VectorDBEmbedding.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
@@ -281,7 +281,7 @@ namespace LibPythonAI.Model.Content {
             VectorDBProperty searchProperty = new() {
                 FolderId = Id,
                 TopK = 4,
-                VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Id,
+                VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
             };
             return searchProperty;
         }

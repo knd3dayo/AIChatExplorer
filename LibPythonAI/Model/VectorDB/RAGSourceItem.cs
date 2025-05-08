@@ -1,6 +1,7 @@
 using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -117,37 +118,41 @@ namespace PythonAILib.Model.VectorDB {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
                     }
-                    VectorDBEmbedding vectorDBEntry = new(source_path);
+                    VectorDBEmbedding vectorDBEntry = new() {
+                        SourcePath = source_path
+                    };
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
                     VectorDBProperty vectorDBProperty = new() {
                         TopK = 4,
-                        VectorDBItemId = VectorDBItem.Id,
+                        VectorDBItemName = VectorDBItem.Name,
                     };
-                    vectorDBProperty.VectorMetadata = vectorDBEntry;
+
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
-                        VectorDBProperties = [vectorDBProperty],
-
                     };
 
-                    PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext);
+                    EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
+                    PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext, embeddingRequestContext);
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
                     VectorDBProperty vectorDBProperty = new() {
                         TopK = 4,
-                        VectorDBItemId = VectorDBItem.Id,
+                        VectorDBItemName = VectorDBItem.Name,
                     };
-                    VectorDBEmbedding vectorDBEntry = new(source_path);
-                    vectorDBProperty.VectorMetadata = vectorDBEntry;
+                    VectorDBEmbedding vectorDBEntry = new() {
+                        SourcePath = source_path
+                    };
+
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
                         VectorDBProperties = [vectorDBProperty],
 
                     };
 
-                    PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext);
+                    EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
+                    PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext, embeddingRequestContext);
                 }
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合

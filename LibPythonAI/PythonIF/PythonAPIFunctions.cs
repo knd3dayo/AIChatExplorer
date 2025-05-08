@@ -13,7 +13,6 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 using SocketIOClient;
@@ -243,7 +242,7 @@ namespace PythonAILib.PythonIF {
             List<VectorSearchRequest> vectorSearchRequests = [];
             foreach (VectorDBProperty vectorDBProperty in chatRequestContext.VectorDBProperties) {
                 // VectorSearchRequestを作成
-                string? name = VectorDBItem.GetItemById(vectorDBProperty.VectorDBItemId)?.Name;
+                string? name = vectorDBProperty.VectorDBItemName;
                 if (string.IsNullOrEmpty(name)) {
                     throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
                 }
@@ -601,7 +600,7 @@ namespace PythonAILib.PythonIF {
             List<VectorSearchRequest> vectorSearchRequests = [];
             foreach (VectorDBProperty vectorDBProperty in chatRequestContext.VectorDBProperties) {
                 // VectorSearchRequestを作成
-                string? name = VectorDBItem.GetItemById(vectorDBProperty.VectorDBItemId)?.Name;
+                string? name = vectorDBProperty.VectorDBItemName;
                 if (string.IsNullOrEmpty(name)) {
                     throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
                 }
@@ -661,63 +660,35 @@ namespace PythonAILib.PythonIF {
 
         }
 
-        // 指定されたベクトルDBのコレクションを削除する
-        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
-            // ベクトルDB更新処理用にUseVectorDB=Trueに設定
-            chatRequestContext.UseVectorDB = true;
 
-            // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
-            if (vectorDBItem == null) {
-                throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
-            }
-            string name = vectorDBItem.Name;
-            string model = chatRequestContext.OpenAIProperties.OpenAIEmbeddingModel;
-            VectorDBEmbedding embedding = chatRequestContext.VectorDBProperties[0].VectorMetadata;
+        public void DeleteEmbeddingsByFolder(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
-            // EmbeddingRequestを作成
-            EmbeddingRequest embeddingRequest = new(name, model, embedding);
             // RequestContainerを作成
-
             RequestContainer requestContainer = new() {
                 RequestContextInstance = chatRequestContext,
                 EmbeddingRequestInstance = embeddingRequest
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbeddingsByFolderExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
-            // DeleteVectorDBIndexExecuteを呼び出す
+            // delete_embeddings_by_folder
             // endpointを作成
-            string endpoint = $"{this.base_url}/delete_embeddings";
-            PythonScriptResult result = new();
+            string endpoint = $"{this.base_url}/delete_embeddings_by_folder";
+            // PostAsyncを実行する
             string resultString = PostAsync(endpoint, chatRequestContextJson).Result;
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
-
-
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
             // Errorがある場合は例外をスローする
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
+
         }
 
+        public void DeleteEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
-        public void DeleteEmbeddings(ChatRequestContext chatRequestContext) {
-
-            // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
-            if (vectorDBItem == null) {
-                throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
-            }
-            string name = vectorDBItem.Name;
-            string model = chatRequestContext.OpenAIProperties.OpenAIEmbeddingModel;
-            VectorDBEmbedding embedding = chatRequestContext.VectorDBProperties[0].VectorMetadata;
-
-            // EmbeddingRequestを作成
-            EmbeddingRequest embeddingRequest = new(name, model, embedding);
             // RequestContainerを作成
 
             RequestContainer requestContainer = new() {
@@ -746,19 +717,8 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        public void UpdateEmbeddings(ChatRequestContext chatRequestContext) {
+        public void UpdateEmbeddings(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest) {
 
-            // chatRequestContext.VectorDBProperties[0]
-            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(chatRequestContext.VectorDBProperties[0].VectorDBItemId);
-            if (vectorDBItem == null) {
-                throw new Exception(StringResources.PropertyNotSet("VectorDBItem"));
-            }
-            string name = vectorDBItem.Name;
-            string model = chatRequestContext.OpenAIProperties.OpenAIEmbeddingModel;
-            VectorDBEmbedding embedding = chatRequestContext.VectorDBProperties[0].VectorMetadata;
-
-            // EmbeddingRequestを作成
-            EmbeddingRequest embeddingRequest = new(name, model, embedding);
             // RequestContainerを作成
 
             RequestContainer requestContainer = new() {

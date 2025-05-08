@@ -2,8 +2,15 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Utils.Common;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.VectorDB;
+using PythonAILib.PythonIF;
+using PythonAILib.Resources;
 
-namespace PythonAILib.Model.VectorDB {
+namespace LibPythonAI.Model.VectorDB {
     public class VectorDBEmbedding {
 
         public static readonly JsonSerializerOptions Options = new() {
@@ -15,9 +22,13 @@ namespace PythonAILib.Model.VectorDB {
 
         public VectorDBEmbedding() { }
 
-        public VectorDBEmbedding(string source_id) {
+        public VectorDBEmbedding(string source_id, string folderId) {
             SourceId = source_id;
+            FolderId = folderId;
         }
+
+        [JsonPropertyName("FolderId")]
+        public string? FolderId { get; set; } = null;
 
         [JsonPropertyName("source_id")]
         public string SourceId { get; set; } = "";
@@ -79,6 +90,9 @@ namespace PythonAILib.Model.VectorDB {
                 ["doc_id"] = DocId,
                 ["score"] = Score
             };
+            if (FolderId != null) {
+                dict["FolderId"] = FolderId;
+            }
             return dict;
         }
 
@@ -88,7 +102,7 @@ namespace PythonAILib.Model.VectorDB {
 
         public static List<VectorDBEmbedding> FromJson(string json) {
             JsonSerializerOptions options = Options;
-            List<VectorDBEmbedding>? result = System.Text.Json.JsonSerializer.Deserialize<List<VectorDBEmbedding>>(json, options);
+            List<VectorDBEmbedding>? result = JsonSerializer.Deserialize<List<VectorDBEmbedding>>(json, options);
             return result ?? [];
         }
 
@@ -106,7 +120,52 @@ namespace PythonAILib.Model.VectorDB {
             result.Score = Convert.ToDouble(dict["score"]);
             return result;
         }
+        public static void UpdateEmbeddings(string vectorDBItemName, VectorDBEmbedding vectorDBEmbedding) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
+            // Parallelによる並列処理。4並列
+            ChatRequestContext chatRequestContext = new() {
+                OpenAIProperties = openAIProperties,
+            };
+
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddings(chatRequestContext, embeddingRequestContext);
+            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+
+        }
+
+        public static void DeleteEmbeddings(string vectorDBItemName, VectorDBEmbedding vectorDBEmbedding) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            ChatRequestContext chatRequestContext = new() {
+                OpenAIProperties = openAIProperties,
+            };
+
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            PythonExecutor.PythonAIFunctions.DeleteEmbeddings(chatRequestContext, embeddingRequestContext);
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+        }
+
+        // DeleteEmbeddingsByFolder
+        public static void DeleteEmbeddingsByFolder(string vectorDBItemName, string folderId) {
+            Task.Run(() => {
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = openAIProperties,
+                };
+                VectorDBEmbedding vectorDBEmbedding = new() {
+                    FolderId = folderId,
+                };
+                EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+                PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolder(chatRequestContext, embeddingRequestContext);
+            });
+        }
 
     }
 }

@@ -6,7 +6,6 @@ using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;

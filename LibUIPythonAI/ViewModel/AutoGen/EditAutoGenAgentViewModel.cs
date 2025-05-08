@@ -152,7 +152,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
-                var item = VectorDBItem.GetItemById(selectedItem.VectorDBItemId);
+                var item = VectorDBItem.GetItemByName(selectedItem.VectorDBItemName);
                 if (item == null) {
                     return;
                 }

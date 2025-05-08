@@ -172,6 +172,34 @@ class LangChainVectorDB:
         param.append((doc_id, source_document))
         retriever.docstore.mset(param)
 
+    def __delete_folder(self, folder_id: str):
+        # ベクトルDB固有のvector id取得メソッドを呼び出し。
+        vector_ids, metadata = self._get_document_ids_by_tag("FolderId", folder_id)
+        # vector_idsが空の場合は何もしない
+        if len(vector_ids) == 0:
+            return 0
+
+        # ベクトルDB固有の削除メソッドを呼び出し
+        self._delete(vector_ids)
+
+    def __delete_multivector_folder(self, folder_id: str ) :
+        
+        # ベクトルDB固有のvector id取得メソッドを呼び出し。
+        vector_ids, metadata_list = self._get_document_ids_by_tag("FolderId", folder_id)
+
+        # vector_idsが空の場合は何もしない
+        if len(vector_ids) == 0:
+            return 0
+        # documentのmetadataのdoc_idを取得
+        doc_ids = [data.get("doc_id", None) for data in metadata_list]
+        # doc_idsが空ではない場合
+        if len(doc_ids) > 0:
+            # DocStoreから削除
+            self.doc_store.mdelete(doc_ids)
+
+        # ベクトルDB固有の削除メソッドを呼び出し
+        self._delete(vector_ids)
+
 
     def __delete_document(self, source_id: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
@@ -307,6 +335,15 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出してコレクションを削除
         self._delete_collection()
 
+    def delete_folder(self, folder_id: str):
+        # MultiVectorRetrieverの場合
+        if self.vector_db_props.IsUseMultiVectorRetriever:
+            # DBからfolder_idを指定して既存フォルダを削除
+            self.__delete_multivector_folder(folder_id)
+        else:
+            # DBからfolder_idを指定して既存フォルダを削除
+            self.__delete_folder(folder_id)
+            
     def delete_document(self, source_id: str):
         # MultiVectorRetrieverの場合
         if self.vector_db_props.IsUseMultiVectorRetriever:

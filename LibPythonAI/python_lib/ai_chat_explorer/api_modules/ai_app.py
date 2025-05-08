@@ -155,6 +155,17 @@ def delete_collection(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
 def update_collection(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
     pass
 
+def delete_embeddings_by_folder(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
+    # LangChainVectorDBを生成
+    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_item)
+    # folder_idを取得
+    if vector_db_item.EmbeddingData is None:
+        return
+
+    folder_id = vector_db_item.EmbeddingData.FolderId
+    # delete_folder_embeddingsを実行
+    vector_db.delete_folder(folder_id)
+
 def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
     entry = vector_db_props.EmbeddingData

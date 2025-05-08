@@ -2,6 +2,7 @@ using System.Diagnostics;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
@@ -129,10 +130,16 @@ namespace LibPythonAI.Model.Content {
             };
             Task.Run(() => {
                 Parallel.ForEach(items, parallelOptions, (item) => {
-                    // VectorDBItemを取得
-                    VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                    
+                    string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                    if (string.IsNullOrEmpty(vectorDBItemName)) {
+                        LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
+                        return;
+                    }
+                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+
                     // VectorDBPropertyを削除
-                    VectorDBProperty.DeleteEmbeddings(folderVectorDBItem);
+                    VectorDBEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             });
         }
@@ -147,10 +154,13 @@ namespace LibPythonAI.Model.Content {
             Task.Run(() => {
                 Parallel.ForEach(items, parallelOptions, (item) => {
                     // VectorDBItemを取得
-                    VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
+                    string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                    if (string.IsNullOrEmpty(vectorDBItemName)) {
+                        LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
+                        return;
+                    }
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString());
-                    folderVectorDBItem.VectorMetadata = vectorDBEntry;
+                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
 
                     // タイトルとHeaderTextを追加
                     string description = item.Description + "\n" + item.HeaderText;
@@ -167,7 +177,7 @@ namespace LibPythonAI.Model.Content {
                         }
                     }
                     // VectorDBPropertyを更新
-                    VectorDBProperty.UpdateEmbeddings(folderVectorDBItem);
+                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });

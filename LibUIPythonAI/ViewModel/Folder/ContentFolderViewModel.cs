@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -234,8 +235,12 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
             Task.Run(() => {
                 // MainWindowViewModelのIsIndeterminateをTrueに設定
+                string? vectorDBItemName = Folder.GetMainVectorSearchProperty().VectorDBItemName;
+                if (vectorDBItemName == null) {
+                    return;
+                }
                 CommonViewModelProperties.UpdateIndeterminate(true);
-                Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
+                VectorDBEmbedding.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.Id);
                 ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
 
                     ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));

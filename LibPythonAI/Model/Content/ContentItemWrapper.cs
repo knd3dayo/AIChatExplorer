@@ -557,7 +557,13 @@ namespace LibPythonAI.Model.Content {
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
                 Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings(GetFolder().GetMainVectorSearchProperty());
+                    string? vectorDBItemName = GetMainVectorSearchProperty().VectorDBItemName;
+                    if (string.IsNullOrEmpty(vectorDBItemName)) {
+                        LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
+                        return;
+                    }
+                    VectorDBEmbedding vectorDBEntry = new(Id.ToString(),GetFolder().Id);
+                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             }
 
@@ -592,10 +598,23 @@ namespace LibPythonAI.Model.Content {
             ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
         }
 
-        public static void SaveItems(List<ContentItemWrapper> items, bool updateLastModifiedTime = true, bool applyAutoProcess = false) {
-            if (updateLastModifiedTime) {
-                // 更新日時を設定
-                items.ForEach(item => item.UpdatedAt = DateTime.Now);
+        public static void SaveItems(List<ContentItemWrapper> items,  bool applyAutoProcess = false) {
+
+            foreach (var item in items) {
+                if (item.ContentModified || item.DescriptionModified) {
+                    // 更新日時を設定
+                    item.UpdatedAt = DateTime.Now;
+                    // ベクトルを更新
+                    Task.Run(() => {
+                        string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                        if (string.IsNullOrEmpty(vectorDBItemName)) {
+                            LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
+                            return;
+                        }
+                        VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                        VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                    });
+                }
             }
             if (applyAutoProcess) {
                 // 自動処理を適用

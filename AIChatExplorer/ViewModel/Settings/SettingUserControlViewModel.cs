@@ -488,7 +488,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 } else {
                     testResult.Message = $"[OK]:{CommonStringResources.Instance.OpenAIRunIsPossible}";
                     testResult.Result = true;
-                }3ed
+                }
             } catch (Exception ex) {
                 testResult.Message = $"[NG]:{CommonStringResources.Instance.ErrorOccurredAndMessage} ex.Message  \n[{CommonStringResources.Instance.StackTrace}] {ex.StackTrace}";
                 testResult.Result = false;

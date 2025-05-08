@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Windows.Documents;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 

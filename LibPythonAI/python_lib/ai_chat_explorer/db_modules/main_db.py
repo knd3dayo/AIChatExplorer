@@ -131,7 +131,6 @@ class VectorDBItem:
         "DocStoreURL" TEXT NOT NULL,
         "VectorDBType" INTEGER NOT NULL,
         "CollectionName" TEXT NOT NULL,
-        "CatalogDBURL" TEXT NOT NULL,
         "ChunkSize" INTEGER NOT NULL,
         "DefaultSearchResultLimit" INTEGER NOT NULL,
         "IsEnabled" INTEGER NOT NULL,
@@ -229,6 +228,7 @@ class EmbeddingData:
 
         # request_jsonをdictに変換
         self.source_id = item["source_id"]
+        self.FolderId = item["FolderId"]
         self.description = item.get("description", "")
         self.content = item["content"]
         self.source_path = item.get("source_path", "")

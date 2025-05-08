@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using PythonAILib.Model.VectorDB;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibPythonAI.PythonIF.Request {
     public class EmbeddingRequest {

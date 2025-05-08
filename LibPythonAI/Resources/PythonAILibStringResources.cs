@@ -198,6 +198,9 @@ namespace PythonAILib.Resources {
         // UpdateVectorDBIndex実行
         public virtual string UpdateEmbeddingExecute { get; } = "Embeddingを更新します";
 
+        // DeleteEmbeddingsByFolderExecute
+        public virtual string DeleteEmbeddingsByFolderExecute { get; } = "フォルダ内のEmbeddingを削除します";
+
         // Embeddingを削除します
         public virtual string DeleteEmbeddingExecute { get; } = "Embeddingを削除します";
 

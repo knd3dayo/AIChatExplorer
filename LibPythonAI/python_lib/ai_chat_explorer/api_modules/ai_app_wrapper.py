@@ -163,8 +163,8 @@ async def autogen_chat( request_json: str):
     # request_jsonからrequestを作成
     request_dict: dict = json.loads(request_json)
     autogen_props = get_autogen_objects( request_dict)
-    chat_request_dict = request_dict.get(chat_request_name, None)
-    input_text = chat_request_dict.get("input_text", "")
+    autogen_request = get_autogen_request_objects(request_dict)
+    input_text = autogen_request.get("input_text", "")
     if not input_text:
         raise ValueError("input_text is not set")
 
@@ -379,6 +379,26 @@ def delete_collection(request_json: str):
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+# ベクトルDBのインデックスをフォルダ単位で削除する
+def delete_embeddings_by_folder(request_json: str):
+    def func () -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(request_dict)
+
+        # embedding_requestを取得
+        vector_db_item = get_embedding_request_objects(request_dict)
+        ai_app.delete_embeddings_by_folder(openai_props, vector_db_item)
+
+        return {}
+
+    # strout, stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
