@@ -154,7 +154,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 string url = item.SourcePath;
                 string tempFilePath = Path.GetTempFileName();
                 try {
-                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
                     // 一時ファイルのパスを取得します
 
                     // データを一時ファイルに書き込みます
@@ -189,7 +189,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
                 string tempFilePath = Path.GetTempFileName();
                 try {
-                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
                     // 一時ファイルのパスを取得します
 
                     // データを一時ファイルに書き込みます
