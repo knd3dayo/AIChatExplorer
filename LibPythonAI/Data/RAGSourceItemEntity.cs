@@ -1,9 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using PythonAILib.Common;
-using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
-using PythonAILib.Utils.Git;
 
 namespace LibPythonAI.Data {
     public class RAGSourceItemEntity {

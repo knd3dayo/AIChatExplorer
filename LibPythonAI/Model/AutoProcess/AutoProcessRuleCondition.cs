@@ -1,6 +1,5 @@
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.File;
 
 namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleCondition {
@@ -42,7 +41,7 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // アイテムのタイプ種類のリスト
-        public List<ContentTypes.ContentItemTypes> ContentTypes {
+        public List<ContentItemTypes.ContentItemTypeEnum> ContentTypes {
             get {
                 return Entity.ContentTypes;
             }
@@ -172,7 +171,7 @@ namespace PythonAILib.Model.AutoProcess {
             if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
                 return false;
             }
-            if (clipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
+            if (clipboardItem.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
                 return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
             }
             return true;

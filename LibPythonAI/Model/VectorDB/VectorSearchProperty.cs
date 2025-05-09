@@ -1,20 +1,16 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
-using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
-    public class VectorDBProperty {
+    public class VectorSearchProperty {
 
 
-        public string?  VectorDBItemName  { init; get; } = null;
+        public string? VectorDBItemName { init; get; } = null;
 
         //TopK
         public int TopK { get; set; } = 5; // デフォルト値
@@ -77,7 +73,7 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(this, options);
         }
 
-        public static string ToListJson(List<VectorDBProperty> items) {
+        public static string ToListJson(List<VectorSearchProperty> items) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
@@ -86,26 +82,26 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(items, options);
         }
 
-        public static VectorDBProperty? FromJson(string json) {
+        public static VectorSearchProperty? FromJson(string json) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
             JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Deserialize<VectorDBProperty>(json, options);
+            return JsonSerializer.Deserialize<VectorSearchProperty>(json, options);
         }
 
-        public static List<VectorDBProperty>? FromListJson(string json) {
+        public static List<VectorSearchProperty>? FromListJson(string json) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
             JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Deserialize<List<VectorDBProperty>>(json, options);
+            return JsonSerializer.Deserialize<List<VectorSearchProperty>>(json, options);
         }
 
-        public static VectorDBProperty? FromDict(Dictionary<string, dynamic?> dict) {
-            VectorDBProperty item = new() {
+        public static VectorSearchProperty? FromDict(Dictionary<string, dynamic?> dict) {
+            VectorSearchProperty item = new() {
                 VectorDBItemName = dict["VectorDBItemName"]?.ToString(),
                 TopK = Int32.Parse(dict["TopK"]() ?? "5"),
                 FolderId = dict["FolderId"](),
@@ -128,23 +124,23 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // CreateEntriesDictList
-        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBProperty> items) {
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchProperty> items) {
             return items.Select(item => item.ToDict()).ToList();
         }
 
 
         // ベクトル検索を実行する
-        public async Task<List<VectorDBEmbedding>> VectorSearch(string query) {
+        public async Task<List<VectorEmbedding>> VectorSearch(string query) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = [this],
+                VectorSearchProperties = [this],
                 OpenAIProperties = openAIProperties,
             };
 
             // ベクトル検索を実行
-            List<VectorDBEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query);
+            List<VectorEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query);
             return results;
         }
 

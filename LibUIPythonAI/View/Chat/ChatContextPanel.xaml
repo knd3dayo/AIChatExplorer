@@ -141,7 +141,7 @@
                     Grid.Row="0"
                     Margin="10,20,0,10"
                     Content="{x:Static local:ViewStringResources.UseVectorDBSettingInFolder}"
-                    IsChecked="{Binding UseFolderVectorDBProperty}" />
+                    IsChecked="{Binding UseFolderVectorSearchProperty}" />
                 <!--  ベクトルDB検索結果最大値  -->
                 <StackPanel
                     Grid.Row="1"

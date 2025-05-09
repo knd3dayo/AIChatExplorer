@@ -1,4 +1,6 @@
 using LibPythonAI.Model.Content;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
@@ -70,7 +72,7 @@ namespace LibUIMergeChat.Common {
                         SplitMode = context.SplitMode,
                         SplitTokenCount = context.SplitTokenCount,
                         UseVectorDB = context.UseVectorDB,
-                        VectorDBProperties = context.VectorDBProperties,
+                        VectorSearchProperties = context.VectorSearchProperties,
                         AutoGenProperties = context.AutoGenProperties,
                         OpenAIProperties = context.OpenAIProperties,
 
@@ -129,7 +131,7 @@ namespace LibUIMergeChat.Common {
                 SplitMode = context.SplitMode,
                 SplitTokenCount = context.SplitTokenCount,
                 UseVectorDB = context.UseVectorDB,
-                VectorDBProperties = context.VectorDBProperties,
+                VectorSearchProperties = context.VectorSearchProperties,
                 AutoGenProperties = context.AutoGenProperties,
                 OpenAIProperties = context.OpenAIProperties,
             };

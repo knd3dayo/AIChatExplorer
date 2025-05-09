@@ -3,12 +3,11 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
-using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Resources;
 using PythonAILib.Utils;
 
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.PythonIF.Response {
     public class ChatResult : PythonScriptResult {
 
         private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
@@ -17,7 +16,7 @@ namespace PythonAILib.Model.Chat {
         };
 
 
-        public List<VectorDBEmbedding> SourceDocuments { get; set; } = [];
+        public List<VectorEmbedding> SourceDocuments { get; set; } = [];
         public long TotalTokens { get; set; } = 0;
 
         public ChatResult() { }
@@ -45,7 +44,7 @@ namespace PythonAILib.Model.Chat {
             if (resultDict.ContainsKey("documents")) {
                 JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                SourceDocuments = VectorDBEmbedding.FromJson(documentsObject.ToString() ?? "[]");
+                SourceDocuments = VectorEmbedding.FromJson(documentsObject.ToString() ?? "[]");
             }
         }
     }

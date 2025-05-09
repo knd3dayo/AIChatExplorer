@@ -1,5 +1,4 @@
-namespace PythonAILib.Model.File
-{
+namespace LibPythonAI.Model.File {
     public enum FileStatusEnum
     {
         Untracked,

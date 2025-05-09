@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Model.File;
+using LibPythonAI.Model.Content;
 
 namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleConditionEntity {
@@ -25,11 +25,11 @@ namespace PythonAILib.Model.AutoProcess {
 
         // アイテムのタイプ種類のリスト
         [NotMapped]
-        public List<ContentTypes.ContentItemTypes> ContentTypes {
+        public List<ContentItemTypes.ContentItemTypeEnum> ContentTypes {
             get {
-                List<ContentTypes.ContentItemTypes> result = [];
+                List<ContentItemTypes.ContentItemTypeEnum> result = [];
                 foreach (var item in JsonSerializer.Deserialize<List<int>>(ContentTypesJson, jsonSerializerOptions) ?? []) {
-                    result.Add((ContentTypes.ContentItemTypes)item);
+                    result.Add((ContentItemTypes.ContentItemTypeEnum)item);
                 }
                 return result;
             }

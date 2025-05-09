@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Chat;
@@ -96,8 +97,8 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             }
         }
 
-        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -107,8 +108,8 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             }
         }
 
-        private VectorDBProperty? _selectedVectorSearchProperty = null;
-        public VectorDBProperty? SelectedVectorSearchProperty {
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -130,7 +131,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorDBProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    List<VectorSearchProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

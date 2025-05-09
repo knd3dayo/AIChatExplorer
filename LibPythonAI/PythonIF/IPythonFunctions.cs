@@ -1,9 +1,9 @@
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.File;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
+using LibPythonAI.PythonIF.Response;
 
 namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
@@ -38,7 +38,7 @@ namespace PythonAILib.PythonIF {
 
         public VectorDBItem? GetVectorDBItemByName(string name);
         
-        public  Task<List<VectorDBEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
+        public  Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
 
         // delete_embeddings_by_folder
         public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);

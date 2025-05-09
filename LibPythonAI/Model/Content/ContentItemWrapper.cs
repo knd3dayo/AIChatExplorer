@@ -8,7 +8,6 @@ using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
@@ -87,7 +86,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // クリップボードの内容の種類
-        public ContentTypes.ContentItemTypes ContentType {
+        public ContentItemTypes.ContentItemTypeEnum ContentType {
             get {
                 return Entity.ContentType;
             }
@@ -134,12 +133,12 @@ namespace LibPythonAI.Model.Content {
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
         public string Base64Image {
             get {
-                if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
+                if (Entity.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                     // IOExceptionが発生する可能性があるため、try-catchで囲む
                     try {
-                        (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+                        (bool isImage, ContentItemTypes.ImageType imageType) = ContentItemTypes.IsImageFile(SourcePath);
                         if (isImage) {
-                            byte[] imageBytes = File.ReadAllBytes(SourcePath);
+                            byte[] imageBytes = System.IO.File.ReadAllBytes(SourcePath);
                             return Convert.ToBase64String(imageBytes);
                         }
                     } catch (IOException e) {
@@ -184,12 +183,12 @@ namespace LibPythonAI.Model.Content {
 
         public string ContentTypeString {
             get {
-                ContentTypes.ContentItemTypes ContentType = Entity.ContentType;
-                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                ContentItemTypes.ContentItemTypeEnum ContentType = Entity.ContentType;
+                if (ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                     return "Text";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
+                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                     return "File";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
+                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                     return "Image";
                 } else {
                     return "Unknown";
@@ -224,7 +223,7 @@ namespace LibPythonAI.Model.Content {
                     return null;
                 }
                 byte[] imageBytes = Convert.FromBase64String(Base64Image);
-                return ContentTypes.GetBitmapImage(imageBytes);
+                return ContentItemTypes.GetBitmapImage(imageBytes);
             }
         }
         public System.Drawing.Image? Image {
@@ -232,7 +231,7 @@ namespace LibPythonAI.Model.Content {
                 if (!IsImage()) {
                     return null;
                 }
-                return ContentTypes.GetImageFromBase64(Base64Image);
+                return ContentItemTypes.GetImageFromBase64(Base64Image);
             }
         }
 
@@ -252,35 +251,35 @@ namespace LibPythonAI.Model.Content {
             }
         }
         // フォルダに設定されたVerctorDBPropertyを使うかどうか
-        public bool UseFolderVectorDBProperty {
+        public bool UseFolderVectorSearchProperty {
             get {
-                Entity.ExtendedProperties.TryGetValue("UseFolderVectorDBProperty", out object? value);
+                Entity.ExtendedProperties.TryGetValue("UseFolderVectorSearchProperty", out object? value);
                 if (value is bool boolValue) {
                     return boolValue;
                 }
                 return true;
             }
             set {
-                Entity.ExtendedProperties["UseFolderVectorDBProperty"] = value;
+                Entity.ExtendedProperties["UseFolderVectorSearchProperty"] = value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
-        // このアイテムに紐付けらされたVectorDBProperty
-        // UseFolderVectorDBPropertyがtrueの場合は、フォルダに設定されたVectorDBPropertyを使用する
-        public List<VectorDBProperty> VectorDBProperties {
+        // このアイテムに紐付けらされたVectorSearchProperty
+        // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchPropertyを使用する
+        public List<VectorSearchProperty> VectorDBProperties {
             get {
-                if (UseFolderVectorDBProperty) {
+                if (UseFolderVectorSearchProperty) {
                     return GetFolder().GetVectorSearchProperties();
                 }
 
                 Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value);
                 if (value is string strValue) {
-                    return VectorDBProperty.FromListJson(strValue) ?? [];
+                    return VectorSearchProperty.FromListJson(strValue) ?? [];
                 }
                 return [];
             }
             set {
-                Entity.ExtendedProperties["VectorDBProperties"] = VectorDBProperty.ToListJson(value);
+                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(value);
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -502,11 +501,11 @@ namespace LibPythonAI.Model.Content {
                 // SourcePathを追加
                 header1 += $"[{PythonAILibStringResources.Instance.SourcePath}]" + SourcePath + "\n";
 
-                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                if (ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                     header1 += $"[{PythonAILibStringResources.Instance.Type}]Text";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
+                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                     header1 += $"[{PythonAILibStringResources.Instance.Type}]File";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
+                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                     header1 += $"[{PythonAILibStringResources.Instance.Type}]Image";
                 } else {
                     header1 += $"[{PythonAILibStringResources.Instance.Type}]Unknown";
@@ -533,20 +532,20 @@ namespace LibPythonAI.Model.Content {
             if (string.IsNullOrEmpty(Base64Image)) {
                 return false;
             }
-            if (ContentTypes.GetImageTypeFromBase64(Base64Image).Item1) {
+            if (ContentItemTypes.GetImageTypeFromBase64(Base64Image).Item1) {
                 return true;
             } else {
                 Base64Image = "";
             }
-            if (Entity.ContentType == ContentTypes.ContentItemTypes.Files) {
-                (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.IsImageFile(SourcePath);
+            if (Entity.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
+                (bool isImage, ContentItemTypes.ImageType imageType) = ContentItemTypes.IsImageFile(SourcePath);
                 return isImage;
             }
             return false;
         }
 
 
-        public virtual VectorDBProperty GetMainVectorSearchProperty() {
+        public virtual VectorSearchProperty GetMainVectorSearchProperty() {
             return GetFolder().GetMainVectorSearchProperty();
         }
 
@@ -562,8 +561,8 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorDBEmbedding vectorDBEntry = new(Id.ToString(),GetFolder().Id);
-                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                    VectorEmbedding vectorDBEntry = new(Id.ToString(),GetFolder().Id);
+                    VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             }
 
@@ -611,8 +610,8 @@ namespace LibPythonAI.Model.Content {
                             LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                             return;
                         }
-                        VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
-                        VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                        VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                        VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
                 }
             }

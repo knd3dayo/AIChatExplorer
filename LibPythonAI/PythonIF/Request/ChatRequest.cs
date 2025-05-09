@@ -3,7 +3,7 @@ using LibPythonAI.Model.Chat;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
 
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.PythonIF.Request {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>

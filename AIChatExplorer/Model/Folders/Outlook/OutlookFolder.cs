@@ -89,7 +89,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), outlookItem => {
                 OutlookItem newItem = new(Entity, outlookItem.EntryID) {
                     Description = outlookItem.Subject,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
+                    ContentType = ContentItemTypes.ContentItemTypeEnum.Text,
                     Content = outlookItem.Body,
                 };
                 newItem.Save();

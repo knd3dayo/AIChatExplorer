@@ -82,7 +82,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
+                    ContentType = ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 

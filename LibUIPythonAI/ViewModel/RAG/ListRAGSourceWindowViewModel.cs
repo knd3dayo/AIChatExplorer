@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Common;
-using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Data;
 using LibUIPythonAI.Resource;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>

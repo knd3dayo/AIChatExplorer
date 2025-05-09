@@ -9,7 +9,7 @@ using LibPythonAI.Model.VectorDB;
 namespace LibPythonAI.PythonIF.Request {
     public class EmbeddingRequest {
 
-        public EmbeddingRequest(string vectorDBName, string model, VectorDBEmbedding embedding) {
+        public EmbeddingRequest(string vectorDBName, string model, VectorEmbedding embedding) {
             Name = vectorDBName;
             Model = model;
             Embedding = embedding;
@@ -20,7 +20,7 @@ namespace LibPythonAI.PythonIF.Request {
         public string Model { get; set; } = "text-embedding-3-small";
 
         // Embedding
-        public VectorDBEmbedding Embedding { get; set; }
+        public VectorEmbedding Embedding { get; set; }
 
 
 

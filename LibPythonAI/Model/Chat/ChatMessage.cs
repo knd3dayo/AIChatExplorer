@@ -20,7 +20,7 @@ namespace LibPythonAI.Model.Chat {
 
         // JSON化しないプロパティ
         [JsonIgnore]
-        public List<VectorDBEmbedding> SourceDocuments { get; set; } = [];
+        public List<VectorEmbedding> SourceDocuments { get; set; } = [];
 
         // ImageのURLのリスト
         [JsonIgnore]
@@ -47,7 +47,7 @@ namespace LibPythonAI.Model.Chat {
             Role = role;
             Content = text;
         }
-        public ChatMessage(string role, string text, List<VectorDBEmbedding> sources) {
+        public ChatMessage(string role, string text, List<VectorEmbedding> sources) {
             Role = role;
             Content = text;
             SourceDocuments = sources;

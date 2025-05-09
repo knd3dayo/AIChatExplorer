@@ -171,7 +171,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
+                    ContentType = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 

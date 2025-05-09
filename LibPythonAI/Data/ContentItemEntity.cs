@@ -4,7 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.Chat;
-using PythonAILib.Model.File;
+using LibPythonAI.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Utils.Common;
 
@@ -38,7 +38,7 @@ namespace LibPythonAI.Data {
 
         // クリップボードの内容の種類
 
-        public ContentTypes.ContentItemTypes ContentType { get; set; }
+        public ContentItemTypes.ContentItemTypeEnum ContentType { get; set; }
 
         // ChatMessagesJson
         public string ChatMessagesJson { get; set; } = "[]";

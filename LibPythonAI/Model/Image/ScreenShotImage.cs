@@ -19,7 +19,7 @@ namespace LibPythonAI.Model.Image {
                 if (string.IsNullOrEmpty(ImagePath)) {
                     return null;
                 }
-                if (!File.Exists(ImagePath)) {
+                if (!System.IO.File.Exists(ImagePath)) {
                     return null;
                 }
                 return System.Drawing.Image.FromFile(ImagePath);

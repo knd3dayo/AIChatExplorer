@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
@@ -92,8 +93,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
         }
 
 
-        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -103,8 +104,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
-        private VectorDBProperty? _selectedVectorSearchProperty = null;
-        public VectorDBProperty? SelectedVectorSearchProperty {
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -113,26 +114,26 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedVectorSearchProperty));
             }
         }
-        // UseFolderVectorDBProperty
+        // UseFolderVectorSearchProperty
         // フォルダのベクトルDBを使用するか否か
-        public bool UseFolderVectorDBProperty {
+        public bool UseFolderVectorSearchProperty {
             get {
-                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorDBProperty;
+                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty;
             }
             set {
-                QAChatStartupPropsInstance.ContentItem.UseFolderVectorDBProperty = value;
+                QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty = value;
 
                 InitVectorDBProperties();
-                OnPropertyChanged(nameof(UseFolderVectorDBProperty));
+                OnPropertyChanged(nameof(UseFolderVectorSearchProperty));
             }
         }
 
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (UseVectorDB) {
-                List<VectorDBProperty> items = [];
-                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorDBProperty == Trueの場合
-                if (UseFolderVectorDBProperty) {
+                List<VectorSearchProperty> items = [];
+                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty == Trueの場合
+                if (UseFolderVectorSearchProperty) {
                     // フォルダのベクトルDBを取得
                     items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
@@ -185,8 +186,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
             // VectorDBItemsから削除
             VectorSearchProperties.Remove(SelectedVectorSearchProperty);
-            // UseFolderVectorDBPropertyがFalseの場合、ContentItemからも削除
-            if (UseFolderVectorDBProperty == false) {
+            // UseFolderVectorSearchPropertyがFalseの場合、ContentItemからも削除
+            if (UseFolderVectorSearchProperty == false) {
                 QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Remove(SelectedVectorSearchProperty);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
@@ -198,8 +199,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
                 RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
-                    // UseFolderVectorDBPropertyがFalseの場合、ContentItemに追加
-                    if (UseFolderVectorDBProperty == false) {
+                    // UseFolderVectorSearchPropertyがFalseの場合、ContentItemに追加
+                    if (UseFolderVectorSearchProperty == false) {
                         QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Add(vectorDBItemBase);
                     }
                 });

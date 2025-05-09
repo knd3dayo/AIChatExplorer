@@ -1,15 +1,30 @@
 using System.IO;
 using LibPythonAI.Data;
-using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Model.File;
 using LibPythonAI.PythonIF.Request;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Git;
 
-namespace PythonAILib.Model.VectorDB {
+namespace LibPythonAI.Model.VectorDB {
+
+    // Index更新処理結果を格納するクラス
+    public class UpdateIndexResult {
+        public enum UpdateIndexResultEnum {
+            Success,
+            Failed_FileNotFound,
+            Failed_InvalidFileType,
+            Failed_Other
+        }
+        public UpdateIndexResultEnum Result { get; set; } = UpdateIndexResultEnum.Failed_Other;
+
+        public string Message { get; set; } = "";
+
+        public int TokenCount { get; set; } = 0;
+    }
+
     public class RAGSourceItem {
 
         public RAGSourceItemEntity Entity { get; set; }
@@ -71,24 +86,24 @@ namespace PythonAILib.Model.VectorDB {
 
         // 最初のコミットから最後のコミットで処理されたファイルのリストを取得
 
-        public List<File.FileStatus> GetFileStatusList() {
+        public List<LibPythonAI.Model.File.FileStatus> GetFileStatusList() {
             return GetFileStatusList(null, null);
         }
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        public List<File.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
+        public List<LibPythonAI.Model.File.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
             return GitUtil.GetFileStatusList(WorkingDirectory, startHash, endHash);
         }
 
         // 指定したコミットの次のコミットで処理されたファイルのリストを取得
 
-        public List<File.FileStatus> GetAfterIndexedCommitFileStatusList() {
+        public List<LibPythonAI.Model.File.FileStatus> GetAfterIndexedCommitFileStatusList() {
             return GitUtil.GetFileStatusList(WorkingDirectory, LastIndexCommitHash, null);
         }
 
         // 指定したコミット以後に処理されたファイルのリストを取得
 
-        public List<File.FileStatus> GetFileStatusList(string startHash) {
+        public List<LibPythonAI.Model.File.FileStatus> GetFileStatusList(string startHash) {
             return GitUtil.GetFileStatusList(WorkingDirectory, startHash, "HEAD");
         }
 
@@ -118,13 +133,13 @@ namespace PythonAILib.Model.VectorDB {
                         result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
                         return result;
                     }
-                    VectorDBEmbedding vectorDBEntry = new() {
+                    VectorEmbedding vectorDBEntry = new() {
                         SourcePath = source_path
                     };
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
-                    VectorDBProperty vectorDBProperty = new() {
+                    VectorSearchProperty vectorSearchProperty = new() {
                         TopK = 4,
                         VectorDBItemName = VectorDBItem.Name,
                     };
@@ -134,25 +149,25 @@ namespace PythonAILib.Model.VectorDB {
                     };
 
                     EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
-                    PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
+                    await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
 
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                    VectorDBProperty vectorDBProperty = new() {
+                    VectorSearchProperty vectorSearchProperty = new() {
                         TopK = 4,
                         VectorDBItemName = VectorDBItem.Name,
                     };
-                    VectorDBEmbedding vectorDBEntry = new() {
+                    VectorEmbedding vectorDBEntry = new() {
                         SourcePath = source_path
                     };
 
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
-                        VectorDBProperties = [vectorDBProperty],
+                        VectorSearchProperties = [vectorSearchProperty],
 
                     };
 
                     EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);
-                    PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
+                    await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
                 }
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合

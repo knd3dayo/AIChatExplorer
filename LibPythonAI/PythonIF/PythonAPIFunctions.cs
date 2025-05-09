@@ -5,14 +5,13 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.File;
 using LibPythonAI.Model.Statistics;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
 using SocketIOClient;
@@ -242,13 +241,13 @@ namespace PythonAILib.PythonIF {
 
             // VectorSearchRequestsを作成
             List<VectorSearchRequest> vectorSearchRequests = [];
-            foreach (VectorDBProperty vectorDBProperty in chatRequestContext.VectorDBProperties) {
+            foreach (VectorSearchProperty vectorSearchProperty in chatRequestContext.VectorSearchProperties) {
                 // VectorSearchRequestを作成
-                string? name = vectorDBProperty.VectorDBItemName;
+                string? name = vectorSearchProperty.VectorDBItemName;
                 if (string.IsNullOrEmpty(name)) {
                     throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
                 }
-                VectorSearchRequest vectorSearchRequest = new(name, chatRequest.ContentText, vectorDBProperty.TopK, vectorDBProperty.FolderId, vectorDBProperty.ContentType);
+                VectorSearchRequest vectorSearchRequest = new(name, chatRequest.ContentText, vectorSearchProperty.TopK, vectorSearchProperty.FolderId, vectorSearchProperty.ContentType);
                 vectorSearchRequests.Add(vectorSearchRequest);
             }
 
@@ -593,17 +592,17 @@ namespace PythonAILib.PythonIF {
             return vectorDBItem;
         }
 
-        public async Task<List<VectorDBEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
+        public async Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
 
             // VectorSearchRequestsを作成
             List<VectorSearchRequest> vectorSearchRequests = [];
-            foreach (VectorDBProperty vectorDBProperty in chatRequestContext.VectorDBProperties) {
+            foreach (VectorSearchProperty vectorSearchProperty in chatRequestContext.VectorSearchProperties) {
                 // VectorSearchRequestを作成
-                string? name = vectorDBProperty.VectorDBItemName;
+                string? name = vectorSearchProperty.VectorDBItemName;
                 if (string.IsNullOrEmpty(name)) {
                     throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
                 }
-                VectorSearchRequest vectorSearchRequest = new(name, query, vectorDBProperty.TopK, vectorDBProperty.FolderId, vectorDBProperty.ContentType);
+                VectorSearchRequest vectorSearchRequest = new(name, query, vectorSearchProperty.TopK, vectorSearchProperty.FolderId, vectorSearchProperty.ContentType);
                 vectorSearchRequests.Add(vectorSearchRequest);
             }
 
@@ -621,7 +620,7 @@ namespace PythonAILib.PythonIF {
 
             // vector_search
             // VectorSearchResultのリストを作成
-            List<VectorDBEmbedding> vectorSearchResults = [];
+            List<VectorEmbedding> vectorSearchResults = [];
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/vector_search";
@@ -644,15 +643,16 @@ namespace PythonAILib.PythonIF {
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {
                 var documents = resultDict["documents"];
+                if (documents == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
                 foreach (var item in documents) {
-                    // VectorDBEmbeddingを取得
-                    VectorDBEmbedding? vectorDBEmbedding = VectorDBEmbedding.FromDict(item);
-                    if (vectorDBEmbedding != null) {
-                        vectorSearchResults.Add(vectorDBEmbedding);
+                    // VectorEmbeddingを取得
+                    VectorEmbedding? vectorEmbedding = VectorEmbedding.FromDict(item);
+                    if (vectorEmbedding != null) {
+                        vectorSearchResults.Add(vectorEmbedding);
                     }
                 }
-                // List<VectorSearchResult>に変換
-                //  vectorSearchResults = VectorDBEmbedding.FromDictList(documents);
             }
 
             return vectorSearchResults;

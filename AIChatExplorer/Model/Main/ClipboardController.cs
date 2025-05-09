@@ -81,14 +81,14 @@ namespace AIChatExplorer.Model.Main {
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard
-            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
+            if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // If ContentType is Files, copy files to clipboard
-            else if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files) {
                 // SourcePathの取得
                 System.Collections.Specialized.StringCollection strings = [item.SourcePath];
                 // Stringsが空の場合は何もしない

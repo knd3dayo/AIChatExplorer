@@ -25,6 +25,8 @@ using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Python;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {
@@ -160,8 +162,8 @@ namespace LibUIMergeChat.ViewModel {
         public static ChatMessage? SelectedItem { get; set; }
 
 
-        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -171,8 +173,8 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private VectorDBProperty? _selectedVectorSearchProperty = null;
-        public VectorDBProperty? SelectedVectorSearchProperty {
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -203,7 +205,7 @@ namespace LibUIMergeChat.ViewModel {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorDBProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
+                    List<VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

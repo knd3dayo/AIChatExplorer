@@ -16,6 +16,8 @@ using LibPythonAI.Model.Image;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatWindowViewModel : CommonViewModelBase {

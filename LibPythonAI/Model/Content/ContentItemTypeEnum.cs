@@ -1,10 +1,10 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace PythonAILib.Model.File {
-    public class ContentTypes {
+namespace LibPythonAI.Model.Content {
+    public class ContentItemTypes {
 
-        public enum ContentItemTypes {
+        public enum ContentItemTypeEnum {
             Text,
             Files,
             Image,

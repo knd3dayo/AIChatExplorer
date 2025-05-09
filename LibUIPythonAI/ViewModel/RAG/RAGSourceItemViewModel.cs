@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Model.VectorDB;
 using LibUIPythonAI.Resource;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     public class RAGSourceItemViewModel(RAGSourceItem item) : CommonViewModelBase {

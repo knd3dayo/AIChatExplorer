@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Model.File;
 
 namespace LibUIPythonAI.ViewModel.RAG {
     internal class UpdateRAGIndexWindowViewModel : CommonViewModelBase {

@@ -5,8 +5,9 @@ using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
+using PythonAILib.Model.Chat;
 
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.PythonIF.Request {
     // リクエストと共に送信するコンテキスト情報
     public class ChatRequestContext {
 
@@ -17,7 +18,7 @@ namespace PythonAILib.Model.Chat {
         // ベクトルDBアイテム
 
         [JsonPropertyName("vector_db_props")]
-        public List<VectorDBProperty> VectorDBProperties { get; set; } = [];
+        public List<VectorSearchProperty> VectorSearchProperties { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName("autogen_props")]
@@ -61,7 +62,7 @@ namespace PythonAILib.Model.Chat {
 
         // CreateEntriesDictList
         public List<Dictionary<string, object>> ToDictVectorDBItemsDict() {
-            return UseVectorDB ? VectorDBProperty.ToDictList(VectorDBProperties) : [];
+            return UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchProperties) : [];
         }
 
        
@@ -69,12 +70,12 @@ namespace PythonAILib.Model.Chat {
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
                 OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  
-                List<VectorDBProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText, string sessionToken
+                List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText, string sessionToken
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = vectorSearchProperties,
+                VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = promptTemplateText,
                 UseVectorDB = userVectorDB,

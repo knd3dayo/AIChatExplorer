@@ -12,7 +12,6 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.File;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 
@@ -133,7 +132,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         // ExtractTextCommand
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
             // ContentTypes.Files, ContentTypes.Imageのアイテムを取得
-            var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files || x.ContentItem.ContentType == ContentTypes.ContentItemTypes.Files);
+            var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files || x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files);
             Commands.ExtractTextCommand.Execute(MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems);
 
         });

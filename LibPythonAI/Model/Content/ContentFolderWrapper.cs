@@ -96,16 +96,16 @@ namespace LibPythonAI.Model.Content {
         }
 
         public const string VectorDBPropertiesName = "VectorDBProperties";
-        public List<VectorDBProperty> ReferenceVectorSearchProperties {
+        public List<VectorSearchProperty> ReferenceVectorSearchProperties {
             get {
                 if (Entity.ExtendedProperties.TryGetValue(VectorDBPropertiesName, out var propList) && propList is List<Dictionary<string, object>>) {
-                    List<VectorDBProperty> result = [];
+                    List<VectorSearchProperty> result = [];
                     foreach (var item in (List<Dictionary<string, object>>)propList) {
-                        VectorDBProperty vectorDBProperty = new() {
+                        VectorSearchProperty vectorSearchProperty = new() {
                             FolderId = item["FolderId"]?.ToString() ?? Id,
                             VectorDBItemName = item["VectorDBItemName"]?.ToString() ?? VectorDBItem.GetDefaultVectorDB().Name,
                         };
-                        result.Add(vectorDBProperty);
+                        result.Add(vectorSearchProperty);
                     }
                     return result;
                 }
@@ -155,7 +155,7 @@ namespace LibPythonAI.Model.Content {
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
-            VectorDBEmbedding.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
+            VectorEmbedding.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
@@ -277,8 +277,8 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        public VectorDBProperty GetMainVectorSearchProperty() {
-            VectorDBProperty searchProperty = new() {
+        public VectorSearchProperty GetMainVectorSearchProperty() {
+            VectorSearchProperty searchProperty = new() {
                 FolderId = Id,
                 TopK = 4,
                 VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
@@ -286,8 +286,8 @@ namespace LibPythonAI.Model.Content {
             return searchProperty;
         }
 
-        public List<VectorDBProperty> GetVectorSearchProperties() {
-            List<VectorDBProperty> searchProperties =
+        public List<VectorSearchProperty> GetVectorSearchProperties() {
+            List<VectorSearchProperty> searchProperties =
             [
                 GetMainVectorSearchProperty(),
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得

@@ -5,13 +5,12 @@ using System.Text.Unicode;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
-    public class VectorDBEmbedding {
+    public class VectorEmbedding {
 
         public static readonly JsonSerializerOptions Options = new() {
             Converters = { new JsonStringEnumConverter() },
@@ -20,9 +19,9 @@ namespace LibPythonAI.Model.VectorDB {
             WriteIndented = true
         };
 
-        public VectorDBEmbedding() { }
+        public VectorEmbedding() { }
 
-        public VectorDBEmbedding(string source_id, string folderId) {
+        public VectorEmbedding(string source_id, string folderId) {
             SourceId = source_id;
             FolderId = folderId;
         }
@@ -64,7 +63,7 @@ namespace LibPythonAI.Model.VectorDB {
 
         // sub_docs
         [JsonPropertyName("sub_docs")]
-        public List<VectorDBEmbedding> SubDocs { get; set; } = [];
+        public List<VectorEmbedding> SubDocs { get; set; } = [];
 
 
         public void UpdateSourceInfo(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
@@ -100,14 +99,14 @@ namespace LibPythonAI.Model.VectorDB {
             return JsonSerializer.Serialize(this, Options);
         }
 
-        public static List<VectorDBEmbedding> FromJson(string json) {
+        public static List<VectorEmbedding> FromJson(string json) {
             JsonSerializerOptions options = Options;
-            List<VectorDBEmbedding>? result = JsonSerializer.Deserialize<List<VectorDBEmbedding>>(json, options);
+            List<VectorEmbedding>? result = JsonSerializer.Deserialize<List<VectorEmbedding>>(json, options);
             return result ?? [];
         }
 
-        public static VectorDBEmbedding FromDict(Dictionary<string, object> dict) {
-            VectorDBEmbedding result = new();
+        public static VectorEmbedding FromDict(Dictionary<string, object> dict) {
+            VectorEmbedding result = new();
             result.SourceId = dict["source_id"].ToString() ?? "";
             result.SourceType = (VectorSourceType)Enum.Parse(typeof(VectorSourceType), dict["source_type"].ToString() ?? "");
             result.Description = dict["description"].ToString() ?? "";
@@ -120,7 +119,7 @@ namespace LibPythonAI.Model.VectorDB {
             result.Score = Convert.ToDouble(dict["score"]);
             return result;
         }
-        public static async Task UpdateEmbeddings(string vectorDBItemName, VectorDBEmbedding vectorDBEmbedding) {
+        public static async Task UpdateEmbeddings(string vectorDBItemName, VectorEmbedding vectorEmbedding) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
@@ -129,7 +128,7 @@ namespace LibPythonAI.Model.VectorDB {
                 OpenAIProperties = openAIProperties,
             };
 
-            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbedding);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
             await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
@@ -137,14 +136,14 @@ namespace LibPythonAI.Model.VectorDB {
 
         }
 
-        public static async Task DeleteEmbeddings(string vectorDBItemName, VectorDBEmbedding vectorDBEmbedding) {
+        public static async Task DeleteEmbeddings(string vectorDBItemName, VectorEmbedding vectorEmbedding) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = openAIProperties,
             };
 
-            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbedding);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
             await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
@@ -159,10 +158,10 @@ namespace LibPythonAI.Model.VectorDB {
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = openAIProperties,
                 };
-                VectorDBEmbedding vectorDBEmbedding = new() {
+                VectorEmbedding vectorEmbedding = new() {
                     FolderId = folderId,
                 };
-                EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorDBEmbedding);
+                EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbedding);
                 PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);
             });
         }

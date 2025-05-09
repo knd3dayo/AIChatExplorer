@@ -55,8 +55,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public Visibility VectorDBItemButtonVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 1);
 
-        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -66,8 +66,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        private VectorDBProperty? _selectedVectorSearchProperty = null;
-        public VectorDBProperty? SelectedVectorSearchProperty {
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }

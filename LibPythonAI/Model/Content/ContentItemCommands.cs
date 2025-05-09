@@ -6,8 +6,6 @@ using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
@@ -22,7 +20,7 @@ namespace LibPythonAI.Model.Content {
         // Command to open a folder
         public static void OpenFolder(ContentItemWrapper contentItem) {
             // Open the folder only if the ContentType is File
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
+            if (contentItem.ContentType != ContentItemTypes.ContentItemTypeEnum.Files) {
                 LogWrapper.Error(PythonAILibStringResources.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
@@ -58,7 +56,7 @@ namespace LibPythonAI.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
+                VectorSearchProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
             };
 
@@ -70,7 +68,7 @@ namespace LibPythonAI.Model.Content {
                     if (string.IsNullOrEmpty(result) == false) {
                         item.Content = result;
                     }
-                } else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+                } else if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                     // ファイル名から拡張子を取得
                     string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(item.SourcePath);
                     item.Content = text;
@@ -106,7 +104,7 @@ namespace LibPythonAI.Model.Content {
                     LogWrapper.UpdateInProgress(true, message);
                     var item = items[index];
 
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                    if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                         LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
@@ -136,10 +134,9 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
 
-                    // VectorDBPropertyを削除
-                    VectorDBEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    VectorEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                 });
             });
         }
@@ -160,11 +157,11 @@ namespace LibPythonAI.Model.Content {
                         return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
 
                     // タイトルとHeaderTextを追加
                     string description = item.Description + "\n" + item.HeaderText;
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                    if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                         string sourcePath = item.SourcePath;
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
                     } else {
@@ -176,8 +173,8 @@ namespace LibPythonAI.Model.Content {
                             vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
                         }
                     }
-                    // VectorDBPropertyを更新
-                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+
+                    VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });
@@ -190,11 +187,11 @@ namespace LibPythonAI.Model.Content {
 
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text || item.ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";
             }
             // Fileの場合
-            else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {

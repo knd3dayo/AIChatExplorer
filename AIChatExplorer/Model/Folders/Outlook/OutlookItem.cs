@@ -26,18 +26,18 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(() => {
+                Task.Run(async () => {
                     string? vectorDBItemName = GetFolder().GetMainVectorSearchProperty()?.VectorDBItemName;
                     if (vectorDBItemName == null) {
                         return;
                     }
-                    VectorDBEmbedding vectorDBEmbedding = new(Id.ToString(), GetFolder().Id) {
+                    VectorEmbedding vectorEmbedding = new(Id.ToString(), GetFolder().Id) {
                         Content = Content,
                         Description = Description,
                         SourceType = PythonAILib.Model.VectorDB.VectorSourceType.Mail,
                         SourcePath = SourcePath,
                     };
-                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEmbedding);
+                    await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorEmbedding);
                 });
                 ContentModified = false;
                 DescriptionModified = false;

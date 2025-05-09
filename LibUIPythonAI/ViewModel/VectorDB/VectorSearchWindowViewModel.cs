@@ -6,7 +6,6 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
@@ -17,8 +16,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         }
 
         // VectorSearchProperty
-        private VectorDBProperty? _vectorSearchProperty;
-        public VectorDBProperty? VectorSearchProperty {
+        private VectorSearchProperty? _vectorSearchProperty;
+        public VectorSearchProperty? VectorSearchProperty {
             get => _vectorSearchProperty;
             set {
                 if (value == null) {
@@ -48,13 +47,13 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
 
-        public ObservableCollection<VectorDBEmbedding> MultiVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorEmbedding> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorDBEmbedding> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorEmbedding> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<VectorDBProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
         private int _selectedTabIndex = 0;
@@ -103,7 +102,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
             CommonViewModelProperties.UpdateIndeterminate(true);
             Task.Run(async () => {
-                List<VectorDBEmbedding> vectorSearchResults = [];
+                List<VectorEmbedding> vectorSearchResults = [];
                 // ベクトル検索を実行
                 // VectorDBSearchResultMaxをVectorSearchPropertyに設定
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
@@ -120,17 +119,17 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     VectorSearchResults.Clear();
 
                     if (vectorDBItem.IsUseMultiVectorRetriever) {
-                        foreach (VectorDBEmbedding vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorEmbedding vectorSearchResult in vectorSearchResults) {
                             MultiVectorSearchResults.Add(vectorSearchResult);
                             // sub_docsを追加
-                            foreach (VectorDBEmbedding subDoc in vectorSearchResult.SubDocs) {
+                            foreach (VectorEmbedding subDoc in vectorSearchResult.SubDocs) {
                                 VectorSearchResults.Add(subDoc);
                             }
                         }
                     } else {
                         // VectorSearchResultsを更新
                         VectorSearchResults.Clear();
-                        foreach (VectorDBEmbedding vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorEmbedding vectorSearchResult in vectorSearchResults) {
                             VectorSearchResults.Add(vectorSearchResult);
                         }
                     }
@@ -155,7 +154,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
-                    VectorDBProperties = [VectorSearchProperty],
+                    VectorSearchProperties = [VectorSearchProperty],
                     OpenAIProperties = openAIProperties,
                 };
                 RequestContainer requestContainer = new() {
@@ -171,7 +170,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<VectorDBProperty> items = [];
+            List<VectorSearchProperty> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {

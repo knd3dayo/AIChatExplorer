@@ -15,7 +15,6 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : CommonViewModelBase {
@@ -91,17 +90,17 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
                         IsNotAllItemsRuleChecked = true;
 
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Text)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Text)) {
                             IsTextItemApplied = true;
                             OnPropertyChanged(nameof(IsTextItemApplied));
                             MinTextLineCount = condition.MinLineCount.ToString();
                             MaxTextLineCount = condition.MaxLineCount.ToString();
                         }
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Image)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Image)) {
                             IsImageItemApplied = true;
                             OnPropertyChanged(nameof(IsImageItemApplied));
                         }
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Files)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Files)) {
                             IsFileItemApplied = true;
                             OnPropertyChanged(nameof(IsFileItemApplied));
                         }
@@ -454,21 +453,21 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
                 }
                 // ContentTypeの処理
-                List<ContentTypes.ContentItemTypes> contentTypes = [];
+                List<ContentItemTypes.ContentItemTypeEnum> contentTypes = [];
                 // IsTextItemAppliedがTrueの場合は条件を追加
                 if (IsTextItemApplied) {
                     // TextItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Text);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Text);
                 }
                 // IsImageItemAppliedがTrueの場合は条件を追加
                 if (IsImageItemApplied) {
                     // ImageItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Image);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Image);
                 }
                 // IsFileItemAppliedがTrueの場合は条件を追加
                 if (IsFileItemApplied) {
                     // FileItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Files);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Files);
                 }
                 // ContentTypeIsを条件に追加
                 autoProcessRuleConditionEntity = new() {

@@ -37,7 +37,7 @@ namespace PythonAILib.Model.AutoProcess {
 
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= configParams.IgnoreLineCount()) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text && lineCount <= configParams.IgnoreLineCount()) {
                 return item;
             }
             // If AutoFileExtract is set, extract files

@@ -10,7 +10,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
@@ -146,7 +145,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         public FlowDocument? MarkdownChatItemsText => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.ChatItemsText) : null;
 
         // ContentType
-        public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
+        public ContentItemTypes.ContentItemTypeEnum ContentType => ContentItem.ContentType;
 
         // ContentPanelContentHint
         public string ContentPanelContentHint {
@@ -159,7 +158,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                     return CommonStringResources.Instance.ExecuteDownloadWebPageToViewContent;
                 }
                 // 画像の場合
-                if (ContentItem.ContentType == ContentTypes.ContentItemTypes.Image) {
+                if (ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                     return CommonStringResources.Instance.ExecuteExtractTextToViewFileContent;
                 }
 
@@ -310,7 +309,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
         // ファイルタブの表示可否
-        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
+        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentItemTypes.ContentItemTypeEnum.Files || ContentType == ContentItemTypes.ContentItemTypeEnum.Image);
 
         // ImageVisibility
         public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());

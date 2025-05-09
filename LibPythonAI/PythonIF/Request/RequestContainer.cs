@@ -4,7 +4,6 @@ using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Model.Chat;
 
 namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {

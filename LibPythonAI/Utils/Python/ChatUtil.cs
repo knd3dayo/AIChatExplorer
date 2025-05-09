@@ -1,10 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Common;
@@ -35,7 +37,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorDBProperty> vectorDBProperties, List<string> promptList, string content) {
+        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorSearchProperty> vectorDBProperties, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {
@@ -138,10 +140,10 @@ namespace LibPythonAI.Utils.Python {
             if (PythonExecutor.PythonAIFunctions == null) {
                 throw new Exception("PythonAIFunctions is null");
             }
-            List<VectorDBEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query) ?? [];
+            List<VectorEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query) ?? [];
             sb.AppendLine();
             for (int i = 0; i < results.Count; i++) {
-                VectorDBEmbedding vectorSearchResult = results[i];
+                VectorEmbedding vectorSearchResult = results[i];
                 sb.AppendLine($"## 参考情報:{i + 1} ##");
                 sb.AppendLine("--------");
                 sb.AppendLine(vectorSearchResult.Description);
@@ -192,8 +194,8 @@ namespace LibPythonAI.Utils.Python {
 
         public static string CreateImageURL(string base64String) {
 
-            (bool isImage, ContentTypes.ImageType imageType) = ContentTypes.GetImageTypeFromBase64(base64String);
-            if (imageType == ContentTypes.ImageType.unknown) {
+            (bool isImage, ContentItemTypes.ImageType imageType) = ContentItemTypes.GetImageTypeFromBase64(base64String);
+            if (imageType == ContentItemTypes.ImageType.unknown) {
                 return "";
             }
             string formatText = imageType.ToString();

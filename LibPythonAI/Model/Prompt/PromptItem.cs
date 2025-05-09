@@ -2,11 +2,11 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
@@ -463,11 +463,11 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
+            List<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = vectorSearchProperties,
+                VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties,
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
@@ -549,7 +549,7 @@ namespace LibPythonAI.Model.Prompt {
         // OpenAIを使用してタイトルを生成する
         public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
             // ContentTypeがTextの場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                 using PythonAILibDBContext db = new();
                 PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
                 if (promptItem == null) {
@@ -560,7 +560,7 @@ namespace LibPythonAI.Model.Prompt {
                 return;
             }
             // ContentTypeがFiles,の場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                 // ファイル名をタイトルとして使用
                 item.Description += item.FileName;
                 return;
@@ -587,7 +587,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
+                VectorSearchProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
             };
 
