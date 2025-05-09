@@ -124,11 +124,11 @@ namespace LibPythonAI.Model.Content {
         // ベクトルを更新する
         public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
 
-            // Parallelによる並列処理。4並列
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
             Task.Run(() => {
+                // Parallelによる並列処理。4並列
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 4
+                };
                 Parallel.ForEach(items, parallelOptions, (item) => {
                     
                     string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
@@ -139,7 +139,7 @@ namespace LibPythonAI.Model.Content {
                     VectorDBEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
 
                     // VectorDBPropertyを削除
-                    VectorDBEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
+                    VectorDBEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                 });
             });
         }
@@ -147,11 +147,11 @@ namespace LibPythonAI.Model.Content {
         // Embeddingを更新する
         public static void UpdateEmbeddings(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
             beforeAction();
-            // Parallelによる並列処理。4並列
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
             Task.Run(() => {
+                // Parallelによる並列処理。4並列
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 4
+                };
                 Parallel.ForEach(items, parallelOptions, (item) => {
                     // VectorDBItemを取得
                     string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
@@ -177,7 +177,7 @@ namespace LibPythonAI.Model.Content {
                         }
                     }
                     // VectorDBPropertyを更新
-                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                    VectorDBEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });
