@@ -10,7 +10,7 @@ import ai_chat_explorer.api_modules.ai_app_util as ai_app_util
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 routes = web.RouteTableDef()
-app = web.Application()
+app = web.Application(client_max_size=1024*1024*300) # 300MB
 sio = socketio.AsyncServer(async_mode='aiohttp')
 sio.attach(app)
 logger = logging.getLogger(__name__)
