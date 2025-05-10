@@ -114,6 +114,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedVectorSearchProperty));
             }
         }
+
         // UseFolderVectorSearchProperty
         // フォルダのベクトルDBを使用するか否か
         public bool UseFolderVectorSearchProperty {

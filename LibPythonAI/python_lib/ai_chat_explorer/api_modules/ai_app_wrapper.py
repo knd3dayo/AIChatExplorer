@@ -172,8 +172,8 @@ async def autogen_chat( request_json: str):
     messages = chat_request_dict.get("messages", None)
     if not messages:
         raise ValueError("messages is not set")
-    # messagesの最後の要素を取得
-    last_message = messages[-1]
+    # messagesのうち、role == userの最後の要素を取得
+    last_message = [message for message in messages if message.get("role") == "user"][-1]
     # last_messageのcontent(リスト)を取得
     content_list = last_message.get("content", None)
     if not content_list:
@@ -182,7 +182,6 @@ async def autogen_chat( request_json: str):
     text_list = [content for content in content_list if content.get("type") == "text"]
     # text_listの要素を結合 
     input_text = "\n".join([content.get("text") for content in text_list])
-            
     # strout,stderrorをStringIOでキャプチャする
     buffer = StringIO()
     sys.stdout = buffer

@@ -256,10 +256,10 @@ namespace LibPythonAI.Utils.Python {
         public static async Task<ChatResult?> ExecuteAutoGenGroupChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
             PrepareNormalRequest(chatRequestContext, chatRequest);
+
             // 結果
             ChatMessage result = new(ChatMessage.AssistantRole, "", []);
             chatRequest.ChatHistory.Add(result);
-
             // AutoGenGroupChatを実行する
             return await ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
                 result.Content += message + "\n";

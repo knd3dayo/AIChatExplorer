@@ -1,32 +1,29 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibUIPythonAI.ViewModel;
+using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
+using LibUIMergeChat.Common;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.View.PromptTemplate;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
-using LibUIPythonAI.View.PromptTemplate;
-using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.VectorDB;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIMergeChat.Common;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Data;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Utils.Python;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {
@@ -231,6 +228,8 @@ namespace LibUIMergeChat.ViewModel {
         }
 
         //
+
+
         public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseVectorDB);
 
         public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
