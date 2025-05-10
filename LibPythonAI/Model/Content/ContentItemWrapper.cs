@@ -629,14 +629,14 @@ namespace LibPythonAI.Model.Content {
                     // 更新日時を設定
                     item.UpdatedAt = DateTime.Now;
                     // ベクトルを更新
-                    Task.Run(() => {
+                    Task.Run(async () => {
                         string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
                         if (string.IsNullOrEmpty(vectorDBItemName)) {
                             LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                             return;
                         }
                         VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
-                        VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                        await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
                 }
             }
