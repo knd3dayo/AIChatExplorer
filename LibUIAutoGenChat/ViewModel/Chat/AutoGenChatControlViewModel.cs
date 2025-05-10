@@ -33,7 +33,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
             }
             // ChatContextPanelViewModelを設定
-            ChatContextViewModelInstance = new ChatContextViewModel(QAChatStartupPropsInstance);
+            ChatContextViewModelInstance = new AutoGenChatContextViewModel(QAChatStartupPropsInstance);
 
             CommonViewModelProperties.PropertyChanged  += OnPropertyChanged;
 
@@ -47,7 +47,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         }
 
         // ChatContextPanelViewModel
-        public ChatContextViewModel ChatContextViewModelInstance { get; set; }
+        public AutoGenChatContextViewModel ChatContextViewModelInstance { get; set; }
 
         public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
 

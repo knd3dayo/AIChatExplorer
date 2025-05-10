@@ -254,14 +254,17 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
 
-        public ChatRequestContext CreateChatRequestContext(string PromptText) {
+        public ChatRequestContext CreateChatRequestContext(string promptText, string sessionToken) {
             // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;
             }
+            // AutoGenPropertiesにSessionTokenを設定
+            AutoGenProperties.SessionToken = sessionToken;
+
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, promptText
                 );
             return chatRequestContext;
         }
