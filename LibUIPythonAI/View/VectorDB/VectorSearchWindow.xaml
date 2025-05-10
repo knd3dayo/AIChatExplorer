@@ -186,10 +186,7 @@
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.RequestParameterJson}">
                 <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
-                    <TextBox
-                        VerticalAlignment="Top"
-                        Text="{Binding PreviewJson, Mode=OneWay}"
-                        TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                    <TextBox VerticalAlignment="Top" Text="{Binding PreviewJson, Mode=OneWay}" />
                 </ScrollViewer>
             </TabItem>
         </TabControl>

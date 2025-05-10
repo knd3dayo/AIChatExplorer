@@ -1,10 +1,34 @@
 using System.Text;
+using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
 
 namespace AIChatExplorer.ViewModel.Settings {
     public partial class SettingUserControlViewModel {
 
+
+        public bool EnableDevFeatures {
+            get {
+                return AIChatExplorerConfig.Instance.EnableDevFeatures;
+            }
+            set {
+                AIChatExplorerConfig.Instance.EnableDevFeatures = value;
+                OnPropertyChanged(nameof(EnableDevFeatures));
+                OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+        public Visibility EnableDevFeaturesVisibility {
+            get {
+                if (EnableDevFeatures) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
 
         #region 開発中機能関連の設定
         // TesseractExePath
