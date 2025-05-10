@@ -156,5 +156,10 @@ namespace LibUIAutoGenChat.View.Chat {
         // Chat
         public static string Chat => CommonStringResources.Instance.Chat;
 
+        // UseVectorDBSettingInFolder
+        public static string UseVectorDBSettingInFolder => CommonStringResources.Instance.UseVectorDBSettingInFolder;
+
+        // VectorDBList
+        public static string VectorDBList => CommonStringResources.Instance.VectorDBList;
     }
 }

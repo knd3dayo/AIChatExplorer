@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
@@ -148,6 +147,54 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
+        // UseFolderVectorSearchProperty
+        // フォルダのベクトルDBを使用するか否か
+        public bool UseFolderVectorSearchProperty {
+            get {
+                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty;
+            }
+            set {
+                QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty = value;
+
+                InitVectorDBProperties();
+                OnPropertyChanged(nameof(UseFolderVectorSearchProperty));
+                OnPropertyChanged(nameof(UseItemVectorSearchProperty));
+                OnPropertyChanged(nameof(UseFolderVectorSearchPropertyVisibility));
+                OnPropertyChanged(nameof(UseItemVectorSearchPropertyVisibility));
+            }
+        }
+        // アイテムのベクトルDBを使用するか否か
+        public bool UseItemVectorSearchProperty {
+            get {
+                return !UseFolderVectorSearchProperty;
+            }
+        }
+        public Visibility UseFolderVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty);
+
+        public Visibility UseItemVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty == false);
+
+
+
+        private void InitVectorDBProperties() {
+            VectorSearchProperties.Clear();
+            if (UseVectorDB) {
+                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
+                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty == Trueの場合
+                if (UseFolderVectorSearchProperty) {
+                    // フォルダのベクトルDBを取得
+                    items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    foreach (var item in items) {
+                        VectorSearchProperties.Add(item);
+                    }
+                } else {
+                    // ContentItemのベクトルDBを取得
+                    items = QAChatStartupPropsInstance.ContentItem.VectorDBProperties;
+                    foreach (var item in items) {
+                        VectorSearchProperties.Add(item);
+                    }
+                }
+            }
+        }
 
 
         #region AutoGen Group Chat
