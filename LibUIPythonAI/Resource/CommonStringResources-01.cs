@@ -315,7 +315,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string UseVectorDB { get; } = "ベクトルDBを使用する";
 
         // UseVectorDBSettingInFolder
-        public virtual string UseVectorDBSettingInFolder { get; } = "フォルダに設定されたベクトルDB設定を使用";
+        public virtual string UseVectorDBSettingInFolder { get; } = "フォルダ設定を使用";
 
         // 出力形式
         public virtual string OutputType { get; } = "出力形式";

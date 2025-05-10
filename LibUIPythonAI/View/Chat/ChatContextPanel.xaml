@@ -161,13 +161,14 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontWeight="Bold"
-                                Text="{x:Static local:ViewStringResources.VectorDB}" />
+                                Text="{x:Static local:ViewStringResources.VectorDBList}" />
                             <TextBlock
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="10"
-                                Text="{x:Static local:ViewStringResources.ClickHereToAddVectorDB}">
+                                Text="{x:Static local:ViewStringResources.ClickHereToAddVectorDB}"
+                                Visibility="{Binding UseItemVectorSearchPropertyVisibility}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>

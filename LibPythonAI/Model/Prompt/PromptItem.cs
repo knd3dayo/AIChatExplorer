@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
@@ -463,7 +464,7 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
+            ObservableCollection<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {

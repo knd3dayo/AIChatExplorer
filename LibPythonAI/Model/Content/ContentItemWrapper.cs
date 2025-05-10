@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -13,13 +14,13 @@ using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
-        public ContentItemWrapper() {}
+        public ContentItemWrapper() { }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
             FolderId = folder.Id;
         }
 
-        public ContentItemEntity Entity { get; protected set; }　= new ContentItemEntity();
+        public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
 
         // ID
         public string Id { get => Entity.Id; }
@@ -208,7 +209,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // フォルダ名
-        public string FolderName  => Path.GetDirectoryName(SourcePath) ?? "";
+        public string FolderName => Path.GetDirectoryName(SourcePath) ?? "";
 
         // ファイル名
         public string FileName => Path.GetFileName(SourcePath) ?? "";
@@ -266,21 +267,45 @@ namespace LibPythonAI.Model.Content {
         }
         // このアイテムに紐付けらされたVectorSearchProperty
         // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchPropertyを使用する
-        public List<VectorSearchProperty> VectorDBProperties {
+        public ObservableCollection<VectorSearchProperty> VectorDBProperties {
             get {
+                ObservableCollection<VectorSearchProperty> vectorDBProperties = [];
                 if (UseFolderVectorSearchProperty) {
-                    return GetFolder().GetVectorSearchProperties();
+                    vectorDBProperties = [.. GetFolder().GetVectorSearchProperties()];
                 }
 
-                Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value);
-                if (value is string strValue) {
-                    return VectorSearchProperty.FromListJson(strValue) ?? [];
+                if (Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value) ) {
+                    if (value is string strValue) {
+                        vectorDBProperties = [.. VectorSearchProperty.FromListJson(strValue)];
+                    } else if (value is List<VectorSearchProperty> list) {
+                        vectorDBProperties = [.. list];
+                    }
                 }
-                return [];
-            }
-            set {
-                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(value);
-                Entity.SaveExtendedPropertiesJson();
+
+                // Addイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    if (e.NewItems != null) {
+                        // Entityを更新
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.SaveExtendedPropertiesJson();
+                    }
+                };
+                // Removeイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    if (e.OldItems != null) {
+                        // Entityを更新
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.SaveExtendedPropertiesJson();
+                    }
+                };
+                // Clearイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    // Entityを更新
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties); 
+                    Entity.SaveExtendedPropertiesJson();
+                };
+
+                return vectorDBProperties;
             }
         }
 
@@ -389,7 +414,7 @@ namespace LibPythonAI.Model.Content {
                 Entity.ExtendedProperties["SourcePath"] = value;
                 Entity.SaveExtendedPropertiesJson();
             }
-       }
+        }
 
         // SourceType 
         public string SourceType {
@@ -555,14 +580,14 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run(() => {
+                Task.Run(async () => {
                     string? vectorDBItemName = GetMainVectorSearchProperty().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbedding vectorDBEntry = new(Id.ToString(),GetFolder().Id);
-                    VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                    VectorEmbedding vectorDBEntry = new(Id.ToString(), GetFolder().Id);
+                    await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             }
 
@@ -578,7 +603,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // FolderIdが一致するContentItemWrapperを取得
-        public static List<T> GetItems<T>(ContentFolderWrapper folder) where T: ContentItemWrapper {
+        public static List<T> GetItems<T>(ContentFolderWrapper folder) where T : ContentItemWrapper {
             using PythonAILibDBContext db = new();
             var items = db.ContentItems.Where(x => x.FolderId == folder.Id);
             List<T> result = [];
@@ -597,7 +622,7 @@ namespace LibPythonAI.Model.Content {
             ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
         }
 
-        public static void SaveItems(List<ContentItemWrapper> items,  bool applyAutoProcess = false) {
+        public static void SaveItems(List<ContentItemWrapper> items, bool applyAutoProcess = false) {
 
             foreach (var item in items) {
                 if (item.ContentModified || item.DescriptionModified) {

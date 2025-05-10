@@ -71,13 +71,13 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
 
-        public static List<VectorSearchProperty>? FromListJson(string json) {
+        public static List<VectorSearchProperty> FromListJson(string json) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
             JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Deserialize<List<VectorSearchProperty>>(json, options);
+            return JsonSerializer.Deserialize<List<VectorSearchProperty>>(json, options) ?? [];
         }
 
 
@@ -105,6 +105,30 @@ namespace LibPythonAI.Model.VectorDB {
         // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchProperty> items) {
             return items.Select(item => item.ToDict()).ToList();
+        }
+        // FromDict
+        public static VectorSearchProperty FromDict(Dictionary<string, object> dict) {
+            VectorSearchProperty item = new() {
+                VectorDBItemName = dict["Name"]?.ToString(),
+                Model = dict["model"]?.ToString(),
+                InputText = dict["input_text"]?.ToString()
+            };
+            if (dict.ContainsKey("SearchKwargs")) {
+                Dictionary<string, object> search_kwargs = (Dictionary<string, object>)dict["SearchKwargs"];
+                if (search_kwargs.ContainsKey("k")) {
+                    item.TopK = Convert.ToInt32(search_kwargs["k"]);
+                }
+            }
+            return item;
+        }
+        // FromDictList
+        public static List<VectorSearchProperty> FromDictList(List<Dictionary<string, object>> dicts) {
+            List<VectorSearchProperty> items = [];
+            foreach (var dict in dicts) {
+                VectorSearchProperty item = FromDict(dict);
+                items.Add(item);
+            }
+            return items;
         }
 
         // ToListJson

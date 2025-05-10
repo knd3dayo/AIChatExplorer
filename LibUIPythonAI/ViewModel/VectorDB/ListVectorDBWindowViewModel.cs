@@ -102,7 +102,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             });
         });
 
-        // VectorDB Sourceの追加
+        // VectorDBList Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
             // ベクトルDBの編集Windowを開く

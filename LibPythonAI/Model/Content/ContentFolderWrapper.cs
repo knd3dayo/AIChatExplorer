@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
@@ -288,8 +289,8 @@ namespace LibPythonAI.Model.Content {
             return searchProperty;
         }
 
-        public List<VectorSearchProperty> GetVectorSearchProperties() {
-            List<VectorSearchProperty> searchProperties =
+        public ObservableCollection<VectorSearchProperty> GetVectorSearchProperties() {
+            ObservableCollection<VectorSearchProperty> searchProperties =
             [
                 GetMainVectorSearchProperty(),
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得

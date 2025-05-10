@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -19,7 +20,7 @@ namespace LibPythonAI.PythonIF.Request {
         // ベクトル検索
 
         [JsonPropertyName("vector_search_requests")]
-        public List<VectorSearchProperty> VectorSearchRequests { get; set; } = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchRequests { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName("autogen_props")]
@@ -72,8 +73,8 @@ namespace LibPythonAI.PythonIF.Request {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  
-                List<VectorSearchProperty> vectorSearchRequests, AutoGenProperties? autoGenProperties, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,
+                ObservableCollection<VectorSearchProperty> vectorSearchRequests, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 

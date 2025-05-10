@@ -125,13 +125,22 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
                 InitVectorDBProperties();
                 OnPropertyChanged(nameof(UseFolderVectorSearchProperty));
+                OnPropertyChanged(nameof(UseItemVectorSearchProperty));
+                OnPropertyChanged(nameof(UseFolderVectorSearchPropertyVisibility));
+                OnPropertyChanged(nameof(UseItemVectorSearchPropertyVisibility));
+            }
+        }
+        // アイテムのベクトルDBを使用するか否か
+        public bool UseItemVectorSearchProperty {
+            get {
+                return !UseFolderVectorSearchProperty;
             }
         }
 
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (UseVectorDB) {
-                List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
+                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty == Trueの場合
                 if (UseFolderVectorSearchProperty) {
                     // フォルダのベクトルDBを取得
@@ -165,6 +174,11 @@ namespace LibUIPythonAI.ViewModel.Chat {
         }
         //
         public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
+
+        public Visibility UseFolderVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty);
+
+        public Visibility UseItemVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty == false);
+
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 

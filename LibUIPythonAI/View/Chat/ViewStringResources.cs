@@ -93,8 +93,8 @@ namespace LibUIPythonAI.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
-        // VectorDB
-        public static string VectorDB => CommonStringResources.Instance.VectorDB;
+        // VectorDBList
+        public static string VectorDBList => CommonStringResources.Instance.VectorDBList;
 
         // ClickHereToAddVectorDB
         public static string ClickHereToAddVectorDB => CommonStringResources.Instance.ClickHereToAddVectorDB;

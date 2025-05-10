@@ -95,7 +95,7 @@ namespace LibUIPythonAI.View.AutoGen {
         // LLM
         public static string LLM { get; set; } = CommonStringResources.Instance.LLM;
 
-        // VectorDB
+        // VectorDBList
         public static string VectorDB { get; set; } = CommonStringResources.Instance.VectorDB;
 
         // AddVectorDB

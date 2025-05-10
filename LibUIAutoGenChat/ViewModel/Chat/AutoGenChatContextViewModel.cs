@@ -131,7 +131,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

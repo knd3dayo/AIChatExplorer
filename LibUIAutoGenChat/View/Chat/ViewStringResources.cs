@@ -93,7 +93,7 @@ namespace LibUIAutoGenChat.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
-        // VectorDB
+        // VectorDBList
         public static string VectorDB => CommonStringResources.Instance.VectorDB;
 
         // ClickHereToAddVectorDB

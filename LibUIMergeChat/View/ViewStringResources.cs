@@ -92,7 +92,7 @@ namespace LibUIMergeChat.View {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
-        // VectorDB
+        // VectorDBList
         public static string VectorDB => CommonStringResources.Instance.VectorDB;
 
         // ClickHereToAddVectorDB
