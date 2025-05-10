@@ -246,7 +246,7 @@ class LangChainVectorDB:
 
         return retriever
 
-    def add_document_list(self, content_text: str, description_text: str, source_id: str, source_path: str, source_url: str, image_url=""):
+    def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url=""):
         
         chunk_size = self.vector_db_props.ChunkSize
     
@@ -258,7 +258,6 @@ class LangChainVectorDB:
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
             doc_id = str(uuid.uuid4())
-            folder_id = self.vector_db_props.FolderId
             logger.info(f"folder_id:{folder_id}")
             metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
@@ -358,7 +357,7 @@ class LangChainVectorDB:
         # 既に存在するドキュメントを削除
         self.delete_document(params.source_id)
         # ドキュメントを格納する。
-        self.add_document_list(params.content, params.description, params.source_id, params.source_path, params.git_relative_path)
+        self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
     @classmethod

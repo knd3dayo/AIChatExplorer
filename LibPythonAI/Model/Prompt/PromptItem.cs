@@ -467,7 +467,8 @@ namespace LibPythonAI.Model.Prompt {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = vectorSearchProperties,
+                VectorSearchRequests = vectorSearchProperties,
+                UseVectorDB = promptItem.UseVectorDB,
                 OpenAIProperties = openAIProperties,
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
@@ -587,8 +588,8 @@ namespace LibPythonAI.Model.Prompt {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
+                UseVectorDB = false
             };
 
             Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {

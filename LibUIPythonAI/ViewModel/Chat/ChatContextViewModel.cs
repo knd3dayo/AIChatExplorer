@@ -19,7 +19,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public ChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;
-            // VectorSearchProperties = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
+            // VectorSearchRequests = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
             _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
@@ -93,8 +93,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
         }
 
 
-        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -104,8 +104,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
-        private VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public VectorSearchProperty? SelectedVectorSearchProperty {
+        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public LibPythonAI.Model.VectorDB.VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -131,7 +131,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (UseVectorDB) {
-                List<VectorSearchProperty> items = [];
+                List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty == Trueの場合
                 if (UseFolderVectorSearchProperty) {
                     // フォルダのベクトルDBを取得
@@ -215,7 +215,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText, sessionToken
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
                 );
             return chatRequestContext;
         }

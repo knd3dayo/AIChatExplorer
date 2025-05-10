@@ -5,6 +5,7 @@ using System.Text.Unicode;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;

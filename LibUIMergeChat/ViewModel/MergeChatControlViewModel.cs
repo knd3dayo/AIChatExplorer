@@ -162,8 +162,8 @@ namespace LibUIMergeChat.ViewModel {
         public static ChatMessage? SelectedItem { get; set; }
 
 
-        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -173,8 +173,8 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public VectorSearchProperty? SelectedVectorSearchProperty {
+        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public LibPythonAI.Model.VectorDB.VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _selectedVectorSearchProperty;
             }
@@ -205,7 +205,7 @@ namespace LibUIMergeChat.ViewModel {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
+                    List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -225,7 +225,7 @@ namespace LibUIMergeChat.ViewModel {
                 item.TopK = VectorDBSearchResultMax;
             }
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText, SessionToken
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
                 );
             return chatRequestContext;
         }

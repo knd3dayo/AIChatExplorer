@@ -142,6 +142,7 @@ namespace LibPythonAI.Model.VectorDB {
                     VectorSearchProperty vectorSearchProperty = new() {
                         TopK = 4,
                         VectorDBItemName = VectorDBItem.Name,
+                        Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
                     };
 
                     ChatRequestContext chatRequestContext = new() {
@@ -155,6 +156,7 @@ namespace LibPythonAI.Model.VectorDB {
                     VectorSearchProperty vectorSearchProperty = new() {
                         TopK = 4,
                         VectorDBItemName = VectorDBItem.Name,
+                        Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
                     };
                     VectorEmbedding vectorDBEntry = new() {
                         SourcePath = source_path
@@ -162,8 +164,6 @@ namespace LibPythonAI.Model.VectorDB {
 
                     ChatRequestContext chatRequestContext = new() {
                         OpenAIProperties = openAIProperties,
-                        VectorSearchProperties = [vectorSearchProperty],
-
                     };
 
                     EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(VectorDBItem.Name, openAIProperties.OpenAIEmbeddingModel, vectorDBEntry);

@@ -1,6 +1,7 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Resources;
 
@@ -282,6 +283,7 @@ namespace LibPythonAI.Model.Content {
                 FolderId = Id,
                 TopK = 4,
                 VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
+                Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
             };
             return searchProperty;
         }

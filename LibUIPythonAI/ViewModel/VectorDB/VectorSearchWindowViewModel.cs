@@ -16,8 +16,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         }
 
         // VectorSearchProperty
-        private VectorSearchProperty? _vectorSearchProperty;
-        public VectorSearchProperty? VectorSearchProperty {
+        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _vectorSearchProperty;
+        public LibPythonAI.Model.VectorDB.VectorSearchProperty? VectorSearchProperty {
             get => _vectorSearchProperty;
             set {
                 if (value == null) {
@@ -53,7 +53,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public ObservableCollection<VectorEmbedding> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<LibPythonAI.Model.VectorDB.VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
         private int _selectedTabIndex = 0;
@@ -153,9 +153,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
+
                 ChatRequestContext chatRequestContext = new() {
-                    VectorSearchProperties = [VectorSearchProperty],
                     OpenAIProperties = openAIProperties,
+                    VectorSearchRequests = [VectorSearchProperty],
+                    UseVectorDB = true,
                 };
                 RequestContainer requestContainer = new() {
                     RequestContextInstance = chatRequestContext,
@@ -170,7 +172,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<VectorSearchProperty> items = [];
+            List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {

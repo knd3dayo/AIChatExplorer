@@ -31,7 +31,7 @@ namespace PythonAILib.Model.AutoProcess {
             };
             if (clipboardFolder != null) {
                 chatRequestContent.UseVectorDB = true;
-                chatRequestContent.VectorSearchProperties = [clipboardFolder.GetMainVectorSearchProperty()];
+                chatRequestContent.VectorSearchRequests = [clipboardFolder.GetMainVectorSearchProperty()];
             }
 
             ChatResult? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });

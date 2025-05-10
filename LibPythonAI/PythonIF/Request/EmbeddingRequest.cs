@@ -33,7 +33,7 @@ namespace LibPythonAI.PythonIF.Request {
             return dict;
         }
 
-        public static List<Dictionary<string, object>> ToDictList(List<VectorSearchRequest> requests) {
+        public static List<Dictionary<string, object>> ToDictList(List<VectorSearchProperty> requests) {
             List<Dictionary<string, object>> dicts = [];
             foreach (var request in requests) {
                 dicts.Add(request.ToDict());

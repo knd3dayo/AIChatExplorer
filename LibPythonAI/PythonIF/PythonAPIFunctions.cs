@@ -239,23 +239,11 @@ namespace PythonAILib.PythonIF {
         // 通常のOpenAIChatを実行する
         public async Task<ChatResult> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
 
-            // VectorSearchRequestsを作成
-            List<VectorSearchRequest> vectorSearchRequests = [];
-            foreach (VectorSearchProperty vectorSearchProperty in chatRequestContext.VectorSearchProperties) {
-                // VectorSearchRequestを作成
-                string? name = vectorSearchProperty.VectorDBItemName;
-                if (string.IsNullOrEmpty(name)) {
-                    throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
-                }
-                VectorSearchRequest vectorSearchRequest = new(name, chatRequest.ContentText, vectorSearchProperty.TopK, vectorSearchProperty.FolderId, vectorSearchProperty.ContentType);
-                vectorSearchRequests.Add(vectorSearchRequest);
-            }
 
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 ChatRequestInstance = chatRequest,
                 RequestContextInstance = chatRequestContext,
-                VectorSearchRequestsInstance = vectorSearchRequests
             };
             // RequestContainerをJSON文字列に変換
             string requestContextJson = requestContainer.ToJson();
@@ -594,22 +582,9 @@ namespace PythonAILib.PythonIF {
 
         public async Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
 
-            // VectorSearchRequestsを作成
-            List<VectorSearchRequest> vectorSearchRequests = [];
-            foreach (VectorSearchProperty vectorSearchProperty in chatRequestContext.VectorSearchProperties) {
-                // VectorSearchRequestを作成
-                string? name = vectorSearchProperty.VectorDBItemName;
-                if (string.IsNullOrEmpty(name)) {
-                    throw new Exception(StringResources.PropertyNotSet("VectorDBItem.Name"));
-                }
-                VectorSearchRequest vectorSearchRequest = new(name, query, vectorSearchProperty.TopK, vectorSearchProperty.FolderId, vectorSearchProperty.ContentType);
-                vectorSearchRequests.Add(vectorSearchRequest);
-            }
-
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 RequestContextInstance = chatRequestContext,
-                VectorSearchRequestsInstance = vectorSearchRequests
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();

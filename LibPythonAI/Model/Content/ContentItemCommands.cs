@@ -56,7 +56,6 @@ namespace LibPythonAI.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = item.GetFolder().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties,
             };
 

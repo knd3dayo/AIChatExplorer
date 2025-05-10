@@ -15,10 +15,11 @@ namespace LibPythonAI.PythonIF.Request {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
-        // ベクトルDBアイテム
 
-        [JsonPropertyName("vector_db_props")]
-        public List<VectorSearchProperty> VectorSearchProperties { get; set; } = [];
+        // ベクトル検索
+
+        [JsonPropertyName("vector_search_requests")]
+        public List<VectorSearchProperty> VectorSearchRequests { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName("autogen_props")]
@@ -49,20 +50,22 @@ namespace LibPythonAI.PythonIF.Request {
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
-                { "prompt_template_text", PromptTemplateText },
                 { "split_mode", SplitMode.ToString() },
-                { "summarize_prompt_text", SummarizePromptText },
-                { "related_information_prompt_text", RelatedInformationPromptText },
-                { "split_token_count", SplitTokenCount },
-
             };
+
+            if (SplitMode != SplitOnTokenLimitExceedModeEnum.None) {
+                requestContext["prompt_template_text"] = PromptTemplateText;
+                requestContext["summarize_prompt_text"] = SummarizePromptText;
+                requestContext["related_information_prompt_text"] = RelatedInformationPromptText;
+                requestContext["split_token_count"] = SplitTokenCount;
+            }
             return requestContext;
 
         }
 
         // CreateEntriesDictList
         public List<Dictionary<string, object>> ToDictVectorDBItemsDict() {
-            return UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchProperties) : [];
+            return UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchRequests) : [];
         }
 
        
@@ -70,12 +73,12 @@ namespace LibPythonAI.PythonIF.Request {
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
                 OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  
-                List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText, string sessionToken
+                List<VectorSearchProperty> vectorSearchRequests, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchProperties = vectorSearchProperties,
+                VectorSearchRequests = vectorSearchRequests,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = promptTemplateText,
                 UseVectorDB = userVectorDB,

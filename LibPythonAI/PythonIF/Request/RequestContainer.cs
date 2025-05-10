@@ -25,8 +25,6 @@ namespace LibPythonAI.PythonIF.Request {
         // ContentFolderRequests
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
-        // VectorSearchRequest
-        public List<VectorSearchRequest> VectorSearchRequestsInstance { get; set; } = [];
 
         // VectorDBItemInstance
         public VectorDBItem? VectorDBItemInstance { get; set; } = null;
@@ -50,19 +48,13 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
 
             if (RequestContextInstance != null) {
-                dict["vector_db_props"] = RequestContextInstance.ToDictVectorDBItemsDict();
-            }
-
-            if (RequestContextInstance != null) {
                 dict["openai_props"] = RequestContextInstance.OpenAIProperties.ToDict();
-            }
-            if (RequestContextInstance != null) {
                 dict["autogen_props"] = RequestContextInstance.AutoGenProperties.ToDict();
+                dict["chat_request_context"] = RequestContextInstance.ToChatRequestContextDict();
+                dict["vector_search_requests"] = RequestContextInstance.ToDictVectorDBItemsDict();
             }
 
-            if (RequestContextInstance != null) {
-                dict["chat_request_context"] = RequestContextInstance.ToChatRequestContextDict();
-            }
+
             if (ChatRequestInstance != null) {
                 dict["chat_request"] = ChatRequestInstance.ToDict();
             }
@@ -75,9 +67,7 @@ namespace LibPythonAI.PythonIF.Request {
             if (VectorDBItemInstance != null) {
                 dict["vector_db_item_request"] = VectorDBItemInstance.ToDict();
             }
-            if (VectorSearchRequestsInstance != null) {
-                dict["vector_search_requests"] = VectorSearchRequest.ToDictList(VectorSearchRequestsInstance);
-            }
+
             if (EmbeddingRequestInstance != null) {
                 dict["embedding_request"] = EmbeddingRequestInstance.ToDict();
             }
