@@ -64,23 +64,11 @@ namespace PythonAILib.Utils.Python {
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターJsonを作成する。
         public static string CreateParameterJson(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
-            Dictionary<string, object> parametersDict = [];
-            parametersDict["chat_request_context"] = chatRequestContext.ToChatRequestContextDict();
-            parametersDict["openai_props"] = chatRequestContext.OpenAIProperties.ToDict();
-            parametersDict["autogen_props"] = chatRequestContext.AutoGenProperties.ToDict();
-            parametersDict["vector_db_props"] = chatRequestContext.ToDictVectorDBItemsDict();
-
-            // ChatRequestをDictionaryに保存
-            if (chatRequest != null) {
-                if (chatMode == OpenAIExecutionModeEnum.Normal) {
-                    parametersDict["chat_request"] = chatRequest.ToDict();
-                }
-                if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
-                    parametersDict["autogen_request"] = chatRequest.ToDict();
-                }
-            }
-
-            string parametersJson = JsonSerializer.Serialize(parametersDict, options);
+            RequestContainer requestContainer = new() {
+                RequestContextInstance = chatRequestContext,
+                ChatRequestInstance = chatRequest
+            };
+            string parametersJson = requestContainer.ToJson();
             return parametersJson;
 
         }

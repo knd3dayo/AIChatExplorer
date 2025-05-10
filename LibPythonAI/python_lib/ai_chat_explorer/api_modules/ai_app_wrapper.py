@@ -163,11 +163,26 @@ async def autogen_chat( request_json: str):
     # request_jsonからrequestを作成
     request_dict: dict = json.loads(request_json)
     autogen_props = get_autogen_objects( request_dict)
-    autogen_request = get_autogen_request_objects(request_dict)
-    input_text = autogen_request.get("input_text", "")
-    if not input_text:
-        raise ValueError("input_text is not set")
-
+    # chat_requestを取得
+    chat_request_dict = request_dict.get(chat_request_name, None)
+    if not chat_request_dict:
+        raise ValueError("chat_request is not set")
+    
+    # chat_request_dictのmessagesを取得
+    messages = chat_request_dict.get("messages", None)
+    if not messages:
+        raise ValueError("messages is not set")
+    # messagesの最後の要素を取得
+    last_message = messages[-1]
+    # last_messageのcontent(リスト)を取得
+    content_list = last_message.get("content", None)
+    if not content_list:
+        raise ValueError("content is not set")
+    # content_listの要素の中で、typeがtextのものを取得
+    text_list = [content for content in content_list if content.get("type") == "text"]
+    # text_listの要素を結合 
+    input_text = "\n".join([content.get("text") for content in text_list])
+            
     # strout,stderrorをStringIOでキャプチャする
     buffer = StringIO()
     sys.stdout = buffer

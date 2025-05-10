@@ -283,7 +283,7 @@ namespace PythonAILib.PythonIF {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 RequestContextInstance = chatRequestContext,
-                AutogenRequestInstance = new(inputText),
+                ChatRequestInstance = chatRequest,
             };
             // RequestContainerをJSON文字列に変換
             string requestContextJson = requestContainer.ToJson();

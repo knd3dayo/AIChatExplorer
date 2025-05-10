@@ -20,8 +20,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public TokenCountRequest? TokenCountRequestInstance { get; set; }
 
-        public AutogenRequest? AutogenRequestInstance { get; set; }
-
+        
         // ContentFolderRequests
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
@@ -60,9 +59,6 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (TokenCountRequestInstance != null) {
                 dict["token_count_request"] = TokenCountRequestInstance.ToDict();
-            }
-            if (AutogenRequestInstance != null) {
-                dict["autogen_request"] = AutogenRequestInstance.ToDict();
             }
             if (VectorDBItemInstance != null) {
                 dict["vector_db_item_request"] = VectorDBItemInstance.ToDict();

@@ -18,7 +18,6 @@ get_content_folder_requelsts_name = "content_folder_requests"
 chat_request_name = "chat_request"
 chat_contatenate_request_name = "chat_contatenate_request"
 token_count_request_name = "token_count_request"
-autogen_request_name = "autogen_request"
 vector_search_requests_name = "vector_search_requests"
 embedding_request_name = "embedding_request"
 excel_request_name = "excel_request"
@@ -204,15 +203,6 @@ def get_token_count_objects(request_dict: dict) -> dict:
         raise ValueError("token_count_request is not set")
     return token_count_request
 
-def get_autogen_request_objects(request_dict: dict) -> dict:
-    '''
-    {"context": {"autogen_request": {}}}の形式で渡される
-    '''
-    # contextを取得
-    request:dict = request_dict.get(autogen_request_name, None)
-    if not request:
-        raise ValueError("request is not set.")
-    return request
 
 def get_vector_db_item_object(request_dict: dict) -> VectorDBItem:
     '''
