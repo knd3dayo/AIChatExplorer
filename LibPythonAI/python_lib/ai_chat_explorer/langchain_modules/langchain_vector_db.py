@@ -4,6 +4,7 @@ from typing import Tuple, List, Any, Union, Optional
 from collections import defaultdict
 import copy
 import logging
+import asyncio
 
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
@@ -103,11 +104,11 @@ class LangChainVectorDB:
         # 未実装例外をスロー
         raise NotImplementedError("Not implemented")
 
-    def _save(self, documents:list=[]):
+    async def _save(self, documents:list=[]):
         if self.db is None:
             raise ValueError("db is None")
         
-        self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
+        await self.db.aadd_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
     def _delete(self, doc_ids:list=[]):
         if len(doc_ids) == 0:
@@ -125,7 +126,7 @@ class LangChainVectorDB:
 
     def __add_document(self, document: Document):
         # ベクトルDB固有の保存メソッドを呼び出し                
-        self._save([document])
+        asyncio.run( self._save([document] ))
 
     def __add_multivector_document(self, source_document: Document):
 
@@ -165,7 +166,7 @@ class LangChainVectorDB:
         # Retoriverを作成
         retriever = self.create_retriever()
         # ドキュメントを追加
-        retriever.vectorstore.add_documents(sub_docs)
+        asyncio.run(retriever.vectorstore.aadd_documents(sub_docs))
 
         # 元のドキュメントをDocStoreに保存
         param = []

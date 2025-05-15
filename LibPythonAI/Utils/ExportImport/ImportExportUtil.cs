@@ -69,7 +69,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (exportText) {
                     row.Add(clipboardItem.Content);
                 }
-                // SourcePath
+                // Path
                 bool exportSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
                 if (exportSourcePath) {
                     row.Add(clipboardItem.SourcePath);
@@ -106,7 +106,7 @@ namespace LibPythonAI.Utils.ExportImport {
             if (importText) {
                 targetNames.Add("Text");
             }
-            // SourcePath
+            // Path
             bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
             if (importSourcePath) {
                 targetNames.Add("SourcePath");

@@ -282,6 +282,16 @@ class AutogentLLMConfig:
         self.api_key = llm_config_dict.get("api_key", "")
         self.base_url = llm_config_dict.get("base_url", "")
 
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "api_type": self.api_type,
+            "api_version": self.api_version,
+            "model": self.model,
+            "api_key": self.api_key,
+            "base_url": self.base_url
+        }
+
 class AutogenTools:
     '''
     以下のテーブル定義のデータを格納するクラス
@@ -290,6 +300,13 @@ class AutogenTools:
         self.name = tools_dict.get("name", "")
         self.path = tools_dict.get("path", "")
         self.description = tools_dict.get("description", "")
+    
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "path": self.path,
+            "description": self.description
+        }
 
 class AutogenAgent:
     '''
@@ -305,6 +322,17 @@ class AutogenAgent:
         self.tool_names = agent_dict.get("tool_names", "")
         self.vector_db_items = agent_dict.get("vector_db_props", json.dumps([]))
 
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "system_message": self.system_message,
+            "code_execution": self.code_execution,
+            "llm_config_name": self.llm_config_name,
+            "tool_names": self.tool_names,
+            "vector_db_items": self.vector_db_items
+        }
+    
 class AutogenGroupChat:
     '''
     以下のテーブル定義のデータを格納するクラス
@@ -316,6 +344,14 @@ class AutogenGroupChat:
         self.llm_config_name = group_chat_dict.get("llm_config_name", "")
         self.agent_names_str = group_chat_dict.get("agent_names", "")
         self.agent_names = self.agent_names_str.split(",")
+
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "llm_config_name": self.llm_config_name,
+            "agent_names": self.agent_names_str
+        }
 
 class MainDB:
     def __init__(self, db_path):
@@ -744,6 +780,17 @@ class MainDB:
     #################################################
     # Autogen関連
     #################################################
+    def get_autogen_llm_config_list(self) -> List[AutogentLLMConfig]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM autogen_llm_configs")
+        rows = cur.fetchall()
+        llm_configs = [AutogentLLMConfig(dict(row)) for row in rows]
+        conn.close()
+
+        return llm_configs
+    
     def get_autogen_llm_config(self, llm_config_name: str) -> Union[AutogentLLMConfig, None]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
@@ -760,6 +807,23 @@ class MainDB:
 
         return AutogentLLMConfig(llm_config_dict)
     
+    def update_autogen_llm_config(self, llm_config: AutogentLLMConfig):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        if self.get_autogen_llm_config(llm_config.name) is None:
+            cur.execute("INSERT INTO autogen_llm_configs VALUES (?, ?, ?, ?, ?, ?)", (llm_config.name, llm_config.api_type, llm_config.api_version, llm_config.model, llm_config.api_key, llm_config.base_url))
+        else:
+            cur.execute("UPDATE autogen_llm_configs SET api_type=?, api_version=?, model=?, api_key=?, base_url=? WHERE name=?", (llm_config.api_type, llm_config.api_version, llm_config.model, llm_config.api_key, llm_config.base_url, llm_config.name))
+        conn.commit()
+        conn.close()
+
+    def delete_autogen_llm_config(self, llm_config: AutogentLLMConfig):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM autogen_llm_configs WHERE name=?", (llm_config.name,))
+        conn.commit()
+        conn.close()
+
     def get_autogen_tool(self, tool_name: str) -> Union[AutogenTools, None]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
@@ -776,7 +840,7 @@ class MainDB:
 
         return AutogenTools(tool_dict)
     
-    def get_autogen_tools(self) -> List[AutogenTools]:
+    def get_autogen_tool_list(self) -> List[AutogenTools]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
@@ -795,6 +859,28 @@ class MainDB:
         else:
             cur.execute("UPDATE autogen_tools SET path=?, description=? WHERE name=?", (tool.path, tool.description, tool.name))
         conn.commit()
+        conn.close()
+
+    def delete_autogen_tool(self, tool: AutogenTools):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM autogen_tools WHERE name=?", (tool.name,))
+        conn.commit()
+        conn.close()
+
+    #################################################
+    # AutogenAgent関連
+    #################################################
+    def get_autogen_agent_list(self) -> List[AutogenAgent]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM autogen_agents")
+        rows = cur.fetchall()
+        agents = [AutogenAgent(dict(row)) for row in rows]
+        conn.close()
+
+        return agents
 
     def get_autogen_agent(self, agent_name: str) -> Union[AutogenAgent, None]:
         conn = sqlite3.connect(self.db_path)
@@ -810,17 +896,6 @@ class MainDB:
         conn.close()
 
         return AutogenAgent(agent_dict)
-
-    def get_autogen_agents(self) -> List[AutogenAgent]:
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row 
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM autogen_agents")
-        rows = cur.fetchall()
-        agents = [AutogenAgent(dict(row)) for row in rows]
-        conn.close()
-
-        return agents
     
     def update_autogen_agent(self, agent: AutogenAgent):
         conn = sqlite3.connect(self.db_path)
@@ -830,7 +905,27 @@ class MainDB:
         else:
             cur.execute("UPDATE autogen_agents SET description=?, system_message=?, code_execution=?, llm_config_name=?, tool_names=?, vector_db_items=? WHERE name=?", (agent.description, agent.system_message, agent.code_execution, agent.llm_config_name, agent.tool_names, agent.vector_db_items, agent.name))
         conn.commit()
+        conn.close()
+    
+    def delete_autogen_agent(self, agent: AutogenAgent):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM autogen_agents WHERE name=?", (agent.name,))
+        conn.commit()
+        conn.close()
+    #################################################
+    # AutogenGroupChat関連
+    #################################################
+    def get_autogen_group_chat_list(self) -> List[AutogenGroupChat]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM autogen_group_chats")
+        rows = cur.fetchall()
+        group_chats = [AutogenGroupChat(dict(row)) for row in rows]
+        conn.close()
 
+        return group_chats  
 
     def get_autogen_group_chat(self, group_chat_name: str) -> Union[AutogenGroupChat, None]:
         conn = sqlite3.connect(self.db_path)
@@ -847,3 +942,20 @@ class MainDB:
         conn.close()
 
         return AutogenGroupChat(group_chat_dict)
+    
+    def update_autogen_group_chat(self, group_chat: AutogenGroupChat):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        if self.get_autogen_group_chat(group_chat.name) is None:
+            cur.execute("INSERT INTO autogen_group_chats VALUES (?, ?, ?, ?)", (group_chat.name, group_chat.description, group_chat.llm_config_name, group_chat.agent_names_str))
+        else:
+            cur.execute("UPDATE autogen_group_chats SET description=?, llm_config_name=?, agent_names=? WHERE name=?", (group_chat.description, group_chat.llm_config_name, group_chat.agent_names_str, group_chat.name))
+        conn.commit()
+        conn.close()
+
+    def delete_autogen_group_chat(self, group_chat: AutogenGroupChat):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM autogen_group_chats WHERE name=?", (group_chat.name,))
+        conn.commit()
+        conn.close()

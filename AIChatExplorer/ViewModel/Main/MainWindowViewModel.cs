@@ -76,8 +76,6 @@ namespace AIChatExplorer.ViewModel.Main {
             MainTabManager.TabItems.Add(container);
 
 
-            // AutoGenPropertiesの初期化
-            AutoGenProperties.Init();
 
         }
 
@@ -132,7 +130,10 @@ namespace AIChatExplorer.ViewModel.Main {
             // VectorDBItemのLoad
             Task.Run(async () => {
                 await VectorDBItem.LoadItemsAsync();
+                // AutoGenPropertiesの初期化
+                await AutoGenProperties.Init();
             });
+
         }
         // プログレスインジケータ表示更新用のアクション
 

@@ -23,6 +23,9 @@ namespace LibUIPythonAI.Resource {
         // EditAutoGenAgentWindowTitle
         public override string EditAutoGenAgentWindowTitle { get; } = "EditAutoGenAgentWindowTitle";
 
+        // EditAutoGenToolWindowTitle
+        public override string EditAutoGenToolWindowTitle { get; } = "EditAutoGenToolWindowTitle";
+
         // EditAutoGenLLMConfigWindowTitle
         public override string EditAutoGenLLMConfigWindowTitle { get; } = "EditAutoGenLLMConfigWindowTitle";
 
@@ -40,7 +43,7 @@ namespace LibUIPythonAI.Resource {
         public override string NestedChat { get; } = "Nested Chat";
         // Agent
         public override string Agent { get; } = "Agent";
-        // SourcePath
+        // Path
         public override string SourcePath { get; } = "Source Path";
         // InitialAgent
         public override string InitialAgent { get; } = "Initial Agent";

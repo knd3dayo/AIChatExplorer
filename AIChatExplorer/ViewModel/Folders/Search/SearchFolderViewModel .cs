@@ -42,7 +42,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
             });
 
         }
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<ContentItemWrapper>();
         }

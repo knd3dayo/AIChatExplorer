@@ -1033,10 +1033,10 @@ namespace LibUIPythonAI.Resource {
         public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
         public override string ClearChatContents { get; } = "Clear Chat Contents";
-        // Clear SourcePath
+        // Clear Path
         public override string ClearContent { get; } = "Clear Content";
 
-        // Reload SourcePath
+        // Reload Path
         public override string ReloadContent { get; } = "Reload Content";
 
         public override string ExtractedText { get; } = "Extracted Text";

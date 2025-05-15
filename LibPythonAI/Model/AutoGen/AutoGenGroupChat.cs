@@ -1,10 +1,15 @@
 using System.Data.SQLite;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using PythonAILib.Common;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenGroupChat {
 
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -148,6 +153,23 @@ namespace LibPythonAI.Model.AutoGen {
             return chats;
         }
 
+        // ToJson
+        public string ToJson() {
+            // Serialize the object to JSON
+            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            return jsonString;
+        }
+
+        // FromDict
+        public static AutoGenGroupChat FromDict(Dictionary<string, object> dict) {
+            AutoGenGroupChat chat = new() {
+                Name = dict["name"].ToString() ?? "",
+                Description = dict["description"].ToString() ?? "",
+                LLMConfigName = dict["llm_config_name"].ToString() ?? "",
+                AgentNames = ((List<string?>)dict["agent_names"]).Select(x => x.ToString()).ToList() ?? [],
+            };
+            return chat;
+        }
     }
 
 

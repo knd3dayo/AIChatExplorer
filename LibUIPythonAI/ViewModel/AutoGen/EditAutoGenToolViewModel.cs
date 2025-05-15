@@ -31,12 +31,12 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
 
-        //　SourcePath
-        public string SourcePath {
-            get { return AutoGenTool.SourcePath; }
+        //　Path
+        public string Path {
+            get { return AutoGenTool.Path; }
             set {
-                AutoGenTool.SourcePath = value;
-                OnPropertyChanged(nameof(SourcePath));
+                AutoGenTool.Path = value;
+                OnPropertyChanged(nameof(Path));
             }
         }
 
@@ -58,7 +58,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
                 return;
             } else {
-                SourcePath = dialog.FileName;
+                Path = dialog.FileName;
             }
         }, null, null);
 

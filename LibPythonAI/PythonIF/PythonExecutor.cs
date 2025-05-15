@@ -60,6 +60,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.PythonNotInitialized);
                 }
             }
+
         }
 
 

@@ -77,7 +77,7 @@ namespace AIChatExplorer.Model.Main {
         /// </summary>
         /// <param name="item"></param>
         public void SetDataObject(ContentItemWrapper item) {
-            // System.Windows.MessageBox.Show(item.SourcePath);
+            // System.Windows.MessageBox.Show(item.Path);
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard

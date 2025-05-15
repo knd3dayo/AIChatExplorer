@@ -133,6 +133,28 @@ namespace PythonAILib.Resources {
         // ベクトル検索リクエスト
         public override string VectorSearchRequest { get; } = "Vector Search Request";
 
+        // UpdateAutoGenAgentExecute
+        public override string UpdateAutoGenAgentExecute { get; } = "Update AutoGen Agent Execute";
+
+        // UpdateAutogenLLMConfigExecute
+        public override string UpdateAutogenLLMConfigExecute { get; } = "Update Autogen LLM Config Execute";
+
+        // DeleteAutoGenAgentExecute
+        public override string DeleteAutoGenAgentExecute { get; } = "Delete AutoGen Agent Execute";
+        // DeleteAutogenLLMConfigExecute
+        public override string DeleteAutogenLLMConfigExecute { get; } = "Delete Autogen LLM Config Execute";
+
+        // DeleteAutoGenAgentExecute
+        public override string DeleteAutoGenGroupChatExecute { get; } = "Delete AutoGen Group Chat Execute";
+
+        // UpdateAutoGenGroupChatExecute
+        public override string UpdateAutoGenGroupChatExecute { get; } = "Update AutoGen Group Chat Execute";
+        // UpdateAutoGenToolExecute
+        public override string UpdateAutoGenToolExecute { get; } = "Update AutoGen Tool Execute";
+
+        // DeleteAutoGenToolExecute
+        public override string DeleteAutoGenToolExecute { get; } = "Delete AutoGen Tool Execute";
+
         // Excelへのエクスポートを実行します
         public override string ExportToExcelExecute { get; } = "Export to Excel Execute";
         // Excelへのエクスポートが失敗しました
@@ -223,7 +245,7 @@ namespace PythonAILib.Resources {
 
         public override string SourceTitle { get; } = "Source Title";
 
-        // SourcePath
+        // Path
         public override string SourcePath { get; } = "Source Path";
 
         public override string Pin { get; } = "Pin";

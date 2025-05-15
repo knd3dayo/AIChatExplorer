@@ -3,7 +3,6 @@ using System.Windows;
 using LibPythonAI.Model.AutoGen;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenGroupChatViewModel : CommonViewModelBase {
@@ -15,7 +14,9 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AfterUpdate = afterUpdate;
 
             LoadAutoGenAgents();
-            LoadLLMConfig();
+            Task.Run(async () => {
+                await LoadLLMConfigAsync();
+            });
         }
 
         public AutoGenGroupChat AutoGenGroupChat { get; set; }
@@ -61,10 +62,24 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
         // LLMConfigList
-        public ObservableCollection<AutoGenLLMConfig> LLMConfigList { get; set; } = [.. AutoGenLLMConfig.GetAutoGenLLMConfigList()];
+        private ObservableCollection<AutoGenLLMConfig> _LLMConfigList = new();
+        public ObservableCollection<AutoGenLLMConfig> LLMConfigList {
+            get => _LLMConfigList;
+            set {
+                _LLMConfigList = value;
+                OnPropertyChanged(nameof(LLMConfigList));
+            }
+        }
 
         // InitAgent
-        public AutoGenLLMConfig? LLMConfig { get; set; }
+        private AutoGenLLMConfig? _llmConfig;
+        public AutoGenLLMConfig? LLMConfig {
+            get => _llmConfig;
+            set {
+                _llmConfig = value;
+                OnPropertyChanged(nameof(LLMConfig));
+            }
+        }
 
         public void LoadAutoGenAgents() {
             // AutoGenAgentのリストを取得
@@ -83,9 +98,16 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             OnPropertyChanged(nameof(AutoGenAgents));
         }
         // LLMConfigを読み込む
-        public void LoadLLMConfig() {
-            LLMConfig = AutoGenLLMConfig.GetAutoGenLLMConfigList().FirstOrDefault(x => x.Name == LLMConfigName);
-            OnPropertyChanged(nameof(LLMConfig));
+        public async Task LoadLLMConfigAsync() {
+            List<AutoGenLLMConfig> list = await AutoGenLLMConfig.GetAutoGenLLMConfigList();
+            var config  = list.FirstOrDefault(x => x.Name == LLMConfigName);
+
+            // MainUIスレッドで実行する
+            MainUITask.Run(() => {
+                if (config != null) {
+                    LLMConfig = config;
+                }
+            });
         }
 
 

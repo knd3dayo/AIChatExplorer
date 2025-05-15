@@ -183,7 +183,7 @@
                             Header="{x:Static res:ViewStringResources.Description}" />
                         <DataGridTextColumn
                             Width="*"
-                            Binding="{Binding SourcePath}"
+                            Binding="{Binding Path}"
                             Header="{x:Static res:ViewStringResources.SourcePath}" />
                     </DataGrid.Columns>
                     <DataGrid.ContextMenu>

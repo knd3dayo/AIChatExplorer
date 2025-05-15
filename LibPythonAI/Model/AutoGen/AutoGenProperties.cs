@@ -1,7 +1,6 @@
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
@@ -75,105 +74,196 @@ namespace PythonAILib.Model.AutoGen {
 
         private static bool Initialized { get; set; } = false;
         // デフォルトの設定を取得
-        public static void Init() {
+        public static async Task Init() {
             if (Initialized) {
                 return;
             }
 
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // llm_configの初期設定  
-            string name = "default";
-            string api_type = ConfigPrams.GetOpenAIProperties().AzureOpenAI ? "azure" : "";
-            string api_version = ConfigPrams.GetOpenAIProperties().AzureOpenAIAPIVersion;
-            string model = ConfigPrams.GetOpenAIProperties().OpenAICompletionModel;
-            string api_key = ConfigPrams.GetOpenAIProperties().OpenAIKey;
-            string base_url = ConfigPrams.GetOpenAIProperties().OpenAIBaseURL;
-            if (api_type == "azure") {
-                base_url = ConfigPrams.GetOpenAIProperties().AzureOpenAIEndpoint;
+            AutoGenLLMConfig config = new() {
+                Name = "default",
+                ApiType = ConfigPrams.GetOpenAIProperties().AzureOpenAI ? "azure" : "",
+                ApiVersion = ConfigPrams.GetOpenAIProperties().AzureOpenAIAPIVersion,
+                Model = ConfigPrams.GetOpenAIProperties().OpenAICompletionModel,
+                ApiKey = ConfigPrams.GetOpenAIProperties().OpenAIKey,
+            };
+            if (config.ApiType == "azure") {
+                config.BaseURL = ConfigPrams.GetOpenAIProperties().AzureOpenAIEndpoint;
+            } else {
+                config.BaseURL = ConfigPrams.GetOpenAIProperties().OpenAIBaseURL;
             }
+
+            await config.Save();
+
             string work_dir = ConfigPrams.GetAutoGenWorkDir();
-            AutoGenLLMConfig.UpdateAutoGenLLMConfig(name, api_type, api_version, model, api_key, base_url);
 
             // search_wikipedia_ja
             string toolName = "search_wikipedia_ja";
             string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
             string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_chat_explorer", "autogen_modules", "default_tools.py");
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            AutoGenTool autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // list_files_in_directory
             toolName = "list_files_in_directory";
             toolDescription = "This function lists the files in the specified directory.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // extract_file
             toolName = "extract_file";
             toolDescription = "This function extracts the specified file.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // check_file
             toolName = "check_file";
             toolDescription = "This function checks if the specified file exists.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // extract_webpage
             toolName = "extract_webpage";
             toolDescription = "This function extracts text and links from the specified URL of a web page.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // search_duckduckgo
             toolName = "search_duckduckgo";
             toolDescription = "This function searches DuckDuckGo with the specified keywords and returns related articles.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // save_text_file
             toolName = "save_text_file";
             toolDescription = "This function saves the specified text to a file.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // arxiv_search
             toolName = "arxiv_search";
             toolDescription = "This function searches arXiv with the specified keywords and returns related articles.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // list_agents
             toolName = "list_agents";
             toolDescription = "This function retrieves a list of registered agents from the database.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // execute_agent
             toolName = "execute_agent";
             toolDescription = "This function executes the specified agent.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // list_agents
             toolName = "list_agents";
             toolDescription = "This function retrieves a list of registered agents from the database.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // get_current_time
             toolName = "get_current_time";
             toolDescription = "This function returns the current time.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // vector_search
             toolName = "vector_search";
             toolDescription = "This function searches for the specified vector in the database.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // global_vector_search
             toolName = "global_vector_search";
             toolDescription = "This function searches for the specified vector in the global database.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // past_chat_history_vector_search
             toolName = "past_chat_history_vector_search";
             toolDescription = "This function searches for the specified vector in the past chat history.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // list_tool_agent
             toolName = "list_tool_agents";
             toolDescription = "This function retrieves a list of registered tool agents from the database.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // execute_tool_agent
             toolName = "execute_tool_agent";
@@ -183,7 +273,13 @@ namespace PythonAILib.Model.AutoGen {
                 - Agent name: Specify the name of the agent as the Python function name.
                 - Input text: The text data to be processed by the agent.
                 """;
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // register_tool_agent
             toolName = "register_tool_agent";
@@ -192,8 +288,13 @@ namespace PythonAILib.Model.AutoGen {
                 引数で与えられたPythonコードから関数を作成し、FunctionToolオブジェクトを作成します。
                 作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
             """;
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
+            autoGenTool = new() {
+                Name = toolName,
+                Description = toolDescription,
+                Path = toolPath,
+            };
+            await autoGenTool.Save();
 
             // agentの初期化
             var agentName = "planner";
@@ -427,7 +528,7 @@ namespace PythonAILib.Model.AutoGen {
             groupName = "agent_generative_chat";
             groupDescription = "ツールエージェントの実行と登録するためのグループチャットです。";
             groupLLMConfig = "default";
-            groupAgentNames = new List<string> { "tool_generative_planner", "tool_agent_creator", "agent_selector"};
+            groupAgentNames = new List<string> { "tool_generative_planner", "tool_agent_creator", "agent_selector" };
             AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
 

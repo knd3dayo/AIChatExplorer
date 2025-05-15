@@ -133,7 +133,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public async Task RunAction(ContentItemWrapper clipboardItem) {
+        public async Task RunActionAsync(ContentItemWrapper clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResources.Instance.RuleNameIsInvalid(RuleName));
@@ -150,7 +150,7 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             // DestinationIdに一致するフォルダを取得
 
-            await RuleAction.Execute(clipboardItem, DestinationFolder);
+             await RuleAction.Execute(clipboardItem, DestinationFolder);
         }
 
         public string GetDescriptionString() {

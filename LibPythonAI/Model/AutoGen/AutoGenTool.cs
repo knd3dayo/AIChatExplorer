@@ -1,10 +1,18 @@
 using System.Data.SQLite;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using PythonAILib.Common;
+using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenTool {
 
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -12,8 +20,25 @@ namespace LibPythonAI.Model.AutoGen {
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
 
-        [JsonPropertyName("source_path")]
-        public string SourcePath { get; set; } = "";
+        [JsonPropertyName("path")]
+        public string Path { get; set; } = "";
+
+        // ToJson
+        public string ToJson() {
+            // Serialize the object to JSON
+            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            return jsonString;
+        }
+
+        // FromDict
+        public static AutoGenTool FromDict(Dictionary<string, object> dict) {
+            AutoGenTool config = new() {
+                Name = dict["name"]?.ToString() ?? "",
+                Description = dict["description"]?.ToString() ?? "",
+                Path = dict["path"]?.ToString() ?? "",
+            };
+            return config;
+        }
 
         // CreateEntriesDictList
         public static Dictionary<string, object> ToDict(AutoGenTool data) {
@@ -21,7 +46,7 @@ namespace LibPythonAI.Model.AutoGen {
             Dictionary<string, object> dict = new Dictionary<string, object> {
                 { "name", data.Name },
                 { "description", data.Description },
-                { "source_path", data.SourcePath },
+                { "path", data.Path },
             };
             return dict;
         }
@@ -34,114 +59,30 @@ namespace LibPythonAI.Model.AutoGen {
             return dictList;
         }
 
-        public void Save(bool allow_override = true) {
-            UpdateAutoGenTool(Name, Description, SourcePath, allow_override);
+        public async Task Save() {
+            // APIを呼び出して、設定を保存する
+            await PythonExecutor.PythonAIFunctions.UpdateAutoGenToolAsync(this);
         }
 
-        public void Delete() {
-            DeleteAutoGenTool(Name);
+        public async Task Delete() {
+            await DeleteAutoGenTool(Name);
         }
 
-        public static void DeleteAll() {
-            List<AutoGenTool> autoGenTools = GetAutoGenToolList();
-            foreach (AutoGenTool tool in autoGenTools) {
-                tool.Delete();
-            }
-        }
-
-        public static void UpdateAutoGenTool(string toolPath, string toolName, string toolDescription, bool overwrite) {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // DBにテーブルを作成
-            // テーブルが存在しない場合のみ作成
-            // toolsテーブル： ツールの情報を格納
-            // name: ツール名
-            // path: ツールのパス
-            // description: ツールの説明
-
-            using var cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS autogen_tools (name TEXT, path TEXT, description TEXT)", sqlConn);
-            cmd.ExecuteNonQuery();
-            // ツールの情報をDBに登録
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_tools WHERE name = @name", sqlConn);
-            checkCmd.Parameters.AddWithValue("@name", toolName);
-            using var reader = checkCmd.ExecuteReader();
-            if (reader.HasRows == false) {
-                using var insertCmd = new SQLiteCommand("INSERT INTO autogen_tools (name, path, description) VALUES (@name, @path, @description)", sqlConn);
-                insertCmd.Parameters.AddWithValue("@name", toolName);
-                insertCmd.Parameters.AddWithValue("@path", toolPath);
-                insertCmd.Parameters.AddWithValue("@description", toolDescription);
-                insertCmd.ExecuteNonQuery();
-
-            } else if (overwrite) {
-                using var insertCmd = new SQLiteCommand("UPDATE autogen_tools SET path = @path, description = @description WHERE name = @name", sqlConn);
-                insertCmd.Parameters.AddWithValue("@name", toolName);
-                insertCmd.Parameters.AddWithValue("@path", toolPath);
-                insertCmd.Parameters.AddWithValue("@description", toolDescription);
-                insertCmd.ExecuteNonQuery();
-            }
-
-
-            // close
-            sqlConn.Close();
-
-        }
         // DeleteAutoGenTool
-        public static void DeleteAutoGenTool(string toolName) {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // ツールの情報をDBから削除
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_tools WHERE name = @name", sqlConn);
-            checkCmd.Parameters.AddWithValue("@name", toolName);
-            using var reader = checkCmd.ExecuteReader();
-            if (reader.HasRows) {
-                using var deleteCmd = new SQLiteCommand("DELETE FROM autogen_tools WHERE name = @name", sqlConn);
-                deleteCmd.Parameters.AddWithValue("@name", toolName);
-                deleteCmd.ExecuteNonQuery();
-            }
-            // close
-            sqlConn.Close();
+        public static async Task DeleteAutoGenTool(string toolName) {
+            // APIを呼び出して、設定を削除する
+            AutoGenTool autoGenTool = new() {
+                Name = toolName,
+            };
+            await PythonExecutor.PythonAIFunctions.DeleteAutoGenToolAsync(autoGenTool);
         }
 
-        // GetAutoGenToolList
-        public static List<AutoGenTool> GetAutoGenToolList() {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // ツールの情報をDBから取得
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_tools", sqlConn);
-            using var reader = checkCmd.ExecuteReader();
-            List<AutoGenTool> tools = [];
-            while (reader.Read()) {
-                AutoGenTool tool = new() {
-                    Name = reader.GetString(0),
-                    SourcePath = reader.GetString(1),
-                    Description = reader.GetString(2),
-                };
-                tools.Add(tool);
-            }
-            // close
-            sqlConn.Close();
-            return tools;
+        // GetAutoGenToolListAsync
+        public static async Task<List<AutoGenTool>> GetAutoGenToolListAsync() {
+            // APIを呼び出して、設定を取得する
+            List<AutoGenTool> autoGenTools = await PythonExecutor.PythonAIFunctions.GetAutoGenToolListAsync();
+            return autoGenTools;
+
         }
 
     }

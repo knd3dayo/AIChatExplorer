@@ -165,7 +165,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         public static async Task<ChatResult?> ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
-            ChatResult? result = await PythonExecutor.PythonAIFunctions?.AutoGenGroupChatAsync(chatRequestContext, chat, iteration);
+            ChatResult? result = await PythonExecutor.PythonAIFunctions.AutoGenGroupChatAsync(chatRequestContext, chat, iteration);
             return result;
         }
 

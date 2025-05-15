@@ -51,7 +51,7 @@ namespace PythonAILib.Model.AutoProcess {
                 if (configParams.AutoExtractImageWithOpenAI()) {
 
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoExtractImageText);
-                    ContentItemCommands.ExtractImageWithOpenAI(item);
+                    await ContentItemCommands.ExtractImageWithOpenAIAsync(item);
                 }
             }
 
@@ -110,14 +110,14 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static ContentItemWrapper? ApplyFolderAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItemWrapper?> ApplyFolderAutoAction(ContentItemWrapper item) {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                rule.RunAction(result);
+                await rule.RunActionAsync(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.ItemsDeletedByAutoProcessing);

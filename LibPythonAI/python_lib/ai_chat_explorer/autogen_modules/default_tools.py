@@ -309,7 +309,7 @@ def list_agents() -> Annotated[list[dict[str, str]], "List of registered agents,
     autogen_db_path = props.autogen_db_path
 
     main_db = MainDB(autogen_db_path)
-    agents = main_db.get_autogen_agents()
+    agents = main_db.get_autogen_agent_list()
     agent_list = []
     for agent in agents:
         agent_list.append({"name": agent.name, "description": agent.description})
@@ -390,7 +390,7 @@ def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered to
     props : AutoGenProps = autogen_props # type: ignore
     autogen_db_path = props.autogen_db_path
     main_db = MainDB(autogen_db_path)
-    tools = main_db.get_autogen_tools()
+    tools = main_db.get_autogen_tool_list()
 
     tool_descption_list = []
     for agent in tools:

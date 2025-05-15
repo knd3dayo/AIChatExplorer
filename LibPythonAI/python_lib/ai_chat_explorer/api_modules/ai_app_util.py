@@ -6,6 +6,7 @@ import sys
 
 from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestContext
 from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, ContentFolder, init_db, get_main_db_path
+from ai_chat_explorer.db_modules import AutogentLLMConfig, AutogenTools, AutogenAgent, AutogenGroupChat
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
 
@@ -23,6 +24,10 @@ embedding_request_name = "embedding_request"
 excel_request_name = "excel_request"
 file_request_name = "file_request"
 web_request_name = "web_request"
+autogen_llm_config_request_name = "autogen_llm_config_request"
+autogen_tool_request_name = "autogen_tool_request"
+autogen_agent_request_name = "autogen_agent_request"
+autogen_group_chat_request_name = "autogen_group_chat_request"
 
 # アプリケーション初期化時に呼び出される関数
 def init_app() -> None:
@@ -191,6 +196,52 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_db_items)
     return autogen_props
 
+def get_autogen_llm_config_object(request_dict: dict) -> AutogentLLMConfig:
+    '''
+    {"autogen_llm_config_request": {}}の形式で渡される
+    '''
+    # autogen_llm_config_requestを取得
+    request:dict = request_dict.get(autogen_llm_config_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    result = AutogentLLMConfig(request)
+    return result
+
+def get_autogen_tool_object(request_dict: dict) -> AutogenTools:
+    '''
+    {"autogen_tool_request": {}}の形式で渡される
+    '''
+    # autogen_tool_requestを取得
+    request:dict = request_dict.get(autogen_tool_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    # autogen_toolを生成
+    autogen_tool = AutogenTools(request)
+    return autogen_tool
+
+def get_autogen_agent_object(request_dict: dict) -> AutogenAgent:
+    '''
+    {"autogen_agent_request": {}}の形式で渡される
+    '''
+    # autogen_agent_requestを取得
+    request:dict = request_dict.get(autogen_agent_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    # autogen_agentを生成
+    autogen_agent = AutogenAgent(request)
+    return autogen_agent
+
+def get_autogen_group_chat_object(request_dict: dict) -> AutogenGroupChat:
+    '''
+    {"autogen_group_chat_request": {}}の形式で渡される
+    '''
+    # autogen_group_chat_requestを取得
+    request:dict = request_dict.get(autogen_group_chat_request_name, None)
+    if not request:
+        raise ValueError("request is not set.")
+    # autogen_group_chatを生成
+    autogen_group_chat = AutogenGroupChat(request)
+    return autogen_group_chat
 
 def get_token_count_objects(request_dict: dict) -> dict:
     '''

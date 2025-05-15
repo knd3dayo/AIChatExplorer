@@ -249,6 +249,30 @@ namespace PythonAILib.Resources {
         // ベクトル検索リクエスト
         public virtual string VectorSearchRequest { get; } = "ベクトル検索リクエスト";
 
+        // UpdateAutoGenAgentExecute
+        public virtual string UpdateAutoGenAgentExecute { get; } = "UpdateAutoGenAgent実行";
+
+        // UpdateAutogenLLMConfigExecute
+        public virtual string UpdateAutogenLLMConfigExecute { get; } = "UpdateAutogenLLMConfig実行";
+        
+        // DeleteAutoGenAgentExecute
+        public virtual string DeleteAutoGenAgentExecute { get; } = "DeleteAutoGenAgent実行";
+
+        // DeleteAutogenLLMConfigExecute
+        public virtual string DeleteAutogenLLMConfigExecute { get; } = "DeleteAutogenLLMConfig実行";
+
+        // DeleteAutoGenAgentExecute
+        public virtual string DeleteAutoGenGroupChatExecute { get; } = "DeleteAutoGenGroupChat実行";
+
+        // UpdateAutoGenGroupChatExecute
+        public virtual string UpdateAutoGenGroupChatExecute { get; } = "UpdateAutoGenGroupChat実行";
+
+        // UpdateAutoGenToolExecute
+        public virtual string UpdateAutoGenToolExecute { get; } = "UpdateAutoGenTool実行";
+
+        // DeleteAutoGenToolExecute
+        public virtual string DeleteAutoGenToolExecute { get; } = "DeleteAutoGenTool実行";
+
         // Excelへのエクスポートを実行します
         public virtual string ExportToExcelExecute { get; } = "Excelへのエクスポートを実行します";
         // Excelへのエクスポートが失敗しました
@@ -275,7 +299,7 @@ namespace PythonAILib.Resources {
         // ソースタイトル
         public virtual string SourceTitle { get; } = "ソースタイトル";
 
-        // SourcePath
+        // Path
         public virtual string SourcePath { get; } = "ソースパス";
 
         // ピン留め

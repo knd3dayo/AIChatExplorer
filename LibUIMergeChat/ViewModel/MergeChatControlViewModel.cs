@@ -33,7 +33,11 @@ namespace LibUIMergeChat.ViewModel {
         public MergeChatControlViewModel(MergeTargetPanelViewModel mergeTargetPanelViewModel) {
 
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            VectorSearchProperties = [.. mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
+            var folder = mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
+            if (folder == null) {
+                return;
+            }
+            VectorSearchProperties = [.. folder.Folder.GetVectorSearchProperties()];
 
             // AutoGenPropertiesを設定
             _autoGenProperties = new();
@@ -202,7 +206,11 @@ namespace LibUIMergeChat.ViewModel {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [.. MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder?.Folder.GetVectorSearchProperties()];
+                    var folder = MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
+                    if (folder == null) {
+                        return;
+                    }
+                    List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [.. folder.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

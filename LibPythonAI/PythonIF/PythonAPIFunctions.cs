@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
@@ -853,6 +854,328 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(result.Error);
             }
             return result.Output;
+        }
+
+        public async Task<List<AutoGenLLMConfig>> GetAutoGenLLMConfigListAsync() {
+
+            string endpoint = $"{this.base_url}/get_autogen_llm_config_list";
+            string resultString = await PostAsync(endpoint, "{}");
+
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // autogen_llm_config_listを取得   
+            List<AutoGenLLMConfig> autogenLLMConfigList = [];
+            // llm_config_listがある場合は取得
+            if (resultDict.TryGetValue("llm_config_list", out dynamic? dictList)) {
+                if (dictList != null) {
+
+                    foreach (var item in dictList) {
+                        // AutoGenLLMConfigを取得
+                        AutoGenLLMConfig? autogenLLMConfig = AutoGenLLMConfig.FromDict(item);
+                        if (autogenLLMConfig != null) {
+                            autogenLLMConfigList.Add(autogenLLMConfig);
+                        }
+                    }
+                }
+            }
+            return autogenLLMConfigList;
+
+        }
+
+        public async Task<AutoGenLLMConfig?> GetAutoGenLLMConfigAsync(string name) {
+
+            // AutoGenLLMConfigを作成
+            AutoGenLLMConfig autogenLLMConfig = new() {
+                Name = name
+            };
+            // Json文字列を取得
+            string nameJson = autogenLLMConfig.ToJson();
+            string endpoint = $"{this.base_url}/get_autogen_llm_config";
+
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            // PostAsyncを実行する
+            string resultString = await PostAsync(endpoint, nameJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // AutoGenLLMConfigを取得
+            AutoGenLLMConfig? autogenLLMConfigResult;
+            if (resultDict.TryGetValue("llm_config", out dynamic? autogenLLMConfigValue)) {
+                autogenLLMConfigResult = AutoGenLLMConfig.FromDict(autogenLLMConfigValue);
+            } else {
+                autogenLLMConfigResult = null;
+            }
+            return autogenLLMConfigResult;
+        }
+
+        public async Task UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutogenLLMConfigExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_autogen_llm_config";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
+        }
+
+        public async Task DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutogenLLMConfigExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_autogen_llm_config";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        // AutoGenTool
+        public async Task<List<AutoGenTool>> GetAutoGenToolListAsync() {
+            string endpoint = $"{this.base_url}/get_autogen_tool_list";
+            string resultString = await PostAsync(endpoint, "{}");
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // tool_listを取得
+            List<AutoGenTool> autogenToolList = [];
+            // llm_config_listがある場合は取得
+            if (resultDict.TryGetValue("tool_list", out dynamic? dictList)) {
+                if (dictList != null) {
+                    foreach (var item in dictList) {
+                        // AutoGenToolを取得
+                        AutoGenTool? autogenTool = AutoGenTool.FromDict(item);
+                        if (autogenTool != null) {
+                            autogenToolList.Add(autogenTool);
+                        }
+                    }
+                }
+            }
+            return autogenToolList;
+        }
+
+        public async Task<AutoGenTool?> GetAutoGenToolAsync(string name) {
+            // AutoGenToolを作成
+            AutoGenTool autogenTool = new() {
+                Name = name
+            };
+            // Json文字列を取得
+            string nameJson = autogenTool.ToJson();
+            string endpoint = $"{this.base_url}/get_autogen_tool";
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            // PostAsyncを実行する
+            string resultString = await PostAsync(endpoint, nameJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // AutoGenToolを取得
+            AutoGenTool? autogenToolResult;
+            if (resultDict.TryGetValue("tool", out dynamic? autogenToolValue)) {
+                autogenToolResult = AutoGenTool.FromDict(autogenToolValue);
+            } else {
+                autogenToolResult = null;
+            }
+
+            return autogenToolResult;
+        }
+
+        public async Task UpdateAutoGenToolAsync(AutoGenTool config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenToolExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_autogen_tool";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        public async Task DeleteAutoGenToolAsync(AutoGenTool config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenToolExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_autogen_tool";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        // AutoGenAgent
+        public async Task<List<AutoGenAgent>> GetAutoGenAgentListAsync() {
+            string endpoint = $"{this.base_url}/get_autogen_agent_list";
+            string resultString = await PostAsync(endpoint, "{}");
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            var dictList = resultDict["autogen_agent_list"] ?? "[]";
+            // autogen_llm_config_listを取得
+            List<AutoGenAgent> autogenAgentList = [];
+            foreach (var item in dictList) {
+                // AutoGenAgentを取得
+                AutoGenAgent? autogenAgent = AutoGenAgent.FromDict(item);
+                if (autogenAgent != null) {
+                    autogenAgentList.Add(autogenAgent);
+                }
+            }
+            return autogenAgentList;
+        }
+
+        public async Task<AutoGenAgent> GetAutoGenAgentAsync(string name) {
+            // AutoGenAgentを作成
+            AutoGenAgent autogenAgent = new() {
+                Name = name
+            };
+            // Json文字列を取得
+            string nameJson = autogenAgent.ToJson();
+            string endpoint = $"{this.base_url}/get_autogen_agent";
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            // PostAsyncを実行する
+            string resultString = await PostAsync(endpoint, nameJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // AutoGenAgentを取得
+            AutoGenAgent? autogenAgentResult = AutoGenAgent.FromDict(resultDict["autogen_agent"]);
+            return autogenAgentResult;
+
+        }
+
+        public async Task UpdateAutoGenAgentAsync(AutoGenAgent config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenAgentExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_autogen_agent";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        public async Task DeleteAutoGenAgentAsync(AutoGenAgent config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenAgentExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_autogen_agent";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        // AutoGenGroupChat
+        public async Task<List<AutoGenGroupChat>> GetAutoGenGroupChatListAsync() {
+            string endpoint = $"{this.base_url}/get_autogen_group_chat_list";
+            string resultString = await PostAsync(endpoint, "{}");
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            var dictList = resultDict["autogen_group_chat_list"] ?? "[]";
+            // autogen_llm_config_listを取得
+            List<AutoGenGroupChat> autogenGroupChatList = [];
+            foreach (var item in dictList) {
+                // AutoGenGroupChatを取得
+                AutoGenGroupChat? autogenGroupChat = AutoGenGroupChat.FromDict(item);
+                if (autogenGroupChat != null) {
+                    autogenGroupChatList.Add(autogenGroupChat);
+                }
+            }
+            return autogenGroupChatList;
+        }
+
+        public async Task<AutoGenGroupChat> GetAutoGenGroupChatAsync(string name) {
+            // AutoGenGroupChatを作成
+            AutoGenGroupChat autogenGroupChat = new() {
+                Name = name
+            };
+            // Json文字列を取得
+            string nameJson = autogenGroupChat.ToJson();
+            string endpoint = $"{this.base_url}/get_autogen_group_chat";
+            // Log出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            // PostAsyncを実行する
+            string resultString = await PostAsync(endpoint, nameJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+            // AutoGenGroupChatを取得
+            AutoGenGroupChat? autogenGroupChatResult = AutoGenGroupChat.FromDict(resultDict["autogen_group_chat"]);
+            return autogenGroupChatResult;
+        }
+
+        public async Task UpdateAutoGenGroupChatAsync(AutoGenGroupChat config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenGroupChatExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_autogen_group_chat";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+        }
+
+        public async Task DeleteAutoGenGroupChatAsync(AutoGenGroupChat config) {
+            // Json文字列を取得
+            string requestJson = config.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenGroupChatExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_autogen_group_chat";
+            string resultString = await PostAsync(endpoint, requestJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
         }
 
 

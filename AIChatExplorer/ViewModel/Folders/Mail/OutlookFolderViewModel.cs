@@ -36,7 +36,7 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
         }
 
 
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<OutlookItem>();
         }

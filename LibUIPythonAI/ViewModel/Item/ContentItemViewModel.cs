@@ -177,7 +177,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
             tabControl.Items.Clear();
-            // SourcePath 
+            // Path 
             ContentPanel contentPanel = new() {
                 DataContext = this,
             };

@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.AutoGen;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenLLMConfigViewModel : CommonViewModelBase {

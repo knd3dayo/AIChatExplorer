@@ -45,7 +45,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             return []; ;
         }
 
-        public void SyncItems() {
+        public override void SyncItems() {
             // オリジナルのHistoryファイルが存在しない場合は何もしない
             if (!File.Exists(OriginalHistoryFilePath)) {
                 return;

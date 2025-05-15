@@ -86,7 +86,7 @@ namespace LibUIPythonAI.View.Item {
         // ExtractedText
         public static string ExtractedText { get; set; } = CommonStringResources.Instance.ExtractedText;
 
-        // SourcePath
+        // Path
         public static string SourcePath { get; set; } = CommonStringResources.Instance.SourcePath;
 
         // MarkdownView

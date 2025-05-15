@@ -77,7 +77,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-        // SourcePath
+        // Path
         public string SourcePath {
             get {
                 return itemViewModel.ContentItem.SourcePath;
@@ -147,24 +147,23 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
             // フォルダに自動処理が設定されている場合は実行
-            ContentItemWrapper? item = AutoProcessRuleController.ApplyFolderAutoAction(ItemViewModel.ContentItem);
-            // ClipboardItemを更新
-            if (item != null) {
-
-                Task.Run(() => {
+            Task.Run(async () => {
+                // 自動処理を実行
+                ContentItemWrapper? item = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(ItemViewModel.ContentItem);
+                // ClipboardItemを更新
+                if (item != null) {
                     // 保存
                     item.Save();
                     MainUITask.Run(() => {
                         // 更新後の処理を実行
                         _afterUpdate.Invoke();
                     });
-                });
+                } else {
+                    // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
+                    LogWrapper.Info("自動処理に失敗しました");
+                }
 
-            } else {
-                // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
-                LogWrapper.Info("自動処理に失敗しました");
-            }
-
+            });
         });
         // OKボタンのコマンド
         public SimpleDelegateCommand<object> OKButtonCommand => new((parameter) => {

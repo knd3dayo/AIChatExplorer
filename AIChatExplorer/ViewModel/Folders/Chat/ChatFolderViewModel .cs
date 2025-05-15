@@ -49,7 +49,7 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
         }
 
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<ClipboardItem>();
         }

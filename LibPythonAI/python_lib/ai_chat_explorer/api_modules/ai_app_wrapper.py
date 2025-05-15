@@ -204,7 +204,333 @@ async def autogen_chat( request_json: str):
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
 
- 
+def get_autogen_llm_config_list(request_json: str):
+    # get_autogen_llm_config_listを実行する関数を定義
+    def func() -> dict:
+        # autogen_propsからllm_config_listを取得
+        llm_config_list = ai_app.get_autogen_llm_config_list()
+        if not llm_config_list:
+            raise ValueError("llm_config_list is not set")
+        
+        result: dict = {}
+        result["llm_config_list"] = [config.to_dict() for config in llm_config_list]
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_llm_config(request_json: str):
+    # get_autogen_llm_configを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # ai_appからllm_configを取得
+        llm_config_result = ai_app.get_autogen_llm_config(llm_config.name)
+        result: dict = {}
+        if llm_config_result:
+            result["llm_config"] = llm_config_result.to_dict()
+
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_autogen_llm_config(request_json: str):
+    # update_autogen_llm_configを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # autogen_propsを更新
+        ai_app.update_autogen_llm_config(llm_config)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_autogen_llm_config(request_json: str):
+    # delete_autogen_llm_configを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # autogen_propsを削除
+        ai_app.delete_autogen_llm_config(llm_config)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_tool_list(request_json: str):
+    # get_autogen_tools_listを実行する関数を定義
+    def func() -> dict:
+        # autogen_propsからtools_listを取得
+        tools_list = ai_app.get_autogen_tool_list()
+        if not tools_list:
+            raise ValueError("tool_list is not set")
+        
+        result: dict = {}
+        result["tool_list"] = [tool.to_dict() for tool in tools_list]
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_tool(request_json: str):
+    # get_autogen_toolを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # ai_appからtoolを取得
+        tool_result = ai_app.get_autogen_tool(tool.name)
+        
+        result: dict = {}
+        if tool_result:
+            result["tool"] = tool_result.to_dict()
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_autogen_tool(request_json: str):
+    # update_autogen_toolを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # autogen_propsを更新
+        ai_app.update_autogen_tool(tool)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_autogen_tool(request_json: str):
+    # delete_autogen_toolを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # autogen_propsを削除
+        ai_app.delete_autogen_tool(tool)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_agent_list(request_json: str):
+    # get_autogen_agent_listを実行する関数を定義
+    def func() -> dict:
+        # autogen_propsからagent_listを取得
+        agent_list = ai_app.get_autogen_agent_list()
+        if not agent_list:
+            raise ValueError("agent_list is not set")
+        
+        result: dict = {}
+        result["agent_list"] = [agent.to_dict() for agent in agent_list]
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_agent(request_json: str):
+    # get_autogen_agentを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+        
+        # ai_appからagentを取得
+        agent_result = ai_app.get_autogen_agent(agent.name)
+        
+        result: dict = {}
+        if agent_result:
+            result["agent"] = agent_result.to_dict()
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_autogen_agent(request_json: str):
+    # update_autogen_agentを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+        
+        # autogen_propsを更新
+        ai_app.update_autogen_agent(agent)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_autogen_agent(request_json: str):
+    # delete_autogen_agentを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+        
+        # autogen_propsを削除
+        ai_app.delete_autogen_agent(agent)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_group_chat_list(request_json: str):
+    # get_autogen_group_chat_listを実行する関数を定義
+    def func() -> dict:
+        # autogen_propsからgroup_chat_listを取得
+        group_chat_list = ai_app.get_autogen_group_chat_list()
+        if not group_chat_list:
+            raise ValueError("group_chat_list is not set")
+        
+        result: dict = {}
+        result["group_chat_list"] = [group_chat.to_dict() for group_chat in group_chat_list]
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_autogen_group_chat(request_json: str):
+    # get_autogen_group_chatを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+        # ai_appからgroup_chatを取得
+        group_chat_result = ai_app.get_autogen_group_chat(group_chat.name)
+
+        result: dict = {}
+        if group_chat_result:
+            result["group_chat"] = group_chat_result.to_dict()
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_autogen_group_chat(request_json: str):
+    # update_autogen_group_chatを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+        
+        # autogen_propsを更新
+        ai_app.update_autogen_group_chat(group_chat)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_autogen_group_chat(request_json: str):
+    # delete_autogen_group_chatを実行する関数を定義
+    def func() -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+        
+        # autogen_propsを削除
+        ai_app.delete_autogen_group_chat(group_chat)
+
+        result: dict = {}
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 ########################
 # langchain関連
 ########################

@@ -7,7 +7,7 @@ from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestCo
 from ai_chat_explorer.langchain_modules import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_chat_explorer.file_modules import ExcelUtil, FileUtil
 from ai_chat_explorer.autogen_modules import AutoGenProps
-from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData, TagItem, ContentFolder
+from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData, TagItem, ContentFolder, AutogentLLMConfig, AutogenTools, AutogenAgent, AutogenGroupChat
 from ai_chat_explorer.api_modules.ai_app_util import get_main_db_path
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -52,6 +52,103 @@ async def run_autogen_chat(autogen_props: AutoGenProps,input_text: str) -> Async
     # run_group_chatを実行
     async for message in autogen_props.run_autogen_chat(input_text):
         yield message
+
+def get_autogen_llm_config_list() -> list[AutogentLLMConfig]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # LLMConfigの一覧を取得
+    llm_configs = main_db.get_autogen_llm_config_list()
+    return llm_configs
+
+def get_autogen_llm_config(llm_config_id: str) -> Union[AutogentLLMConfig, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # LLMConfigを取得
+    llm_config = main_db.get_autogen_llm_config(llm_config_id)
+    return llm_config
+
+def update_autogen_llm_config(llm_config: AutogentLLMConfig):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # LLMConfigを更新
+    main_db.update_autogen_llm_config(llm_config)
+
+def delete_autogen_llm_config(llm_config: AutogentLLMConfig):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # LLMConfigを削除
+    main_db.delete_autogen_llm_config(llm_config)
+
+def get_autogen_tool_list() -> list[AutogenTools]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenToolsの一覧を取得
+    tools = main_db.get_autogen_tool_list()
+    return tools
+def get_autogen_tool(tool_id: str) -> Union[AutogenTools, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenToolsを取得
+    tool = main_db.get_autogen_tool(tool_id)
+    return tool
+
+def update_autogen_tool(tool: AutogenTools):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenToolsを更新
+    main_db.update_autogen_tool(tool)
+
+def delete_autogen_tool(tool: AutogenTools):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenToolsを削除
+    main_db.delete_autogen_tool(tool)
+
+def get_autogen_agent_list() -> list[AutogenAgent]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenAgentの一覧を取得
+    agents = main_db.get_autogen_agent_list()
+    return agents
+def get_autogen_agent(agent_id: str) -> Union[AutogenAgent, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenAgentを取得
+    agent = main_db.get_autogen_agent(agent_id)
+    return agent
+def update_autogen_agent(agent: AutogenAgent):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenAgentを更新
+    main_db.update_autogen_agent(agent)
+def delete_autogen_agent(agent: AutogenAgent):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenAgentを削除
+    main_db.delete_autogen_agent(agent)
+
+def get_autogen_group_chat_list() -> list[AutogenGroupChat]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenGroupChatの一覧を取得
+    group_chats = main_db.get_autogen_group_chat_list()
+    return group_chats
+def get_autogen_group_chat(group_chat_id: str) -> Union[AutogenGroupChat, None]:
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenGroupChatを取得
+    group_chat = main_db.get_autogen_group_chat(group_chat_id)
+    return group_chat
+def update_autogen_group_chat(group_chat: AutogenGroupChat):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenGroupChatを更新
+    main_db.update_autogen_group_chat(group_chat)
+def delete_autogen_group_chat(group_chat: AutogenGroupChat):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    # AutogenGroupChatを削除
+    main_db.delete_autogen_group_chat(group_chat)
 
 ########################
 # langchain関連

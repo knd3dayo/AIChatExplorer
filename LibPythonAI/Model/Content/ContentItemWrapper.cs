@@ -401,7 +401,7 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // SourcePath
+        // Path
         public string SourcePath {
             get {
                 Entity.ExtendedProperties.TryGetValue("SourcePath", out object? value);

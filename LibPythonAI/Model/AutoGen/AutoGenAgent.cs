@@ -1,10 +1,15 @@
 using System.Data.SQLite;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenAgent {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -57,6 +62,8 @@ namespace LibPythonAI.Model.AutoGen {
             };
             return dict;
         }
+
+
         // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(List<AutoGenAgent> data) {
             // Create a list of dictionaries
@@ -189,7 +196,18 @@ namespace LibPythonAI.Model.AutoGen {
             sqlConn.Close();
             return agents;
         }
-
-
+        // ToJson
+        public  string ToJson() {
+            // Serialize the object to JSON
+            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            return jsonString;
+        }
+        // FromDict
+        public static AutoGenAgent FromDict(Dictionary<string, object> dict) {
+            // Deserialize the dictionary to an object
+            string jsonString = JsonSerializer.Serialize(dict, jsonSerializerOptions);
+            AutoGenAgent data = JsonSerializer.Deserialize<AutoGenAgent>(jsonString, jsonSerializerOptions)!;
+            return data;
+        }
     }
 }

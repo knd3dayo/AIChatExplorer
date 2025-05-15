@@ -27,7 +27,7 @@ namespace LibPythonAI.Model.Chat {
         public List<string> ImageURLs { get; set; } = [];
 
         [JsonIgnore]
-        // SourcePath + Sourcesを返す
+        // Path + Sourcesを返す
         public string ContentWithSources {
             get {
                 if (SourceDocuments.Count == 0) {

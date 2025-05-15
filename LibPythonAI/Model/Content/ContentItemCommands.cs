@@ -44,8 +44,8 @@ namespace LibPythonAI.Model.Content {
 
 
         // OpenAIを使用してイメージからテキスト抽出する。
-        public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
-            ExtractText(item);
+        public static async Task ExtractImageWithOpenAIAsync(ContentItemWrapper item) {
+            await ExtractText(item);
         }
 
 

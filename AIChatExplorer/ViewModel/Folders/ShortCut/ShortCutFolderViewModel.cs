@@ -32,7 +32,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
             return childFolderViewModel;
         }
 
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<ShortCutItem>();
         }

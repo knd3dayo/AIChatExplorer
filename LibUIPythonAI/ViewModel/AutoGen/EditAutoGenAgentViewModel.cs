@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.AutoGen;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
@@ -16,7 +15,11 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AutoGenAgent = autoGenAgent;
             RootFolderViewModels = rootFolderViewModels;
             AfterUpdate = afterUpdate;
-            LoadTools();
+
+            Task.Run(async () => {
+                await LoadLLMConfigListAsync();
+                await LoadTools();
+            });
         }
 
         public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; }
@@ -79,15 +82,26 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
         // LlmConfigList
+        private ObservableCollection<string> _llmConfigNameList = new();
         public ObservableCollection<string> LlmConfigNameList {
-            get {
-               var list = AutoGenLLMConfig.GetAutoGenLLMConfigList();
-                ObservableCollection<string> llmConfigNames = [];
-                foreach (var item in list) {
-                    llmConfigNames.Add(item.Name);
-                }
-                return llmConfigNames;
+            get => _llmConfigNameList;
+            set {
+                _llmConfigNameList = value;
+                OnPropertyChanged();
             }
+        }
+
+        private async Task LoadLLMConfigListAsync() {
+            // LLMConfigList
+            ObservableCollection<string> llmConfigNameList = [];
+            var autoGenLLMConfigs = await AutoGenLLMConfig.GetAutoGenLLMConfigList();
+            foreach (var item in autoGenLLMConfigs) {
+                llmConfigNameList.Add(item.Name);
+            }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                LlmConfigNameList = llmConfigNameList;
+            });
         }
 
         // VectorSearchProperty
@@ -122,10 +136,11 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
 
-        public void LoadTools() {
+        public async Task LoadTools() {
             // Load tools
             ObservableCollection<AutoGenToolViewModel> autoGenTools = [];
-            foreach (AutoGenTool tool in AutoGenTool.GetAutoGenToolList()) {
+            var list = await AutoGenTool.GetAutoGenToolListAsync();
+            foreach (AutoGenTool tool in list) {
                 AutoGenToolViewModel toolViewModel = new(tool);
                 if (AutoGenAgent.ToolNames.Contains(tool.Name)) {
                     toolViewModel.ToolIsChecked = true;

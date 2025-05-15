@@ -56,9 +56,38 @@
     "vector_db_item_request" : {
 
     },
-    "content_folder_requsts" : {
-
+    "autogen_llm_config_request": {
+        "name": "名前",
+        "api_type" : "APIのタイプ",
+        "api_version" : "APIバージョン",
+        "model" : "モデル",
+        "api_key" : "APIキー",
+        "base_url" : "BaseURL"
     },
+
+    "autogen_tool_request": {
+        "name": "名前",
+        "path": "パス",
+        "description": "説明"
+    },
+
+    "autogen_agent_request": {
+        "name": "名前",
+        "description": "説明",
+        "system_message": "システムメッセージ",
+        "code_execution" : "コード実行",
+        "llm_config_name" : "LLMの設定",
+        "tool_names" : "ツール名",
+        "vector_db_props" : "vector_db_props"
+    },
+
+    "autogen_group_chat_request": {
+        "name": "名前",
+        "description": "説明",
+        "llm_config_name": "LLMの設定",
+        "agent_names": "AIエージェント"
+    },
+
     "tag_item_requests" : [
       {  "Id" : "タグID",
         "Tag" : "タグ名",

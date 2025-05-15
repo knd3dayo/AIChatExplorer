@@ -1,3 +1,4 @@
+using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Tag;
@@ -28,6 +29,43 @@ namespace PythonAILib.PythonIF {
 
         public void CancelAutoGenChat(string sessionToken);
 
+        public Task<List<AutoGenLLMConfig>> GetAutoGenLLMConfigListAsync();
+
+        public Task<AutoGenLLMConfig?> GetAutoGenLLMConfigAsync(string name);
+
+        public Task UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config);
+
+        public Task DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config);
+
+        // AutoGenTool
+        public Task<List<AutoGenTool>> GetAutoGenToolListAsync();
+
+        public Task<AutoGenTool?> GetAutoGenToolAsync(string name);
+
+        public Task UpdateAutoGenToolAsync(AutoGenTool config);
+
+        public Task DeleteAutoGenToolAsync(AutoGenTool config);
+
+        // AutoGenAgent
+        public Task<List<AutoGenAgent>> GetAutoGenAgentListAsync();
+
+        public Task<AutoGenAgent> GetAutoGenAgentAsync(string name);
+
+        public Task UpdateAutoGenAgentAsync(AutoGenAgent config);
+
+        public Task DeleteAutoGenAgentAsync(AutoGenAgent config);
+
+        // AutoGenGroupChat
+        public Task<List<AutoGenGroupChat>> GetAutoGenGroupChatListAsync();
+
+        public Task<AutoGenGroupChat> GetAutoGenGroupChatAsync(string name);
+
+        public Task UpdateAutoGenGroupChatAsync(AutoGenGroupChat config);
+
+        public Task DeleteAutoGenGroupChatAsync(AutoGenGroupChat config);
+
+
+
         public Task UpdateVectorDBItem(VectorDBItem item);
 
         public Task DeleteVectorDBItem(VectorDBItem item);
@@ -37,8 +75,8 @@ namespace PythonAILib.PythonIF {
         public VectorDBItem? GetVectorDBItemById(string id);
 
         public VectorDBItem? GetVectorDBItemByName(string name);
-        
-        public  Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
+
+        public Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
 
         // delete_embeddings_by_folder
         public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);

@@ -48,7 +48,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
 
         public string EntryID {
             get {
-                if (Entity.ExtendedProperties.TryGetValue(EntryIDName, out var path)) {
+                if (Entity.ExtendedProperties.TryGetValue(EntryIDName, out var path) && path != null) {
                     return (string)path;
                 } else {
                     return "";

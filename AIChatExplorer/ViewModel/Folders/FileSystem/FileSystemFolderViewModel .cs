@@ -35,7 +35,7 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
             return childFolderViewModel;
         }
 
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<FileSystemItem>();
         }

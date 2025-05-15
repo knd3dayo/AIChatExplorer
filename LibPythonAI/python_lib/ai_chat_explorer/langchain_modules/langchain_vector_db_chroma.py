@@ -1,7 +1,7 @@
 import os, sys
-sys.path.append("python")
 
 from typing import Tuple, List, Any
+import chromadb.config
 from langchain_chroma.vectorstores import Chroma # type: ignore
 import chromadb
 from langchain_core.vectorstores import VectorStore # type: ignore
@@ -28,8 +28,10 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             # ディレクトリが作成されたことをログに出力
             print("create directory:", vector_db_url)
         # params
+        settings = chromadb.config.Settings(anonymized_telemetry=False)
+
         params: dict[str, Any]= {}
-        params["client"] = chromadb.PersistentClient(path=vector_db_url)
+        params["client"] = chromadb.PersistentClient(path=vector_db_url, settings=settings)
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         params["collection_metadata"] = {"hnsw:space":"cosine"}
         # collectionが指定されている場合

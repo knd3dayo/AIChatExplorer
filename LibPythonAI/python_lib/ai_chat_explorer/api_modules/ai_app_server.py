@@ -50,6 +50,125 @@ async def openai_chat(request: Request) -> Response:
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
+# get_autogen_llm_config_list
+@routes.post('/api/get_autogen_llm_config_list')
+async def get_autogen_llm_config_list(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_llm_config_list(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# get_autogen_llm_config
+@routes.post('/api/get_autogen_llm_config')
+async def get_autogen_llm_config(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_llm_config(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# update_autogen_llm_config
+@routes.post('/api/update_autogen_llm_config')
+async def update_autogen_llm_config(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_autogen_llm_config(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# delete_autogen_llm_config
+@routes.post('/api/delete_autogen_llm_config')
+async def delete_autogen_llm_config(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_autogen_llm_config(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_autogen_tool_list
+@routes.post('/api/get_autogen_tool_list')
+async def get_autogen_tool_list(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_tool_list(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_autogen_tool
+@routes.post('/api/get_autogen_tool')
+async def get_autogen_tool(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_tool(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# update_autogen_tool
+@routes.post('/api/update_autogen_tool')
+async def update_autogen_tool(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_autogen_tool(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# delete_autogen_tool
+@routes.post('/api/delete_autogen_tool')
+async def delete_autogen_tool(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_autogen_tool(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_autogen_agent_list
+@routes.post('/api/get_autogen_agent_list')
+async def get_autogen_agent_list(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_agent_list(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_autogen_agent
+@routes.post('/api/get_autogen_agent')
+async def get_autogen_agent(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_agent(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# update_autogen_agent
+@routes.post('/api/update_autogen_agent')
+async def update_autogen_agent(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_autogen_agent(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# delete_autogen_agent
+@routes.post('/api/delete_autogen_agent')
+async def delete_autogen_agent(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_autogen_agent(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
+# get_autogen_group_chat_list
+@routes.post('/api/get_autogen_group_chat_list')
+async def get_autogen_group_chat_list(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_group_chat_list(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# get_autogen_group_chat
+@routes.post('/api/get_autogen_group_chat')
+async def get_autogen_group_chat(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_autogen_group_chat(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# update_autogen_group_chat
+@routes.post('/api/update_autogen_group_chat')
+async def update_autogen_group_chat(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_autogen_group_chat(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+# delete_autogen_group_chat
+@routes.post('/api/delete_autogen_group_chat')
+async def delete_autogen_group_chat(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_autogen_group_chat(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
 @routes.post('/api/get_token_count')
 async def get_token_count(request: Request) -> Response:
     request_json = await request.text()

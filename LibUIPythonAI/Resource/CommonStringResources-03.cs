@@ -16,6 +16,9 @@ namespace LibUIPythonAI.Resource {
         // AutoGen設定一覧
         public virtual string AutoGenSettingList { get; } = "AutoGen設定一覧";
 
+        // AutoGenツール編集
+        public virtual string EditAutoGenToolWindowTitle { get; } = "AutoGenツール編集";
+
         // AutoGenエージェント編集
         public virtual string EditAutoGenAgentWindowTitle { get; } = "AutoGenエージェント編集";
 
