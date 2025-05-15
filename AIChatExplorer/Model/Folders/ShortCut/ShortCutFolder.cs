@@ -23,14 +23,15 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
             return child;
         }
 
-        // 子フォルダ
-        public override List<T> GetChildren<T>() {
-            // RootFolder以外の場合はSyncFoldersを実行
-            if (!IsRootFolder) {
-                SyncFolders();
+        public override void SyncFolders() {
+            // SyncFoldersを実行
+            if (IsRootFolder) {
+                return;
             }
-            return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
+            // SyncFoldersを実行
+            base.SyncFolders();
         }
+
         // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
         protected override HashSet<string> GetFileSystemFolderPaths() {
             HashSet<string> fileSystemFolderPaths = [];

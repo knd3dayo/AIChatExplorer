@@ -33,10 +33,7 @@ selenium
 webdriver-manager
 duckduckgo-search
 
-# flask-socketio
-# Flask-Cors
 aiohttp
 python-socketio
-
-arxiv
-opentelemetry-sdk
+aiosqlite
+aiofiles

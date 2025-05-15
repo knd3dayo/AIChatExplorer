@@ -2,6 +2,8 @@ from magika import Magika
 from magika.types import MagikaResult 
 from chardet.universaldetector import UniversalDetector
 from pathlib import Path
+import aiofiles # type: ignore
+from bs4 import BeautifulSoup
 
 class FileUtil:
 
@@ -63,7 +65,7 @@ class FileUtil:
         return res.output.mime_type
 
     @classmethod
-    def extract_text_from_file(cls, filename):
+    async def extract_text_from_file_async(cls, filename):
         res, encoding = cls.identify_type(filename)
         
         if res is None:
@@ -71,7 +73,7 @@ class FileUtil:
         print(res.output.mime_type)
         result = None        
         if res.output.mime_type.startswith("text/"):
-            result = cls.process_text(filename, res, encoding)
+            result = await cls.process_text_async(filename, res, encoding)
 
         # application/pdf
         elif res.output.mime_type == "application/pdf":
@@ -132,14 +134,13 @@ class FileUtil:
 
     # text/*のファイルを読み込んで文字列として返す関数
     @classmethod
-    def process_text(cls, filename, res, encoding):
+    async def process_text_async(cls, filename, res, encoding):
         result = ""
         if res.output.mime_type == "text/html":
             # text/htmlの場合
-            from bs4 import BeautifulSoup
             # テキストを取得
-            with open(filename, "rb") as f:
-                text_data = f.read()
+            async with aiofiles.open(filename, "rb") as f:
+                text_data = await f.read()
                 soup = BeautifulSoup(text_data, "html.parser")
             result = soup.get_text()
 
@@ -147,8 +148,8 @@ class FileUtil:
             # text/xmlの場合
             from bs4 import BeautifulSoup
             # テキストを取得
-            with open(filename, "rb") as f:
-                text_data = f.read()
+            async with aiofiles.open(filename, "rb") as f:
+                text_data = await f.read()
                 soup = BeautifulSoup(text_data, features="xml")
             result = soup.get_text()
 
@@ -157,19 +158,18 @@ class FileUtil:
             from bs4 import BeautifulSoup
             from markdown import markdown # type: ignore
             # テキストを取得
-            with open(filename, "r" ,encoding=encoding, errors='ignore') as f:
-                text_data = f.read()
+            async with aiofiles.open(filename, "r" ,encoding=encoding, errors='ignore') as f:
+                text_data = await f.read()
                 md = markdown(text_data)
                 soup = BeautifulSoup(md, "html.parser")
             result = soup.get_text()
         else:
             # その他のtext/*の場合
-            with open(filename, "r", encoding=encoding, errors='ignore') as f:
-                result = f.read()
+            async with aiofiles.open(filename, "r", encoding=encoding, errors='ignore') as f:
+                result = await f.read()
             
         return result
 
-import sys
 import datetime
 
 import openpyxl # type: ignore

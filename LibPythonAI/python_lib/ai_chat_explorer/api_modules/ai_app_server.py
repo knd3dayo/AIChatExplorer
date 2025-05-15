@@ -46,7 +46,7 @@ async def get_root_content_folders(request: Request) -> Response:
 @routes.post('/api/openai_chat')
 async def openai_chat(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.openai_chat(request_json)
+    response = await ai_app_wrapper.openai_chat_async(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
@@ -291,7 +291,7 @@ async def extract_excel_sheet(request: Request) -> Response:
 @routes.post('/api/extract_text_from_file')
 async def extract_text_from_file(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.extract_text_from_file(request_json)
+    response: dict = await ai_app_wrapper.extract_text_from_file_async(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
@@ -300,7 +300,7 @@ async def extract_text_from_file(request: Request) -> Response:
 @routes.post('/api/extract_base64_to_text')
 async def extract_base64_to_text(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.extract_base64_to_text(request_json)
+    response: dict = await ai_app_wrapper.extract_base64_to_text_async(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 

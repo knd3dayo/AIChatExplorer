@@ -2,6 +2,7 @@ from typing import Any, Annotated, Union, Callable
 from autogen_core.code_executor import ImportFromModule
 from autogen_core.tools import FunctionTool
 from autogen_agentchat.messages import BaseChatMessage
+import asyncio
 
 def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
     """
@@ -41,13 +42,13 @@ def list_files_in_directory(directory_path: Annotated[str, "Directory path"]) ->
     files = os.listdir(directory_path)
     return files
 
-def extract_file(file_path: Annotated[str, "File path"]) -> str:
+async def extract_file(file_path: Annotated[str, "File path"]) -> str:
     """
     This function extracts text from the specified file.
     """
     from ai_chat_explorer.file_modules.file_util import FileUtil
     # Extract text from a temporary file
-    text = FileUtil.extract_text_from_file(file_path)
+    text = await FileUtil.extract_text_from_file_async(file_path)
     return text
 
 def check_file(file_path: Annotated[str, "File path"]) -> bool:

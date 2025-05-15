@@ -148,7 +148,7 @@ class OpenAIProps:
 
 from typing import Tuple
 import json
-from openai import OpenAI, AzureOpenAI, RateLimitError
+from openai import AsyncOpenAI, AsyncAzureOpenAI, RateLimitError
 import time
 
 class OpenAIClient:
@@ -156,52 +156,37 @@ class OpenAIClient:
         
         self.props = props
 
-    def get_completion_client(self):
+    def get_completion_client(self) -> Union[AsyncOpenAI, AsyncAzureOpenAI]:
         
         if (self.props.AzureOpenAI):
             params = self.props.create_azure_openai_dict()
-            result = AzureOpenAI(
+            return AsyncAzureOpenAI(
                 **params
             )
 
         else:
             params =self.props.create_openai_dict()
-            result = OpenAI(
+            return AsyncOpenAI(
                 **params
             )
-        return result
 
-    def get_embedding_client(self):
+    def get_embedding_client(self) -> Union[AsyncOpenAI, AsyncAzureOpenAI]:
         if (self.props.AzureOpenAI):
             params = self.props.create_azure_openai_dict()
-            result = AzureOpenAI(
+            return AsyncAzureOpenAI(
                 **params
             )
         else:
             params =self.props.create_openai_dict()
-            result = OpenAI(
+            return AsyncOpenAI(
                 **params
             )
-        return result
 
-    def get_whisper_client(self):
-        if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_dict()
-            result = AzureOpenAI(
-                **params
-            )
-        else:
-            params =self.props.create_openai_dict()
-            result = OpenAI(
-                **params
-            )
-        return result
-
-    def list_openai_models(self) -> list[str]:
+    async def list_openai_models_async(self) -> list[str]:
         
         client = self.get_completion_client()
 
-        response = client.models.list()
+        response = await client.models.list()
 
         # モデルのリストを取得する
         model_id_list = [ model.id for model in response.data]
@@ -285,7 +270,7 @@ class OpenAIClient:
 
         return result_messages, [ value for value in result_documents_dict.values()]
 
-    def post_process_output(self, request_context: RequestContext, 
+    async def post_process_output_async(self, request_context: RequestContext, 
                             input_dict: dict, chat_result_dict_list: list[dict],
                             docs_list: list[dict]) -> dict:
 
@@ -317,7 +302,7 @@ class OpenAIClient:
             # openai_chatの入力用のdictを作成する
             summary_input_dict = OpenAIProps.create_openai_chat_parameter_dict_simple(input_dict["model"], summary_input, input_dict.get("temperature", 0.5), input_dict.get("json_mode", False))
             # chatを実行する
-            summary_result_dict = self.openai_chat(summary_input_dict)
+            summary_result_dict = await self.openai_chat_async(summary_input_dict)
             # total_tokensを更新する
             summary_result_dict["total_tokens"] = total_tokens + summary_result_dict["total_tokens"]
             summary_result_dict["documents"] = docs_list
@@ -331,7 +316,7 @@ class OpenAIClient:
     def get_last_message(self, input_dict: dict) -> dict:
         return input_dict["messages"][-1]
     
-    def run_openai_chat(self, request_context: RequestContext ,input_dict: dict, vector_search_function : Union[Callable, None]) -> dict:
+    async def run_openai_chat_async(self, request_context: RequestContext ,input_dict: dict, vector_search_function : Union[Callable, None]) -> dict:
         # ★TODO 分割モードの場合とそうでない場合で処理を分ける
         # 分割モードの場合はそれまでのチャット履歴をどうするか？
         
@@ -352,15 +337,15 @@ class OpenAIClient:
             else:
                 copied_input_dict["messages"][-1] = pre_processed_input
 
-            chat_result_dict = self.openai_chat(copied_input_dict)
+            chat_result_dict = await self.openai_chat_async(copied_input_dict)
             # chat_result_dictをchat_result_dict_listに追加する
             chat_result_dict_list.append(chat_result_dict)
 
         # post_process_outputを実行する
-        result_dict = self.post_process_output(request_context, input_dict, chat_result_dict_list, docs_list)
+        result_dict = await self.post_process_output_async(request_context, input_dict, chat_result_dict_list, docs_list)
         return result_dict
     
-    def openai_chat(self, input_dict: dict) -> dict:
+    async def openai_chat_async(self, input_dict: dict) -> dict:
         # openai.
         # RateLimitErrorが発生した場合はリトライする
         # リトライ回数は最大で3回
@@ -372,7 +357,7 @@ class OpenAIClient:
         count = 0
         while count < 3:
             try:
-                response = client.chat.completions.create(
+                response = await client.chat.completions.create(
                     **input_dict
                 )
                 break
@@ -394,7 +379,7 @@ class OpenAIClient:
         return {"output": content, "total_tokens": total_tokens}
 
 
-    def openai_embedding(self, input_text: str):
+    async def openai_embedding(self, input_text: str):
         
         # OpenAIのchatを実行する
         client = self.get_embedding_client()
@@ -410,7 +395,7 @@ class OpenAIClient:
         count = 0
         while count < 3:
             try:
-                response = client.embeddings.create(
+                response = await client.embeddings.create(
                     model=embedding_model_name,
                     input=[input_text]
                 )
@@ -425,17 +410,6 @@ class OpenAIClient:
 
         return response.data[0].embedding
     
-    def openai_transcription(self, audit_file_path: str):
-        # OpenAIのtranscriptionを実行する
-        client = self.get_whisper_client()
-        
-        with open(audit_file_path, "rb") as f:
-            response = client.audio.transcriptions.create(
-                model=self.props.OpenAITranscriptionModel,
-                file=f,
-                response_format="verbose_json"
-            )
-        return json.loads(response.model_dump_json())
 
     def get_token_count(self, input_text: str) -> int:
         # completion_modelに対応するencoderを取得する

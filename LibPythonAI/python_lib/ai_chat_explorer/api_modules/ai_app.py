@@ -18,7 +18,7 @@ from typing import Annotated
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], request_context: RequestContext, request: dict) -> dict[str, str]:
+async def run_openai_chat_async(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], request_context: RequestContext, request: dict) -> dict[str, str]:
     openai_client = OpenAIClient(openai_props)
     # ベクトル検索関数
     def vector_search(query: str) -> dict:
@@ -28,7 +28,7 @@ def run_openai_chat(openai_props: OpenAIProps, vector_search_requests: list[Vect
 
     # vector_db_itemsが空の場合はNoneを設定
     vector_search_function: Union[Callable, None] = None if len(vector_search_requests) == 0 else vector_search
-    return openai_client.run_openai_chat(request_context, request, vector_search_function)
+    return await openai_client.run_openai_chat_async(request_context, request, vector_search_function)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)
@@ -36,7 +36,7 @@ def openai_embedding(openai_props: OpenAIProps, input_text: str):
 
 def list_openai_models(openai_props: OpenAIProps):
     client = OpenAIClient(openai_props)
-    return client.list_openai_models()
+    return client.list_openai_models_async()
 
 def get_token_count(openai_props: OpenAIProps, input_text: str):
     client = OpenAIClient(openai_props)
@@ -306,11 +306,11 @@ def extract_text_from_sheet(filename, sheet_name):
 
 
 # ファイルからテキストを抽出する
-def extract_text_from_file(filename:str) -> str:
-    return FileUtil.extract_text_from_file(filename)
+async def extract_text_from_file_async(filename:str) -> str:
+    return await FileUtil.extract_text_from_file_async(filename)
 
 # base64形式のデータからテキストを抽出する
-def extract_base64_to_text(base64_data:str, extension:str) -> str:
+async def extract_base64_to_text_async(base64_data:str, extension:str) -> str:
     # サイズが0の場合は空文字を返す
     if len(base64_data) == 0:
         return ""
@@ -326,7 +326,7 @@ def extract_base64_to_text(base64_data:str, extension:str) -> str:
         temp_path = temp.name
         temp.close()
         # 一時ファイルからテキストを抽出
-        text = FileUtil.extract_text_from_file(temp_path)
+        text = await FileUtil.extract_text_from_file_async(temp_path)
         # 一時ファイルを削除
         os.remove(temp_path)
         return text
