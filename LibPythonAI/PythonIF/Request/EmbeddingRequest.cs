@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using LibPythonAI.Model.VectorDB;
 
@@ -15,30 +16,27 @@ namespace LibPythonAI.PythonIF.Request {
             Embedding = embedding;
         }
 
+        [JsonPropertyName("name")]
         public string Name { get; set; } = "";
         // Model
+        [JsonPropertyName("model")]
         public string Model { get; set; } = "text-embedding-3-small";
 
         // Embedding
+        [JsonPropertyName("embedding")]
         public VectorEmbedding Embedding { get; set; }
 
 
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
-            dict["Name"] = Name;
-            dict["Model"] = Model;
-            dict["Embedding"] = Embedding.ToDict();
+            dict["name"] = Name;
+            dict["model"] = Model;
+            foreach (var kvp in Embedding.ToDict()) {
+                dict[kvp.Key] = kvp.Value;
+            }
 
             return dict;
-        }
-
-        public static List<Dictionary<string, object>> ToDictList(List<VectorSearchProperty> requests) {
-            List<Dictionary<string, object>> dicts = [];
-            foreach (var request in requests) {
-                dicts.Add(request.ToDict());
-            }
-            return dicts;
         }
     }
 }

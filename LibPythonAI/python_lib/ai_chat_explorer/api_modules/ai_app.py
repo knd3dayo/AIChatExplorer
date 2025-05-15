@@ -7,7 +7,7 @@ from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestCo
 from ai_chat_explorer.langchain_modules import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_chat_explorer.file_modules import ExcelUtil, FileUtil
 from ai_chat_explorer.autogen_modules import AutoGenProps
-from ai_chat_explorer.db_modules import VectorDBItem, MainDB, EmbeddingData, TagItem, ContentFolder, AutogentLLMConfig, AutogenTools, AutogenAgent, AutogenGroupChat
+from ai_chat_explorer.db_modules import *
 from ai_chat_explorer.api_modules.ai_app_util import get_main_db_path
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -18,18 +18,16 @@ from typing import Annotated
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], request_context: RequestContext, request: dict) -> dict[str, str]:
+def run_openai_chat(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], request_context: RequestContext, request: dict) -> dict[str, str]:
     openai_client = OpenAIClient(openai_props)
     # ベクトル検索関数
     def vector_search(query: str) -> dict:
         from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
         # vector_db_itemsの各要素にinput_textを設定
-        for vector_db_props in vector_db_items:
-            vector_db_props.input_text = query
-        return LangChainVectorDB.vector_search(openai_props, vector_db_items)
+        return LangChainVectorDB.vector_search(openai_props, vector_search_requests)
 
     # vector_db_itemsが空の場合はNoneを設定
-    vector_search_function: Union[Callable, None] = None if len(vector_db_items) == 0 else vector_search
+    vector_search_function: Union[Callable, None] = None if len(vector_search_requests) == 0 else vector_search
     return openai_client.run_openai_chat(request_context, request, vector_search_function)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
@@ -153,9 +151,9 @@ def delete_autogen_group_chat(group_chat: AutogenGroupChat):
 ########################
 # langchain関連
 ########################
-def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], params:LangChainChatParameter) -> dict:
+def run_langchain_chat(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], params:LangChainChatParameter) -> dict:
     # langchan_chatを実行
-    result = LangChainUtil.langchain_chat(openai_props, vector_db_items, params)
+    result = LangChainUtil.langchain_chat(openai_props, vector_search_requests, params)
     return result
 
 ########################
@@ -237,44 +235,59 @@ def get_vector_db_items() -> list[VectorDBItem]:
     vector_db_list = main_db.get_vector_db_items()
     return vector_db_list  
 
-def vector_search(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem]) -> dict:
-    result = LangChainVectorDB.vector_search(openai_props, vector_db_items)
+def vector_search(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest]) -> dict:
+    result = LangChainVectorDB.vector_search(openai_props, vector_search_requests)
     return result
 
 # vector db関連
-def delete_collection(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
+def delete_collection(openai_props: OpenAIProps, embedding_data: EmbeddingData):
     # vector_db_itemsからVectorDBItemを取得
     # LangChainVectorDBを生成
+    main_db = MainDB(get_main_db_path())
+    vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+    if vector_db_item is None:
+        raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_item)
     # delete_collectionを実行
     vector_db.delete_collection()
 
-def update_collection(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
+def update_collection(openai_props: OpenAIProps, embedding_data: EmbeddingData):
     pass
 
-def delete_embeddings_by_folder(openai_props: OpenAIProps, vector_db_item: VectorDBItem):
+def delete_embeddings_by_folder(openai_props: OpenAIProps, embedding_data: EmbeddingData):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+
+    vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+    if vector_db_item is None:
+        raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+    
     # LangChainVectorDBを生成
     vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_item)
-    # folder_idを取得
-    if vector_db_item.EmbeddingData is None:
-        return
 
-    folder_id = vector_db_item.EmbeddingData.FolderId
+
+    folder_id = embedding_data.FolderId
     # delete_folder_embeddingsを実行
     vector_db.delete_folder(folder_id)
 
-def delete_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
-    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    entry = vector_db_props.EmbeddingData
-    if entry is not None:
-        vector_db.delete_document(entry.source_id)
+def delete_embeddings(openai_props: OpenAIProps, embedding_data: EmbeddingData):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+    if vector_db_item is None:
+        raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_item)
+    vector_db.delete_document(embedding_data.source_id)
 
-def update_embeddings(openai_props: OpenAIProps ,vector_db_props: VectorDBItem):
+async def update_embeddings(openai_props: OpenAIProps, embedding_data: EmbeddingData):
+    # MainDBを取得
+    main_db = MainDB(get_main_db_path())
+    vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+    if vector_db_item is None:
+        raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
     # LangChainVectorDBを生成
-    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
-    entry = vector_db_props.EmbeddingData
-    if entry is not None:
-        vector_db.update_document(entry)
+    vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_item)
+    await vector_db.update_document(embedding_data)
 
 ########################
 # ファイル関連

@@ -15,7 +15,7 @@ from ai_chat_explorer.langchain_modules.langchain_client import LangChainOpenAIC
 from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
 
 from ai_chat_explorer.openai_modules.openai_util import OpenAIProps
-from ai_chat_explorer.db_modules import VectorDBItem
+from ai_chat_explorer.db_modules import VectorDBItem, VectorSearchRequest, MainDB, get_main_db_path
 
 
 class CustomToolInput(BaseModel):
@@ -23,12 +23,12 @@ class CustomToolInput(BaseModel):
 
 class RetrievalQAUtil:
 
-    def __init__(self, client: LangChainOpenAIClient, vector_db_items:list[VectorDBItem]):
+    def __init__(self, client: LangChainOpenAIClient, vector_search_requests:list[VectorSearchRequest]):
         self.client = client
-        self.vector_db_items = vector_db_items
+        self.vector_search_requests = vector_search_requests
 
         # ツールのリストを作成
-        self.tools = self.create_vector_search_tools(self.client, self.vector_db_items)
+        self.tools = self.create_vector_search_tools(self.client, self.vector_search_requests)
 
     def create_agent_executor(self):
         '''
@@ -125,19 +125,24 @@ class RetrievalQAUtil:
 
 
     # ベクトル検索結果を返すToolを作成する関数
-    def create_vector_search_tools(self, client: LangChainOpenAIClient, vector_db_props: list[VectorDBItem]) -> list[Any]:
+    def create_vector_search_tools(self, client: LangChainOpenAIClient, vector_search_requests: list[VectorSearchRequest]) -> list[Any]:
         tools = []
-        for i in range(len(vector_db_props)):
-            item = vector_db_props[i]
+        for i in range(len(vector_search_requests)):
+            item = vector_search_requests[i]
             # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
-            description = item.Description
+            main_db = MainDB(get_main_db_path())
+            vector_db_item = main_db.get_vector_db_by_name(item.name)
+            if vector_db_item is None:
+                raise ValueError(f"VectorDBItem not found for name: {item.name}")
+
+            description = vector_db_item.Description
 
             # ツールを作成
             def vector_search_function(question: str) -> list[Document]:
                 # Retrieverを作成
                 search_kwargs = {"k": 4}
 
-                retriever = LangChainVectorDB(client, item).create_retriever(search_kwargs)
+                retriever = LangChainVectorDB(client, vector_db_item).create_retriever(search_kwargs)
                 docs: list[Document] = retriever.invoke(question)
                 # page_contentを取得
                 result_docs = []
@@ -159,13 +164,13 @@ class LangChainUtil:
 
 
     @staticmethod
-    def langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBItem], params: LangChainChatParameter):
+    def langchain_chat(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], params: LangChainChatParameter):
 
         # langchainのログを出力する
         langchain.verbose = True
         print("langchain_chat:start")
         client = LangChainOpenAIClient(openai_props)
-        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
+        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_search_requests)
         ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
         print("langchain_chat:init done")
         
@@ -187,43 +192,3 @@ class LangChainUtil:
         print("langchain_chat:end")
 
         return result_dict
-
-if __name__ == '__main__':
-
-    question1 = input("Please enter your question:")
-
-    from ai_chat_explorer.openai_modules.openai_util import OpenAIProps
-
-    openai_props:OpenAIProps  = OpenAIProps.env_to_props()
-    vector_db_item: VectorDBItem = VectorDBItem.get_vector_db_env_variables()
-    request = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": question1
-                    }
-                ]
-            }
-        ],
-        "temperature": 0.5
-    }
-    params: LangChainChatParameter = LangChainChatParameter(request)
-
-    params.prompt = question1
-    result1 = LangChainUtil.langchain_chat(openai_props, [vector_db_item], params)
-
-    print(result1.get("output",""))
-    page_conetnt_list = result1.get("page_content_list", [])
-    page_source_list = result1.get("page_source_list", [])
-    for page_content, page_source in zip(page_conetnt_list, page_source_list):
-        print(page_source)
-        print(page_content)
-        print('---------------------')
-    
-    verbose = result1.get("verbose", "")
-    print(verbose)
-

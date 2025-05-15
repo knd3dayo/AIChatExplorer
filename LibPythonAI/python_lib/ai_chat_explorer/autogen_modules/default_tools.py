@@ -198,13 +198,14 @@ def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
     from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
     from ai_chat_explorer.autogen_modules import AutoGenProps
     props : AutoGenProps = autogen_props # type: ignore
-    if not props.vector_db_prop_list:
+    if not props.vector_search_requests:
         return []
 
     # vector_db_prop_listの各要素にinput_textを設定
-    for vector_db_props in props.vector_db_prop_list:
-        vector_db_props.input_text = query
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
+    for vector_search_request in props.vector_search_requests:
+        vector_search_request.query = query
+
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents
@@ -225,9 +226,10 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     main_vector_db_item = main_db.get_vector_db_by_id(props.main_vector_db_id)
     vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
     # vector_db_prop_listの各要素にinput_textを設定
-    for vector_db_props in props.vector_db_prop_list:
-        vector_db_props.input_text = query
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
+    for request in props.vector_search_requests:
+        request.query = query
+
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents
@@ -255,9 +257,9 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
 
     vector_db_item_list = [] if main_vector_db_item is None else [main_vector_db_item]
     # vector_db_prop_listの各要素にinput_textを設定
-    for vector_db_props in props.vector_db_prop_list:
-        vector_db_props.input_text = query
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_db_prop_list)
+    for request in props.vector_search_requests:
+        request.query = query
+    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents

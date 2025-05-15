@@ -21,7 +21,8 @@ from ai_chat_explorer.langchain_modules.langchain_doc_store import SQLDocStore
 
 from ai_chat_explorer.openai_modules.openai_util import OpenAIProps
 
-from ai_chat_explorer.db_modules import EmbeddingData, VectorDBItem
+from ai_chat_explorer.db_modules import EmbeddingData, VectorDBItem, VectorSearchRequest, MainDB
+from ai_chat_explorer.api_modules.ai_app_util import get_main_db_path
 
 logger = logging.getLogger(__name__)
 
@@ -124,11 +125,11 @@ class LangChainVectorDB:
         self.db.delete_collection()
         # self.db.persist()
 
-    def __add_document(self, document: Document):
+    async def __add_document(self, document: Document):
         # ベクトルDB固有の保存メソッドを呼び出し                
-        asyncio.run( self._save([document] ))
+        await self._save([document] )
 
-    def __add_multivector_document(self, source_document: Document):
+    async def __add_multivector_document(self, source_document: Document):
 
         # doc_idを取得
         doc_id = source_document.metadata.get("doc_id", None)
@@ -166,7 +167,7 @@ class LangChainVectorDB:
         # Retoriverを作成
         retriever = self.create_retriever()
         # ドキュメントを追加
-        asyncio.run(retriever.vectorstore.aadd_documents(sub_docs))
+        await retriever.vectorstore.aadd_documents(sub_docs)
 
         # 元のドキュメントをDocStoreに保存
         param = []
@@ -247,7 +248,7 @@ class LangChainVectorDB:
 
         return retriever
 
-    def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url=""):
+    async def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url=""):
         
         chunk_size = self.vector_db_props.ChunkSize
     
@@ -268,11 +269,12 @@ class LangChainVectorDB:
         # MultiVectorRetrieverの場合はadd_multivector_documentを呼び出す
         if self.vector_db_props.IsUseMultiVectorRetriever:
             for document in document_list:
-                self.__add_multivector_document(document)
+                await self.__add_multivector_document(document)
             return document_list
         else:
             for document in document_list:
-                self.__add_document(document)
+                await self.__add_document(document)
+            return document_list
 
 
     # テキストをサニタイズする
@@ -353,34 +355,41 @@ class LangChainVectorDB:
             # DBからsourceを指定して既存ドキュメントを削除
             self.__delete_document(source_id)
     
-    def update_document(self, params: EmbeddingData):
+    async def update_document(self, params: EmbeddingData):
         
         # 既に存在するドキュメントを削除
         self.delete_document(params.source_id)
         # ドキュメントを格納する。
-        self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, params.git_relative_path)
+        await self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
     @classmethod
-    def vector_search(cls, openai_props: OpenAIProps, vector_db_props: list[VectorDBItem]) -> dict[str, Any]:    
+    def vector_search(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest]) -> dict[str, Any]:    
 
         if not openai_props:
             raise ValueError("openai_props is None")
         client = LangChainOpenAIClient(openai_props)
 
+        main_db = MainDB(get_main_db_path())
+
         # documentsの要素からcontent, source, source_urlを取得
         result = []
         # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-        for vector_db_item in vector_db_props:
-
+        for request in vector_search_requests:
+            # vector_db_itemを取得
+            vector_db_item = main_db.get_vector_db_by_name(request.name)
+            if vector_db_item is None:
+                raise ValueError(f"vector_db_item is None. name:{request.name}")
+            
             # デバッグ出力
-            logger.info(f'検索文字列: {vector_db_item.input_text}')
             logger.info('ベクトルDBの設定')
             logger.info(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-            logger.info(f'SearchKwargs:{vector_db_item.SearchKwargs}')
             logger.info(f'IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}')
-            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwargs)
-            documents: list[Document] = retriever.invoke(vector_db_item.input_text)
+
+            logger.info(f'検索文字列: {request.query}')
+            logger.info(f'SearchKwargs:{request.search_kwargs}')
+            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(request.search_kwargs)
+            documents: list[Document] = retriever.invoke(request.query)
 
             logger.debug(f"documents:\n{documents}")
             for doc in documents:

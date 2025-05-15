@@ -546,13 +546,13 @@ def langchain_chat( request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBItemを生成
-        vector_db_items = get_vector_search_requests_objects(request_dict)
+        vector_search_requests = get_vector_search_requests_objects(request_dict)
 
         # chat_requestを取得
         chat_request_dict = request_dict.get(chat_request_name, None)
         params:LangChainChatParameter = LangChainChatParameter(chat_request_dict)
         # langchan_chatを実行
-        result = ai_app.run_langchain_chat(openai_props, vector_db_items, params)
+        result = ai_app.run_langchain_chat(openai_props, vector_search_requests, params)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -675,7 +675,7 @@ def vector_search(request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # queryを取得
-        vector_search_requests: list[VectorDBItem] = get_vector_search_requests_objects(request_dict)
+        vector_search_requests: list[VectorSearchRequest] = get_vector_search_requests_objects(request_dict)
 
         result = ai_app.vector_search(openai_props, vector_search_requests)
         return result
@@ -693,9 +693,9 @@ def update_collection(request_json: str):
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # ChatRequestContextからVectorDBItemを生成
-        vector_db_item = get_embedding_request_objects(request_dict)
+        vector_search_requests = get_embedding_request_objects(request_dict)
 
-        ai_app.update_collection(openai_props, vector_db_item)
+        ai_app.update_collection(openai_props, vector_search_requests)
 
         return {}
 
@@ -764,22 +764,23 @@ def delete_embeddings(request_json: str):
     return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
-def update_embeddings(request_json: str):
-    def func () -> dict:
+async def update_embeddings(request_json: str):
+    async def func () -> dict:
         # request_jsonからrequestを作成
         request_dict: dict = json.loads(request_json)
 
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(request_dict)
         # embedding_requestを取得
-        vector_db_item: VectorDBItem = get_embedding_request_objects(request_dict)
-        ai_app.update_embeddings(openai_props, vector_db_item)
+        embedding: EmbeddingData = get_embedding_request_objects(request_dict)
+
+        await ai_app.update_embeddings(openai_props, embedding)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
+    wrapper = capture_stdout_stderr_async(func)
     # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
+    return await wrapper()
 
 ########################
 # ファイル関連

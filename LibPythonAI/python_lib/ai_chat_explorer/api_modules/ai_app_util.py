@@ -5,7 +5,7 @@ from io import StringIO
 import sys
 
 from ai_chat_explorer.openai_modules import OpenAIProps, OpenAIClient, RequestContext
-from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, ContentFolder, init_db, get_main_db_path
+from ai_chat_explorer.db_modules import VectorDBItem, TagItem, MainDB, EmbeddingData, ContentFolder, init_db, get_main_db_path, VectorSearchRequest
 from ai_chat_explorer.db_modules import AutogentLLMConfig, AutogenTools, AutogenAgent, AutogenGroupChat
 from ai_chat_explorer.autogen_modules import AutoGenProps
 
@@ -69,6 +69,43 @@ def capture_stdout_stderr(func):
         return json.dumps(result, ensure_ascii=False, indent=4)
 
     return wrapper
+
+# stdout,stderrを文字列として取得するためラッパー関数を定義
+def capture_stdout_stderr_async(func):
+    async def wrapper(*args, **kwargs) -> str:
+        # strout,stderrorをStringIOでキャプチャする
+        buffer = StringIO()
+        sys.stdout = buffer
+        sys.stderr = buffer
+        result = {}
+        try:
+            # debug用
+            # HTTPS_PROXY環境変数
+            print(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
+            # NO_PROXY環境変数
+            print(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
+
+            result = await func(*args, **kwargs)
+            # resultがdictでない場合は例外をスロー
+            if not isinstance(result, dict):
+                raise ValueError("result must be dict")
+        except Exception as e:
+            # エラーが発生した場合はエラーメッセージを出力
+            print(e)
+            import traceback
+            traceback.print_exc()            
+            result["error"] = "\n".join(traceback.format_exception(type(e), e, e.__traceback__))
+
+        # strout,stderrorを元に戻す
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+            
+        # resultにlogを追加して返す
+        result["log"] = buffer.getvalue()
+        # jsonを返す
+        return json.dumps(result, ensure_ascii=False, indent=4)
+
+    return  wrapper
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_generator_stdout_stderr(func):
@@ -190,10 +227,10 @@ def get_autogen_objects(request_dict: dict) -> AutoGenProps:
     openai_props, _ = get_openai_objects(request_dict)
 
     # vector_db_itemsを取得
-    vector_db_items = get_vector_search_requests_objects(request_dict)
+    vector_search_requests = get_vector_search_requests_objects(request_dict)
 
     app_db_path = get_main_db_path()
-    autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_db_items)
+    autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_search_requests)
     return autogen_props
 
 def get_autogen_llm_config_object(request_dict: dict) -> AutogentLLMConfig:
@@ -268,7 +305,7 @@ def get_vector_db_item_object(request_dict: dict) -> VectorDBItem:
     vector_db_item = VectorDBItem(vector_db_item_request)
     return vector_db_item    
 
-def get_vector_search_requests_objects(request_dict: dict) -> list[VectorDBItem]:
+def get_vector_search_requests_objects(request_dict: dict) -> list[VectorSearchRequest]:
     '''
     {"vector_search_request": {}}の形式で渡される
     '''
@@ -278,32 +315,15 @@ def get_vector_search_requests_objects(request_dict: dict) -> list[VectorDBItem]
         print("request is not set.", file=sys.stderr)
         return []
 
-    # MainDBを取得
-    app_db_path = get_main_db_path()
-    main_db = MainDB(app_db_path)
-
-    vector_db_items = []
+    vector_search_requests = []
     for item in request:
-        # nameからVectorDBItemを取得
-        name = item.get("Name", None)
-        if not name:
-            raise ValueError("Name is not set.")
-        vector_db_item = main_db.get_vector_db_by_name(name)
-        if not vector_db_item:
-            raise ValueError(f"vector_db_item({name}) is not found.")
-        # input_textとSearchKWArgを設定
-        input_text = item.get("input_text", None)
-        search_kwarg = item.get("SearchKWArg", None)
-        if input_text:
-            vector_db_item.input_text = input_text
-        if search_kwarg:
-            vector_db_item.search_kwarg = search_kwarg
-        # vector_db_itemsに追加
-        vector_db_items.append(vector_db_item)
+        # vector_search_requestsを生成
+        vector_search_request = VectorSearchRequest(item)
+        vector_search_requests.append(vector_search_request)
+    return vector_search_requests
 
-    return vector_db_items
 
-def get_embedding_request_objects(request_dict: dict) -> VectorDBItem:
+def get_embedding_request_objects(request_dict: dict) -> EmbeddingData:
     '''
     {"embedding_request": {}}の形式で渡される
     '''
@@ -312,25 +332,8 @@ def get_embedding_request_objects(request_dict: dict) -> VectorDBItem:
     if not request:
         raise ValueError("request is not set.")
     # MainDBを取得
-    app_db_path = get_main_db_path()
-    main_db = MainDB(app_db_path)
-
-    # nameからVectorDBItemを取得
-    name = request.get("Name", None)
-    if not name:
-        raise ValueError("Name is not set.")
-    vector_db_item = main_db.get_vector_db_by_name(name)
-    if not vector_db_item:
-        raise ValueError(f"vector_db_item({name}) is not found.")
-    # Embeddingを取得
-    embedding: dict = request.get("Embedding", None)
-    if not embedding:
-        raise ValueError("Embedding is not set.")
-    
-    # vector_db_itemにEmbeddingを設定
-    vector_db_item.EmbeddingData = EmbeddingData(embedding)
-    
-    return vector_db_item
+ 
+    return EmbeddingData(request)
 
 def get_excel_request_objects(request_dict: dict) -> tuple[str, dict]:
     '''

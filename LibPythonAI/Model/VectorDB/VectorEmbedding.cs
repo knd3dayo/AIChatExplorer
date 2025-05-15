@@ -5,7 +5,6 @@ using System.Text.Unicode;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
@@ -27,7 +26,7 @@ namespace LibPythonAI.Model.VectorDB {
             FolderId = folderId;
         }
 
-        [JsonPropertyName("FolderId")]
+        [JsonPropertyName("folder_id")]
         public string? FolderId { get; set; } = null;
 
         [JsonPropertyName("source_id")]
@@ -91,7 +90,7 @@ namespace LibPythonAI.Model.VectorDB {
                 ["score"] = Score
             };
             if (FolderId != null) {
-                dict["FolderId"] = FolderId;
+                dict["folder_id"] = FolderId;
             }
             return dict;
         }

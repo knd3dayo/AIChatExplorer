@@ -23,10 +23,10 @@
     },
     "vector_search_requests": [
     {
-        "Name": "default",
+        "name": "default",
         "model": "text-embedding-3-small",
-        "input_text": "検索文字列",
-        "SearchKwargs": {
+        "query": "検索文字列",
+        "search_kwargs": {
             "k": 10,
             "filter": {
                 "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a"
@@ -36,22 +36,20 @@
     ],
     "embedding_request":
         {
-        "Name": "default",
+        "name": "default",
         "model": "text-embedding-3-small",
-        "Embedding": {
-            "FolderId": "47bbf240-5022-470f-9b8b-0de0e600595a",
-            "source_id": "",
-            "source_type": 0,
-            "description": "",
-            "content": "",
-            "source_path": "",
-            "git_repository_url": "",
-            "git_relative_path": "",
-            "image_url": "",
-            "doc_id": "",
-            "score": 0,
-            "sub_docs": []
-        }
+        "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a",
+        "source_id": "",
+        "source_type": 0,
+        "description": "",
+        "content": "",
+        "source_path": "",
+        "git_repository_url": "",
+        "git_relative_path": "",
+        "image_url": "",
+        "doc_id": "",
+        "score": 0,
+        "sub_docs": []
     },
     "vector_db_item_request" : {
 

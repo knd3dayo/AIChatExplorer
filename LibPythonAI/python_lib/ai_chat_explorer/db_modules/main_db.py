@@ -172,20 +172,11 @@ class VectorDBItem:
             else:
                 raise ValueError("VectorDBType must be 1 or 2")
 
-        # vector_db_entries ContentUpdateOrDeleteRequestParamsのリスト
-        metadata = vector_db_item_dict.get("Embedding" , None)
-        self.EmbeddingData = EmbeddingData(metadata) if metadata else None
-        # search_kwarg
-        self.SearchKwargs = vector_db_item_dict.get("SearchKwargs", {})
         # system_message
         self.SystemMessage = vector_db_item_dict.get("SystemMessage", self.Description)
         # FolderのID
         self.FolderId = vector_db_item_dict.get("FolderId", "")
 
-        # input_text
-        self.input_text = vector_db_item_dict.get("input_text", None)
-        # search_kwarg
-        self.search_kwarg = vector_db_item_dict.get("SearchKwarg", None)
 
     def to_dict(self) -> dict:
         return {
@@ -223,12 +214,39 @@ class VectorDBItem:
         }
         return  VectorDBItem(props)
 
+class VectorSearchRequest:
+    def __init__(self, item: dict):
+        self.name = item.get("name", "")
+        self.query = item.get("query", "")
+        self.model = item.get("model", "")
+        self.search_kwargs = item.get("search_kwargs", {})
+        
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "query": self.query,
+            "model": self.model,
+            "search_kwargs": self.search_kwargs
+        }
+    
+
 class EmbeddingData:
     def __init__(self, item: dict):
+    # nameからVectorDBItemを取得
+        name = item.get("name", None)
+        if not name:
+            raise ValueError("name is not set.")
+        
+        model = item.get("model", None)
+        if not model:
+            raise ValueError("model is not set.")
 
         # request_jsonをdictに変換
+        self.name = name
+        self.model = model
+
         self.source_id = item["source_id"]
-        self.FolderId = item["FolderId"]
+        self.FolderId = item["folder_id"]
         self.description = item.get("description", "")
         self.content = item["content"]
         self.source_path = item.get("source_path", "")

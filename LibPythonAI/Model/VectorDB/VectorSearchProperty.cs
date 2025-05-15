@@ -1,5 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
@@ -11,11 +12,14 @@ namespace LibPythonAI.Model.VectorDB {
     public class VectorSearchProperty {
 
 
+        [JsonPropertyName("name")]
         public string? VectorDBItemName { init; get; } = null;
 
+        [JsonPropertyName("model")]
         public string? Model { get; set; } = null;
 
         // InputText
+        [JsonPropertyName("query")]
         public string? InputText { get; set; } = null;
 
         //TopK
@@ -90,14 +94,14 @@ namespace LibPythonAI.Model.VectorDB {
             }
 
             Dictionary<string, object> dict = [];
-            dict["Name"] = VectorDBItemName;
+            dict["name"] = VectorDBItemName;
             dict["model"] = Model;
             var search_kwargs = GetSearchKwargs();
             if (search_kwargs.Count > 0) {
-                dict["SearchKwargs"] = search_kwargs;
+                dict["search_kwargs"] = search_kwargs;
             }
             if (!string.IsNullOrEmpty(InputText)) {
-                dict["input_text"] = InputText;
+                dict["query"] = InputText;
             }
             return dict;
         }
@@ -105,30 +109,6 @@ namespace LibPythonAI.Model.VectorDB {
         // CreateEntriesDictList
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchProperty> items) {
             return items.Select(item => item.ToDict()).ToList();
-        }
-        // FromDict
-        public static VectorSearchProperty FromDict(Dictionary<string, object> dict) {
-            VectorSearchProperty item = new() {
-                VectorDBItemName = dict["Name"]?.ToString(),
-                Model = dict["model"]?.ToString(),
-                InputText = dict["input_text"]?.ToString()
-            };
-            if (dict.ContainsKey("SearchKwargs")) {
-                Dictionary<string, object> search_kwargs = (Dictionary<string, object>)dict["SearchKwargs"];
-                if (search_kwargs.ContainsKey("k")) {
-                    item.TopK = Convert.ToInt32(search_kwargs["k"]);
-                }
-            }
-            return item;
-        }
-        // FromDictList
-        public static List<VectorSearchProperty> FromDictList(List<Dictionary<string, object>> dicts) {
-            List<VectorSearchProperty> items = [];
-            foreach (var dict in dicts) {
-                VectorSearchProperty item = FromDict(dict);
-                items.Add(item);
-            }
-            return items;
         }
 
         // ToListJson
@@ -149,7 +129,7 @@ namespace LibPythonAI.Model.VectorDB {
             // ChatRequestContextを作成
             this.InputText = query;
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = [ this],
+                VectorSearchRequests = [this],
                 OpenAIProperties = openAIProperties,
                 UseVectorDB = true,
             };

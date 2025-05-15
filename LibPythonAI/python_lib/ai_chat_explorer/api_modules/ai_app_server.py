@@ -258,7 +258,7 @@ async def delete_embeddings(request: Request) -> Response:
 @routes.post('/api/update_embeddings')
 async def update_embeddings(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.update_embeddings(request_json)
+    response = await ai_app_wrapper.update_embeddings(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 

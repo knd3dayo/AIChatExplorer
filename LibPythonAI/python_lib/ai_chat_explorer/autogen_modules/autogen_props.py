@@ -19,9 +19,7 @@ from autogen_agentchat.teams import SelectorGroupChat
 from autogen_agentchat.base import TaskResult
 from autogen_agentchat.messages import ChatMessage, AgentEvent, TextMessage
 
-# vector_db_props
-# main_db
-from ai_chat_explorer.db_modules import VectorDBItem, MainDB
+from ai_chat_explorer.db_modules import VectorDBItem, MainDB, VectorSearchRequest, get_main_db_path
 
 # openai_props
 from ai_chat_explorer.openai_modules import OpenAIProps
@@ -48,7 +46,7 @@ class AutoGenProps:
             return True
         return False
 
-    def __init__(self, app_db_path: str ,props_dict: dict, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem]):
+    def __init__(self, app_db_path: str ,props_dict: dict, openai_props: OpenAIProps, vector_search_requests:list[VectorSearchRequest]):
 
         # session_token
         self.session_token = props_dict.get("session_token", None)
@@ -92,7 +90,7 @@ class AutoGenProps:
         self.openai_props = openai_props
 
         # vector_db_prop_list
-        self.vector_db_prop_list = vector_db_prop_list
+        self.vector_search_requests = vector_search_requests
 
         # main_vector_db
         self.main_vector_db_id = props_dict.get("main_vector_db_id", None)
@@ -173,19 +171,26 @@ class AutoGenProps:
         self.chat_object = chat
 
     # vector_search_agentsを準備する。vector_db_props_listを受け取り、vector_search_agentsを作成する
-    def __create_vector_search_agent_list(self, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBItem]):
+    def __create_vector_search_agent_list(self, openai_props: OpenAIProps, vector_search_requests:list[VectorSearchRequest]):
         vector_search_agents = []
-        for vector_db_props in vector_db_prop_list:
-            vector_search_agent = self.__create_vector_search_agent(openai_props, vector_db_props)
+        for request in vector_search_requests:
+            vector_search_agent = self.__create_vector_search_agent(openai_props, request)
             vector_search_agents.append(vector_search_agent)
         
         return vector_search_agents
 
     # 指定したopenai_propsとvector_db_propsを使って、VectorSearchAgentを作成する
-    def __create_vector_search_agent(self, openai_props: OpenAIProps, vector_db_props: VectorDBItem):
+    def __create_vector_search_agent(self, openai_props: OpenAIProps, vector_search_request: VectorSearchRequest):
         import uuid
         params: dict[str, Any] = {}
         id = str(uuid.uuid4()).replace('-', '_')
+
+        # main_dbを作成
+        main_db = MainDB(get_main_db_path())
+        # vector_db_propsを取得
+        vector_db_props = main_db.get_vector_db_by_name(vector_search_request.name)
+        if vector_db_props is None:
+            raise ValueError(f"VectorDBItem not found for name: {vector_search_request.name}")
 
         params["name"] = f"vector_searcher_{id}"
         params["description"] = vector_db_props.Description
@@ -194,7 +199,7 @@ class AutoGenProps:
         params["model_client"] = self.__load_client("default")
         # vector_search_toolを作成
         from ai_chat_explorer.autogen_modules.vector_db_tools import create_vector_search_tool
-        func = create_vector_search_tool(openai_props, [vector_db_props])
+        func = create_vector_search_tool(openai_props, [vector_search_request])
         func_tool = FunctionTool(func, description=f"Vector Search Tool for {vector_db_props.Description}", name=f"vector_search_tool_{id}")
         params["tools"] = [func_tool]
 
