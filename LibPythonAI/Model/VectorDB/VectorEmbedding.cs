@@ -84,8 +84,7 @@ namespace LibPythonAI.Model.VectorDB {
             // タイトルとHeaderTextを追加
             string description = item.Description + "\n" + item.HeaderText;
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                string sourcePath = item.SourcePath;
-                SetMetadata(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
+                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath, "", "", "");
             } else {
                 if (item.IsImage()) {
                     // 画像からテキスト抽出

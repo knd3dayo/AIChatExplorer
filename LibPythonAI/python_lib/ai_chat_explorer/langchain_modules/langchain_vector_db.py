@@ -164,7 +164,7 @@ class LangChainVectorDB:
         # Retoriverを作成
         retriever = self.create_retriever()
         # ドキュメントを追加
-        await self.add_doucment_with_retry(retriever, sub_docs)    
+        await self.add_doucment_with_retry(retriever.vectorstore, sub_docs)    
 
         # 元のドキュメントをDocStoreに保存
         param = []
