@@ -15,6 +15,7 @@ from langchain_core.runnables import chain
 from langchain_core.callbacks import (
     CallbackManagerForRetrieverRun,
 )
+from openai import RateLimitError
 
 from ai_chat_explorer.langchain_modules.langchain_client import LangChainOpenAIClient
 from ai_chat_explorer.langchain_modules.langchain_doc_store import SQLDocStore
@@ -87,14 +88,10 @@ class LangChainVectorDB:
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         self.langchain_openai_client = langchain_openai_client
         self.vector_db_props = vector_db_props
-        if vector_db_props.IsUseMultiVectorRetriever:
-            print("doc_store_url:", vector_db_props.DocStoreURL)
-            self.doc_store = SQLDocStore(vector_db_props.DocStoreURL)
-        else:
-            print("doc_store_url is None")
 
         # 子クラスで実装
         self.db: Union[VectorStore, None] = None
+        self.doc_store: Union[SQLDocStore, None] = None
 
     def _load(self) -> VectorStore:
         # 未実装例外をスロー
@@ -108,8 +105,8 @@ class LangChainVectorDB:
     async def _save(self, documents:list=[]):
         if self.db is None:
             raise ValueError("db is None")
-        
-        await self.db.aadd_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
+        # リトライ処理
+        await self.add_doucment_with_retry(self.db, documents)    
 
     def _delete(self, doc_ids:list=[]):
         if len(doc_ids) == 0:
@@ -176,7 +173,7 @@ class LangChainVectorDB:
 
     def __delete_folder(self, folder_id: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata = self._get_document_ids_by_tag("FolderId", folder_id)
+        vector_ids, metadata = self._get_document_ids_by_tag("folder_id", folder_id)
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
             return 0
@@ -187,7 +184,7 @@ class LangChainVectorDB:
     def __delete_multivector_folder(self, folder_id: str ) :
         
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata_list = self._get_document_ids_by_tag("FolderId", folder_id)
+        vector_ids, metadata_list = self._get_document_ids_by_tag("older_id", folder_id)
 
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
@@ -197,7 +194,8 @@ class LangChainVectorDB:
         # doc_idsが空ではない場合
         if len(doc_ids) > 0:
             # DocStoreから削除
-            self.doc_store.mdelete(doc_ids)
+            if self.doc_store is not None:
+                self.doc_store.mdelete(doc_ids)
 
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
@@ -226,7 +224,8 @@ class LangChainVectorDB:
         # doc_idsが空ではない場合
         if len(doc_ids) > 0:
             # DocStoreから削除
-            self.doc_store.mdelete(doc_ids)
+            if self.doc_store is not None:
+                self.doc_store.mdelete(doc_ids)
 
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
@@ -361,6 +360,24 @@ class LangChainVectorDB:
         self.delete_document(params.source_id)
         # ドキュメントを格納する。
         await self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, params.git_relative_path)
+
+    # RateLimitErrorが発生した場合は、指数バックオフを行う
+    async def add_doucment_with_retry(self, vector_db: VectorStore, documents: list[Document], max_retries: int = 5, delay: float = 1.0):
+        for attempt in range(max_retries):
+            try:
+                await vector_db.aadd_documents(documents=documents)
+                return
+            except RateLimitError as e:
+                if attempt < max_retries - 1:
+                    logger.warning(f"RateLimitError: {e}. Retrying in {delay} seconds...")
+                    await asyncio.sleep(delay)
+                    delay *= 2
+                else:
+                    logger.error(f"Max retries reached. Failed to add documents: {e}")
+                    break
+            except Exception as e:
+                logger.error(f"Error adding documents: {e}")
+                break
 
     # ベクトル検索を行う
     @classmethod

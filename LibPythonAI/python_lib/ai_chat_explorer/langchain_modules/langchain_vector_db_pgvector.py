@@ -12,13 +12,18 @@ from langchain_core.vectorstores import VectorStore
 from ai_chat_explorer.langchain_modules.langchain_util import LangChainOpenAIClient
 from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
 from ai_chat_explorer.db_modules import VectorDBItem
-
+from ai_chat_explorer.langchain_modules.langchain_doc_store import SQLDocStore
     
 class LangChainVectorDBPGVector(LangChainVectorDB):
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
         super().__init__(langchain_openai_client, vector_db_props)
         self.db = self._load()
+        if vector_db_props.IsUseMultiVectorRetriever:
+            print("doc_store_url:", vector_db_props.DocStoreURL)
+            self.doc_store = SQLDocStore(vector_db_props.DocStoreURL)
+        else:
+            print("doc_store_url is None")
 
     def _load(self) -> VectorStore:
         # VectorDBTypeStringが"PGVector"でない場合は例外をスロー
