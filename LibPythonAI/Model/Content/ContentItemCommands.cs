@@ -134,6 +134,7 @@ namespace LibPythonAI.Model.Content {
                         return;
                     }
                     VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    vectorDBEntry.SetMetadata(item);
 
                     VectorEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                 });
@@ -157,21 +158,7 @@ namespace LibPythonAI.Model.Content {
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
                     VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
-
-                    // タイトルとHeaderTextを追加
-                    string description = item.Description + "\n" + item.HeaderText;
-                    if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                        string sourcePath = item.SourcePath;
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
-                    } else {
-                        if (item.IsImage()) {
-                            // 画像からテキスト抽出
-                            vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
-
-                        } else {
-                            vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
-                        }
-                    }
+                    vectorDBEntry.SetMetadata(item);
 
                     VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                     // ベクトル化日時を更新

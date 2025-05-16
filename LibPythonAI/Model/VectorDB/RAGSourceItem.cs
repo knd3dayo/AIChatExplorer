@@ -136,7 +136,7 @@ namespace LibPythonAI.Model.VectorDB {
                     VectorEmbedding vectorDBEntry = new() {
                         SourcePath = source_path
                     };
-                    vectorDBEntry.UpdateSourceInfo(
+                    vectorDBEntry.SetMetadata(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
 
                     VectorSearchProperty vectorSearchProperty = new() {

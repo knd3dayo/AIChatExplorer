@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
@@ -66,7 +67,7 @@ namespace LibPythonAI.Model.VectorDB {
         public List<VectorEmbedding> SubDocs { get; set; } = [];
 
 
-        public void UpdateSourceInfo(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
+        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
             Description = description;
             Content = content;
             SourceType = sourceType;
@@ -74,6 +75,26 @@ namespace LibPythonAI.Model.VectorDB {
             GitRepositoryUrl = git_repository_url;
             GitRelativePath = git_relative_path;
             ImageURL = image_url;
+
+        }
+
+        public void SetMetadata(ContentItemWrapper item) {
+
+
+            // タイトルとHeaderTextを追加
+            string description = item.Description + "\n" + item.HeaderText;
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
+                string sourcePath = item.SourcePath;
+                SetMetadata(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
+            } else {
+                if (item.IsImage()) {
+                    // 画像からテキスト抽出
+                    SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
+
+                } else {
+                    SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
+                }
+            }
 
         }
         public Dictionary<string, object> ToDict() {
@@ -119,6 +140,7 @@ namespace LibPythonAI.Model.VectorDB {
             result.Score = Convert.ToDouble(dict["score"]);
             return result;
         }
+
         public static async Task UpdateEmbeddings(string vectorDBItemName, VectorEmbedding vectorEmbedding) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();

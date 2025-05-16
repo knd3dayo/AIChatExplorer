@@ -587,6 +587,7 @@ namespace LibPythonAI.Model.Content {
                         return;
                     }
                     VectorEmbedding vectorDBEntry = new(Id.ToString(), GetFolder().Id);
+                    vectorDBEntry.SetMetadata(this);
                     await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             }
@@ -636,6 +637,7 @@ namespace LibPythonAI.Model.Content {
                             return;
                         }
                         VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                        vectorDBEntry.SetMetadata(item);
                         await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
                 }
