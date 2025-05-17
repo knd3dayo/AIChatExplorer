@@ -340,7 +340,7 @@ class VectorSearchRequest:
         # contextを取得
         request:list[dict] = request_dict.get(cls.vector_search_requests_name, None)
         if not request:
-            logger.error("request is not set.")
+            logger.info("vector search request is not set. skipping.")
             return []
 
         vector_search_requests = []
@@ -1031,7 +1031,7 @@ class MainDB:
                 "VectorDBType": 1,
                 "VectorDBURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_vector_db"),
                 "DocStoreURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_doc_store.db"),
-                "IsUseMultiVectorRetriever": True,
+                "IsUseMultiVectorRetriever": False,
                 "IsEnable": True,
                 "IsSystem": False,
                 "CollectionName": "ai_app_default_collection",

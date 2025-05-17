@@ -45,10 +45,17 @@ namespace LibPythonAI.Model.AutoGen {
             await PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
         }
 
-        public string ToJson() {
-            // Serialize the object to JSON
-            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
-            return jsonString;
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                ["name"] = Name,
+                ["api_type"] = ApiType,
+                ["api_version"] = ApiVersion,
+                ["model"] = Model,
+                ["api_key"] = ApiKey,
+                ["base_url"] = BaseURL
+            };
+            return dict;
         }
 
         public static AutoGenLLMConfig FromDict(Dictionary<string, object> dict) {

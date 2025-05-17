@@ -46,18 +46,18 @@ namespace LibPythonAI.Model.AutoGen {
         public bool VectorDBSearchAgent { get; set; } = false;
 
         // CreateEntriesDictList
-        public static Dictionary<string, object> ToDict(AutoGenAgent data) {
+        public Dictionary<string, object> ToDict() {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
-                { "name", data.Name },
-                { "description", data.Description },
-                { "system_message", data.SystemMessage },
-                { "type_value", data.TypeValue },
-                { "tool_names", data.ToolNames },
-                { "code_execution", data.CodeExecution },
-                { "llm_config_name", data.LLMConfigName },
-                { "vector_db_props", VectorDBItem.ToDictList(data.VectorDBItems) },
-                { "vector_db_search_agent", data.VectorDBSearchAgent },
+                { "name", Name },
+                { "description", Description },
+                { "system_message", SystemMessage },
+                { "type_value", TypeValue },
+                { "tool_names", ToolNames },
+                { "code_execution", CodeExecution },
+                { "llm_config_name", LLMConfigName },
+                { "vector_db_props", VectorDBItem.ToDictList(VectorDBItems) },
+                { "vector_db_search_agent", VectorDBSearchAgent },
 
             };
             return dict;
@@ -69,7 +69,7 @@ namespace LibPythonAI.Model.AutoGen {
             // Create a list of dictionaries
             List<Dictionary<string, object>> dictList = [];
             foreach (AutoGenAgent item in data) {
-                dictList.Add(ToDict(item));
+                dictList.Add(item.ToDict());
             }
             return dictList;
         }

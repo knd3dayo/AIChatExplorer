@@ -894,14 +894,19 @@ namespace PythonAILib.PythonIF {
             AutoGenLLMConfig autogenLLMConfig = new() {
                 Name = name
             };
-            // Json文字列を取得
-            string nameJson = autogenLLMConfig.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenLLMConfigInstance = autogenLLMConfig
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             string endpoint = $"{this.base_url}/get_autogen_llm_config";
 
             // Log出力
-            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
             // PostAsyncを実行する
-            string resultString = await PostAsync(endpoint, nameJson);
+            string resultString = await PostAsync(endpoint, requestJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -921,8 +926,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenLLMConfigInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutogenLLMConfigExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -934,8 +944,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenLLMConfigInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutogenLLMConfigExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -979,13 +994,19 @@ namespace PythonAILib.PythonIF {
             AutoGenTool autogenTool = new() {
                 Name = name
             };
-            // Json文字列を取得
-            string nameJson = autogenTool.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenToolInstance = autogenTool
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
+
             string endpoint = $"{this.base_url}/get_autogen_tool";
             // Log出力
-            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
             // PostAsyncを実行する
-            string resultString = await PostAsync(endpoint, nameJson);
+            string resultString = await PostAsync(endpoint, requestJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -1006,8 +1027,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task UpdateAutoGenToolAsync(AutoGenTool config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenToolInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenToolExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -1018,8 +1044,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task DeleteAutoGenToolAsync(AutoGenTool config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenToolInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenToolExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -1059,13 +1090,18 @@ namespace PythonAILib.PythonIF {
             AutoGenAgent autogenAgent = new() {
                 Name = name
             };
-            // Json文字列を取得
-            string nameJson = autogenAgent.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenAgentInstance = autogenAgent
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             string endpoint = $"{this.base_url}/get_autogen_agent";
             // Log出力
-            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
             // PostAsyncを実行する
-            string resultString = await PostAsync(endpoint, nameJson);
+            string resultString = await PostAsync(endpoint, requestJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -1081,8 +1117,14 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task UpdateAutoGenAgentAsync(AutoGenAgent config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenAgentInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
+
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenAgentExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -1093,8 +1135,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task DeleteAutoGenAgentAsync(AutoGenAgent config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenAgentInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenAgentExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -1134,13 +1181,17 @@ namespace PythonAILib.PythonIF {
             AutoGenGroupChat autogenGroupChat = new() {
                 Name = name
             };
-            // Json文字列を取得
-            string nameJson = autogenGroupChat.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenGroupChatInstance = autogenGroupChat
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
             string endpoint = $"{this.base_url}/get_autogen_group_chat";
             // Log出力
-            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{nameJson}");
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
             // PostAsyncを実行する
-            string resultString = await PostAsync(endpoint, nameJson);
+            string resultString = await PostAsync(endpoint, requestJson);
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -1155,8 +1206,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task UpdateAutoGenGroupChatAsync(AutoGenGroupChat config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenGroupChatInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenGroupChatExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する
@@ -1167,8 +1223,13 @@ namespace PythonAILib.PythonIF {
         }
 
         public async Task DeleteAutoGenGroupChatAsync(AutoGenGroupChat config) {
-            // Json文字列を取得
-            string requestJson = config.ToJson();
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                AutoGenGroupChatInstance = config
+            };
+            // RequestContainerをJSON文字列に変換
+            string requestJson = requestContainer.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenGroupChatExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
             // PostAsyncを実行する

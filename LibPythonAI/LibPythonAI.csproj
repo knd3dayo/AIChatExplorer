@@ -64,6 +64,9 @@
     <EmbeddedResource Include="python_lib\ai_chat_lib\autogen_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\normal_chat_local.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_lib\file_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -100,13 +103,13 @@
     <EmbeddedResource Include="python_lib\ai_chat_lib\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\ai_app_langchain_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\vector_search_api.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\ai_app_open_ai_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\normal_chat_api.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\autogen_group_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\autogen_group_chat_api.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_lib\db_modules\__init__.py">

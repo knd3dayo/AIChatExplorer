@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
@@ -43,6 +44,18 @@ namespace LibPythonAI.PythonIF.Request {
         // EmbeddingRequest
         public EmbeddingRequest? EmbeddingRequestInstance { get; set; }
 
+        // AutoGenLLMConfig
+        public AutoGenLLMConfig? AutoGenLLMConfigInstance { get; set; } = null;
+
+        // AutoGenTool
+        public AutoGenTool? AutoGenToolInstance { get; set; } = null;
+
+        // AutoGenAgent
+        public AutoGenAgent? AutoGenAgentInstance { get; set; } = null;
+
+        // AutoGenGroupChat
+        public AutoGenGroupChat? AutoGenGroupChatInstance { get; set; } = null;
+
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
 
@@ -84,6 +97,18 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (ContentFolderRequestsInstance.Count > 0) {
                 dict["content_folder_requests"] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
+            }
+            if (AutoGenLLMConfigInstance != null) {
+                dict["autogen_llm_config_request"] = AutoGenLLMConfigInstance.ToDict();
+            }
+            if (AutoGenToolInstance != null) {
+                dict["autogen_tool_request"] = AutoGenToolInstance.ToDict();
+            }
+            if (AutoGenAgentInstance != null) {
+                dict["autogen_agent_request"] = AutoGenAgentInstance.ToDict();
+            }
+            if (AutoGenGroupChatInstance != null) {
+                dict["autogen_group_chat_request"] = AutoGenGroupChatInstance.ToDict();
             }
 
             return dict;

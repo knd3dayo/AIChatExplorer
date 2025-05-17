@@ -39,8 +39,8 @@ async def delete_tag_items(request: Request) -> Response:
 
 @routes.post('/api/openai_chat')
 async def openai_chat(request: Request) -> Response:
-    request_json = await request.text()
-    response = await ai_app_wrapper.openai_chat_async(request_json)
+    request_dict: dict = await request.json()
+    response = await ai_app_wrapper.openai_chat_async(request_dict)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 

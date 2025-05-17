@@ -33,8 +33,8 @@ def delete_tag_items(request_json: str):
 # openai関連
 ########################
 @capture_stdout_stderr_async
-async def openai_chat_async(request_json: str) -> dict:
-    return await ChatUtil.openai_chat_async_api(request_json)
+async def openai_chat_async(request_dict: dict) -> dict:
+    return await ChatUtil.run_openai_chat_async_api(request_dict)
 
 @capture_stdout_stderr
 def get_token_count(request_json: str):

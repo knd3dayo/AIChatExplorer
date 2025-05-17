@@ -23,14 +23,9 @@ namespace PythonAILib.Utils.Python {
         }
 
         // ChatRequestの内容からPythonスクリプトを実行するコマンド文字列を生成する。
-        public static List<string> GetPythonScriptCommand(string pythonScriptName, string pythonScriptArgs, string beforeExecScriptCommands = "", string afterExecScriptCommands = "") {
+        public static List<string> GetPythonScriptCommand(List<string> mainCmmands, List<string> beforeExecScriptCommands, List<string> afterExecScriptCommands) {
             List<string> cmdLines = [];
-            // python_libのディレクトリ
-            string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
-            // debug用のScriptのディレクトリ
-            string debugScriptDir = Path.Combine(pythonAILibDir, "ai_chat_explorer", "debug_tool");
-            // Scriptのフルパス
-            string pythonScriptPath = Path.Combine(debugScriptDir, pythonScriptName);
+
             // 文字コードをUTF-8に設定
             cmdLines.Add("chcp 65001");
             // venvが有効な場合は、activate.batを実行
@@ -40,13 +35,21 @@ namespace PythonAILib.Utils.Python {
                 cmdLines.Add($"call {venvActivateScript}");
             }
             // 事前処理
-            cmdLines.Add(beforeExecScriptCommands);
-            cmdLines.Add($"set PYTHONPATH={pythonAILibDir}");
+            foreach (string cmd in beforeExecScriptCommands) {
+                cmdLines.Add(cmd);
+            }
+            cmdLines.Add($"set PYTHONPATH={PythonAILibManager.Instance.ConfigParams.GetPythonLibPath()}");
             // APP_DB_PATH
             cmdLines.Add($"set APP_DATA_PATH={PythonAILibManager.Instance.ConfigParams.GetAppDataPath()}");
-            cmdLines.Add($"python {pythonScriptPath} {pythonScriptArgs}");
+
+            // メインコマンドを実行
+            foreach (string cmd in mainCmmands) {
+                cmdLines.Add(cmd);
+            }
             // 事後処理
-            cmdLines.Add(afterExecScriptCommands);
+            foreach (string cmd in afterExecScriptCommands) {
+                cmdLines.Add(cmd);
+            }
             cmdLines.Add("\n");
 
             return cmdLines;
@@ -77,12 +80,26 @@ namespace PythonAILib.Utils.Python {
         public static List<string> CreateAutoGenGroupChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
 
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
-            string beforeExecScriptCommands = "notepad " + parametersJsonFile;
+            List<string> beforeExecScriptCommands = [
+                "notepad " + parametersJsonFile,
+            ];
+
             // 事後コマンド pauseで一時停止
-            string afterExecScriptCommands = "pause";
+            List<string> afterExecScriptCommands = [
+                "pause"
+            ];
+
             string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("autogen_group_chat_debug_01.py", $"{options}",
-                beforeExecScriptCommands, afterExecScriptCommands);
+            // python_libのディレクトリ
+            string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
+            // debug用のScriptのディレクトリ
+            string pythonScriptPath = Path.Combine(pythonAILibDir, "ai_chat_lib", "cmd_tools", "autogen_group_chat_api.py");
+
+            List<string> scripytCmdLines = [
+                $"python {pythonScriptPath} {options}"
+            ];
+
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(scripytCmdLines, beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;
         }
@@ -92,7 +109,7 @@ namespace PythonAILib.Utils.Python {
             ProcessStartInfo psi = new() {
                 FileName = "cmd.exe",
                 Arguments = $"/k {command}",
-                WorkingDirectory =PythonAILibManager.Instance.ConfigParams.GetAppDataPath(),
+                WorkingDirectory = PythonAILibManager.Instance.ConfigParams.GetAppDataPath(),
                 UseShellExecute = true,
             };
             Process.Start(psi);
@@ -120,24 +137,52 @@ namespace PythonAILib.Utils.Python {
 
         // OpenAIチャットを実行するコマンド文字列を生成する。
         public static List<string> CreateOpenAIChatCommandLine(string parametersJsonFile) {
+            string apiUrl = PythonAILibManager.Instance.ConfigParams.GetAPIServerURL();
+            string appDataPath = PythonAILibManager.Instance.ConfigParams.GetAppDataPath();
+            string pythonLibPath = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
-            string beforeExecScriptCommands = "notepad " + parametersJsonFile;
+            List<string> beforeExecScriptCommands = ["notepad " + parametersJsonFile];
             // 事後コマンド pauseで一時停止
-            string afterExecScriptCommands = "pause";
-            string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("ai_app_open_ai_chat_debug_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> afterExecScriptCommands = ["pause"];
+
+            string api_script_path = Path.Combine(pythonLibPath, "ai_chat_lib", "cmd_tools", "normal_chat_api.py");
+            string local_script_path = Path.Combine(pythonLibPath, "ai_chat_lib", "cmd_tools", "normal_chat_local.py");
+            // メインコマンド
+            List<string> mainCmmands = [
+                "REM When using a api server, set the server URL and request JSON file in the command line.",
+                $"python {api_script_path} -p {parametersJsonFile}  -s {apiUrl}",
+                "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
+                $"REM  python {local_script_path} -p {parametersJsonFile}  -d {appDataPath}",
+                "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
+                $"REM  python {local_script_path} -d {appDataPath}",
+
+            ];
+
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
 
 
             return cmdLines;
         }
-        // LangChainチャットを実行するコマンド文字列を生成する。
-        public static List<string> CreateLangChainChatCommandLine(string parametersJsonFile) {
+        // ベクトル検索を実行するコマンド文字列を生成する。
+        public static List<string> CreateLVearchCommandLine(string parametersJsonFile) {
+            string apiUrl = PythonAILibManager.Instance.ConfigParams.GetAPIServerURL();
+            string appDataPath = PythonAILibManager.Instance.ConfigParams.GetAppDataPath();
+
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
-            string beforeExecScriptCommands = "notepad " + parametersJsonFile;
+            List<string> beforeExecScriptCommands = ["notepad " + parametersJsonFile];
             // 事後コマンド pauseで一時停止
-            string afterExecScriptCommands = "pause";
-            string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("ai_app_langchain_chat_debug_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> afterExecScriptCommands = ["pause"];
+
+            // メインコマンド
+            List<string> mainCmmands = [
+                "REM When using a api server, set the server URL and request JSON file in the command line.",
+                $"python vector_search_api.py -p {parametersJsonFile} -s {apiUrl}",
+                "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
+                $"REM  python vector_search_local.py -p {parametersJsonFile}  -d {appDataPath}",
+                "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
+                $"REM  python vector_search_local.py -d {appDataPath}",
+            ];
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;
         }

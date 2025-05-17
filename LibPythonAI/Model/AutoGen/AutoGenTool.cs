@@ -41,12 +41,12 @@ namespace LibPythonAI.Model.AutoGen {
         }
 
         // CreateEntriesDictList
-        public static Dictionary<string, object> ToDict(AutoGenTool data) {
+        public  Dictionary<string, object> ToDict() {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
-                { "name", data.Name },
-                { "description", data.Description },
-                { "path", data.Path },
+                { "name", Name },
+                { "description", Description },
+                { "path", Path },
             };
             return dict;
         }
@@ -54,7 +54,7 @@ namespace LibPythonAI.Model.AutoGen {
         public static List<Dictionary<string, object>> ToDictList(List<AutoGenTool> data) {
             List<Dictionary<string, object>> dictList = new List<Dictionary<string, object>>();
             foreach (AutoGenTool item in data) {
-                dictList.Add(ToDict(item));
+                dictList.Add(item.ToDict());
             }
             return dictList;
         }

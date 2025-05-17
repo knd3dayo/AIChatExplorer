@@ -9,6 +9,9 @@ from ai_chat_lib.openai_modules import OpenAIClient, OpenAIProps
 from ai_chat_lib.langchain_modules import  LangChainUtil
 from ai_chat_lib.db_modules import VectorSearchRequest
 
+import logging
+logger = logging.getLogger(__name__)
+
 # リクエストコンテキスト
 class RequestContext:
 
@@ -44,9 +47,7 @@ class ChatUtil:
 
     chat_request_name = "chat_request"
     @classmethod
-    async def openai_chat_async_api(cls, request_json: str) -> dict:
-        # request_jsonからrequestを作成
-        request_dict: dict = json.loads(request_json)
+    async def run_openai_chat_async_api(cls, request_dict: dict) -> dict:
         # OpenAIPorps, OpenAIClientを生成
         openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
         # context_jsonからVectorSearchRequestを生成
@@ -170,7 +171,7 @@ class ChatUtil:
 
                 # source_pathを取得する
                 for document in vector_search_result["documents"]:
-                    print(document)
+                    logger.info(document)
                     result_documents_dict[document["source_id"]] = document
 
                 context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_result_contents)
@@ -217,7 +218,7 @@ class ChatUtil:
             # openai_chatの入力用のdictを作成する
             summary_input_dict = OpenAIProps.create_openai_chat_parameter_dict_simple(input_dict["model"], summary_input, input_dict.get("temperature", 0.5), input_dict.get("json_mode", False))
             # chatを実行する
-            summary_result_dict = await cls.openai_chat_async(client, summary_input_dict)
+            summary_result_dict = await cls.call_openai_completion_async(client, summary_input_dict)
             # total_tokensを更新する
             summary_result_dict["total_tokens"] = total_tokens + summary_result_dict["total_tokens"]
             summary_result_dict["documents"] = docs_list
@@ -254,7 +255,7 @@ class ChatUtil:
             else:
                 copied_input_dict["messages"][-1] = pre_processed_input
 
-            chat_result_dict = await cls.openai_chat_async(client, copied_input_dict)
+            chat_result_dict = await cls.call_openai_completion_async(client, copied_input_dict)
             # chat_result_dictをchat_result_dict_listに追加する
             chat_result_dict_list.append(chat_result_dict)
 
@@ -263,7 +264,7 @@ class ChatUtil:
         return result_dict
     
     @classmethod
-    async def openai_chat_async(cls, client: OpenAIClient, input_dict: dict) -> dict:
+    async def call_openai_completion_async(cls, client: OpenAIClient, input_dict: dict) -> dict:
         # openai.
         # RateLimitErrorが発生した場合はリトライする
         # リトライ回数は最大で3回
@@ -282,7 +283,7 @@ class ChatUtil:
             except RateLimitError as e:
                 count += 1
                 # rate limit errorが発生した場合はリトライする旨を表示。英語
-                print(f"RateLimitError has occurred. Retry after {count*30} seconds.")
+                logger.warn(f"RateLimitError has occurred. Retry after {count*30} seconds.")
                 time.sleep(count*30)
                 if count == 5:
                     raise e
@@ -293,7 +294,7 @@ class ChatUtil:
         content = response.choices[0].message.content
 
         # dictにして返す
-        print("chat output", json.dumps(content, ensure_ascii=False, indent=2))
+        logger.info("chat output", json.dumps(content, ensure_ascii=False, indent=2))
         return {"output": content, "total_tokens": total_tokens}
 
     @classmethod
