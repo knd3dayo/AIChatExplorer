@@ -1,5 +1,7 @@
 from typing import Any, Union, Callable
 import os
+import sys
+from io import StringIO
 
 import venv
 
@@ -26,6 +28,28 @@ from ai_chat_explorer.openai_modules import OpenAIProps
 
 
 class AutoGenProps:
+
+    autogen_props_name = "autogen_props"
+    @classmethod
+    def get_autogen_objects(cls, request_dict: dict) -> "AutoGenProps":
+        '''
+        {"context": {"autogen_props": {}}}の形式で渡される
+        '''
+        # AutoGenPropsを生成
+        props_dict = request_dict.get(cls.autogen_props_name, None)
+        if not props_dict:
+            raise ValueError("autogen_props is not set")
+        
+        # get_openai_objectsを使ってOpenAIPropsを取得
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+
+        # vector_db_itemsを取得
+        vector_search_requests = VectorSearchRequest.get_vector_search_requests_objects(request_dict)
+
+        app_db_path = get_main_db_path()
+        autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_search_requests)
+        return autogen_props
+
 
     CHAT_TYPE_GROUP_NAME = "group"
     CHAT_TYPE_NORMAL_NAME = "normal"
@@ -416,3 +440,52 @@ class AutoGenProps:
                 message_str = f"{message.source}: {message.content}"
                 yield message_str
 
+    chat_request_name = "chat_request"
+    @classmethod
+    async def autogen_chat_api(cls, request_json: str) -> AsyncGenerator:
+
+        result = None # 初期化
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        autogen_props = AutoGenProps.get_autogen_objects( request_dict)
+        # chat_requestを取得
+        chat_request_dict = request_dict.get(cls.chat_request_name, None)
+        if not chat_request_dict:
+            raise ValueError("chat_request is not set")
+        
+        # chat_request_dictのmessagesを取得
+        messages = chat_request_dict.get("messages", None)
+        if not messages:
+            raise ValueError("messages is not set")
+        # messagesのうち、role == userの最後の要素を取得
+        last_message = [message for message in messages if message.get("role") == "user"][-1]
+        # last_messageのcontent(リスト)を取得
+        content_list = last_message.get("content", None)
+        if not content_list:
+            raise ValueError("content is not set")
+        # content_listの要素の中で、typeがtextのものを取得
+        text_list = [content for content in content_list if content.get("type") == "text"]
+        # text_listの要素を結合 
+        input_text = "\n".join([content.get("text") for content in text_list])
+        # strout,stderrorをStringIOでキャプチャする
+        buffer = StringIO()
+        sys.stdout = buffer
+        sys.stderr = buffer
+
+        # run_group_chatを実行
+        async for message in autogen_props.run_autogen_chat(input_text):
+            if not message:
+                break
+            # dictを作成
+            result = {"message": message }
+            # resultにlogを追加して返す
+            result["log"] = buffer.getvalue()
+            json_string = json.dumps(result, ensure_ascii=False, indent=4)
+            # bufferをクリア
+            buffer.truncate(0)
+        
+            yield json_string
+
+        # strout,stderrorを元に戻す
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__

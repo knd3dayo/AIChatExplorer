@@ -59,35 +59,13 @@ class CustomMultiVectorRetriever(MultiVectorRetriever):
         return docs
 
 class LangChainVectorDB:
-
-    @staticmethod
-    def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBItem):
-
-        langchain_openai_client = LangChainOpenAIClient(openai_props)
-        # ベクトルDBのタイプがChromaの場合
-        if vector_db_props.VectorDBTypeString == "Chroma":
-            from ai_chat_explorer.langchain_modules.langchain_vector_db_chroma import LangChainVectorDBChroma
-            return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
-        # ベクトルDBのタイプがPostgresの場合
-        elif vector_db_props.VectorDBTypeString == "PGVector":
-            from ai_chat_explorer.langchain_modules.langchain_vector_db_pgvector import LangChainVectorDBPGVector
-            return LangChainVectorDBPGVector(langchain_openai_client, vector_db_props)
-        else:
-            # それ以外の場合は例外
-            raise ValueError("VectorDBType is invalid")
     
-    @staticmethod
-    def get_vector_db_with_default_collection(openai_props: OpenAIProps, vector_db_props: VectorDBItem):
-        # vector_db_propsのコピーを作成
-        new_vector_db_props = copy.deepcopy(vector_db_props)
-        # デフォルトのコレクション名を設定
-        new_vector_db_props.CollectionName = VectorDBItem.DEFAULT_COLLECTION_NAME
-
-        return LangChainVectorDB.get_vector_db(openai_props, new_vector_db_props)
-
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_url :str, collection_name :str = "", multi_vector_doc_store_url: str = "", chunk_size: int = 1024):
         self.langchain_openai_client = langchain_openai_client
-        self.vector_db_props = vector_db_props
+        self.vector_db_url = vector_db_url
+        self.collection_name = collection_name
+        self.multi_vector_doc_store_url = multi_vector_doc_store_url
+        self.chunk_size = chunk_size
 
         # 子クラスで実装
         self.db: Union[VectorStore, None] = None
@@ -247,10 +225,8 @@ class LangChainVectorDB:
 
         return retriever
 
-    async def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url=""):
+    async def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url="" , chunk_size: int = 1024) -> list[Document]:
         
-        chunk_size = self.vector_db_props.ChunkSize
-    
         document_list = []
 
         # テキストをサニタイズ
@@ -266,13 +242,13 @@ class LangChainVectorDB:
             document_list.append(document)
 
         # MultiVectorRetrieverの場合はadd_multivector_documentを呼び出す
-        if self.vector_db_props.IsUseMultiVectorRetriever:
+        if self.multi_vector_doc_store_url:
             for document in document_list:
-                await self.__add_multivector_document(document)
+                await self.__add_document(document)
             return document_list
         else:
             for document in document_list:
-                await self.__add_document(document)
+                await self.__add_multivector_document(document)
             return document_list
 
 
@@ -306,28 +282,29 @@ class LangChainVectorDB:
     def create_retriever(self, search_kwargs: dict[str, Any] = {}) -> Any:
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
 
-        vector_db_props = self.vector_db_props
         if not search_kwargs:
             # デフォルトの検索パラメータを設定
             print("search_kwargs is empty. Set default search_kwargs")
             search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
-        if vector_db_props.IsUseMultiVectorRetriever:
+        if self.db is None:
+            raise ValueError("db is None")
+        if self.multi_vector_doc_store_url:
             print("Creating MultiVectorRetriever")
+            if self.doc_store is None:
+                raise ValueError("doc_store is None")
             
-            langChainVectorDB = LangChainVectorDB.get_vector_db(self.langchain_openai_client.props, vector_db_props)
             retriever = CustomMultiVectorRetriever(
-                vectorstore=langChainVectorDB.db,
-                docstore=langChainVectorDB.doc_store,
+                vectorstore=self.db,
+                docstore=self.doc_store,
                 id_key="doc_id",
                 search_kwargs=search_kwargs
             )
 
         else:
             print("Creating a regular Retriever")
-            langChainVectorDB = LangChainVectorDB.get_vector_db(self.langchain_openai_client.props, vector_db_props)
-            retriever = self.__create_decorated_retriever(langChainVectorDB.db, **search_kwargs)
+            retriever = self.__create_decorated_retriever(self.db, **search_kwargs)
          
         return retriever
 
@@ -338,7 +315,7 @@ class LangChainVectorDB:
 
     def delete_folder(self, folder_id: str):
         # MultiVectorRetrieverの場合
-        if self.vector_db_props.IsUseMultiVectorRetriever:
+        if self.multi_vector_doc_store_url:
             # DBからfolder_idを指定して既存フォルダを削除
             self.__delete_multivector_folder(folder_id)
         else:
@@ -347,7 +324,7 @@ class LangChainVectorDB:
             
     def delete_document(self, source_id: str):
         # MultiVectorRetrieverの場合
-        if self.vector_db_props.IsUseMultiVectorRetriever:
+        if self.multi_vector_doc_store_url:
             # DBからsourceを指定して既存ドキュメントを削除
             self.__delete_multivector_document(source_id)
         else:
@@ -378,55 +355,6 @@ class LangChainVectorDB:
             except Exception as e:
                 logger.error(f"Error adding documents: {e}")
                 break
-
-    # ベクトル検索を行う
-    @classmethod
-    def vector_search(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest]) -> dict[str, Any]:    
-
-        if not openai_props:
-            raise ValueError("openai_props is None")
-        client = LangChainOpenAIClient(openai_props)
-
-        main_db = MainDB(get_main_db_path())
-
-        # documentsの要素からcontent, source, source_urlを取得
-        result = []
-        # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-        for request in vector_search_requests:
-            # vector_db_itemを取得
-            vector_db_item = main_db.get_vector_db_by_name(request.name)
-            if vector_db_item is None:
-                raise ValueError(f"vector_db_item is None. name:{request.name}")
-            
-            # デバッグ出力
-            logger.info('ベクトルDBの設定')
-            logger.info(f'name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-            logger.info(f'IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}')
-
-            logger.info(f'検索文字列: {request.query}')
-            logger.info(f'SearchKwargs:{request.search_kwargs}')
-            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(request.search_kwargs)
-            documents: list[Document] = retriever.invoke(request.query)
-
-            logger.debug(f"documents:\n{documents}")
-            for doc in documents:
-                content = doc.page_content
-                doc_dict = cls.create_metadata_from_document(doc)
-                doc_dict["content"] = content
-
-                sub_docs: list[Document]= doc.metadata.get("sub_docs", [])
-                # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
-                sub_docs_result = []
-                for sub_doc in sub_docs:
-                    content = sub_doc.page_content
-                    sub_doc_dict = cls.create_metadata_from_document(sub_doc)
-                    sub_doc_dict["content"] = content
-                    sub_docs_result.append(sub_doc_dict)
-
-                doc_dict["sub_docs"] = sub_docs_result
-                result.append(doc_dict)
-            
-        return {"documents": result}
 
     @classmethod
     def create_metadata(cls, doc_id, source_id, folder_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):

@@ -10,6 +10,7 @@ import psutil # type: ignore
 def check_process(pid : int, url : str):
     
     while True:
+        time.sleep(5)
         # pidのプロセスが存在しない場合
         if not psutil.pid_exists(pid):
             # 指定したURLにリクエストを送信
@@ -31,7 +32,6 @@ def check_process(pid : int, url : str):
             break
 
         print("Process is running") 
-        time.sleep(5)
 
 # メイン
 if __name__ == "__main__":

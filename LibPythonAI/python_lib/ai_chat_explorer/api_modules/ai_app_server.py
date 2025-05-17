@@ -5,9 +5,10 @@ import logging
 from aiohttp import web, WSMsgType
 from aiohttp.web import WebSocketResponse, Request, Response
 import socketio # type: ignore
-import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
-import ai_chat_explorer.api_modules.ai_app_util as ai_app_util
 from ai_chat_explorer.autogen_modules import AutoGenProps
+from ai_chat_explorer.api_modules import ai_app_wrapper
+from ai_chat_explorer.api_modules import ai_app_util
+
 
 routes = web.RouteTableDef()
 app = web.Application(client_max_size=1024*1024*300) # 300MB
@@ -33,13 +34,6 @@ async def update_tag_items(request: Request) -> Response:
 async def delete_tag_items(request: Request) -> Response:
     request_json = await request.text()
     response = ai_app_wrapper.delete_tag_items(request_json)
-    logger.debug(response)
-    return web.Response(body=response, status=200, content_type='application/json')
-
-@routes.post('/api/get_root_content_folders')
-async def get_root_content_folders(request: Request) -> Response:
-    request_json = await request.text()
-    response = ai_app_wrapper.get_root_content_folders(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 

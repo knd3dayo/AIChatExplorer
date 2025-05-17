@@ -16,7 +16,6 @@ namespace PythonAILib.PythonIF {
 
         public static string? PythonPath { get; set; }
 
-
         private static string PythonAILibPath { get; set; } = DefaultPythonAILibDir;
 
         private const string DefaultPythonAILibDir = "python_lib";
@@ -67,31 +66,29 @@ namespace PythonAILib.PythonIF {
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
 
-            // AIアプリケーションプロセスチェッカーを開始する。
-            string url = $"{configPrams.GetAPIServerURL()}/shutdown";
-
-            // プロセスを終了するスクリプトを実行
-            string shutdownScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "util_modules", "ai_app_server_shutdown.py");
-
-
-            StartPythonConsole(configPrams, $"{shutdownScriptPath} {url}", false, (Process) => { });
-
-
             LogWrapper.Info("Internal API started");
 
             // 自分自身のプロセスIDを取得
-            int currentProcessId = Process.GetCurrentProcess().Id;
-
-            // AIアプリケーションプロセスチェッカーを開始する。
-            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "util_modules", "ai_app_process_checker.py");
-
-            StartPythonConsole(configPrams, $"{processCheckerScriptPath} {currentProcessId} {url}", false, (Process) => { });
+            int currentProcessId = Environment.ProcessId;
 
             // AIアプリケーションサーバーを開始する
             string serverScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "api_modules", "ai_app_server.py");
             // APP_DATAのパスを取得
             string app_data_path = configPrams.GetAppDataPath();
-            StartPythonConsole(configPrams, $"{serverScriptPath} {app_data_path}",  false, (process) => { });
+            string serverCmdLine = $"{serverScriptPath} {app_data_path}";
+            LogWrapper.Info($"ServerCmdLine:{serverCmdLine}");
+
+            StartPythonConsole(configPrams, serverCmdLine,  false, (process) => { });
+
+            // AIアプリケーションプロセスチェッカーを開始する。
+            string url = $"{configPrams.GetAPIServerURL()}/shutdown";
+
+            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "ai_chat_explorer", "api_modules", "ai_app_process_checker.py");
+            string processCheckerCmdLine = $"{processCheckerScriptPath} {currentProcessId} {url}";
+            LogWrapper.Info($"ProcessCheckerCmdLine:{processCheckerCmdLine}");
+
+            StartPythonConsole(configPrams, processCheckerCmdLine, false, (Process) => { });
+
         }
 
 

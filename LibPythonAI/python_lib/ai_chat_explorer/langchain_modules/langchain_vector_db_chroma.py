@@ -10,39 +10,40 @@ from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVect
 
 from ai_chat_explorer.db_modules import VectorDBItem
 from ai_chat_explorer.langchain_modules.langchain_doc_store import SQLDocStore
+import logging
+
+logger = logging.getLogger(__name__)
+
 class LangChainVectorDBChroma(LangChainVectorDB):
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBItem):
-        super().__init__(langchain_openai_client, vector_db_props)
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_url :str, collection_name: str = "", multi_vector_doc_store_url: str = "", chunk_size: int = 1024):
+        super().__init__(langchain_openai_client, vector_db_url, collection_name,  multi_vector_doc_store_url, chunk_size)
         self.db = self._load()
-        if vector_db_props.IsUseMultiVectorRetriever:
-            print("doc_store_url:", vector_db_props.DocStoreURL)
-            self.doc_store = SQLDocStore(vector_db_props.DocStoreURL)
+        if multi_vector_doc_store_url:
+            logger.info("doc_store_url:", multi_vector_doc_store_url)
+            self.doc_store = SQLDocStore(multi_vector_doc_store_url)
         else:
-            print("doc_store_url is None")
+            logger.info("doc_store_url is None")
 
     def _load(self) -> VectorStore:
-        # VectorDBTypeStringが"Chroma"でない場合は例外をスロー
-        if self.vector_db_props.VectorDBTypeString != "Chroma":
-            raise ValueError("vector_db_type_string must be 'Chroma'")
-        # ベクトルDB用のディレクトリが存在しない、または空の場合
-        vector_db_url = self.vector_db_props.VectorDBURL
-        if not vector_db_url or not os.path.exists(vector_db_url):
+
+        # ベクトルDB用のディレクトリが存在しない場合
+        if not os.path.exists(self.vector_db_url):
             # ディレクトリを作成
-            os.makedirs(vector_db_url)
+            os.makedirs(self.vector_db_url)
             # ディレクトリが作成されたことをログに出力
-            print("create directory:", vector_db_url)
+            logger.info("create directory:", self.vector_db_url)
         # params
         settings = chromadb.config.Settings(anonymized_telemetry=False)
 
         params: dict[str, Any]= {}
-        params["client"] = chromadb.PersistentClient(path=vector_db_url, settings=settings)
+        params["client"] = chromadb.PersistentClient(path=self.vector_db_url, settings=settings)
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         params["collection_metadata"] = {"hnsw:space":"cosine"}
         # collectionが指定されている場合
-        print("collection_name:", self.vector_db_props.CollectionName)
-        if self.vector_db_props.CollectionName:
-            params["collection_name"] = self.vector_db_props.CollectionName
+        logger.info("collection_name:", self.collection_name)
+        if self.collection_name:
+            params["collection_name"] = self.collection_name
                     
         db: VectorStore = Chroma(
             **params

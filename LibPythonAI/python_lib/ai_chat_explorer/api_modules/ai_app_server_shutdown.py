@@ -13,13 +13,6 @@ def stop_process(url : str):
         import traceback
         print(traceback.format_exc())
         print("Failed to send a request to the specified URL")
-    # prompt flowサービスを停止
-    try:
-        # エラーを無視してコマンドを実行
-        # pf service stopコマンドを実行
-        os.system("pf service stop")
-    except: 
-        print("Failed to stop the prompt flow service")
 
 # メイン
 if __name__ == "__main__":

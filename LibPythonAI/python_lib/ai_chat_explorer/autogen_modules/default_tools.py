@@ -196,7 +196,7 @@ def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
     if vector_db_items is empty, return None
     """
     global autogen_props
-    from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
+    from ai_chat_explorer.langchain_modules.langchain_util import LangChainUtil
     from ai_chat_explorer.autogen_modules import AutoGenProps
     props : AutoGenProps = autogen_props # type: ignore
     if not props.vector_search_requests:
@@ -206,7 +206,7 @@ def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
     for vector_search_request in props.vector_search_requests:
         vector_search_request.query = query
 
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
+    search_results = LangChainUtil.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents
@@ -219,7 +219,7 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     """
     global autogen_props
     from ai_chat_explorer.db_modules import MainDB
-    from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
+    from ai_chat_explorer.langchain_modules.langchain_util import LangChainUtil
     from ai_chat_explorer.autogen_modules import AutoGenProps
 
     props : AutoGenProps = autogen_props # type: ignore
@@ -230,7 +230,7 @@ def global_vector_search(query: Annotated[str, "String to search for"]) -> list[
     for request in props.vector_search_requests:
         request.query = query
 
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
+    search_results = LangChainUtil.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents
@@ -243,7 +243,7 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
     """
     global autogen_props
     from ai_chat_explorer.db_modules import MainDB
-    from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
+    from ai_chat_explorer.langchain_modules.langchain_util import LangChainUtil
     from ai_chat_explorer.autogen_modules import AutoGenProps
 
     props : AutoGenProps = autogen_props # type: ignore
@@ -260,7 +260,7 @@ def past_chat_history_vector_search(query: Annotated[str, "String to search for"
     # vector_db_prop_listの各要素にinput_textを設定
     for request in props.vector_search_requests:
         request.query = query
-    search_results = LangChainVectorDB.vector_search(props.openai_props, props.vector_search_requests)
+    search_results = LangChainUtil.vector_search(props.openai_props, props.vector_search_requests)
     # Retrieve documents from result
     documents = search_results.get("documents", [])
     # Extract content of each document from documents

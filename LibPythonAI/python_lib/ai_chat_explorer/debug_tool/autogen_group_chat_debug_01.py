@@ -1,7 +1,6 @@
 import os, json
 from typing import Any
 import ai_chat_explorer.api_modules.ai_app_wrapper as ai_app_wrapper
-import ai_chat_explorer.api_modules.ai_app as ai_app
 
 import logging 
 logging.basicConfig(level=logging.ERROR)
@@ -59,7 +58,8 @@ async def main():
 
     # AutogenGroupChatを実行
     message_count = 0
-    async for message in ai_app.run_autogen_chat(autogen_props,  input_text):
+    # run_group_chatを実行
+    async for message in autogen_props.run_autogen_chat(input_text):
         if not message:
             break
         message_count += 1

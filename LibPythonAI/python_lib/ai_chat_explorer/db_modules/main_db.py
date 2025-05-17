@@ -3,6 +3,9 @@ import json
 from typing import List, Union
 import uuid
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # main_dbへのパスを取得
 def get_main_db_path() -> str:
@@ -46,6 +49,28 @@ class ContentFolder:
     "ExtendedPropertiesJson" TEXT NOT NULL
     )
     '''
+    get_content_folder_requelsts_name = "content_folder_requests"
+
+    @classmethod
+    def get_content_folder_requelst_objects(cls, request_dict: dict) -> list["ContentFolder"]:
+        '''
+        {"content_folder_requsts": [] }の形式で渡される
+        '''
+        # contextを取得
+        content_folders: list[dict] = request_dict.get(cls.get_content_folder_requelsts_name, None)
+        if not content_folders:
+            raise ValueError("content_folder is not set.")
+        
+        # content_folderを生成
+        result = []
+        for item in content_folders:
+            content_folder = ContentFolder(item)
+            result.append(content_folder)
+
+        return result
+
+
+    
     def __init__(self, content_folder_dict: dict):
         self.Id = content_folder_dict.get("Id", "")
         self.FolderTypeString = content_folder_dict.get("FolderTypeString", "")
@@ -120,6 +145,80 @@ class VectorDBItem:
     DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
     FOLDER_CATALOG_COLLECTION_NAME = "ai_app_folder_catalog_collection"
 
+    @classmethod
+    def update_vector_db_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_itemを取得
+        vector_db_item = VectorDBItem.get_vector_db_item_object(request_dict)
+        # vector_dbを更新
+        main_db = MainDB(get_main_db_path())
+        main_db.update_vector_db_item(vector_db_item)
+        # 更新したVectorDBItemを返す
+        result: dict = {}
+        result["vector_db_item"] = vector_db_item.to_dict()
+        return result
+
+    @classmethod
+    def delete_vector_db_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_itemを取得
+        vector_db_item = VectorDBItem.get_vector_db_item_object(request_dict)
+        # vector_dbを削除
+        main_db = MainDB(get_main_db_path())
+        # ベクトルDBを削除する
+        result: dict = main_db.delete_vector_db_item(vector_db_item)
+        result["vector_db_item"] = vector_db_item.to_dict()
+        return result
+
+    @classmethod
+    def get_vector_db_items_api(cls):
+        # request_jsonからrequestを作成
+        main_db = MainDB(get_main_db_path())
+        # ベクトルDBの一覧を取得する
+        vector_db_list = main_db.get_vector_db_items()
+
+        result = {}
+        result["vector_db_items"] = [item.to_dict() for item in vector_db_list]
+        return result
+
+    @classmethod
+    def get_vector_db_item_by_id_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_idを取得
+        vector_db_id =  VectorDBItem.get_vector_db_item_object(request_dict).Id
+        if not vector_db_id:
+            raise ValueError("vector_db_id is not set")
+        # idからVectorDBItemを取得
+        main_db = MainDB(get_main_db_path())
+        vector_db_item = main_db.get_vector_db_by_id(vector_db_id)
+
+        result: dict = {}
+        if vector_db_item is not None:
+            result["vector_db_item"] = vector_db_item.to_dict()
+        return result
+
+    @classmethod
+    def get_vector_db_item_by_name_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # vector_db_nameを取得
+        vector_db_name = VectorDBItem.get_vector_db_item_object(request_dict).Name
+        if not vector_db_name:
+            raise ValueError("vector_db_name is not set")
+
+        # nameからVectorDBItemを取得
+        main_db = MainDB(get_main_db_path())
+        vector_db = main_db.get_vector_db_by_name(vector_db_name)
+
+        result: dict = {}
+        if vector_db is not None:
+            result["vector_db_item"] = vector_db.to_dict()
+        return result
+
+
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE "VectorDBItems" (
@@ -137,6 +236,22 @@ class VectorDBItem:
         "IsSystem" INTEGER NOT NULL
     )    
     '''
+    vector_db_item_request_name = "vector_db_item_request"
+    @classmethod
+    def get_vector_db_item_object(cls, request_dict: dict) -> "VectorDBItem":
+        '''
+        {"vector_db_item_request": {}}の形式で渡される
+        '''
+        # vector_db_item_requestを取得
+        vector_db_item_request: dict = request_dict.get(cls.vector_db_item_request_name, None)
+        if not vector_db_item_request:
+            raise ValueError("vector_db_item_request is not set.")
+
+        # vector_db_itemを生成
+        vector_db_item = VectorDBItem(vector_db_item_request)
+        return vector_db_item    
+
+    
     def __init__(self, vector_db_item_dict: dict):
         self.Id = vector_db_item_dict.get("Id", "")
         if not self.Id:
@@ -215,12 +330,45 @@ class VectorDBItem:
         return  VectorDBItem(props)
 
 class VectorSearchRequest:
+
+    vector_search_requests_name = "vector_search_requests"
+    @classmethod
+    def get_vector_search_requests_objects(cls, request_dict: dict) -> list["VectorSearchRequest"]:
+        '''
+        {"vector_search_request": {}}の形式で渡される
+        '''
+        # contextを取得
+        request:list[dict] = request_dict.get(cls.vector_search_requests_name, None)
+        if not request:
+            logger.error("request is not set.")
+            return []
+
+        vector_search_requests = []
+        for item in request:
+            # vector_search_requestsを生成
+            vector_search_request = VectorSearchRequest(item)
+            vector_search_requests.append(vector_search_request)
+        return vector_search_requests
+
     def __init__(self, item: dict):
         self.name = item.get("name", "")
         self.query = item.get("query", "")
         self.model = item.get("model", "")
         self.search_kwargs = item.get("search_kwargs", {})
-        
+        self.vector_db_item = None
+    
+    def get_vector_db_item(self) -> VectorDBItem:
+        if self.vector_db_item:
+            return self.vector_db_item
+
+        # nameからVectorDBItemを取得
+        main_db = MainDB(get_main_db_path())
+        vector_db_item = main_db.get_vector_db_by_name(self.name)
+        if not vector_db_item:
+            raise ValueError("VectorDBItem is not found.")
+        return vector_db_item
+
+
     def to_dict(self) -> dict:
         return {
             "name": self.name,
@@ -231,6 +379,23 @@ class VectorSearchRequest:
     
 
 class EmbeddingData:
+
+
+    embedding_request_name = "embedding_request"
+
+    @classmethod
+    def get_embedding_request_objects(cls, request_dict: dict) -> "EmbeddingData":
+        '''
+        {"embedding_request": {}}の形式で渡される
+        '''
+        # contextを取得
+        request: dict = request_dict.get(cls.embedding_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        # MainDBを取得
+    
+        return EmbeddingData(request)
+
     def __init__(self, item: dict):
     # nameからVectorDBItemを取得
         name = item.get("name", None)
@@ -263,6 +428,70 @@ class TagItem:
     "IsPinned" INTEGER NOT NULL
     )
     '''
+    @classmethod
+    def get_tag_item_objects(cls, request_dict: dict) -> list["TagItem"]:
+        '''
+        {"tag_item_requests": []}の形式で渡される
+        '''
+        # contextを取得
+        tag_items: list[dict] = request_dict.get("tag_item_requests", None)
+        if not tag_items:
+            raise ValueError("tag_items is not set.")
+        
+        # TagItemを生成
+        tag_items_list = []
+        for item in tag_items:
+            tag_item = TagItem(item)
+            tag_items_list.append(tag_item)
+
+        return tag_items_list
+
+    @classmethod
+    def get_tag_items_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        # request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # タグの一覧を取得
+        tag_items = main_db.get_tag_items()
+        result: dict = {}
+        result["tag_items"] = [item.to_dict() for item in tag_items]
+        return result
+
+    @classmethod
+    def update_tag_items_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        tag_items = TagItem.get_tag_item_objects(request_dict)
+        # tag_itemsを更新
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # タグを更新
+        for tag_item in tag_items:
+            main_db.update_tag_item(tag_item)
+
+        result: dict = {}
+        return result
+    
+    @classmethod
+    def delete_tag_items_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # tag_itemsを取得
+        tag_items = TagItem.get_tag_item_objects(request_dict)
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # タグを削除
+        for tag_item in tag_items:
+            main_db.delete_tag_item(tag_item)
+
+        result: dict = {}
+        return result
+
+
+
     def __init__(self, tag_item_dict: dict):
         self.Id = tag_item_dict.get("Id", "")
         if not self.Id:
@@ -292,6 +521,89 @@ class AutogentLLMConfig:
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE autogen_llm_configs (name TEXT, api_type TEXT, api_version TEXT, model TEXT, api_key TEXT, base_url TEXT)
     '''
+    @classmethod
+    def get_autogen_llm_config_list_api(cls, request_json: str):
+        # autogen_propsからllm_config_listを取得
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # LLMConfigの一覧を取得
+        llm_config_list = main_db.get_autogen_llm_config_list()
+
+        if not llm_config_list:
+            raise ValueError("llm_config_list is not set")
+        
+        result: dict = {}
+        result["llm_config_list"] = [config.to_dict() for config in llm_config_list]
+        return result
+
+    @classmethod
+    def get_autogen_llm_config_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = AutogentLLMConfig.get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # LLMConfigを取得
+        llm_config_result = main_db.get_autogen_llm_config(llm_config.name)
+
+        result: dict = {}
+        if llm_config_result:
+            result["llm_config"] = llm_config_result.to_dict()
+
+        return result
+
+    @classmethod
+    def update_autogen_llm_config_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = AutogentLLMConfig.get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # autogen_propsを更新
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # LLMConfigを更新
+        main_db.update_autogen_llm_config(llm_config)
+
+        result: dict = {}
+        return result
+
+    @classmethod
+    def delete_autogen_llm_config_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからllm_configを取得
+        llm_config = AutogentLLMConfig.get_autogen_llm_config_object(request_dict)
+        if not llm_config:
+            raise ValueError("llm_config is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # LLMConfigを削除
+        main_db.delete_autogen_llm_config(llm_config)
+
+        result: dict = {}
+        return result
+
+    autogen_llm_config_request_name = "autogen_llm_config_request"
+    @classmethod
+    def get_autogen_llm_config_object(cls, request_dict: dict) -> "AutogentLLMConfig":
+        '''
+        {"autogen_llm_config_request": {}}の形式で渡される
+        '''
+        # autogen_llm_config_requestを取得
+        request:dict = request_dict.get(cls.autogen_llm_config_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        result = AutogentLLMConfig(request)
+        return result
+
     def __init__(self, llm_config_dict: dict):
         self.name = llm_config_dict.get("name", "")
         self.api_type = llm_config_dict.get("api_type", "")
@@ -314,6 +626,87 @@ class AutogenTools:
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE autogen_tools (name TEXT, path TEXT, description TEXT)    '''
+
+    @classmethod
+    def get_autogen_tool_list_api(cls, request_json: str):
+        # autogen_propsからtools_listを取得
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenToolsの一覧を取得
+        tools_list = main_db.get_autogen_tool_list()
+        
+        result: dict = {}
+        result["tool_list"] = [tool.to_dict() for tool in tools_list]
+        return result
+
+    @classmethod
+    def get_autogen_tool_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = AutogenTools.get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenToolsを取得
+        tool_result = main_db.get_autogen_tool(tool.name)
+        
+        result: dict = {}
+        if tool_result:
+            result["tool"] = tool_result.to_dict()
+        return result
+
+    @classmethod
+    def update_autogen_tool_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = AutogenTools.get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenToolsを更新
+        main_db.update_autogen_tool(tool)
+
+        result: dict = {}
+        return result
+
+    @classmethod
+    def delete_autogen_tool_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからtoolを取得
+        tool = AutogenTools.get_autogen_tool_object(request_dict)
+        if not tool:
+            raise ValueError("tool is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenToolsを削除
+        main_db.delete_autogen_tool(tool)
+
+        result: dict = {}
+        return result
+
+
+    autogen_tool_request_name = "autogen_tool_request"
+    @classmethod
+    def get_autogen_tool_object(cls, request_dict: dict) -> "AutogenTools":
+        '''
+        {"autogen_tool_request": {}}の形式で渡される
+        '''
+        # autogen_tool_requestを取得
+        request:dict = request_dict.get(cls.autogen_tool_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        # autogen_toolを生成
+        autogen_tool = AutogenTools(request)
+        return autogen_tool
+
     def __init__(self, tools_dict: dict):
         self.name = tools_dict.get("name", "")
         self.path = tools_dict.get("path", "")
@@ -331,6 +724,86 @@ class AutogenAgent:
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE autogen_agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)
     '''
+    @classmethod
+    def get_autogen_agent_list_api(cls, request_json: str):
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenAgentの一覧を取得
+        agent_list = main_db.get_autogen_agent_list()
+        if not agent_list:
+            raise ValueError("agent_list is not set")
+        
+        result: dict = {}
+        result["agent_list"] = [agent.to_dict() for agent in agent_list]
+        return result
+
+    @classmethod
+    def get_autogen_agent_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = AutogenAgent.get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenAgentを取得
+        agent_result = main_db.get_autogen_agent(agent.name)
+
+        result: dict = {}
+        if agent_result:
+            result["agent"] = agent_result.to_dict()
+        return result
+
+    @classmethod
+    def update_autogen_agent_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = AutogenAgent.get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenAgentを更新
+        main_db.update_autogen_agent(agent)
+
+        result: dict = {}
+        return result
+
+    @classmethod
+    def delete_autogen_agent_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからagentを取得
+        agent = AutogenAgent.get_autogen_agent_object(request_dict)
+        if not agent:
+            raise ValueError("agent is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenAgentを削除
+        main_db.delete_autogen_agent(agent)
+
+        result: dict = {}
+        return result
+
+    autogen_agent_request_name = "autogen_agent_request"
+    @classmethod
+    def get_autogen_agent_object(cls, request_dict: dict) -> "AutogenAgent":
+        '''
+        {"autogen_agent_request": {}}の形式で渡される
+        '''
+        # autogen_agent_requestを取得
+        request:dict = request_dict.get(cls.autogen_agent_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        # autogen_agentを生成
+        autogen_agent = AutogenAgent(request)
+        return autogen_agent
+
     def __init__(self, agent_dict: dict):
         self.name = agent_dict.get("name", "")
         self.description = agent_dict.get("description", "")
@@ -356,6 +829,89 @@ class AutogenGroupChat:
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE autogen_group_chats (name TEXT, description TEXT, llm_config_name TEXT, agent_names TEXT)
     '''
+    @classmethod
+    def get_autogen_group_chat_list_api(cls, request_json: str):
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenGroupChatの一覧を取得
+        group_chat_list = main_db.get_autogen_group_chat_list()
+
+        if not group_chat_list:
+            raise ValueError("group_chat_list is not set")
+        
+        result: dict = {}
+        result["group_chat_list"] = [group_chat.to_dict() for group_chat in group_chat_list]
+        return result
+
+
+    autogen_group_chat_request_name = "autogen_group_chat_request"
+    @classmethod
+    def get_autogen_group_chat_object(cls, request_dict: dict) -> "AutogenGroupChat":
+        '''
+        {"autogen_group_chat_request": {}}の形式で渡される
+        '''
+        # autogen_group_chat_requestを取得
+        request:dict = request_dict.get(cls.autogen_group_chat_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        # autogen_group_chatを生成
+        autogen_group_chat = AutogenGroupChat(request)
+        return autogen_group_chat
+
+    @classmethod
+    def get_autogen_group_chat_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = AutogenGroupChat.get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenGroupChatを取得
+        group_chat_result = main_db.get_autogen_group_chat(group_chat.name)
+
+        result: dict = {}
+        if group_chat_result:
+            result["group_chat"] = group_chat_result.to_dict()
+        return result
+
+    @classmethod
+    def update_autogen_group_chat_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = AutogenGroupChat.get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenGroupChatを更新
+        main_db.update_autogen_group_chat(group_chat)
+
+        result: dict = {}
+        return result
+
+    @classmethod
+    def delete_autogen_group_chat_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # autogen_propsからgroup_chatを取得
+        group_chat = AutogenGroupChat.get_autogen_group_chat_object(request_dict)
+        if not group_chat:
+            raise ValueError("group_chat is not set")
+        
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        # AutogenGroupChatを削除
+        main_db.delete_autogen_group_chat(group_chat)
+
+        result: dict = {}
+        return result
+
+
     def __init__(self, group_chat_dict: dict):
         self.name = group_chat_dict.get("name", "")
         self.description = group_chat_dict.get("description", "")

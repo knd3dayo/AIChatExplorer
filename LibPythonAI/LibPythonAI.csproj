@@ -73,16 +73,28 @@
     <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\chat_modules\chat_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\chat_modules\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\openai_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\util_modules\ai_app_server_shutdown.py">
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_server_shutdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_server.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\util_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\file_modules\excel_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\web_modules\web_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\web_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\__init__.py">
@@ -109,7 +121,7 @@
     <EmbeddedResource Include="python_lib\requirements.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\util_modules\ai_app_process_checker.py">
+    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_process_checker.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_wrapper.py">
@@ -118,9 +130,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_explorer\file_modules\file_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

@@ -15,7 +15,10 @@ from ai_chat_explorer.langchain_modules.langchain_client import LangChainOpenAIC
 from ai_chat_explorer.langchain_modules.langchain_vector_db import LangChainVectorDB
 
 from ai_chat_explorer.openai_modules.openai_util import OpenAIProps
-from ai_chat_explorer.db_modules import VectorDBItem, VectorSearchRequest, MainDB, get_main_db_path
+from ai_chat_explorer.db_modules import *
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CustomToolInput(BaseModel):
@@ -129,20 +132,23 @@ class RetrievalQAUtil:
         tools = []
         for i in range(len(vector_search_requests)):
             item = vector_search_requests[i]
+            vector_db_item: VectorDBItem = item.get_vector_db_item()
+            # ベクトルDBのURLを取得
             # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
-            main_db = MainDB(get_main_db_path())
-            vector_db_item = main_db.get_vector_db_by_name(item.name)
-            if vector_db_item is None:
-                raise ValueError(f"VectorDBItem not found for name: {item.name}")
-
             description = vector_db_item.Description
+            vector_db_url = vector_db_item.VectorDBURL
+            doc_store_url = ""
+            if vector_db_item.IsUseMultiVectorRetriever:
+                doc_store_url = vector_db_item.DocStoreURL
+            collection_name = vector_db_item.CollectionName
+            chunk_size = vector_db_item.ChunkSize
 
             # ツールを作成
             def vector_search_function(question: str) -> list[Document]:
                 # Retrieverを作成
                 search_kwargs = {"k": 4}
 
-                retriever = LangChainVectorDB(client, vector_db_item).create_retriever(search_kwargs)
+                retriever = LangChainVectorDB(client, vector_db_url, collection_name, doc_store_url, chunk_size).create_retriever(search_kwargs)
                 docs: list[Document] = retriever.invoke(question)
                 # page_contentを取得
                 result_docs = []
@@ -162,9 +168,141 @@ class RetrievalQAUtil:
 
 class LangChainUtil:
 
+    @classmethod
+    def vector_search_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
 
-    @staticmethod
-    def langchain_chat(openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], params: LangChainChatParameter):
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+        # queryを取得
+        vector_search_requests: list[VectorSearchRequest] = VectorSearchRequest.get_vector_search_requests_objects(request_dict)
+
+        result = cls.vector_search(openai_props, vector_search_requests)
+        return result
+
+    @classmethod
+    def update_collection_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # ChatRequestContextからVectorDBItemを生成
+        vector_search_requests = EmbeddingData.get_embedding_request_objects(request_dict)
+
+        # 現時点では処理なし
+        return {}
+
+    @classmethod
+    def delete_collection_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+        # ChatRequestContextからVectorDBItemを生成
+        embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
+        
+        main_db = MainDB(get_main_db_path())
+        vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+        if vector_db_item is None:
+            raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        # delete_collectionを実行
+        vector_db.delete_collection()
+
+        return {}
+
+    @classmethod
+    def delete_embeddings_by_folder_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+
+        # embedding_requestを取得
+        embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+
+        vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+        if vector_db_item is None:
+            raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+        
+        # LangChainVectorDBを生成
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+
+        folder_id = embedding_data.FolderId
+        # delete_folder_embeddingsを実行
+        vector_db.delete_folder(folder_id)
+
+        return {}
+
+    @classmethod
+    def delete_embeddings_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+
+        # embedding_requestを取得
+        embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+        if vector_db_item is None:
+            raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        vector_db.delete_document(embedding_data.source_id)
+
+        return {}
+
+    @classmethod
+    async def update_embeddings_api(cls, request_json: str) -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+        # embedding_requestを取得
+        embedding_data: EmbeddingData = EmbeddingData.get_embedding_request_objects(request_dict)
+
+        # MainDBを取得
+        main_db = MainDB(get_main_db_path())
+        vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
+        if vector_db_item is None:
+            raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
+        # LangChainVectorDBを生成
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        await vector_db.update_document(embedding_data)
+
+        return {}
+
+
+    chat_request_name = "chat_request"
+
+    @classmethod
+    def langchain_chat_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+
+        # process_langchain_chat_parameterを実行
+        from ai_chat_explorer.langchain_modules.langchain_util import LangChainChatParameter
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
+        # ChatRequestContextからVectorDBItemを生成
+        vector_search_requests = VectorSearchRequest.get_vector_search_requests_objects(request_dict)
+
+        # chat_requestを取得
+        chat_request_dict = request_dict.get(cls.chat_request_name, None)
+        params:LangChainChatParameter = LangChainChatParameter(chat_request_dict)
+
+        # langchan_chatを実行
+        result = LangChainUtil.langchain_chat(openai_props, vector_search_requests, params)
+        return result
+
+    @classmethod
+    def langchain_chat(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], params: LangChainChatParameter):
 
         # langchainのログを出力する
         langchain.verbose = True
@@ -192,3 +330,91 @@ class LangChainUtil:
         print("langchain_chat:end")
 
         return result_dict
+
+    @classmethod
+    def get_vector_db(cls, openai_props: OpenAIProps, vector_db_props: VectorDBItem) -> LangChainVectorDB:
+
+        langchain_openai_client = LangChainOpenAIClient(openai_props)
+
+        vector_db_url = vector_db_props.VectorDBURL
+        doc_store_url = vector_db_props.DocStoreURL
+        collection_name = vector_db_props.CollectionName
+        chunk_size = vector_db_props.ChunkSize
+
+        # ベクトルDBのタイプがChromaの場合
+        if vector_db_props.VectorDBTypeString == "Chroma":
+            from ai_chat_explorer.langchain_modules.langchain_vector_db_chroma import LangChainVectorDBChroma
+            return LangChainVectorDBChroma(langchain_openai_client, vector_db_url, collection_name, doc_store_url, chunk_size)
+        # ベクトルDBのタイプがPostgresの場合
+        elif vector_db_props.VectorDBTypeString == "PGVector":
+            from ai_chat_explorer.langchain_modules.langchain_vector_db_pgvector import LangChainVectorDBPGVector
+            return LangChainVectorDBPGVector(langchain_openai_client, vector_db_url, collection_name, doc_store_url, chunk_size)
+        else:
+            # それ以外の場合は例外
+            raise ValueError("VectorDBType is invalid")
+
+    @classmethod
+    def get_vector_db_with_default_collection(cls, openai_props: OpenAIProps, vector_db_props: VectorDBItem) -> LangChainVectorDB:
+        import copy
+        # vector_db_propsのコピーを作成
+        new_vector_db_props: VectorDBItem = copy.deepcopy(vector_db_props)
+        # デフォルトのコレクション名を設定
+        new_vector_db_props.CollectionName = VectorDBItem.DEFAULT_COLLECTION_NAME
+
+        return cls.get_vector_db(openai_props, new_vector_db_props)
+
+    # ベクトル検索を行う
+    @classmethod
+    def vector_search(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest]) -> dict[str, Any]:    
+
+        if not openai_props:
+            raise ValueError("openai_props is None")
+        client = LangChainOpenAIClient(openai_props)
+
+        main_db = MainDB(get_main_db_path())
+
+        # documentsの要素からcontent, source, source_urlを取得
+        result = []
+        # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
+        for request in vector_search_requests:
+            # vector_db_itemを取得
+            vector_db_item = main_db.get_vector_db_by_name(request.name)
+            if vector_db_item is None:
+                raise ValueError(f"vector_db_item is None. name:{request.name}")
+
+            langchain_db = cls.get_vector_db(openai_props, vector_db_item)
+            
+            # デバッグ出力
+            logger.info('ベクトルDBの設定')
+            logger.info(f'''
+                        name:{vector_db_item.Name} vector_db_description:{vector_db_item.Description} 
+                        VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} 
+                        CollectionName:{vector_db_item.CollectionName}'
+                        ChunkSize:{vector_db_item.ChunkSize} IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}
+                        ''')
+
+            logger.info(f'検索文字列: {request.query}')
+            logger.info(f'SearchKwargs:{request.search_kwargs}')
+            retriever = langchain_db.create_retriever(request.search_kwargs)
+            documents: list[Document] = retriever.invoke(request.query)
+
+            logger.debug(f"documents:\n{documents}")
+            for doc in documents:
+                content = doc.page_content
+                doc_dict = LangChainVectorDB.create_metadata_from_document(doc)
+                doc_dict["content"] = content
+
+                sub_docs: list[Document]= doc.metadata.get("sub_docs", [])
+                # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
+                sub_docs_result = []
+                for sub_doc in sub_docs:
+                    content = sub_doc.page_content
+                    sub_doc_dict = LangChainVectorDB.create_metadata_from_document(sub_doc)
+                    sub_doc_dict["content"] = content
+                    sub_docs_result.append(sub_doc_dict)
+
+                doc_dict["sub_docs"] = sub_docs_result
+                result.append(doc_dict)
+            
+        return {"documents": result}
+    

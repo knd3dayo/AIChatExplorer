@@ -3,9 +3,82 @@ from magika.types import MagikaResult
 from chardet.universaldetector import UniversalDetector
 from pathlib import Path
 import aiofiles # type: ignore
-from bs4 import BeautifulSoup
+from ai_chat_explorer.file_modules.excel_util import ExcelUtil
+import json
+import os
+import tempfile
+import base64
+import aiofiles
+
 
 class FileUtil:
+
+    file_request_name = "file_request"
+    @classmethod
+    def get_file_request_objects(cls, request_dict: dict) -> dict:
+        '''
+        {"context": {"file_request": {}}}の形式で渡される
+        '''
+        # contextを取得
+        request:dict = request_dict.get(cls.file_request_name, None)
+        if not request:
+            raise ValueError("request is not set.")
+        return request
+
+    @classmethod
+    async def extract_text_from_file_async_api(cls, request_json: str) -> dict:
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = FileUtil.get_file_request_objects(request_dict)
+        # file_pathを取得
+        filename = file_request.get("file_path", None)
+        text: str =  await FileUtil.extract_text_from_file_async(filename)
+        return {"output": text}
+
+    @classmethod
+    async def extract_base64_to_text_async_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = cls.get_file_request_objects(request_dict)
+        # extensionを取得
+        extension = file_request.get("extension", None)
+        # base64_dataを取得
+        base64_data = file_request.get("base64_data", None)
+
+        # サイズが0の場合は空文字を返す
+        if len(base64_data) == 0:
+            return ""
+
+        # base64からバイナリデータに変換
+        base64_data_bytes = base64.b64decode(base64_data)
+
+        # 拡張子の指定。extensionが空の場合は設定しない.空でない場合は"."を先頭に付与
+        suffix = "" if extension == "" else "." + extension
+        # base64データから一時ファイルを生成
+        async with aiofiles.tempfile.NamedTemporaryFile(mode="wb", delete=False, suffix=suffix) as temp:
+            await temp.write(base64_data_bytes)
+            await temp.close()
+            # 一時ファイルからテキストを抽出
+            text = await FileUtil.extract_text_from_file_async(temp.name)
+            # 一時ファイルを削除
+            os.remove(temp.name)
+            return text
+
+        return {"output": text}
+
+
+    @classmethod
+    def get_mime_type_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # file_requestを取得
+        file_request = cls.get_file_request_objects(request_dict)
+        # file_pathを取得
+        file_path = file_request.get("file_path", None)
+        text = FileUtil.get_mime_type(file_path)
+        return {"output": text}
 
     @classmethod    
     def sanitize_text(cls, text: str) -> str:
@@ -169,74 +242,4 @@ class FileUtil:
                 result = await f.read()
             
         return result
-
-import datetime
-
-import openpyxl # type: ignore
-
-class ExcelUtil:
-
-    @staticmethod
-    def export_to_excel(filePath, data):
-        # Workbookオブジェクトを生成
-        wb = openpyxl.Workbook()
-        # アクティブなシートを取得
-        ws = wb.active
-        # シート名を設定
-        ws.title = "Sheet1"
-        # データを書き込む
-        for row in data:
-            ws.append(row)
-        # ファイルを保存
-        wb.save(filePath)
-        
-    @staticmethod
-    def import_from_excel(filePath):
-        # Workbookオブジェクトを生成
-        wb = openpyxl.load_workbook(filePath)
-        # アクティブなシートを取得
-        ws = wb.active
-        # データを取得
-        data = []
-        for row in ws.iter_rows(values_only=True):
-            data.append(row)
-        
-        return data
-
-    # application/vnd.openxmlformats-officedocument.spreadsheetml.sheetのファイルを読み込んで文字列として返す関数
-    @staticmethod
-    def extract_text_from_sheet(filename:str, sheet_name:str=""):
-        import openpyxl
-        from io import StringIO
-        # 出力用のストリームを作成
-        output = StringIO()
-        wb = openpyxl.load_workbook(filename)
-        for sheet in wb:
-            # シート名が指定されている場合はそのシートのみ処理
-            if sheet_name and sheet.title != sheet_name:
-                continue
-            for row in sheet.iter_rows(values_only=True):
-                # 1行分のデータを格納するリスト
-                cells = []
-                for cell in row:
-                    # cell.valueがNoneの場合はcontinue
-                    if cell is None:
-                        continue
-                    # cell.valueがdatetime.datetimeの場合はisoformat()で文字列に変換
-                    if isinstance(cell, datetime.datetime):
-                        cells.append(cell.isoformat())
-                    else:
-                        cells.append(str(cell))
-                    
-                output.write("\t".join(cells))
-                output.write("\n")
-        
-        return output.getvalue()
-
-    # excelのシート名一覧を取得する関数
-    @staticmethod
-    def get_sheet_names(filename):
-        import openpyxl
-        wb = openpyxl.load_workbook(filename)
-        return wb.sheetnames
 
