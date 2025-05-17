@@ -11,14 +11,14 @@
   <ItemGroup>
     <None Remove="Nlog.config" />
     <None Remove="python_lib\ai_app.py" />
-    <None Remove="python_lib\ai_chat_explorer\autogen_modules\default_tools.py" />
-    <None Remove="python_lib\ai_chat_explorer\autogen_modules\vector_db_tools.py" />
-    <None Remove="python_lib\ai_chat_explorer\autogen_modules\__init__.py" />
+    <None Remove="python_lib\ai_chat_lib\autogen_modules\default_tools.py" />
+    <None Remove="python_lib\ai_chat_lib\autogen_modules\vector_db_tools.py" />
+    <None Remove="python_lib\ai_chat_lib\autogen_modules\__init__.py" />
     <None Remove="python_lib\ai_app_autogen_tools.py" />
     <None Remove="python_lib\ai_app_autogen_util.py" />
-    <None Remove="python_lib\ai_chat_explorer\file_modules\__init__.py" />
+    <None Remove="python_lib\ai_chat_lib\file_modules\__init__.py" />
     <None Remove="python_lib\ai_app_file_util.py" />
-    <None Remove="python_lib\ai_chat_explorer\langchain_modules\__init__.py" />
+    <None Remove="python_lib\ai_chat_lib\langchain_modules\__init__.py" />
     <None Remove="python_lib\ai_app_langchain_client.py" />
     <None Remove="python_lib\ai_app_langchain_util.py" />
     <None Remove="python_lib\ai_app_openai_util.py" />
@@ -38,7 +38,7 @@
     <None Remove="python_lib\llamaindex_client.py" />
     <None Remove="python_lib\llamaindex_vector_db.py" />
     <None Remove="python_lib\llamaindex_vector_db_chroma.py" />
-    <None Remove="python_lib\ai_chat_explorer\openai_modules\__init__.py" />
+    <None Remove="python_lib\ai_chat_lib\openai_modules\__init__.py" />
     <None Remove="python_lib\script_template.py" />
     <None Remove="python_lib\test_ai_app_autogen_group_chat_01.py" />
     <None Remove="python_lib\test_ai_app_langchain_chat_01.py" />
@@ -49,109 +49,109 @@
     <EmbeddedResource Include="Nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\ai_app_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\autogen_modules\vector_db_tools.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\autogen_modules\vector_db_tools.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\autogen_modules\default_tools.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\autogen_modules\default_tools.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\autogen_modules\autogen_props.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\autogen_modules\autogen_props.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\autogen_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\autogen_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\file_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\file_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_client.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\chat_modules\chat_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\chat_modules\chat_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\chat_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\chat_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\openai_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\openai_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_server_shutdown.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\ai_app_server_shutdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_server.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\ai_app_server.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\file_modules\excel_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\file_modules\excel_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\web_modules\web_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\web_modules\web_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\web_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\web_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\ai_app_langchain_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\ai_app_langchain_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\ai_app_open_ai_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\ai_app_open_ai_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\debug_tool\autogen_group_chat_debug_01.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\debug_tool\autogen_group_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\db_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\db_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\db_modules\main_db.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\db_modules\main_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\__init__.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\requirements.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_process_checker.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\ai_app_process_checker.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\api_modules\ai_app_wrapper.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\api_modules\ai_app_wrapper.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\file_modules\file_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\file_modules\file_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_doc_store_postgres.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_doc_store_postgres.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_doc_store.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_vector_db.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_vector_db_pgvector.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_vector_db_pgvector.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\langchain_modules\langchain_vector_db_chroma.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\langchain_modules\langchain_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_lib\ai_chat_explorer\openai_modules\openai_util.py">
+    <EmbeddedResource Include="python_lib\ai_chat_lib\openai_modules\openai_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ReadMe.md">
