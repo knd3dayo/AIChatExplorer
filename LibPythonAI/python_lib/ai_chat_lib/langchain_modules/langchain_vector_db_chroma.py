@@ -20,7 +20,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         super().__init__(langchain_openai_client, vector_db_url, collection_name,  multi_vector_doc_store_url, chunk_size)
         self.db = self._load()
         if multi_vector_doc_store_url:
-            logger.info("doc_store_url:", multi_vector_doc_store_url)
+            logger.info(f"doc_store_url: {multi_vector_doc_store_url}")
             self.doc_store = SQLDocStore(multi_vector_doc_store_url)
         else:
             logger.info("doc_store_url is None")
@@ -32,7 +32,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             # ディレクトリを作成
             os.makedirs(self.vector_db_url)
             # ディレクトリが作成されたことをログに出力
-            logger.info("create directory:", self.vector_db_url)
+            logger.info(f"create directory:{self.vector_db_url}")
         # params
         settings = chromadb.config.Settings(anonymized_telemetry=False)
 
@@ -41,7 +41,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         params["collection_metadata"] = {"hnsw:space":"cosine"}
         # collectionが指定されている場合
-        logger.info("collection_name:", self.collection_name)
+        logger.info(f"collection_name:{self.collection_name}")
         if self.collection_name:
             params["collection_name"] = self.collection_name
                     

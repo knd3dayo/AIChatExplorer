@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
+using PythonAILib.Common;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
-    /// <summary>
-    /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
-    /// </summary>
+
     public class ListVectorDBWindowViewModel : CommonViewModelBase {
 
         public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
@@ -23,6 +21,13 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             FolderSelectWindowViewModel = new(rootFolderViewModels, (selectedFolder, finished) => {
                 FolderViewModel = selectedFolder;
             });
+
+            //  ActionModeEnum.Select以外の場合は、SelectedTabIndex = 1 (ベクトルDB一覧タブを選択)
+            if (mode != ActionModeEnum.Select) {
+                SelectedTabIndex = 1;
+            } else {
+                SelectedTabIndex = 0;
+            }
 
         }
 
@@ -158,21 +163,28 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
             if (SelectedTabIndex == 0) {
-                if (SelectedVectorDBItem == null) {
-                    LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
-                    return;
-                }
-                VectorSearchProperty? prop = new() { VectorDBItemName = SelectedVectorDBItem.Item.Name };
-                callBackup?.Invoke(prop);
-            }
-            // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
-            else if (SelectedTabIndex == 1) {
                 VectorSearchProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
                 if (item == null) {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
                 callBackup?.Invoke(item);
+
+            }
+            // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
+            else if (SelectedTabIndex == 1) {
+                if (SelectedVectorDBItem == null) {
+                    LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
+                    return;
+                }
+                VectorSearchProperty? prop = new() {
+                    VectorDBItemName = SelectedVectorDBItem.Item.Name,
+                    TopK = 4,
+                    Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel
+                };
+
+                callBackup?.Invoke(prop);
+
             }
             // Windowを閉じる
             window.Close();

@@ -223,10 +223,7 @@ namespace AIChatExplorer.ViewModel.Main {
             AppViewModelCommands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
-        // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
-            AppViewModelCommands.OpenRAGManagementWindowCommand();
-        });
+
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
             AppViewModelCommands.OpenVectorDBManagementWindowCommand();

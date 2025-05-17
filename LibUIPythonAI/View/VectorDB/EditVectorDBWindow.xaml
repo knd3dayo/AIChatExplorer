@@ -116,7 +116,7 @@
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,10,10,10"
-                    materialDesign:HintAssist.Hint="{Binding StringResources.ExampleGeneralVectorDB, Mode=OneTime}"
+                    materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ExampleGeneralVectorDB}"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description}" />
                 <TextBlock

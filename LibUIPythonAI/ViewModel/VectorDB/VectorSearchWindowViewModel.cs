@@ -31,6 +31,14 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
                 // VectorDBSearchResultMax
                 VectorDBSearchResultMax = item.DefaultSearchResultLimit;
+
+                // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
+                if (!item.IsUseMultiVectorRetriever) {
+                    SelectedTabIndex = 1;
+                } else {
+                    SelectedTabIndex = 0;
+                }
+
                 // StatusTextを更新
                 UpdateStatusText();
 

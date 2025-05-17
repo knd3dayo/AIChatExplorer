@@ -53,12 +53,6 @@
     <Compile Update="View\PromptTemplate\ListPromptTemplateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\RAG\EditRAGSourceWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\RAG\SelectCommitWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="View\Common\MyStatusBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

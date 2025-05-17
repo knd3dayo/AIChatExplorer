@@ -105,5 +105,8 @@ namespace LibUIPythonAI.View.VectorDB {
         // CollectionName
         public static string CollectionName { get; set; } = CommonStringResources.Instance.CollectionName;
 
+        // ExampleGeneralVectorDB
+        public static string ExampleGeneralVectorDB { get; set; } = CommonStringResources.Instance.ExampleGeneralVectorDB;
+
     }
 }

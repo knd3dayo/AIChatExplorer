@@ -20,7 +20,6 @@ using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.View.VectorDB;
@@ -208,11 +207,6 @@ namespace AIChatExplorer.ViewModel.Main {
             MergeChatWindow.OpenWindow(folderViewModel, selectedItems);
         }
 
-        // Process when "RAG Management" is clicked in the menu
-        public static void OpenRAGManagementWindowCommand() {
-            // Open RARManagementWindow
-            ListRAGSourceWindow.OpenRagManagementWindow();
-        }
 
         // Process when "Vector DB Management" is clicked in the menu
         public static void OpenVectorDBManagementWindowCommand() {

@@ -595,8 +595,6 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
 
             // vector_search
-            // VectorSearchResultのリストを作成
-            List<VectorEmbedding> vectorSearchResults = [];
 
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/vector_search";
@@ -615,6 +613,10 @@ namespace PythonAILib.PythonIF {
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
+
+            // VectorSearchResultのリストを作成
+            List<VectorEmbedding> vectorSearchResults = [];
+
 
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {

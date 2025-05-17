@@ -77,19 +77,19 @@ namespace LibPythonAI.Model.VectorDB {
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                { "Id", Id },
-                { "VectorDBType", (int)Type },
-                { "IsEnabled", IsEnabled },
-                { "IsSystem", IsSystem },
-                { "Name", Name },
-                { "Description", Description },
-                { "SystemMessage", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
-                { "VectorDBURL", VectorDBURL },
-                { "IsUseMultiVectorRetriever", IsUseMultiVectorRetriever },
-                { "DocStoreURL", DocStoreURL },
-                { "VectorDBTypeString", VectorDBTypeString },
-                { "CollectionName", CollectionName ?? ""},
-                { "ChunkSize", ChunkSize },
+                { "id", Id },
+                { "vector_db_type", (int)Type },
+                { "is_enabled", IsEnabled },
+                { "is_system", IsSystem },
+                { "name", Name },
+                { "description", Description },
+                { "system_message", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
+                { "vector_db_url", VectorDBURL },
+                { "is_use_multi_vector_retriever", IsUseMultiVectorRetriever },
+                { "doc_store_url", DocStoreURL },
+                { "vector_db_type_string", VectorDBTypeString },
+                { "collection_name", CollectionName ?? ""},
+                { "chunk_size", ChunkSize },
             };
             return dict;
         }
@@ -168,18 +168,18 @@ namespace LibPythonAI.Model.VectorDB {
 
         public static VectorDBItem FromDict(Dictionary<string, object> dict) {
             VectorDBItem item = new();
-            item.Id = dict["Id"]?.ToString() ?? "";
-            item.Name = dict["Name"]?.ToString() ?? "";
-            item.Description = dict["Description"]?.ToString() ?? "";
-            item.VectorDBURL = dict["VectorDBURL"]?.ToString() ?? "";
-            item.IsUseMultiVectorRetriever = Convert.ToBoolean(dict["IsUseMultiVectorRetriever"]);
-            item.DocStoreURL = dict["DocStoreURL"]?.ToString() ?? "";
-            item.ChunkSize = Convert.ToInt32(dict["ChunkSize"]);
-            item.CollectionName = dict["CollectionName"]?.ToString() ?? "";
-            item.IsEnabled = Convert.ToBoolean(dict["IsEnabled"]);
-            item.IsSystem = Convert.ToBoolean(dict["IsSystem"]);
-            item.Type = (VectorDBTypeEnum)Int32.Parse(dict["VectorDBType"]?.ToString() ?? "0");
-            item.DefaultSearchResultLimit = Convert.ToInt32(dict["DefaultSearchResultLimit"]);
+            item.Id = dict["id"]?.ToString() ?? "";
+            item.Name = dict["name"]?.ToString() ?? "";
+            item.Description = dict["description"]?.ToString() ?? "";
+            item.VectorDBURL = dict["vector_db_url"]?.ToString() ?? "";
+            item.IsUseMultiVectorRetriever = Convert.ToBoolean(dict["is_use_multi_vector_retriever"]);
+            item.DocStoreURL = dict["doc_store_url"]?.ToString() ?? "";
+            item.ChunkSize = Convert.ToInt32(dict["chunk_size"]);
+            item.CollectionName = dict["collection_name"]?.ToString() ?? "";
+            item.IsEnabled = Convert.ToBoolean(dict["is_enabled"]);
+            item.IsSystem = Convert.ToBoolean(dict["is_system"]);
+            item.Type = (VectorDBTypeEnum)Int32.Parse(dict["vector_db_type"]?.ToString() ?? "0");
+            item.DefaultSearchResultLimit = Convert.ToInt32(dict["default_search_result_limit"]);
 
             return item;
 

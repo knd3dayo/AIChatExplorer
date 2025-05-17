@@ -141,6 +141,24 @@ class ContentItem:
 
 class VectorDBItem:
 
+
+    '''
+    以下のテーブル定義のデータを格納するクラス
+    CREATE TABLE "VectorDBItems" (
+        "id" TEXT NOT NULL CONSTRAINT "PK_VectorDBItems" PRIMARY KEY,
+        "name" TEXT NOT NULL,
+        "description" TEXT NOT NULL,
+        "vector_db_url" TEXT NOT NULL,
+        "is_use_multi_vector_retriever" INTEGER NOT NULL,
+        "doc_store_url" TEXT NOT NULL,
+        "vector_db_type" INTEGER NOT NULL,
+        "collection_name" TEXT NOT NULL,
+        "chunk_size" INTEGER NOT NULL,
+        "default_search_result_limit" INTEGER NOT NULL,
+        "is_enabled" INTEGER NOT NULL,
+        "is_system" INTEGER NOT NULL
+    )    
+    '''
     # コレクションの指定がない場合はデフォルトのコレクション名を使用
     DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
     FOLDER_CATALOG_COLLECTION_NAME = "ai_app_folder_catalog_collection"
@@ -218,24 +236,6 @@ class VectorDBItem:
             result["vector_db_item"] = vector_db.to_dict()
         return result
 
-
-    '''
-    以下のテーブル定義のデータを格納するクラス
-    CREATE TABLE "VectorDBItems" (
-        "Id" TEXT NOT NULL CONSTRAINT "PK_VectorDBItems" PRIMARY KEY,
-        "Name" TEXT NOT NULL,
-        "Description" TEXT NOT NULL,
-        "VectorDBURL" TEXT NOT NULL,
-        "IsUseMultiVectorRetriever" INTEGER NOT NULL,
-        "DocStoreURL" TEXT NOT NULL,
-        "VectorDBType" INTEGER NOT NULL,
-        "CollectionName" TEXT NOT NULL,
-        "ChunkSize" INTEGER NOT NULL,
-        "DefaultSearchResultLimit" INTEGER NOT NULL,
-        "IsEnabled" INTEGER NOT NULL,
-        "IsSystem" INTEGER NOT NULL
-    )    
-    '''
     vector_db_item_request_name = "vector_db_item_request"
     @classmethod
     def get_vector_db_item_object(cls, request_dict: dict) -> "VectorDBItem":
@@ -251,17 +251,17 @@ class VectorDBItem:
         vector_db_item = VectorDBItem(vector_db_item_request)
         return vector_db_item    
 
-    
+
     def __init__(self, vector_db_item_dict: dict):
         self.Id = vector_db_item_dict.get("Id", "")
         if not self.Id:
             # UUIDを生成
             self.Id = str(uuid.uuid4())
         
-        self.Name = vector_db_item_dict.get("Name", "")
-        self.Description = vector_db_item_dict.get("Description", "")
-        self.VectorDBURL = vector_db_item_dict.get("VectorDBURL", "")
-        value1 = vector_db_item_dict.get("IsUseMultiVectorRetriever", 0)
+        self.Name = vector_db_item_dict.get("name", "")
+        self.Description = vector_db_item_dict.get("description", "")
+        self.VectorDBURL = vector_db_item_dict.get("vector_db_url", "")
+        value1 = vector_db_item_dict.get("is_use_multi_vector_retriever", 0)
         if value1 == 1 or value1 == True:
             self.IsUseMultiVectorRetriever = True
         elif (type(value1) == str and value1.upper() == "TRUE"):
@@ -269,16 +269,15 @@ class VectorDBItem:
         else:
             self.IsUseMultiVectorRetriever = False
 
-        self.DocStoreURL = vector_db_item_dict.get("DocStoreURL", "")
-        self.VectorDBType = vector_db_item_dict.get("VectorDBType", 0)
-        self.CollectionName = vector_db_item_dict.get("CollectionName", "")
-        self.CatalogDBURL = vector_db_item_dict.get("CatalogDBURL", "")
-        self.ChunkSize = vector_db_item_dict.get("ChunkSize", 0)
-        self.DefaultSearchResultLimit = vector_db_item_dict.get("DefaultSearchResultLimit", 0)
-        self.IsEnabled = vector_db_item_dict.get("IsEnabled", 0)
-        self.IsSystem = vector_db_item_dict.get("IsSystem", 0)
+        self.DocStoreURL = vector_db_item_dict.get("doc_store_url", "")
+        self.VectorDBType = vector_db_item_dict.get("vector_db_type", 0)
+        self.CollectionName = vector_db_item_dict.get("collection_name", "")
+        self.ChunkSize = vector_db_item_dict.get("chunk_size", 0)
+        self.DefaultSearchResultLimit = vector_db_item_dict.get("default_search_result_limit", 0)
+        self.IsEnabled = vector_db_item_dict.get("is_enabled", 0)
+        self.IsSystem = vector_db_item_dict.get("is_system", 0)
 
-        self.VectorDBTypeString :str = vector_db_item_dict.get("VectorDBTypeString", "")
+        self.VectorDBTypeString :str = vector_db_item_dict.get("vector_db_type_string", "")
         if not self.VectorDBTypeString:
             if self.VectorDBType == 1:
                 self.VectorDBTypeString = "Chroma"
@@ -288,46 +287,28 @@ class VectorDBItem:
                 raise ValueError("VectorDBType must be 1 or 2")
 
         # system_message
-        self.SystemMessage = vector_db_item_dict.get("SystemMessage", self.Description)
+        self.SystemMessage = vector_db_item_dict.get("system_message", self.Description)
         # FolderのID
-        self.FolderId = vector_db_item_dict.get("FolderId", "")
+        self.FolderId = vector_db_item_dict.get("folder_id", "")
 
 
     def to_dict(self) -> dict:
         return {
-            "Id": self.Id,
-            "Name": self.Name,
-            "Description": self.Description,
-            "VectorDBURL": self.VectorDBURL,
-            "IsUseMultiVectorRetriever": self.IsUseMultiVectorRetriever,
-            "DocStoreURL": self.DocStoreURL,
-            "VectorDBType": self.VectorDBType,
-            "CollectionName": self.CollectionName,
-            "CatalogDBURL": self.CatalogDBURL,
-            "ChunkSize": self.ChunkSize,
-            "DefaultSearchResultLimit": self.DefaultSearchResultLimit,
-            "IsEnabled": self.IsEnabled,
-            "IsSystem": self.IsSystem
+            "id": self.Id,
+            "name": self.Name,
+            "description": self.Description,
+            "vector_db_url": self.VectorDBURL,
+            "is_use_multi_vector_retriever": self.IsUseMultiVectorRetriever,
+            "doc_store_url": self.DocStoreURL,
+            "vector_db_type": self.VectorDBType,
+            "vector_db_type_string": self.VectorDBTypeString,
+            "collection_name": self.CollectionName,
+            "chunk_size": self.ChunkSize,
+            "default_search_result_limit": self.DefaultSearchResultLimit,
+            "is_enabled": self.IsEnabled,
+            "is_system": self.IsSystem,
         }
     
-    @staticmethod
-    def get_vector_db_env_variables() -> 'VectorDBItem':
-        from dotenv import load_dotenv
-        import os
-        load_dotenv()
-        props: dict = {
-            "Name": os.getenv("VECTOR_DB_NAME"),
-            "VectorDBUrl": os.getenv("VECTOR_DB_URL"),
-            "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
-            "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
-            "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
-            "DocStoreUrl": os.getenv("DOC_STORE_URL"),
-            "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
-            # チャンクサイズ
-            "ChunkSize": int(os.getenv("ChunkSize", 1024)),
-            
-        }
-        return  VectorDBItem(props)
 
 class VectorSearchRequest:
 
@@ -961,7 +942,6 @@ class MainDB:
         conn.commit()
         conn.close()
 
-
     def init_content_item_table(self):
         # ContentItemsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
@@ -1000,19 +980,18 @@ class MainDB:
         cur = conn.cursor()
         cur.execute('''
             CREATE TABLE IF NOT EXISTS VectorDBItems (
-                Id TEXT NOT NULL PRIMARY KEY,
-                Name TEXT NOT NULL,
-                Description TEXT NOT NULL,
-                VectorDBURL TEXT NOT NULL,
-                IsUseMultiVectorRetriever INTEGER NOT NULL,
-                DocStoreURL TEXT NOT NULL,
-                VectorDBType INTEGER NOT NULL,
-                CollectionName TEXT NOT NULL,
-                CatalogDBURL TEXT NOT NULL,
-                ChunkSize INTEGER NOT NULL,
-                DefaultSearchResultLimit INTEGER NOT NULL,
-                IsEnabled INTEGER NOT NULL,
-                IsSystem INTEGER NOT NULL
+                id TEXT NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                vector_db_url TEXT NOT NULL,
+                is_use_multi_vector_retriever INTEGER NOT NULL,
+                doc_store_url TEXT NOT NULL,
+                vector_db_type INTEGER NOT NULL,
+                collection_name TEXT NOT NULL,
+                chunk_size INTEGER NOT NULL,
+                default_search_result_limit INTEGER NOT NULL,
+                is_enabled INTEGER NOT NULL,
+                is_system INTEGER NOT NULL
             )
         ''')
         conn.commit()
@@ -1026,16 +1005,17 @@ class MainDB:
         if not vector_db_item:
             # VectorDBItemを作成
             params = {
-                "Name": "default",
-                "Description": "Application default vector db",
-                "VectorDBType": 1,
-                "VectorDBURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_vector_db"),
-                "DocStoreURL": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_doc_store.db"),
-                "IsUseMultiVectorRetriever": False,
-                "IsEnable": True,
-                "IsSystem": False,
-                "CollectionName": "ai_app_default_collection",
-
+                "name": "default",
+                "description": "Application default vector db",
+                "vector_db_url": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_vector_db"),
+                "is_use_multi_vector_retriever": False,
+                "doc_store_url": f'sqlite:///{os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_doc_store.db")}',
+                "vector_db_type": 1,
+                "collection_name": "ai_app_default_collection",
+                "chunk_size": 1024,
+                "default_search_result_limit": 10,
+                "is_enable": True,
+                "is_system": False,
             }
             vector_db_item = VectorDBItem(params)
             # VectorDBItemのプロパティを設定
@@ -1237,7 +1217,7 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("SELECT * FROM VectorDBItems WHERE Id=?", (vector_db_item_id,))
+        cur.execute("SELECT * FROM VectorDBItems WHERE id=?", (vector_db_item_id,))
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
@@ -1261,7 +1241,7 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("SELECT * FROM VectorDBItems WHERE Name=?", (vector_db_item_name,))
+        cur.execute("SELECT * FROM VectorDBItems WHERE name=?", (vector_db_item_name,))
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
@@ -1291,25 +1271,14 @@ class MainDB:
 
         return vector_db_items
     
+    # folder_idを指定してパスを取得する
+    def get_vector_db_item_path(self, vector_db_item_id: str) -> str:
+        vector_db_item = self.get_vector_db_by_id(vector_db_item_id)
+        if vector_db_item is None:
+            raise ValueError("VectorDBItem not found")
+        return vector_db_item.VectorDBURL
+    
     def update_vector_db_item(self, vector_db_item: VectorDBItem) -> VectorDBItem:
-        '''
-        以下のテーブル定義のデータを格納するクラス
-        CREATE TABLE "VectorDBItems" (
-            "Id" TEXT NOT NULL CONSTRAINT "PK_VectorDBItems" PRIMARY KEY,
-            "Name" TEXT NOT NULL,
-            "Description" TEXT NOT NULL,
-            "VectorDBURL" TEXT NOT NULL,
-            "IsUseMultiVectorRetriever" INTEGER NOT NULL,
-            "DocStoreURL" TEXT NOT NULL,
-            "VectorDBType" INTEGER NOT NULL,
-            "CollectionName" TEXT NOT NULL,
-            "CatalogDBURL" TEXT NOT NULL,
-            "ChunkSize" INTEGER NOT NULL,
-            "DefaultSearchResultLimit" INTEGER NOT NULL,
-            "IsEnabled" INTEGER NOT NULL,
-            "IsSystem" INTEGER NOT NULL
-        )    
-        '''
         # VectorDBTypeStringからVectorDBTypeを取得
         if vector_db_item.VectorDBTypeString == "Chroma":
             vector_db_item.VectorDBType = 1
@@ -1330,7 +1299,7 @@ class MainDB:
                           vector_db_item.IsEnabled, vector_db_item.IsSystem)
                           )
         else:
-            cur.execute("UPDATE VectorDBItems SET Name=?, Description=?, VectorDBURL=?, IsUseMultiVectorRetriever=?, DocStoreURL=?, VectorDBType=?, CollectionName=?, ChunkSize=?, DefaultSearchResultLimit=?, IsEnabled=?, IsSystem=? WHERE Id=?",
+            cur.execute("UPDATE VectorDBItems SET name=?, description=?, vectordb_url=?, is_use_multi_vector_retriever=?, doc_store_url=?, vector_db_type=?, collection_name=?, chunk_size=?, default_search_result_limit=?, is_enabled=?, is_system=? WHERE id=?",
                          (vector_db_item.Name, vector_db_item.Description, vector_db_item.VectorDBURL, 
                           vector_db_item.IsUseMultiVectorRetriever, vector_db_item.DocStoreURL, 
                           vector_db_item.VectorDBType, vector_db_item.CollectionName, 
@@ -1352,7 +1321,7 @@ class MainDB:
         conn.close()
 
     #################################################
-    # Autogen関連
+        # Autogen関連
     #################################################
     def get_autogen_llm_config_list(self) -> List[AutogentLLMConfig]:
         conn = sqlite3.connect(self.db_path)
