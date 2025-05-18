@@ -1,16 +1,12 @@
 using System.Diagnostics;
-using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using PythonAILib.Common;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemCommands {
@@ -51,7 +47,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // テキストを抽出する
-        public static  async Task ExtractText(ContentItemWrapper item) {
+        public static async Task ExtractText(ContentItemWrapper item) {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
@@ -127,7 +123,7 @@ namespace LibPythonAI.Model.Content {
                     MaxDegreeOfParallelism = 4
                 };
                 Parallel.ForEach(items, parallelOptions, (item) => {
-                    
+
                     string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);

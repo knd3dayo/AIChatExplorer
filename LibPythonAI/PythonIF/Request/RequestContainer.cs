@@ -2,7 +2,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 
@@ -14,6 +13,24 @@ namespace LibPythonAI.PythonIF.Request {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
 
+        public const string OPENAI_PROPS_KEY = "openai_props";
+        public const string AUTOGEN_PROPS_KEY = "autogen_props";
+        public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
+        public const string AUTOGEN_TOOL_REQUEST_KEY = "autogen_tool_request";
+        public const string AUTOGEN_AGENT_REQUEST_KEY = "autogen_agent_request";
+        public const string AUTOGEN_GROUP_CHAT_REQUEST_KEY = "autogen_group_chat_request";
+        public const string AUTOGEN_LLM_CONFIG_REQUEST_KEY = "autogen_llm_config_request";
+        public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
+        public const string TAG_ITEM_REQUESTS_KEY = "tag_item_requests";
+        public const string EMBEDDING_REQUEST_KEY = "embedding_request";
+        public const string EXCEL_REQUEST_KEY = "excel_request";
+        public const string FILE_REQUEST_KEY = "file_request";
+        public const string WEB_REQUEST_KEY = "web_request";
+        public const string CHAT_REQUEST_KEY = "chat_request";
+        public const string CHAT_REQUEST_CONTEXT_KEY = "chat_request_context";
+        public const string TOKEN_COUNT_REQUEST_KEY = "token_count_request";
+        public const string VECTOR_DB_ITEM_REQUEST_KEY = "vector_db_item_request";
+        public const string SESSION_TOKEN_KEY = "session_token";
         public string SessionToken { get; set; } = "";
 
         public ChatRequestContext? RequestContextInstance { get; set; }
@@ -21,7 +38,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public TokenCountRequest? TokenCountRequestInstance { get; set; }
 
-        
+
         // ContentFolderRequests
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
@@ -60,55 +77,58 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
 
             if (RequestContextInstance != null) {
-                dict["openai_props"] = RequestContextInstance.OpenAIProperties.ToDict();
-                dict["autogen_props"] = RequestContextInstance.AutoGenProperties.ToDict();
-                dict["chat_request_context"] = RequestContextInstance.ToChatRequestContextDict();
-                dict["vector_search_requests"] = RequestContextInstance.ToDictVectorDBItemsDict();
+                dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIProperties.ToDict();
+                dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
+                dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBItemsDict();
+                if (RequestContextInstance.AutoGenProperties != null) {
+                    dict[AUTOGEN_PROPS_KEY] = RequestContextInstance.AutoGenProperties.ToDict();
+                }
+            }
+
+            if (EmbeddingRequestInstance != null) {
+                dict[EMBEDDING_REQUEST_KEY] = EmbeddingRequestInstance.ToDict();
             }
 
 
             if (ChatRequestInstance != null) {
-                dict["chat_request"] = ChatRequestInstance.ToDict();
+                dict[CHAT_REQUEST_KEY] = ChatRequestInstance.ToDict();
             }
             if (TokenCountRequestInstance != null) {
-                dict["token_count_request"] = TokenCountRequestInstance.ToDict();
+                dict[TOKEN_COUNT_REQUEST_KEY] = TokenCountRequestInstance.ToDict();
             }
             if (VectorDBItemInstance != null) {
-                dict["vector_db_item_request"] = VectorDBItemInstance.ToDict();
+                dict[VECTOR_DB_ITEM_REQUEST_KEY] = VectorDBItemInstance.ToDict();
             }
 
-            if (EmbeddingRequestInstance != null) {
-                dict["embedding_request"] = EmbeddingRequestInstance.ToDict();
-            }
             if (ExcelRequestInstance != null) {
-                dict["excel_request"] = ExcelRequestInstance.ToDict();
+                dict[EXCEL_REQUEST_KEY] = ExcelRequestInstance.ToDict();
             }
             if (FileRequestInstance != null) {
-                dict["file_request"] = FileRequestInstance.ToDict();
+                dict[FILE_REQUEST_KEY] = FileRequestInstance.ToDict();
             }
             if (WebRequestInstance != null) {
-                dict["web_request"] = WebRequestInstance.ToDict();
+                dict[WEB_REQUEST_KEY] = WebRequestInstance.ToDict();
             }
             if (SessionToken != "") {
-                dict["session_token"] = SessionToken;
+                dict[SESSION_TOKEN_KEY] = SessionToken;
             }
             if (TagItemsInstance.Count > 0) {
-                dict["tag_item_requests"] = TagItem.ToDictList(TagItemsInstance);
+                dict[TAG_ITEM_REQUESTS_KEY] = TagItem.ToDictList(TagItemsInstance);
             }
             if (ContentFolderRequestsInstance.Count > 0) {
-                dict["content_folder_requests"] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
+                dict[CONTENT_FOLDER_REQUESTS_KEY] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
             }
             if (AutoGenLLMConfigInstance != null) {
-                dict["autogen_llm_config_request"] = AutoGenLLMConfigInstance.ToDict();
+                dict[AUTOGEN_LLM_CONFIG_REQUEST_KEY] = AutoGenLLMConfigInstance.ToDict();
             }
             if (AutoGenToolInstance != null) {
-                dict["autogen_tool_request"] = AutoGenToolInstance.ToDict();
+                dict[AUTOGEN_TOOL_REQUEST_KEY] = AutoGenToolInstance.ToDict();
             }
             if (AutoGenAgentInstance != null) {
-                dict["autogen_agent_request"] = AutoGenAgentInstance.ToDict();
+                dict[AUTOGEN_AGENT_REQUEST_KEY] = AutoGenAgentInstance.ToDict();
             }
             if (AutoGenGroupChatInstance != null) {
-                dict["autogen_group_chat_request"] = AutoGenGroupChatInstance.ToDict();
+                dict[AUTOGEN_GROUP_CHAT_REQUEST_KEY] = AutoGenGroupChatInstance.ToDict();
             }
 
             return dict;

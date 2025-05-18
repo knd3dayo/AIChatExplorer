@@ -1,20 +1,22 @@
 SQLAlchemy
 psycopg-binary
 psutil
-tiktoken
 chardet
 
+# For OpenAI
 openai
+tiktoken
 
+# For Langchain
 langchain==0.3.4
 langchain-openai==0.2.3
 langchain-community==0.3.3
 langchain-chroma
 langchain_postgres
-
 chroma-hnswlib==0.7.3
 chromadb==0.5.0
 
+# For File,Excel
 magika==0.6.0rc3
 pillow
 python-docx
@@ -24,16 +26,20 @@ openpyxl
 markdown
 pdfminer.six
 
-autogen-agentchat
-autogen-ext
-beautifulsoup4
-wikipedia
-flaml[automl]
-selenium
-webdriver-manager
-duckduckgo-search
-
+# For API Server
 aiohttp
 python-socketio
 aiosqlite
 aiofiles
+
+# For AutoGen
+autogen-agentchat
+autogen-ext
+beautifulsoup4
+selenium
+webdriver-manager
+duckduckgo-search
+wikipedia
+
+# flaml[automl]  # too large
+

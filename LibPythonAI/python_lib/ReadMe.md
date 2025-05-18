@@ -1,19 +1,10 @@
 ## APIの説明
 
 ### request
-```json
+この説明はJSONC形式(コメント付きJOSN)で記載していますが、実際のリクエストはJSON形式で記述してください。
+```jsonc
 {
-    "autogen_props": {
-        "work_dir": "autogenの作業用ディレクトリ",
-        "tool_dir": "ツール出力ディレクトリ",
-        "chat_history_folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a",
-        "chat_type": "group",
-        "chat_name": "default",
-        "terminate_msg": "TERMINATE",
-        "max_msg": 15,
-        "timeout": 120,
-        "session_token": "5aeb0538-a082-43de-9eb0-cc8452a087d9"
-    },
+    // openaiを使用する場合の基本設定用ディクショナリ 
     "openai_props": {
         "OpenAIKey": "str: OpenAIのAPIキー",
         "AzureOpenAI": "bool: Azure OpenAIを使用するか否か",
@@ -21,16 +12,28 @@
         "AzureOpenAIEndpoint": "str: AureOpenAIのエンドポイントURL",
         "OpenAIBaseURL": "str: カスタムモデル用のBaseURL",
     },
+    // autogenを使用する場合の基本設定用ディクショナリ AutoGenを使用しない場合には不要
+    "autogen_props": {
+        "work_dir": "str: autogenの作業用ディレクトリ",
+        "tool_dir": "str: ツール出力ディレクトリ",
+        "chat_history_folder_id": "str: チャット履歴フォルダのフォルダID",
+        "chat_type": "group",
+        "chat_name": "default",
+        "terminate_msg": "TERMINATE",
+        "max_msg": 15,
+        "timeout": 120,
+        "session_token": "str: セッションキャンセル用のトークン。UUIDなどの一意の値を指定する"
+    },
     "vector_search_requests": [
     {
         "name": "default",
-        "model": "text-embedding-3-small",
-        "query": "検索文字列",
+        "model": "str: embeddingに使用するモデル. 例：text-embedding-3-small",
+        "query": "str: 検索文字列",
         "search_kwargs": {
-            "k": 10,
+            "k": "int: ベクトル検索結果の数",
             "filter": {
-                "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a",
-                "folder_path" : "フォルダのパス"
+                "folder_id": "検索対象のフォルダのID. folder_id、folder_pathが指定されていない場合はDB内を全検索",
+                "folder_path" : "フォルダのパス.指定されている場合はfolder_idよりも優先される"
             }
         }
     }
@@ -39,7 +42,7 @@
         {
         "name": "default",
         "model": "text-embedding-3-small",
-        "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a",
+        "folder_id": "フォルダID",
         "source_id": "",
         "source_type": 0,
         "description": "",
@@ -66,6 +69,7 @@
         "is_enabled": "このベクトルDBを有効にするか否か。",
         "is_system": "システム用のベクトルDBか否か"
     },
+
     "autogen_llm_config_request": {
         "name": "名前",
         "api_type" : "APIのタイプ",

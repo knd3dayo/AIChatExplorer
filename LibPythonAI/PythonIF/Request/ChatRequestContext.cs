@@ -12,30 +12,36 @@ namespace LibPythonAI.PythonIF.Request {
     // リクエストと共に送信するコンテキスト情報
     public class ChatRequestContext {
 
-        private static readonly JsonSerializerOptions options = new() {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-        };
+        public const string OPENAI_PROPS_KEY = "openai_props";
+        public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
+        public const string AUTOGEN_PROPS_KEY = "autogen_props";
+        public const string SPLIT_TOKEN_COUNT_KEY = "split_token_count";
+        public const string PROMPT_TEMPLATE_TEXT_KEY = "prompt_template_text";
+        public const string SPLIT_MODE_KEY = "split_mode";
+        public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
+        public const string RELATED_INFORMATION_PROMPT_TEXT_KEY = "related_information_prompt_text";
+        public const string USE_VECTOR_DB_KEY = "use_vector_db";
+
+        
+        // OpenAIProperties
+        [JsonPropertyName(OPENAI_PROPS_KEY)]
+        public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
 
         // ベクトル検索
 
-        [JsonPropertyName("vector_search_requests")]
+        [JsonPropertyName(VECTOR_SEARCH_REQUESTS_KEY)]
         public ObservableCollection<VectorSearchProperty> VectorSearchRequests { get; set; } = [];
 
         // AutoGenProperties
-        [JsonPropertyName("autogen_props")]
-        public AutoGenProperties AutoGenProperties { get; set; } = new AutoGenProperties();
-
-        // OpenAIProperties
-        [JsonPropertyName("openai_props")]
-        public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
+        [JsonPropertyName(AUTOGEN_PROPS_KEY)]
+        public AutoGenProperties? AutoGenProperties { get; set; }
 
         // リクエストを分割するトークン数
-        [JsonPropertyName("split_token_count")]
+        [JsonPropertyName(SPLIT_TOKEN_COUNT_KEY)]
         public int SplitTokenCount { get; set; } = 8000;
 
         // PromptTemplateText
-        [JsonPropertyName("prompt_template_text")]
+        [JsonPropertyName(PROMPT_TEMPLATE_TEXT_KEY)]
         public string PromptTemplateText { get; set; } = "";
 
         // ベクトルDBを使用するかどうか
@@ -51,14 +57,14 @@ namespace LibPythonAI.PythonIF.Request {
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
-                { "split_mode", SplitMode.ToString() },
+                { SPLIT_MODE_KEY, SplitMode.ToString() },
             };
 
             if (SplitMode != SplitOnTokenLimitExceedModeEnum.None) {
-                requestContext["prompt_template_text"] = PromptTemplateText;
-                requestContext["summarize_prompt_text"] = SummarizePromptText;
-                requestContext["related_information_prompt_text"] = RelatedInformationPromptText;
-                requestContext["split_token_count"] = SplitTokenCount;
+                requestContext[PROMPT_TEMPLATE_TEXT_KEY] = PromptTemplateText;
+                requestContext[SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText;
+                requestContext[RELATED_INFORMATION_PROMPT_TEXT_KEY] = RelatedInformationPromptText;
+                requestContext[SPLIT_TOKEN_COUNT_KEY] = SplitTokenCount;
             }
             return requestContext;
 
