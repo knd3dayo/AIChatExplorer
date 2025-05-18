@@ -148,7 +148,6 @@ class OpenAIProps:
         
         return params
 
-from typing import Tuple
 import json
 from openai import AsyncOpenAI, AsyncAzureOpenAI, RateLimitError
 

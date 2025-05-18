@@ -28,6 +28,9 @@ namespace LibPythonAI.Model.VectorDB {
         // FolderId
         public string? FolderId { get; set; } = null;
 
+        // FolderPath
+        public string? FolderPath { get; set; } = null;
+
         public string ContentType { init; get; } = string.Empty;
 
         // SearchKWargs
@@ -40,6 +43,10 @@ namespace LibPythonAI.Model.VectorDB {
             // folder_idが指定されている場合
             if (FolderId != null) {
                 filter["folder_id"] = FolderId;
+            }
+            // folder_pathが指定されている場合
+            if (FolderPath != null) {
+                filter["folder_path"] = FolderPath;
             }
             // content_typeが指定されている場合
             if (ContentType != string.Empty) {
@@ -103,6 +110,9 @@ namespace LibPythonAI.Model.VectorDB {
             if (!string.IsNullOrEmpty(InputText)) {
                 dict["query"] = InputText;
             }
+            if (!string.IsNullOrEmpty(FolderId)) {
+                dict["folder_id"] = FolderId;
+            }
             return dict;
         }
 
@@ -123,7 +133,7 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // ベクトル検索を実行する
-        public async Task<List<VectorEmbedding>> VectorSearch(string query) {
+        public async Task<List<VectorEmbedding>> VectorSearchAsync(string query) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成

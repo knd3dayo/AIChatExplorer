@@ -26,6 +26,7 @@ namespace LibPythonAI.PythonIF.Request {
         // ParentId
         public string? ParentId { get; set; } = null;
 
+        public string? FolderPath { get; set; } = null;
 
         // ToDict
         public Dictionary<string, object> ToDict() {
@@ -39,6 +40,9 @@ namespace LibPythonAI.PythonIF.Request {
             };
             if (ParentId != null) {
                 dict["parent_id"] = ParentId;
+            }
+            if (FolderPath != null) {
+                dict["folder_path"] = FolderPath;
             }
             return dict;
         }
@@ -63,6 +67,11 @@ namespace LibPythonAI.PythonIF.Request {
                 request.ParentId = dict["parent_id"]?.ToString();
             } else {
                 request.ParentId = null;
+            }
+            if (dict.ContainsKey("folder_path")) {
+                request.FolderPath = dict["folder_path"]?.ToString();
+            } else {
+                request.FolderPath = null;
             }
 
             return request;

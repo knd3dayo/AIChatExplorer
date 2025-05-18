@@ -54,11 +54,11 @@ namespace AIChatExplorer.Model.Main {
             /// Get AppData folder path
             string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
             // Create database file path
-            string dbPath = Path.Combine(appDataPath, "main_db");
+            string dbPath = Path.Combine(appDataPath, "client", "main_db");
             if (!Directory.Exists(dbPath)) {
                 Directory.CreateDirectory(dbPath);
             }
-            dbPath = Path.Combine(dbPath, "main.db");
+            dbPath = Path.Combine(dbPath, "client_main.db");
             return dbPath;
         }
         public string GetPythonLibPath() {

@@ -16,6 +16,46 @@ sio = socketio.AsyncServer(async_mode='aiohttp')
 sio.attach(app)
 logger = logging.getLogger(__name__)
 
+########################
+# ContentFolders関連
+########################
+@routes.post('/api/get_root_content_folders')
+async def get_root_content_folders(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_root_content_folders()
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+@routes.post('/api/get_content_folders')
+async def get_content_folders(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_content_folders()
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+@routes.post('/api/get_content_folders_by_id')
+async def get_content_folders_by_id(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_content_folders_by_id(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+@routes.post('/api/get_content_folder_by_path')
+async def get_content_folder_by_path(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.get_content_folder_by_path(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+@routes.post('/api/update_content_folders')
+async def update_content_folders(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.update_content_folders(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+@routes.post('/api/delete_content_folders')
+async def delete_content_folders(request: Request) -> Response:
+    request_json = await request.text()
+    response = ai_app_wrapper.delete_content_folders(request_json)
+    logger.debug(response)
+    return web.Response(body=response, status=200, content_type='application/json')
+
 @routes.post('/api/get_tag_items')
 async def get_tag_items(request: Request) -> Response:
     request_json = await request.text()
@@ -48,7 +88,7 @@ async def openai_chat(request: Request) -> Response:
 @routes.post('/api/get_autogen_llm_config_list')
 async def get_autogen_llm_config_list(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.get_autogen_llm_config_list(request_json)
+    response = ai_app_wrapper.get_autogen_llm_config_list()
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 # get_autogen_llm_config
@@ -77,7 +117,7 @@ async def delete_autogen_llm_config(request: Request) -> Response:
 @routes.post('/api/get_autogen_tool_list')
 async def get_autogen_tool_list(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.get_autogen_tool_list(request_json)
+    response = ai_app_wrapper.get_autogen_tool_list()
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
@@ -108,7 +148,7 @@ async def delete_autogen_tool(request: Request) -> Response:
 @routes.post('/api/get_autogen_agent_list')
 async def get_autogen_agent_list(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.get_autogen_agent_list(request_json)
+    response = ai_app_wrapper.get_autogen_agent_list()
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
@@ -138,7 +178,7 @@ async def delete_autogen_agent(request: Request) -> Response:
 @routes.post('/api/get_autogen_group_chat_list')
 async def get_autogen_group_chat_list(request: Request) -> Response:
     request_json = await request.text()
-    response = ai_app_wrapper.get_autogen_group_chat_list(request_json)
+    response = ai_app_wrapper.get_autogen_group_chat_list()
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 # get_autogen_group_chat

@@ -307,6 +307,7 @@ namespace LibPythonAI.Model.Content {
                 TopK = 4,
                 VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
                 Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
+                FolderPath = ContentFolderPath,
             };
             return searchProperty;
         }

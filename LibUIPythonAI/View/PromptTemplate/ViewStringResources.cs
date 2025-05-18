@@ -13,7 +13,7 @@ namespace LibUIPythonAI.View.PromptTemplate {
         // Edit
         public static string Edit { get; set; } = CommonStringResources.Instance.Edit;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Close { get; set; } = CommonStringResources.Instance.Close;

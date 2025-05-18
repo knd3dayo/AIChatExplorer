@@ -3,12 +3,10 @@ from typing import Any
 from collections.abc import Generator, AsyncGenerator
 from io import StringIO
 import sys
-
-from ai_chat_lib.db_modules import EmbeddingData, init_db, get_main_db_path
-
+from ai_chat_lib.db_modules import MainDB
 # アプリケーション初期化時に呼び出される関数
 def init_app() -> None:
-    init_db(get_main_db_path())
+    MainDB.init()
 
 # stdout,stderrを文字列として取得するためラッパー関数を定義
 def capture_stdout_stderr(func):

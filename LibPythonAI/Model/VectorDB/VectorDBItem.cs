@@ -18,7 +18,6 @@ namespace LibPythonAI.Model.VectorDB {
         // フォルダーカタログのコレクション名 
         public readonly static string FolderCatalogCollectionName = "ai_app_folder_catalog_collection";
 
-
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         // システム共通のベクトルDB
@@ -95,7 +94,7 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
 
-        // Save
+        // SaveAsync
         public async Task SaveAsync() {
             await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this));
         }

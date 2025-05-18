@@ -94,7 +94,7 @@ namespace PythonAILib.Model.AutoGen {
                 config.BaseURL = ConfigPrams.GetOpenAIProperties().OpenAIBaseURL;
             }
 
-            await config.Save();
+            await config.SaveAsync();
 
             string work_dir = ConfigPrams.GetAutoGenWorkDir();
 
@@ -107,7 +107,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // list_files_in_directory
             toolName = "list_files_in_directory";
@@ -118,7 +118,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // extract_file
             toolName = "extract_file";
@@ -129,7 +129,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // check_file
             toolName = "check_file";
@@ -140,7 +140,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // extract_webpage
             toolName = "extract_webpage";
@@ -151,7 +151,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // search_duckduckgo
             toolName = "search_duckduckgo";
@@ -161,7 +161,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // save_text_file
             toolName = "save_text_file";
@@ -171,7 +171,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // arxiv_search
             toolName = "arxiv_search";
@@ -181,7 +181,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // list_agents
             toolName = "list_agents";
@@ -191,7 +191,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // execute_agent
             toolName = "execute_agent";
@@ -201,7 +201,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // list_agents
             toolName = "list_agents";
@@ -212,7 +212,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // get_current_time
             toolName = "get_current_time";
@@ -222,7 +222,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // vector_search
             toolName = "vector_search";
@@ -232,7 +232,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // global_vector_search
             toolName = "global_vector_search";
@@ -242,7 +242,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // past_chat_history_vector_search
             toolName = "past_chat_history_vector_search";
@@ -252,7 +252,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // list_tool_agent
             toolName = "list_tool_agents";
@@ -263,7 +263,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // execute_tool_agent
             toolName = "execute_tool_agent";
@@ -279,7 +279,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // register_tool_agent
             toolName = "register_tool_agent";
@@ -294,7 +294,7 @@ namespace PythonAILib.Model.AutoGen {
                 Description = toolDescription,
                 Path = toolPath,
             };
-            await autoGenTool.Save();
+            await autoGenTool.SaveAsync();
 
             // agentの初期化
             var agentName = "planner";
@@ -311,7 +311,17 @@ namespace PythonAILib.Model.AutoGen {
             var agentLLMConfig = "default";
             var agentTools = new List<string> { };
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            AutoGenAgent agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             agentName = "tool_generative_planner";
             agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します.必要に応じてPython関数を作成してツールとして登録します";
@@ -330,7 +340,18 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = new List<string> { };
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
+
 
             agentName = "code_writer";
             agentDescription = "コードを書くためのエージェントです。";
@@ -348,7 +369,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             agentName = "code_executor";
             agentDescription = "コードを実行するためのエージェントです。";
@@ -362,7 +393,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             agentName = "web_searcher";
             agentDescription = "Web検索を行うエージェントです。";
@@ -377,7 +418,18 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["search_duckduckgo", "extract_webpage"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
+
 
             agentName = "file_operator";
             agentDescription = "ファイル操作を行うエージェントです。";
@@ -392,7 +444,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["list_files_in_directory", "extract_file", "check_file", "save_text_file"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             agentName = "time_checker";
             agentDescription = "時間を確認するエージェントです。";
@@ -405,7 +467,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["get_current_time"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             // arxiv_searcher
             agentName = "arxiv_searcher";
@@ -419,7 +491,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["arxiv_search"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             agentName = "tool_agent_creator";
             agentDescription = "Python関数を作成するためのエージェント";
@@ -447,7 +529,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["list_tool_agents", "execute_tool_agent", "register_tool_agent"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             // ユーザーからの指示にマッチするエージェントを検索してエージェントを実行する
             agentName = "agent_selector";
@@ -461,7 +553,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["execute_agent", "list_agents"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = false,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             // ベクトル検索エージェント
             agentName = "vector_searcher";
@@ -475,7 +577,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["vector_search"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = true,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             // global_vector_searcher
             agentName = "global_vector_searcher";
@@ -489,7 +601,17 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["global_vector_search"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, [], true);
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = true,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
 
             // past_chat_history_vector_searcher
             agentName = "past_chat_history_vector_searcher";
@@ -503,6 +625,18 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["past_chat_history_vector_search"];
 
+            agent = new() {
+                Name = agentName,
+                Description = agentDescription,
+                SystemMessage = agentSystemMessage,
+                TypeValue = CHAT_TYPE_GROUP,
+                CodeExecution = agentCodeExecution,
+                LLMConfigName = agentLLMConfig,
+                VectorDBSearchAgent = true,
+                ToolNames = agentTools,
+            };
+            await agent.SaveAsync();
+
 
             // group_chatの初期化
 
@@ -511,27 +645,53 @@ namespace PythonAILib.Model.AutoGen {
             var groupDescription = "エージェント一覧から適切なエージェントを取得して実行するグループチャットです。";
             var groupLLMConfig = "default";
             var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_agent_selector" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
+            AutoGenGroupChat autoGenGroupChat = new() {
+                Name = groupName,
+                Description = groupDescription,
+                LLMConfigName = groupLLMConfig,
+                AgentNames = groupAgentNames,
+            };
+            await autoGenGroupChat.SaveAsync();
 
             // 全エージェント名のリスト
             groupName = "agent_selector_chat";
             groupDescription = "計画に基づき適切なエージェントを選択しながらタスクを実行するグループチャットです。";
             groupAgentNames = new List<string> { "planner", "agent_selector" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
+            autoGenGroupChat = new() {
+                Name = groupName,
+                Description = groupDescription,
+                LLMConfigName = groupLLMConfig,
+                AgentNames = groupAgentNames,
+            };
+            await autoGenGroupChat.SaveAsync();
 
             groupName = "code_execution";
             groupDescription = "コードを実行するためのグループチャットです。";
             groupLLMConfig = "default";
             groupAgentNames = new List<string> { "planner", "code_writer", "code_executor" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
+            autoGenGroupChat = new() {
+                Name = groupName,
+                Description = groupDescription,
+                LLMConfigName = groupLLMConfig,
+                AgentNames = groupAgentNames,
+            };
+            await autoGenGroupChat.SaveAsync();
 
             groupName = "agent_generative_chat";
             groupDescription = "ツールエージェントの実行と登録するためのグループチャットです。";
             groupLLMConfig = "default";
             groupAgentNames = new List<string> { "tool_generative_planner", "tool_agent_creator", "agent_selector" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
 
-
+            autoGenGroupChat = new() {
+                Name = groupName,
+                Description = groupDescription,
+                LLMConfigName = groupLLMConfig,
+                AgentNames = groupAgentNames,
+            };
+            await autoGenGroupChat.SaveAsync();
 
             Initialized = true;
 

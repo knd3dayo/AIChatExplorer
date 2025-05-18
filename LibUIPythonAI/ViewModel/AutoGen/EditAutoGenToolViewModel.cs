@@ -42,7 +42,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            AutoGenTool.Save();
+            AutoGenTool.SaveAsync();
             AfterUpdate();
             window.Close();
         }, null, null);

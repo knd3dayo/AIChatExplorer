@@ -367,7 +367,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 async (clipboardItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {
-                        // Save to folder if saveToFolder is true
+                        // SaveAsync to folder if saveToFolder is true
                         clipboardFolder.AddItem(clipboardItem);
                         // Process after pasting
                     }).ContinueWith((obj) => {

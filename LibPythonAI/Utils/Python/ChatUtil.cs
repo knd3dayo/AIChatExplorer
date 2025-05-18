@@ -132,33 +132,6 @@ namespace LibPythonAI.Utils.Python {
             return "";
         }
 
-        // VectorSearchを実行してコンテキスト情報を生成する
-        public static async Task<string> GenerateVectorSearchResult(ChatRequestContext chatRequestContext, string query) {
-            // ベクトル検索が存在するか否かのフラグ
-            bool hasVectorSearch = false;
-            StringBuilder sb = new();
-            if (PythonExecutor.PythonAIFunctions == null) {
-                throw new Exception("PythonAIFunctions is null");
-            }
-            List<VectorEmbedding> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query) ?? [];
-            sb.AppendLine();
-            for (int i = 0; i < results.Count; i++) {
-                VectorEmbedding vectorSearchResult = results[i];
-                sb.AppendLine($"## 参考情報:{i + 1} ##");
-                sb.AppendLine("--------");
-                sb.AppendLine(vectorSearchResult.Description);
-                sb.AppendLine(vectorSearchResult.Content);
-                hasVectorSearch = true;
-            }
-
-            if (hasVectorSearch) {
-                // 結果をContentTextに追加
-                string result = "\n" + PromptStringResource.Instance.RelatedInformation;
-                result += sb.ToString();
-                return result;
-            }
-            return "";
-        }
 
         public static void CancelAutoGenChat(string sessionToken) {
             PythonExecutor.PythonAIFunctions?.CancelAutoGenChat(sessionToken);

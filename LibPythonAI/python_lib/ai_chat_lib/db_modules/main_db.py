@@ -7,52 +7,24 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# main_dbへのパスを取得
-def get_main_db_path() -> str:
-    app_data_path = os.getenv("APP_DATA_PATH", None)
-    if not app_data_path:
-        raise ValueError("APP_DATA_PATH is not set.")
-    app_db_path = os.path.join(app_data_path, "main_db", "main.db")
-    return app_db_path
 
-def init_db(db_path: str):
-        # MainDBを取得
-    main_db = MainDB(db_path)
-    # ContentFoldersテーブルを初期化
-    main_db.init_content_folder_table()
-    # TagItemsテーブルを初期化
-    main_db.init_tag_item_table()
-    # ContentItemsテーブルを初期化
-    main_db.init_content_item_table()
-    # VectorDBItemsテーブルを初期化
-    main_db.init_vector_db_item_table()
-    # autogen_llm_configsテーブルを初期化
-    main_db.init_autogen_llm_config_table()
-    # autogen_toolsテーブルを初期化
-    main_db.init_autogen_tools_table()
-    # autogen_agentsテーブルを初期化
-    main_db.init_autogen_agents_table()
-    # autogen_group_chatsテーブルを初期化
-    main_db.init_autogen_group_chats_table()
-
-
-class ContentFolder:
+class ContentFoldersCatalog:
 
     '''
     以下のテーブル定義のデータを格納するクラス
-    CREATE TABLE "ContentFolders" (
-    "Id" TEXT NOT NULL CONSTRAINT "PK_ContentFolders" PRIMARY KEY,
-    "FolderTypeString" TEXT NOT NULL,
-    "ParentId" TEXT NULL,
-    "FolderName" TEXT NOT NULL,
-    "Description" TEXT NOT NULL,
-    "ExtendedPropertiesJson" TEXT NOT NULL
+    CREATE TABLE "ContentFoldersCatalog" (
+    "id" TEXT NOT NULL CONSTRAINT "PK_ContentFoldersCatalog" PRIMARY KEY,
+    "folder_type_string" TEXT NOT NULL,
+    "parent_id" TEXT NULL,
+    "folder_name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "extended_properties_json" TEXT NOT NULL
     )
     '''
     get_content_folder_requelsts_name = "content_folder_requests"
 
     @classmethod
-    def get_content_folder_requelst_objects(cls, request_dict: dict) -> list["ContentFolder"]:
+    def get_content_folder_requelst_objects(cls, request_dict: dict) -> list["ContentFoldersCatalog"]:
         '''
         {"content_folder_requsts": [] }の形式で渡される
         '''
@@ -64,80 +36,149 @@ class ContentFolder:
         # content_folderを生成
         result = []
         for item in content_folders:
-            content_folder = ContentFolder(item)
+            content_folder = ContentFoldersCatalog(item)
             result.append(content_folder)
 
         return result
 
+    @classmethod
+    def get_root_content_folders_api(cls):
+        # request_jsonからrequestを作成
+        # MainDBを取得
+        main_db = MainDB()
+        # ルートフォルダの情報を取得
+        content_folders = main_db.get_root_content_folders()
 
+        result = {}
+        result["content_folders"] = [item.to_dict() for item in content_folders]
+        return result
     
+    @classmethod
+    def get_content_folders_api(cls):
+        # request_jsonからrequestを作成
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を取得
+        content_folders = main_db.get_content_folders()
+
+        result = {}
+        result["content_folders"] = [item.to_dict() for item in content_folders]
+        return result
+    
+    @classmethod
+    def get_content_folder_by_id_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # content_folder_idを取得
+        content_folder_id = ContentFoldersCatalog.get_content_folder_requelst_objects(request_dict)[0].Id
+        if not content_folder_id:
+            raise ValueError("content_folder_id is not set")
+        
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を取得
+        content_folder = main_db.get_content_folder_by_id(content_folder_id)
+
+        result: dict = {}
+        if content_folder is not None:
+            result["content_folder"] = content_folder.to_dict()
+        return result
+    
+    @classmethod
+    def update_content_folders_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # content_folderを取得
+        content_folders = ContentFoldersCatalog.get_content_folder_requelst_objects(request_dict)
+        if len(content_folders) == 0:
+            raise ValueError("content_folder is not set")
+        
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を更新
+        for content_folder in content_folders:
+            main_db.update_content_folder(content_folder)
+
+        result: dict = {}
+        return result
+    
+    @classmethod
+    def delete_content_folders_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # content_folderを取得
+        content_folders = ContentFoldersCatalog.get_content_folder_requelst_objects(request_dict)
+        if len(content_folders) == 0:
+            raise ValueError("content_folder is not set")
+        
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を削除
+        for content_folder in content_folders:
+            main_db.delete_content_folder(content_folder)
+
+        result: dict = {}
+        return result
+
+    @classmethod
+    def get_content_folder_by_path_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # content_folder_pathを取得
+        content_folder_path = request_dict.get("content_folder_path", None)
+        if not content_folder_path:
+            raise ValueError("content_folder_path is not set")
+        
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を取得
+        content_folder = main_db.get_content_folder_by_path(content_folder_path)
+
+        result: dict = {}
+        if content_folder is not None:
+            result["content_folder"] = content_folder.to_dict()
+        return result
+    
+    @classmethod
+    def get_content_folder_path_by_id_api(cls, request_json: str):
+        # request_jsonからrequestを作成
+        request_dict: dict = json.loads(request_json)
+        # content_folder_idを取得
+        content_folder_id = ContentFoldersCatalog.get_content_folder_requelst_objects(request_dict)[0].Id
+        if not content_folder_id:
+            raise ValueError("content_folder_id is not set")
+        
+        # MainDBを取得
+        main_db = MainDB()
+        # フォルダの情報を取得
+        content_folder_path = main_db.get_content_folder_path_by_id(content_folder_id)
+
+        result: dict = {}
+        if content_folder_path is not None:
+            result["content_folder_path"] = content_folder_path
+        return result
+
     def __init__(self, content_folder_dict: dict):
-        self.Id = content_folder_dict.get("Id", "")
-        self.FolderTypeString = content_folder_dict.get("FolderTypeString", "")
-        self.ParentId = content_folder_dict.get("ParentId", "")
-        self.FolderName = content_folder_dict.get("FolderName", "")
-        self.Description = content_folder_dict.get("Description", "")
-        self.ExtendedPropertiesJson = content_folder_dict.get("ExtendedPropertiesJson", "")
+        self.Id = content_folder_dict.get("id", "")
+        self.FolderTypeString = content_folder_dict.get("folder_type_string", "")
+        self.ParentId = content_folder_dict.get("parent_id", "")
+        self.FolderName = content_folder_dict.get("folder_name", "")
+        self.Description = content_folder_dict.get("description", "")
+        self.ExtendedPropertiesJson = content_folder_dict.get("extended_properties_json", "")
+        self.FolderPath = content_folder_dict.get("folder_path", "")
  
     def to_dict(self) -> dict:
-        return {
-            "Id": self.Id,
-            "FolderTypeString": self.FolderTypeString,
-            "ParentId": self.ParentId,
-            "FolderName": self.FolderName,
-            "Description": self.Description,
-            "ExtendedPropertiesJson": self.ExtendedPropertiesJson
+        result = {
+            "id": self.Id,
+            "folder_type_string": self.FolderTypeString,
+            "parent_id": self.ParentId,
+            "folder_name": self.FolderName,
+            "description": self.Description,
+            "extended_properties_json": self.ExtendedPropertiesJson,
         }
-
-class ContentItem:
-    '''
-    以下のテーブル定義のデータを格納するクラス
-    "Id" TEXT NOT NULL CONSTRAINT "PK_ContentItems" PRIMARY KEY,
-    "FolderId" TEXT NULL,
-    "CreatedAt" TEXT NOT NULL,
-    "UpdatedAt" TEXT NOT NULL,
-    "VectorizedAt" TEXT NOT NULL,
-    "Content" TEXT NOT NULL,
-    "Description" TEXT NOT NULL,
-    "ContentType" INTEGER NOT NULL,
-    "ChatMessagesJson" TEXT NOT NULL,
-    "PromptChatResultJson" TEXT NOT NULL,
-    "TagString" TEXT NOT NULL,
-    "SourceApplicationName" TEXT NOT NULL,
-    "SourceApplicationTitle" TEXT NOT NULL,
-    "SourceApplicationID" INTEGER NOT NULL,
-    "SourceApplicationPath" TEXT NOT NULL,
-    "IsPinned" INTEGER NOT NULL,
-    "DocumentReliability" INTEGER NOT NULL,
-    "DocumentReliabilityReason" TEXT NOT NULL,
-    "IsReferenceVectorDBItemsSynced" INTEGER NOT NULL,
-    "CachedBase64String" TEXT NOT NULL,
-    "ExtendedPropertiesJson" TEXT NOT NULL
-    '''
-    def __init__(self, content_item_dict: dict):
-
-        self.Id = content_item_dict.get("Id", "")
-        self.FolderId = content_item_dict.get("FolderId", "")
-        self.CreatedAt = content_item_dict.get("CreatedAt", "")
-        self.UpdatedAt = content_item_dict.get("UpdatedAt", "")
-        self.VectorizedAt = content_item_dict.get("VectorizedAt", "")
-        self.Content = content_item_dict.get("Content", "")
-        self.Description = content_item_dict.get("Description", "")
-        self.ContentType = content_item_dict.get("ContentType", 0)
-        self.ChatMessagesJson = content_item_dict.get("ChatMessagesJson", "")
-        self.PromptChatResultJson = content_item_dict.get("PromptChatResultJson", "")
-        self.TagString = content_item_dict.get("TagString", "")
-        self.SourceApplicationName = content_item_dict.get("SourceApplicationName", "")
-        self.SourceApplicationTitle = content_item_dict.get("SourceApplicationTitle", "")
-        self.SourceApplicationID = content_item_dict.get("SourceApplicationID", 0)
-        self.SourceApplicationPath = content_item_dict.get("SourceApplicationPath", "")
-        self.IsPinned = content_item_dict.get("IsPinned", 0)
-        self.DocumentReliability = content_item_dict.get("DocumentReliability", 0)
-        self.DocumentReliabilityReason = content_item_dict.get("DocumentReliabilityReason", "")
-        self.IsReferenceVectorDBItemsSynced = content_item_dict.get("IsReferenceVectorDBItemsSynced", 0)
-        self.CachedBase64String = content_item_dict.get("CachedBase64String", "")
-        self.ExtendedPropertiesJson = content_item_dict.get("ExtendedPropertiesJson", "")
-
+        if self.FolderPath:
+            result["folder_path"] = self.FolderPath
+        return result
 
 class VectorDBItem:
 
@@ -170,7 +211,7 @@ class VectorDBItem:
         # vector_db_itemを取得
         vector_db_item = VectorDBItem.get_vector_db_item_object(request_dict)
         # vector_dbを更新
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         main_db.update_vector_db_item(vector_db_item)
         # 更新したVectorDBItemを返す
         result: dict = {}
@@ -184,7 +225,7 @@ class VectorDBItem:
         # vector_db_itemを取得
         vector_db_item = VectorDBItem.get_vector_db_item_object(request_dict)
         # vector_dbを削除
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # ベクトルDBを削除する
         result: dict = main_db.delete_vector_db_item(vector_db_item)
         result["vector_db_item"] = vector_db_item.to_dict()
@@ -193,7 +234,7 @@ class VectorDBItem:
     @classmethod
     def get_vector_db_items_api(cls):
         # request_jsonからrequestを作成
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # ベクトルDBの一覧を取得する
         vector_db_list = main_db.get_vector_db_items()
 
@@ -210,7 +251,7 @@ class VectorDBItem:
         if not vector_db_id:
             raise ValueError("vector_db_id is not set")
         # idからVectorDBItemを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db_item = main_db.get_vector_db_by_id(vector_db_id)
 
         result: dict = {}
@@ -228,7 +269,7 @@ class VectorDBItem:
             raise ValueError("vector_db_name is not set")
 
         # nameからVectorDBItemを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db = main_db.get_vector_db_by_name(vector_db_name)
 
         result: dict = {}
@@ -251,9 +292,8 @@ class VectorDBItem:
         vector_db_item = VectorDBItem(vector_db_item_request)
         return vector_db_item    
 
-
     def __init__(self, vector_db_item_dict: dict):
-        self.Id = vector_db_item_dict.get("Id", "")
+        self.Id = vector_db_item_dict.get("id", "")
         if not self.Id:
             # UUIDを生成
             self.Id = str(uuid.uuid4())
@@ -337,13 +377,29 @@ class VectorSearchRequest:
         self.model = item.get("model", "")
         self.search_kwargs = item.get("search_kwargs", {})
         self.vector_db_item = None
-    
+
+        # search_kwargsのアップデート
+        self.__update_search_kwargs(self.search_kwargs)
+
+    def __update_search_kwargs(self, kwargs: dict):
+        # folder_pathが指定されている場合はfolder_pathからfolder_idを取得する
+        folder_path = kwargs.get("folder_path", None)
+        if folder_path:
+            # MainDBを取得
+            main_db = MainDB()
+            # folder_pathからfolder_idを取得
+            folder_id = main_db.get_content_folder_path_by_id(folder_path)
+            if not folder_id:
+                raise ValueError("folder_path is not found.")
+            kwargs["folder_id"] = folder_id
+            del kwargs["folder_path"]
+
     def get_vector_db_item(self) -> VectorDBItem:
         if self.vector_db_item:
             return self.vector_db_item
 
         # nameからVectorDBItemを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db_item = main_db.get_vector_db_by_name(self.name)
         if not vector_db_item:
             raise ValueError("VectorDBItem is not found.")
@@ -404,9 +460,9 @@ class TagItem:
     '''
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE "TagItems" (
-    "Id" TEXT NOT NULL CONSTRAINT "PK_TagItems" PRIMARY KEY,
-    "Tag" TEXT NOT NULL,
-    "IsPinned" INTEGER NOT NULL
+    "id" TEXT NOT NULL CONSTRAINT "PK_TagItems" PRIMARY KEY,
+    "tag" TEXT NOT NULL,
+    "is_pinned" INTEGER NOT NULL
     )
     '''
     @classmethod
@@ -433,7 +489,7 @@ class TagItem:
         # request_dict: dict = json.loads(request_json)
         # tag_itemsを取得
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # タグの一覧を取得
         tag_items = main_db.get_tag_items()
         result: dict = {}
@@ -448,7 +504,7 @@ class TagItem:
         tag_items = TagItem.get_tag_item_objects(request_dict)
         # tag_itemsを更新
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # タグを更新
         for tag_item in tag_items:
             main_db.update_tag_item(tag_item)
@@ -463,7 +519,7 @@ class TagItem:
         # tag_itemsを取得
         tag_items = TagItem.get_tag_item_objects(request_dict)
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # タグを削除
         for tag_item in tag_items:
             main_db.delete_tag_item(tag_item)
@@ -474,12 +530,12 @@ class TagItem:
 
 
     def __init__(self, tag_item_dict: dict):
-        self.Id = tag_item_dict.get("Id", "")
+        self.Id = tag_item_dict.get("id", "")
         if not self.Id:
             # UUIDを生成
             self.Id = str(uuid.uuid4())
-        self.Tag = tag_item_dict.get("Tag", "")
-        is_pinned = tag_item_dict.get("IsPinned", 0)
+        self.Tag = tag_item_dict.get("tag", "")
+        is_pinned = tag_item_dict.get("is_pinned", 0)
         if type(is_pinned) == int:
             self.IsPinned = bool(is_pinned)
         elif type(is_pinned) == bool:
@@ -491,9 +547,9 @@ class TagItem:
 
     def to_dict(self) -> dict:
         return {
-            "Id": self.Id,
-            "Tag": self.Tag,
-            "IsPinned": self.IsPinned
+            "id": self.Id,
+            "tag": self.Tag,
+            "is_pinned": self.IsPinned
         }
     
 
@@ -503,17 +559,17 @@ class AutogentLLMConfig:
     CREATE TABLE autogen_llm_configs (name TEXT, api_type TEXT, api_version TEXT, model TEXT, api_key TEXT, base_url TEXT)
     '''
     @classmethod
-    def get_autogen_llm_config_list_api(cls, request_json: str):
+    def get_autogen_llm_config_list_api(cls):
         # autogen_propsからllm_config_listを取得
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # LLMConfigの一覧を取得
         llm_config_list = main_db.get_autogen_llm_config_list()
 
         if not llm_config_list:
             raise ValueError("llm_config_list is not set")
         
-        result: dict = {}
+        result = {}
         result["llm_config_list"] = [config.to_dict() for config in llm_config_list]
         return result
 
@@ -527,7 +583,7 @@ class AutogentLLMConfig:
             raise ValueError("llm_config is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # LLMConfigを取得
         llm_config_result = main_db.get_autogen_llm_config(llm_config.name)
 
@@ -548,7 +604,7 @@ class AutogentLLMConfig:
         
         # autogen_propsを更新
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # LLMConfigを更新
         main_db.update_autogen_llm_config(llm_config)
 
@@ -565,7 +621,7 @@ class AutogentLLMConfig:
             raise ValueError("llm_config is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # LLMConfigを削除
         main_db.delete_autogen_llm_config(llm_config)
 
@@ -609,14 +665,14 @@ class AutogenTools:
     CREATE TABLE autogen_tools (name TEXT, path TEXT, description TEXT)    '''
 
     @classmethod
-    def get_autogen_tool_list_api(cls, request_json: str):
+    def get_autogen_tool_list_api(cls, ):
         # autogen_propsからtools_listを取得
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenToolsの一覧を取得
         tools_list = main_db.get_autogen_tool_list()
         
-        result: dict = {}
+        result = {}
         result["tool_list"] = [tool.to_dict() for tool in tools_list]
         return result
 
@@ -630,7 +686,7 @@ class AutogenTools:
             raise ValueError("tool is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenToolsを取得
         tool_result = main_db.get_autogen_tool(tool.name)
         
@@ -649,7 +705,7 @@ class AutogenTools:
             raise ValueError("tool is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenToolsを更新
         main_db.update_autogen_tool(tool)
 
@@ -666,7 +722,7 @@ class AutogenTools:
             raise ValueError("tool is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenToolsを削除
         main_db.delete_autogen_tool(tool)
 
@@ -703,18 +759,20 @@ class AutogenTools:
 class AutogenAgent:
     '''
     以下のテーブル定義のデータを格納するクラス
-    CREATE TABLE autogen_agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)
+    CREATE TABLE autogen_agents (
+        name TEXT PRIMARY KEY, description TEXT, system_message TEXT, 
+        code_execution BOOLEAN, llm_config_name TEXT, tool_names_json TEXT, vector_db_items_json TEXT)
     '''
     @classmethod
-    def get_autogen_agent_list_api(cls, request_json: str):
+    def get_autogen_agent_list_api(cls):
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenAgentの一覧を取得
         agent_list = main_db.get_autogen_agent_list()
         if not agent_list:
             raise ValueError("agent_list is not set")
         
-        result: dict = {}
+        result = {}
         result["agent_list"] = [agent.to_dict() for agent in agent_list]
         return result
 
@@ -728,7 +786,7 @@ class AutogenAgent:
             raise ValueError("agent is not set")
 
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenAgentを取得
         agent_result = main_db.get_autogen_agent(agent.name)
 
@@ -747,7 +805,7 @@ class AutogenAgent:
             raise ValueError("agent is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenAgentを更新
         main_db.update_autogen_agent(agent)
 
@@ -764,7 +822,7 @@ class AutogenAgent:
             raise ValueError("agent is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenAgentを削除
         main_db.delete_autogen_agent(agent)
 
@@ -790,9 +848,26 @@ class AutogenAgent:
         self.description = agent_dict.get("description", "")
         self.system_message = agent_dict.get("system_message", "")
         self.code_execution = agent_dict.get("code_execution", False)
+        # code_executionの値をboolに変換
+        if type(self.code_execution) == int:
+            if self.code_execution == 1:
+                self.code_execution = True
+            else:
+                self.code_execution = False
+                
         self.llm_config_name = agent_dict.get("llm_config_name", "")
         self.tool_names = agent_dict.get("tool_names", "")
-        self.vector_db_items = agent_dict.get("vector_db_props", json.dumps([]))
+        self.vector_db_items = agent_dict.get("vector_db_items", [])
+
+        self.tool_names_json = agent_dict.get("tool_names_json", None)
+        if self.tool_names_json:
+            # tool_names_jsonをdictに変換
+            self.tool_names = json.loads(self.tool_names_json)
+
+        self.vector_db_items_json = agent_dict.get("vector_db_items", None)
+        if self.vector_db_items_json:
+            # vector_db_items_jsonをdictに変換
+            self.vector_db_items = json.loads(self.vector_db_items_json)
 
     def to_dict(self) -> dict:
         return {
@@ -808,19 +883,19 @@ class AutogenAgent:
 class AutogenGroupChat:
     '''
     以下のテーブル定義のデータを格納するクラス
-    CREATE TABLE autogen_group_chats (name TEXT, description TEXT, llm_config_name TEXT, agent_names TEXT)
+    CREATE TABLE autogen_group_chats (name TEXT, description TEXT, llm_config_name TEXT, agent_names_json TEXT)
     '''
     @classmethod
-    def get_autogen_group_chat_list_api(cls, request_json: str):
+    def get_autogen_group_chat_list_api(cls):
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenGroupChatの一覧を取得
         group_chat_list = main_db.get_autogen_group_chat_list()
 
         if not group_chat_list:
             raise ValueError("group_chat_list is not set")
         
-        result: dict = {}
+        result = {}
         result["group_chat_list"] = [group_chat.to_dict() for group_chat in group_chat_list]
         return result
 
@@ -849,7 +924,7 @@ class AutogenGroupChat:
             raise ValueError("group_chat is not set")
 
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenGroupChatを取得
         group_chat_result = main_db.get_autogen_group_chat(group_chat.name)
 
@@ -868,7 +943,7 @@ class AutogenGroupChat:
             raise ValueError("group_chat is not set")
 
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenGroupChatを更新
         main_db.update_autogen_group_chat(group_chat)
 
@@ -885,7 +960,7 @@ class AutogenGroupChat:
             raise ValueError("group_chat is not set")
         
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # AutogenGroupChatを削除
         main_db.delete_autogen_group_chat(group_chat)
 
@@ -897,84 +972,141 @@ class AutogenGroupChat:
         self.name = group_chat_dict.get("name", "")
         self.description = group_chat_dict.get("description", "")
         self.llm_config_name = group_chat_dict.get("llm_config_name", "")
-        self.agent_names_str = group_chat_dict.get("agent_names", "")
-        self.agent_names = self.agent_names_str.split(",")
+        self.agent_names = group_chat_dict.get("agent_names", [])
+        self.agent_names_json = group_chat_dict.get("agent_names_json", None)
+        if self.agent_names_json:
+            # agent_names_jsonをdictに変換
+            self.agent_names = json.loads(self.agent_names_json)
 
     def to_dict(self) -> dict:
         return {
             "name": self.name,
             "description": self.description,
             "llm_config_name": self.llm_config_name,
-            "agent_names": self.agent_names_str
+            "agent_names": self.agent_names
         }
 
 class MainDB:
-    def __init__(self, db_path):
-        self.db_path = db_path
-    def init_content_folder_table(self):
+
+    @classmethod
+    def init(cls):
+        # main_dbへのパスを取得
+        app_db_path = MainDB.get_main_db_path()
+        cls.__init_database(app_db_path)
+
+    # main_dbへのパスを取得
+    @classmethod
+    def get_main_db_path(cls) -> str:
+        app_data_path = os.getenv("APP_DATA_PATH", None)
+        if not app_data_path:
+            raise ValueError("APP_DATA_PATH is not set.")
+        app_db_path = os.path.join(app_data_path, "server", "main_db", "server_main.db")
+
+        return app_db_path
+
+    @classmethod
+    def __init_database(cls, app_db_path: str, upgrade: bool = False):
+
+        # db_pathが存在しない場合は作成する
+        if not os.path.exists(app_db_path):
+            os.makedirs(os.path.dirname(app_db_path), exist_ok=True)
+            conn = sqlite3.connect(app_db_path)
+            conn.close()
+            # データベースの初期化
+            main_db = MainDB(app_db_path)
+            # テーブルの初期化
+            cls.__init_tables(main_db)
+
+        if upgrade:
+            # テーブルの初期化
+            main_db = MainDB(app_db_path)
+            cls.__init_tables(main_db)
+
+    @classmethod
+    def __init_tables(cls, main_db: "MainDB"):
+        # DBPropertiesテーブルを初期化
+        main_db.init_db_properties_table()
+        # ContentFoldersテーブルを初期化
+        main_db.__init_content_folder_catalog_table()
+        # TagItemsテーブルを初期化
+        main_db.__init_tag_item_table()
+        # VectorDBItemsテーブルを初期化
+        main_db.__init_vector_db_item_table()
+        # autogen_llm_configsテーブルを初期化
+        main_db.__init_autogen_llm_config_table()
+        # autogen_toolsテーブルを初期化
+        main_db.__init_autogen_tools_table()
+        # autogen_agentsテーブルを初期化
+        main_db.__init_autogen_agents_table()
+        # autogen_group_chatsテーブルを初期化
+        main_db.__init_autogen_group_chats_table()
+
+    @classmethod
+    def __update_database(cls, app_db_path: str):
+        pass
+
+    def __init__(self, db_path = ""):
+        # db_pathが指定されている場合は、指定されたパスを使用する
+        if db_path:
+            self.db_path = db_path
+        else:
+            # db_pathが指定されていない場合は、環境変数から取得する
+            self.db_path = MainDB.get_main_db_path()
+
+        # データベースの初期化
+        MainDB.__init_database(self.db_path)
+
+    def init_db_properties_table(self):
+        # DBPropertiesテーブルが存在しない場合は作成する
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS DBProperties (
+                id TEXT NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                value TEXT NOT NULL
+            )
+        ''')
+        # version = 1を追加
+        cur.execute('''
+            INSERT OR IGNORE INTO DBProperties (id, name, value) VALUES (?, ?, ?)
+        ''', (str(uuid.uuid4()), "version", "1"))
+
+        conn.commit()
+        conn.close()
+
+    def __init_content_folder_catalog_table(self):
         # ContentFoldersテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS ContentFolders (
-                Id TEXT NOT NULL PRIMARY KEY,
-                FolderTypeString TEXT NOT NULL,
-                ParentId TEXT NULL,
-                FolderName TEXT NOT NULL,
-                Description TEXT NOT NULL,
-                ExtendedPropertiesJson TEXT NOT NULL
+            CREATE TABLE IF NOT EXISTS ContentFoldersCatalog (
+                id TEXT NOT NULL PRIMARY KEY,
+                folder_type_string TEXT NOT NULL,
+                parent_id TEXT NULL,
+                folder_name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                extended_properties_json TEXT NOT NULL
             )
         ''')
         conn.commit()
         conn.close()
     
-    def init_tag_item_table(self):
+    def __init_tag_item_table(self):
         # TagItemsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
         cur.execute('''
             CREATE TABLE IF NOT EXISTS TagItems (
-                Id TEXT NOT NULL PRIMARY KEY,
-                Tag TEXT NOT NULL,
-                IsPinned INTEGER NOT NULL
+                id TEXT NOT NULL PRIMARY KEY,
+                tag TEXT NOT NULL,
+                is_pinned INTEGER NOT NULL
             )
         ''')
         conn.commit()
         conn.close()
 
-    def init_content_item_table(self):
-        # ContentItemsテーブルが存在しない場合は作成する
-        conn = sqlite3.connect(self.db_path)
-        cur = conn.cursor()
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS ContentItems (
-                Id TEXT NOT NULL PRIMARY KEY,
-                FolderId TEXT NULL,
-                CreatedAt TEXT NOT NULL,
-                UpdatedAt TEXT NOT NULL,
-                VectorizedAt TEXT NOT NULL,
-                Content TEXT NOT NULL,
-                Description TEXT NOT NULL,
-                ContentType INTEGER NOT NULL,
-                ChatMessagesJson TEXT NOT NULL,
-                PromptChatResultJson TEXT NOT NULL,
-                TagString TEXT NOT NULL,
-                SourceApplicationName TEXT NOT NULL,
-                SourceApplicationTitle TEXT NOT NULL,
-                SourceApplicationID INTEGER NOT NULL,
-                SourceApplicationPath TEXT NOT NULL,
-                IsPinned INTEGER NOT NULL,
-                DocumentReliability INTEGER NOT NULL,
-                DocumentReliabilityReason TEXT NOT NULL,
-                IsReferenceVectorDBItemsSynced INTEGER NOT NULL,
-                CachedBase64String TEXT NOT NULL,
-                ExtendedPropertiesJson TEXT NOT NULL
-            )
-        ''')
-        conn.commit()
-        conn.close()
-
-    def init_vector_db_item_table(self):
+    def __init_vector_db_item_table(self):
         # VectorDBItemsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -1007,9 +1139,9 @@ class MainDB:
             params = {
                 "name": "default",
                 "description": "Application default vector db",
-                "vector_db_url": os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_vector_db"),
+                "vector_db_url": os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "clipboard_vector_db"),
                 "is_use_multi_vector_retriever": False,
-                "doc_store_url": f'sqlite:///{os.path.join(os.getenv("APP_DATA_PATH", ""), "vector_db", "clipboard_doc_store.db")}',
+                "doc_store_url": f'sqlite:///{os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "clipboard_doc_store.db")}',
                 "vector_db_type": 1,
                 "collection_name": "ai_app_default_collection",
                 "chunk_size": 1024,
@@ -1027,7 +1159,7 @@ class MainDB:
             # 存在する場合は初期化処理を行わない
             print("VectorDBItem is already exists.")
 
-    def init_autogen_llm_config_table(self):
+    def __init_autogen_llm_config_table(self):
         # autogen_llm_configsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -1044,7 +1176,7 @@ class MainDB:
         conn.commit()
         conn.close()
 
-    def init_autogen_tools_table(self):
+    def __init_autogen_tools_table(self):
         # autogen_toolsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -1058,7 +1190,7 @@ class MainDB:
         conn.commit()
         conn.close()
 
-    def init_autogen_agents_table(self):
+    def __init_autogen_agents_table(self):
         # autogen_agentsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -1069,14 +1201,14 @@ class MainDB:
                 system_message TEXT,
                 code_execution BOOLEAN,
                 llm_config_name TEXT,
-                tool_names TEXT,
-                vector_db_items TEXT
+                tool_names_json TEXT,
+                vector_db_items_json TEXT
             )
         ''')
         conn.commit()
         conn.close()
         
-    def init_autogen_group_chats_table(self):
+    def __init_autogen_group_chats_table(self):
         # autogen_group_chatsテーブルが存在しない場合は作成する
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -1085,22 +1217,123 @@ class MainDB:
                 name TEXT PRIMARY KEY,
                 description TEXT,
                 llm_config_name TEXT,
-                agent_names TEXT
+                agent_names_json TEXT
             )
         ''')
         conn.commit()
         conn.close()
     
-
     #########################################
-    # ContentItem関連
+    # DBProperties関連
     #########################################
-
-    def get_content_folder(self, folder_id: str) -> Union[ContentFolder, None]:
+    def get_db_properties(self) -> dict:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("SELECT * FROM ContentFolders WHERE Id=?", (folder_id,))
+        cur.execute("SELECT * FROM DBProperties")
+        rows = cur.fetchall()
+        db_properties = {row["name"]: row["value"] for row in rows}
+        conn.close()
+
+        return db_properties
+    
+    def get_db_property(self, name: str) -> Union[str, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM DBProperties WHERE name=?", (name,))
+        row = cur.fetchone()
+
+        # データが存在しない場合はNoneを返す
+        if row is None or len(row) == 0:
+            return None
+
+        db_property_dict = dict(row)
+        conn.close()
+
+        return db_property_dict["value"]
+    
+    def update_db_property(self, name: str, value: str):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        if self.get_db_property(name) is None:
+            cur.execute("INSERT INTO DBProperties (id, name, value) VALUES (?, ?, ?)", (str(uuid.uuid4()), name, value))
+        else:
+            cur.execute("UPDATE DBProperties SET value=? WHERE name=?", (value, name))
+        conn.commit()
+        conn.close()
+
+    def delete_db_property(self, name: str):
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM DBProperties WHERE name=?", (name,))
+        conn.commit()
+        conn.close()
+
+
+    #########################################
+    # ContentFolder関連
+    #########################################
+    # idを指定して、idとfolder_nameとparent_idを取得する.再帰的に親フォルダを辿り、folderのパスを生成する
+    def get_content_folder_path_by_id(self, folder_id: str) -> str:
+        def get_folder_name_recursively(folder_id: str, paths: list[str]) -> list[str]:
+            # データベースへ接続
+            with sqlite3.connect(self.db_path) as conn:
+                conn.row_factory = sqlite3.Row
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM ContentFoldersCatalog WHERE id=?", (folder_id,))
+                row = cur.fetchone()
+
+                # データが存在しない場合はNoneを返す
+                if row is None:
+                    return paths
+
+                folder_dict = dict(row)
+                folder_name = folder_dict.get("folder_name", "")
+                parent_id = folder_dict.get("parent_id", "")
+
+                # 親フォルダが存在する場合は再帰的に取得する
+                if parent_id:
+                    paths = get_folder_name_recursively(parent_id, paths)
+
+                paths.append(folder_name)
+            return paths
+
+        # フォルダのパスを取得する
+        paths = get_folder_name_recursively(folder_id, [])
+        # フォルダのパスを生成する
+        folder_path = "/".join(reversed(paths))
+        return folder_path
+
+    # pathを指定して、pathにマッチするエントリーを再帰的に辿り、folderを取得する
+    def get_content_folder_by_path(self, folder_path: str) -> Union[ContentFoldersCatalog, None]:
+        # フォルダのパスを分割する
+        folder_names = folder_path.split("/")
+        # フォルダのパスを取得する
+        folder_id = None
+        for folder_name in folder_names:
+            # データベースへ接続
+            with sqlite3.connect(self.db_path) as conn:
+                conn.row_factory = sqlite3.Row
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM ContentFoldersCatalog WHERE folder_name=? AND parent_id=?", (folder_name, folder_id))
+                row = cur.fetchone()
+
+                # データが存在しない場合はNoneを返す
+                if row is None:
+                    return None
+
+                folder_dict = dict(row)
+                folder_id = folder_dict.get("id", "")
+
+        return self.get_content_folder_by_id(folder_id)
+
+    # FolderTypeStringを指定してContentFolderのRootFolderを取得する
+    def get_root_content_folders(self) -> Union[ContentFoldersCatalog, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row 
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM ContentFoldersCatalog WHERE parent_id IS NULL")
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
@@ -1110,25 +1343,27 @@ class MainDB:
         folder_dict = dict(row)
         conn.close()
 
-        return ContentFolder(folder_dict)
+        return ContentFoldersCatalog(folder_dict)
     
-    def get_content_folders(self) -> List[ContentFolder]:
+    def get_content_folders(self) -> List[ContentFoldersCatalog]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        cur.execute("SELECT * FROM ContentFolders")
+        cur.execute("SELECT * FROM ContentFoldersCatalog")
         rows = cur.fetchall()
-        folders = [ContentFolder(dict(row)) for row in rows]
+        folders = [ContentFoldersCatalog(dict(row)) for row in rows]
         conn.close()
 
         return folders
-    
-    # FolderTypeStringを指定してContentFolderのRootFolderを取得する
-    def get_root_content_folder(self, folder_type_string: str) -> Union[ContentFolder, None]:
+
+    def get_content_folder_by_id(self, folder_id: Union[str, None]) -> Union[ContentFoldersCatalog, None]:
+        if folder_id is None:
+            return None
+
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("SELECT * FROM ContentFolders WHERE FolderTypeString=? AND ParentId IS NULL", (folder_type_string,))
+        cur.execute("SELECT * FROM ContentFoldersCatalog WHERE id=?", (folder_id,))
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
@@ -1138,24 +1373,25 @@ class MainDB:
         folder_dict = dict(row)
         conn.close()
 
-        return ContentFolder(folder_dict)
-    
-    def update_content_folder(self, folder: ContentFolder):
+        return ContentFoldersCatalog(folder_dict)
+
+    def update_content_folder(self, folder: ContentFoldersCatalog):
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
-        if self.get_content_folder(folder.Id) is None:
-            cur.execute("INSERT INTO ContentFolders VALUES (?, ?, ?, ?, ?, ?)", (folder.Id, folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson))
+        if self.get_content_folder_by_id(folder.Id) is None:
+            cur.execute("INSERT INTO ContentFoldersCatalog VALUES (?, ?, ?, ?, ?, ?)", (folder.Id, folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson))
         else:
-            cur.execute("UPDATE ContentFolders SET FolderTypeString=?, ParentId=?, FolderName=?, Description=?, ExtendedPropertiesJson=? WHERE Id=?", (folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson, folder.Id))
+            cur.execute("UPDATE ContentFoldersCatalog SET folder_type_string=?, parent_id=?, folder_name=?, description=?, extended_properties_json=? WHERE Id=?", (folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson, folder.Id))
         conn.commit()
         conn.close()
 
-    def delete_content_folder(self, folder: ContentFolder):
+    def delete_content_folder(self, folder: ContentFoldersCatalog):
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
-        cur.execute("DELETE FROM ContentFolders WHERE Id=?", (folder.Id,))
+        cur.execute("DELETE FROM ContentFolders WHERE id=?", (folder.Id,))
         conn.commit()
         conn.close()
+
 
     ########################################
     # TagItem関連
@@ -1164,7 +1400,7 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("SELECT * FROM TagItems WHERE Id=?", (tag_id,))
+        cur.execute("SELECT * FROM TagItems WHERE id=?", (tag_id,))
         row = cur.fetchone()
 
         # データが存在しない場合はNoneを返す
@@ -1194,7 +1430,7 @@ class MainDB:
         if self.get_tag_item(tag_item.Id) is None:
             cur.execute("INSERT INTO TagItems VALUES (?, ?, ?)", (tag_item.Id, tag_item.Tag, tag_item.IsPinned))
         else:
-            cur.execute("UPDATE TagItems SET Tag=?, IsPinned=? WHERE Id=?", (tag_item.Tag, tag_item.IsPinned, tag_item.Id))
+            cur.execute("UPDATE TagItems SET tag=?, is_pinned=? WHERE id=?", (tag_item.Tag, tag_item.IsPinned, tag_item.Id))
         conn.commit()
         conn.close()
 
@@ -1205,7 +1441,7 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row 
         cur = conn.cursor()
-        cur.execute("DELETE FROM TagItems WHERE Id=?", (tag_item.Id,))
+        cur.execute("DELETE FROM TagItems WHERE id=?", (tag_item.Id,))
         conn.commit()
         conn.close()
 
@@ -1444,9 +1680,18 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
         if self.get_autogen_agent(agent.name) is None:
-            cur.execute("INSERT INTO autogen_agents VALUES (?, ?, ?, ?, ?, ?, ?)", (agent.name, agent.description, agent.system_message, agent.code_execution, agent.llm_config_name, agent.tool_names, agent.vector_db_items))
+            cur.execute("INSERT INTO autogen_agents VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                        (agent.name, agent.description, agent.system_message, 
+                         agent.code_execution, agent.llm_config_name, 
+                         json.dumps(agent.tool_names, ensure_ascii=False), 
+                         json.dumps(agent.vector_db_items,ensure_ascii=False)))
         else:
-            cur.execute("UPDATE autogen_agents SET description=?, system_message=?, code_execution=?, llm_config_name=?, tool_names=?, vector_db_items=? WHERE name=?", (agent.description, agent.system_message, agent.code_execution, agent.llm_config_name, agent.tool_names, agent.vector_db_items, agent.name))
+            cur.execute("UPDATE autogen_agents SET description=?, system_message=?, code_execution=?, llm_config_name=?, tool_names_json=?, vector_db_items_json=? WHERE name=?", 
+                        (agent.description, agent.system_message, 
+                         agent.code_execution, agent.llm_config_name, 
+                         json.dumps(agent.tool_names, ensure_ascii=False), 
+                         json.dumps(agent.vector_db_items,ensure_ascii=False), 
+                         agent.name))
         conn.commit()
         conn.close()
     
@@ -1490,9 +1735,13 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
         if self.get_autogen_group_chat(group_chat.name) is None:
-            cur.execute("INSERT INTO autogen_group_chats VALUES (?, ?, ?, ?)", (group_chat.name, group_chat.description, group_chat.llm_config_name, group_chat.agent_names_str))
+            cur.execute("INSERT INTO autogen_group_chats VALUES (?, ?, ?, ?)", 
+                        (group_chat.name, group_chat.description, group_chat.llm_config_name, 
+                         json.dumps(group_chat.agent_names, ensure_ascii=False)))
         else:
-            cur.execute("UPDATE autogen_group_chats SET description=?, llm_config_name=?, agent_names=? WHERE name=?", (group_chat.description, group_chat.llm_config_name, group_chat.agent_names_str, group_chat.name))
+            cur.execute("UPDATE autogen_group_chats SET description=?, llm_config_name=?, agent_names_json=? WHERE name=?", 
+                        (group_chat.description, group_chat.llm_config_name, 
+                         json.dumps(group_chat.agent_names, ensure_ascii=False), group_chat.name))
         conn.commit()
         conn.close()
 

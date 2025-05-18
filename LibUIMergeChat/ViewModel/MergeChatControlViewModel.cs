@@ -39,15 +39,6 @@ namespace LibUIMergeChat.ViewModel {
             }
             VectorSearchProperties = [.. folder.Folder.GetVectorSearchProperties()];
 
-            // AutoGenPropertiesを設定
-            _autoGenProperties = new();
-            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
-            _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
-            _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
-
-            // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
-
             // MergeTargetPanelViewModelを設定
             MergeTargetPanelViewModel = mergeTargetPanelViewModel;
 
@@ -302,17 +293,6 @@ namespace LibUIMergeChat.ViewModel {
 
         });
 
-        // Chatモードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ChatModeSelectionChangedCommand => new((routedEventArgs) => {
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            ChatMode = comboBox.SelectedIndex;
-            // ChatModeVisibility
-            OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
-
-
-        });
-
         // Splitモードが変更されたときの処理
         public SimpleDelegateCommand<RoutedEventArgs> SplitModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
@@ -391,77 +371,6 @@ namespace LibUIMergeChat.ViewModel {
 
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
-
-        #region AutoGen Group Chat
-        // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
-
-        // AutoGenGroupChatList
-        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
-            get {
-                ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
-                foreach (var item in AutoGenGroupChat.GetAutoGenChatList()) {
-                    autoGenGroupChatList.Add(item);
-                }
-                return autoGenGroupChatList;
-            }
-        }
-        // SelectedAutoGenGroupChat
-        private AutoGenGroupChat? _SelectedAutoGenGroupChat = null;
-        public AutoGenGroupChat? SelectedAutoGenGroupChat {
-            get {
-                return _SelectedAutoGenGroupChat;
-            }
-            set {
-                _SelectedAutoGenGroupChat = value;
-                if (_SelectedAutoGenGroupChat != null) {
-                    AutoGenProperties.ChatType = AutoGenProperties.CHAT_TYPE_GROUP;
-                    AutoGenProperties.ChatName = _SelectedAutoGenGroupChat.Name;
-                }
-                OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
-            }
-        }
-        // AutoGenGroupChatSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
-                // 選択されたComboBoxItemのIndexを取得
-                int index = comboBox.SelectedIndex;
-                SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
-            }
-        });
-
-        // terminate_msg
-        public string TerminateMsg {
-            get {
-                return AutoGenProperties.TerminateMsg;
-            }
-            set {
-                AutoGenProperties.TerminateMsg = value;
-                OnPropertyChanged(nameof(TerminateMsg));
-            }
-        }
-        // max_msg
-        public int MaxMsg {
-            get {
-                return AutoGenProperties.MaxMsg;
-            }
-            set {
-                AutoGenProperties.MaxMsg = value;
-                OnPropertyChanged(nameof(MaxMsg));
-            }
-        }
-        // timeout
-        public int Timeout {
-            get {
-                return AutoGenProperties.Timeout;
-            }
-            set {
-                AutoGenProperties.Timeout = value;
-                OnPropertyChanged(nameof(Timeout));
-            }
-        }
-
-        #endregion
 
         // ExportItems
         public ObservableCollection<ExportImportItem> ExportItems { get; set; } = CreateExportItems();

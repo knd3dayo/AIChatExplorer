@@ -11,7 +11,7 @@ using WpfAppCommon.Model;
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : CommonViewModelBase {
 
-        public VectorSearchWindowViewModel() {
+        public VectorSearchWindowViewModel(VectorSearchProperty vectorSearchProperty) {
             InputText = string.Empty;
         }
 
@@ -116,7 +116,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 VectorSearchProperty.TopK = VectorDBSearchResultMax;
 
                 try {
-                    var searchResults = await VectorSearchProperty.VectorSearch(InputText);
+                    var searchResults = await VectorSearchProperty.VectorSearchAsync(InputText);
                     vectorSearchResults.AddRange(searchResults);
                 } finally {
                     CommonViewModelProperties.UpdateIndeterminate(false);

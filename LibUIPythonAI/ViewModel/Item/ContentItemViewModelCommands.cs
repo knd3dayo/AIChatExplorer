@@ -12,6 +12,7 @@ using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 using WpfAppCommon.Model;
+using LibPythonAI.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModelCommands {
@@ -223,13 +224,15 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // Command to perform vector search
         public static void OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
+            VectorSearchProperty vectorSearchProperty = itemViewModel.ContentItem.GetMainVectorSearchProperty();
             // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
-                });
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new(vectorSearchProperty) {
+                // Action when a vector DB item is selected
+                SelectVectorDBItemAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                        vectorDBItems.Add(vectorDBItemBase);
+                    });
+                }
             };
             var contentItem = itemViewModel.ContentItem;
             vectorSearchWindowViewModel.VectorSearchProperty = contentItem.GetMainVectorSearchProperty();
@@ -243,7 +246,8 @@ namespace LibUIPythonAI.ViewModel.Item {
         // Command to perform vector search
         public static void OpenFolderVectorSearchWindowCommandExecute(ContentFolderViewModel folderViewModel) {
             // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new() {
+            VectorSearchProperty vectorSearchProperty = folderViewModel.Folder.GetMainVectorSearchProperty();
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new(vectorSearchProperty) {
                 // Action when a vector DB item is selected
                 SelectVectorDBItemAction = (vectorDBItems) => {
                     ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {

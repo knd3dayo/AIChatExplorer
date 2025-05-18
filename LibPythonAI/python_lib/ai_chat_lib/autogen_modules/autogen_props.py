@@ -21,7 +21,7 @@ from autogen_agentchat.teams import SelectorGroupChat
 from autogen_agentchat.base import TaskResult
 from autogen_agentchat.messages import ChatMessage, AgentEvent, TextMessage
 
-from ai_chat_lib.db_modules import VectorDBItem, MainDB, VectorSearchRequest, get_main_db_path
+from ai_chat_lib.db_modules import VectorDBItem, MainDB, VectorSearchRequest
 
 # openai_props
 from ai_chat_lib.openai_modules import OpenAIProps
@@ -46,7 +46,7 @@ class AutoGenProps:
         # vector_db_itemsを取得
         vector_search_requests = VectorSearchRequest.get_vector_search_requests_objects(request_dict)
 
-        app_db_path = get_main_db_path()
+        app_db_path = MainDB.get_main_db_path()
         autogen_props = AutoGenProps(app_db_path, props_dict, openai_props, vector_search_requests)
         return autogen_props
 
@@ -210,7 +210,7 @@ class AutoGenProps:
         id = str(uuid.uuid4()).replace('-', '_')
 
         # main_dbを作成
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         # vector_db_propsを取得
         vector_db_props = main_db.get_vector_db_by_name(vector_search_request.name)
         if vector_db_props is None:

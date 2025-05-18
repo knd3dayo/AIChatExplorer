@@ -29,7 +29,8 @@
         "search_kwargs": {
             "k": 10,
             "filter": {
-                "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a"
+                "folder_id": "47bbf240-5022-470f-9b8b-0de0e600595a",
+                "folder_path" : "フォルダのパス"
             }
         }
     }
@@ -52,8 +53,18 @@
         "sub_docs": []
     },
     "vector_db_item_request" : {
-        
-
+        "id": "ベクトルDBのID",
+        "name": "ベクトルDBの名前",
+        "description": "ベクトルDBの説明",
+        "vector_db_url": "ベクトルDBのURLまたはパス",
+        "is_use_multi_vector_retriever":　"MultiVectorRetrieverを使用するかどうか",
+        "doc_store_url": "MultiVectorRetriever用のDBのURL",
+        "vector_db_type": "0:Chroma, 1:PGVector",
+        "collection_name": "ベクトル格納用のコレクション名",
+        "chunk_size": "チャンクサイズ。データはこの単位に分割してベクトル化する",
+        "default_search_result_limit": "デフォルトの検索結果表示数",
+        "is_enabled": "このベクトルDBを有効にするか否か。",
+        "is_system": "システム用のベクトルDBか否か"
     },
     "autogen_llm_config_request": {
         "name": "名前",

@@ -28,7 +28,15 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
 
             // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
+            Task.Run(async () => {
+                var autogenGroupChatList = await AutoGenGroupChat.GetAutoGenChatListAsync();
+                MainUITask.Run(() => {
+                    AutoGenGroupChatList = [.. autogenGroupChatList];
+                    if (AutoGenGroupChatList.Count > 0) {
+                        SelectedAutoGenGroupChat = AutoGenGroupChatList[0];
+                    }
+                });
+            });
         }
 
         // Temperature
@@ -202,13 +210,14 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
 
         // AutoGenGroupChatList
+        private ObservableCollection<AutoGenGroupChat> _AutoGenGroupChatList = [];
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
             get {
-                ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
-                foreach (var item in AutoGenGroupChat.GetAutoGenChatList()) {
-                    autoGenGroupChatList.Add(item);
-                }
-                return autoGenGroupChatList;
+                return _AutoGenGroupChatList;
+            }
+            set {
+                _AutoGenGroupChatList = value;
+                OnPropertyChanged(nameof(AutoGenGroupChatList));
             }
         }
         // SelectedAutoGenGroupChat

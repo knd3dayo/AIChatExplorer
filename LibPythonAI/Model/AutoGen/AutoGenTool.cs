@@ -59,22 +59,14 @@ namespace LibPythonAI.Model.AutoGen {
             return dictList;
         }
 
-        public async Task Save() {
+        public async Task SaveAsync() {
             // APIを呼び出して、設定を保存する
             await PythonExecutor.PythonAIFunctions.UpdateAutoGenToolAsync(this);
         }
 
-        public async Task Delete() {
-            await DeleteAutoGenTool(Name);
-        }
-
-        // DeleteAutoGenTool
-        public static async Task DeleteAutoGenTool(string toolName) {
+        public async Task DeleteAsync() {
             // APIを呼び出して、設定を削除する
-            AutoGenTool autoGenTool = new() {
-                Name = toolName,
-            };
-            await PythonExecutor.PythonAIFunctions.DeleteAutoGenToolAsync(autoGenTool);
+            await PythonExecutor.PythonAIFunctions.DeleteAutoGenToolAsync(this);
         }
 
         // GetAutoGenToolListAsync

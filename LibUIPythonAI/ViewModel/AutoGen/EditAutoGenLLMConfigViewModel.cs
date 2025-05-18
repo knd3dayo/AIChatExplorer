@@ -89,8 +89,8 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            // Save
-            AutoGenLLMConfig.Save();
+            // SaveAsync
+            AutoGenLLMConfig.SaveAsync();
             AfterUpdate();
             window.Close();
         }, null, null);

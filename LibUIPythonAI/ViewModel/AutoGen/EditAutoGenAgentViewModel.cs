@@ -94,7 +94,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         private async Task LoadLLMConfigListAsync() {
             // LLMConfigList
             ObservableCollection<string> llmConfigNameList = [];
-            var autoGenLLMConfigs = await AutoGenLLMConfig.GetAutoGenLLMConfigList();
+            var autoGenLLMConfigs = await AutoGenLLMConfig.GetAutoGenLLMConfigListAsync();
             foreach (var item in autoGenLLMConfigs) {
                 llmConfigNameList.Add(item.Name);
             }
@@ -157,8 +157,8 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 
-            // Save
-            AutoGenAgent.Save();
+            // SaveAsync
+            AutoGenAgent.SaveAsync();
             AfterUpdate();
             window.Close();
         }, null, null);

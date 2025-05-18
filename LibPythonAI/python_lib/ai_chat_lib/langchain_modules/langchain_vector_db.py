@@ -20,10 +20,7 @@ from openai import RateLimitError
 from ai_chat_lib.langchain_modules.langchain_client import LangChainOpenAIClient
 from ai_chat_lib.langchain_modules.langchain_doc_store import SQLDocStore
 
-from ai_chat_lib.openai_modules.openai_util import OpenAIProps
-
-from ai_chat_lib.db_modules import EmbeddingData, VectorDBItem, VectorSearchRequest, MainDB
-from ai_chat_lib.api_modules.ai_app_util import get_main_db_path
+from ai_chat_lib.db_modules import EmbeddingData
 
 logger = logging.getLogger(__name__)
 
@@ -291,7 +288,7 @@ class LangChainVectorDB:
         if self.db is None:
             raise ValueError("db is None")
         if self.multi_vector_doc_store_url:
-            print("Creating MultiVectorRetriever")
+            logger.info("Creating MultiVectorRetriever")
             if self.doc_store is None:
                 raise ValueError("doc_store is None")
             

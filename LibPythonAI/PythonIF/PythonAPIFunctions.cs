@@ -78,30 +78,18 @@ namespace PythonAILib.PythonIF {
         }
 
         // ContentFolder
-        public async Task<List<ContentFolderWrapper>> GetRootContentFolders(List<string> folderTypeStrings) {
-
-            List<ContentFolderRequest> contentFolderRequests = [];
-            foreach (string folderTypeString in folderTypeStrings) {
-                // ContentFolderRequestを作成
-                ContentFolderRequest contentFolderRequest = new() {
-                    FolderTypeString = folderTypeString
-                };
-
-                contentFolderRequests.Add(contentFolderRequest);
-            }
+        public async Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                ContentFolderRequestsInstance = contentFolderRequests
+                ContentFolderRequestsInstance = folders
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
-            LogWrapper.Info(PythonAILibStringResources.Instance.GetRootContentFoldersExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateContentFoldersExecute);
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
-
             // PostAsyncを実行する
-            string endpoint = $"{this.base_url}/get_root_content_folders";
+            string endpoint = $"{this.base_url}/update_content_folders";
             string resultString = await PostAsync(endpoint, chatRequestContextJson);
-
             // resultStringをログに出力
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
             // resultStringからDictionaryに変換する。
@@ -110,19 +98,31 @@ namespace PythonAILib.PythonIF {
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
-            // ContentFolderWrapperのリストを取得
-            dynamic dictList = resultDict["content_folders"] ?? "[]";
-            List<ContentFolderWrapper> contentFolders = [];
-            foreach (var item in dictList) {
-                // ContentFolderWrapperを取得
-                ContentFolderWrapper? contentFolder = ContentFolderWrapper.FromDict(item);
-                if (contentFolder != null) {
-                    contentFolders.Add(contentFolder);
-                }
-            }
-            return contentFolders;
-
         }
+
+        public async Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = folders
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteContentFoldersExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_content_folders";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            // resultStringをログに出力
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+            // resultStringからDictionaryに変換する。
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            // Errorがある場合は例外をスローする
+            if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                throw new Exception(errorValue);
+            }
+        }
+
+
 
         // GetTagItemsAsync
         public async Task<List<TagItem>> GetTagItemsAsync() {
@@ -1074,7 +1074,7 @@ namespace PythonAILib.PythonIF {
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
-            var dictList = resultDict["autogen_agent_list"] ?? "[]";
+            var dictList = resultDict["agent_list"] ?? "[]";
             // autogen_llm_config_listを取得
             List<AutoGenAgent> autogenAgentList = [];
             foreach (var item in dictList) {
@@ -1113,7 +1113,7 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(errorValue);
             }
             // AutoGenAgentを取得
-            AutoGenAgent? autogenAgentResult = AutoGenAgent.FromDict(resultDict["autogen_agent"]);
+            AutoGenAgent? autogenAgentResult = AutoGenAgent.FromDict(resultDict["agent"]);
             return autogenAgentResult;
 
         }
@@ -1165,7 +1165,7 @@ namespace PythonAILib.PythonIF {
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
-            var dictList = resultDict["autogen_group_chat_list"] ?? "[]";
+            var dictList = resultDict["group_chat_list"] ?? "[]";
             // autogen_llm_config_listを取得
             List<AutoGenGroupChat> autogenGroupChatList = [];
             foreach (var item in dictList) {
@@ -1203,7 +1203,7 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(errorValue);
             }
             // AutoGenGroupChatを取得
-            AutoGenGroupChat? autogenGroupChatResult = AutoGenGroupChat.FromDict(resultDict["autogen_group_chat"]);
+            AutoGenGroupChat? autogenGroupChatResult = AutoGenGroupChat.FromDict(resultDict["group_chat"]);
             return autogenGroupChatResult;
         }
 

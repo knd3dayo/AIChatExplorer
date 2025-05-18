@@ -202,7 +202,7 @@ class LangChainUtil:
         # ChatRequestContextからVectorDBItemを生成
         embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
         
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
@@ -223,7 +223,7 @@ class LangChainUtil:
         # embedding_requestを取得
         embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
 
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
@@ -249,7 +249,7 @@ class LangChainUtil:
         # embedding_requestを取得
         embedding_data = EmbeddingData.get_embedding_request_objects(request_dict)
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
@@ -268,7 +268,7 @@ class LangChainUtil:
         embedding_data: EmbeddingData = EmbeddingData.get_embedding_request_objects(request_dict)
 
         # MainDBを取得
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
@@ -371,7 +371,7 @@ class LangChainUtil:
             raise ValueError("openai_props is None")
         client = LangChainOpenAIClient(openai_props)
 
-        main_db = MainDB(get_main_db_path())
+        main_db = MainDB()
 
         # documentsの要素からcontent, source, source_urlを取得
         result = []

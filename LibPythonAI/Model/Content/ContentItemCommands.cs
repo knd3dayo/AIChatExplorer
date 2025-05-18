@@ -108,7 +108,7 @@ namespace LibPythonAI.Model.Content {
                         return;
                     }
                     ExtractText(item).Wait();
-                    // Save the item
+                    // SaveAsync the item
                     item.Save();
                 });
                 afterAction();

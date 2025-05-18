@@ -7,7 +7,7 @@ namespace LibUIPythonAI.View.Tag {
         // Open
         public static string Open => CommonStringResources.Instance.Open;
 
-        // Save
+        // SaveAsync
         public static string Save => CommonStringResources.Instance.Save;
 
         // DeleteAsync

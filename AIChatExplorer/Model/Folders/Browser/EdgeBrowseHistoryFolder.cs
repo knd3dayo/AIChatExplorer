@@ -120,7 +120,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
-                // result.Save();
+                // result.SaveAsync();
             });
 
             //HistoryのURLとItemのURLの和集合

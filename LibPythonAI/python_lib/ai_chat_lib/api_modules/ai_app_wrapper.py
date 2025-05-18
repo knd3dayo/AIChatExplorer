@@ -13,6 +13,27 @@ if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
+########################
+# ContentFolders関連
+########################
+@capture_stdout_stderr
+def get_root_content_folders():
+    return ContentFoldersCatalog.get_root_content_folders_api()
+@capture_stdout_stderr
+def get_content_folders():
+    return ContentFoldersCatalog.get_content_folders_api()
+@capture_stdout_stderr
+def get_content_folders_by_id(request_json: str):
+    return ContentFoldersCatalog.get_content_folder_by_id_api(request_json)
+@capture_stdout_stderr
+def get_content_folder_by_path(request_json: str):
+    return ContentFoldersCatalog.get_content_folder_by_path_api(request_json)
+@capture_stdout_stderr
+def update_content_folders(request_json: str):
+    return ContentFoldersCatalog.update_content_folders_api(request_json)
+@capture_stdout_stderr
+def delete_content_folders(request_json: str):
+    return ContentFoldersCatalog.delete_content_folders_api(request_json)
 
 ########################
 # tag関連
@@ -47,8 +68,8 @@ async def autogen_chat( request_json: str):
     yield AutoGenProps.autogen_chat_api(request_json)
 
 @capture_stdout_stderr
-def get_autogen_llm_config_list(request_json: str):
-    return AutogentLLMConfig.get_autogen_llm_config_list_api(request_json)
+def get_autogen_llm_config_list():
+    return AutogentLLMConfig.get_autogen_llm_config_list_api()
 
 @capture_stdout_stderr
 def get_autogen_llm_config(request_json: str):
@@ -63,8 +84,8 @@ def delete_autogen_llm_config(request_json: str):
     return AutogentLLMConfig.delete_autogen_llm_config_api(request_json)
 
 @capture_stdout_stderr
-def get_autogen_tool_list(request_json: str):
-    return AutogenTools.get_autogen_tool_list_api(request_json)
+def get_autogen_tool_list():
+    return AutogenTools.get_autogen_tool_list_api()
 
 @capture_stdout_stderr
 def get_autogen_tool(request_json: str):
@@ -79,8 +100,8 @@ def delete_autogen_tool(request_json: str):
     return AutogenTools.delete_autogen_tool_api(request_json)
 
 @capture_stdout_stderr
-def get_autogen_agent_list(request_json: str):
-    return AutogenAgent.get_autogen_agent_list_api(request_json)
+def get_autogen_agent_list():
+    return AutogenAgent.get_autogen_agent_list_api()
 
 @capture_stdout_stderr
 def get_autogen_agent(request_json: str):
@@ -95,8 +116,8 @@ def delete_autogen_agent(request_json: str):
     return AutogenAgent.delete_autogen_agent_api(request_json)
 
 @capture_stdout_stderr
-def get_autogen_group_chat_list(request_json: str):
-    return AutogenGroupChat.get_autogen_group_chat_list_api(request_json)
+def get_autogen_group_chat_list():
+    return AutogenGroupChat.get_autogen_group_chat_list_api()
 
 @capture_stdout_stderr
 def get_autogen_group_chat(request_json: str):

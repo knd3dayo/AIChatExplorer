@@ -71,7 +71,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         }
 
-        // LoadItems
+        // LoadItemsAsync
         public virtual void LoadItems() {
             LoadItems<ContentItemWrapper>();
         }

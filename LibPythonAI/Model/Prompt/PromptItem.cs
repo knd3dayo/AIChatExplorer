@@ -152,7 +152,7 @@ namespace LibPythonAI.Model.Prompt {
             }
         }
 
-        // Save
+        // SaveAsync
         public void Save() {
             PromptItemEntity.SaveItems([this.Entity]);
         }
@@ -413,7 +413,7 @@ namespace LibPythonAI.Model.Prompt {
                     ContentItemWrapper item = items[index];
 
                     CreateChatResultAsync(item, promptItem.Name).Wait();
-                    // Save
+                    // SaveAsync
                     item.Save();
                 });
                 // Execute if obj is an Action

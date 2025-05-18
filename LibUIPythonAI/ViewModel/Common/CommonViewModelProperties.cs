@@ -88,7 +88,7 @@ namespace LibUIPythonAI.ViewModel.Common {
             }
             set {
                 PythonAILibManager.Instance.ConfigParams.UpdateDevFeaturesEnabled(value);
-                // Save
+                // SaveAsync
                 OnPropertyChanged(nameof(EnableDevFeatures));
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
             }

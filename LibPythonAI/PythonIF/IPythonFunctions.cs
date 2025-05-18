@@ -10,7 +10,9 @@ namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
 
-        public Task<List<ContentFolderWrapper>> GetRootContentFolders(List<string> folderTypeStrings);
+        public Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
+
+        public Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
 
         public Task UpdateTagItemsAsync(List<TagItem> tagItems);

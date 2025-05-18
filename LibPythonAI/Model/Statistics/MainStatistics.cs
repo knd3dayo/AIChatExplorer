@@ -83,7 +83,7 @@ namespace LibPythonAI.Model.Statistics {
             return totalTokens;
         }
 
-        // Save
+        // SaveAsync
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.MainStatistics.Find(Id);
