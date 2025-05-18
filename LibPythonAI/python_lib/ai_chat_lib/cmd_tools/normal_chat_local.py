@@ -3,8 +3,7 @@ import sys
 import getopt
 import json
 import logging 
-from dotenv import load_dotenv
-
+from ai_chat_lib.cmd_tools.client_util import *
 from ai_chat_lib.chat_modules import ChatUtil
 
 logger = logging.getLogger(__name__)
@@ -43,16 +42,25 @@ def create_request_from_json_file(request_json_file: str) -> dict:
         request_dict = json.loads(request_json)
     return request_dict
 
-def create_request_from__envvars():
-    pass    
+def create_request_from_envvars() -> dict:
+    json_template = load_default_json_template()
+    # 環境変数から情報を取得する
+    update_normal_chat_request_by_envvars(json_template)
 
+    return json_template
 
 async def main():
     
     # リクエストJSONファイルの指定
     request_json_file = None
 
-    opts, args = getopt.getopt(sys.argv[1:], "p:d:i")
+    # インタラクティブモードの指定
+    interactive_mode = False
+
+    # メッセージの指定
+    message = None
+
+    opts, args = getopt.getopt(sys.argv[1:], "p:d:i:m:")
     for opt, arg in opts:
         if opt == "-p":
             # リクエストJSONファイルの指定
@@ -61,7 +69,10 @@ async def main():
             os.environ["APP_DATA_PATH"] = arg
         elif opt == "-i":
             # インタラクティブモードの指定
-            os.environ["INTERACTIVE_MODE"] = "1"
+            interactive_mode = True
+        elif opt == "-m":
+            # メッセージの指定
+            message = arg
 
 
     # 非オプション引数の処理
@@ -81,9 +92,18 @@ async def main():
         request_dict = create_request_from_json_file(request_json_file)
     else:
         # TODO request_json_fileが指定されていない場合は環境変数から情報を取得するモード
-        request_dict = create_request_from__envvars()
+        request_dict = create_request_from_envvars()
+        # メッセージを設定する。メッセージがNoneの場合はエラー
+    
+    # interactive_mode = false and request_json_file is Noneの場合はリクエストにメッセージを設定する
+    if not interactive_mode and request_json_file is None:
+        if message is None:
+            raise ValueError("Message is not set.")
+        # メッセージを設定する
+        update_normal_chat_messages("user", message, request_dict)
 
     # run_openai_chat_async_apiを実行
+    print(f"request_dict: {request_dict}")
     response_dict = await ChatUtil.run_openai_chat_async_api(request_dict)
 
     # outputの取得

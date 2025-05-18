@@ -67,6 +67,12 @@
     <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\normal_chat_local.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\client_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_lib\ai_chat_lib\cmd_tools\request_template.jsonc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_lib\ai_chat_lib\file_modules\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
