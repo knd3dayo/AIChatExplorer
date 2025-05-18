@@ -2,12 +2,12 @@ from dotenv import load_dotenv
 import os, json
 import base64
 from mimetypes import guess_type
-from typing import Any, Callable, Union
+from typing import Any, Union
 import time
-from openai import OpenAI, AzureOpenAI, RateLimitError
+from openai import RateLimitError
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 class OpenAIProps:
 

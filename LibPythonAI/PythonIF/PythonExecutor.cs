@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -59,9 +58,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.PythonNotInitialized);
                 }
             }
-
         }
-
 
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
@@ -78,7 +75,7 @@ namespace PythonAILib.PythonIF {
             string serverCmdLine = $"{serverScriptPath} {app_data_path}";
             LogWrapper.Info($"ServerCmdLine:{serverCmdLine}");
 
-            StartPythonConsole(configPrams, serverCmdLine,  false, (process) => { });
+            StartPythonConsole(configPrams, serverCmdLine, false, (process) => { });
 
             // AIアプリケーションプロセスチェッカーを開始する。
             string url = $"{configPrams.GetAPIServerURL()}/shutdown";
@@ -119,6 +116,8 @@ namespace PythonAILib.PythonIF {
                 // NO_PROXY="*"
                 envVars["NO_PROXY"] = "*";
             }
+            // LOGLEVEL
+            envVars["LOGLEVEL"] = "DEBUG";
 
             // ProcessController 
             List<string> cmdLines = [];

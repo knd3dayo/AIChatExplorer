@@ -1,6 +1,5 @@
 import os, sys
 from typing import Any
-import logging
 
 from aiohttp import web, WSMsgType
 from aiohttp.web import WebSocketResponse, Request, Response
@@ -9,12 +8,14 @@ from ai_chat_lib.autogen_modules import AutoGenProps
 from ai_chat_lib.api_modules import ai_app_wrapper
 from ai_chat_lib.api_modules import ai_app_util
 
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 routes = web.RouteTableDef()
 app = web.Application(client_max_size=1024*1024*300) # 300MB
 sio = socketio.AsyncServer(async_mode='aiohttp')
 sio.attach(app)
-logger = logging.getLogger(__name__)
+
 
 ########################
 # ContentFolders関連
@@ -420,7 +421,6 @@ if __name__ == ('__main__'):
     # アプリケーション初期化
     ai_app_util.init_app()
 
-    logging.basicConfig(level=logging.INFO)
     port = os.getenv("API_SERVER_PORT", "5000")
     logger.info(f"port={port}")
 

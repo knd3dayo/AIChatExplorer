@@ -9,8 +9,8 @@ import os
 import base64
 import aiofiles
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 class FileUtil:
 

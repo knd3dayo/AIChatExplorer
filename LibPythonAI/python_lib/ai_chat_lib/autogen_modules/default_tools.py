@@ -9,8 +9,8 @@ def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Ann
     This function searches Wikipedia with the specified keywords and returns related articles.
     """
     import wikipedia # type: ignore[import]
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
 
     # Use the Japanese version of Wikipedia
     wikipedia.set_lang(lang)
@@ -110,8 +110,9 @@ def search_duckduckgo(query: Annotated[str, "String to search for"], num_results
     from duckduckgo_search import DDGS
     ddgs = DDGS()
 
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
+
     try:
         # Retrieve DuckDuckGo search results
         if site:
@@ -284,8 +285,9 @@ async def execute_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
+    
     global autogen_props 
     from ai_chat_lib.db_modules import MainDB, AutogenTools
     from ai_chat_lib.autogen_modules import AutoGenProps
@@ -393,8 +395,9 @@ def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered to
     """
     This function retrieves a list of registered tool agents.
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
+
     logger.debug('start list_tool_agents')
     global autogen_props
     from ai_chat_lib.db_modules import MainDB, AutogenTools
@@ -419,8 +422,8 @@ def register_tool_agent(name: Annotated[str, "Function name"], doc: Annotated[st
     引数で与えられたPythonコードからexec関数を使用して関数を作成し、FunctionToolオブジェクトを作成します。
     作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
 
     global autogen_props
 
@@ -454,8 +457,8 @@ async def execute_tool_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    import ai_chat_lib.log_settings as log_settings
+    logger = log_settings.getLogger(__name__)
     global autogen_props
 
     import os

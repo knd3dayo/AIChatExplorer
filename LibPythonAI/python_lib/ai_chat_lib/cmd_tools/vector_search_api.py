@@ -1,7 +1,8 @@
 import os, json
 import ai_chat_lib.api_modules.ai_app_wrapper as ai_app_wrapper
-import logging 
-logging.basicConfig(level=logging.ERROR)
+
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"

@@ -3,10 +3,9 @@ import json
 from typing import List, Union
 import uuid
 import os
-import logging
 
-logger = logging.getLogger(__name__)
-
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 class ContentFoldersCatalog:
 
@@ -431,8 +430,6 @@ class VectorSearchRequest:
             temp_folder_id = main_db.get_content_folder_path_by_id(folder_path)
             if temp_folder_id:
                 kwargs["filter"]["folder_id"] = temp_folder_id
-            else:
-                logger.error("folder_path is not found.")
         
             del kwargs["filter"]["folder_path"]
         else:

@@ -5,9 +5,10 @@ import sys, os
 import time
 import requests # type: ignore
 import psutil # type: ignore
-import logging
 
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 
 # プロセスを監視する
 def check_process(pid : int, url : str):

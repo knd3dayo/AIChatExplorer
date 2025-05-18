@@ -2,8 +2,6 @@
 import uuid
 from typing import Tuple, List, Any, Union, Optional
 from collections import defaultdict
-import copy
-import logging
 import asyncio
 
 from langchain_core.documents import Document
@@ -22,7 +20,8 @@ from ai_chat_lib.langchain_modules.langchain_doc_store import SQLDocStore
 
 from ai_chat_lib.db_modules import EmbeddingData
 
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:

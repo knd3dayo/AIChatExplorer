@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.PythonIF.Request;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -11,10 +9,6 @@ using PythonAILib.Model.Chat;
 namespace PythonAILib.Utils.Python {
     public class DebugUtil {
 
-        private static readonly JsonSerializerOptions options = new() {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-        };
 
         public static string DebugRequestParametersFile {
             get {
@@ -89,7 +83,7 @@ namespace PythonAILib.Utils.Python {
                 "pause"
             ];
 
-            string options = $"-p {parametersJsonFile}";
+            string options = $"-f {parametersJsonFile}";
             // python_libのディレクトリ
             string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
             // debug用のScriptのディレクトリ
@@ -150,9 +144,9 @@ namespace PythonAILib.Utils.Python {
             // メインコマンド
             List<string> mainCmmands = [
                 "REM When using a api server, set the server URL and request JSON file in the command line.",
-                $"python {api_script_path} -p {parametersJsonFile}  -s {apiUrl}",
+                $"python {api_script_path} -f {parametersJsonFile}  -s {apiUrl}",
                 "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
-                $"REM  python {local_script_path} -p {parametersJsonFile}  -d {appDataPath}",
+                $"REM  python {local_script_path} -f {parametersJsonFile}  -d {appDataPath}",
                 "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
                 $"REM  python {local_script_path} -d {appDataPath}",
 
@@ -176,9 +170,9 @@ namespace PythonAILib.Utils.Python {
             // メインコマンド
             List<string> mainCmmands = [
                 "REM When using a api server, set the server URL and request JSON file in the command line.",
-                $"python vector_search_api.py -p {parametersJsonFile} -s {apiUrl}",
+                $"python vector_search_api.py -f {parametersJsonFile} -s {apiUrl}",
                 "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
-                $"REM  python vector_search_local.py -p {parametersJsonFile}  -d {appDataPath}",
+                $"REM  python vector_search_local.py -f {parametersJsonFile}  -d {appDataPath}",
                 "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
                 $"REM  python vector_search_local.py -d {appDataPath}",
             ];

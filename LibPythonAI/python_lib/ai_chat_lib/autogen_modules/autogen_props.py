@@ -25,8 +25,9 @@ from ai_chat_lib.db_modules import VectorDBItem, MainDB, VectorSearchRequest
 # openai_props
 from ai_chat_lib.openai_modules import OpenAIProps
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 
 class AutoGenProps:
 

@@ -9,8 +9,8 @@ from ai_chat_lib.openai_modules import OpenAIClient, OpenAIProps
 from ai_chat_lib.langchain_modules import  LangChainUtil
 from ai_chat_lib.db_modules import VectorSearchRequest
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 # リクエストコンテキスト
 class RequestContext:
@@ -294,7 +294,7 @@ class ChatUtil:
         content = response.choices[0].message.content
 
         # dictにして返す
-        logger.info("chat output", json.dumps(content, ensure_ascii=False, indent=2))
+        logger.info(f"chat output:{json.dumps(content, ensure_ascii=False, indent=2)}")
         return {"output": content, "total_tokens": total_tokens}
 
     @classmethod

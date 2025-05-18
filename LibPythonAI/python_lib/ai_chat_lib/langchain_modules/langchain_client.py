@@ -9,8 +9,8 @@ from typing import Any
 
 from ai_chat_lib.openai_modules.openai_util import OpenAIProps
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 class LangChainOpenAIClient:
     def __init__(self, props: OpenAIProps):

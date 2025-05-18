@@ -2,13 +2,51 @@ import os
 import sys
 import getopt
 import json
-import logging 
 from ai_chat_lib.cmd_tools.client_util import *
 from ai_chat_lib.chat_modules import ChatUtil
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 os.environ["PYTHONUTF8"] = "1"
+
+def process_arguments(sys_args: list[str]) -> tuple:
+    """
+    コマンドライン引数を処理する関数
+    :param sys_args: コマンドライン引数
+    :return: リクエストJSONファイル, インタラクティブモードのフラグ, メッセージ, 初期化フラグ
+    """
+    # リクエストJSONファイルの指定
+    request_json_file = None
+    # インタラクティブモードの指定
+    interactive_mode = False
+    # メッセージの指定
+    message = None
+
+    opts, args = getopt.getopt(sys_args[1:], "f:d:m:i")
+    for opt, arg in opts:
+        if opt == "-f":
+            # リクエストJSONファイルの指定
+            request_json_file = arg
+        elif opt == "-d":
+            os.environ["APP_DATA_PATH"] = arg
+        elif opt == "-i":
+            # インタラクティブモードの指定
+            interactive_mode = True
+        elif opt == "-m":
+            # メッセージの指定
+            message = arg
+
+    # 非オプション引数の処理
+    if args:
+        # args[0] がinitの場合はアプリケーションの初期化のみを行い終了する。
+        if args[0] == "init":
+            return None, False, None, True
+        else:
+            raise ValueError(f"Unknown argument: {args[0]}")
+        
+    return request_json_file, interactive_mode, message, False
+
 
 def init_app() -> None:
     """
@@ -31,88 +69,63 @@ def check_app_data_path():
         logger.error("APP_DATA_PATH is the path to the root directory where the application data is stored.")
         raise ValueError("APP_DATA_PATH is not set.")
 
-def create_request_from_json_file(request_json_file: str) -> dict:
+async def run_chat_async(request_dict: dict ):
     """
-    JSONファイルからリクエストを作成する関数
-    :param request_json_file: JSONファイルのパス
-    :return: リクエスト辞書
+    非同期でチャットを実行する関数
+    :param request_dict: リクエスト辞書
+    :return: レスポンス辞書
     """
-    with open(request_json_file, "r", encoding="utf-8") as f:
-        request_json = f.read()
-        request_dict = json.loads(request_json)
-    return request_dict
+    # run_openai_chat_async_apiを実行
+    response_dict = await ChatUtil.run_openai_chat_async_api(request_dict)
+    output:str = response_dict.get("output", "")
+    if output:
+        print(output)
+    else:
+        print("No output found in the response.")
 
-def create_request_from_envvars() -> dict:
-    json_template = load_default_json_template()
-    # 環境変数から情報を取得する
-    update_normal_chat_request_by_envvars(json_template)
-
-    return json_template
+async def run_chat_interactive_async(request_dict: dict) -> None:
+    """
+    インタラクティブモードでチャットを実行する関数
+    :param request_dict: リクエスト辞書
+    :return: None
+    """
+    # インタラクティブモードでチャットを実行
+    while True:
+        input_message = input("User: ")
+        # ユーザーメッセージを追加
+        update_normal_chat_messages("user", input_message, request_dict)
+        response_dict = await ChatUtil.run_openai_chat_async_api(request_dict)
+        # レスポンスを取得
+        output = response_dict.get("output")
+        if output:
+            print(f"Assistant:\n{output}")
+            # レスポンスを追加
+            update_normal_chat_messages("assistant", output, request_dict)
+        else:
+            print("No output found in the response.")
 
 async def main():
     
-    # リクエストJSONファイルの指定
-    request_json_file = None
-
-    # インタラクティブモードの指定
-    interactive_mode = False
-
-    # メッセージの指定
-    message = None
-
-    opts, args = getopt.getopt(sys.argv[1:], "p:d:i:m:")
-    for opt, arg in opts:
-        if opt == "-p":
-            # リクエストJSONファイルの指定
-            request_json_file = arg
-        elif opt == "-d":
-            os.environ["APP_DATA_PATH"] = arg
-        elif opt == "-i":
-            # インタラクティブモードの指定
-            interactive_mode = True
-        elif opt == "-m":
-            # メッセージの指定
-            message = arg
-
-
-    # 非オプション引数の処理
-    if args:
-        # args[0] がinitの場合はアプリケーションの初期化のみを行い終了する。
-        if args[0] == "init":
-            init_app()
-            return
-        else:
-            raise ValueError(f"Unknown argument: {args[0]}")
+    # コマンドライン引数の処理
+    request_json_file, interactive_mode, message, init_flag = process_arguments(sys.argv)
+    if init_flag:
+        # アプリケーションの初期化
+        init_app()
+        return
 
     # 環境変数APP_DATA_PATHの確認
     check_app_data_path() 
 
-    if request_json_file:
-        # request_json_fileが指定されている場合はそのファイルを読み込む
-        request_dict = create_request_from_json_file(request_json_file)
-    else:
-        # TODO request_json_fileが指定されていない場合は環境変数から情報を取得するモード
-        request_dict = create_request_from_envvars()
-        # メッセージを設定する。メッセージがNoneの場合はエラー
-    
-    # interactive_mode = false and request_json_file is Noneの場合はリクエストにメッセージを設定する
-    if not interactive_mode and request_json_file is None:
-        if message is None:
-            raise ValueError("Message is not set.")
-        # メッセージを設定する
-        update_normal_chat_messages("user", message, request_dict)
+    # リクエストの準備
+    request_dict = prepare_normal_chat_request(request_json_file, interactive_mode, message)
 
     # run_openai_chat_async_apiを実行
-    print(f"request_dict: {request_dict}")
-    response_dict = await ChatUtil.run_openai_chat_async_api(request_dict)
-
-    # outputの取得
-    output = response_dict.get("output")
-    # outputの表示
-    if output:
-        print(output)
+    if interactive_mode:
+        # インタラクティブモードでチャットを実行
+        await run_chat_interactive_async(request_dict)
     else:
-        raise ValueError("No output found in the response.")
+        # 非同期でチャットを実行
+        await run_chat_async(request_dict)
 
 if __name__ == '__main__':
     import asyncio

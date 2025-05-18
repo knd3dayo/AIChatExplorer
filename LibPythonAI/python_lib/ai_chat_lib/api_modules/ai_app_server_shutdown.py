@@ -3,9 +3,9 @@
 
 import sys, os
 import requests # type: ignore
-import logging
 
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 def stop_process(url : str):
     try:

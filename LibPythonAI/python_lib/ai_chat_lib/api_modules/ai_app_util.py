@@ -4,9 +4,9 @@ from collections.abc import Generator, AsyncGenerator
 from io import StringIO
 import sys
 from ai_chat_lib.db_modules import MainDB
-import logging
 
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
 
 # アプリケーション初期化時に呼び出される関数
 def init_app() -> None:

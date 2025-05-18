@@ -17,8 +17,9 @@ from ai_chat_lib.langchain_modules.langchain_vector_db import LangChainVectorDB
 from ai_chat_lib.openai_modules.openai_util import OpenAIProps
 from ai_chat_lib.db_modules import *
 
-import logging
-logger = logging.getLogger(__name__)
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 
 
 class CustomToolInput(BaseModel):

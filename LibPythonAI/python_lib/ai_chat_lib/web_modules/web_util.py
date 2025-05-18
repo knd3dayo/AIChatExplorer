@@ -1,4 +1,4 @@
-from typing import Any, Callable, AsyncGenerator, Union
+from typing import Any, Union
 from typing import Annotated
 import json
 
@@ -6,10 +6,11 @@ from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
-from ai_chat_lib.langchain_modules.langchain_client import LangChainOpenAIClient
 from ai_chat_lib.file_modules.file_util import FileUtil
-import logging
-logger = logging.getLogger(__name__)
+
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 
 class WebUtil:
     web_request_name = "web_request"

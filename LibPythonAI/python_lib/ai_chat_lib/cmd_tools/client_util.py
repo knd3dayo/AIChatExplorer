@@ -1,8 +1,14 @@
 import json
 import re
 import os
+import httpx  # type: ignore
+
 from dotenv import load_dotenv
-from typing import Optional
+from typing import Optional, Union
+
+import ai_chat_lib.log_settings as log_settings
+logger = log_settings.getLogger(__name__)
+
 def jsonc_load(file_path: str):
     """
     Load a JSON file with comments.
@@ -83,3 +89,88 @@ def update_normal_chat_messages(role: str, message: str, json_template: dict):
     # メッセージを追加する
     content = [ {"type": "text", "text": message} ]
     json_template["chat_request"]["messages"].append({"role": role, "content": content})
+
+def clear_normal_chat_messages(json_template: dict):
+    """
+    Clear the chat messages in the JSON template.
+    :param json_template: JSON template to update.
+    """
+    # メッセージをクリアする
+    json_template["chat_request"]["messages"] = []
+
+def create_normal_chat_request_from_json_file(request_json_file: str) -> dict:
+    """
+    JSONファイルからリクエストを作成する関数
+    :param request_json_file: JSONファイルのパス
+    :return: リクエスト辞書
+    """
+    with open(request_json_file, "r", encoding="utf-8") as f:
+        request_json = f.read()
+        request_dict = json.loads(request_json)
+    return request_dict
+
+def create_normal_chat_request_from_envvars() -> dict:
+    json_template = load_default_json_template()
+    # 環境変数から情報を取得する
+    update_normal_chat_request_by_envvars(json_template)
+
+    return json_template
+
+def prepare_normal_chat_request(request_json_file: Union[str, None], interactive_mode: bool, message: Union[str, None]) -> dict:
+    """
+    リクエストを準備する関数
+    :param request_json_file: JSONファイルのパス
+    :param interactive_mode: インタラクティブモードかどうか
+    :param message: メッセージ
+    :return: リクエスト辞書
+    """
+    
+    if request_json_file:
+        # JSONファイルからリクエストを作成する
+        request_dict = create_normal_chat_request_from_json_file(request_json_file)
+    else:
+        # 環境変数からリクエストを作成する
+        request_dict = create_normal_chat_request_from_envvars()
+
+    if interactive_mode and message:
+        # インタラクティブモードの場合はメッセージをクリアする
+        clear_normal_chat_messages(request_dict)
+        # メッセージを設定する
+        update_normal_chat_messages("user", message, request_dict)
+
+    return request_dict
+
+async def send_request(request_dict: dict, api_endpoint: str) -> dict:
+    """
+    リクエストを送信する関数
+    :param request_dict: リクエスト辞書
+    :param api_base: APIのURL
+    :return: レスポンス辞書
+    """
+
+    # APIリクエスト 現時点では認証はなし
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+    # APIリクエスト 現時点では認証はなし
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+    # APIリクエスト送信
+    async with httpx.AsyncClient() as client:
+        logger.debug(f"Request data: {request_dict}")
+        response = await client.post(api_endpoint, headers=headers, json=request_dict, timeout=180)
+        logger.debug(f"Response data: {response.text}")
+
+    # レスポンスの取得
+    if response.status_code != 200:
+        raise ValueError(f"API request failed with status code {response.status_code}")
+    
+    # レスポンスのJSONをdictionaryに変換
+    response_dict = response.json()  # response.json() は非同期ではない
+
+    return response_dict
+
