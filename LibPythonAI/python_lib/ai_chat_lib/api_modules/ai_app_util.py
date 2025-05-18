@@ -4,6 +4,10 @@ from collections.abc import Generator, AsyncGenerator
 from io import StringIO
 import sys
 from ai_chat_lib.db_modules import MainDB
+import logging
+
+logger = logging.getLogger(__name__)
+
 # アプリケーション初期化時に呼び出される関数
 def init_app() -> None:
     MainDB.init()
@@ -19,9 +23,9 @@ def capture_stdout_stderr(func):
         try:
             # debug用
             # HTTPS_PROXY環境変数
-            print(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
+            logger.debug(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
             # NO_PROXY環境変数
-            print(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
+            logger.debug(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
 
             result = func(*args, **kwargs)
             # resultがdictでない場合は例外をスロー
@@ -29,9 +33,9 @@ def capture_stdout_stderr(func):
                 raise ValueError("result must be dict")
         except Exception as e:
             # エラーが発生した場合はエラーメッセージを出力
-            print(e)
+            logger.debug(e)
             import traceback
-            traceback.print_exc()            
+            logger.debug(traceback.format_exc())
             result["error"] = "\n".join(traceback.format_exception(type(e), e, e.__traceback__))
 
         # strout,stderrorを元に戻す
@@ -56,9 +60,9 @@ def capture_stdout_stderr_async(func):
         try:
             # debug用
             # HTTPS_PROXY環境変数
-            print(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
+            logger.debug(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
             # NO_PROXY環境変数
-            print(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
+            logger.debug(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
 
             result = await func(*args, **kwargs)
             # resultがdictでない場合は例外をスロー
@@ -66,9 +70,9 @@ def capture_stdout_stderr_async(func):
                 raise ValueError("result must be dict")
         except Exception as e:
             # エラーが発生した場合はエラーメッセージを出力
-            print(e)
+            logger.error(e)
             import traceback
-            traceback.print_exc()            
+            logger.error(traceback.format_exc())
             result["error"] = "\n".join(traceback.format_exception(type(e), e, e.__traceback__))
 
         # strout,stderrorを元に戻す
@@ -107,13 +111,14 @@ def capture_generator_stdout_stderr(func):
                 buffer.truncate(0)
 
                 json_string = json.dumps(result, ensure_ascii=False, indent=4)
-                print(json_string)
+                logger.debug(json_string)
                 yield json_string
 
             except Exception as e:
                 # エラーが発生した場合はエラーメッセージを出力
                 import traceback
-                traceback.print_exc()
+                logger.error(e)
+                logger.error(traceback.format_exc())
                 result = {}
                 result["error"] = str(e)
             finally:

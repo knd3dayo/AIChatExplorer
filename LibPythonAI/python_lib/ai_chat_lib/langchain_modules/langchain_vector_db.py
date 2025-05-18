@@ -205,20 +205,22 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
 
-    def __create_decorated_retriever(self, vectorstore, **kwargs: Any):
+    def __create_decorated_retriever(self, vectorstore: VectorStore, **kwargs: Any):
         # ベクトル検索の結果にスコアを追加する
         @chain
         def retriever(query: str) -> list[Document]:
             result = []
-            params = {}
-            if kwargs:
-                params = kwargs
+            params = kwargs.copy()
             params["query"] = query
-            docs, scores = zip(*vectorstore.similarity_search_with_relevance_scores(**params))
+            search_results = vectorstore.similarity_search_with_relevance_scores(**params)
+            if not search_results:
+                return []
+
+            docs, scores = zip(*search_results)
             for doc, score in zip(docs, scores):
                 doc.metadata["score"] = score
                 result.append(doc)
-            return result
+            return result   
 
         return retriever
 
@@ -233,19 +235,19 @@ class LangChainVectorDB:
         for text in text_list:
             doc_id = str(uuid.uuid4())
             logger.info(f"folder_id:{folder_id}")
-            metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description_text, image_url)
-            print("metadata:", metadata)
+            metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, "", source_path, source_url, description_text, image_url)
+            logger.debug("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
             document_list.append(document)
 
         # MultiVectorRetrieverの場合はadd_multivector_documentを呼び出す
         if self.multi_vector_doc_store_url:
             for document in document_list:
-                await self.__add_document(document)
+                await self.__add_multivector_document(document)
             return document_list
         else:
             for document in document_list:
-                await self.__add_multivector_document(document)
+                await self.__add_document(document)
             return document_list
 
 
@@ -281,7 +283,7 @@ class LangChainVectorDB:
 
         if not search_kwargs:
             # デフォルトの検索パラメータを設定
-            print("search_kwargs is empty. Set default search_kwargs")
+            logger.info("search_kwargs is empty. Set default search_kwargs")
             search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
@@ -300,7 +302,7 @@ class LangChainVectorDB:
             )
 
         else:
-            print("Creating a regular Retriever")
+            logger.debug("Creating a regular Retriever")
             retriever = self.__create_decorated_retriever(self.db, **search_kwargs)
          
         return retriever
@@ -354,9 +356,13 @@ class LangChainVectorDB:
                 break
 
     @classmethod
-    def create_metadata(cls, doc_id, source_id, folder_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
+    def create_metadata(cls, 
+                        doc_id: str, source_id: str, folder_id: str, 
+                        folder_path: str, source_path: str, source_url: str, 
+                        description: str, image_url: str, score = 0.0
+                        ) -> dict[str, Any]:
         metadata = {
-            "folder_id": folder_id, "source_path": source_path, "git_repository_url": source_url, 
+            "folder_id": folder_id, "folder_path": folder_path, "source_path": source_path,  "git_repository_url": source_url, 
             "description": description, "image_url": image_url, "git_relative_path": "",
             "doc_id": doc_id, "source_id": source_id, "source_type": 0, "score": score
         }
@@ -373,6 +379,7 @@ class LangChainVectorDB:
         description = metadata.get("description", "")
         image_url = metadata.get("image_url", "")
         score = metadata.get("score", 0)
-        return cls.create_metadata(doc_id, source_id, folder_id, source_path, source_url, description, image_url, score)
+        folder_path = metadata.get("folder_path", "")
+        return cls.create_metadata(doc_id, source_id, folder_id, folder_path ,source_path, source_url, description, image_url, score)
 
     

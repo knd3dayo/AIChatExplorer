@@ -360,7 +360,7 @@ async def export_to_excel(request: Request) -> Response:
 async def import_from_excel(request: Request) -> Response:
     request_json = await request.text()
     response = ai_app_wrapper.import_from_excel(request_json)
-    print(response)
+    logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 
 # hello_world

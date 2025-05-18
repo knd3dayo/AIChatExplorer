@@ -2,13 +2,12 @@ from typing import Any, Union, Callable
 import os
 import sys
 from io import StringIO
-
 import venv
-
 # json
 import json
 # Generator
 from typing import AsyncGenerator
+
 
 # autogen
 from autogen_ext.models.openai import OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient
@@ -26,6 +25,8 @@ from ai_chat_lib.db_modules import VectorDBItem, MainDB, VectorSearchRequest
 # openai_props
 from ai_chat_lib.openai_modules import OpenAIProps
 
+import logging
+logger = logging.getLogger(__name__)
 
 class AutoGenProps:
 
@@ -63,8 +64,8 @@ class AutoGenProps:
     # session_tokenを削除する
     @classmethod
     def remove_session_token(cls, session_token: str) -> bool:
-        print(f"remove_session_token: {session_token}")
-        print(cls.session_tokens)
+        logger.debug(f"remove_session_token: {session_token}")
+        logger.debug(cls.session_tokens)
         if session_token in cls.session_tokens:
             cls.session_tokens.pop(session_token)
             return True
@@ -157,7 +158,7 @@ class AutoGenProps:
     def __prepare_autogen_agent_chat(self):
 
         agent = self.__load_agent(self.chat_name, self.openai_props)
-        print(f"agent:{agent.name}")
+        logger.debug(f"agent:{agent.name}")
 
         self.chat_object = agent
 
@@ -180,7 +181,7 @@ class AutoGenProps:
 
         # エージェント名一覧を表示
         for agent in agents:
-            print(f"agent:{agent.name}")
+            logger.debug(f"agent:{agent.name}")
 
         # termination_conditionを作成
         termination_condition = self.__create_termination_condition(self.terminate_msg, self.max_msg, self.timeout)
@@ -257,7 +258,7 @@ class AutoGenProps:
             for tool_name in agent_dict.tool_names.split(","):
                 if not tool_name:
                     continue
-                print(f"tool_name:{tool_name}")
+                logger.debug(f"tool_name:{tool_name}")
                 func_tool = self.__create_tool(tool_name)
                 tool_dict_list.append(func_tool)
             # vector_db_itemsが指定されている場合は、vector_db_items用のtoolを作成
@@ -331,14 +332,14 @@ class AutoGenProps:
             parameters["azure_endpoint"] = llm_config_entry.base_url
             # parametersのazure_deploymentにmodelを設定
             parameters["azure_deployment"] = llm_config_entry.model
-            # print(f"autogen llm_config parameters:{parameters}")
+            # logger.debug(f"autogen llm_config parameters:{parameters}")
             client = AzureOpenAIChatCompletionClient(**parameters)
         else:
             # base_urlが指定されている場合は、parametersのbase_urlにbase_urlを設定
             if llm_config_entry.base_url != "":
                 parameters["base_url"] = llm_config_entry.base_url
     
-            # print(f"autogen llm_config parameters:{parameters}")
+            # logger.debug(f"autogen llm_config parameters:{parameters}")
             client = OpenAIChatCompletionClient(**parameters)
 
         return client
@@ -346,12 +347,12 @@ class AutoGenProps:
     def __create_code_executor(self):
         params = {}
         params["work_dir"] = self.work_dir_path
-        print(f"work_dir_path:{self.work_dir_path}")
+        logger.debug(f"work_dir_path:{self.work_dir_path}")
         if self.venv_path:
             env_builder = venv.EnvBuilder(with_pip=True)
             virtual_env_context = env_builder.ensure_directories(self.venv_path)
             params["virtual_env_context"] = virtual_env_context
-            print(f"venv_path:{self.venv_path}")
+            logger.debug(f"venv_path:{self.venv_path}")
             
         # Create a local command line code executor.
         executor = LocalCommandLineCodeExecutor(
@@ -410,13 +411,13 @@ class AutoGenProps:
         async for message in agent.run_stream(task=initial_message, cancellation_token=cancel_token):
             # session_tokensにsesson_tokenがない場合は、処理を中断
             if AutoGenProps.session_tokens.get(self.session_token) is None:
-                print("request cancel")
+                logger.debug("request cancel")
                 cancel_token.cancel()    
                 break
             if type(message) == TaskResult:
                 break
             if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
-                message_str = f"{message.source}: {message.content}"
+                message_str = f"{message.source}: {message.content}" # type: ignore
                 yield message_str
     
     # 指定したinitial_messageを使って、GroupChatを実行する
@@ -431,13 +432,13 @@ class AutoGenProps:
         async for message in self.chat_object.run_stream(task=initial_message, cancellation_token=cancel_token):
             # session_tokensにsesson_tokenがない場合は、処理を中断
             if AutoGenProps.session_tokens.get(self.session_token) is None:
-                print("request cancel")
+                logger.debug("request cancel")
                 cancel_token.cancel()    
                 break
             if type(message) == TaskResult:
                 break
             if type(message) == ChatMessage or type(message) == AgentEvent or type(message) == TextMessage:
-                message_str = f"{message.source}: {message.content}"
+                message_str = f"{message.source}: {message.content}" # type: ignore
                 yield message_str
 
     chat_request_name = "chat_request"

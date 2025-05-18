@@ -31,12 +31,12 @@ namespace LibPythonAI.PythonIF.Request {
         // ToDict
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                ["Id"] = Id,
-                ["FolderName"] = FolderName,
-                ["FolderTypeString"] = FolderTypeString,
-                ["Description"] = Description,
-                ["IsRootFolder"] = IsRootFolder,
-                ["ExtendedPropertiesJson"] = ExtendedPropertiesJson
+                ["id"] = Id,
+                ["folder_name"] = FolderName,
+                ["folder_type_string"] = FolderTypeString,
+                ["description"] = Description,
+                ["is_root_folder"] = IsRootFolder,
+                ["extended_properties_json"] = ExtendedPropertiesJson
             };
             if (ParentId != null) {
                 dict["parent_id"] = ParentId;
@@ -57,11 +57,11 @@ namespace LibPythonAI.PythonIF.Request {
         // FromDict
         public static ContentFolderRequest FromDict(Dictionary<string, object> dict) {
             ContentFolderRequest request = new() {
-                Id = dict["Id"]?.ToString() ?? "",
-                FolderName = dict["FolderName"]?.ToString() ?? "",
-                Description = dict["Description"]?.ToString() ?? "",
-                IsRootFolder = Convert.ToBoolean(dict["IsRootFolder"]),
-                ExtendedPropertiesJson = dict["ExtendedPropertiesJson"]?.ToString() ?? "{}"
+                Id = dict["id"]?.ToString() ?? "",
+                FolderName = dict["folder_name"]?.ToString() ?? "",
+                Description = dict["description"]?.ToString() ?? "",
+                IsRootFolder = Convert.ToBoolean(dict["is_root_folder"]),
+                ExtendedPropertiesJson = dict["extended_properties_json"]?.ToString() ?? "{}"
             };
             if (dict.ContainsKey("parent_id")) {
                 request.ParentId = dict["parent_id"]?.ToString();

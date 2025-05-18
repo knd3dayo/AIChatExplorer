@@ -6,6 +6,8 @@ from typing import Any, Callable, Union
 import time
 from openai import OpenAI, AzureOpenAI, RateLimitError
 
+import logging
+logger = logging.getLogger(__name__)
 
 class OpenAIProps:
 
@@ -216,7 +218,7 @@ class OpenAIClient:
             except RateLimitError as e:
                 count += 1
                 # rate limit errorが発生した場合はリトライする旨を表示。英語
-                print(f"RateLimitError has occurred. Retry after {count*30} seconds.")
+                logger.warn(f"RateLimitError has occurred. Retry after {count*30} seconds.")
                 time.sleep(count*30)
                 if count == 5:
                     raise e

@@ -8,6 +8,8 @@ from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from ai_chat_lib.langchain_modules.langchain_client import LangChainOpenAIClient
 from ai_chat_lib.file_modules.file_util import FileUtil
+import logging
+logger = logging.getLogger(__name__)
 
 class WebUtil:
     web_request_name = "web_request"
@@ -79,7 +81,7 @@ class WebUtil:
         # Edgeドライバをインストールし、インストール場所を取得
         if cls.edge_driver_path is None:
             cls.edge_driver_path = EdgeChromiumDriverManager().install()
-            print(f"EdgeDriverのインストール場所: {cls.edge_driver_path}")
+            logger.debug(f"EdgeDriverのインストール場所: {cls.edge_driver_path}")
         # Edgeドライバをセットアップ
         return webdriver.Edge(service=Service(cls.edge_driver_path), options=edge_options)
 

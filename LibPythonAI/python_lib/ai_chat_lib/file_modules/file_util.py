@@ -6,10 +6,11 @@ import aiofiles # type: ignore
 from ai_chat_lib.file_modules.excel_util import ExcelUtil
 import json
 import os
-import tempfile
 import base64
 import aiofiles
 
+import logging
+logger = logging.getLogger(__name__)
 
 class FileUtil:
 
@@ -105,7 +106,7 @@ class FileUtil:
             if res.dl.is_text:
                 encoding = cls.get_encoding(filename)
         except Exception as e:
-            print(e)
+            logger.debug(e)
             return None, None
 
         return res, encoding
@@ -121,7 +122,10 @@ class FileUtil:
                 if not byte_data:
                     return None, None
         except Exception as e:
-            print(e)
+            logger.error(e)
+            import traceback
+            logger.error(traceback.format_exc())
+
             return None, None
         # エンコーディング判定
         detector = UniversalDetector()
@@ -143,7 +147,7 @@ class FileUtil:
         
         if res is None:
             return None
-        print(res.output.mime_type)
+        logger.debug(res.output.mime_type)
         result = None        
         if res.output.mime_type.startswith("text/"):
             result = await cls.process_text_async(filename, res, encoding)
@@ -164,7 +168,7 @@ class FileUtil:
         elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
             result = cls.process_pptx(filename)
         else:
-            print("Unsupported file type: " + res.output.mime_type)
+            logger.error("Unsupported file type: " + res.output.mime_type)
 
         return cls.sanitize_text(result)
 

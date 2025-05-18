@@ -47,6 +47,9 @@ namespace LibPythonAI.Data {
             }
         }
 
+        // IsRootFolder
+        public bool IsRootFolder { get; set; } = false;
+
         public void SaveExtendedPropertiesJson() {
             if (_extendedProperties != null) {
                 ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);

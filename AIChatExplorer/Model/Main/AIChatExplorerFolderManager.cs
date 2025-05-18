@@ -105,11 +105,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                             FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
                     clipboardRootFolder = folder;
 
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (clipboardRootFolder.IsRootFolder == false) {
+                    clipboardRootFolder.IsRootFolder = true;
+                    clipboardRootFolder.Save();
                 }
                 return clipboardRootFolder;
             }
@@ -131,10 +137,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
                             FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
                     searchRootFolder = folder;
+                   
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (searchRootFolder.IsRootFolder == false) {
+                    searchRootFolder.IsRootFolder = true;
+                    searchRootFolder.Save();
                 }
                 return searchRootFolder;
             }
@@ -159,11 +172,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
                             FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
 
                     fileSystemRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (fileSystemRootFolder.IsRootFolder == false) {
+                    fileSystemRootFolder.IsRootFolder = true;
+                    fileSystemRootFolder.Save();
                 }
                 return fileSystemRootFolder;
             }
@@ -187,11 +206,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
                             FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
 
                     shortcutRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (shortcutRootFolder.IsRootFolder == false) {
+                    shortcutRootFolder.IsRootFolder = true;
+                    shortcutRootFolder.Save();
                 }
                 return shortcutRootFolder;
             }
@@ -215,11 +240,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
                             FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
 
                     outlookRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (outlookRootFolder.IsRootFolder == false) {
+                    outlookRootFolder.IsRootFolder = true;
+                    outlookRootFolder.Save();
                 }
                 return outlookRootFolder;
                 #endregion
@@ -246,11 +277,17 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
                             FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
 
                     edgeBrowseHistoryRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (edgeBrowseHistoryRootFolder.IsRootFolder == false) {
+                    edgeBrowseHistoryRootFolder.IsRootFolder = true;
+                    edgeBrowseHistoryRootFolder.Save();
                 }
                 return edgeBrowseHistoryRootFolder;
             }
@@ -275,10 +312,16 @@ namespace AIChatExplorer.Model.Main {
                         folder = new() {
                             FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
                             FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
                         };
                         folder.Save();
                     }
                     recentFilesRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (recentFilesRootFolder.IsRootFolder == false) {
+                    recentFilesRootFolder.IsRootFolder = true;
+                    recentFilesRootFolder.Save();
                 }
 
                 return recentFilesRootFolder;

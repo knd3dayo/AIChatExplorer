@@ -8,6 +8,9 @@ logging.basicConfig(level=logging.ERROR)
 import asyncio
 import sys
 import getopt
+import logging
+logger = logging.getLogger(__name__)
+
 async def main():
     # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
     os.environ["PYTHONUTF8"] = "1"
@@ -32,7 +35,7 @@ async def main():
             props_file = arg
 
     if props_file:
-        print(f"props_file:{props_file}")
+        logger.debug(f"props_file:{props_file}")
         with open(props_file, "r", encoding="utf-8") as f:
             props_dict = json.load(f)
 

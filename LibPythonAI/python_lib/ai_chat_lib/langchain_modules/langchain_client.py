@@ -9,6 +9,9 @@ from typing import Any
 
 from ai_chat_lib.openai_modules.openai_util import OpenAIProps
 
+import logging
+logger = logging.getLogger(__name__)
+
 class LangChainOpenAIClient:
     def __init__(self, props: OpenAIProps):
         
@@ -79,9 +82,9 @@ class LangChainChatParameter:
         chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
         self.chat_history = LangChainChatParameter.convert_to_langchain_chat_history(chat_history_json)
         # デバッグ出力
-        print ("LangChainChatParameter, __init__")
-        print(f'prompt: {self.prompt}')
-        print(f'chat_history: {self.chat_history}')
+        logger.debug ("LangChainChatParameter, __init__")
+        logger.debug(f'prompt: {self.prompt}')
+        logger.debug(f'chat_history: {self.chat_history}')
 
     @classmethod
     def convert_to_langchain_chat_history(cls, chat_history_json: str):

@@ -56,7 +56,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         doc_dict = self.db.get(where={name: value}) # type: ignore
 
         # デバッグ用
-        print("_get_document_ids_by_tag doc_dict:", doc_dict)
+        logger.debug("_get_document_ids_by_tag doc_dict:", doc_dict)
 
         # vector idを取得してidsに追加
         ids.extend(doc_dict.get("ids", []))

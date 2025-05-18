@@ -19,6 +19,7 @@ class ContentFoldersCatalog:
     "folder_name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "extended_properties_json" TEXT NOT NULL
+    "is_root_folder" INTEGER NOT NULL,
     )
     '''
     get_content_folder_requelsts_name = "content_folder_requests"
@@ -166,8 +167,21 @@ class ContentFoldersCatalog:
         self.Description = content_folder_dict.get("description", "")
         self.ExtendedPropertiesJson = content_folder_dict.get("extended_properties_json", "")
         self.FolderPath = content_folder_dict.get("folder_path", "")
+        IsRootFolder = content_folder_dict.get("is_root_folder", 0)
+        # is_root_folderがintの場合
+        if type(IsRootFolder) == int:
+            self.IsRootFolder = bool(IsRootFolder)
+        # is_root_folderがboolの場合
+        elif type(IsRootFolder) == bool:
+            self.IsRootFolder = IsRootFolder
+        # is_root_folderがstrの場合
+        elif type(IsRootFolder) == str and IsRootFolder.upper() == "TRUE":
+            self.IsRootFolder = True
+        else:
+            self.IsRootFolder = False
  
     def to_dict(self) -> dict:
+        
         result = {
             "id": self.Id,
             "folder_type_string": self.FolderTypeString,
@@ -314,8 +328,30 @@ class VectorDBItem:
         self.CollectionName = vector_db_item_dict.get("collection_name", "")
         self.ChunkSize = vector_db_item_dict.get("chunk_size", 0)
         self.DefaultSearchResultLimit = vector_db_item_dict.get("default_search_result_limit", 0)
-        self.IsEnabled = vector_db_item_dict.get("is_enabled", 0)
-        self.IsSystem = vector_db_item_dict.get("is_system", 0)
+        IsEnabled = vector_db_item_dict.get("is_enabled", 0)
+        IsSystem = vector_db_item_dict.get("is_system", 0)
+        # is_enabledがintの場合
+        if type(IsEnabled) == int:
+            self.IsEnabled = bool(IsEnabled)
+        # is_enabledがboolの場合
+        elif type(IsEnabled) == bool:
+            self.IsEnabled = IsEnabled
+        # is_enabledがstrの場合
+        elif type(IsEnabled) == str and IsEnabled.upper() == "TRUE":
+            self.IsEnabled = True
+        else:
+            self.IsEnabled = False
+        # is_systemがintの場合
+        if type(IsSystem) == int:
+            self.IsSystem = bool(IsSystem)
+        # is_systemがboolの場合
+        elif type(IsSystem) == bool:
+            self.IsSystem = IsSystem
+        # is_systemがstrの場合
+        elif type(IsSystem) == str and IsSystem.upper() == "TRUE":
+            self.IsSystem = True
+        else:
+            self.IsSystem = False
 
         self.VectorDBTypeString :str = vector_db_item_dict.get("vector_db_type_string", "")
         if not self.VectorDBTypeString:
@@ -375,24 +411,34 @@ class VectorSearchRequest:
         self.name = item.get("name", "")
         self.query = item.get("query", "")
         self.model = item.get("model", "")
-        self.search_kwargs = item.get("search_kwargs", {})
         self.vector_db_item = None
-
         # search_kwargsのアップデート
-        self.__update_search_kwargs(self.search_kwargs)
+        self.search_kwargs = self.__update_search_kwargs(item.get("search_kwargs", {}))
 
     def __update_search_kwargs(self, kwargs: dict):
+        # filterが存在する場合
+        filter = kwargs.get("filter", None)
+        if not filter:
+            logger.debug("__update_search_kwargs: filter is not set.")
+            return kwargs
         # folder_pathが指定されている場合はfolder_pathからfolder_idを取得する
-        folder_path = kwargs.get("folder_path", None)
+        folder_path = filter.get("folder_path", None)
         if folder_path:
+            logger.info(f"__update_search_kwargs: folder_path: {folder_path}")
             # MainDBを取得
             main_db = MainDB()
             # folder_pathからfolder_idを取得
-            folder_id = main_db.get_content_folder_path_by_id(folder_path)
-            if not folder_id:
-                raise ValueError("folder_path is not found.")
-            kwargs["folder_id"] = folder_id
-            del kwargs["folder_path"]
+            temp_folder_id = main_db.get_content_folder_path_by_id(folder_path)
+            if temp_folder_id:
+                kwargs["filter"]["folder_id"] = temp_folder_id
+            else:
+                logger.error("folder_path is not found.")
+        
+            del kwargs["filter"]["folder_path"]
+        else:
+            logger.info("__update_search_kwargs: folder_path is not set.")
+
+        return kwargs
 
     def get_vector_db_item(self) -> VectorDBItem:
         if self.vector_db_item:
@@ -761,7 +807,7 @@ class AutogenAgent:
     以下のテーブル定義のデータを格納するクラス
     CREATE TABLE autogen_agents (
         name TEXT PRIMARY KEY, description TEXT, system_message TEXT, 
-        code_execution BOOLEAN, llm_config_name TEXT, tool_names_json TEXT, vector_db_items_json TEXT)
+        code_execution INTEGER, llm_config_name TEXT, tool_names_json TEXT, vector_db_items_json TEXT)
     '''
     @classmethod
     def get_autogen_agent_list_api(cls):
@@ -847,14 +893,20 @@ class AutogenAgent:
         self.name = agent_dict.get("name", "")
         self.description = agent_dict.get("description", "")
         self.system_message = agent_dict.get("system_message", "")
-        self.code_execution = agent_dict.get("code_execution", False)
+        code_execution = agent_dict.get("code_execution", 0)
         # code_executionの値をboolに変換
-        if type(self.code_execution) == int:
-            if self.code_execution == 1:
+        if type(code_execution) == int:
+            if code_execution == 1:
                 self.code_execution = True
             else:
                 self.code_execution = False
-                
+        elif type(code_execution) == bool:
+            self.code_execution = code_execution
+        elif type(code_execution) == str and code_execution.upper() == "TRUE":
+            self.code_execution = True
+        else:
+            self.code_execution = False
+
         self.llm_config_name = agent_dict.get("llm_config_name", "")
         self.tool_names = agent_dict.get("tool_names", "")
         self.vector_db_items = agent_dict.get("vector_db_items", [])
@@ -1157,7 +1209,7 @@ class MainDB:
 
         else:
             # 存在する場合は初期化処理を行わない
-            print("VectorDBItem is already exists.")
+            logger.info("VectorDBItem is already exists.")
 
     def __init_autogen_llm_config_table(self):
         # autogen_llm_configsテーブルが存在しない場合は作成する
@@ -1199,7 +1251,7 @@ class MainDB:
                 name TEXT PRIMARY KEY,
                 description TEXT,
                 system_message TEXT,
-                code_execution BOOLEAN,
+                code_execution INTEGER,
                 llm_config_name TEXT,
                 tool_names_json TEXT,
                 vector_db_items_json TEXT
@@ -1286,11 +1338,16 @@ class MainDB:
 
                 # データが存在しない場合はNoneを返す
                 if row is None:
+                    logger.info(f"Folder with id {folder_id} not found.")
                     return paths
+                
+                logger.info(f"Folder with id {folder_id} found.")
 
                 folder_dict = dict(row)
                 folder_name = folder_dict.get("folder_name", "")
                 parent_id = folder_dict.get("parent_id", "")
+
+                logger.info(f"Folder name: {folder_name}, Parent id: {parent_id}")
 
                 # 親フォルダが存在する場合は再帰的に取得する
                 if parent_id:
@@ -1303,6 +1360,7 @@ class MainDB:
         paths = get_folder_name_recursively(folder_id, [])
         # フォルダのパスを生成する
         folder_path = "/".join(reversed(paths))
+        logger.info(f"get_content_folder_path_by_id: Folder path: {folder_path}")
         return folder_path
 
     # pathを指定して、pathにマッチするエントリーを再帰的に辿り、folderを取得する
@@ -1379,8 +1437,10 @@ class MainDB:
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
         if self.get_content_folder_by_id(folder.Id) is None:
+            logger.info(f"ContentFolder {folder.FolderName} is not exists. Create new folder.")
             cur.execute("INSERT INTO ContentFoldersCatalog VALUES (?, ?, ?, ?, ?, ?)", (folder.Id, folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson))
         else:
+            logger.info(f"ContentFolder {folder.FolderName} is exists. Update folder.")
             cur.execute("UPDATE ContentFoldersCatalog SET folder_type_string=?, parent_id=?, folder_name=?, description=?, extended_properties_json=? WHERE Id=?", (folder.FolderTypeString, folder.ParentId, folder.FolderName, folder.Description, folder.ExtendedPropertiesJson, folder.Id))
         conn.commit()
         conn.close()

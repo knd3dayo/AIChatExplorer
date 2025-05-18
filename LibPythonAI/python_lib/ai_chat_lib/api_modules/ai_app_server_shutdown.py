@@ -3,6 +3,9 @@
 
 import sys, os
 import requests # type: ignore
+import logging
+
+logger = logging.getLogger(__name__)
 
 def stop_process(url : str):
     try:
@@ -11,8 +14,8 @@ def stop_process(url : str):
         requests.post(url, timeout=60)
     except Exception as e:
         import traceback
-        print(traceback.format_exc())
-        print("Failed to send a request to the specified URL")
+        logger.error(traceback.format_exc())
+        logger.error("Failed to send a request to the specified URL")
 
 # メイン
 if __name__ == "__main__":

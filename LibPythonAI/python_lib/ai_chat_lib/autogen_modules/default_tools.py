@@ -9,6 +9,8 @@ def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Ann
     This function searches Wikipedia with the specified keywords and returns related articles.
     """
     import wikipedia # type: ignore[import]
+    import logging
+    logger = logging.getLogger(__name__)
 
     # Use the Japanese version of Wikipedia
     wikipedia.set_lang(lang)
@@ -20,18 +22,18 @@ def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Ann
     # Display the top results
     for i, title in enumerate(search_results):
     
-        print(f"Result {i + 1}: {title}")
+        logger.debug(f"Result {i + 1}: {title}")
         try:
             # Retrieve the content of the page
             page = wikipedia.page(title)
-            print(page.content[:500])  # Display the first 500 characters
+            logger.debug(page.content[:500])  # Display the first 500 characters
             text = f"Title:\n{title}\n\nContent:\n{page.content}\n"
             result_texts.append(text)
         except wikipedia.exceptions.DisambiguationError as e:
-            print(f"Disambiguation: {e.options}")
+            logger.debug(f"Disambiguation: {e.options}")
         except wikipedia.exceptions.PageError:
-            print("Page not found.")
-        print("\n" + "-"*50 + "\n")
+            logger.debug("Page not found.")
+        logger.debug("\n" + "-"*50 + "\n")
     return result_texts
 
 def list_files_in_directory(directory_path: Annotated[str, "Directory path"]) -> list[str]:
@@ -107,12 +109,15 @@ def search_duckduckgo(query: Annotated[str, "String to search for"], num_results
     """
     from duckduckgo_search import DDGS
     ddgs = DDGS()
+
+    import logging
+    logger = logging.getLogger(__name__)
     try:
         # Retrieve DuckDuckGo search results
         if site:
             query = f"{query} site:{site}"
 
-        print(f"Search query: {query}")
+        logger.debug(f"Search query: {query}")
 
         results_dict = ddgs.text(
             keywords=query,            # Search keywords
@@ -128,14 +133,14 @@ def search_duckduckgo(query: Annotated[str, "String to search for"], num_results
             title = result.get("title", "")
             href = result.get("href", "")
             body = result.get("body", "")
-            print(f'Title: {title}, URL: {href}, Body: {body[:100]}')
+            logger.debug(f'Title: {title}, URL: {href}, Body: {body[:100]}')
             results.append((title, href, body))
 
         return results
     except Exception as e:
-        print(e)
+        logger.error(e)
         import traceback
-        traceback.print_exc()
+        logger.error(traceback.format_exc())
         return []
 
 def save_text_file(path: Annotated[str, "File path"], text: Annotated[str, "Text data to save"]) -> Annotated[str, "Saveed file path. if failed, return empty string."]:
@@ -279,6 +284,8 @@ async def execute_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
+    import logging
+    logger = logging.getLogger(__name__)
     global autogen_props 
     from ai_chat_lib.db_modules import MainDB, AutogenTools
     from ai_chat_lib.autogen_modules import AutoGenProps
@@ -296,7 +303,7 @@ async def execute_agent(
     async for message in props.run_agent(agent_name, input_text):
         if isinstance(message, BaseChatMessage):
             message_str = f"{message.source}(in agent selector:{trace_id}): {message.content}" # type: ignore
-            print(message_str)
+            logger.debug(message_str)
             output_text += message_str + "\n"   
     return output_text
 
@@ -386,7 +393,9 @@ def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered to
     """
     This function retrieves a list of registered tool agents.
     """
-    print('start list_tool_agents')
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.debug('start list_tool_agents')
     global autogen_props
     from ai_chat_lib.db_modules import MainDB, AutogenTools
     from ai_chat_lib.autogen_modules import AutoGenProps
@@ -398,7 +407,7 @@ def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered to
     tool_descption_list = []
     for agent in tools:
         tool_descption_list.append({"name": agent.name, "description": agent.description, "path": agent.path})
-        print(f"tool name:{agent.name}, description:{agent.description}")
+        logger.debug(f"tool name:{agent.name}, description:{agent.description}")
 
     return tool_descption_list
 
@@ -410,6 +419,9 @@ def register_tool_agent(name: Annotated[str, "Function name"], doc: Annotated[st
     引数で与えられたPythonコードからexec関数を使用して関数を作成し、FunctionToolオブジェクトを作成します。
     作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
     """
+    import logging
+    logger = logging.getLogger(__name__)
+
     global autogen_props
 
     import os
@@ -429,7 +441,7 @@ def register_tool_agent(name: Annotated[str, "Function name"], doc: Annotated[st
     main_db.update_autogen_tool(AutogenTools({"name": name, "description": doc, "path": python_file_path}))
     
     message = f"Registered tool agent: {name}"
-    print(message)
+    logger.debug(message)
     return message
 
 # エージェントを実行する関数
@@ -442,16 +454,18 @@ async def execute_tool_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    global autogen_props
+
+    import os
+    from ai_chat_lib.db_modules import MainDB, AutogenTools
+    from ai_chat_lib.autogen_modules import AutoGenProps
+    props : AutoGenProps = autogen_props # type: ignore
+
     try:
-        global autogen_props
-
-        import os
-        from ai_chat_lib.db_modules import MainDB, AutogenTools
-        from ai_chat_lib.autogen_modules import AutoGenProps
-        props : AutoGenProps = autogen_props # type: ignore
-
         # agent_nameに対応するエージェントを取得
-        print('start execute_tool_agent')
+        logger.debug('start execute_tool_agent')
         tool_list = [ tool for tool in list_tool_agents() if tool["name"] == agent_name]
         tool = tool_list[0] if len(tool_list) > 0 else None
 
@@ -487,7 +501,8 @@ async def execute_tool_agent(
         return output_text
     except Exception as e:
         import traceback
-        traceback.print_exc()
+        logger.error(f"Error in execute_tool_agent: {e}")
+        logger.error(traceback.format_exc())
         return f"Error: {e}"
 
     

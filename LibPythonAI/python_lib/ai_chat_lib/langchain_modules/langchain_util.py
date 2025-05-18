@@ -91,7 +91,7 @@ class RetrievalQAUtil:
         page_source_list = []
         #  verbose情報
         verbose_list = []
-        print(f"intermediate_steps:{intermediate_steps}")
+        logger.debug(f"intermediate_steps:{intermediate_steps}")
 
         for step in intermediate_steps:
             # 0: AgentAction, 1: Observation ( create_vector_search_toolsで作成したツールを使っている場合はlist[Document]が返る)
@@ -306,11 +306,11 @@ class LangChainUtil:
 
         # langchainのログを出力する
         langchain.verbose = True
-        print("langchain_chat:start")
+        logger.debug("langchain_chat:start")
         client = LangChainOpenAIClient(openai_props)
         RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_search_requests)
         ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
-        print("langchain_chat:init done")
+        logger.debug("langchain_chat:init done")
         
         result_dict = {}
         with get_openai_callback() as cb:
@@ -327,7 +327,7 @@ class LangChainUtil:
             result_dict["verbose"] = verbose_json
             result_dict["total_tokens"] = cb.total_tokens
 
-        print("langchain_chat:end")
+        logger.debug("langchain_chat:end")
 
         return result_dict
 
@@ -337,7 +337,10 @@ class LangChainUtil:
         langchain_openai_client = LangChainOpenAIClient(openai_props)
 
         vector_db_url = vector_db_props.VectorDBURL
-        doc_store_url = vector_db_props.DocStoreURL
+        if vector_db_props.IsUseMultiVectorRetriever:
+            doc_store_url = vector_db_props.DocStoreURL
+        else:
+            doc_store_url = ""
         collection_name = vector_db_props.CollectionName
         chunk_size = vector_db_props.ChunkSize
 
@@ -393,13 +396,35 @@ class LangChainUtil:
                         ChunkSize:{vector_db_item.ChunkSize} IsUseMultiVectorRetriever:{vector_db_item.IsUseMultiVectorRetriever}
                         ''')
 
-            logger.info(f'検索文字列: {request.query}')
+            logger.info(f'Query: {request.query}')
             logger.info(f'SearchKwargs:{request.search_kwargs}')
             retriever = langchain_db.create_retriever(request.search_kwargs)
             documents: list[Document] = retriever.invoke(request.query)
 
-            logger.debug(f"documents:\n{documents}")
+            # 重複排除用のリストを作成
+            doc_ids = []
+            # folder_idからfolder_pathを生成するためのMainDBを取得
+            main_db = MainDB()
+
             for doc in documents:
+                # doc_idを取得
+                doc_id = doc.metadata.get("doc_id", "")
+                # 既にdoc_idが存在する場合はスキップ
+                if doc_id in doc_ids:
+                    continue
+                # doc_idを追加
+                doc_ids.append(doc_id)
+                # folder_idを取得
+                folder_id = doc.metadata.get("folder_id", "")
+                if folder_id:
+                    # folder_idからfolder_pathを取得
+                    folder_path = main_db.get_content_folder_path_by_id(folder_id)
+                    if folder_path:
+                        doc.metadata["folder_path"] = folder_path
+                    else:
+                        # folder_pathが存在しない場合は空文字を設定
+                        doc.metadata["folder_path"] = ""
+
                 content = doc.page_content
                 doc_dict = LangChainVectorDB.create_metadata_from_document(doc)
                 doc_dict["content"] = content
@@ -409,12 +434,25 @@ class LangChainUtil:
                 sub_docs_result = []
                 for sub_doc in sub_docs:
                     content = sub_doc.page_content
+                    # folder_idを取得
+                    folder_id = sub_doc.metadata.get("folder_id", "")
+                    if folder_id:
+                        # folder_idからfolder_pathを取得
+                        folder_path = main_db.get_content_folder_path_by_id(folder_id)
+                        if folder_path:
+                            sub_doc.metadata["folder_path"] = folder_path
+                        else:
+                            # folder_pathが存在しない場合は空文字を設定
+                            sub_doc.metadata["folder_path"] = ""
+
                     sub_doc_dict = LangChainVectorDB.create_metadata_from_document(sub_doc)
                     sub_doc_dict["content"] = content
                     sub_docs_result.append(sub_doc_dict)
 
                 doc_dict["sub_docs"] = sub_docs_result
                 result.append(doc_dict)
+
+            # logger.debug(f"documents:\n{documents}")
             
         return {"documents": result}
     

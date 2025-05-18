@@ -5,6 +5,9 @@ import sys, os
 import time
 import requests # type: ignore
 import psutil # type: ignore
+import logging
+
+logger = logging.getLogger(__name__)
 
 # プロセスを監視する
 def check_process(pid : int, url : str):
@@ -21,17 +24,7 @@ def check_process(pid : int, url : str):
             except:
                 pass
 
-            # prompt flowサービスを停止
-            try:
-                # エラーを無視してコマンドを実行
-                # pf service stopコマンドを実行
-                os.system("pf service stop")
-            except: 
-                pass       
-
             break
-
-        print("Process is running") 
 
 # メイン
 if __name__ == "__main__":

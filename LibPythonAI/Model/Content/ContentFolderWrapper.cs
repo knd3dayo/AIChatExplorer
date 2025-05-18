@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Data;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
+using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
@@ -21,6 +23,14 @@ namespace LibPythonAI.Model.Content {
         public string Id {
             get {
                 return Entity.Id;
+            }
+        }
+        public bool IsRootFolder {
+            get {
+                return Entity.IsRootFolder;
+            }
+            set {
+                Entity.IsRootFolder = value;
             }
         }
 
@@ -88,14 +98,6 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // ルートフォルダか否か
-        public bool IsRootFolder {
-            get {
-                // このオブジェクトのIdと一致するIdをContentFolderRootEntityが存在するか
-                var rootId = Entity.GetRootFolder().Id;
-                return rootId != null && rootId.Equals(Id);
-            }
-        }
 
         public const string VectorDBPropertiesName = "VectorDBProperties";
         public ObservableCollection<VectorSearchProperty> ReferenceVectorSearchProperties {
@@ -183,6 +185,13 @@ namespace LibPythonAI.Model.Content {
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
+            // APIを呼び出して、ContentFolderを削除
+            Task.Run(async () => {
+                ContentFolderRequest request = new() {
+                    Id = Id,
+                };
+                await PythonExecutor.PythonAIFunctions.DeleteContentFoldersForVectorSearch([request]);
+            });
 
         }
 
@@ -207,6 +216,36 @@ namespace LibPythonAI.Model.Content {
                     children.Add(childFolder);
                 }
             }
+            // APIを呼び出して、自分自身とchildrenのContentFolderを更新
+            Task.Run(async () => {
+                List<ContentFolderRequest> requests = [];
+                foreach (var child in children) {
+                    ContentFolderRequest childRequest = new() {
+                        Id = child.Id,
+                        FolderName = child.FolderName,
+                        Description = child.Description,
+                        FolderTypeString = child.FolderTypeString,
+                        ParentId = child.Parent?.Id,
+                        ExtendedPropertiesJson = child.Entity.ExtendedPropertiesJson,
+                        IsRootFolder = child.IsRootFolder,
+                    };
+                    requests.Add(childRequest);
+                }
+                ContentFolderRequest request = new() {
+                    Id = Id,
+                    FolderName = FolderName,
+                    Description = Description,
+                    ParentId = Parent?.Id,
+                    FolderTypeString = FolderTypeString,
+                    ExtendedPropertiesJson = Entity.ExtendedPropertiesJson,
+                    IsRootFolder = IsRootFolder,
+                };
+                requests.Add(request);
+
+                await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch(requests);
+            });
+
+
             return children;
         }
 
@@ -257,6 +296,20 @@ namespace LibPythonAI.Model.Content {
                 db.ContentFolders.Entry(folder).CurrentValues.SetValues(Entity);
             }
             db.SaveChanges();
+
+            // APIを呼び出して、ContentFolderを更新
+            Task.Run(async () => {
+                ContentFolderRequest request = new() {
+                    Id = Id,
+                    FolderName = FolderName,
+                    Description = Description,
+                    ParentId = Parent?.Id,
+                    FolderTypeString = FolderTypeString,
+                    ExtendedPropertiesJson = Entity.ExtendedPropertiesJson,
+                    IsRootFolder = IsRootFolder,
+                };
+                await  PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
+            });
 
         }
 
