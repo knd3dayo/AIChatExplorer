@@ -20,7 +20,7 @@ from ai_chat_lib.langchain_modules.langchain_doc_store import SQLDocStore
 
 from ai_chat_lib.db_modules import EmbeddingData
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
@@ -223,7 +223,7 @@ class LangChainVectorDB:
 
         return retriever
 
-    async def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str, source_url: str, image_url="" , chunk_size: int = 1024) -> list[Document]:
+    async def add_document_list(self, content_text: str, description_text: str, folder_id: str, source_id: str, source_path: str,  chunk_size: int) -> list[Document]:
         
         document_list = []
 
@@ -234,7 +234,7 @@ class LangChainVectorDB:
         for text in text_list:
             doc_id = str(uuid.uuid4())
             logger.info(f"folder_id:{folder_id}")
-            metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, "", source_path, source_url, description_text, image_url)
+            metadata = LangChainVectorDB.create_metadata(doc_id, source_id, folder_id, "", source_path, description_text)
             logger.debug("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
             document_list.append(document)
@@ -334,7 +334,7 @@ class LangChainVectorDB:
         # 既に存在するドキュメントを削除
         self.delete_document(params.source_id)
         # ドキュメントを格納する。
-        await self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, params.git_relative_path)
+        await self.add_document_list(params.content, params.description, params.FolderId, params.source_id, params.source_path, chunk_size=self.chunk_size)
 
     # RateLimitErrorが発生した場合は、指数バックオフを行う
     async def add_doucment_with_retry(self, vector_db: VectorStore, documents: list[Document], max_retries: int = 5, delay: float = 1.0):
@@ -357,12 +357,12 @@ class LangChainVectorDB:
     @classmethod
     def create_metadata(cls, 
                         doc_id: str, source_id: str, folder_id: str, 
-                        folder_path: str, source_path: str, source_url: str, 
-                        description: str, image_url: str, score = 0.0
+                        folder_path: str, source_path: str,
+                        description: str, score = 0.0
                         ) -> dict[str, Any]:
         metadata = {
-            "folder_id": folder_id, "folder_path": folder_path, "source_path": source_path,  "git_repository_url": source_url, 
-            "description": description, "image_url": image_url, "git_relative_path": "",
+            "folder_id": folder_id, "folder_path": folder_path, "source_path": source_path,   
+            "description": description, 
             "doc_id": doc_id, "source_id": source_id, "source_type": 0, "score": score
         }
         return metadata
@@ -374,11 +374,9 @@ class LangChainVectorDB:
         folder_id = metadata.get("folder_id", "")
         doc_id = metadata.get("doc_id", "")
         source_path = metadata.get("source_path", "")
-        source_url = metadata.get("git_repository_url", "")
         description = metadata.get("description", "")
-        image_url = metadata.get("image_url", "")
         score = metadata.get("score", 0)
         folder_path = metadata.get("folder_path", "")
-        return cls.create_metadata(doc_id, source_id, folder_id, folder_path ,source_path, source_url, description, image_url, score)
+        return cls.create_metadata(doc_id, source_id, folder_id, folder_path ,source_path, description, score)
 
     

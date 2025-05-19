@@ -202,12 +202,12 @@ namespace PythonAILib.PythonIF {
         }
 
         // GetTokenCount
-        public async Task<long> GetTokenCount(ChatRequestContext chatRequestContext, string inputText) {
+        public async Task<long> GetTokenCount(ChatRequestContext chatRequestContext, TokenCountRequest tokenCountRequest) {
 
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
                 RequestContextInstance = chatRequestContext,
-                TokenCountRequestInstance = new(inputText)
+                TokenCountRequestInstance = tokenCountRequest
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();

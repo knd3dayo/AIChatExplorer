@@ -4,7 +4,7 @@ import ai_chat_lib.api_modules.ai_app_wrapper as ai_app_wrapper
 import asyncio
 import sys
 import getopt
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 async def main():

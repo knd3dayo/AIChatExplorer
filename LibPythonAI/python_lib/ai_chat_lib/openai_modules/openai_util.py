@@ -6,7 +6,7 @@ from typing import Any, Union
 import time
 from openai import RateLimitError
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 class OpenAIProps:
@@ -29,10 +29,6 @@ class OpenAIProps:
     def __init__(self, props_dict: dict):
         
         self.OpenAIKey:str = props_dict.get("OpenAIKey", "")
-        self.OpenAICompletionModel:str = props_dict.get("OpenAICompletionModel", "")
-        self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel", "")
-        self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel" , "")
-        self.OpenAITranscriptionModel:str = props_dict.get("OpenAITranscriptionModel", "")
 
         self.AzureOpenAI =props_dict.get("AzureOpenAI", False)
         if type(self.AzureOpenAI) == str:
@@ -194,34 +190,3 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
  
-    async def openai_embedding(self, input_text: str):
-        
-        # OpenAIのchatを実行する
-        client = self.get_embedding_client()
-        
-        # embedding_model_nameを取得する
-        embedding_model_name = self.props.OpenAIEmbeddingModel
-        
-        # RateLimitErrorが発生した場合はリトライする
-        # リトライ回数は最大で3回
-        # リトライ間隔はcount*30秒
-        # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
-        # リトライ回数が5回以内で成功した場合は結果を返す
-        count = 0
-        while count < 3:
-            try:
-                response = await client.embeddings.create(
-                    model=embedding_model_name,
-                    input=[input_text]
-                )
-                break
-            except RateLimitError as e:
-                count += 1
-                # rate limit errorが発生した場合はリトライする旨を表示。英語
-                logger.warn(f"RateLimitError has occurred. Retry after {count*30} seconds.")
-                time.sleep(count*30)
-                if count == 5:
-                    raise e
-
-        return response.data[0].embedding
-    

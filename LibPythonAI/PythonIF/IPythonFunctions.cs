@@ -1,5 +1,4 @@
 using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
@@ -97,7 +96,7 @@ namespace PythonAILib.PythonIF {
         public Task<string> GetMimeType(string filePath);
 
         // GetTokenCount
-        public Task<long> GetTokenCount(ChatRequestContext chatRequestContext, string inputText);
+        public Task<long> GetTokenCount(ChatRequestContext chatRequestContext, TokenCountRequest tokenCountRequest);
 
         // extract_webpage
         public Task<string> ExtractWebPage(string url);

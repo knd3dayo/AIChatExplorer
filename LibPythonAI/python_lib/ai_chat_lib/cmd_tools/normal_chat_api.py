@@ -5,16 +5,29 @@ import httpx  # type: ignore
 
 from ai_chat_lib.cmd_tools.client_util import *
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 os.environ["PYTHONUTF8"] = "1"
 
-def process_arguments(sys_args: list[str]) -> tuple:
+def usage():
+    """
+    コマンドライン引数の使い方を表示する関数
+    :return: None
+    """
+    print("Usage: python normal_chat_api.py -f <request_json_file> [-s <api_base>] [-i] [-m <message>]")
+    print("Options:")
+    print("  -f <request_json_file> : リクエストJSONファイル")
+    print("  -s <api_base>          : APIのURL")
+    print("  -i                     : インタラクティブモード")
+    print("  -m <message>           : メッセージ")
+    print("  -h                     : ヘルプ")
+
+def __process_arguments(sys_args: list[str]) -> tuple:
     """
     コマンドライン引数を処理する関数
     :param sys_args: コマンドライン引数
-    :return: リクエストJSONファイル, APIのURL, インタラクティブモードのフラグ, メッセージ
+    :return: リクエストJSONファイル, APIのURL, メッセージ, インタラクティブモードのフラグ
     """
     # リクエストJSONファイルの指定
     request_json_file = None
@@ -25,7 +38,7 @@ def process_arguments(sys_args: list[str]) -> tuple:
     # APIのURL
     api_base = None
 
-    opts, args = getopt.getopt(sys_args[1:], "f:s:m:i")
+    opts, args = getopt.getopt(sys_args[1:], "f:s:m:ih")
     for opt, arg in opts:
         if opt == "-f":
             # リクエストJSONファイルの指定
@@ -39,8 +52,12 @@ def process_arguments(sys_args: list[str]) -> tuple:
         elif opt == "-m":
             # メッセージの指定
             message = arg
+        elif opt == "-h":
+            # ヘルプの表示
+            usage()
+            sys.exit(0)
 
-    return request_json_file, api_base, interactive_mode, message
+    return request_json_file, api_base,  message, interactive_mode
 
 async def call_api(request_dict: dict, api_endpoint: str):
     """
@@ -69,21 +86,21 @@ async def call_api_interactve(request_dict: dict, api_endpoint: str):
     while True:
         input_message = input("User: ")
         # ユーザーメッセージを追加
-        update_normal_chat_messages("user", input_message, request_dict)
+        add_normal_chat_message("user", input_message, request_dict)
         response_dict = await send_request(request_dict, api_endpoint)
         # レスポンスを取得
         output = response_dict.get("output")
         if output:
             print(f"Assistant:\n{output}")
             # レスポンスを追加
-            update_normal_chat_messages("assistant", output, request_dict)
+            add_normal_chat_message("assistant", output, request_dict)
         else:
             print("No output found in the response.")
 
 async def main():
 
     # コマンドライン引数の処理
-    request_json_file, api_base, interactive_mode, message = process_arguments(sys.argv)
+    request_json_file, api_base, message, interactive_mode = __process_arguments(sys.argv)
         
     # リクエストの準備
     request_dict = prepare_normal_chat_request(request_json_file, interactive_mode, message)

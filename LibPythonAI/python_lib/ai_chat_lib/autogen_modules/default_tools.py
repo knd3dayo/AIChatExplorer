@@ -9,7 +9,7 @@ def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Ann
     This function searches Wikipedia with the specified keywords and returns related articles.
     """
     import wikipedia # type: ignore[import]
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
 
     # Use the Japanese version of Wikipedia
@@ -110,7 +110,7 @@ def search_duckduckgo(query: Annotated[str, "String to search for"], num_results
     from duckduckgo_search import DDGS
     ddgs = DDGS()
 
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
 
     try:
@@ -285,7 +285,7 @@ async def execute_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
     
     global autogen_props 
@@ -395,7 +395,7 @@ def list_tool_agents() -> Annotated[list[dict[str, str]], "List of registered to
     """
     This function retrieves a list of registered tool agents.
     """
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
 
     logger.debug('start list_tool_agents')
@@ -422,7 +422,7 @@ def register_tool_agent(name: Annotated[str, "Function name"], doc: Annotated[st
     引数で与えられたPythonコードからexec関数を使用して関数を作成し、FunctionToolオブジェクトを作成します。
     作成したFunctionToolを実行するためのエージェントを作成し、tool_agentsに追加します。
     """
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
 
     global autogen_props
@@ -457,7 +457,7 @@ async def execute_tool_agent(
     - Agent name: Specify the name of the agent as the Python function name.
     - Input text: The text data to be processed by the agent.
     """
-    import ai_chat_lib.log_settings as log_settings
+    import ai_chat_lib.log_modules.log_settings as log_settings
     logger = log_settings.getLogger(__name__)
     global autogen_props
 

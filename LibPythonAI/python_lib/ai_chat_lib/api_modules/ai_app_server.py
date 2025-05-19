@@ -8,7 +8,7 @@ from ai_chat_lib.autogen_modules import AutoGenProps
 from ai_chat_lib.api_modules import ai_app_wrapper
 from ai_chat_lib.api_modules import ai_app_util
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 routes = web.RouteTableDef()
@@ -208,13 +208,6 @@ async def delete_autogen_group_chat(request: Request) -> Response:
 async def get_token_count(request: Request) -> Response:
     request_json = await request.text()
     response = ai_app_wrapper.get_token_count(request_json)
-    logger.debug(response)
-    return web.Response(body=response, status=200, content_type='application/json')
-
-@routes.post('/api/langchain_chat')
-async def langchain_chat(request: Request) -> Response:
-    request_json = await request.text()
-    response = ai_app_wrapper.langchain_chat(request_json)
     logger.debug(response)
     return web.Response(body=response, status=200, content_type='application/json')
 

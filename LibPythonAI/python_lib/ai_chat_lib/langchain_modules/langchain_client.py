@@ -9,45 +9,30 @@ from typing import Any
 
 from ai_chat_lib.openai_modules.openai_util import OpenAIProps
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 class LangChainOpenAIClient:
-    def __init__(self, props: OpenAIProps):
+    def __init__(self, props: OpenAIProps, embedding_model: str):
         
         self.props: OpenAIProps = props
+        self.embedding_model: str = embedding_model
 
-    def get_completion_client(self):
-        
-        if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_dict()
-            # modelを設定する。
-            params["model"] = self.props.OpenAICompletionModel
-            llm = AzureChatOpenAI(
-                **params
-            )
-
-        else:
-            params =self.props.create_openai_dict()
-            # modelを設定する。
-            params["model"] = self.props.OpenAICompletionModel
-            llm = ChatOpenAI(
-                **params
-            )
-        return llm
-        
     def get_embedding_client(self):
+        if not self.embedding_model:
+            raise ValueError("embedding_model is not set.")
+
         if (self.props.AzureOpenAI):
             params = self.props.create_azure_openai_dict()
             # modelを設定する。
-            params["model"] = self.props.OpenAIEmbeddingModel
+            params["model"] = self.embedding_model
             embeddings = AzureOpenAIEmbeddings(
                 **params
             )
         else:
             params =self.props.create_openai_dict()
             # modelを設定する。
-            params["model"] = self.props.OpenAIEmbeddingModel
+            params["model"] = self.embedding_model
             embeddings = OpenAIEmbeddings(
                 **params
             )

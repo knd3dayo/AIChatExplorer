@@ -4,9 +4,9 @@ import os
 import httpx  # type: ignore
 
 from dotenv import load_dotenv
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 def jsonc_load(file_path: str):
@@ -46,11 +46,10 @@ def load_default_json_template() -> dict:
     json_template = jsonc_load(os.path.join(os.path.dirname(__file__), "request_template.jsonc"))
     return json_template
 
-def update_normal_chat_request_by_envvars(json_template):
+def __update_openai_props_by_envvars(json_template):
     load_dotenv()
     AZURE_OPENAI=os.environ.get("AZURE_OPENAI", "False").upper() == "TRUE"
     OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY", None) 
-    OPENAI_EMBEDDING_MODEL=os.environ.get("OPENAI_EMBEDDING_MODEL", None)
     OPENAI_COMPLETION_MODEL=os.environ.get("OPENAI_COMPLETION_MODEL", None)
     AZURE_OPENAI_ENDPOINT=os.environ.get("AZURE_OPENAI_ENDPOINT", None)
     AZURE_OPENAI_API_VERSION=os.environ.get("AZURE_OPENAI_API_VERSION", None)
@@ -58,8 +57,6 @@ def update_normal_chat_request_by_envvars(json_template):
 
     if OPENAI_API_KEY is None:
         raise ValueError("OPENAI_API_KEY is not set.")
-    if OPENAI_EMBEDDING_MODEL is None:
-        raise ValueError("OPENAI_EMBEDDING_MODEL is not set.")
     if OPENAI_COMPLETION_MODEL is None:
         raise ValueError("OPENAI_COMPLETION_MODEL is not set.")
 
@@ -71,17 +68,55 @@ def update_normal_chat_request_by_envvars(json_template):
     json_template["openai_props"]["AzureOpenAIEndpoint"] = AZURE_OPENAI_ENDPOINT
     json_template["openai_props"]["OpenAIBaseURL"] = OPENAI_BASE_URL
 
+def create_vector_search_request_from_envvars( top_k: int = 10, folder_path: Optional[str] = None) -> dict:
+    json_template = load_default_json_template()
+    # 環境変数から情報を取得する
+    # openai_propsの設定
+    __update_openai_props_by_envvars(json_template)
 
-    # chat_requestの設定
-    json_template["chat_request"]["model"] = OPENAI_COMPLETION_MODEL
-    json_template["chat_request"]["messages"] = []
+    load_dotenv()
+    VECTOR_DB_NAME=os.environ.get("VECTOR_DB_NAME", "default") 
+    OPENAI_EMBEDDING_MODEL=os.environ.get("OPENAI_EMBEDDING_MODEL", None)
+    if OPENAI_EMBEDDING_MODEL is None:
+        raise ValueError("OPENAI_EMBEDDING_MODEL is not set.")
 
-    # vector_search_requestsの解除
-    json_template["vector_search_requests"] = None
+    # 環境変数から情報を取得する
+    # vector_search_requestsの設定
+    json_template["vector_search_requests"] = []
+    request: dict[str, Any]= {}
+    request["name"] = VECTOR_DB_NAME
+    request["model"] = OPENAI_EMBEDDING_MODEL
+    request["search_kwargs"] = {}
+    request["search_kwargs"]["k"] = top_k
+    if folder_path:
+        request["search_kwargs"]["filter"] = {"folder_path": folder_path}
+    json_template["vector_search_requests"].append(request)
 
-def update_normal_chat_messages(role: str, message: str, json_template: dict):
+    return json_template
+
+
+def prepare_vector_search_request(request_json_file: Union[str, None], message: Union[str, None], search_result_count, vector_db_folder: str) -> dict:
     """
-    Update the chat messages in the JSON template.
+    ベクトル検索リクエストを準備する関数
+    :param request_json_file: JSONファイルのパス
+    :param message: メッセージ
+    :param search_result_count: 検索結果の数
+    :param vector_db_folder: ベクトルDBの検索対象フォルダ
+    :return: リクエスト辞書
+    """
+    
+    if request_json_file:
+        # JSONファイルからリクエストを作成する
+        request_dict = create_normal_chat_request_from_json_file(request_json_file)
+    else:
+        # 環境変数からリクエストを作成する
+        request_dict = create_vector_search_request_from_envvars(search_result_count, vector_db_folder)
+
+    return request_dict
+
+def add_normal_chat_message(role: str, message: str, json_template: dict):
+    """
+    Add a message to the chat request in the JSON template.
     :param role: Role of the message (user, assistant, system).
     :param message: Content of the message.
     :param json_template: JSON template to update.
@@ -112,7 +147,18 @@ def create_normal_chat_request_from_json_file(request_json_file: str) -> dict:
 def create_normal_chat_request_from_envvars() -> dict:
     json_template = load_default_json_template()
     # 環境変数から情報を取得する
-    update_normal_chat_request_by_envvars(json_template)
+    # openai_propsの設定
+    __update_openai_props_by_envvars(json_template)
+
+    # chat_requestの設定
+    load_dotenv()
+    OPENAI_COMPLETION_MODEL=os.environ.get("OPENAI_COMPLETION_MODEL", None)
+    json_template["chat_request"]["model"] = OPENAI_COMPLETION_MODEL
+    json_template["chat_request"]["messages"] = []
+
+    # vector_search_requestsの解除
+    json_template["vector_search_requests"] = None
+
 
     return json_template
 
@@ -136,7 +182,7 @@ def prepare_normal_chat_request(request_json_file: Union[str, None], interactive
         # インタラクティブモードの場合はメッセージをクリアする
         clear_normal_chat_messages(request_dict)
         # メッセージを設定する
-        update_normal_chat_messages("user", message, request_dict)
+        add_normal_chat_message("user", message, request_dict)
 
     return request_dict
 

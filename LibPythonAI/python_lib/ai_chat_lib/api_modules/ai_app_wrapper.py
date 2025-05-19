@@ -132,13 +132,6 @@ def delete_autogen_group_chat(request_json: str):
     return AutogenGroupChat.delete_autogen_group_chat_api(request_json)
 
 ########################
-# langchain関連
-########################
-@capture_stdout_stderr
-def langchain_chat( request_json: str):
-    return LangChainUtil.langchain_chat_api(request_json)
-
-########################
 # ベクトルDB関連
 ########################
 # vector_db_itemを更新する

@@ -5,7 +5,7 @@ from io import StringIO
 import sys
 from ai_chat_lib.db_modules import MainDB
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 # アプリケーション初期化時に呼び出される関数

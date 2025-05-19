@@ -4,7 +4,7 @@ from typing import List, Union
 import uuid
 import os
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 class ContentFoldersCatalog:
@@ -1188,12 +1188,12 @@ class MainDB:
             params = {
                 "name": "default",
                 "description": "Application default vector db",
-                "vector_db_url": os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "clipboard_vector_db"),
-                "is_use_multi_vector_retriever": False,
-                "doc_store_url": f'sqlite:///{os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "clipboard_doc_store.db")}',
+                "vector_db_url": os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "default_vector_db"),
+                "is_use_multi_vector_retriever": True,
+                "doc_store_url": f'sqlite:///{os.path.join(os.getenv("APP_DATA_PATH", ""), "server", "vector_db", "default_doc_store.db")}',
                 "vector_db_type": 1,
                 "collection_name": "ai_app_default_collection",
-                "chunk_size": 1024,
+                "chunk_size": 4096,
                 "default_search_result_limit": 10,
                 "is_enable": True,
                 "is_system": False,
@@ -1592,7 +1592,7 @@ class MainDB:
                           vector_db_item.IsEnabled, vector_db_item.IsSystem)
                           )
         else:
-            cur.execute("UPDATE VectorDBItems SET name=?, description=?, vectordb_url=?, is_use_multi_vector_retriever=?, doc_store_url=?, vector_db_type=?, collection_name=?, chunk_size=?, default_search_result_limit=?, is_enabled=?, is_system=? WHERE id=?",
+            cur.execute("UPDATE VectorDBItems SET name=?, description=?, vector_db_url=?, is_use_multi_vector_retriever=?, doc_store_url=?, vector_db_type=?, collection_name=?, chunk_size=?, default_search_result_limit=?, is_enabled=?, is_system=? WHERE id=?",
                          (vector_db_item.Name, vector_db_item.Description, vector_db_item.VectorDBURL, 
                           vector_db_item.IsUseMultiVectorRetriever, vector_db_item.DocStoreURL, 
                           vector_db_item.VectorDBType, vector_db_item.CollectionName, 

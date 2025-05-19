@@ -5,12 +5,25 @@ import json
 from ai_chat_lib.cmd_tools.client_util import *
 from ai_chat_lib.chat_modules import ChatUtil
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 os.environ["PYTHONUTF8"] = "1"
+def usage():
+    """
+    コマンドライン引数の使い方を表示する関数
+    :return: None
+    """
+    print("Usage: python normal_chat_local.py -f <request_json_file> [-d <app_data_path>] [-i] [-m <message>]")
+    print("Options:")
+    print("  -f <request_json_file> : リクエストJSONファイル")
+    print("  -d <app_data_path>     : アプリケーションデータのパス")
+    print("  -i                     : インタラクティブモード")
+    print("  -m <message>           : メッセージ")
+    print("  init                   : アプリケーションの初期化")
+    print("  -h                     : ヘルプ")
 
-def process_arguments(sys_args: list[str]) -> tuple:
+def __process_arguments(sys_args: list[str]) -> tuple:
     """
     コマンドライン引数を処理する関数
     :param sys_args: コマンドライン引数
@@ -23,7 +36,7 @@ def process_arguments(sys_args: list[str]) -> tuple:
     # メッセージの指定
     message = None
 
-    opts, args = getopt.getopt(sys_args[1:], "f:d:m:i")
+    opts, args = getopt.getopt(sys_args[1:], "f:d:m:ih")
     for opt, arg in opts:
         if opt == "-f":
             # リクエストJSONファイルの指定
@@ -36,6 +49,10 @@ def process_arguments(sys_args: list[str]) -> tuple:
         elif opt == "-m":
             # メッセージの指定
             message = arg
+        elif opt == "-h":
+            # ヘルプの表示
+            usage()
+            sys.exit(0)
 
     # 非オプション引数の処理
     if args:
@@ -43,7 +60,9 @@ def process_arguments(sys_args: list[str]) -> tuple:
         if args[0] == "init":
             return None, False, None, True
         else:
-            raise ValueError(f"Unknown argument: {args[0]}")
+            print(f"Unknown argument: {args[0]}")
+            usage()
+            sys.exit(1)
         
     return request_json_file, interactive_mode, message, False
 
@@ -93,21 +112,21 @@ async def run_chat_interactive_async(request_dict: dict) -> None:
     while True:
         input_message = input("User: ")
         # ユーザーメッセージを追加
-        update_normal_chat_messages("user", input_message, request_dict)
+        add_normal_chat_message("user", input_message, request_dict)
         response_dict = await ChatUtil.run_openai_chat_async_api(request_dict)
         # レスポンスを取得
         output = response_dict.get("output")
         if output:
             print(f"Assistant:\n{output}")
             # レスポンスを追加
-            update_normal_chat_messages("assistant", output, request_dict)
+            add_normal_chat_message("assistant", output, request_dict)
         else:
             print("No output found in the response.")
 
 async def main():
     
     # コマンドライン引数の処理
-    request_json_file, interactive_mode, message, init_flag = process_arguments(sys.argv)
+    request_json_file, interactive_mode, message, init_flag = __process_arguments(sys.argv)
     if init_flag:
         # アプリケーションの初期化
         init_app()

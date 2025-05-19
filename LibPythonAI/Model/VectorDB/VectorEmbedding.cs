@@ -45,15 +45,6 @@ namespace LibPythonAI.Model.VectorDB {
         [JsonPropertyName("source_path")]
         public string SourcePath { get; set; } = "";
 
-        [JsonPropertyName("git_repository_url")]
-        public string GitRepositoryUrl { get; set; } = "";
-
-        [JsonPropertyName("git_relative_path")]
-        public string GitRelativePath { get; set; } = "";
-
-        [JsonPropertyName("image_url")]
-        public string ImageURL { get; set; } = "";
-
         // doc_id
         [JsonPropertyName("doc_id")]
         public string DocId { get; set; } = string.Empty;
@@ -67,14 +58,11 @@ namespace LibPythonAI.Model.VectorDB {
         public List<VectorEmbedding> SubDocs { get; set; } = [];
 
 
-        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path, string git_repository_url, string git_relative_path, string image_url) {
+        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path) {
             Description = description;
             Content = content;
             SourceType = sourceType;
             SourcePath = source_path;
-            GitRepositoryUrl = git_repository_url;
-            GitRelativePath = git_relative_path;
-            ImageURL = image_url;
 
         }
 
@@ -84,15 +72,9 @@ namespace LibPythonAI.Model.VectorDB {
             // タイトルとHeaderTextを追加
             string description = item.Description + "\n" + item.HeaderText;
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath, "", "", "");
+                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath);
             } else {
-                if (item.IsImage()) {
-                    // 画像からテキスト抽出
-                    SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
-
-                } else {
-                    SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
-                }
+                SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath);
             }
 
         }
@@ -103,9 +85,6 @@ namespace LibPythonAI.Model.VectorDB {
                 ["description"] = Description,
                 ["content"] = Content,
                 ["source_path"] = SourcePath,
-                ["git_repository_url"] = GitRepositoryUrl,
-                ["git_relative_path"] = GitRelativePath,
-                ["image_url"] = ImageURL,
                 ["doc_id"] = DocId,
                 ["score"] = Score
             };
@@ -132,11 +111,14 @@ namespace LibPythonAI.Model.VectorDB {
             result.Description = dict["description"].ToString() ?? "";
             result.Content = dict["content"].ToString() ?? "";
             result.SourcePath = dict["source_path"].ToString() ?? "";
-            result.GitRepositoryUrl = dict["git_repository_url"].ToString() ?? "";
-            result.GitRelativePath = dict["git_relative_path"].ToString() ?? "";
-            result.ImageURL = dict["image_url"].ToString() ?? "";
             result.DocId = dict["doc_id"].ToString() ?? "";
             result.Score = Convert.ToDouble(dict["score"]);
+            if (dict.ContainsKey("sub_docs")) {
+                foreach (var subDoc in (List<object>)dict["sub_docs"]) {
+                    result.SubDocs.Add(FromDict((Dictionary<string, object>)subDoc));
+                }
+            }
+
             return result;
         }
 

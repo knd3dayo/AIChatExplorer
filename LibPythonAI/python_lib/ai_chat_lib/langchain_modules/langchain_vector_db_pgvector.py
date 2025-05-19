@@ -13,7 +13,7 @@ from ai_chat_lib.langchain_modules.langchain_util import LangChainOpenAIClient
 from ai_chat_lib.langchain_modules.langchain_vector_db import LangChainVectorDB
 from ai_chat_lib.langchain_modules.langchain_doc_store import SQLDocStore
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
     
 class LangChainVectorDBPGVector(LangChainVectorDB):

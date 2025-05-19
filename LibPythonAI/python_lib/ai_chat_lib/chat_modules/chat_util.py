@@ -9,7 +9,7 @@ from ai_chat_lib.openai_modules import OpenAIClient, OpenAIProps
 from ai_chat_lib.langchain_modules import  LangChainUtil
 from ai_chat_lib.db_modules import VectorSearchRequest
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 # リクエストコンテキスト
@@ -82,11 +82,14 @@ class ChatUtil:
         token_count_request = request_dict.get(cls.token_count_request_name, None)
         if not token_count_request:
             raise ValueError("token_count_request is not set")
+        model = token_count_request.get("model", None)
+        if not model:
+            raise ValueError("model is not set")
         input_text = token_count_request.get("input_text", "")
         if not input_text:
             raise ValueError("input_text is not set")
         result: dict = {}
-        result["total_tokens"] = ChatUtil.get_token_count(openai_props.OpenAICompletionModel, input_text)
+        result["total_tokens"] = ChatUtil.get_token_count(model, input_text)
         return result
 
     chat_contatenate_request_name = "chat_contatenate_request"
@@ -128,7 +131,7 @@ class ChatUtil:
     
     @classmethod
     def pre_process_input(
-            cls, client: OpenAIClient, request_context:RequestContext, last_message_dict: dict, 
+            cls, client: OpenAIClient, model: str, request_context:RequestContext, last_message_dict: dict, 
             vector_search_function : Union[Callable, None]) -> tuple[list[dict], list[dict]]:
         # "messages"の最後のtext要素を取得する       
         last_text_content_index = -1
@@ -149,7 +152,6 @@ class ChatUtil:
         result_documents_dict: dict[str, dict] = {}
 
         if request_context.SplitMode != "None":
-            model = client.props.OpenAICompletionModel
             splited_messages = cls.split_message(original_last_message.split("\n"), model, request_context.SplitTokenCount)
         else:
             splited_messages = [original_last_message]
@@ -240,8 +242,13 @@ class ChatUtil:
         
         # pre_process_inputを実行する
         last_message_dict = cls.get_last_message(input_dict)
+        # modelを取得する
+        model = input_dict.get("model", None)
+        if not model:
+            raise ValueError("model is not set")
+        
         # 最後のメッセージの分割処理、ベクトル検索処理を行う
-        pre_processed_input_list, docs_list = cls.pre_process_input(client, request_context, last_message_dict, vector_search_function)
+        pre_processed_input_list, docs_list = cls.pre_process_input(client, model, request_context, last_message_dict, vector_search_function)
         chat_result_dict_list = []
 
         for pre_processed_input in pre_processed_input_list:

@@ -89,6 +89,8 @@ namespace LibPythonAI.Model.VectorDB {
                 { "vector_db_type_string", VectorDBTypeString },
                 { "collection_name", CollectionName ?? ""},
                 { "chunk_size", ChunkSize },
+                { "default_search_result_limit", DefaultSearchResultLimit },
+
             };
             return dict;
         }

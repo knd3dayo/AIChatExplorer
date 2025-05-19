@@ -17,7 +17,7 @@ from ai_chat_lib.langchain_modules.langchain_vector_db import LangChainVectorDB
 from ai_chat_lib.openai_modules.openai_util import OpenAIProps
 from ai_chat_lib.db_modules import *
 
-import ai_chat_lib.log_settings as log_settings
+import ai_chat_lib.log_modules.log_settings as log_settings
 logger = log_settings.getLogger(__name__)
 
 
@@ -207,7 +207,7 @@ class LangChainUtil:
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
-        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item, embedding_data.model)
         # delete_collectionを実行
         vector_db.delete_collection()
 
@@ -231,7 +231,7 @@ class LangChainUtil:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
         
         # LangChainVectorDBを生成
-        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item, embedding_data.model)
 
         folder_id = embedding_data.FolderId
         # delete_folder_embeddingsを実行
@@ -254,7 +254,7 @@ class LangChainUtil:
         vector_db_item = main_db.get_vector_db_by_name(embedding_data.name)
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
-        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item, embedding_data.model)
         vector_db.delete_document(embedding_data.source_id)
 
         return {}
@@ -274,7 +274,7 @@ class LangChainUtil:
         if vector_db_item is None:
             raise ValueError(f"VectorDBItem with name {embedding_data.name} not found.")
         # LangChainVectorDBを生成
-        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item)
+        vector_db: LangChainVectorDB = LangChainUtil.get_vector_db(openai_props, vector_db_item, embedding_data.model)
         await vector_db.update_document(embedding_data)
 
         return {}
@@ -283,59 +283,9 @@ class LangChainUtil:
     chat_request_name = "chat_request"
 
     @classmethod
-    def langchain_chat_api(cls, request_json: str):
-        # request_jsonからrequestを作成
-        request_dict: dict = json.loads(request_json)
+    def get_vector_db(cls, openai_props: OpenAIProps, vector_db_props: VectorDBItem, embedding_model: str) -> LangChainVectorDB:
 
-        # process_langchain_chat_parameterを実行
-        from ai_chat_lib.langchain_modules.langchain_util import LangChainChatParameter
-        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = OpenAIProps.get_openai_objects(request_dict)
-        # ChatRequestContextからVectorDBItemを生成
-        vector_search_requests = VectorSearchRequest.get_vector_search_requests_objects(request_dict)
-
-        # chat_requestを取得
-        chat_request_dict = request_dict.get(cls.chat_request_name, None)
-        params:LangChainChatParameter = LangChainChatParameter(chat_request_dict)
-
-        # langchan_chatを実行
-        result = LangChainUtil.langchain_chat(openai_props, vector_search_requests, params)
-        return result
-
-    @classmethod
-    def langchain_chat(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest], params: LangChainChatParameter):
-
-        # langchainのログを出力する
-        langchain.verbose = True
-        logger.debug("langchain_chat:start")
-        client = LangChainOpenAIClient(openai_props)
-        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_search_requests)
-        ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
-        logger.debug("langchain_chat:init done")
-        
-        result_dict = {}
-        with get_openai_callback() as cb:
-            result = ChatAgentExecutorInstance.invoke(
-                    {
-                        "input": params.prompt,
-                        "chat_history": params.chat_history,
-                    }
-                )
-            result_dict["output"] = result.get("output", "")
-            page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
-            result_dict["page_content_list"] = page_conetnt_list
-            result_dict["page_source_list"] = page_source_list
-            result_dict["verbose"] = verbose_json
-            result_dict["total_tokens"] = cb.total_tokens
-
-        logger.debug("langchain_chat:end")
-
-        return result_dict
-
-    @classmethod
-    def get_vector_db(cls, openai_props: OpenAIProps, vector_db_props: VectorDBItem) -> LangChainVectorDB:
-
-        langchain_openai_client = LangChainOpenAIClient(openai_props)
+        langchain_openai_client = LangChainOpenAIClient(openai_props, embedding_model)
 
         vector_db_url = vector_db_props.VectorDBURL
         if vector_db_props.IsUseMultiVectorRetriever:
@@ -357,23 +307,12 @@ class LangChainUtil:
             # それ以外の場合は例外
             raise ValueError("VectorDBType is invalid")
 
-    @classmethod
-    def get_vector_db_with_default_collection(cls, openai_props: OpenAIProps, vector_db_props: VectorDBItem) -> LangChainVectorDB:
-        import copy
-        # vector_db_propsのコピーを作成
-        new_vector_db_props: VectorDBItem = copy.deepcopy(vector_db_props)
-        # デフォルトのコレクション名を設定
-        new_vector_db_props.CollectionName = VectorDBItem.DEFAULT_COLLECTION_NAME
-
-        return cls.get_vector_db(openai_props, new_vector_db_props)
-
     # ベクトル検索を行う
     @classmethod
     def vector_search(cls, openai_props: OpenAIProps, vector_search_requests: list[VectorSearchRequest]) -> dict[str, Any]:    
 
         if not openai_props:
             raise ValueError("openai_props is None")
-        client = LangChainOpenAIClient(openai_props)
 
         main_db = MainDB()
 
@@ -386,7 +325,7 @@ class LangChainUtil:
             if vector_db_item is None:
                 raise ValueError(f"vector_db_item is None. name:{request.name}")
 
-            langchain_db = cls.get_vector_db(openai_props, vector_db_item)
+            langchain_db = cls.get_vector_db(openai_props, vector_db_item, request.model)
             
             # デバッグ出力
             logger.info('ベクトルDBの設定')
