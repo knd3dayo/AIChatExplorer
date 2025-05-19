@@ -154,8 +154,8 @@ namespace LibUIMergeChat.ViewModel {
         public static ChatMessage? SelectedItem { get; set; }
 
 
-        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -165,14 +165,14 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public LibPythonAI.Model.VectorDB.VectorSearchProperty? SelectedVectorSearchProperty {
+        private LibPythonAI.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
+        public LibPythonAI.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
             get {
-                return _selectedVectorSearchProperty;
+                return _selectedVectorSearchItem;
             }
             set {
-                _selectedVectorSearchProperty = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
+                _selectedVectorSearchItem = value;
+                OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
 
@@ -201,7 +201,7 @@ namespace LibUIMergeChat.ViewModel {
                     if (folder == null) {
                         return;
                     }
-                    List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [.. folder.Folder.GetVectorSearchProperties()];
+                    List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [.. folder.Folder.GetVectorSearchProperties()];
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -216,7 +216,7 @@ namespace LibUIMergeChat.ViewModel {
 
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = int.Parse(SplitTokenCount);
-            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+            // ベクトルDB検索結果最大値をVectorSearchItemに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;
             }
@@ -241,7 +241,7 @@ namespace LibUIMergeChat.ViewModel {
 
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                ChatResult? result = null;
+                ChatResponse? result = null;
                 // プログレスバーを表示
                 CommonViewModelProperties.UpdateIndeterminate(true);
 
@@ -354,9 +354,9 @@ namespace LibUIMergeChat.ViewModel {
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchProperty != null) {
+            if (SelectedVectorSearchItem != null) {
                 // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
+                VectorSearchProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
         });

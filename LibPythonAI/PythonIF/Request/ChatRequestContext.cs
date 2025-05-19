@@ -23,14 +23,14 @@ namespace LibPythonAI.PythonIF.Request {
         public const string USE_VECTOR_DB_KEY = "use_vector_db";
 
         
-        // OpenAIProperties
+        // OpenAIPropsRequest
         [JsonPropertyName(OPENAI_PROPS_KEY)]
-        public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
+        public OpenAIPropsRequest? OpenAIPropsRequest { get; set; } 
 
         // ベクトル検索
 
         [JsonPropertyName(VECTOR_SEARCH_REQUESTS_KEY)]
-        public ObservableCollection<VectorSearchProperty> VectorSearchRequests { get; set; } = [];
+        public List<VectorSearchRequest> VectorSearchRequests { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName(AUTOGEN_PROPS_KEY)]
@@ -71,8 +71,8 @@ namespace LibPythonAI.PythonIF.Request {
         }
 
         // CreateEntriesDictList
-        public List<Dictionary<string, object>> ToDictVectorDBItemsDict() {
-            return UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchRequests) : [];
+        public List<Dictionary<string, object>> ToDictVectorDBRequestDict() {
+            return UseVectorDB ? VectorSearchRequest.ToDictList(VectorSearchRequests) : [];
         }
 
        
@@ -80,13 +80,13 @@ namespace LibPythonAI.PythonIF.Request {
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
                 OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,
-                ObservableCollection<VectorSearchProperty> vectorSearchRequests, AutoGenProperties? autoGenProperties, string promptTemplateText
+                ObservableCollection<VectorSearchItem> vectorSearchItems, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = vectorSearchRequests,
-                OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
+                OpenAIPropsRequest = new OpenAIPropsRequest(libManager.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = promptTemplateText,
                 UseVectorDB = userVectorDB,
                 SplitMode = splitMode,

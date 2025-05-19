@@ -17,17 +17,17 @@ namespace AIChatExplorer.Model.Folders.Browser {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
                 Task.Run(async () => {
-                    string? vectorDBItemName = GetFolder().GetMainVectorSearchProperty()?.VectorDBItemName;
+                    string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
                     if (vectorDBItemName == null) {
                         return;
                     }
-                    VectorEmbedding vectorEmbedding = new(Id.ToString(), GetFolder().Id) {
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
                         Content = Content,
                         Description = Description,
                         SourceType = PythonAILib.Model.VectorDB.VectorSourceType.File,
                         SourcePath = SourcePath,
                     };
-                    await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorEmbedding);
+                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
                 ContentModified = false;
                 DescriptionModified = false;

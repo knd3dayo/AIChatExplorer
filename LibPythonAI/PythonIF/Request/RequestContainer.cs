@@ -77,9 +77,9 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
 
             if (RequestContextInstance != null) {
-                dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIProperties.ToDict();
+                dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIPropsRequest.ToDict();
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
-                dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBItemsDict();
+                dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBRequestDict();
                 if (RequestContextInstance.AutoGenProperties != null) {
                     dict[AUTOGEN_PROPS_KEY] = RequestContextInstance.AutoGenProperties.ToDict();
                 }

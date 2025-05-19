@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Statistics;
 using LibPythonAI.Model.Tag;
@@ -238,7 +237,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // 通常のOpenAIChatを実行する
-        public async Task<ChatResult> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+        public async Task<ChatResponse> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
 
 
             // RequestContainerを作成
@@ -253,7 +252,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
 
             // ChatResultを作成
-            ChatResult chatResult = new();
+            ChatResponse chatResult = new();
             // PostAsyncを実行する
             string endpoint = $"{this.base_url}/openai_chat";
             string resultString = await PostAsync(endpoint, requestContextJson);
@@ -267,12 +266,12 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(chatResult.Error);
             }
             // StatisticManagerにトークン数を追加
-            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
+            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, chatRequest.Model);
             return chatResult;
         }
 
         // AutoGenのGroupChatを実行する
-        public async Task<ChatResult> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+        public async Task<ChatResponse> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
             // ChatRequestから最後のユーザー発言を取得
             ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
@@ -292,7 +291,7 @@ namespace PythonAILib.PythonIF {
 
             LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
 
-            ChatResult chatResult = new();
+            ChatResponse chatResult = new();
             string endpoint = $"{this.base_url}/autogen_group_chat";
             // endpoint を  host:port 部分と path 部分に分割
             Uri uri = new(endpoint);
@@ -581,7 +580,7 @@ namespace PythonAILib.PythonIF {
             return vectorDBItem;
         }
 
-        public async Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
+        public async Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
 
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
@@ -614,9 +613,8 @@ namespace PythonAILib.PythonIF {
                 throw new Exception(errorValue);
             }
 
-            // VectorSearchResultのリストを作成
-            List<VectorEmbedding> vectorSearchResults = [];
-
+            // 
+            List<VectorEmbeddingItem> vectorSearchResults = [];
 
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {
@@ -625,10 +623,9 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 foreach (var item in documents) {
-                    // VectorEmbeddingを取得
-                    VectorEmbedding? vectorEmbedding = VectorEmbedding.FromDict(item);
-                    if (vectorEmbedding != null) {
-                        vectorSearchResults.Add(vectorEmbedding);
+                    EmbeddingResponse? VectorEmbeddingItem = EmbeddingResponse.FromDict(item);
+                    if (VectorEmbeddingItem != null) {
+                        vectorSearchResults.Add(VectorEmbeddingItem.CreateVectorEmbeddingItem());
                     }
                 }
             }

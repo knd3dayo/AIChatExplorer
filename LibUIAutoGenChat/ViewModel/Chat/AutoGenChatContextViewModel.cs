@@ -104,8 +104,8 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             }
         }
 
-        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -115,14 +115,14 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             }
         }
 
-        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public LibPythonAI.Model.VectorDB.VectorSearchProperty? SelectedVectorSearchProperty {
+        private LibPythonAI.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
+        public LibPythonAI.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
             get {
-                return _selectedVectorSearchProperty;
+                return _selectedVectorSearchItem;
             }
             set {
-                _selectedVectorSearchProperty = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
+                _selectedVectorSearchItem = value;
+                OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
 
@@ -138,7 +138,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 // _UserVectorDBがTrueの場合はVectorDBItemを取得
                 VectorSearchProperties = [];
                 if (_UseVectorDB) {
-                    ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -155,40 +155,40 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
-        // UseFolderVectorSearchProperty
+        // UseFolderVectorSearchItem
         // フォルダのベクトルDBを使用するか否か
-        public bool UseFolderVectorSearchProperty {
+        public bool UseFolderVectorSearchItem {
             get {
-                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty;
+                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem;
             }
             set {
-                QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty = value;
+                QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem = value;
 
                 InitVectorDBProperties();
-                OnPropertyChanged(nameof(UseFolderVectorSearchProperty));
-                OnPropertyChanged(nameof(UseItemVectorSearchProperty));
-                OnPropertyChanged(nameof(UseFolderVectorSearchPropertyVisibility));
-                OnPropertyChanged(nameof(UseItemVectorSearchPropertyVisibility));
+                OnPropertyChanged(nameof(UseFolderVectorSearchItem));
+                OnPropertyChanged(nameof(UseItemVectorSearchItem));
+                OnPropertyChanged(nameof(UseFolderVectorSearchItemVisibility));
+                OnPropertyChanged(nameof(UseItemVectorSearchItemVisibility));
             }
         }
         // アイテムのベクトルDBを使用するか否か
-        public bool UseItemVectorSearchProperty {
+        public bool UseItemVectorSearchItem {
             get {
-                return !UseFolderVectorSearchProperty;
+                return !UseFolderVectorSearchItem;
             }
         }
-        public Visibility UseFolderVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty);
+        public Visibility UseFolderVectorSearchItemVisibility => Tools.BoolToVisibility(UseFolderVectorSearchItem);
 
-        public Visibility UseItemVectorSearchPropertyVisibility => Tools.BoolToVisibility(UseFolderVectorSearchProperty == false);
+        public Visibility UseItemVectorSearchItemVisibility => Tools.BoolToVisibility(UseFolderVectorSearchItem == false);
 
 
 
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (UseVectorDB) {
-                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
-                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchProperty == Trueの場合
-                if (UseFolderVectorSearchProperty) {
+                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
+                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
+                if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
                     items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
@@ -292,9 +292,9 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchProperty != null) {
+            if (SelectedVectorSearchItem != null) {
                 // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
+                VectorSearchProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
@@ -311,7 +311,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         });
 
         public ChatRequestContext CreateChatRequestContext(string promptText, string sessionToken) {
-            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+            // ベクトルDB検索結果最大値をVectorSearchItemに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;
             }

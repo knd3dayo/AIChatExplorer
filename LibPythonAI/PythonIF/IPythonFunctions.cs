@@ -24,9 +24,9 @@ namespace PythonAILib.PythonIF {
 
         public Task<string> ExtractBase64ToText(string base64, string extension);
 
-        public Task<ChatResult> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+        public Task<ChatResponse> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
-        public Task<ChatResult> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+        public Task<ChatResponse> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
 
@@ -77,7 +77,7 @@ namespace PythonAILib.PythonIF {
 
         public VectorDBItem? GetVectorDBItemByName(string name);
 
-        public Task<List<VectorEmbedding>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
+        public Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
 
         // delete_embeddings_by_folder
         public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);

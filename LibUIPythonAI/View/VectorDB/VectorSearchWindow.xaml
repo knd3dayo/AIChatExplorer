@@ -102,15 +102,19 @@
                     VirtualizingStackPanel.IsVirtualizing="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn
-                            Width="100"
+                            Width="150"
                             Binding="{Binding DocId}"
                             Header="DocId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
+                            Binding="{Binding FolderPath}"
+                            Header="FolderPath" />
+                        <DataGridTextColumn
+                            Width="150"
                             Binding="{Binding SourceId}"
                             Header="SourceId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="250"
                             Binding="{Binding SourcePath}"
                             Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
@@ -154,15 +158,19 @@
                             Binding="{Binding Score}"
                             Header="Score" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="150"
                             Binding="{Binding DocId}"
                             Header="DocId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
+                            Binding="{Binding FolderPath}"
+                            Header="FolderPath" />
+                        <DataGridTextColumn
+                            Width="150"
                             Binding="{Binding SourceId}"
                             Header="SourceId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
                             Binding="{Binding SourcePath}"
                             Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">

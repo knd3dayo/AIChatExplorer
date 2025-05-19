@@ -1,14 +1,12 @@
-using System.Collections.ObjectModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Resources;
-using PythonAILib.Utils;
 
 namespace LibPythonAI.PythonIF.Response {
-    public class ChatResult : PythonScriptResult {
+    public class ChatResponse : PythonScriptResult {
 
         private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -16,10 +14,10 @@ namespace LibPythonAI.PythonIF.Response {
         };
 
 
-        public List<VectorEmbedding> SourceDocuments { get; set; } = [];
+        public List<VectorEmbeddingItem> SourceDocuments { get; set; } = [];
         public long TotalTokens { get; set; } = 0;
 
-        public ChatResult() { }
+        public ChatResponse() { }
 
         public override void LoadFromJson(string json) {
             base.LoadFromJson(json);
@@ -44,7 +42,7 @@ namespace LibPythonAI.PythonIF.Response {
             if (resultDict.ContainsKey("documents")) {
                 JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                SourceDocuments = VectorEmbedding.FromJson(documentsObject.ToString() ?? "[]");
+                SourceDocuments = EmbeddingResponse.FromJson(documentsObject.ToString() ?? "[]").Select(x => x.CreateVectorEmbeddingItem()).ToList();
             }
         }
     }

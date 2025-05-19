@@ -104,7 +104,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             });
         }
 
-        // VectorSearchProperty
+        // VectorSearchItem
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         public VectorDBItemViewModel? SelectedVectorDBItem { get; set; }

@@ -91,18 +91,14 @@
         {
         "name": "default",
         "model": "text-embedding-3-small",
+        "doc_id": "",
         "folder_id": "フォルダID",
+        "folder_path": "フォルダパス",
         "source_id": "",
+        "source_path": "",
         "source_type": 0,
         "description": "",
         "content": "",
-        "source_path": "",
-        "git_repository_url": "",
-        "git_relative_path": "",
-        "image_url": "",
-        "doc_id": "",
-        "score": 0,
-        "sub_docs": []
     },
     // -----------------------------------------------------------
     // 設定編集用のディクショナリ

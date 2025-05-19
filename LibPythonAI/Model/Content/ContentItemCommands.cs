@@ -52,7 +52,7 @@ namespace LibPythonAI.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                OpenAIProperties = openAIProperties,
+                OpenAIPropsRequest = new (openAIProperties),
             };
 
 
@@ -124,15 +124,15 @@ namespace LibPythonAI.Model.Content {
                 };
                 Parallel.ForEach(items, parallelOptions, (item) => {
 
-                    string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
                     vectorDBEntry.SetMetadata(item);
 
-                    VectorEmbedding.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                 });
             });
         }
@@ -147,16 +147,16 @@ namespace LibPythonAI.Model.Content {
                 };
                 Parallel.ForEach(items, parallelOptions, (item) => {
                     // VectorDBItemを取得
-                    string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
                     vectorDBEntry.SetMetadata(item);
 
-                    VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });

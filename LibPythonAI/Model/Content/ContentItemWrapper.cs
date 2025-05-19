@@ -252,32 +252,32 @@ namespace LibPythonAI.Model.Content {
             }
         }
         // フォルダに設定されたVerctorDBPropertyを使うかどうか
-        public bool UseFolderVectorSearchProperty {
+        public bool UseFolderVectorSearchItem {
             get {
-                Entity.ExtendedProperties.TryGetValue("UseFolderVectorSearchProperty", out object? value);
+                Entity.ExtendedProperties.TryGetValue("UseFolderVectorSearchItem", out object? value);
                 if (value is bool boolValue) {
                     return boolValue;
                 }
                 return true;
             }
             set {
-                Entity.ExtendedProperties["UseFolderVectorSearchProperty"] = value;
+                Entity.ExtendedProperties["UseFolderVectorSearchItem"] = value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
-        // このアイテムに紐付けらされたVectorSearchProperty
-        // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchPropertyを使用する
-        public ObservableCollection<VectorSearchProperty> VectorDBProperties {
+        // このアイテムに紐付けらされたVectorSearchItem
+        // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchItemを使用する
+        public ObservableCollection<VectorSearchItem> VectorDBProperties {
             get {
-                ObservableCollection<VectorSearchProperty> vectorDBProperties = [];
-                if (UseFolderVectorSearchProperty) {
+                ObservableCollection<VectorSearchItem> vectorDBProperties = [];
+                if (UseFolderVectorSearchItem) {
                     vectorDBProperties = [.. GetFolder().GetVectorSearchProperties()];
                 }
 
                 if (Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value) ) {
                     if (value is string strValue) {
-                        vectorDBProperties = [.. VectorSearchProperty.FromListJson(strValue)];
-                    } else if (value is List<VectorSearchProperty> list) {
+                        vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
+                    } else if (value is List<VectorSearchItem> list) {
                         vectorDBProperties = [.. list];
                     }
                 }
@@ -286,7 +286,7 @@ namespace LibPythonAI.Model.Content {
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     if (e.NewItems != null) {
                         // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
                         Entity.SaveExtendedPropertiesJson();
                     }
                 };
@@ -294,14 +294,14 @@ namespace LibPythonAI.Model.Content {
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     if (e.OldItems != null) {
                         // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
                         Entity.SaveExtendedPropertiesJson();
                     }
                 };
                 // Clearイベント発生時の処理
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties); 
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties); 
                     Entity.SaveExtendedPropertiesJson();
                 };
 
@@ -570,8 +570,8 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual VectorSearchProperty GetMainVectorSearchProperty() {
-            return GetFolder().GetMainVectorSearchProperty();
+        public virtual VectorSearchItem GetMainVectorSearchItem() {
+            return GetFolder().GetMainVectorSearchItem();
         }
 
 
@@ -581,14 +581,14 @@ namespace LibPythonAI.Model.Content {
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
                 Task.Run(async () => {
-                    string? vectorDBItemName = GetMainVectorSearchProperty().VectorDBItemName;
+                    string? vectorDBItemName = GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbedding vectorDBEntry = new(Id.ToString(), GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().Id);
                     vectorDBEntry.SetMetadata(this);
-                    await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             }
 
@@ -631,14 +631,14 @@ namespace LibPythonAI.Model.Content {
                     item.UpdatedAt = DateTime.Now;
                     // ベクトルを更新
                     Task.Run(async () => {
-                        string? vectorDBItemName = item.GetMainVectorSearchProperty().VectorDBItemName;
+                        string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                         if (string.IsNullOrEmpty(vectorDBItemName)) {
                             LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                             return;
                         }
-                        VectorEmbedding vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                        VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
                         vectorDBEntry.SetMetadata(item);
-                        await VectorEmbedding.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                        await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
                 }
             }

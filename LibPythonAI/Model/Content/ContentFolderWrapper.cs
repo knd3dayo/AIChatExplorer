@@ -100,21 +100,21 @@ namespace LibPythonAI.Model.Content {
 
 
         public const string VectorDBPropertiesName = "VectorDBProperties";
-        public ObservableCollection<VectorSearchProperty> ReferenceVectorSearchProperties {
+        public ObservableCollection<VectorSearchItem> ReferenceVectorSearchProperties {
             get {
-                ObservableCollection<VectorSearchProperty> vectorDBProperties = [];
+                ObservableCollection<VectorSearchItem> vectorDBProperties = [];
 
                 if (Entity.ExtendedProperties.TryGetValue(VectorDBPropertiesName, out var propList)) {
                     if (propList is string json) {
-                        // JsonをパースしてVectorSearchPropertyのリストを取得
-                        vectorDBProperties = [.. VectorSearchProperty.FromListJson(json)];
+                        // JsonをパースしてVectorSearchItemのリストを取得
+                        vectorDBProperties = [.. VectorSearchItem.FromListJson(json)];
                     }
                 }
                 // Addイベント発生時の処理
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     if (e.NewItems != null) {
                         // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
                         Entity.SaveExtendedPropertiesJson();
                     }
                 };
@@ -122,14 +122,14 @@ namespace LibPythonAI.Model.Content {
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     if (e.OldItems != null) {
                         // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
                         Entity.SaveExtendedPropertiesJson();
                     }
                 };
                 // Clearイベント発生時の処理
                 vectorDBProperties.CollectionChanged += (sender, e) => {
                     // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchProperty.ToListJson(vectorDBProperties);
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
                     Entity.SaveExtendedPropertiesJson();
                 };
 
@@ -137,7 +137,7 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 // Entityを更新
-                Entity.ExtendedProperties[VectorDBPropertiesName] = VectorSearchProperty.ToListJson(value);
+                Entity.ExtendedProperties[VectorDBPropertiesName] = VectorSearchItem.ToListJson(value);
                 Entity.SaveExtendedPropertiesJson();
             }
 
@@ -181,7 +181,7 @@ namespace LibPythonAI.Model.Content {
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
-            VectorEmbedding.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
+            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
@@ -354,8 +354,8 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        public VectorSearchProperty GetMainVectorSearchProperty() {
-            VectorSearchProperty searchProperty = new() {
+        public VectorSearchItem GetMainVectorSearchItem() {
+            VectorSearchItem searchProperty = new() {
                 FolderId = Id,
                 TopK = 4,
                 VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
@@ -365,10 +365,10 @@ namespace LibPythonAI.Model.Content {
             return searchProperty;
         }
 
-        public ObservableCollection<VectorSearchProperty> GetVectorSearchProperties() {
-            ObservableCollection<VectorSearchProperty> searchProperties =
+        public ObservableCollection<VectorSearchItem> GetVectorSearchProperties() {
+            ObservableCollection<VectorSearchItem> searchProperties =
             [
-                GetMainVectorSearchProperty(),
+                GetMainVectorSearchItem(),
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
                 .. ReferenceVectorSearchProperties,
             ];

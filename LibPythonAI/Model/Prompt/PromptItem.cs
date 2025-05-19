@@ -464,13 +464,13 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ObservableCollection<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
+            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = vectorSearchProperties,
+                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x)).ToList(),
                 UseVectorDB = promptItem.UseVectorDB,
-                OpenAIProperties = openAIProperties,
+                OpenAIPropsRequest = new(openAIProperties),
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
             };
@@ -589,7 +589,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                OpenAIProperties = openAIProperties,
+                OpenAIPropsRequest = new(openAIProperties),
                 UseVectorDB = false
             };
 

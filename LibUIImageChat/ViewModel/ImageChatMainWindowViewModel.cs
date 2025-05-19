@@ -126,7 +126,7 @@ namespace LibUIImageChat.ViewModel {
             PythonAILibManager? libManager = PythonAILibManager.Instance;
             // ChatRequestContextを生成
             ChatRequestContext chatRequestContext = new() {
-                OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                OpenAIPropsRequest = new OpenAIPropsRequest( libManager.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = PromptText,
 
             };
@@ -143,7 +143,7 @@ namespace LibUIImageChat.ViewModel {
 
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信
-                ChatResult? result = null;
+                ChatResponse? result = null;
                 await Task.Run(async () => {
 
                     // ScreenShotImageのリストからファイル名のリストを取得

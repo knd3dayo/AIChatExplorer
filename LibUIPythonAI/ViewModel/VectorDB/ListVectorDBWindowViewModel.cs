@@ -12,7 +12,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
     public class ListVectorDBWindowViewModel : CommonViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchItem> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
@@ -39,7 +39,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         private ActionModeEnum mode;
-        Action<VectorSearchProperty>? callBackup;
+        Action<VectorSearchItem>? callBackup;
 
 
         // 選択中のVectorDBItem
@@ -163,7 +163,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
             if (SelectedTabIndex == 0) {
-                VectorSearchProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
+                VectorSearchItem? item = FolderViewModel?.Folder.GetMainVectorSearchItem();
                 if (item == null) {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
@@ -177,7 +177,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
-                VectorSearchProperty? prop = new() {
+                VectorSearchItem? prop = new() {
                     VectorDBItemName = SelectedVectorDBItem.Item.Name,
                     TopK = 4,
                     Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel

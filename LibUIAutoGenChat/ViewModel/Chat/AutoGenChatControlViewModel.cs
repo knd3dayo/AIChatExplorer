@@ -186,7 +186,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                ChatResult? result = null;
+                ChatResponse? result = null;
                 // プログレスバーを表示
                 CommonViewModelProperties.UpdateIndeterminate(true);
 

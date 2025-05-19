@@ -26,15 +26,15 @@ namespace PythonAILib.Model.AutoProcess {
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
-                OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
+                OpenAIPropsRequest = new (PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
             if (clipboardFolder != null) {
                 chatRequestContent.UseVectorDB = true;
-                chatRequestContent.VectorSearchRequests = [clipboardFolder.GetMainVectorSearchProperty()];
+                chatRequestContent.VectorSearchRequests = [ new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
             }
 
-            ChatResult? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
+            ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
             if (result == null) {
                 return;
             }

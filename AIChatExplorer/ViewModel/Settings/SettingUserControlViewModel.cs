@@ -480,10 +480,10 @@ namespace AIChatExplorer.ViewModel.Settings {
 
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
-                    OpenAIProperties = AIChatExplorerConfig.Instance.CreateOpenAIProperties(),
+                    OpenAIPropsRequest = new OpenAIPropsRequest(AIChatExplorerConfig.Instance.CreateOpenAIProperties()),
                 };
 
-                ChatResult? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+                ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
                 string resultString = result?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{CommonStringResources.Instance.FailedToRunOpenAI}";

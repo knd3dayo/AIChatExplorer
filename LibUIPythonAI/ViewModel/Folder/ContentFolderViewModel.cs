@@ -235,12 +235,12 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
             Task.Run(() => {
                 // MainWindowViewModelのIsIndeterminateをTrueに設定
-                string? vectorDBItemName = Folder.GetMainVectorSearchProperty().VectorDBItemName;
+                string? vectorDBItemName = Folder.GetMainVectorSearchItem().VectorDBItemName;
                 if (vectorDBItemName == null) {
                     return;
                 }
                 CommonViewModelProperties.UpdateIndeterminate(true);
-                VectorEmbedding.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.Id);
+                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.Id);
                 ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
 
                     ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));

@@ -55,8 +55,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public Visibility VectorDBItemButtonVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 1);
 
-        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -66,22 +66,22 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        private VectorSearchProperty? _selectedVectorSearchProperty = null;
-        public VectorSearchProperty? SelectedVectorSearchProperty {
+        private VectorSearchItem? _selectedVectorSearchItem = null;
+        public VectorSearchItem? SelectedVectorSearchItem {
             get {
-                return _selectedVectorSearchProperty;
+                return _selectedVectorSearchItem;
             }
             set {
-                _selectedVectorSearchProperty = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
+                _selectedVectorSearchItem = value;
+                OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchProperty != null) {
+            if (SelectedVectorSearchItem != null) {
                 // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
+                VectorSearchProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
         });

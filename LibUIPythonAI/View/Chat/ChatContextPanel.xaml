@@ -141,7 +141,7 @@
                     Grid.Row="0"
                     Margin="10,20,0,10"
                     Content="{x:Static local:ViewStringResources.UseVectorDBSettingInFolder}"
-                    IsChecked="{Binding UseFolderVectorSearchProperty}" />
+                    IsChecked="{Binding UseFolderVectorSearchItem}" />
                 <!--  ベクトルDB検索結果最大値  -->
                 <StackPanel
                     Grid.Row="1"
@@ -168,7 +168,7 @@
                                 VerticalAlignment="Center"
                                 FontSize="10"
                                 Text="{x:Static local:ViewStringResources.ClickHereToAddVectorDB}"
-                                Visibility="{Binding UseItemVectorSearchPropertyVisibility}">
+                                Visibility="{Binding UseItemVectorSearchItemVisibility}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -180,7 +180,7 @@
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch"
                             ItemsSource="{Binding VectorSearchProperties}"
-                            SelectedItem="{Binding SelectedVectorSearchProperty}">
+                            SelectedItem="{Binding SelectedVectorSearchItem}">
                             <ItemsControl.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListBoxItem}">
                                     <Setter Property="BorderThickness" Value="1" />

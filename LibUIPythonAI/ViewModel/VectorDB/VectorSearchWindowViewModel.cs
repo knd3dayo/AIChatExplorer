@@ -11,14 +11,14 @@ using WpfAppCommon.Model;
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : CommonViewModelBase {
 
-        public VectorSearchWindowViewModel(VectorSearchProperty vectorSearchProperty) {
+        public VectorSearchWindowViewModel(VectorSearchItem VectorSearchItem) {
             InputText = string.Empty;
         }
 
-        // VectorSearchProperty
-        private LibPythonAI.Model.VectorDB.VectorSearchProperty? _vectorSearchProperty;
-        public LibPythonAI.Model.VectorDB.VectorSearchProperty? VectorSearchProperty {
-            get => _vectorSearchProperty;
+        // VectorSearchItem
+        private LibPythonAI.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
+        public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
+            get => _VectorSearchItem;
             set {
                 if (value == null) {
                     return;
@@ -27,7 +27,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 if (item == null) {
                     return;
                 }
-                _vectorSearchProperty = value;
+                _VectorSearchItem = value;
 
                 // VectorDBSearchResultMax
                 VectorDBSearchResultMax = item.DefaultSearchResultLimit;
@@ -42,7 +42,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 // StatusTextを更新
                 UpdateStatusText();
 
-                OnPropertyChanged(nameof(VectorSearchProperty));
+                OnPropertyChanged(nameof(VectorSearchItem));
                 OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
                 OnPropertyChanged(nameof(VectorSearchResults));
 
@@ -55,13 +55,13 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
 
-        public ObservableCollection<VectorEmbedding> MultiVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorEmbeddingItem> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorEmbedding> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorEmbeddingItem> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<LibPythonAI.Model.VectorDB.VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<LibPythonAI.Model.VectorDB.VectorSearchItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
         private int _selectedTabIndex = 0;
@@ -77,7 +77,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public Visibility MultiVectorRetrieverVisibility {
             get {
 
-                var item = VectorDBItem.GetItemByName(VectorSearchProperty?.VectorDBItemName); 
+                var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName); 
                 if (item == null) {
                     return Visibility.Collapsed;
                 }
@@ -98,11 +98,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // SendCommand
         public SimpleDelegateCommand<object> SendCommand => new( (parameter) => {
             // VectorDBItemがnullの場合は何もしない
-            if (VectorSearchProperty == null) {
+            if (VectorSearchItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchProperty.VectorDBItemName); 
+            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName); 
             if (vectorDBItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
@@ -110,13 +110,13 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
             CommonViewModelProperties.UpdateIndeterminate(true);
             Task.Run(async () => {
-                List<VectorEmbedding> vectorSearchResults = [];
+                List<VectorEmbeddingItem> vectorSearchResults = [];
                 // ベクトル検索を実行
-                // VectorDBSearchResultMaxをVectorSearchPropertyに設定
-                VectorSearchProperty.TopK = VectorDBSearchResultMax;
+                // VectorDBSearchResultMaxをVectorSearchItemに設定
+                VectorSearchItem.TopK = VectorDBSearchResultMax;
 
                 try {
-                    var searchResults = await VectorSearchProperty.VectorSearchAsync(InputText);
+                    var searchResults = await VectorSearchItem.VectorSearchAsync(InputText);
                     vectorSearchResults.AddRange(searchResults);
                 } finally {
                     CommonViewModelProperties.UpdateIndeterminate(false);
@@ -127,17 +127,17 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     VectorSearchResults.Clear();
 
                     if (vectorDBItem.IsUseMultiVectorRetriever) {
-                        foreach (VectorEmbedding vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
                             MultiVectorSearchResults.Add(vectorSearchResult);
                             // sub_docsを追加
-                            foreach (VectorEmbedding subDoc in vectorSearchResult.SubDocs) {
+                            foreach (VectorEmbeddingItem subDoc in vectorSearchResult.SubDocs) {
                                 VectorSearchResults.Add(subDoc);
                             }
                         }
                     } else {
                         // VectorSearchResultsを更新
                         VectorSearchResults.Clear();
-                        foreach (VectorEmbedding vectorSearchResult in vectorSearchResults) {
+                        foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
                             VectorSearchResults.Add(vectorSearchResult);
                         }
                     }
@@ -152,19 +152,19 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // PreviewJson
         public string PreviewJson {
             get {
-                if (VectorSearchProperty == null) {
+                if (VectorSearchItem == null) {
                     return "";
                 }
-                // VectorDBSearchResultMaxをVectorSearchPropertyに設定
-                VectorSearchProperty.TopK = VectorDBSearchResultMax;
+                // VectorDBSearchResultMaxをVectorSearchItemに設定
+                VectorSearchItem.TopK = VectorDBSearchResultMax;
 
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
 
                 ChatRequestContext chatRequestContext = new() {
-                    OpenAIProperties = openAIProperties,
-                    VectorSearchRequests = [VectorSearchProperty],
+                    OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
+                    VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
                     UseVectorDB = true,
                 };
                 RequestContainer requestContainer = new() {
@@ -180,11 +180,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<LibPythonAI.Model.VectorDB.VectorSearchProperty> items = [];
+            List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {
-                VectorSearchProperty = items[0];
+                VectorSearchItem = items[0];
                 // MultiVectorRetrieverの場合のVisibilityを更新
                 OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
 
@@ -196,11 +196,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // UpdateStatusText
         private void UpdateStatusText() {
             // StatusTextを更新
-            if (VectorSearchProperty == null) {
+            if (VectorSearchItem == null) {
                 return;
             }
-            StatusText.Instance.ReadyText = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchProperty.DisplayText}]";
-            StatusText.Instance.Text = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchProperty.DisplayText}]";
+            StatusText.Instance.ReadyText = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchItem.DisplayText}]";
+            StatusText.Instance.Text = $"{CommonStringResources.Instance.VectorDB}:[{VectorSearchItem.DisplayText}]";
         }
 
         // Closed時の処理
