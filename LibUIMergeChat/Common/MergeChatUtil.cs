@@ -73,7 +73,7 @@ namespace LibUIMergeChat.Common {
                         SplitTokenCount = context.SplitTokenCount,
                         UseVectorDB = context.UseVectorDB,
                         VectorSearchRequests = context.VectorSearchRequests,
-                        AutoGenProperties = context.AutoGenProperties,
+                        AutoGenPropsRequest = context.AutoGenPropsRequest,
                         OpenAIPropsRequest = context.OpenAIPropsRequest,
 
                     };
@@ -132,7 +132,7 @@ namespace LibUIMergeChat.Common {
                 SplitTokenCount = context.SplitTokenCount,
                 UseVectorDB = context.UseVectorDB,
                 VectorSearchRequests = context.VectorSearchRequests,
-                AutoGenProperties = context.AutoGenProperties,
+                AutoGenPropsRequest = context.AutoGenPropsRequest,
                 OpenAIPropsRequest = context.OpenAIPropsRequest,
             };
             ChatRequest postProcessRequest = new() {

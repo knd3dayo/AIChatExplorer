@@ -29,11 +29,6 @@ namespace LibPythonAI.Model.VectorDB {
             return item!;
         }
 
-        private static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-
 
         // 名前
         public string Name { get; set; } = "";
@@ -73,28 +68,6 @@ namespace LibPythonAI.Model.VectorDB {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
-        // CreateEntriesDictList
-        public Dictionary<string, object> ToDict() {
-            Dictionary<string, object> dict = new() {
-                { "id", Id },
-                { "vector_db_type", (int)Type },
-                { "is_enabled", IsEnabled },
-                { "is_system", IsSystem },
-                { "name", Name },
-                { "description", Description },
-                { "system_message", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
-                { "vector_db_url", VectorDBURL },
-                { "is_use_multi_vector_retriever", IsUseMultiVectorRetriever },
-                { "doc_store_url", DocStoreURL },
-                { "vector_db_type_string", VectorDBTypeString },
-                { "collection_name", CollectionName ?? ""},
-                { "chunk_size", ChunkSize },
-                { "default_search_result_limit", DefaultSearchResultLimit },
-
-            };
-            return dict;
-        }
-
 
         // SaveAsync
         public async Task SaveAsync() {
@@ -106,20 +79,6 @@ namespace LibPythonAI.Model.VectorDB {
             await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this));
         }
 
-
-        // CreateEntriesDictList
-        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBItem> items) {
-            return items.Select(item => item.ToDict()).ToList();
-        }
-
-        // Json文字列化する
-        public static string ToJson(IEnumerable<VectorDBItem> items) {
-            return JsonSerializer.Serialize(items, JsonSerializerOptions);
-        }
-        // Json文字列化する
-        public static string ToJson(VectorDBItem item) {
-            return JsonSerializer.Serialize(item, JsonSerializerOptions);
-        }
 
         private static List<VectorDBItem> _items = new(); // 修正: 空のリストを初期化
         public static async Task LoadItemsAsync() {
@@ -167,23 +126,5 @@ namespace LibPythonAI.Model.VectorDB {
 
         }
 
-        public static VectorDBItem FromDict(Dictionary<string, object> dict) {
-            VectorDBItem item = new();
-            item.Id = dict["id"]?.ToString() ?? "";
-            item.Name = dict["name"]?.ToString() ?? "";
-            item.Description = dict["description"]?.ToString() ?? "";
-            item.VectorDBURL = dict["vector_db_url"]?.ToString() ?? "";
-            item.IsUseMultiVectorRetriever = Convert.ToBoolean(dict["is_use_multi_vector_retriever"]);
-            item.DocStoreURL = dict["doc_store_url"]?.ToString() ?? "";
-            item.ChunkSize = Convert.ToInt32(dict["chunk_size"]);
-            item.CollectionName = dict["collection_name"]?.ToString() ?? "";
-            item.IsEnabled = Convert.ToBoolean(dict["is_enabled"]);
-            item.IsSystem = Convert.ToBoolean(dict["is_system"]);
-            item.Type = (VectorDBTypeEnum)Int32.Parse(dict["vector_db_type"]?.ToString() ?? "0");
-            item.DefaultSearchResultLimit = Convert.ToInt32(dict["default_search_result_limit"]);
-
-            return item;
-
-        }
     }
 }

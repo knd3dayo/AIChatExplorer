@@ -43,8 +43,8 @@ namespace LibPythonAI.PythonIF.Request {
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
 
-        // VectorDBItemInstance
-        public VectorDBItem? VectorDBItemInstance { get; set; } = null;
+        // VectorDBItemRequestInstance
+        public VectorDBItemRequest? VectorDBItemRequestInstance { get; set; } = null;
 
         // TagItemInstance
         public List<TagItem> TagItemsInstance { get; set; } = [];
@@ -77,11 +77,17 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
 
             if (RequestContextInstance != null) {
-                dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIPropsRequest.ToDict();
+                if (RequestContextInstance.OpenAIPropsRequest != null) {
+                    dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIPropsRequest.ToDict();
+                }
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
-                dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBRequestDict();
-                if (RequestContextInstance.AutoGenProperties != null) {
-                    dict[AUTOGEN_PROPS_KEY] = RequestContextInstance.AutoGenProperties.ToDict();
+
+                if (RequestContextInstance.VectorSearchRequests.Count > 0) {
+                    dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBRequestDict();
+                }
+
+                if (RequestContextInstance.AutoGenPropsRequest != null) {
+                    dict[AUTOGEN_PROPS_KEY] = RequestContextInstance.AutoGenPropsRequest.ToDict();
                 }
             }
 
@@ -96,8 +102,8 @@ namespace LibPythonAI.PythonIF.Request {
             if (TokenCountRequestInstance != null) {
                 dict[TOKEN_COUNT_REQUEST_KEY] = TokenCountRequestInstance.ToDict();
             }
-            if (VectorDBItemInstance != null) {
-                dict[VECTOR_DB_ITEM_REQUEST_KEY] = VectorDBItemInstance.ToDict();
+            if (VectorDBItemRequestInstance != null) {
+                dict[VECTOR_DB_ITEM_REQUEST_KEY] = VectorDBItemRequestInstance.ToDict();
             }
 
             if (ExcelRequestInstance != null) {

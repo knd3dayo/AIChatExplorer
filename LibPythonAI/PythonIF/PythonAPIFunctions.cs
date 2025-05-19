@@ -446,7 +446,7 @@ namespace PythonAILib.PythonIF {
         public async Task UpdateVectorDBItem(VectorDBItem item) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                VectorDBItemInstance = item
+                VectorDBItemRequestInstance = new VectorDBItemRequest(item)
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
@@ -470,7 +470,7 @@ namespace PythonAILib.PythonIF {
         public async Task DeleteVectorDBItem(VectorDBItem item) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                VectorDBItemInstance = item
+                VectorDBItemRequestInstance = new VectorDBItemRequest(item)
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
@@ -516,7 +516,7 @@ namespace PythonAILib.PythonIF {
             List<VectorDBItem> vectorDBItems = [];
             foreach (var item in dictList) {
                 // VectorDBItemを取得
-                VectorDBItem? vectorDBItem = VectorDBItem.FromDict(item);
+                VectorDBItem? vectorDBItem = (new VectorDBItemResponse(item)).CreateVectorDBItem();
                 if (vectorDBItem != null) {
                     vectorDBItems.Add(vectorDBItem);
                 }
@@ -527,7 +527,7 @@ namespace PythonAILib.PythonIF {
         public VectorDBItem? GetVectorDBItemById(string id) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                VectorDBItemInstance = new VectorDBItem() { Id = id }
+                VectorDBItemRequestInstance = new VectorDBItemRequest(new VectorDBItem() { Id = id })
             };
 
             // RequestContainerをJSON文字列に変換
@@ -548,14 +548,14 @@ namespace PythonAILib.PythonIF {
             }
 
             // VectorDBItemを取得
-            VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
+            VectorDBItem? vectorDBItem = (new VectorDBItemResponse(resultDict["vector_db_item"] ?? "[]")).CreateVectorDBItem();
             return vectorDBItem;
         }
         // public VectorDBItem? GetVectorDBItemByName(string name);
         public VectorDBItem? GetVectorDBItemByName(string name) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                VectorDBItemInstance = new VectorDBItem() { Name = name }
+                VectorDBItemRequestInstance = new VectorDBItemRequest(new VectorDBItem() { Name = name })
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
@@ -576,7 +576,7 @@ namespace PythonAILib.PythonIF {
 
 
             // VectorDBItemを取得
-            VectorDBItem? vectorDBItem = VectorDBItem.FromDict(resultDict["vector_db_item"] ?? "[]");
+            VectorDBItem? vectorDBItem = (new VectorDBItemResponse(resultDict["vector_db_item"] ?? "[]")).CreateVectorDBItem();
             return vectorDBItem;
         }
 
@@ -623,7 +623,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 foreach (var item in documents) {
-                    EmbeddingResponse? VectorEmbeddingItem = EmbeddingResponse.FromDict(item);
+                    EmbeddingResponse? VectorEmbeddingItem = new (item);
                     if (VectorEmbeddingItem != null) {
                         vectorSearchResults.Add(VectorEmbeddingItem.CreateVectorEmbeddingItem());
                     }

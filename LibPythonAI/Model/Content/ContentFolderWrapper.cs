@@ -34,6 +34,14 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
+        public string ExtendedPropertiesJson {
+            get {
+                return Entity.ExtendedPropertiesJson;
+            }
+            set {
+                Entity.ExtendedPropertiesJson = value;
+            }
+        }
 
         // Parent
         public ContentFolderWrapper? Parent {
@@ -187,9 +195,7 @@ namespace LibPythonAI.Model.Content {
             db.SaveChanges();
             // APIを呼び出して、ContentFolderを削除
             Task.Run(async () => {
-                ContentFolderRequest request = new() {
-                    Id = Id,
-                };
+                ContentFolderRequest request = new(this);
                 await PythonExecutor.PythonAIFunctions.DeleteContentFoldersForVectorSearch([request]);
             });
 
@@ -220,26 +226,10 @@ namespace LibPythonAI.Model.Content {
             Task.Run(async () => {
                 List<ContentFolderRequest> requests = [];
                 foreach (var child in children) {
-                    ContentFolderRequest childRequest = new() {
-                        Id = child.Id,
-                        FolderName = child.FolderName,
-                        Description = child.Description,
-                        FolderTypeString = child.FolderTypeString,
-                        ParentId = child.Parent?.Id,
-                        ExtendedPropertiesJson = child.Entity.ExtendedPropertiesJson,
-                        IsRootFolder = child.IsRootFolder,
-                    };
+                    ContentFolderRequest childRequest = new(this);
                     requests.Add(childRequest);
                 }
-                ContentFolderRequest request = new() {
-                    Id = Id,
-                    FolderName = FolderName,
-                    Description = Description,
-                    ParentId = Parent?.Id,
-                    FolderTypeString = FolderTypeString,
-                    ExtendedPropertiesJson = Entity.ExtendedPropertiesJson,
-                    IsRootFolder = IsRootFolder,
-                };
+                ContentFolderRequest request = new(this);
                 requests.Add(request);
 
                 await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch(requests);
@@ -299,15 +289,7 @@ namespace LibPythonAI.Model.Content {
 
             // APIを呼び出して、ContentFolderを更新
             Task.Run(async () => {
-                ContentFolderRequest request = new() {
-                    Id = Id,
-                    FolderName = FolderName,
-                    Description = Description,
-                    ParentId = Parent?.Id,
-                    FolderTypeString = FolderTypeString,
-                    ExtendedPropertiesJson = Entity.ExtendedPropertiesJson,
-                    IsRootFolder = IsRootFolder,
-                };
+                ContentFolderRequest request = new(this);
                 await  PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
             });
 

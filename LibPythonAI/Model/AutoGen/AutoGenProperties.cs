@@ -1,7 +1,4 @@
 using System.IO;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.VectorDB;
@@ -10,13 +7,8 @@ using PythonAILib.Common;
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenProperties {
 
-        static readonly JsonSerializerOptions options = new() {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-        };
-
-        public static readonly string CHAT_TYPE_GROUP = "group";
-        public static readonly string CHAT_TYPE_NORMAL = "normal";
+        public const string CHAT_TYPE_GROUP = "group";
+        public const string CHAT_TYPE_NORMAL = "normal";
 
         // autogen_db_path
         public string AutoGenDBPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
@@ -65,11 +57,6 @@ namespace PythonAILib.Model.AutoGen {
                 { "session_token", SessionToken },
             };
             return dict;
-        }
-
-        // ToJson
-        public string ToJson() {
-            return JsonSerializer.Serialize(ToDict(), options);
         }
 
         private static bool Initialized { get; set; } = false;

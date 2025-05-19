@@ -2,6 +2,7 @@ using System.Data.SQLite;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
 
@@ -57,7 +58,7 @@ namespace LibPythonAI.Model.AutoGen {
                 { "tool_names", ToolNames },
                 { "code_execution", CodeExecution },
                 { "llm_config_name", LLMConfigName },
-                { "vector_db_items", VectorDBItem.ToDictList(VectorDBItems) },
+                { "vector_db_items", VectorDBItemRequest.ToDictList(VectorDBItems.Select(x => new VectorDBItemRequest(x))) },
                 { "vector_db_search_agent", VectorDBSearchAgent },
 
             };

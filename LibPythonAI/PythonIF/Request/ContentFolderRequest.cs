@@ -1,49 +1,59 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LibPythonAI.Model.Content;
 
 namespace LibPythonAI.PythonIF.Request {
     public class ContentFolderRequest {
 
+        public const string ID_KEY = "id";
+        public const string FOLDER_NAME_KEY = "folder_name";
+        public const string FOLDER_TYPE_STRING_KEY = "folder_type_string";
+        public const string DESCRIPTION_KEY = "description";
+        public const string IS_ROOT_FOLDER_KEY = "is_root_folder";
+        public const string EXTENDED_PROPERTIES_JSON_KEY = "extended_properties_json";
+        public const string PARENT_ID_KEY = "parent_id";
 
-        public string Id { get; set; } = "";
 
-        public string FolderName { get; set; } = "";
+        public ContentFolderRequest(ContentFolderWrapper contentFolderWrapper) {
+            Id = contentFolderWrapper.Id.ToString();
+            FolderName = contentFolderWrapper.FolderName;
+            FolderTypeString = contentFolderWrapper.FolderTypeString;
+            Description = contentFolderWrapper.Description;
+            IsRootFolder = contentFolderWrapper.IsRootFolder;
+            ExtendedPropertiesJson = contentFolderWrapper.ExtendedPropertiesJson;
+            ParentId = contentFolderWrapper.Parent?.Id?.ToString();
+        }
+
+        public string Id { get; set; }
+
+        public string FolderName { get; set; }
 
         // Description
-        public string Description { get; set; } = "";
+        public string Description { get; set; }
 
         // FolderTypeString
-        public string FolderTypeString { get; set; } = "";
+        public string FolderTypeString { get; set; }
         // IsRootFolder
         public bool IsRootFolder { get; set; } = false;
 
         // ExtendedPropertiesJson
-        public string ExtendedPropertiesJson { get; set; } = "{}";
+        public string ExtendedPropertiesJson { get; set; }
 
         // ParentId
         public string? ParentId { get; set; } = null;
 
-        public string? FolderPath { get; set; } = null;
-
         // ToDict
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                ["id"] = Id,
-                ["folder_name"] = FolderName,
-                ["folder_type_string"] = FolderTypeString,
-                ["description"] = Description,
-                ["is_root_folder"] = IsRootFolder,
-                ["extended_properties_json"] = ExtendedPropertiesJson
+                { ID_KEY, Id },
+                { FOLDER_NAME_KEY, FolderName },
+                { FOLDER_TYPE_STRING_KEY, FolderTypeString },
+                { DESCRIPTION_KEY, Description },
+                { IS_ROOT_FOLDER_KEY, IsRootFolder },
+                { EXTENDED_PROPERTIES_JSON_KEY, ExtendedPropertiesJson }
             };
             if (ParentId != null) {
-                dict["parent_id"] = ParentId;
+                dict[PARENT_ID_KEY] = ParentId;
             }
-            if (FolderPath != null) {
-                dict["folder_path"] = FolderPath;
-            }
+
             return dict;
         }
         // ToDictList
@@ -54,37 +64,5 @@ namespace LibPythonAI.PythonIF.Request {
             }
             return dictList;
         }
-        // FromDict
-        public static ContentFolderRequest FromDict(Dictionary<string, object> dict) {
-            ContentFolderRequest request = new() {
-                Id = dict["id"]?.ToString() ?? "",
-                FolderName = dict["folder_name"]?.ToString() ?? "",
-                Description = dict["description"]?.ToString() ?? "",
-                IsRootFolder = Convert.ToBoolean(dict["is_root_folder"]),
-                ExtendedPropertiesJson = dict["extended_properties_json"]?.ToString() ?? "{}"
-            };
-            if (dict.ContainsKey("parent_id")) {
-                request.ParentId = dict["parent_id"]?.ToString();
-            } else {
-                request.ParentId = null;
-            }
-            if (dict.ContainsKey("folder_path")) {
-                request.FolderPath = dict["folder_path"]?.ToString();
-            } else {
-                request.FolderPath = null;
-            }
-
-            return request;
-        }
-        // FromDictList
-        public static List<ContentFolderRequest> FromDictList(List<Dictionary<string, object>> dicts) {
-            List<ContentFolderRequest> requests = new();
-            foreach (var dict in dicts) {
-                requests.Add(FromDict(dict));
-            }
-            return requests;
-        }
-
-
     }
 }

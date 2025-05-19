@@ -32,9 +32,9 @@ namespace LibPythonAI.PythonIF.Request {
         [JsonPropertyName(VECTOR_SEARCH_REQUESTS_KEY)]
         public List<VectorSearchRequest> VectorSearchRequests { get; set; } = [];
 
-        // AutoGenProperties
+        // AutoGenPropsRequest
         [JsonPropertyName(AUTOGEN_PROPS_KEY)]
-        public AutoGenProperties? AutoGenProperties { get; set; }
+        public AutoGenPropsRequest? AutoGenPropsRequest { get; set; }
 
         // リクエストを分割するトークン数
         [JsonPropertyName(SPLIT_TOKEN_COUNT_KEY)]
@@ -93,7 +93,7 @@ namespace LibPythonAI.PythonIF.Request {
                 SplitTokenCount = split_token_count,
             };
             if (autoGenProperties != null) {
-                chatRequestContext.AutoGenProperties = autoGenProperties;
+                chatRequestContext.AutoGenPropsRequest = new AutoGenPropsRequest(autoGenProperties);
             }
 
             return chatRequestContext;
