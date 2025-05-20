@@ -35,16 +35,7 @@ namespace PythonAILib.PythonIF {
             ConfigPrams = configPrams;
 
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
-            string appDataDir = configPrams.GetAppDataPath();
 
-
-            if (!string.IsNullOrEmpty(appDataDir)) {
-
-                PythonAILibPath = Path.Combine(appDataDir, DefaultPythonAILibDir);
-                // Check if the PythonAILibPath exists
-                // ./pythonディレクトリをPythonAILibPathRootへコピーする
-                Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
-            }
             if (_pythonAIFunctions == null) {
                 if (ConfigPrams.UseInternalAPI()) {
                     InitInternalAPI(ConfigPrams);
