@@ -151,7 +151,6 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
                     VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
-                    UseVectorDB = true,
                 };
 
                 RequestContainer requestContainer = new() {

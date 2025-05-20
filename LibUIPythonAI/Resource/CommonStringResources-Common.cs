@@ -160,6 +160,17 @@ namespace LibUIPythonAI.Resource {
         // PromptTextIsNeededWhenSplitModeIsEnabled
         public virtual string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "分割モードが有効な場合はプロンプトテキストが必要です";
 
+        // RAGMode_None
+        public virtual string RAGMode_None { get; } = "ベクトル検索情報は行わない";
+
+        // RAGMode_NormalSearch
+        public virtual string RAGMode_NormalSearch { get; } = "ベクトル検索情報を使用する";
+
+        // RAGMode_PromptSearch
+        public virtual string RAGMode_PromptSearch { get; } = "プロンプトを指定してベクトル検索を行う";
+
+
+
         // リクエストを分割するトークン数
         public virtual string NumberOfTokensToSplitRequest { get; } = "リクエストを分割するトークン数";
 

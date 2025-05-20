@@ -280,6 +280,14 @@ namespace LibUIPythonAI.Resource {
         // PromptTextIsNeededWhenSplitModeIsEnabled
         public override string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "Prompt text is needed when split mode is enabled";
 
+        // RAGMode_None ベクトル検索情報は行わない
+        public override string RAGMode_None { get; } = "No vector search information will be performed";
+        // RAGMode_NormalSearch ベクトル検索情報を使用する
+        public override string RAGMode_NormalSearch { get; } = "Use vector search information";
+
+        // RAGMode_PromptSearch プロンプトを指定してベクトル検索を行う
+        public override string RAGMode_PromptSearch { get; } = "Perform vector search with specified prompt";
+
         // NumberOfTokensToSplitRequest
         public override string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 

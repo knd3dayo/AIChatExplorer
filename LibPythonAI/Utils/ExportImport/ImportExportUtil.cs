@@ -24,7 +24,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 row.Add(promptItem.Prompt);
                 row.Add(promptItem.ChatMode.ToString());
                 row.Add(promptItem.SplitMode.ToString());
-                row.Add(promptItem.UseVectorDB.ToString());
+                row.Add(promptItem.RAGMode.ToString());
                 data.Add(row);
             }
             CommonDataTable dataTable = new(data);
@@ -47,8 +47,8 @@ namespace LibPythonAI.Utils.ExportImport {
                     Description = row[1],
                     Prompt = row[2],
                     ChatMode = (OpenAIExecutionModeEnum)Enum.Parse(typeof(OpenAIExecutionModeEnum), row[3]),
-                    SplitMode = (SplitOnTokenLimitExceedModeEnum)Enum.Parse(typeof(SplitOnTokenLimitExceedModeEnum), row[4]),
-                    UseVectorDB = bool.Parse(row[5])
+                    SplitMode = (SplitModeEnum)Enum.Parse(typeof(SplitModeEnum), row[4]),
+                    RAGMode =  (RAGModeEnum)Enum.Parse(typeof(RAGModeEnum), row[5])
                 };
                 promptItem.Save();
             }

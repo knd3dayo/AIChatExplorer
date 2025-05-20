@@ -62,13 +62,13 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             }
         }
 
-        private SplitOnTokenLimitExceedModeEnum _splitMode = SplitOnTokenLimitExceedModeEnum.None;
+        private SplitModeEnum _splitMode = SplitModeEnum.None;
         public int SplitMode {
             get {
                 return (int)_splitMode;
             }
             set {
-                _splitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                _splitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitMode));
             }
         }
@@ -125,35 +125,36 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
-
-
-        // UseVectorDB
-        private bool _UseVectorDB = false;
-        public bool UseVectorDB {
+        // RAGMode
+        private RAGModeEnum _ragMode = RAGModeEnum.None;
+        public int RAGMode {
             get {
-                return _UseVectorDB;
+                return (int)_ragMode;
             }
             set {
-                _UseVectorDB = value;
-                // _UserVectorDBがTrueの場合はVectorDBItemを取得
-                VectorSearchProperties = [];
-                if (_UseVectorDB) {
-                    ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
-                    foreach (var item in items) {
-                        VectorSearchProperties.Add(item);
-                    }
-                } else {
-                    VectorSearchProperties.Clear();
-                }
+                _ragMode = (RAGModeEnum)value;
 
-                OnPropertyChanged(nameof(UseVectorDB));
-                OnPropertyChanged(nameof(VectorDBItemVisibility));
+                OnPropertyChanged(nameof(RAGMode));
+                InitVectorDBProperties();
+
             }
         }
-        //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
+        private void UpdateVectorDBProperties() {
+            if (_ragMode != RAGModeEnum.None) {
+                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                foreach (var item in items) {
+                    VectorSearchProperties.Add(item);
+                }
+            } else {
+                VectorSearchProperties.Clear();
+            }
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
+        }
 
-        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
+
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_ragMode != RAGModeEnum.None);
+
+        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitModeEnum.None);
 
         // UseFolderVectorSearchItem
         // フォルダのベクトルDBを使用するか否か
@@ -185,7 +186,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
-            if (UseVectorDB) {
+            if (_ragMode != RAGModeEnum.None) {
                 ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
@@ -289,6 +290,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             OnPropertyChanged(nameof(SplitMOdeVisibility));
 
         });
+        // RAGModeが変更されたときの処理
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
@@ -320,7 +322,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, promptText
+                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], AutoGenProperties, promptText
                 );
             return chatRequestContext;
         }

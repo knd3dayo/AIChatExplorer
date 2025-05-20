@@ -93,6 +93,15 @@ namespace LibUIPythonAI.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
+        // RAGMode None
+        public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
+        // RAGMode NormalSearch
+        public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
+        // RAGMode PromptSearch
+        public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
+
+
+
         // VectorDBList
         public static string VectorDBList => CommonStringResources.Instance.VectorDBList;
 
@@ -101,6 +110,9 @@ namespace LibUIPythonAI.View.Chat {
 
         // ベクトルDB検索結果の最大値
         public static string VectorDBSearchResultMax => CommonStringResources.Instance.VectorDBSearchResultMax;
+
+        // ScoreThreshold
+        public static string VectorDBSearchScoreThreashold => CommonStringResources.Instance.VectorDBSearchScoreThreashold;
 
         // RequestParameterJson
         public static string RequestParameterJson => CommonStringResources.Instance.RequestParameterJson;
@@ -144,7 +156,7 @@ namespace LibUIPythonAI.View.Chat {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // UseVectorDB
+        // RAGMode
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // ExcludeFromList

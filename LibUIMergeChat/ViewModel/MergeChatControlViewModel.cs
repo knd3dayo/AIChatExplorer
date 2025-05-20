@@ -120,13 +120,13 @@ namespace LibUIMergeChat.ViewModel {
                 OnPropertyChanged(nameof(ChatMode));
             }
         }
-        private SplitOnTokenLimitExceedModeEnum _splitMode = SplitOnTokenLimitExceedModeEnum.None;
+        private SplitModeEnum _splitMode = SplitModeEnum.None;
         public int SplitMode {
             get {
                 return (int)_splitMode;
             }
             set {
-                _splitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                _splitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitMode));
             }
         }
@@ -186,33 +186,38 @@ namespace LibUIMergeChat.ViewModel {
                 OnPropertyChanged(nameof(AutoGenProperties));
             }
         }
-        // UseVectorDB
-        private bool _UseVectorDB = false;
-        public bool UseVectorDB {
+
+        // RAGMode
+        private RAGModeEnum _ragMode = RAGModeEnum.None;
+        public int RAGMode {
             get {
-                return _UseVectorDB;
+                return (int)_ragMode;
             }
             set {
-                _UseVectorDB = value;
-                // _UserVectorDBがTrueの場合はVectorDBItemを取得
-                VectorSearchProperties = [];
-                if (_UseVectorDB) {
-                    var folder = MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
-                    if (folder == null) {
-                        return;
-                    }
-                    List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [.. folder.Folder.GetVectorSearchProperties()];
-                    foreach (var item in items) {
-                        VectorSearchProperties.Add(item);
-                    }
-                } else {
-                    VectorSearchProperties.Clear();
-                }
+                _ragMode = (RAGModeEnum)value;
 
-                OnPropertyChanged(nameof(UseVectorDB));
-                OnPropertyChanged(nameof(VectorDBItemVisibility));
+                OnPropertyChanged(nameof(RAGMode));
+                UpdateVectorDBProperties();
+
             }
         }
+        
+        private void UpdateVectorDBProperties() {
+            if (_ragMode != RAGModeEnum.None) {
+                var folder = MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
+                if (folder == null) {
+                    return;
+                }
+                List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [.. folder.Folder.GetVectorSearchProperties()];
+                foreach (var item in items) {
+                    VectorSearchProperties.Add(item);
+                }
+            } else {
+                VectorSearchProperties.Clear();
+            }
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
+        }
+
 
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = int.Parse(SplitTokenCount);
@@ -221,7 +226,7 @@ namespace LibUIMergeChat.ViewModel {
                 item.TopK = VectorDBSearchResultMax;
             }
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
+                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
                 );
             return chatRequestContext;
         }
@@ -229,9 +234,9 @@ namespace LibUIMergeChat.ViewModel {
         //
 
 
-        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseVectorDB);
+        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_ragMode != RAGModeEnum.None);
 
-        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
+        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_splitMode != SplitModeEnum.None);
 
 
         // チャットを送信するコマンド
@@ -252,7 +257,7 @@ namespace LibUIMergeChat.ViewModel {
                 await Task.Run(async () => {
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
+                    if (_splitMode != SplitModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         return;
@@ -301,6 +306,14 @@ namespace LibUIMergeChat.ViewModel {
             // SplitMOdeVisibility
             OnPropertyChanged(nameof(SplitMOdeVisibility));
 
+        });
+        // RAGモードが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            RAGMode = comboBox.SelectedIndex;
+            // VectorDBItemVisibility
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
         });
 
         private int _SelectedTabIndex = 0;

@@ -144,6 +144,26 @@
                     Grid.Row="3"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left">
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static local:ViewStringResources.UseVectorDB}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding RAGModeIndex}">
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
+                        <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                     <CheckBox
                         Margin="10,0,10,0"
                         Content="{x:Static local:ViewStringResources.UseVectorDB}"

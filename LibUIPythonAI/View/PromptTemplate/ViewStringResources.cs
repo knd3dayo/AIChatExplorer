@@ -64,8 +64,16 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken;
 
 
-        // UseVectorDB
+        // RAGMode
         public static string UseVectorDB { get; set; } = CommonStringResources.Instance.UseVectorDB;
+
+        // RAGMode_None
+        public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
+        // RAGMode_NormalSearch
+        public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
+
+        // RAGMode_PromptSearch
+        public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
 
         // 出力形式
         public static string OutputType { get; set; } = CommonStringResources.Instance.OutputType;

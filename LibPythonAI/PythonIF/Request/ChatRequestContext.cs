@@ -1,8 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
@@ -20,12 +17,13 @@ namespace LibPythonAI.PythonIF.Request {
         public const string SPLIT_MODE_KEY = "split_mode";
         public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
         public const string RELATED_INFORMATION_PROMPT_TEXT_KEY = "related_information_prompt_text";
-        public const string USE_VECTOR_DB_KEY = "use_vector_db";
+        public const string RAG_MODE_KEY = "rag_mode";
+        public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
 
-        
+
         // OpenAIPropsRequest
         [JsonPropertyName(OPENAI_PROPS_KEY)]
-        public OpenAIPropsRequest? OpenAIPropsRequest { get; set; } 
+        public OpenAIPropsRequest? OpenAIPropsRequest { get; set; }
 
         // ベクトル検索
 
@@ -44,26 +42,30 @@ namespace LibPythonAI.PythonIF.Request {
         [JsonPropertyName(PROMPT_TEMPLATE_TEXT_KEY)]
         public string PromptTemplateText { get; set; } = "";
 
-        // ベクトルDBを使用するかどうか
-        [JsonIgnore]
-        public bool UseVectorDB { get; set; } = false;
+        // RAGを使用するかどうか
+        [JsonPropertyName(RAG_MODE_KEY)]
+        public RAGModeEnum RAGMode { get; set; } = RAGModeEnum.None;
+
+        // RAGを使用する場合のプロンプト
+        [JsonPropertyName(RAG_MODE_PROMPT_TEXT_KEY)]
+        public string RagModePromptText { get; set; } = "";
 
 
-        public SplitOnTokenLimitExceedModeEnum SplitMode = SplitOnTokenLimitExceedModeEnum.None;
+        public SplitModeEnum SplitMode = SplitModeEnum.None;
 
         public string SummarizePromptText = PythonAILib.Resources.PromptStringResource.Instance.SummarizePromptText;
-
-        public string RelatedInformationPromptText = PythonAILib.Resources.PromptStringResource.Instance.RelatedInformationByVectorSearch;
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
                 { SPLIT_MODE_KEY, SplitMode.ToString() },
+                { RAG_MODE_KEY, RAGMode.ToString() },
             };
-
-            if (SplitMode != SplitOnTokenLimitExceedModeEnum.None) {
+            if (RAGMode != RAGModeEnum.None) {
+                requestContext[RAG_MODE_PROMPT_TEXT_KEY] = RagModePromptText;
+            }
+            if (SplitMode != SplitModeEnum.None) {
                 requestContext[PROMPT_TEMPLATE_TEXT_KEY] = PromptTemplateText;
                 requestContext[SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText;
-                requestContext[RELATED_INFORMATION_PROMPT_TEXT_KEY] = RelatedInformationPromptText;
                 requestContext[SPLIT_TOKEN_COUNT_KEY] = SplitTokenCount;
             }
             return requestContext;
@@ -72,14 +74,14 @@ namespace LibPythonAI.PythonIF.Request {
 
         // CreateEntriesDictList
         public List<Dictionary<string, object>> ToDictVectorDBRequestDict() {
-            return UseVectorDB ? VectorSearchRequest.ToDictList(VectorSearchRequests) : [];
+            return RAGMode != RAGModeEnum.None ? VectorSearchRequest.ToDictList(VectorSearchRequests) : [];
         }
 
-       
+
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,
+                OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, int split_token_count, RAGModeEnum ragModeEnum,
                 ObservableCollection<VectorSearchItem> vectorSearchItems, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -88,7 +90,7 @@ namespace LibPythonAI.PythonIF.Request {
                 VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
                 OpenAIPropsRequest = new OpenAIPropsRequest(libManager.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = promptTemplateText,
-                UseVectorDB = userVectorDB,
+                RAGMode = ragModeEnum,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
             };

@@ -78,13 +78,13 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // 分割モード
-        public SplitOnTokenLimitExceedModeEnum SplitMode {
+        public SplitModeEnum SplitMode {
             get {
                 Entity.ExtendedProperties.TryGetValue("SplitMode", out object? value);
                 if (value is Decimal decValue) {
-                    return (SplitOnTokenLimitExceedModeEnum)decValue;
+                    return (SplitModeEnum)decValue;
                 }
-                return SplitOnTokenLimitExceedModeEnum.None;
+                return SplitModeEnum.None;
             }
             set {
                 Entity.ExtendedProperties["SplitMode"] = (Decimal)value;
@@ -93,16 +93,16 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // ベクトルDBを使用する
-        public bool UseVectorDB {
+        public RAGModeEnum RAGMode {
             get {
-                Entity.ExtendedProperties.TryGetValue("UseVectorDB", out object? value);
-                if (value is bool boolValue) {
-                    return boolValue;
+                Entity.ExtendedProperties.TryGetValue("RAGMode", out object? value);
+                if (value is Decimal decValue) {
+                    return (RAGModeEnum)decValue;
                 }
-                return false;
+                return RAGModeEnum.None;
             }
             set {
-                Entity.ExtendedProperties["UseVectorDB"] = value;
+                Entity.ExtendedProperties["RAGMode"] = (Decimal)value;
                 Entity.SaveExtendedPropertiesJson();
             }
         }
@@ -247,9 +247,9 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     // ベクトルDBは使用しない
-                    UseVectorDB = false,
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.OverwriteTitle,
 
                 };
@@ -266,9 +266,9 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用する
-                    UseVectorDB = true,
+                    RAGMode = RAGModeEnum.NormalSearch,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
                 backgroundInformationGeneration.Save();
@@ -286,9 +286,9 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用しない
-                    UseVectorDB = false,
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -306,8 +306,8 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TableContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
-                    // ベクトルDBを使用する
-                    UseVectorDB = true,
+                    // ベクトルDBを使用しない
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -325,10 +325,10 @@ namespace LibPythonAI.Model.Prompt {
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
                     // ベクトルDBを使用しない
-                    UseVectorDB = false,
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };
@@ -347,9 +347,9 @@ namespace LibPythonAI.Model.Prompt {
                     PromptResultType = PromptResultTypeEnum.ListContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
                     UseTagList = true,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     // ベクトルDBを使用しない
-                    UseVectorDB = false,
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.AppendTags,
                 };
                 tagGeneration.Save();
@@ -365,10 +365,10 @@ namespace LibPythonAI.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.ListContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitOnTokenLimitExceedModeEnum.SplitAndSummarize,
+                    SplitMode = SplitModeEnum.SplitAndSummarize,
                     UseTagList = true,
                     // ベクトルDBを使用しない
-                    UseVectorDB = false,
+                    RAGMode = RAGModeEnum.None,
                     PromptOutputType = PromptOutputTypeEnum.AppendTags,
                 };
                 selectExistedTags.Save();
@@ -464,12 +464,12 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.UseVectorDB ? item.VectorDBProperties : [];
+            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x)).ToList(),
-                UseVectorDB = promptItem.UseVectorDB,
+                RAGMode = promptItem.RAGMode,
                 OpenAIPropsRequest = new(openAIProperties),
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
@@ -590,13 +590,13 @@ namespace LibPythonAI.Model.Prompt {
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 OpenAIPropsRequest = new(openAIProperties),
-                UseVectorDB = false
+                RAGMode = RAGModeEnum.None,
             };
 
             Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
-                UseVectorDB = true,
+                RAGMode = RAGModeEnum.NormalSearch,
                 Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
             // responseからキー：reliabilityを取得

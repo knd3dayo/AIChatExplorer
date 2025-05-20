@@ -19,12 +19,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         public ChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;
-            // VectorSearchRequests = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
-            // AutoGenPropertiesを設定
-            _autoGenProperties = new();
-            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetMainDBPath();
-            _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
-            _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
 
         }
 
@@ -50,13 +44,13 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 OnPropertyChanged(nameof(ChatMode));
             }
         }
-        private SplitOnTokenLimitExceedModeEnum _splitMode = SplitOnTokenLimitExceedModeEnum.None;
+        private SplitModeEnum _splitMode = SplitModeEnum.None;
         public int SplitMode {
             get {
                 return (int)_splitMode;
             }
             set {
-                _splitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                _splitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitMode));
             }
         }
@@ -81,17 +75,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
 
-        private AutoGenProperties _autoGenProperties;
-        public AutoGenProperties AutoGenProperties {
-            get {
-                return _autoGenProperties;
-            }
-            set {
-                _autoGenProperties = value;
-                OnPropertyChanged(nameof(AutoGenProperties));
-            }
-        }
-
+        // ScoreThreshold
+        public float ScoreThreshold { get; set; } = 0.5f;
 
         private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
         public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
@@ -140,7 +125,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         private void InitVectorDBProperties() {
             VectorSearchProperties.Clear();
-            if (UseVectorDB) {
+            if (_ragMode != RAGModeEnum.None) {
                 ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
@@ -158,30 +143,31 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 }
             }
         }
-        // UseVectorDB
-        private bool _UseVectorDB = false;
-        public bool UseVectorDB {
+
+        // RAGMode
+        private RAGModeEnum _ragMode = RAGModeEnum.None;
+        public int RAGMode {
             get {
-                return _UseVectorDB;
+                return (int)_ragMode;
             }
             set {
-                _UseVectorDB = value;
-                InitVectorDBProperties();
+                _ragMode = (RAGModeEnum)value;
 
-                OnPropertyChanged(nameof(UseVectorDB));
+                InitVectorDBProperties();
+                OnPropertyChanged(nameof(RAGMode));
                 OnPropertyChanged(nameof(VectorDBItemVisibility));
 
             }
         }
         //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_ragMode != RAGModeEnum.None);
 
         public Visibility UseFolderVectorSearchItemVisibility => Tools.BoolToVisibility(UseFolderVectorSearchItem);
 
         public Visibility UseItemVectorSearchItemVisibility => Tools.BoolToVisibility(UseFolderVectorSearchItem == false);
 
 
-        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
+        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitModeEnum.None);
 
 
         // Splitモードが変更されたときの処理
@@ -192,6 +178,14 @@ namespace LibUIPythonAI.ViewModel.Chat {
             // SplitMOdeVisibility
             OnPropertyChanged(nameof(SplitMOdeVisibility));
 
+        });
+        // RAGモードが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            RAGMode = comboBox.SelectedIndex;
+            // VectorDBItemVisibility
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
         });
 
         // ベクトルDBをリストから削除するコマンド
@@ -227,10 +221,11 @@ namespace LibUIPythonAI.ViewModel.Chat {
             // ベクトルDB検索結果最大値をVectorSearchItemに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;
+                item.ScoreThreshold = ScoreThreshold;
             }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
+                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], null, PromptText
                 );
             return chatRequestContext;
         }

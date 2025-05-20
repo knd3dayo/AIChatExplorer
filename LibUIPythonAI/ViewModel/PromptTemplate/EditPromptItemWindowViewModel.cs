@@ -157,24 +157,24 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                ItemViewModel.PromptItem.SplitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitModeIndex));
             }
         }
-        // UseVectorDB
-        public bool UseVectorDB {
+        // RAGModeIndex
+        public int RAGModeIndex {
             get {
                 if (ItemViewModel == null) {
-                    return false;
+                    return 0;
                 }
-                return ItemViewModel.PromptItem.UseVectorDB;
+                return (int)ItemViewModel.PromptItem.RAGMode;
             }
             set {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.UseVectorDB = value;
-                OnPropertyChanged(nameof(UseVectorDB));
+                ItemViewModel.PromptItem.RAGMode = (RAGModeEnum)value;
+                OnPropertyChanged(nameof(RAGModeIndex));
             }
         }
 
@@ -203,9 +203,16 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
-            ChatModeIndex = index;
+            SplitModeIndex = index;
         });
 
+        // RAGModeSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            RAGModeIndex = index;
+        });
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
 
@@ -226,7 +233,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             promptItem.PromptResultType = (PromptResultTypeEnum)PromptResultTypeIndex;
             promptItem.PromptOutputType = (PromptOutputTypeEnum)PromptOutputTypeIndex;
             promptItem.ChatMode = (OpenAIExecutionModeEnum)ChatModeIndex;
-            promptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)SplitModeIndex;
+            promptItem.SplitMode = (SplitModeEnum)SplitModeIndex;
 
             // 入力がプロンプト結果の場合はPromptInputNameを設定
             if (PromptResultToInput) {

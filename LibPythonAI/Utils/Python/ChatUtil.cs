@@ -37,7 +37,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorSearchItem> vectorDBProperties, List<string> promptList, string content) {
+        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorSearchItem> vectorDBProperties, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {

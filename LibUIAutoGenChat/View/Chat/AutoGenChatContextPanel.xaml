@@ -205,11 +205,20 @@
             </Grid>
         </Grid>
         <Separator Grid.Row="2" />
-        <CheckBox
+        <ComboBox
             Grid.Row="3"
             Margin="10,20,0,10"
-            Content="{x:Static local:ViewStringResources.UseVectorDB}"
-            IsChecked="{Binding UseVectorDB}" />
+            SelectedIndex="{Binding RAGMode}">
+            <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
+            <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
+            <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
+
         <!--  ベクトルDB設定  -->
         <Grid Grid.Row="4" Visibility="{Binding VectorDBItemVisibility}">
             <Grid.RowDefinitions>

@@ -197,8 +197,8 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
                     ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    SplitOnTokenLimitExceedModeEnum _splitMode = (SplitOnTokenLimitExceedModeEnum)ChatContextViewModelInstance.SplitMode;
-                    if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
+                    SplitModeEnum _splitMode = (SplitModeEnum)ChatContextViewModelInstance.SplitMode;
+                    if (_splitMode != SplitModeEnum.None && string.IsNullOrEmpty(PromptText)) {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         return;
                     }

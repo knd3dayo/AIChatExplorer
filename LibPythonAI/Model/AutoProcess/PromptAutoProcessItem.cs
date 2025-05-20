@@ -30,7 +30,7 @@ namespace PythonAILib.Model.AutoProcess {
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
             if (clipboardFolder != null) {
-                chatRequestContent.UseVectorDB = true;
+                chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
                 chatRequestContent.VectorSearchRequests = [ new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
             }
 

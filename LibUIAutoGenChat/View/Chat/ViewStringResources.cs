@@ -93,6 +93,14 @@ namespace LibUIAutoGenChat.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
+        // RAGMode_None
+        public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
+
+        // RAGMode_NormalSearch
+        public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
+
+        // RAGMode_PromptSearch
+        public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
         // VectorDBList
         public static string VectorDB => CommonStringResources.Instance.VectorDB;
 
@@ -144,7 +152,7 @@ namespace LibUIAutoGenChat.View.Chat {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // UseVectorDB
+        // RAGMode
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // ExcludeFromList

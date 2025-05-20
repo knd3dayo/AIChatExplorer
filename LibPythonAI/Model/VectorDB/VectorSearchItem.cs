@@ -6,6 +6,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.VectorDB {
@@ -95,7 +96,7 @@ namespace LibPythonAI.Model.VectorDB {
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchRequests = [new VectorSearchRequest(this)],
                 OpenAIPropsRequest = new(openAIProperties),
-                UseVectorDB = true,
+                RAGMode = RAGModeEnum.NormalSearch,
             };
 
             // ベクトル検索を実行
