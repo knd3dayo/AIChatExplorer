@@ -111,8 +111,11 @@ namespace AIChatExplorer.ViewModel.Main {
         public void SelectedTreeViewItemChangeCommandExecute(ContentFolderViewModel folder) {
             TreeView? treeView = ThisUserControl?.FindName("FolderTreeView") as TreeView;
             if (treeView == null) {
+                LogWrapper.Error("FolderTreeView is null.");
                 return;
             }
+            ItemsControl itemsControl = treeView;
+
             List<ContentFolderViewModel> items = [];
             // folderからRootFolderまでのフォルダを取得 
             ContentFolderViewModel? currentFolder = folder;
@@ -120,7 +123,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 items.Add(currentFolder);
                 currentFolder = currentFolder.ParentFolderViewModel;
             }
-            ItemsControl itemsControl = treeView;
             // itemsの順番を逆にして、RootFolderからFolderまでのフォルダをExpandする
             for (int i = items.Count - 1; i >= 0; i--) {
 
@@ -155,39 +157,6 @@ namespace AIChatExplorer.ViewModel.Main {
             // フォルダを作成する
             SelectedFolder.CreateFolderCommand.Execute();
         });
-
-        private void CreateSearchFolder() {
-            // 現在の日付 時刻の文字列を取得
-            string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            SearchFolder folder = AIChatExplorerFolderManager.SearchRootFolder.CreateChild(now);
-
-            // 検索フォルダの親フォルダにこのフォルダを追加
-
-            SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
-
-            AppViewModelCommands.OpenSearchWindowCommandExecute(searchFolderViewModel, () => {
-                // 保存と再読み込み
-                searchFolderViewModel.ParentFolderViewModel = RootFolderViewModelContainer.SearchRootFolderViewModel;
-                searchFolderViewModel.SaveFolderCommand.Execute(null);
-                // 親フォルダを保存
-                RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
-                // Load
-                RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
-                () => {
-                    Commands.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        Commands.UpdateIndeterminate(false);
-
-                        SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
-                        // SelectedFolder に　SearchFolderViewModelを設定
-                        SelectedFolder = searchFolderViewModel;
-                    });
-                });
-
-            });
-        }
 
     }
 }

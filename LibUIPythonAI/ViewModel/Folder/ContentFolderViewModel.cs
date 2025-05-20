@@ -13,8 +13,6 @@ using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Folder {
     public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : CommonViewModelBase {
-
-
         public ContentFolderWrapper Folder { get; set; } = folder;
 
         public ContentItemViewModelCommands Commands { get; set; } = commands;
@@ -54,7 +52,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<Model>()) {
+            foreach (var child in Folder.GetChildren<Model>().OrderBy(x => x.FolderName)) {
                 if (child == null) {
                     continue;
                 }
@@ -66,7 +64,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 _children.Add(childViewModel);
             }
             MainUITask.Run(() => {
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
+                Children = [.. _children];
                 OnPropertyChanged(nameof(Children));
             });
         }
