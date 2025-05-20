@@ -6,7 +6,6 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
     public class VectorSearchItem {
@@ -23,7 +22,10 @@ namespace LibPythonAI.Model.VectorDB {
         public string? InputText { get; set; } = null;
 
         //TopK
-        public int TopK { get; set; } = 5; // デフォルト値
+        public int TopK { get; set; } = 10; // デフォルト値
+
+        // score_threshold
+        public float ScoreThreshold { get; set; } = 0.5f;
 
         // FolderId
         public string? FolderId { get; set; } = null;

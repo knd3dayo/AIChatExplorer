@@ -60,6 +60,9 @@ namespace LibPythonAI.Model.VectorDB {
         // ベクトル検索時の検索結果上限
         public int DefaultSearchResultLimit { get; set; } = 10;
 
+        // スコアの閾値
+        public float DefaultScoreThreshold { get; set; } = 0.5f;
+
         // 有効かどうか
         [JsonIgnore]
         public bool IsEnabled { get; set; } = false;

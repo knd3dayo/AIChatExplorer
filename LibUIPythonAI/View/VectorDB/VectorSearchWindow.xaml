@@ -231,6 +231,15 @@
                     Width="100"
                     Margin="10,0,0,0"
                     Text="{Binding VectorDBSearchResultMax, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="100,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:ViewStringResources.VectorDBSearchScoreThreashold}" />
+                <TextBox
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Text="{Binding VectorDBSearchScoreThreashold, UpdateSourceTrigger=PropertyChanged}" />
 
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">

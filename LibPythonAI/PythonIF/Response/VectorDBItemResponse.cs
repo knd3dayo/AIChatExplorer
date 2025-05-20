@@ -24,6 +24,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string IS_SYSTEM_KEY = "is_system";
         public const string TYPE_KEY = "vector_db_type";
         public const string DEFAULT_SEARCH_RESULT_LIMIT_KEY = "default_search_result_limit";
+        public const string DEFAULT_SCORE_THREASHOLD_KEY = "default_score_threshold";
 
         public static VectorDBItemResponse FromDict(Dictionary<string, object> dict) {
             // VectorDBItemResponseを作成する
@@ -44,36 +45,38 @@ namespace LibPythonAI.PythonIF.Request {
             return item;
         }
 
-        public string Id { get; set; } 
+        public string Id { get; set; } = string.Empty;
         // 名前
-        public string Name { get; set; } 
+        public string Name { get; set; } = string.Empty;
         // 説明
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         // ベクトルDBのURL
-        public string VectorDBURL { get; set; } 
+        public string VectorDBURL { get; set; } = string.Empty;
 
         // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever { get; set; } 
+        public bool IsUseMultiVectorRetriever { get; set; } = false;
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        public string DocStoreURL { get; set; }
+        public string DocStoreURL { get; set; } = string.Empty;
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
-        public VectorDBTypeEnum Type { get; set; } 
+        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
         // ベクトルDBの種類を表す文字列
-        public string VectorDBTypeString { get; set; } 
+        public string VectorDBTypeString { get; set; } = string.Empty;
 
         // コレクション名
-        public string CollectionName { get; set; }
+        public string CollectionName { get; set; } = string.Empty;
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
-        public int ChunkSize { get; set; } 
+        public int ChunkSize { get; set; } = 1024; // デフォルト値
 
         // ベクトル検索時の検索結果上限
-        public int DefaultSearchResultLimit { get; set; }
+        public int DefaultSearchResultLimit { get; set; } = 10; // デフォルト値
+        // スコアの閾値
+        public float DefaultScoreThreshold { get; set; } = 0.5f;
 
         public bool IsEnabled { get; set; } 
 

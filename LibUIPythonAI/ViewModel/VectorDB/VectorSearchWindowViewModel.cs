@@ -13,7 +13,11 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         public VectorSearchWindowViewModel(VectorSearchItem VectorSearchItem) {
             InputText = string.Empty;
+            VectorSearchRequest = new VectorSearchRequest(VectorSearchItem);
         }
+
+        // VectorSearchRquest
+        public VectorSearchRequest VectorSearchRequest { get; set; } 
 
         // VectorSearchItem
         private LibPythonAI.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
@@ -31,6 +35,9 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
                 // VectorDBSearchResultMax
                 VectorDBSearchResultMax = item.DefaultSearchResultLimit;
+
+                // VectorDBSearchScoreThreashold
+                VectorDBSearchScoreThreashold = item.DefaultScoreThreshold;
 
                 // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
                 if (!item.IsUseMultiVectorRetriever) {
@@ -54,6 +61,9 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
+
+        // VectorDBSearchScoreThreashold
+        public double VectorDBSearchScoreThreashold { get; set; } = 0.5;
 
         public ObservableCollection<VectorEmbeddingItem> MultiVectorSearchResults { get; set; } = [];
 
@@ -114,6 +124,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 // ベクトル検索を実行
                 // VectorDBSearchResultMaxをVectorSearchItemに設定
                 VectorSearchItem.TopK = VectorDBSearchResultMax;
+                // VectorDBSearchScoreThreasholdをVectorSearchItemに設定
+                VectorSearchItem.ScoreThreshold = (float)VectorDBSearchScoreThreashold;
 
                 try {
                     var searchResults = await VectorSearchItem.VectorSearchAsync(InputText);
@@ -155,12 +167,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 if (VectorSearchItem == null) {
                     return "";
                 }
-                // VectorDBSearchResultMaxをVectorSearchItemに設定
-                VectorSearchItem.TopK = VectorDBSearchResultMax;
-
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
+
+                // VectorDBSearchResultMaxをVectorSearchItemに設定
+                VectorSearchItem.TopK = VectorDBSearchResultMax;
+
+                // VectorDBSearchScoreThreasholdをVectorSearchItemに設定
+                VectorSearchItem.ScoreThreshold = (float)VectorDBSearchScoreThreashold;
 
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),

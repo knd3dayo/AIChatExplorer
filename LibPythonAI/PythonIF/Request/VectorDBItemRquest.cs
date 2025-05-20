@@ -1,9 +1,5 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.PythonIF.Request {
     /// <summary>
@@ -23,6 +19,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string IS_SYSTEM_KEY = "is_system";
         public const string TYPE_KEY = "vector_db_type";
         public const string DEFAULT_SEARCH_RESULT_LIMIT_KEY = "default_search_result_limit";
+        public const string DEFAULT_SCORE_THREASHOLD_KEY = "default_score_threshold";
 
 
 
@@ -40,41 +37,46 @@ namespace LibPythonAI.PythonIF.Request {
             Type = item.Type;
             DefaultSearchResultLimit = item.DefaultSearchResultLimit;
             VectorDBTypeString = item.VectorDBTypeString;
+            DefaultScoreThreshold = item.DefaultScoreThreshold;
+
         }
-        public string Id { get; set; } 
+        public string Id { get; set; }
         // 名前
-        public string Name { get; set; } 
+        public string Name { get; set; }
         // 説明
         public string Description { get; set; }
 
         // ベクトルDBのURL
-        public string VectorDBURL { get; set; } 
+        public string VectorDBURL { get; set; }
 
         // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever { get; set; } 
+        public bool IsUseMultiVectorRetriever { get; set; }
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
         public string DocStoreURL { get; set; }
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
-        public VectorDBTypeEnum Type { get; set; } 
+        public VectorDBTypeEnum Type { get; set; }
 
         // ベクトルDBの種類を表す文字列
-        public string VectorDBTypeString { get; set; } 
+        public string VectorDBTypeString { get; set; }
 
         // コレクション名
         public string CollectionName { get; set; }
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
-        public int ChunkSize { get; set; } 
+        public int ChunkSize { get; set; }
 
         // ベクトル検索時の検索結果上限
         public int DefaultSearchResultLimit { get; set; }
 
-        public bool IsEnabled { get; set; } 
+        // スコアの閾値
+        public float DefaultScoreThreshold { get; set; }
 
-        public bool IsSystem { get; set; } 
+        public bool IsEnabled { get; set; }
+
+        public bool IsSystem { get; set; }
 
         // CreateEntriesDictList
         public Dictionary<string, object> ToDict() {
@@ -90,7 +92,8 @@ namespace LibPythonAI.PythonIF.Request {
                 { IS_ENABLED_KEY, IsEnabled },
                 { IS_SYSTEM_KEY, IsSystem },
                 { TYPE_KEY, (int)Type },
-                { DEFAULT_SEARCH_RESULT_LIMIT_KEY, DefaultSearchResultLimit}
+                { DEFAULT_SEARCH_RESULT_LIMIT_KEY, DefaultSearchResultLimit},
+                { DEFAULT_SCORE_THREASHOLD_KEY, DefaultScoreThreshold }
             }
             ;
             return dict;
@@ -118,6 +121,7 @@ namespace LibPythonAI.PythonIF.Request {
             item.IsSystem = Convert.ToBoolean(dict[IS_SYSTEM_KEY]);
             item.Type = (VectorDBTypeEnum)int.Parse(dict[TYPE_KEY]?.ToString() ?? "0");
             item.DefaultSearchResultLimit = Convert.ToInt32(dict[DEFAULT_SEARCH_RESULT_LIMIT_KEY]);
+            item.DefaultScoreThreshold = Convert.ToSingle(dict[DEFAULT_SCORE_THREASHOLD_KEY]);
 
             return item;
 

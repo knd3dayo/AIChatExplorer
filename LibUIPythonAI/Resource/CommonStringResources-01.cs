@@ -435,6 +435,8 @@ namespace LibUIPythonAI.Resource {
         // ベクトル検索結果
         public virtual string VectorSearchResult { get; } = "ベクトル検索結果";
 
+        // VectorDBSearchScoreThreashold
+        public virtual string VectorDBSearchScoreThreashold { get; } = "VectorDB検索スコア閾値";
         // -- ImageChatWindow
         // 設定項目
         public virtual string SettingItem { get; } = "設定項目";
@@ -1062,6 +1064,9 @@ namespace LibUIPythonAI.Resource {
 
         // ベクトル検索結果の上限値
         public virtual string DefaultSearchResultLimit { get; } = "ベクトル検索結果のデフォルト上限値";
+
+        // ベクトルのスコア(コサイン類似度)の閾値
+        public virtual string DefaultScoreThreshold { get; } = "ベクトルのスコア(コサイン類似度)の閾値";
 
         // MultiVectorRetrieverを使用
         public virtual string UseMultiVectorRetriever { get; } = "MultiVectorRetrieverを使用";

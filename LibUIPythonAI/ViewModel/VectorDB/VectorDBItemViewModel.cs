@@ -116,6 +116,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 OnPropertyChanged(nameof(DefaultSearchResultLimit));
             }
         }
+        // DefaultScoreThreshold
+        public float DefaultScoreThreshold {
+            get => Item.DefaultScoreThreshold;
+            set {
+                Item.DefaultScoreThreshold = value;
+                OnPropertyChanged(nameof(DefaultScoreThreshold));
+            }
+        }
+
 
         // DocStoreURLを表示するか否かのVisibility
         public Visibility DocStoreURLVisibility {

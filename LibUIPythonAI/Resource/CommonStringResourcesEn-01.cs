@@ -733,6 +733,8 @@ namespace LibUIPythonAI.Resource {
         // -- VectorSearchResultWindow
         public override string VectorSearchResult { get; } = "Vector search result";
 
+        // VectorDBSearchScoreThreashold
+        public override string VectorDBSearchScoreThreashold { get; } = "Vector DB search score threshold";
         // -- ImageChatWindow
         public override string SettingItem { get; } = "Setting item";
         public override string SettingValue { get; } = "Setting value";
@@ -1026,6 +1028,9 @@ namespace LibUIPythonAI.Resource {
 
         // ベクトル検索結果のデフォルト上限値
         public override string DefaultSearchResultLimit { get; } = "Default Search Result Limit";
+
+        // ベクトルのスコア(コサイン類似度)の閾値
+        public override string DefaultScoreThreshold { get; } = "Default Score Threshold";
         public override string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";
         public override string SQLite3LocationForDocStore { get; } = "SQLite3 Location for DocStore";
         public override string ExampleSQLite3Location { get; } = "Example: sqlite:///C:\\Users\\Username\\sqlite3.db";

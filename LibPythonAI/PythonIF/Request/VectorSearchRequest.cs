@@ -17,6 +17,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string SEARCH_KWARGS_KEY = "search_kwargs";
         public const string FILTER_KEY = "filter";
         public const string TOP_K_KEY = "k";
+        public const string SCORE_THRESHOLD_KEY = "score_threshold";
 
 
         public VectorSearchRequest(VectorSearchItem vectorSearchItem) {
@@ -27,6 +28,7 @@ namespace LibPythonAI.PythonIF.Request {
             FolderId = vectorSearchItem.FolderId;
             FolderPath = vectorSearchItem.FolderPath;
             ContentType = vectorSearchItem.ContentType;
+            ScoreThreshold = vectorSearchItem.ScoreThreshold;
         }
         public string? Name { init; get; } = null;
 
@@ -36,6 +38,9 @@ namespace LibPythonAI.PythonIF.Request {
 
         //TopK
         public int TopK { get; set; } = 5; // デフォルト値
+
+        // score_threshold
+        public float ScoreThreshold { get; set; } = 0.5f;
 
         // FolderId
         public string? FolderId { get; set; } = null;
@@ -48,7 +53,8 @@ namespace LibPythonAI.PythonIF.Request {
         // SearchKWargs
         private Dictionary<string, object> GetSearchKwargs() {
             Dictionary<string, object> dict = new() {
-                [TOP_K_KEY] = TopK
+                [TOP_K_KEY] = TopK,
+                [SCORE_THRESHOLD_KEY] = ScoreThreshold,
             };
             // filter 
             Dictionary<string, object> filter = new();
