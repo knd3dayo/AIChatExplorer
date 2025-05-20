@@ -11,39 +11,31 @@ using WpfAppCommon.Model;
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : CommonViewModelBase {
 
-        public VectorSearchWindowViewModel(VectorSearchItem VectorSearchItem) {
-            InputText = string.Empty;
-            VectorSearchRequest = new VectorSearchRequest(VectorSearchItem);
+        public static readonly int MultiVectorRetrieverTabIndex = 0; // MultiVectorRetrieverのタブインデックス
+        public static readonly int VectorRetrieverTabIndex = 1; // VectorRetrieverのタブインデックス
+
+        public VectorSearchWindowViewModel(VectorSearchItem vectorSearchItem) {
+            VectorSearchItem = vectorSearchItem;
         }
-
-        // VectorSearchRquest
-        public VectorSearchRequest VectorSearchRequest { get; set; } 
-
+        
         // VectorSearchItem
         private LibPythonAI.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
         public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
             get => _VectorSearchItem;
             set {
-                if (value == null) {
-                    return;
-                }
-                var item = VectorDBItem.GetItemByName(value.VectorDBItemName);
+                var item = VectorDBItem.GetItemByName(value?.VectorDBItemName);
                 if (item == null) {
+                    // VectorDBItemがnullの場合はエラーを表示
+                    LogWrapper.Error("VectorDBItem is null.");
                     return;
                 }
                 _VectorSearchItem = value;
 
-                // VectorDBSearchResultMax
-                VectorDBSearchResultMax = item.DefaultSearchResultLimit;
-
-                // VectorDBSearchScoreThreashold
-                VectorDBSearchScoreThreashold = item.DefaultScoreThreshold;
-
                 // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
-                if (!item.IsUseMultiVectorRetriever) {
-                    SelectedTabIndex = 1;
+                if (item.IsUseMultiVectorRetriever) {
+                    SelectedTabIndex = MultiVectorRetrieverTabIndex;
                 } else {
-                    SelectedTabIndex = 0;
+                    SelectedTabIndex = VectorRetrieverTabIndex;
                 }
 
                 // StatusTextを更新
@@ -56,15 +48,6 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             }
         }
 
-        // InputText
-        public string InputText { get; set; }
-
-        // VectorDBSearchResultMax
-        public int VectorDBSearchResultMax { get; set; }
-
-        // VectorDBSearchScoreThreashold
-        public double VectorDBSearchScoreThreashold { get; set; } = 0.5;
-
         public ObservableCollection<VectorEmbeddingItem> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
@@ -74,7 +57,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public Action<List<LibPythonAI.Model.VectorDB.VectorSearchItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
-        private int _selectedTabIndex = 0;
+        private int _selectedTabIndex = MultiVectorRetrieverTabIndex;
         public int SelectedTabIndex {
             get => _selectedTabIndex;
             set {
@@ -122,13 +105,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             Task.Run(async () => {
                 List<VectorEmbeddingItem> vectorSearchResults = [];
                 // ベクトル検索を実行
-                // VectorDBSearchResultMaxをVectorSearchItemに設定
-                VectorSearchItem.TopK = VectorDBSearchResultMax;
-                // VectorDBSearchScoreThreasholdをVectorSearchItemに設定
-                VectorSearchItem.ScoreThreshold = (float)VectorDBSearchScoreThreashold;
-
                 try {
-                    var searchResults = await VectorSearchItem.VectorSearchAsync(InputText);
+                    var searchResults = await VectorSearchItem.VectorSearchAsync();
                     vectorSearchResults.AddRange(searchResults);
                 } finally {
                     CommonViewModelProperties.UpdateIndeterminate(false);
@@ -170,25 +148,19 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
-
-                // VectorDBSearchResultMaxをVectorSearchItemに設定
-                VectorSearchItem.TopK = VectorDBSearchResultMax;
-
-                // VectorDBSearchScoreThreasholdをVectorSearchItemに設定
-                VectorSearchItem.ScoreThreshold = (float)VectorDBSearchScoreThreashold;
-
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
                     VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
                     UseVectorDB = true,
                 };
+
                 RequestContainer requestContainer = new() {
                     RequestContextInstance = chatRequestContext,
                 };
 
                 string json = requestContainer.ToJson();
                 // ChatRequestContextをJson文字列化したものと、検索文字列を結合
-                return $"# ChatRequestContext:\n{json}\n\n# Search Text:\n{InputText}";
+                return json;
             }
         }
 

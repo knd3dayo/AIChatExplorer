@@ -27,7 +27,6 @@ namespace LibPythonAI.PythonIF.Request {
             TopK = vectorSearchItem.TopK;
             FolderId = vectorSearchItem.FolderId;
             FolderPath = vectorSearchItem.FolderPath;
-            ContentType = vectorSearchItem.ContentType;
             ScoreThreshold = vectorSearchItem.ScoreThreshold;
         }
         public string? Name { init; get; } = null;

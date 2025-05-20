@@ -4,11 +4,19 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Utils.Common;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.VectorDB {
     public class VectorSearchItem {
+
+        public VectorSearchItem(VectorDBItem vectorDBItem) {
+            VectorDBItemName = vectorDBItem.Name;
+            Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel;
+            TopK = vectorDBItem.DefaultSearchResultLimit;
+            ScoreThreshold = vectorDBItem.DefaultScoreThreshold;
+        }
 
 
         [JsonPropertyName("name")]
@@ -32,8 +40,6 @@ namespace LibPythonAI.Model.VectorDB {
 
         // FolderPath
         public string? FolderPath { get; set; } = null;
-
-        public string ContentType { init; get; } = string.Empty;
 
         public string DisplayText {
             get {
@@ -77,11 +83,15 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // ベクトル検索を実行する
-        public async Task<List<VectorEmbeddingItem>> VectorSearchAsync(string query) {
+        public async Task<List<VectorEmbeddingItem>> VectorSearchAsync() {
+            // InputTextがnullまたは空文字の場合は空のリストを返す
+            if (string.IsNullOrEmpty(InputText)) {
+                LogWrapper.Warn("InputText is null or empty.");
+                return [];
+            }
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
-            this.InputText = query;
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchRequests = [new VectorSearchRequest(this)],
                 OpenAIPropsRequest = new(openAIProperties),
@@ -89,7 +99,7 @@ namespace LibPythonAI.Model.VectorDB {
             };
 
             // ベクトル検索を実行
-            List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, query);
+            List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, InputText);
             return results;
         }
 

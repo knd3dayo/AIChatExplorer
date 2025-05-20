@@ -337,13 +337,8 @@ namespace LibPythonAI.Model.Content {
         }
 
         public VectorSearchItem GetMainVectorSearchItem() {
-            VectorSearchItem searchProperty = new() {
-                FolderId = Id,
-                TopK = 4,
-                VectorDBItemName = VectorDBItem.GetDefaultVectorDB().Name,
-                Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
-                FolderPath = ContentFolderPath,
-            };
+
+            VectorSearchItem searchProperty = VectorDBItem.GetDefaultVectorDB().CreateVectorSearchItem(Id, ContentFolderPath);
             return searchProperty;
         }
 

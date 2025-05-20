@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using PythonAILib.Common;
 using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
@@ -89,6 +90,18 @@ namespace LibPythonAI.Model.VectorDB {
             _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItemsAsync());
         }
 
+        public VectorSearchItem CreateVectorSearchItem(string? folderId = null, string? folderPath = null) {
+            VectorSearchItem item = new(this) {
+                VectorDBItemName = this.Name,
+                Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
+                FolderId = folderId,
+                FolderPath = folderPath,
+                ScoreThreshold = this.DefaultScoreThreshold,
+                TopK = this.DefaultSearchResultLimit,
+            };
+            return item;
+        }
+
         public static List<VectorDBItem> GetItems() {
             return _items;
         }
@@ -128,6 +141,7 @@ namespace LibPythonAI.Model.VectorDB {
             return result;
 
         }
+
 
     }
 }

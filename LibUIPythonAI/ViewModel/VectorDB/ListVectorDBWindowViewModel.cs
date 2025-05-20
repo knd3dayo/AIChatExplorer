@@ -177,11 +177,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
-                VectorSearchItem? prop = new() {
-                    VectorDBItemName = SelectedVectorDBItem.Item.Name,
-                    TopK = 4,
-                    Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel
-                };
+                VectorSearchItem? prop = SelectedVectorDBItem.Item.CreateVectorSearchItem();
 
                 callBackup?.Invoke(prop);
 

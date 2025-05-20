@@ -209,7 +209,7 @@
                 Margin="10,0,10,0"
                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                 AcceptsReturn="True"
-                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding VectorSearchItem.InputText, UpdateSourceTrigger=PropertyChanged}"
                 TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
         </ScrollViewer>
         <DockPanel Grid.Row="4" Margin="10,10,10,10">
@@ -230,7 +230,7 @@
                 <TextBox
                     Width="100"
                     Margin="10,0,0,0"
-                    Text="{Binding VectorDBSearchResultMax, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding VectorSearchItem.TopK, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock
                     Margin="100,0,0,0"
                     HorizontalAlignment="Right"
@@ -239,7 +239,7 @@
                 <TextBox
                     Width="100"
                     Margin="10,0,0,0"
-                    Text="{Binding VectorDBSearchScoreThreashold, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding VectorSearchItem.ScoreThreshold, UpdateSourceTrigger=PropertyChanged}" />
 
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">

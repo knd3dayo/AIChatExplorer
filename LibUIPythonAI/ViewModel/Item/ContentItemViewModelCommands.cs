@@ -236,7 +236,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             };
             var contentItem = itemViewModel.ContentItem;
             vectorSearchWindowViewModel.VectorSearchItem = contentItem.GetMainVectorSearchItem();
-            vectorSearchWindowViewModel.InputText = contentItem.Content;
+            vectorSearchWindowViewModel.VectorSearchItem.InputText = contentItem.Content;
             // Execute vector search
             vectorSearchWindowViewModel.SendCommand.Execute(null);
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
