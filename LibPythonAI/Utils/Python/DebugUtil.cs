@@ -84,13 +84,19 @@ namespace PythonAILib.Utils.Python {
             ];
 
             string options = $"-f {parametersJsonFile}";
-            // python_libのディレクトリ
-            string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
-            // debug用のScriptのディレクトリ
-            string pythonScriptPath = Path.Combine(pythonAILibDir, "ai_chat_lib", "cmd_tools", "autogen_group_chat_api.py");
+            // app_data_pathのディレクトリ
+            string app_data_path = PythonAILibManager.Instance.ConfigParams.GetAppDataPath();
+
+            // api用のモジュールパス
+            string api_module_path = "ai_chat_lib.cmd_tools.autogen_group_chat_api";
+            // local用のモジュールパス
+            string local_script_path = "ai_chat_lib.cmd_tools.autogen_group_chat_local";
 
             List<string> scripytCmdLines = [
-                $"python {pythonScriptPath} {options}"
+                "REM When using a api server, set the server URL and request JSON file in the command line.",
+                $"python -m {api_module_path} {options}",
+                "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
+                $"REM python -m {local_script_path} {options} -d {app_data_path}",
             ];
 
             List<string> cmdLines = DebugUtil.GetPythonScriptCommand(scripytCmdLines, beforeExecScriptCommands, afterExecScriptCommands);
@@ -139,16 +145,16 @@ namespace PythonAILib.Utils.Python {
             // 事後コマンド pauseで一時停止
             List<string> afterExecScriptCommands = ["pause"];
 
-            string api_script_path = Path.Combine(pythonLibPath, "ai_chat_lib", "cmd_tools", "normal_chat_api.py");
-            string local_script_path = Path.Combine(pythonLibPath, "ai_chat_lib", "cmd_tools", "normal_chat_local.py");
+            string api_module_path = "ai_chat_lib.cmd_tools.normal_chat_api";
+            string local_script_path = "ai_chat_lib.cmd_tools.normal_chat_local";
             // メインコマンド
             List<string> mainCmmands = [
                 "REM When using a api server, set the server URL and request JSON file in the command line.",
-                $"python {api_script_path} -f {parametersJsonFile}  -s {apiUrl}",
+                $"python -m {api_module_path} -f {parametersJsonFile}  -s {apiUrl}",
                 "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
-                $"REM  python {local_script_path} -f {parametersJsonFile}  -d {appDataPath}",
+                $"REM  python -m {local_script_path} -f {parametersJsonFile}  -d {appDataPath}",
                 "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
-                $"REM  python {local_script_path} -d {appDataPath}",
+                $"REM  python -m  {local_script_path} -d {appDataPath}",
 
             ];
 
@@ -170,11 +176,11 @@ namespace PythonAILib.Utils.Python {
             // メインコマンド
             List<string> mainCmmands = [
                 "REM When using a api server, set the server URL and request JSON file in the command line.",
-                $"python vector_search_api.py -f {parametersJsonFile} -s {apiUrl}",
+                $"python -m ai_chat_lib.cmd_tools.vector_search_api.py -f {parametersJsonFile} -s {apiUrl}",
                 "REM When using a local environment with a request JSON file, set the application data directory and set the request JSON file in the command line.",
-                $"REM  python vector_search_local.py -f {parametersJsonFile}  -d {appDataPath}",
+                $"REM python  -m ai_chat_lib.cmd_tools.vector_search_local.py -f {parametersJsonFile}  -d {appDataPath}",
                 "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
-                $"REM  python vector_search_local.py -d {appDataPath}",
+                $"REM python -m ai_chat_lib.cmd_tools.vector_search_local.py -d {appDataPath}",
             ];
             List<string> cmdLines = DebugUtil.GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
 

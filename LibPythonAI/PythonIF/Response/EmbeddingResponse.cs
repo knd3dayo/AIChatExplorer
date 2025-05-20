@@ -28,25 +28,28 @@ namespace LibPythonAI.PythonIF.Response {
             IncludeFields = true,
             WriteIndented = true
         };
-        public EmbeddingResponse(Dictionary<string, object> dict) {
-            SourceId = dict[SOURCE_ID_KEY].ToString() ?? "";
-            SourceType = (VectorSourceType)Enum.Parse(typeof(VectorSourceType), dict[SOURCE_TYPE_KEY].ToString() ?? "");
-            Description = dict[DESCRIPTION_KEY].ToString() ?? "";
-            Content = dict[CONTENT_KEY].ToString() ?? "";
-            SourcePath = dict[SOURCE_PATH_KEY].ToString() ?? "";
-            DocId = dict[DOC_ID_KEY].ToString() ?? "";
-            Score = Convert.ToDouble(dict[SCORE_KEY]);
+        public static EmbeddingResponse FromDict(Dictionary<string, object> dict) {
+            EmbeddingResponse response = new();
+
+            response.SourceId = dict[SOURCE_ID_KEY].ToString() ?? "";
+            response.SourceType = (VectorSourceType)Enum.Parse(typeof(VectorSourceType), dict[SOURCE_TYPE_KEY].ToString() ?? "");
+            response.Description = dict[DESCRIPTION_KEY].ToString() ?? "";
+            response.Content = dict[CONTENT_KEY].ToString() ?? "";
+            response.SourcePath = dict[SOURCE_PATH_KEY].ToString() ?? "";
+            response.DocId = dict[DOC_ID_KEY].ToString() ?? "";
+            response.Score = Convert.ToDouble(dict[SCORE_KEY]);
             if (dict.ContainsKey(FOLDER_ID_KEY)) {
-                FolderId = dict[FOLDER_ID_KEY].ToString() ?? "";
+                response.FolderId = dict[FOLDER_ID_KEY].ToString() ?? "";
             }
             if (dict.ContainsKey(FOLDER_PATH_KEY)) {
-                FolderPath = dict[FOLDER_PATH_KEY].ToString() ?? "";
+                response.FolderPath = dict[FOLDER_PATH_KEY].ToString() ?? "";
             }
             if (dict.ContainsKey(SUB_DOCS_KEY)) {
                 foreach (var subDoc in (List<object>)dict[SUB_DOCS_KEY]) {
-                    SubDocs.Add(new((Dictionary<string, object>)subDoc));
+                    response.SubDocs.Add(FromDict((Dictionary<string, object>)subDoc));
                 }
             }
+            return response;
         }
 
         [JsonPropertyName(FOLDER_ID_KEY)]

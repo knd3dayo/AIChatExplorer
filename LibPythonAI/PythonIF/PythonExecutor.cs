@@ -69,7 +69,7 @@ namespace PythonAILib.PythonIF {
             int currentProcessId = Environment.ProcessId;
 
             // AIアプリケーションサーバーを開始する
-            string serverScriptPath = Path.Combine(PythonAILibPath, "ai_chat_lib", "api_modules", "ai_app_server.py");
+            string serverScriptPath = "-m ai_chat_lib.api_modules.ai_app_server";
             // APP_DATAのパスを取得
             string app_data_path = configPrams.GetAppDataPath();
             string serverCmdLine = $"{serverScriptPath} {app_data_path}";
@@ -80,7 +80,7 @@ namespace PythonAILib.PythonIF {
             // AIアプリケーションプロセスチェッカーを開始する。
             string url = $"{configPrams.GetAPIServerURL()}/shutdown";
 
-            string processCheckerScriptPath = Path.Combine(PythonAILibPath, "ai_chat_lib", "api_modules", "ai_app_process_checker.py");
+            string processCheckerScriptPath = "-m ai_chat_lib.api_modules.ai_app_process_checker";
             string processCheckerCmdLine = $"{processCheckerScriptPath} {currentProcessId} {url}";
             LogWrapper.Info($"ProcessCheckerCmdLine:{processCheckerCmdLine}");
 
@@ -89,7 +89,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string scriptPath, bool showConsole, Action<Process> afterStart) {
+        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string cmdLine, bool showConsole, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             string appDataDir = configPrams.GetAppDataPath();
@@ -133,7 +133,7 @@ namespace PythonAILib.PythonIF {
                 cmdLines.Add($"call {venvActivateScript}");
             }
 
-            cmdLines.Add($"python {scriptPath}");
+            cmdLines.Add($"python {cmdLine}");
 
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
 

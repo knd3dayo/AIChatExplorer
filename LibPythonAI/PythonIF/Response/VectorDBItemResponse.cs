@@ -25,20 +25,23 @@ namespace LibPythonAI.PythonIF.Request {
         public const string TYPE_KEY = "vector_db_type";
         public const string DEFAULT_SEARCH_RESULT_LIMIT_KEY = "default_search_result_limit";
 
-        public VectorDBItemResponse(Dictionary<string, object> dict) {
-            Id = dict[ID_KEY]?.ToString() ?? "";
-            Name = dict[NAME_KEY]?.ToString() ?? "";
-            Description = dict[DESCRIPTION_KEY]?.ToString() ?? "";
-            VectorDBURL = dict[VECTOR_DB_URL_KEY]?.ToString() ?? "";
-            IsUseMultiVectorRetriever = Convert.ToBoolean(dict[IS_USE_MULTI_VECTOR_RETRIEVER_KEY]);
-            DocStoreURL = dict[DOC_STORE_URL_KEY]?.ToString() ?? "";
-            ChunkSize = Convert.ToInt32(dict[CHUNK_SIZE_KEY]);
-            CollectionName = dict[COLLECTION_NAME_KEY]?.ToString() ?? "";
-            IsEnabled = Convert.ToBoolean(dict[IS_ENABLED_KEY]);
-            IsSystem = Convert.ToBoolean(dict[IS_SYSTEM_KEY]);
-            Type = (VectorDBTypeEnum)int.Parse(dict[TYPE_KEY]?.ToString() ?? "0");
-            DefaultSearchResultLimit = Convert.ToInt32(dict[DEFAULT_SEARCH_RESULT_LIMIT_KEY]);
-            VectorDBTypeString = Type.ToString();
+        public static VectorDBItemResponse FromDict(Dictionary<string, object> dict) {
+            // VectorDBItemResponseを作成する
+            VectorDBItemResponse item = new() {
+                Id = dict[ID_KEY]?.ToString() ?? "",
+                Name = dict[NAME_KEY]?.ToString() ?? "",
+                Description = dict[DESCRIPTION_KEY]?.ToString() ?? "",
+                VectorDBURL = dict[VECTOR_DB_URL_KEY]?.ToString() ?? "",
+                IsUseMultiVectorRetriever = Convert.ToBoolean(dict[IS_USE_MULTI_VECTOR_RETRIEVER_KEY]),
+                DocStoreURL = dict[DOC_STORE_URL_KEY]?.ToString() ?? "",
+                ChunkSize = Convert.ToInt32(dict[CHUNK_SIZE_KEY]),
+                CollectionName = dict[COLLECTION_NAME_KEY]?.ToString() ?? "",
+                IsEnabled = Convert.ToBoolean(dict[IS_ENABLED_KEY]),
+                IsSystem = Convert.ToBoolean(dict[IS_SYSTEM_KEY]),
+                Type = (VectorDBTypeEnum)int.Parse(dict[TYPE_KEY]?.ToString() ?? "0"),
+                DefaultSearchResultLimit = Convert.ToInt32(dict[DEFAULT_SEARCH_RESULT_LIMIT_KEY])
+            };
+            return item;
         }
 
         public string Id { get; set; } 

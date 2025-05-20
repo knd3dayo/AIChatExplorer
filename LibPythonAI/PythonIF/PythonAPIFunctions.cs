@@ -516,7 +516,7 @@ namespace PythonAILib.PythonIF {
             List<VectorDBItem> vectorDBItems = [];
             foreach (var item in dictList) {
                 // VectorDBItemを取得
-                VectorDBItem? vectorDBItem = (new VectorDBItemResponse(item)).CreateVectorDBItem();
+                VectorDBItem? vectorDBItem = VectorDBItemResponse.FromDict(item).CreateVectorDBItem();
                 if (vectorDBItem != null) {
                     vectorDBItems.Add(vectorDBItem);
                 }
@@ -548,7 +548,7 @@ namespace PythonAILib.PythonIF {
             }
 
             // VectorDBItemを取得
-            VectorDBItem? vectorDBItem = (new VectorDBItemResponse(resultDict["vector_db_item"] ?? "[]")).CreateVectorDBItem();
+            VectorDBItem? vectorDBItem = VectorDBItemResponse.FromDict(resultDict["vector_db_item"] ?? "[]").CreateVectorDBItem();
             return vectorDBItem;
         }
         // public VectorDBItem? GetVectorDBItemByName(string name);
@@ -576,7 +576,7 @@ namespace PythonAILib.PythonIF {
 
 
             // VectorDBItemを取得
-            VectorDBItem? vectorDBItem = (new VectorDBItemResponse(resultDict["vector_db_item"] ?? "[]")).CreateVectorDBItem();
+            VectorDBItem? vectorDBItem = VectorDBItemResponse.FromDict(resultDict["vector_db_item"] ?? "[]").CreateVectorDBItem();
             return vectorDBItem;
         }
 
@@ -623,7 +623,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 foreach (var item in documents) {
-                    EmbeddingResponse? VectorEmbeddingItem = new (item);
+                    EmbeddingResponse? VectorEmbeddingItem = EmbeddingResponse.FromDict(item);
                     if (VectorEmbeddingItem != null) {
                         vectorSearchResults.Add(VectorEmbeddingItem.CreateVectorEmbeddingItem());
                     }
