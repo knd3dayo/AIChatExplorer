@@ -8,7 +8,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         }
         public ContentItemWrapper ContentItem { get; set; }
 
-        public Action<ContentItemWrapper, bool> CloseCommand { get; set; } = (item, saveChatHistory) => { };
+        public Action<ContentItemWrapper, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatMessage>> ExportChatCommand { get; set; } = (chatHistory) => { };
 

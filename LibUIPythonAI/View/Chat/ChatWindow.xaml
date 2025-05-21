@@ -35,7 +35,7 @@
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand, Mode=OneTime}"
+            Command="{Binding SaveCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>

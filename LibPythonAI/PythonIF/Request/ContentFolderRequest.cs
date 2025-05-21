@@ -10,6 +10,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string IS_ROOT_FOLDER_KEY = "is_root_folder";
         public const string EXTENDED_PROPERTIES_JSON_KEY = "extended_properties_json";
         public const string PARENT_ID_KEY = "parent_id";
+        public const string FOLDER_PATH_KEY = "folder_path";
 
 
         public ContentFolderRequest(ContentFolderWrapper contentFolderWrapper) {
@@ -38,7 +39,10 @@ namespace LibPythonAI.PythonIF.Request {
         public string ExtendedPropertiesJson { get; set; }
 
         // ParentId
-        public string? ParentId { get; set; } = null;
+        public string? ParentId { get; set; } 
+
+        // FolderPath
+        public string? FolderPath { get; set; } 
 
         // ToDict
         public Dictionary<string, object> ToDict() {
@@ -52,6 +56,9 @@ namespace LibPythonAI.PythonIF.Request {
             };
             if (ParentId != null) {
                 dict[PARENT_ID_KEY] = ParentId;
+            }
+            if (FolderPath != null) {
+                dict[FOLDER_PATH_KEY] = FolderPath;
             }
 
             return dict;

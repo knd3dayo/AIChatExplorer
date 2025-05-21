@@ -322,7 +322,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             // Chatを実行した場合は 、ContentItemを更新
             CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
 
-            QAChatStartupPropsInstance.CloseCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
+            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
             window.Close();
         });
 

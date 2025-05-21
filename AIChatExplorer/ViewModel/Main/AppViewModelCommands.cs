@@ -384,13 +384,13 @@ namespace AIChatExplorer.ViewModel.Main {
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             QAChatStartupProps props = new(clipboardItem) {
                 // Closeアクション
-                CloseCommand = (item, saveChatHistory) => {
+                SaveCommand = (item, saveChatHistory) => {
                     if (!saveChatHistory) {
                         return;
                     }
-                    Task.Run(() => {
+                    Task.Run(async () => {
                         ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                        ContentItemCommands.SaveChatHistoryAsync(clipboardItem, chatFolder);
+                        await ContentItemCommands.SaveChatHistoryAsync(clipboardItem, chatFolder);
 
                     });
                 },
