@@ -39,13 +39,13 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // コンストラクタ
         public FolderViewModelManager(ContentItemViewModelCommands commands) : base(commands) {
-            RootFolderViewModel = new ClipboardFolderViewModel(AIChatExplorerFolderManager.RootFolder, commands);
-            SearchRootFolderViewModel = new SearchFolderViewModel(AIChatExplorerFolderManager.SearchRootFolder, commands);
-            ChatRootFolderViewModel = new ChatFolderViewModel(AIChatExplorerFolderManager.ChatRootFolder, commands);
-            FileSystemFolderViewModel = new FileSystemFolderViewModel(AIChatExplorerFolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
-            ShortcutFolderViewModel = new ShortCutFolderViewModel(AIChatExplorerFolderManager.ShortcutRootFolder, commands);
-            RecentFilesFolderViewModel = new RecentFilesFolderViewModel(AIChatExplorerFolderManager.RecentFilesRootFolder, commands);
-            EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(AIChatExplorerFolderManager.EdgeBrowseHistoryRootFolder, commands);
+            RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder, commands);
+            SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
+            ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
+            FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
+            ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder, commands);
+            RecentFilesFolderViewModel = new RecentFilesFolderViewModel(FolderManager.RecentFilesRootFolder, commands);
+            EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(FolderManager.EdgeBrowseHistoryRootFolder, commands);
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
@@ -54,7 +54,7 @@ namespace AIChatExplorer.ViewModel.Main {
             FolderViewModels.Add(RecentFilesFolderViewModel);
             FolderViewModels.Add(EdgeBrowseHistoryFolderViewModel);
             if (OutlookFolder.OutlookApplicationExists()) {
-                OutlookFolderViewModel = new OutlookFolderViewModel(AIChatExplorerFolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
+                OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder, MainWindowViewModel.Instance.Commands);
                 FolderViewModels.Add(OutlookFolderViewModel);
             }
 

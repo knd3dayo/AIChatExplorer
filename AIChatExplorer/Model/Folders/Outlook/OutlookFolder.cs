@@ -14,11 +14,11 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         // コンストラクタ
         public OutlookFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
         }
 
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = AIChatExplorerFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
             // フォルダ名を設定
             FolderName = folderName;
             // FolderNameに一致するMAPIFolderがある場合は取得

@@ -300,8 +300,8 @@ namespace LibUIPythonAI.Resource {
 
 
         // -- FolderEditWindow --
-        // クリップボードフォルダ編集
-        public virtual string EditClipboardFolder { get; } = "クリップボードフォルダ編集";
+        // フォルダ編集
+        public virtual string EditClipboardFolder { get; } = "フォルダ編集";
 
         // 自動処理時の設定
         public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
@@ -336,10 +336,10 @@ namespace LibUIPythonAI.Resource {
         public virtual string SelectFile { get; } = "ファイル選択";
 
         // SelectClipboardFolder
-        public virtual string SelectClipboardFolder { get; } = "クリップボードフォルダ選択";
+        public virtual string SelectClipboardFolder { get; } = "フォルダ選択";
 
         // SelectedClipboardFolder
-        public virtual string SelectedClipboardFolder { get; } = "選択したクリップボードフォルダ";
+        public virtual string SelectedClipboardFolder { get; } = "選択したフォルダ";
 
         // -- EditItemWindow --
         // テキストをファイルとして開く
@@ -983,7 +983,7 @@ namespace LibUIPythonAI.Resource {
 
         // --- ClipboardFolder.cs ---
         // クリップボード
-        public virtual string Clipboard { get; } = "クリップボード";
+        public virtual string Clipboard { get; } = "アプリケーション";
 
         // クリップボード 英語名
         public virtual string ClipboardEnglish { get; } = "Clipboard";

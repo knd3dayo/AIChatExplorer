@@ -41,7 +41,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string SpecifyVenvPath { get; } = "Python venvを使用する場合はvenvの場所を設定";
 
         // クリップボードDBのバックアップ世代数
-        public virtual string ClipboardDBBackupGenerations { get; } = "クリップボードDBのバックアップ世代数";
+        public virtual string ClipboardDBBackupGenerations { get; } = "メインDBのバックアップ世代数";
 
         // clipbord.db,clipboard-log.dbのバックアップ世代数
         public virtual string ClipboardDBBackupGenerationsDescription { get; } = "clipbord.db,clipboard-log.dbのバックアップ世代数";
@@ -162,17 +162,11 @@ namespace LibUIPythonAI.Resource {
         // クリップボードの内容から自動的にタグを生成します
         public virtual string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
 
-        // 自動でEmbedding
-        public virtual string AutomaticallyEmbedding { get; } = "自動でEmbedding";
-
-        // クリップボードアイテム保存時に自動でEmbeddingを行います
-        public virtual string AutomaticallyEmbeddingWhenSavingClipboardItems { get; } = "クリップボードアイテム保存時に自動でEmbeddingを行います";
-
         // ファイルから自動でテキスト抽出
         public virtual string AutomaticallyExtractTextFromFile { get; } = "ファイルから自動でテキスト抽出";
 
-        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
-        public virtual string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います";
+        // アイテムがファイルの場合、自動でテキスト抽出を行います
+        public virtual string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "アイテムがファイルの場合、自動でテキスト抽出を行います";
 
         // 画像から自動でテキスト抽出
         public virtual string AutomaticallyExtractTextFromImage { get; } = "画像から自動でテキスト抽出";
@@ -192,20 +186,6 @@ namespace LibUIPythonAI.Resource {
         // 自動背景情報追加
         public virtual string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
 
-        // 自動背景情報に日本語文章解析結果を追加します
-        public virtual string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に日本語文章解析結果を追加します";
-
-        // 自動背景情報に自動QA結果を追加します
-        public virtual string AutomaticallyAddAutoQAResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に自動QA結果を追加します";
-
-        // 同じフォルダにあるアイテムから背景情報を生成します。
-        public virtual string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "同じフォルダにあるアイテムから背景情報を生成します。";
-
-        // Embeddingに背景情報を含める
-        public virtual string IncludeBackgroundInformationInEmbedding { get; } = "Embeddingに背景情報を含める";
-
-        // Embedding対象テキストに背景情報を含めます。
-        public virtual string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Embedding対象テキストに背景情報を含めます。";
 
         // 自動サマリー生成
         public virtual string AutomaticallyGenerateSummary { get; } = "自動サマリー生成";
@@ -221,21 +201,6 @@ namespace LibUIPythonAI.Resource {
 
         // コンテンツの文書信頼度をチェックします。
         public virtual string CheckDocumentReliabilityOfContent { get; } = "コンテンツの文書信頼度をチェックします。";
-
-        // クリップボードアイテムをOS上のフォルダと同期させる
-        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
-
-        // クリップボードアイテムをOS上のフォルダと同期させます。
-        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "クリップボードアイテムをOS上のフォルダと同期させます。";
-
-        // 同期先のフォルダ名
-        public virtual string SyncTargetFolderName { get; } = "同期先のフォルダ名";
-
-        // クリップボードアイテムを同期するOS上のフォルダ名を指定。
-        public virtual string SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems { get; } = "クリップボードアイテムを同期するOS上のフォルダ名を指定。";
-
-        // 同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。
-        public virtual string IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated { get; } = "同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。";
 
         // エンティティ抽出/データマスキング
         public virtual string EntityExtractionDataMasking { get; } = "エンティティ抽出/データマスキング";
@@ -264,9 +229,6 @@ namespace LibUIPythonAI.Resource {
 
         // PythonDLLのパスが設定されています
         public virtual string PythonDLLPathSet { get; } = "PythonDLLのパスが設定されています";
-
-        // PythonDLLのファイルが存在しません
-        public virtual string PythonDLLFileDoesNotExist { get; } = "PythonDLLのファイルが存在しません";
 
         // PythonDLLのファイルが存在します
         public virtual string PythonDLLFileExists { get; } = "PythonDLLのファイルが存在します";
@@ -300,9 +262,6 @@ namespace LibUIPythonAI.Resource {
         // Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック
         public virtual string AzureOpenAIEndpointNotSet { get; } = "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック";
 
-        // Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください
-        public virtual string SetAzureOpenAIEndpointOrBaseURL { get; } = "Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください";
-
         // Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません
         public virtual string CannotSetBothAzureOpenAIEndpointAndBaseURL { get; } = "Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません";
 
@@ -321,25 +280,15 @@ namespace LibUIPythonAI.Resource {
         // OpenAIの実行が可能です。
         public virtual string OpenAIRunIsPossible { get; } = "OpenAIの実行が可能です。";
 
-        // LangChainの実行に失敗しました
-        public virtual string FailedToRunLangChain { get; } = "LangChainの実行に失敗しました";
-
-        // LangChainの実行が可能です。
-        public virtual string LangChainRunIsPossible { get; } = "LangChainの実行が可能です。";
 
         #endregion
 
-        #region メイン画面
-
-        #endregion
 
         #region ToolTip
         // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
         public virtual string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
 
-        // 開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.
-        public virtual string ToggleNotificationWatchToolTop { get; } = "開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.";
- 
+        
         #endregion
 
         #region イベント
@@ -349,82 +298,25 @@ namespace LibUIPythonAI.Resource {
         public virtual string StartClipboardWatchMessage { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました
         public virtual string StopClipboardWatchMessage { get; } = "クリップボード監視を停止しました";
-        // Windows通知監視を開始しました
-        public virtual string StartNotificationWatchMessage { get; } = "Windows通知監視を開始しました";
-        // Windows通知監視を停止しました
-        public virtual string StopNotificationWatchMessage { get; } = "Windows通知監視を停止しました";
-
-        // AutoGenStudioを開始しました
-        public virtual string StartAutoGenStudioMessage { get; } = "AutoGenStudioを開始しました";
-        // AutoGenStudioを停止しました
-        public virtual string StopAutoGenStudioMessage { get; } = "AutoGenStudioを停止しました";
-
-        public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
-        // クリップボードアイテムを処理
-        public virtual string ProcessClipboardItem { get; } = "クリップボードアイテムを処理";
+        
         // 自動処理を実行中
         public virtual string AutoProcessing { get; } = "自動処理を実行中";
-        // クリップボードアイテムの追加処理が失敗しました。
-        public virtual string AddItemFailed { get; } = "クリップボードアイテムの追加処理が失敗しました。";
+        // アイテムの追加処理が失敗しました。
+        public virtual string AddItemFailed { get; } = "アイテムの追加処理が失敗しました。";
 
-        // 自動タイトル設定処理を実行します
-        public virtual string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";
-        // タイトル設定処理が失敗しました
-        public virtual string SetTitleFailed { get; } = "タイトル設定処理が失敗しました";
-
-        // 自動背景情報追加処理を実行します
-        public virtual string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
-        // 背景情報追加処理が失敗しました
-        public virtual string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
-
-        // 自動サマリー作成処理を実行します
-        public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
-        // サマリー作成処理が失敗しました
-
+        
         // 自動文書信頼度チェック処理を実行します
         public virtual string AutoCheckDocumentReliability { get; } = "自動文書信頼度チェック処理を実行します";
-        // 文書信頼度チェック処理が失敗しました
-        public virtual string CheckDocumentReliabilityFailed { get; } = "文書信頼度チェック処理が失敗しました";
-
-        public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
-
-        // 自動課題リスト作成処理を実行します
-        public virtual string AutoCreateTaskList { get; } = "自動課題リスト作成処理を実行します";
-        // 課題リスト作成処理が失敗しました
-        public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
-
-
-        // イメージテキスト抽出処理が失敗しました
-        public virtual string ExtractImageTextFailed { get; } = "イメージテキスト抽出処理が失敗しました";
-
-        // 自動タグ設定処理を実行します
-        public virtual string AutoSetTag { get; } = "自動タグ設定処理を実行します";
-        // タグ設定処理が失敗しました
-        public virtual string SetTagFailed { get; } = "タグ設定処理が失敗しました";
-
-        // OCR処理を実行します
-        public virtual string OCR { get; } = "OCR処理を実行します";
-        // OCR処理が失敗しました
-        public virtual string OCRFailed { get; } = "OCR処理が失敗しました";
-
-        // 自動ファイル抽出処理を実行します
-        public virtual string ExecuteAutoFileExtract { get; } = "自動ファイル抽出処理を実行します";
-        // 自動ファイル抽出処理が失敗しました
-        public virtual string AutoFileExtractFailed { get; } = "自動ファイル抽出処理が失敗しました";
 
 
         #endregion
 
-        #region EditItemWindow関連
-        // 新規アイテム
-        public virtual string NewItem { get; } = "新規アイテム";
-        #endregion
 
         #region FolderView関連
         // 参照先ベクトルDBに保存用ベクトルDBも追加する
         public virtual string AddVectorDBForSaveToReferenceVectorDB { get; } = "参照先ベクトルDBに保存用ベクトルDBも追加する";
 
-        // こにフォルダの説明を入力
+        // ここにフォルダの説明を入力
         public virtual string InputDescriptionOfThisFolder { get; } = "ここにフォルダの説明を入力";
 
         #endregion
@@ -435,10 +327,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string StartClipboardWatch { get; } = "クリップボード監視開始";
         // クリップボード監視停止
         public virtual string StopClipboardWatch { get; } = "クリップボード監視停止";
-        // Windows通知監視開始
-        public virtual string StartNotificationWatch { get; } = "Windows通知監視開始";
-        // Windows通知監視停止
-        public virtual string StopNotificationWatch { get; } = "Windows通知監視停止";
+
 
         // タグ編集
         public virtual string EditTag { get; } = "タグ編集";
@@ -458,9 +347,6 @@ namespace LibUIPythonAI.Resource {
         public virtual string TextWrapping { get; } = "テキストを右端で折り返す";
         // サイズの大きなテキストの場合は自動的に折り返しを解除する
         public virtual string AutoTextWrapping { get; } = "サイズの大きなテキストの場合は自動的に折り返しを解除する";
-
-        // コンパクト表示モード
-        public virtual string CompactMode { get; } = "コンパクト表示にする";
 
         // ツール
         public virtual string Tool { get; } = "ツール";
@@ -513,13 +399,6 @@ namespace LibUIPythonAI.Resource {
 
         // RecentFiles 英語名
         public virtual string RecentFilesEnglish { get; } = "RecentFiles";
-
-        #endregion
-
-        #region SettingWindow
-        #endregion
-
-        #region 未整理
 
         #endregion
     }

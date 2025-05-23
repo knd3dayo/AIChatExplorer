@@ -305,11 +305,11 @@ namespace AIChatExplorer.ViewModel.Main {
             if (model.IsClipboardMonitoringActive) {
                 ClipboardController.Instance.Start(async (clipboardItem) => {
                     // Process when a clipboard item is added
-                    // クリップボードフォルダのルートフォルダに追加
+                    // フォルダのルートフォルダに追加
                     await Task.Run(() => {
                         model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
                     });
-                    // クリップボードフォルダのルートフォルダを更新
+                    // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
                         model.RootFolderViewModelContainer.RootFolderViewModel?.LoadFolderCommand.Execute();
                     });

@@ -85,7 +85,7 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        // クリップボードアイテムが選択された時の処理
+        // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
 
@@ -117,7 +117,7 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         });
 
-        #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
+        #region アイテムのコンテキストメニューのInputBinding用のコマンド
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
             Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
@@ -136,7 +136,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         #endregion
 
-        #region クリップボードアイテムのInputBinding用のコマンド
+        #region アイテムのInputBinding用のコマンド
         // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             SelectedFolder?.DeleteDisplayedItemCommand.Execute();

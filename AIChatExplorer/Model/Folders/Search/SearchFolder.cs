@@ -10,12 +10,12 @@ namespace AIChatExplorer.Model.Folders.Search {
         // コンストラクタ
         public SearchFolder() : base() {
             IsAutoProcessEnabled = true;
-            FolderTypeString = AIChatExplorerFolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
         protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
 
-            FolderTypeString = AIChatExplorerFolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
             Parent = parent;
             FolderName = folderName;
             IsAutoProcessEnabled = false;

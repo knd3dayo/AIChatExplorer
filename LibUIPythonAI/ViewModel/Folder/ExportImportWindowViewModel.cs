@@ -59,7 +59,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // 
         public ContentFolderWrapper? ExportTargetFolder { get; set; }
 
-        // 選択したクリップボードフォルダのパス
+        // 選択したフォルダのパス
         public string SelectedClipboardFolderPath {
             get {
                 return ExportTargetFolder?.ContentFolderPath ?? "";

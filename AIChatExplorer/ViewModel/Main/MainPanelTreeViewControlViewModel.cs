@@ -70,7 +70,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 );
         });
 
-        // クリップボードアイテムを作成する。
+        // アイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {

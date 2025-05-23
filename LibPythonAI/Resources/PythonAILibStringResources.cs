@@ -41,12 +41,12 @@ namespace PythonAILib.Resources {
 
         // クリップボードの内容が変更されました
         public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
-        // クリップボードアイテムを処理
-        public virtual string ProcessClipboardItem { get; } = "クリップボードアイテムを処理";
+        // アイテムを処理
+        public virtual string ProcessClipboardItem { get; } = "アイテムを処理";
         // 自動処理を実行中
         public virtual string AutoProcessing { get; } = "自動処理を実行中";
-        // クリップボードアイテムの追加処理が失敗しました。
-        public virtual string AddItemFailed { get; } = "クリップボードアイテムの追加処理が失敗しました。";
+        // アイテムの追加処理が失敗しました。
+        public virtual string AddItemFailed { get; } = "アイテムの追加処理が失敗しました。";
 
         // 自動タイトル設定処理を実行します
         public virtual string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";

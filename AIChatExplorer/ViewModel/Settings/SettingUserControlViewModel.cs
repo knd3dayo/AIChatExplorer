@@ -310,7 +310,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
+        // アイテムがファイルの場合、自動でテキスト抽出を行います
         public bool AutoFileExtract {
             get {
                 return AIChatExplorerConfig.Instance.AutoFileExtract;
@@ -659,7 +659,7 @@ namespace AIChatExplorer.ViewModel.Settings {
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             if (Save()) {
                 //追加設定.言語を変更
-                AIChatExplorerFolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
+                FolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
                 LogWrapper.Info(CommonStringResources.Instance.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(CommonStringResources.Instance.RestartAppToApplyChanges, CommonStringResources.Instance.Information, MessageBoxButton.OK);

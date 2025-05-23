@@ -10,7 +10,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
         // コンストラクタ
         public RecentFilesFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected RecentFilesFolder(RecentFilesFolder parent, string folderName) : base(parent, folderName) {
@@ -21,7 +21,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 

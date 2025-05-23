@@ -13,7 +13,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         // コンストラクタ
         public FileSystemFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
         }
 
         protected FileSystemFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
@@ -24,7 +24,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = AIChatExplorerFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
 
         }
 

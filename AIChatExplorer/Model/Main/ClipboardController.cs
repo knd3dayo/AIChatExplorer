@@ -128,7 +128,7 @@ namespace AIChatExplorer.Model.Main {
             if (_clipboard == null) {
                 return;
             }
-            AIChatExplorerFolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
+            FolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
 
         }
 

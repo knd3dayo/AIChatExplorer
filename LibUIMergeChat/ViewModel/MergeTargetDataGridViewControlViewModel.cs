@@ -93,7 +93,7 @@ namespace LibUIMergeChat.ViewModel {
         }
 
 
-        // クリップボードアイテムが選択された時の処理
+        // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
 
@@ -133,7 +133,7 @@ namespace LibUIMergeChat.ViewModel {
         });
 
 
-        #region クリップボードアイテムのInputBinding用のコマンド
+        #region アイテムのInputBinding用のコマンド
         // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             Items.Clear();

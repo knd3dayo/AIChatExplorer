@@ -14,7 +14,7 @@ using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Item {
     /// <summary>
-    /// クリップボードアイテム編集ウィンドウのViewModel
+    /// アイテム編集ウィンドウのViewModel
     /// </summary>
     public class EditItemWindowViewModel : CommonViewModelBase {
 
@@ -129,7 +129,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
             if (ItemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません");
+                LogWrapper.Error("アイテムが選択されていません");
                 return;
             }
             TagWindow.OpenTagWindow(ItemViewModel.ContentItem, () => {

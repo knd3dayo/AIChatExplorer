@@ -26,8 +26,8 @@ namespace LibUIPythonAI.Resource {
         // Specify the venv location if using Python venv
         public override string SpecifyVenvPath { get; } = "Specify the venv location if using Python venv";
 
-        // Clipboard DB backup generations
-        public override string ClipboardDBBackupGenerations { get; } = "Clipboard DB backup generations";
+        // Main DB backup generations
+        public override string ClipboardDBBackupGenerations { get; } = "Main DB backup generations";
 
         // Backup generations of clipbord.db and clipboard-log.db
         public override string ClipboardDBBackupGenerationsDescription { get; } = "Backup generations of clipbord.db and clipboard-log.db";
@@ -422,42 +422,12 @@ namespace LibUIPythonAI.Resource {
         // --- namespace WpfAppCommon.PythonIF ---
 
         // --- DefaultClipboardController.cs ---
-        public override string ClipboardChangedMessage { get; } = "Clipboard content has been changed";
-        public override string ProcessClipboardItem { get; } = "Process clipboard item";
         public override string AutoProcessing { get; } = "Auto processing in progress";
         public override string AddItemFailed { get; } = "Failed to add clipboard item";
 
-        public override string AutoSetTitle { get; } = "Executing auto title setting process";
-        public override string SetTitleFailed { get; } = "Failed to set title";
-
-        public override string AutoSetBackgroundInfo { get; } = "Executing auto background information addition process";
-        public override string AddBackgroundInfoFailed { get; } = "Failed to add background information";
-
-        public override string AutoCreateSummary { get; } = "Executing auto summary creation process";
 
         // Execute automatic document reliability check process
         public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
-        // Document reliability check process failed
-        public override string CheckDocumentReliabilityFailed { get; } = "Document reliability check process failed";
-
-        public override string CreateSummaryFailed { get; } = "Failed to create summary";
-
-        // 自動課題リスト作成処理を実行します
-        public override string AutoCreateTaskList { get; } = "Execute auto Task list creation process";
-        // 課題リスト作成処理が失敗しました
-        public override string CreateTaskListFailed { get; } = "Failed to create Task list";
-
-        public override string ExtractImageTextFailed { get; } = "Failed to extract image text";
-
-        public override string AutoSetTag { get; } = "Executing auto tag setting process";
-        public override string SetTagFailed { get; } = "Failed to set tag";
-
-        public override string OCR { get; } = "Executing OCR process";
-        public override string OCRFailed { get; } = "Failed to perform OCR";
-
-        public override string ExecuteAutoFileExtract { get; } = "Executing auto file extraction process";
-        public override string AutoFileExtractFailed { get; } = "Failed to perform auto file extraction";
-
         // --- EmptyPythonFunctions.cs ---
         public override string PythonNotEnabledMessage { get; } = "Python is not enabled. Please set PythonExecute in the settings screen.";
 
@@ -577,10 +547,6 @@ namespace LibUIPythonAI.Resource {
 
         public override string AutomaticallyGenerateTagsFromClipboardContent { get; } = "Automatically generate tags from clipboard content";
 
-        public override string AutomaticallyEmbedding { get; } = "Automatically embedding";
-
-        public override string AutomaticallyEmbeddingWhenSavingClipboardItems { get; } = "Automatically embed when saving clipboard items";
-
         public override string AutomaticallyExtractTextFromFile { get; } = "Automatically extract text from file";
 
         public override string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "Automatically extract text from file if clipboard item is file";
@@ -596,14 +562,6 @@ namespace LibUIPythonAI.Resource {
 
         public override string AutomaticallyAddBackgroundInformation { get; } = "Automatically add background information";
 
-        public override string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "Generate background information from items in the same folder";
-        public override string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(Experimental Feature) Automatically add Japanese sentence analysis results to background information";
-
-        public override string AutomaticallyAddAutoQAResultsToBackgroundInformation { get; } = "(Experimental Feature) Automatically add auto QA results to background information";
-        public override string IncludeBackgroundInformationInEmbedding { get; } = "Include background information in embedding";
-
-        public override string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Include background information in embedding target text";
-
         public override string AutomaticallyGenerateSummary { get; } = "Automatically generate summary";
 
         public override string GenerateSummaryTextFromContent { get; } = "Generate summary text from content";
@@ -616,17 +574,6 @@ namespace LibUIPythonAI.Resource {
 
         // Checks the document reliability of the content.
         public override string CheckDocumentReliabilityOfContent { get; } = "Checks the document reliability of the content.";
-
-
-        public override string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "Synchronize clipboard items with folders on the OS";
-
-        public override string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "Synchronize clipboard items with folders on the OS";
-
-        public override string SyncTargetFolderName { get; } = "Sync Target Folder Name";
-
-        public override string SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems { get; } = "Specify the folder name on the OS to synchronize the clipboard items";
-
-        public override string IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated { get; } = "If the sync target folder is a Git repository, it will automatically commit when the file is updated";
 
         public override string EntityExtractionDataMasking { get; } = "Entity Extraction / Data Masking";
 
@@ -980,7 +927,6 @@ namespace LibUIPythonAI.Resource {
         public override string PythonSettingCheck { get; } = "Check Python Settings";
         public override string PythonDLLPathNotSet { get; } = "Python DLL Path Not Set";
         public override string PythonDLLPathSet { get; } = "Python DLL Path Set";
-        public override string PythonDLLFileDoesNotExist { get; } = "Python DLL File Does Not Exist";
         public override string PythonDLLFileExists { get; } = "Python DLL File Exists";
         public override string TestRunPythonScript { get; } = "Test Run Python Script";
         public override string OpenAISettingCheck { get; } = "Check OpenAI Settings";
@@ -992,15 +938,12 @@ namespace LibUIPythonAI.Resource {
         public override string OpenAIEmbeddingModelSet { get; } = "OpenAI Embedding Model Set";
         public override string AzureOpenAISettingCheck { get; } = "Check Azure OpenAI Settings";
         public override string AzureOpenAIEndpointNotSet { get; } = "Azure OpenAI Endpoint Not Set";
-        public override string SetAzureOpenAIEndpointOrBaseURL { get; } = "Set Azure OpenAI Endpoint or Base URL";
         public override string CannotSetBothAzureOpenAIEndpointAndBaseURL { get; } = "Cannot Set Both Azure OpenAI Endpoint and Base URL";
         public override string TestRunOpenAI { get; } = "Test Run OpenAI";
         public override string FailedToRunPython { get; } = "Failed to Run Python";
         public override string PythonRunIsPossible { get; } = "Python Run is Possible";
         public override string FailedToRunOpenAI { get; } = "Failed to Run OpenAI";
         public override string OpenAIRunIsPossible { get; } = "OpenAI Run is Possible";
-        public override string FailedToRunLangChain { get; } = "Failed to Run LangChain";
-        public override string LangChainRunIsPossible { get; } = "LangChain Run is Possible";
         public override string ConfirmRun { get; } = "Confirm Run";
         public override string CheckingSettings { get; } = "Checking Settings";
         public override string SettingsSaved { get; } = "Settings Saved";
@@ -1009,7 +952,7 @@ namespace LibUIPythonAI.Resource {
 
         public override string Statistics { get; } = "Statistics";
 
-        public override string Clipboard { get; } = "Clipboard";
+        public override string Clipboard { get; } = "Application";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
         public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";

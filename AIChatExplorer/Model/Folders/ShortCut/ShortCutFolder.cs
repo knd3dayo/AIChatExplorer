@@ -11,11 +11,11 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
 
         // コンストラクタ
         public ShortCutFolder() : base() {
-            FolderTypeString = AIChatExplorerFolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
         }
 
         public ShortCutFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = AIChatExplorerFolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN;
         }
 
         public override ShortCutFolder CreateChild(string folderName) {

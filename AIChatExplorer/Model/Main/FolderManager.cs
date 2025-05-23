@@ -7,13 +7,11 @@ using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Folders.ShortCut;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
 using LibUIPythonAI.Resource;
-using NetOffice.OutlookApi;
 using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
-    public class AIChatExplorerFolderManager : FolderManager {
+    public class FolderManager : LibPythonAI.Model.Folder.FolderManager {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
@@ -142,7 +140,7 @@ namespace AIChatExplorer.Model.Main {
                         folder.Save();
                     }
                     searchRootFolder = folder;
-                   
+
                 }
                 //既にルートフォルダがある環境用にIsRootFolderをtrueにする
                 if (searchRootFolder.IsRootFolder == false) {
