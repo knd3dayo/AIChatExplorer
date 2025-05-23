@@ -316,6 +316,16 @@ namespace LibUIPythonAI.ViewModel.Chat {
             // Chatを実行した場合は 、ContentItemを更新
             CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
 
+            // ChatRequestの内容をContentItemに保存
+            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            foreach (var item in ChatHistory) {
+                QAChatStartupPropsInstance.ContentItem.ChatItems.Add(item);
+            }
+            QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Clear();
+            foreach (var item in ChatContextViewModelInstance.VectorSearchProperties) {
+                QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Add(item);
+            }
+
             QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
             window.Close();
         });

@@ -390,7 +390,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     }
                     Task.Run(async () => {
                         ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                        await ContentItemCommands.SaveChatHistoryAsync(clipboardItem, chatFolder);
+                        await ContentItemCommands.SaveChatHistoryAsync(item, chatFolder);
 
                     });
                 },
