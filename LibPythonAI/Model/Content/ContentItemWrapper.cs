@@ -98,7 +98,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // OpenAIチャットのChatItemコレクション
-        // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
+        // LiteDBの同一コレクションで保存されているオブジェクト。ApplicationItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatMessage> ChatItems {
             get {
                 return Entity.ChatItems;
@@ -648,7 +648,7 @@ namespace LibPythonAI.Model.Content {
             ContentItemEntity.SaveItems(items.Select(item => item.Entity).ToList());
         }
 
-        // ClipboardItemをJSON文字列に変換する
+        // ApplicationItemをJSON文字列に変換する
         public static string ToJson(ContentItemWrapper item) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -659,7 +659,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        // JSON文字列をClipboardItemに変換する
+        // JSON文字列をApplicationItemに変換する
         public static ContentItemWrapper? FromJson(string json) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),

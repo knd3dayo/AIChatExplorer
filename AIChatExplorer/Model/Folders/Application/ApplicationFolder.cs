@@ -11,40 +11,40 @@ using PythonAILib.Model.AutoProcess;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.Clipboard {
-    public partial class ClipboardFolder : ContentFolderWrapper {
+    public partial class ApplicationFolder : ContentFolderWrapper {
 
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder() : base() {
+        public ApplicationFolder() : base() {
             FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
-        protected ClipboardFolder(ClipboardFolder? parent, string folderName) : base(parent, folderName) {
+        protected ApplicationFolder(ApplicationFolder? parent, string folderName) : base(parent, folderName) {
             FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
         }
 
 
-        public override ClipboardFolder CreateChild(string folderName) {
+        public override ApplicationFolder CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
                 FolderTypeString = FolderTypeString,
 
             };
-            ClipboardFolder child = new() { Entity = childFolder };
+            ApplicationFolder child = new() { Entity = childFolder };
             return child;
         }
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
+        public virtual void ProcessApplicationItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
 
             // Get the cut/copied text.
-            List<ClipboardItem> items = CreateClipboardItem(this, e);
+            List<ApplicationItem> items = CreateApplicationItem(this, e);
 
             foreach (var item in items) {
-                // Process clipboard clipboardItem
-                ClipboardController.ProcessClipboardItem(item, _afterClipboardChanged);
+                // Process clipboard applicationItem
+                ClipboardController.ProcessApplicationItem(item, _afterClipboardChanged);
             }
         }
         #endregion
@@ -55,7 +55,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="sender"></param>
-        public static void SetApplicationInfo(ClipboardItem item, ClipboardChangedEventArgs sender) {
+        public static void SetApplicationInfo(ApplicationItem item, ClipboardChangedEventArgs sender) {
             item.SourceApplicationName = sender.SourceApplication.Name;
             item.SourceApplicationTitle = sender.SourceApplication.Title;
             item.SourceApplicationID = sender.SourceApplication.ID;
@@ -63,10 +63,10 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
         }
 
         /// Create ContentItem
-        public static List<ClipboardItem> CreateClipboardItem(
-            ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
+        public static List<ApplicationItem> CreateApplicationItem(
+            ApplicationFolder clipboardFolder, ClipboardChangedEventArgs e) {
 
-            List<ClipboardItem> result = [];
+            List<ApplicationItem> result = [];
             
             ContentItemTypes.ContentItemTypeEnum contentItemTypes;
             string sourceType;
@@ -87,7 +87,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
 
             // If ContentType is Text, set text data
             if (contentItemTypes == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
-                ClipboardItem item = new(clipboardFolder.Entity) {
+                ApplicationItem item = new(clipboardFolder.Entity) {
                     ContentType = contentItemTypes,
                     SourceType = sourceType
                 };
@@ -99,7 +99,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
 
             // If ContentType is BitmapImage, set image data
             if (contentItemTypes == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Image) {
-                ClipboardItem item = new(clipboardFolder.Entity) {
+                ApplicationItem item = new(clipboardFolder.Entity) {
                     ContentType = contentItemTypes,
                     SourceType = sourceType
 
@@ -118,7 +118,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
 
                 // Get the cut/copied file/files.
                 for (int i = 0; i < files.Length; i++) {
-                    ClipboardItem item = new(clipboardFolder.Entity) {
+                    ApplicationItem item = new(clipboardFolder.Entity) {
                         ContentType = contentItemTypes,
                         SourceType = sourceType
                     };
@@ -139,7 +139,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(GetItems<ClipboardItem>(isSync: false), jsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(GetItems<ApplicationItem>(isSync: false), jsonSerializerOptions);
 
             System.IO.File.WriteAllText(fileName, jsonString);
 

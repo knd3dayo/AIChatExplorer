@@ -4,26 +4,26 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.ShortCut;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
+    public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                FileSystemFolderMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.MenuItems;
+                FileSystemFolderMenu applicationItemMenu = new(this);
+                return applicationItemMenu.MenuItems;
             }
         }
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override FileSystemFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new System.Exception("childFolder is not FileSystemFolder");

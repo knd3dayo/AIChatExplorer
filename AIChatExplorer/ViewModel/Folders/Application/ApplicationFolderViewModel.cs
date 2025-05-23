@@ -16,10 +16,10 @@ using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Content;
 
 
-namespace AIChatExplorer.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ContentFolderViewModel(clipboardItemFolder, commands) {
-        public override ClipboardItemViewModel CreateItemViewModel(ContentItemWrapper item) {
-            return new ClipboardItemViewModel(this, item);
+namespace AIChatExplorer.ViewModel.Folders.Application {
+    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ContentFolderViewModel(applicationItemFolder, commands) {
+        public override ApplicationItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+            return new ApplicationItemViewModel(this, item);
         }
 
         // RootFolderのViewModelを取得する
@@ -28,9 +28,9 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         }
 
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var childFolderViewModel = new ClipboardFolderViewModel(childFolder, Commands) {
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
+        public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            var childFolderViewModel = new ApplicationFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -39,27 +39,27 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
 
         // LoadLLMConfigListAsync
         public override void LoadItems() {
-            LoadItems<ClipboardItem>();
+            LoadItems<ApplicationItem>();
         }
 
         // LoadChildren
         public override void LoadChildren(int nestLevel) {
-            LoadChildren<ClipboardFolderViewModel, ClipboardFolder>(nestLevel);
+            LoadChildren<ApplicationFolderViewModel, ApplicationFolder>(nestLevel);
         }
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                ClipboardFolderMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.MenuItems;
+                ApplicationFolderMenu applicationItemMenu = new(this);
+                return applicationItemMenu.MenuItems;
             }
         }
 
         // フォルダ作成コマンドの実装
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
-            ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            ClipboardFolderViewModel childFolderViewModel = new(childFolder, Commands);
+            ApplicationFolder childFolder = (ApplicationFolder)Folder.CreateChild("");
+            ApplicationFolderViewModel childFolderViewModel = new(childFolder, Commands);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
@@ -76,8 +76,8 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         }
 
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(Folder.Entity);
-            ContentItemViewModel ItemViewModel = CreateItemViewModel(clipboardItem);
+            ApplicationItem applicationItem = new(Folder.Entity);
+            ContentItemViewModel ItemViewModel = CreateItemViewModel(applicationItem);
 
 
             // MainWindowViewModelのTabItemを追加する
@@ -97,19 +97,19 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
            MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
-        public virtual void PasteClipboardItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
-            IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
+        public virtual void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
+            IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             foreach (var item in items) {
-                if (item is ClipboardItemViewModel itemViewModel) {
-                    ContentItemWrapper clipboardItem = itemViewModel.ContentItem;
+                if (item is ApplicationItemViewModel itemViewModel) {
+                    ContentItemWrapper applicationItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        clipboardItem.MoveTo(toFolder.Folder);
+                        applicationItem.MoveTo(toFolder.Folder);
                     } else {
-                        clipboardItem.CopyToFolder(toFolder.Folder);
+                        applicationItem.CopyToFolder(toFolder.Folder);
                     }
                 }
-                if (item is ClipboardFolderViewModel folderViewModel) {
+                if (item is ApplicationFolderViewModel folderViewModel) {
                     ContentFolderWrapper folder = folderViewModel.Folder;
                     if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する

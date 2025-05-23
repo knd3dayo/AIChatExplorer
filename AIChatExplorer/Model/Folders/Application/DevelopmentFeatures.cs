@@ -1,7 +1,7 @@
 namespace AIChatExplorer.Model.Item {
 
 
-    public partial class ClipboardItem {
+    public partial class ApplicationItem {
 
 
     }

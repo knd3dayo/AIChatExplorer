@@ -9,7 +9,7 @@ namespace PythonAILib.Resources {
         // Clipboard content has been changed
         public override string ClipboardChangedMessage { get; } = "Clipboard content has been changed";
         // Processing clipboard item
-        public override string ProcessClipboardItem { get; } = "Processing clipboard item";
+        public override string ProcessApplicationItem { get; } = "Processing clipboard item";
         // Running automatic processing
         public override string AutoProcessing { get; } = "Running automatic processing";
         // Failed to add clipboard item.

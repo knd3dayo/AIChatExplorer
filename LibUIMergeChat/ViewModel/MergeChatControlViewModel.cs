@@ -32,7 +32,7 @@ namespace LibUIMergeChat.ViewModel {
         //初期化
         public MergeChatControlViewModel(MergeTargetPanelViewModel mergeTargetPanelViewModel) {
 
-            // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
+            // VectorDBItemsを設定 ApplicationFolderのベクトルDBを取得
             var folder = mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
             if (folder == null) {
                 return;

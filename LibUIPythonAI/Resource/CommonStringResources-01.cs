@@ -301,7 +301,7 @@ namespace LibUIPythonAI.Resource {
 
         // -- FolderEditWindow --
         // フォルダ編集
-        public virtual string EditClipboardFolder { get; } = "フォルダ編集";
+        public virtual string EditApplicationFolder { get; } = "フォルダ編集";
 
         // 自動処理時の設定
         public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
@@ -335,11 +335,11 @@ namespace LibUIPythonAI.Resource {
         // ファイル選択
         public virtual string SelectFile { get; } = "ファイル選択";
 
-        // SelectClipboardFolder
-        public virtual string SelectClipboardFolder { get; } = "フォルダ選択";
+        // SelectApplicationFolder
+        public virtual string SelectApplicationFolder { get; } = "フォルダ選択";
 
-        // SelectedClipboardFolder
-        public virtual string SelectedClipboardFolder { get; } = "選択したフォルダ";
+        // SelectedApplicationFolder
+        public virtual string SelectedApplicationFolder { get; } = "選択したフォルダ";
 
         // -- EditItemWindow --
         // テキストをファイルとして開く
@@ -536,7 +536,7 @@ namespace LibUIPythonAI.Resource {
         // リクエストパラメーター(JSON)
         public virtual string RequestParameterJson { get; } = "リクエストパラメーター(JSON)";
 
-        // --- ClipboardFolderViewModel ---
+        // --- ApplicationFolderViewModel ---
         // 自動処理が設定されています
         public virtual string AutoProcessingIsSet { get; } = "自動処理が設定されています";
 
@@ -593,7 +593,7 @@ namespace LibUIPythonAI.Resource {
         // チャット結果を保存しました
         public virtual string SavedChatResult { get; } = "チャット結果を保存しました";
 
-        // --- ClipboardItemViewModelCommands ---
+        // --- ApplicationItemViewModelCommands ---
 
 
 
@@ -742,7 +742,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string VersionInformation { get; } = "バージョン情報";
 
 
-        #region  ClipboardItemViewModelCommands
+        #region  ApplicationItemViewModelCommands
         // **********************************************************************************
         // -- ExtractTextCommand
 
@@ -981,12 +981,12 @@ namespace LibUIPythonAI.Resource {
         // 統計
         public virtual string Statistics { get; } = "統計";
 
-        // --- ClipboardFolder.cs ---
+        // --- ApplicationFolder.cs ---
         // クリップボード
-        public virtual string Clipboard { get; } = "アプリケーション";
+        public virtual string Application { get; } = "アプリケーション";
 
         // クリップボード 英語名
-        public virtual string ClipboardEnglish { get; } = "Clipboard";
+        public virtual string ApplicationEnglish { get; } = "Application";
 
 
         // チャット履歴

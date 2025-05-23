@@ -13,7 +13,7 @@ using PythonAILib.Common;
 namespace AIChatExplorer.Model.Main {
     public class FolderManager : LibPythonAI.Model.Folder.FolderManager {
 
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Application;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
@@ -23,7 +23,7 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
 
         // 英語名
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardEnglish;
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ApplicationEnglish;
         public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.SearchFolderEnglish;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ImageChatEnglish;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
@@ -33,10 +33,6 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.RecentFilesEnglish;
 
 
-
-
-        #region static methods
-
         // 言語変更時にルートフォルダ名を変更する
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
             using PythonAILibDBContext db = new();
@@ -45,7 +41,7 @@ namespace AIChatExplorer.Model.Main {
             var clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN);
 
             if (clipboardRootFolder != null) {
-                clipboardRootFolder.FolderName = toRes.Clipboard;
+                clipboardRootFolder.FolderName = toRes.Application;
             }
             // SearchRootFolder
             var searchRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
@@ -85,10 +81,10 @@ namespace AIChatExplorer.Model.Main {
         }
 
         //--------------------------------------------------------------------------------
-        private static ClipboardFolder? clipboardRootFolder;
-        public static ClipboardFolder RootFolder {
+        private static ApplicationFolder? applicationRootFolder;
+        public static ApplicationFolder RootFolder {
             get {
-                if (clipboardRootFolder == null) {
+                if (applicationRootFolder == null) {
                     using PythonAILibDBContext db = new();
                     ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CLIPBOARD_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
@@ -98,7 +94,7 @@ namespace AIChatExplorer.Model.Main {
                         };
                         folderRoot.Save();
                     }
-                    ClipboardFolder? folder = ContentFolderWrapper.GetFolderById<ClipboardFolder>(folderRoot.Id);
+                    ApplicationFolder? folder = ContentFolderWrapper.GetFolderById<ApplicationFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
                             FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
@@ -107,15 +103,15 @@ namespace AIChatExplorer.Model.Main {
                         };
                         folder.Save();
                     }
-                    clipboardRootFolder = folder;
+                    applicationRootFolder = folder;
 
                 }
                 //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (clipboardRootFolder.IsRootFolder == false) {
-                    clipboardRootFolder.IsRootFolder = true;
-                    clipboardRootFolder.Save();
+                if (applicationRootFolder.IsRootFolder == false) {
+                    applicationRootFolder.IsRootFolder = true;
+                    applicationRootFolder.Save();
                 }
-                return clipboardRootFolder;
+                return applicationRootFolder;
             }
         }
         private static SearchFolder? searchRootFolder;
@@ -150,7 +146,7 @@ namespace AIChatExplorer.Model.Main {
                 return searchRootFolder;
             }
         }
-        private static ClipboardFolder? chatRootFolder;
+        private static ApplicationFolder? chatRootFolder;
 
         // Local File System Root Folder
         private static FileSystemFolder? fileSystemRootFolder;
@@ -251,7 +247,6 @@ namespace AIChatExplorer.Model.Main {
                     outlookRootFolder.Save();
                 }
                 return outlookRootFolder;
-                #endregion
             }
 
         }

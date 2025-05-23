@@ -3,8 +3,8 @@ using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class QAChatStartupProps {
-        public QAChatStartupProps(ContentItemWrapper clipboardItem) {
-            ContentItem = clipboardItem;
+        public QAChatStartupProps(ContentItemWrapper applicationItem) {
+            ContentItem = applicationItem;
         }
         public ContentItemWrapper ContentItem { get; set; }
 

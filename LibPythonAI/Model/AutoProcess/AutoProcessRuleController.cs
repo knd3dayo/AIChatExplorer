@@ -60,7 +60,7 @@ namespace PythonAILib.Model.AutoProcess {
                 // If AUTO_TAG is set, automatically set the tags
                 if (configParams.AutoTag()) {
                     LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTag);
-                    // ClipboardItem.CreateAutoTags(item);
+                    // ApplicationItem.CreateAutoTags(item);
                 }
             });
             var task2 = Task.Run( async () => {

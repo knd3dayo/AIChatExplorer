@@ -8,7 +8,7 @@ using LibPythonAI.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
-    public class FileSystemFolder : ClipboardFolder {
+    public class FileSystemFolder : ApplicationFolder {
 
         // コンストラクタ
         public FileSystemFolder() : base() {
@@ -199,8 +199,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             });
 
         }
-        // ProcessClipboardItem
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
+        // ProcessApplicationItem
+        public override void ProcessApplicationItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
             // ローカルファイルのフォルダは処理しない
             throw new NotImplementedException();
         }

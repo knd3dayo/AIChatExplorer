@@ -136,13 +136,13 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.ClipboardDBBackupGenerations}"
+                                Text="{x:Static res:ViewStringResources.ApplicationDBBackupGenerations}"
                                 Visibility="Collapsed" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ClipboardDBBackupGenerationsDescription}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ApplicationDBBackupGenerationsDescription}"
                                 Text="{Binding BackupGeneration}"
                                 Visibility="Collapsed" />
 
@@ -494,7 +494,7 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFileIfApplicationItemIsFile}"
                                 IsChecked="{Binding AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock

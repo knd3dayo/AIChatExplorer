@@ -16,13 +16,13 @@ namespace PythonAILib.Model.AutoProcess {
 
         public PromptItemEntity PromptItemEntity { get; set; }
 
-        public override async Task Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
+        public override async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
 
             ChatRequest chatRequest = new();
 
             // PromptItemを取得
-            ContentFolderWrapper? clipboardFolder = clipboardItem.GetFolder();
+            ContentFolderWrapper? clipboardFolder = applicationItem.GetFolder();
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
@@ -38,11 +38,11 @@ namespace PythonAILib.Model.AutoProcess {
             if (result == null) {
                 return;
             }
-            // ClipboardItemのContentにレスポンスを設定
-            clipboardItem.Content = result.Output;
-            // レスポンスをClipboardItemに設定
-            clipboardItem.ChatItems.Clear();
-            clipboardItem.ChatItems.AddRange(chatRequest.ChatHistory);
+            // ApplicationItemのContentにレスポンスを設定
+            applicationItem.Content = result.Output;
+            // レスポンスをApplicationItemに設定
+            applicationItem.ChatItems.Clear();
+            applicationItem.ChatItems.AddRange(chatRequest.ChatHistory);
         }
     }
 

@@ -44,7 +44,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
-        // Ctrl + C or X  が押された時のClipboardItemFolder
+        // Ctrl + C or X  が押された時のApplicationItemFolder
         private ContentFolderViewModel? _copiedFolder;
         public ContentFolderViewModel? CopiedFolder {
             get {
@@ -97,8 +97,8 @@ namespace AIChatExplorer.ViewModel.Main {
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
-            SelectedFolder = clipboardItemFolderViewModel;
+            ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
+            SelectedFolder = applicationItemFolderViewModel;
             if (SelectedFolder != null) {
                 // Load
                 SelectedFolder.LoadFolderCommand.Execute();

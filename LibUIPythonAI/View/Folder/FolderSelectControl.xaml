@@ -24,7 +24,7 @@
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="local:ApplicationItemFolderViewModel" ItemsSource="{Binding Children}">
                     <DockPanel HorizontalAlignment="Stretch">
                         <materialDesign:PackIcon
                             Width="18"
@@ -63,7 +63,7 @@
                 FontSize="12"
                 Foreground="#616161"
                 Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
-                Text="{x:Static res:ViewStringResources.SelectedClipboardFolder}" />
+                Text="{x:Static res:ViewStringResources.SelectedApplicationFolder}" />
             <TextBox
                 Grid.Column="1"
                 MinHeight="20"

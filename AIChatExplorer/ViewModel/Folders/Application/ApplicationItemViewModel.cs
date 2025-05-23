@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Item;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
@@ -11,14 +11,14 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Content {
-    public partial class ClipboardItemViewModel : ContentItemViewModel {
+    public partial class ApplicationItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
-        public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper clipboardItem) : base(folderViewModel, clipboardItem) {
+        public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
             if (folderViewModel.Commands == null) {
                 throw new Exception("folderViewModel.Commands is null");
             }
-            ContentItem = clipboardItem;
+            ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
             Description = ContentItem.Description;
@@ -36,15 +36,15 @@ namespace AIChatExplorer.ViewModel.Content {
 
         public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
-                ClipboardItemMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.ContentItemMenuItems;
+                ApplicationItemMenu applicationItemMenu = new(this);
+                return applicationItemMenu.ContentItemMenuItems;
             }
         }
 
         // Copy
-        public virtual ClipboardItemViewModel Copy() {
+        public virtual ApplicationItemViewModel Copy() {
             ContentItemWrapper newItem = ContentItem.Copy();
-            return new ClipboardItemViewModel(FolderViewModel, newItem);
+            return new ApplicationItemViewModel(FolderViewModel, newItem);
         }
 
         #region 開発中機能

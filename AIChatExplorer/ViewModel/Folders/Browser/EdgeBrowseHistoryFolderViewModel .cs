@@ -1,22 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Browser;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
+    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                EdgeBrowseHistoryFolderMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.MenuItems;
+                EdgeBrowseHistoryFolderMenu applicationItemMenu = new(this);
+                return applicationItemMenu.MenuItems;
             }
         }
         // RootFolderのViewModelを取得する
@@ -28,7 +28,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             return new EdgeBrowseHistoryItemViewModel(this, item);
         }
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override EdgeBrowseHistoryFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             var childFolderViewModel = new EdgeBrowseHistoryFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定

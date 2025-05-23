@@ -95,7 +95,7 @@ namespace LibUIMergeChat.ViewModel {
 
         // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {

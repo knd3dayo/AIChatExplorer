@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using LibUIPythonAI.Resource;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {
-    public class OutlookFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+    public class OutlookFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : ApplicationFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -35,7 +35,7 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
                 MenuItem syncMenuItem = new() {
                     Header = CommonStringResources.Instance.Sync,
                     Command = OutlookFolderViewModel.SyncItemCommand,
-                    CommandParameter = ClipboardFolderViewModel
+                    CommandParameter = ApplicationFolderViewModel
                 };
                 return syncMenuItem;
             }

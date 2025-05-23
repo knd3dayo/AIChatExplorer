@@ -5,7 +5,7 @@ using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Content;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
@@ -57,7 +57,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // アイテム保存
-        public SimpleDelegateCommand<ContentItemViewModel> SaveClipboardItemCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<ContentItemViewModel> SaveApplicationItemCommand => new((itemViewModel) => {
             itemViewModel.ContentItem.Save();
         });
 
@@ -87,12 +87,12 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // ピン留めの切り替えコマンド (複数選択可能)
-        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<ApplicationItemViewModel> ChangePinCommand => new((itemViewModel) => {
             foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
-                if (item is ClipboardItemViewModel clipboardItemViewModel) {
-                    clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
+                if (item is ApplicationItemViewModel applicationItemViewModel) {
+                    applicationItemViewModel.IsPinned = !applicationItemViewModel.IsPinned;
                     // ピン留めの時は更新日時を変更しない
-                    SaveClipboardItemCommand.Execute(clipboardItemViewModel);
+                    SaveApplicationItemCommand.Execute(applicationItemViewModel);
                 }
             }
         });
@@ -165,15 +165,15 @@ namespace AIChatExplorer.ViewModel.Main {
 
         public static void OpenOpenAIChatWindowCommandExecute() {
             // チャット履歴用のItemの設定
-            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
-            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
+            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
                 // タイトルを日付 + 元のタイトルにする
                 Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
             };
-            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
 
-            OpenOpenAIChatWindowCommandExecute(clipboardItemViewModel);
+            OpenOpenAIChatWindowCommandExecute(applicationItemViewModel);
 
         }
 
@@ -185,15 +185,15 @@ namespace AIChatExplorer.ViewModel.Main {
 
         public static void OpenAutoGenChatWindowCommandExecute() {
             // チャット履歴用のItemの設定
-            ClipboardFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
-            ClipboardItem item = new(chatFolderViewModel.Folder.Entity) {
+            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
                 // タイトルを日付 + 元のタイトルにする
                 Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
             };
-            ClipboardItemViewModel clipboardItemViewModel = new(chatFolderViewModel, item);
+            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
 
-            OpenAutoGenChatWindowCommandExecute(clipboardItemViewModel);
+            OpenAutoGenChatWindowCommandExecute(applicationItemViewModel);
 
         }
 
@@ -265,7 +265,7 @@ namespace AIChatExplorer.ViewModel.Main {
             ClipboardController.Instance.CutFlag = ClipboardController.CutFlagEnum.Item;
             // Set the selected items to CopiedItems
             ClipboardController.Instance.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in itemViewModels) {
+            foreach (ApplicationItemViewModel item in itemViewModels) {
                 ClipboardController.Instance.CopiedObjects.Add(item);
             }
             LogWrapper.Info(CommonStringResources.Instance.Cut);
@@ -287,7 +287,7 @@ namespace AIChatExplorer.ViewModel.Main {
             ClipboardController.Instance.CutFlag = ClipboardController.CutFlagEnum.None;
             // Set the selected items to CopiedItems
             ClipboardController.Instance.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in itemViewModels) {
+            foreach (ApplicationItemViewModel item in itemViewModels) {
                 ClipboardController.Instance.CopiedObjects.Add(item);
             }
             try {
@@ -303,11 +303,11 @@ namespace AIChatExplorer.ViewModel.Main {
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
             if (model.IsClipboardMonitoringActive) {
-                ClipboardController.Instance.Start(async (clipboardItem) => {
+                ClipboardController.Instance.Start(async (applicationItem) => {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
+                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
@@ -333,20 +333,20 @@ namespace AIChatExplorer.ViewModel.Main {
         public void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
             ContentFolderViewModel? folder = windowViewModel.MainPanelTreeViewControlViewModel?.SelectedFolder;
-            if (folder is not ClipboardFolderViewModel SelectedFolder) {
+            if (folder is not ApplicationFolderViewModel SelectedFolder) {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
             List<object> CopiedItems = ClipboardController.Instance.CopiedObjects;
             // Do not process if no folder is selected
-            if (SelectedFolder == null || SelectedFolder.Folder is not ClipboardFolder clipboardFolder) {
+            if (SelectedFolder == null || SelectedFolder.Folder is not ApplicationFolder clipboardFolder) {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
 
             // If the source items are from within the app
             if (CopiedItems.Count > 0) {
-                SelectedFolder.PasteClipboardItemCommandExecute(
+                SelectedFolder.PasteApplicationItemCommandExecute(
                     ClipboardController.Instance.CutFlag,
                     CopiedItems,
                     SelectedFolder
@@ -357,18 +357,18 @@ namespace AIChatExplorer.ViewModel.Main {
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // システムのクリップボードからのコピーの場合
-                ProcessClipboardItem(clipboardFolder, ClipboardController.LastClipboardChangedEventArgs);
+                ProcessApplicationItem(clipboardFolder, ClipboardController.LastClipboardChangedEventArgs);
             }
         }
 
-        private void ProcessClipboardItem(ClipboardFolder clipboardFolder, ClipboardChangedEventArgs lastClipboardChangedEventArgs) {
+        private void ProcessApplicationItem(ApplicationFolder clipboardFolder, ClipboardChangedEventArgs lastClipboardChangedEventArgs) {
             UpdateIndeterminate(true);
-            clipboardFolder.ProcessClipboardItem(lastClipboardChangedEventArgs,
-                async (clipboardItem) => {
+            clipboardFolder.ProcessApplicationItem(lastClipboardChangedEventArgs,
+                async (applicationItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {
                         // SaveAsync to folder if saveToFolder is true
-                        clipboardFolder.AddItem(clipboardItem);
+                        clipboardFolder.AddItem(applicationItem);
                         // Process after pasting
                     }).ContinueWith((obj) => {
                         UpdateIndeterminate(false);
@@ -379,10 +379,10 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // -----------------------------------------------------------------------------------
 
-        public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper clipboardItem) {
+        public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper applicationItem) {
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
-            QAChatStartupProps props = new(clipboardItem) {
+            QAChatStartupProps props = new(applicationItem) {
                 // Closeアクション
                 SaveCommand = (item, saveChatHistory) => {
                     if (!saveChatHistory) {
@@ -399,11 +399,11 @@ namespace AIChatExplorer.ViewModel.Main {
 
                     FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
                         if (finished) {
-                            ClipboardItem chatHistoryItem = new(folder.Folder.Entity);
+                            ApplicationItem chatHistoryItem = new(folder.Folder.Entity);
                             // タイトルを日付 + 元のタイトルにする
                             chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
-                            if (!string.IsNullOrEmpty(clipboardItem.Description)) {
-                                chatHistoryItem.Description += " " + clipboardItem.Description;
+                            if (!string.IsNullOrEmpty(applicationItem.Description)) {
+                                chatHistoryItem.Description += " " + applicationItem.Description;
                             }
                             // chatHistoryItemの内容をテキスト化
                             string chatHistoryText = "";

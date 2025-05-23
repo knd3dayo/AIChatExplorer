@@ -81,98 +81,98 @@ namespace PythonAILib.Model.AutoProcess {
 
 
 
-        //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public bool IsDescriptionContains(ContentItemWrapper clipboardItem, string keyword) {
+        //ApplicationItemのDescriptionが指定したキーワードを含むかどうか
+        public bool IsDescriptionContains(ContentItemWrapper applicationItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
-            if (clipboardItem.Description == null) {
+            if (applicationItem.Description == null) {
                 return false;
             }
-            LogWrapper.Info("Description:" + clipboardItem.Description);
+            LogWrapper.Info("Description:" + applicationItem.Description);
             LogWrapper.Info("Keyword:" + keyword);
-            LogWrapper.Info("Contains:" + clipboardItem.Description.Contains(keyword));
+            LogWrapper.Info("Contains:" + applicationItem.Description.Contains(keyword));
 
-            return clipboardItem.Description.Contains(keyword);
+            return applicationItem.Description.Contains(keyword);
 
         }
-        //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public bool IsContentContains(ContentItemWrapper clipboardItem, string keyword) {
+        //ApplicationItemのContentが指定したキーワードを含むかどうか
+        public bool IsContentContains(ContentItemWrapper applicationItem, string keyword) {
             // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
+            if (applicationItem.Content == null) {
                 return false;
             }
-            return clipboardItem.Content.Contains(keyword);
+            return applicationItem.Content.Contains(keyword);
         }
-        // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationNameContains(ContentItemWrapper clipboardItem, string keyword) {
+        // ApplicationItemのSourceApplicationNameが指定したキーワードを含むかどうか
+        public bool IsSourceApplicationNameContains(ContentItemWrapper applicationItem, string keyword) {
             // SourceApplicationNameがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationName == null) {
+            if (applicationItem.SourceApplicationName == null) {
                 return false;
             }
-            return clipboardItem.SourceApplicationName.Contains(keyword);
+            return applicationItem.SourceApplicationName.Contains(keyword);
         }
-        // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationTitleContains(ContentItemWrapper clipboardItem, string keyword) {
+        // ApplicationItemのSourceApplicationTitleが指定したキーワードを含むかどうか
+        public bool IsSourceApplicationTitleContains(ContentItemWrapper applicationItem, string keyword) {
             // SourceApplicationTitleがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationTitle == null) {
+            if (applicationItem.SourceApplicationTitle == null) {
                 return false;
             }
-            return clipboardItem.SourceApplicationTitle.Contains(keyword);
+            return applicationItem.SourceApplicationTitle.Contains(keyword);
         }
-        // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationPathContains(ContentItemWrapper clipboardItem, string keyword) {
+        // ApplicationItemのSourceApplicationPathが指定したキーワードを含むかどうか
+        public bool IsSourceApplicationPathContains(ContentItemWrapper applicationItem, string keyword) {
             // SourceApplicationPathがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationPath == null) {
+            if (applicationItem.SourceApplicationPath == null) {
                 return false;
             }
-            return clipboardItem.SourceApplicationPath != null && clipboardItem.SourceApplicationPath.Contains(keyword);
+            return applicationItem.SourceApplicationPath != null && applicationItem.SourceApplicationPath.Contains(keyword);
         }
 
-        // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public bool IsContentLineCountOver(ContentItemWrapper clipboardItem) {
+        // ApplicationItemのContentの行数が指定した行数以上かどうか
+        public bool IsContentLineCountOver(ContentItemWrapper applicationItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
             }
             // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
+            if (applicationItem.Content == null) {
                 return false;
             }
-            return clipboardItem.Content.Split('\n').Length >= MinLineCount;
+            return applicationItem.Content.Split('\n').Length >= MinLineCount;
         }
-        // ClipboardItemのContentの行数が指定した行数以下かどうか
-        public bool IsContentLineCountUnder(ContentItemWrapper clipboardItem) {
+        // ApplicationItemのContentの行数が指定した行数以下かどうか
+        public bool IsContentLineCountUnder(ContentItemWrapper applicationItem) {
             // MaxLineCountが-1の場合はTrueを返す
             if (MaxLineCount == -1) {
                 return true;
             }
             // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
+            if (applicationItem.Content == null) {
                 return false;
             }
-            return clipboardItem.Content.Split('\n').Length <= MaxLineCount;
+            return applicationItem.Content.Split('\n').Length <= MaxLineCount;
         }
 
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
-        public bool CheckCondition(ContentItemWrapper clipboardItem) {
+        public bool CheckCondition(ContentItemWrapper applicationItem) {
             return Type switch {
-                ConditionTypeEnum.DescriptionContains => IsDescriptionContains(clipboardItem, Keyword),
-                ConditionTypeEnum.ContentContains => IsContentContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationNameContains => IsSourceApplicationNameContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationTitleContains => IsSourceApplicationTitleContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationPathContains => IsSourceApplicationPathContains(clipboardItem, Keyword),
-                ConditionTypeEnum.ContentTypeIs => CheckContentTypeIs(clipboardItem),
+                ConditionTypeEnum.DescriptionContains => IsDescriptionContains(applicationItem, Keyword),
+                ConditionTypeEnum.ContentContains => IsContentContains(applicationItem, Keyword),
+                ConditionTypeEnum.SourceApplicationNameContains => IsSourceApplicationNameContains(applicationItem, Keyword),
+                ConditionTypeEnum.SourceApplicationTitleContains => IsSourceApplicationTitleContains(applicationItem, Keyword),
+                ConditionTypeEnum.SourceApplicationPathContains => IsSourceApplicationPathContains(applicationItem, Keyword),
+                ConditionTypeEnum.ContentTypeIs => CheckContentTypeIs(applicationItem),
                 _ => false,
             };
         }
 
         // ContentTypeIsの条件にマッチするかどうか
-        public bool CheckContentTypeIs(ContentItemWrapper clipboardItem) {
-            if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
+        public bool CheckContentTypeIs(ContentItemWrapper applicationItem) {
+            if (ContentTypes.Contains(applicationItem.ContentType) == false) {
                 return false;
             }
-            if (clipboardItem.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
-                return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
+            if (applicationItem.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
+                return IsContentLineCountOver(applicationItem) && IsContentLineCountUnder(applicationItem);
             }
             return true;
         }

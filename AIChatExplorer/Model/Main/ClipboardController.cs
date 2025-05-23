@@ -45,13 +45,13 @@ namespace AIChatExplorer.Model.Main {
         /// <summary>
         /// コピーされたアイテム
         /// </summary>
-        // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
+        // Ctrl + C or X が押された時のApplicationItem or ApplicationFolder
         public List<object> CopiedObjects { get; set; } = [];
 
         // ClipboardChangedが呼ばれたときの処理
         public Action<ClipboardChangedEventArgs> OnClipboardChanged { get; set; } = (e) => { };
 
-        // Clipboard monitoring enable/disable flag
+        // Application monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard _clipboard;
         private Action<ContentItemWrapper> _afterClipboardChanged = (parameter) => { };
@@ -117,7 +117,7 @@ namespace AIChatExplorer.Model.Main {
 
 
             if (IsClipboardMonitorEnabled == false) {
-                // System.Windows.MessageBox.Show("Clipboard monitor disabled");
+                // System.Windows.MessageBox.Show("Application monitor disabled");
                 return;
             }
             // Determine if it is a target application for monitoring
@@ -128,7 +128,7 @@ namespace AIChatExplorer.Model.Main {
             if (_clipboard == null) {
                 return;
             }
-            FolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
+            FolderManager.RootFolder.ProcessApplicationItem(e, _afterClipboardChanged);
 
         }
 
@@ -156,7 +156,7 @@ namespace AIChatExplorer.Model.Main {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="_afterClipboardChanged"></param>
-        public static void ProcessClipboardItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
+        public static void ProcessApplicationItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
 
             // Execute in a separate thread
             Task.Run(() => {

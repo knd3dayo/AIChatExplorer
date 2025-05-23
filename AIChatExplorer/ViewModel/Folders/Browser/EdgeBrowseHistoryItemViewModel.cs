@@ -5,14 +5,14 @@ using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryItemViewModel : ClipboardItemViewModel {
+    public class EdgeBrowseHistoryItemViewModel : ApplicationItemViewModel {
 
         // コンストラクタ
-        public EdgeBrowseHistoryItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper clipboardItem) : base(folderViewModel, clipboardItem) {
+        public EdgeBrowseHistoryItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
             if (folderViewModel.Commands == null) {
                 throw new Exception("folderViewModel.Commands is null");
             }
-            ContentItem = clipboardItem;
+            ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
             Description = ContentItem.Description;
@@ -30,8 +30,8 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
 
         public override ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
-                EdgeBrowseHistoryItemMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.ContentItemMenuItems;
+                EdgeBrowseHistoryItemMenu applicationItemMenu = new(this);
+                return applicationItemMenu.ContentItemMenuItems;
             }
         }
 

@@ -1,6 +1,6 @@
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Main;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibUIPythonAI.View.Search;
@@ -8,10 +8,10 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(ContentFolderWrapper clipboardItemFolder, ContentItemViewModelCommands commands) : ClipboardFolderViewModel(clipboardItemFolder, commands) {
+    public class SearchFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
+        public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             var searchFolderViewModel = new SearchFolderViewModel(childFolder, Commands) {
                 // 検索フォルダの親フォルダにこのフォルダを追加
                 ParentFolderViewModel = this
@@ -64,7 +64,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
 
         }
 
-        public override void PasteClipboardItemCommandExecute(ClipboardController.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
+        public override void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag, IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
 
         }

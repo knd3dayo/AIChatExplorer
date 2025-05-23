@@ -2,7 +2,7 @@ using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Folders.Browser;
 using AIChatExplorer.ViewModel.Folders.Chat;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.Mail;
 using AIChatExplorer.ViewModel.Folders.Search;
@@ -14,7 +14,7 @@ namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel
-        public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
+        public ApplicationFolderViewModel RootFolderViewModel { get; private set; }
 
         // 検索フォルダのClipboardViewModel
         public SearchFolderViewModel SearchRootFolderViewModel { get; private set; }
@@ -39,7 +39,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // コンストラクタ
         public FolderViewModelManager(ContentItemViewModelCommands commands) : base(commands) {
-            RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder, commands);
+            RootFolderViewModel = new ApplicationFolderViewModel(FolderManager.RootFolder, commands);
             SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);

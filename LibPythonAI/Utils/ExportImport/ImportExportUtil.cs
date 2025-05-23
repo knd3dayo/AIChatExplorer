@@ -58,27 +58,27 @@ namespace LibPythonAI.Utils.ExportImport {
         public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
-            // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
+            // ApplicationItemのリスト要素毎に処理を行う
+            foreach (var applicationItem in fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
-                    row.Add(clipboardItem.Description);
+                    row.Add(applicationItem.Description);
                 }
                 bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
                 if (exportText) {
-                    row.Add(clipboardItem.Content);
+                    row.Add(applicationItem.Content);
                 }
                 // Path
                 bool exportSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
                 if (exportSourcePath) {
-                    row.Add(clipboardItem.SourcePath);
+                    row.Add(applicationItem.SourcePath);
                 }
 
                 // PromptItemのリスト要素毎に処理を行う
                 foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
                     if (promptItem.IsChecked) {
-                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
+                        string promptResult = applicationItem.PromptChatResult.GetTextContent(promptItem.Name);
                         row.Add(promptResult);
                     }
                 }

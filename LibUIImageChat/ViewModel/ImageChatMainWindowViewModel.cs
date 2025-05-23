@@ -22,9 +22,9 @@ using LibPythonAI.PythonIF.Response;
 namespace LibUIImageChat.ViewModel {
     public class ImageChatWindowViewModel : CommonViewModelBase {
         // コンストラクタ
-        public ImageChatWindowViewModel(ContentItemWrapper clipboardItem, Action afterUpdate) {
+        public ImageChatWindowViewModel(ContentItemWrapper applicationItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
-            ClipboardItem = clipboardItem;
+            ApplicationItem = applicationItem;
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(InputText));
             OnPropertyChanged(nameof(ResultText));
@@ -33,8 +33,8 @@ namespace LibUIImageChat.ViewModel {
         }
         public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
 
-        // データ保存用のClipboardItem
-        public ContentItemWrapper ClipboardItem { get; set; }
+        // データ保存用のApplicationItem
+        public ContentItemWrapper ApplicationItem { get; set; }
 
         // Chat
         public ChatRequest ChatRequest { get; set; }
@@ -63,13 +63,13 @@ namespace LibUIImageChat.ViewModel {
                 OnPropertyChanged(nameof(ResultText));
             }
         }
-        // ClipboardItemの説明
+        // ApplicationItemの説明
         public string Description {
             get {
-                return ClipboardItem.Description;
+                return ApplicationItem.Description;
             }
             set {
-                ClipboardItem.Description = value;
+                ApplicationItem.Description = value;
                 OnPropertyChanged(nameof(Description));
             }
         }

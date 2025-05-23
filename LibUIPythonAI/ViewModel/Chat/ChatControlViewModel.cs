@@ -27,7 +27,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
             // InputTextを設定
             InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
-            // ClipboardItemがある場合は、ChatItemsを設定
+            // ApplicationItemがある場合は、ChatItemsを設定
             if (QAChatStartupPropsInstance.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
             }
@@ -239,7 +239,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
-            // ClipboardItemがある場合は、ChatItemsをクリア
+            // ApplicationItemがある場合は、ChatItemsをクリア
             QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
             OnPropertyChanged(nameof(ChatHistory));
         });

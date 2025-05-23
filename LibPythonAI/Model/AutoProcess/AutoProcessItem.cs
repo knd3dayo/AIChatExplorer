@@ -112,10 +112,10 @@ namespace LibPythonAI.Model.AutoProcess {
             return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString();
         }
 
-        public virtual async Task Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
+        public virtual async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
             Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolder);
-            action(clipboardItem);
+            action(applicationItem);
 
         }
 

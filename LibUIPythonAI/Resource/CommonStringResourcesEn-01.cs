@@ -27,10 +27,10 @@ namespace LibUIPythonAI.Resource {
         public override string SpecifyVenvPath { get; } = "Specify the venv location if using Python venv";
 
         // Main DB backup generations
-        public override string ClipboardDBBackupGenerations { get; } = "Main DB backup generations";
+        public override string ApplicationDBBackupGenerations { get; } = "Main DB backup generations";
 
         // Backup generations of clipbord.db and clipboard-log.db
-        public override string ClipboardDBBackupGenerationsDescription { get; } = "Backup generations of clipbord.db and clipboard-log.db";
+        public override string ApplicationDBBackupGenerationsDescription { get; } = "Backup generations of clipbord.db and clipboard-log.db";
 
         // OpenAI Settings
         public override string OpenAISettings { get; } = "OpenAI Settings";
@@ -545,11 +545,11 @@ namespace LibUIPythonAI.Resource {
 
         public override string AutomaticallyGenerateTags { get; } = "Automatically generate tags";
 
-        public override string AutomaticallyGenerateTagsFromClipboardContent { get; } = "Automatically generate tags from clipboard content";
+        public override string AutomaticallyGenerateTagsFromContent { get; } = "Automatically generate tags from content";
 
         public override string AutomaticallyExtractTextFromFile { get; } = "Automatically extract text from file";
 
-        public override string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "Automatically extract text from file if clipboard item is file";
+        public override string AutomaticallyExtractTextFromFileIfApplicationItemIsFile { get; } = "Automatically extract text from file if clipboard item is file";
 
         public override string AutomaticallyExtractTextFromImage { get; } = "Automatically extract text from image";
 
@@ -586,7 +586,7 @@ namespace LibUIPythonAI.Resource {
         public override string SaveSystemCommonSettings { get; } = "Save system common settings";
 
         // -- FolderEditWindow --
-        public override string EditClipboardFolder { get; } = "Edit Clipboard Folder";
+        public override string EditApplicationFolder { get; } = "Edit Application Folder";
 
         public override string Name { get; } = "Name";
 
@@ -632,11 +632,11 @@ namespace LibUIPythonAI.Resource {
 
         public override string SelectFile { get; } = "Select File";
 
-        // SelectClipboardFolder
-        public override string SelectClipboardFolder { get; } = "Select Clipboard Folder";
+        // SelectApplicationFolder
+        public override string SelectApplicationFolder { get; } = "Select Application Folder";
 
-        // SelectedClipboardFolder
-        public override string SelectedClipboardFolder { get; } = "Selected Clipboard Folder";
+        // SelectedApplicationFolder
+        public override string SelectedApplicationFolder { get; } = "Selected Application Folder";
 
         // -- EditItemWindow --
         public override string OpenTextAsFile { get; } = "Open text as file";
@@ -748,7 +748,7 @@ namespace LibUIPythonAI.Resource {
         public override string RequestParameterJson { get; } = "Request Parameters (JSON)";
         public override string Copy { get; } = "Copy";
 
-        // --- ClipboardFolderViewModel ---
+        // --- ApplicationFolderViewModel ---
         public override string AutoProcessingIsSet { get; } = "Auto processing is set";
         public override string FolderEdited { get; } = "Folder edited";
         public override string Reloaded { get; } = "Reloaded";
@@ -771,7 +771,7 @@ namespace LibUIPythonAI.Resource {
         // チャット結果を保存しました
         public override string SavedChatResult { get; } = "Chat result saved";
 
-        // --- ClipboardItemViewModel ---
+        // --- ApplicationItemViewModel ---
 
         public override string MainWindowViewModelIsNull { get; } = "MainWindowViewModel is null";
 
@@ -832,7 +832,7 @@ namespace LibUIPythonAI.Resource {
         public override string TagIsEmpty { get; } = "Tag is empty";
         public override string TagAlreadyExists { get; } = "Tag already exists";
 
-        #region  ClipboardItemViewModelCommands
+        #region  ApplicationItemViewModelCommands
         // **********************************************************************************
         public override string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "Display mode will change when you restart the application";
         public override string Information { get; } = "Information";
@@ -952,7 +952,7 @@ namespace LibUIPythonAI.Resource {
 
         public override string Statistics { get; } = "Statistics";
 
-        public override string Clipboard { get; } = "Application";
+        public override string Application { get; } = "Application";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
         public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";

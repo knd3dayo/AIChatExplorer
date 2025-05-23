@@ -9,7 +9,7 @@ using NetOffice.OutlookApi.Enums;
 using NetOfficeOutlook = NetOffice.OutlookApi;
 
 namespace AIChatExplorer.Model.Folders.Outlook {
-    public class OutlookFolder : ClipboardFolder {
+    public class OutlookFolder : ApplicationFolder {
 
         // コンストラクタ
         public OutlookFolder() : base() {
@@ -99,7 +99,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         // 子フォルダ
         public override List<T> GetChildren<T>() {
 
-            // ローカルファイルシステムとClipboardFolderのフォルダを同期
+            // ローカルファイルシステムとApplicationFolderのフォルダを同期
             SyncFolders();
             return base.GetChildren<T>();
         }

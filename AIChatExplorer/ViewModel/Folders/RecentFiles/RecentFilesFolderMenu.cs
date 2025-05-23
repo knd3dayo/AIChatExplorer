@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class RecentFilesFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
+    public class RecentFilesFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {

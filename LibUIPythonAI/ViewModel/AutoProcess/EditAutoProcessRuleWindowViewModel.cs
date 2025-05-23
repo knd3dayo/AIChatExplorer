@@ -133,14 +133,14 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         }
 
-        // ルール適用対象のClipboardItemFolder
-        private ContentFolderWrapper? _ClipboardItemFolder = null;
+        // ルール適用対象のApplicationItemFolder
+        private ContentFolderWrapper? _ApplicationItemFolder = null;
         public ContentFolderWrapper? TargetFolder {
             get {
-                return _ClipboardItemFolder;
+                return _ApplicationItemFolder;
             }
             set {
-                _ClipboardItemFolder = value;
+                _ApplicationItemFolder = value;
                 OnPropertyChanged(nameof(TargetFolder));
             }
         }

@@ -28,7 +28,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
             // InputTextを設定
             InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
-            // ClipboardItemがある場合は、ChatItemsを設定
+            // ApplicationItemがある場合は、ChatItemsを設定
             if (QAChatStartupPropsInstance.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
             }
@@ -139,7 +139,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
-            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+            // ApplicationItemがある場合はApplicationItemのChatItemsを更新
             QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
             QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange([.. ChatHistory]);
             OnPropertyChanged(nameof(ChatHistory));
@@ -245,7 +245,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
-            // ClipboardItemがある場合は、ChatItemsをクリア
+            // ApplicationItemがある場合は、ChatItemsをクリア
             QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
             OnPropertyChanged(nameof(ChatHistory));
         });

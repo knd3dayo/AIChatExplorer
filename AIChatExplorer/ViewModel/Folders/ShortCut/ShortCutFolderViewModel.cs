@@ -8,19 +8,19 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
-    public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(clipboardItemFolder, commands) {
+    public class ShortCutFolderViewModel(FileSystemFolder applicationItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                ShortCutFolderMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.MenuItems;
+                ShortCutFolderMenu applicationItemMenu = new(this);
+                return applicationItemMenu.MenuItems;
             }
         }
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ShortCutFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new Exception("childFolder is not FileSystemFolder");

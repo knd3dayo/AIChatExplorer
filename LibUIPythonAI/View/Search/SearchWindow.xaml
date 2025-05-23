@@ -125,7 +125,7 @@
                     Margin="10,3,10,3"
                     Padding="10,0,10,0"
                     VerticalAlignment="Center"
-                    Command="{Binding OpenClipboardFolderWindowCommand, Mode=OneTime}"
+                    Command="{Binding OpenApplicationFolderWindowCommand, Mode=OneTime}"
                     Content="{x:Static res:ViewStringResources.Select}"
                     FontSize="12"
                     IsEnabled="{Binding IsSearchSpecifiedFolder}" />

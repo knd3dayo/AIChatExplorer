@@ -150,7 +150,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             Task.Run(async () => {
                 // 自動処理を実行
                 ContentItemWrapper? item = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(ItemViewModel.ContentItem);
-                // ClipboardItemを更新
+                // ApplicationItemを更新
                 if (item != null) {
                     // 保存
                     item.Save();

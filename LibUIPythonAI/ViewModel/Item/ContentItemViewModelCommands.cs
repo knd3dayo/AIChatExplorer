@@ -193,20 +193,20 @@ namespace LibUIPythonAI.ViewModel.Item {
         public static void OpenFileExecute(ContentItemViewModel itemViewModel) {
             ContentItemWrapper contentItem = itemViewModel.ContentItem;
             // Open the selected item
-            ProcessUtil.OpenClipboardItemFile(contentItem, false);
+            ProcessUtil.OpenApplicationItemFile(contentItem, false);
         }
 
         // Command to open a file as a new file
         public static void OpenFileAsNewFileExecute(ContentItemViewModel itemViewModel) {
             // Open the selected item
-            ProcessUtil.OpenClipboardItemFile(itemViewModel.ContentItem, true);
+            ProcessUtil.OpenApplicationItemFile(itemViewModel.ContentItem, true);
         }
 
         // Command to open text content as a file
         public void OpenContentAsFileExecute(ContentItemViewModel itemViewModel) {
             try {
                 // Open the selected item
-                ProcessUtil.OpenClipboardItemContent(itemViewModel.ContentItem);
+                ProcessUtil.OpenApplicationItemContent(itemViewModel.ContentItem);
             } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }

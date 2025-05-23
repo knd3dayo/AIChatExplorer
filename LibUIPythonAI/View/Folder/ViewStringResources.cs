@@ -20,17 +20,17 @@ namespace LibUIPythonAI.View.Folder {
         // SelectFile
         public static string SelectFile { get; set; } = CommonStringResources.Instance.SelectFile;
 
-        // SelectClipboardFolder
-        public static string SelectClipboardFolder { get; set; } = CommonStringResources.Instance.SelectClipboardFolder;
+        // SelectApplicationFolder
+        public static string SelectApplicationFolder { get; set; } = CommonStringResources.Instance.SelectApplicationFolder;
 
         // 選択したフォルダ
-        public static string SelectedClipboardFolder { get; set; } = CommonStringResources.Instance.SelectedClipboardFolder;
+        public static string SelectedApplicationFolder { get; set; } = CommonStringResources.Instance.SelectedApplicationFolder;
 
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
-        // ImportClipboardItemsWindow
-        public static string ImportClipboardItemsWindow { get; set; } = CommonStringResources.Instance.ExportImport;
+        // ImportApplicationItemsWindow
+        public static string ImportApplicationItemsWindow { get; set; } = CommonStringResources.Instance.ExportImport;
 
         // Export
         public static string ExportToExcel { get; set; } = CommonStringResources.Instance.ExportToExcel;
@@ -89,8 +89,8 @@ namespace LibUIPythonAI.View.Folder {
         public static string Summary { get; set; } = CommonStringResources.Instance.Summary;
 
 
-        // EditClipboardFolder
-        public static string EditClipboardFolder { get; set; } = CommonStringResources.Instance.EditClipboardFolder;
+        // EditApplicationFolder
+        public static string EditApplicationFolder { get; set; } = CommonStringResources.Instance.EditApplicationFolder;
 
 
         // InputDescriptionOfThisFolder

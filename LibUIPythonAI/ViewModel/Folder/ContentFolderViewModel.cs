@@ -76,7 +76,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
 
         public void LoadItems<Item>() where Item : ContentItemWrapper {
-            // ClipboardItemFolder.Itemsは別スレッドで実行
+            // ApplicationItemFolder.Itemsは別スレッドで実行
             List<Item> _items = Folder.GetItems<Item>(isSync: false).OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() => {
                 Items.Clear();

@@ -55,12 +55,12 @@ namespace LibPythonAI.Data {
         }
 
         public SearchRuleEntity Copy() {
-            SearchRuleEntity clipboardItem = new();
-            clipboardItem.Name = Name;
-            clipboardItem.SearchCondition = SearchCondition;
-            clipboardItem.SearchFolderId = SearchFolderId;
-            clipboardItem.TargetFolderId = TargetFolderId;
-            return clipboardItem;
+            SearchRuleEntity applicationItem = new();
+            applicationItem.Name = Name;
+            applicationItem.SearchCondition = SearchCondition;
+            applicationItem.SearchFolderId = SearchFolderId;
+            applicationItem.TargetFolderId = TargetFolderId;
+            return applicationItem;
         }
 
         public static void DeleteItems(List<SearchRuleEntity> items) {

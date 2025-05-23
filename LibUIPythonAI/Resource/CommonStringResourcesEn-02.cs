@@ -20,20 +20,20 @@ namespace LibUIPythonAI.Resource {
         #endregion
 
         #region ToolTip
-        // Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.
+        // Start: Start Application Watch. Stop: Stop Application Watch.
         public override string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.";
 
         #endregion
         #region  MainWindow
 
-        // Start Clipboard Watch
+        // Start Application Watch
         public override string StartClipboardWatch { get; } = "Start Clipboard Watch";
-        // Stop Clipboard Watch
+        // Stop Application Watch
         public override string StopClipboardWatch { get; } = "Stop Clipboard Watch";
 
-        // Started Clipboard Watch
+        // Started Application Watch
         public override string StartClipboardWatchMessage { get; } = "Started Clipboard Watch";
-        // Stopped Clipboard Watch
+        // Stopped Application Watch
         public override string StopClipboardWatchMessage { get; } = "Stopped Clipboard Watch";
 
 

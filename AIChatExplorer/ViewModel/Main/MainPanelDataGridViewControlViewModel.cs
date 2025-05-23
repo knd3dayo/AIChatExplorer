@@ -87,12 +87,12 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid dataGrid) {
 
-                if (dataGrid.SelectedItem is ContentItemViewModel clipboardItemViewModel) {
+                if (dataGrid.SelectedItem is ContentItemViewModel applicationItemViewModel) {
                     // SelectedItemsをMainWindowViewModelにセット
                     SelectedItems.Clear();
                     foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
@@ -112,7 +112,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
-            foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
+            foreach (ApplicationItemViewModel applicationItemViewModel in SelectedItems) {
                 Commands.ChangePinCommand.Execute();
             }
         });

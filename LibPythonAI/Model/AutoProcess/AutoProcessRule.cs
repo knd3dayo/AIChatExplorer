@@ -115,7 +115,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
-        public bool IsMatch(ContentItemWrapper clipboardItem) {
+        public bool IsMatch(ContentItemWrapper applicationItem) {
             if (Conditions.Count == 0) {
                 return false;
             }
@@ -125,7 +125,7 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             // 全ての条件を満たすかどうか
             foreach (var condition in Conditions) {
-                if (!condition.CheckCondition(clipboardItem)) {
+                if (!condition.CheckCondition(applicationItem)) {
                     return false;
                 }
             }
@@ -133,14 +133,14 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public async Task RunActionAsync(ContentItemWrapper clipboardItem) {
+        public async Task RunActionAsync(ContentItemWrapper applicationItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResources.Instance.RuleNameIsInvalid(RuleName));
                 return;
             }
 
-            if (!IsMatch(clipboardItem)) {
+            if (!IsMatch(applicationItem)) {
                 LogWrapper.Info(PythonAILibStringResources.Instance.NoMatch);
                 return;
             }
@@ -150,7 +150,7 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             // DestinationIdに一致するフォルダを取得
 
-             await RuleAction.Execute(clipboardItem, DestinationFolder);
+             await RuleAction.Execute(applicationItem, DestinationFolder);
         }
 
         public string GetDescriptionString() {

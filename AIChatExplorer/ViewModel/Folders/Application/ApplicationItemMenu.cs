@@ -7,16 +7,16 @@ using LibUIPythonAI.ViewModel.Item;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
 
-namespace AIChatExplorer.ViewModel.Folders.Clipboard {
-    public class ClipboardItemMenu : CommonViewModelBase {
+namespace AIChatExplorer.ViewModel.Folders.Application {
+    public class ApplicationItemMenu : CommonViewModelBase {
 
-        public ContentItemViewModel ClipboardItemViewModel { get; private set; }
+        public ContentItemViewModel ApplicationItemViewModel { get; private set; }
 
         protected AppViewModelCommands AppCommands { get; set; }
 
-        public ClipboardItemMenu(ContentItemViewModel clipboardItemViewModel) {
-            ClipboardItemViewModel = clipboardItemViewModel;
-            ContentItemViewModelCommands contentCommands = clipboardItemViewModel.Commands;
+        public ApplicationItemMenu(ContentItemViewModel applicationItemViewModel) {
+            ApplicationItemViewModel = applicationItemViewModel;
+            ContentItemViewModelCommands contentCommands = applicationItemViewModel.Commands;
 
             if (contentCommands is not AppViewModelCommands commands) {
                 throw new Exception("commands is not AppItemViewModelCommands");
@@ -27,7 +27,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
         // Itemのコンテキストメニュー
         public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
-                return CreateBasicItemContextMenuItems(ClipboardItemViewModel);
+                return CreateBasicItemContextMenuItems(ApplicationItemViewModel);
             }
         }
 
@@ -125,7 +125,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 MenuItem openMenuItem = new() {
                     Header = CommonStringResources.Instance.Open,
                     Command = AppCommands.OpenItemCommand,
-                    CommandParameter = ClipboardItemViewModel,
+                    CommandParameter = ApplicationItemViewModel,
                     InputGestureText = "Ctrl+O"
                 };
                 return openMenuItem;
@@ -137,7 +137,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 MenuItem openContentAsFileMenuItem = new() {
                     Header = CommonStringResources.Instance.OpenTextAsFile,
                     Command = AppCommands.OpenContentAsFileCommand,
-                    CommandParameter = ClipboardItemViewModel,
+                    CommandParameter = ApplicationItemViewModel,
                     InputGestureText = "Ctrl+Shit+O"
                 };
                 return openContentAsFileMenuItem;
@@ -150,7 +150,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 MenuItem pinnedStateChangeMenuItem = new() {
                     Header = PythonAILibStringResources.Instance.Pin,
                     Command = AppCommands.ChangePinCommand,
-                    CommandParameter = ClipboardItemViewModel
+                    CommandParameter = ApplicationItemViewModel
                 };
                 return pinnedStateChangeMenuItem;
 
@@ -190,7 +190,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                     Header = CommonStringResources.Instance.VectorSearch,
                     // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
                     Command = AppCommands.VectorSearchCommand,
-                    CommandParameter = ClipboardItemViewModel
+                    CommandParameter = ApplicationItemViewModel
                 };
                 return vectorSearchMenuItem;
             }
@@ -212,7 +212,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
                 MenuItem mergeChatMenuItem = new() {
                     Header = CommonStringResources.Instance.MergeChat,
                     Command = MainWindowViewModel.Instance.OpenSelectedItemsMergeChatWindow,
-                    CommandParameter = ClipboardItemViewModel
+                    CommandParameter = ApplicationItemViewModel
                 };
                 return mergeChatMenuItem;
             }

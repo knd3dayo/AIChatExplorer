@@ -1,16 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Main;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 
-namespace AIChatExplorer.ViewModel.Folders.Clipboard {
-    public class ClipboardFolderMenu : ObservableObject {
+namespace AIChatExplorer.ViewModel.Folders.Application {
+    public class ApplicationFolderMenu : ObservableObject {
 
-        public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
+        public ApplicationFolderViewModel ApplicationFolderViewModel { get; private set; }
 
-        public ClipboardFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) {
-            ClipboardFolderViewModel = clipboardFolderViewModel;
+        public ApplicationFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) {
+            ApplicationFolderViewModel = clipboardFolderViewModel;
         }
 
         // -- virtual
@@ -48,7 +47,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem createMenuItem = new() {
                     Header = CommonStringResources.Instance.Create,
-                    Command = ClipboardFolderViewModel.CreateFolderCommand,
+                    Command = ApplicationFolderViewModel.CreateFolderCommand,
                 };
                 return createMenuItem;
             }
@@ -58,7 +57,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem editMenuItem = new() {
                     Header = CommonStringResources.Instance.Edit,
-                    Command = ClipboardFolderViewModel.EditFolderCommand,
+                    Command = ApplicationFolderViewModel.EditFolderCommand,
                 };
                 return editMenuItem;
             }
@@ -68,8 +67,8 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem deleteMenuItem = new();
                 deleteMenuItem.Header = CommonStringResources.Instance.Delete;
-                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
+                deleteMenuItem.Command = ApplicationFolderViewModel.DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = ApplicationFolderViewModel.IsDeleteVisible;
                 return deleteMenuItem;
             }
         }
@@ -79,7 +78,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem extractTextMenuItem = new() {
                     Header = CommonStringResources.Instance.ExtractText,
-                    Command = ClipboardFolderViewModel.ExtractTextCommand,
+                    Command = ApplicationFolderViewModel.ExtractTextCommand,
                 };
                 return extractTextMenuItem;
             }
@@ -89,7 +88,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem refreshMenuItem = new() {
                     Header = CommonStringResources.Instance.RefreshVectorDB,
-                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
+                    Command = ApplicationFolderViewModel.RefreshVectorDBCollectionCommand,
                 };
                 return refreshMenuItem;
             }
@@ -100,7 +99,7 @@ namespace AIChatExplorer.ViewModel.Folders.Clipboard {
             get {
                 MenuItem exportImportMenuItem = new() {
                     Header = CommonStringResources.Instance.ExportImport,
-                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
+                    Command = ApplicationFolderViewModel.ExportImportFolderCommand,
                 };
                 return exportImportMenuItem;
             }

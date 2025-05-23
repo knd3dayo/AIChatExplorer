@@ -41,10 +41,10 @@ namespace LibUIPythonAI.Resource {
         public virtual string SpecifyVenvPath { get; } = "Python venvを使用する場合はvenvの場所を設定";
 
         // クリップボードDBのバックアップ世代数
-        public virtual string ClipboardDBBackupGenerations { get; } = "メインDBのバックアップ世代数";
+        public virtual string ApplicationDBBackupGenerations { get; } = "メインDBのバックアップ世代数";
 
         // clipbord.db,clipboard-log.dbのバックアップ世代数
-        public virtual string ClipboardDBBackupGenerationsDescription { get; } = "clipbord.db,clipboard-log.dbのバックアップ世代数";
+        public virtual string ApplicationDBBackupGenerationsDescription { get; } = "clipbord.db,clipboard-log.dbのバックアップ世代数";
 
         // OpenAI設定
         public virtual string OpenAISettings { get; } = "OpenAI設定";
@@ -160,13 +160,13 @@ namespace LibUIPythonAI.Resource {
         public virtual string AutomaticallyGenerateTags { get; } = "自動でタグ生成する";
 
         // クリップボードの内容から自動的にタグを生成します
-        public virtual string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
+        public virtual string AutomaticallyGenerateTagsFromContent { get; } = "クリップボードの内容から自動的にタグを生成します";
 
         // ファイルから自動でテキスト抽出
         public virtual string AutomaticallyExtractTextFromFile { get; } = "ファイルから自動でテキスト抽出";
 
         // アイテムがファイルの場合、自動でテキスト抽出を行います
-        public virtual string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "アイテムがファイルの場合、自動でテキスト抽出を行います";
+        public virtual string AutomaticallyExtractTextFromFileIfApplicationItemIsFile { get; } = "アイテムがファイルの場合、自動でテキスト抽出を行います";
 
         // 画像から自動でテキスト抽出
         public virtual string AutomaticallyExtractTextFromImage { get; } = "画像から自動でテキスト抽出";

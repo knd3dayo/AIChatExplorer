@@ -12,7 +12,7 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : CommonViewModelBase {
+    public class ExportImportWindowViewModel(ContentFolderViewModel ApplicationFolderViewModel, Action AfterUpdate) : CommonViewModelBase {
 
         // ImportItems
         public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();
@@ -52,7 +52,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             set {
                 _selectedIndex = value;
                 OnPropertyChanged(nameof(FileSelectionButtonVisibility));
-                OnPropertyChanged(nameof(ClipboardFolderSelectionButtonVisibility));
+                OnPropertyChanged(nameof(ApplicationFolderSelectionButtonVisibility));
             }
         }
 
@@ -60,7 +60,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public ContentFolderWrapper? ExportTargetFolder { get; set; }
 
         // 選択したフォルダのパス
-        public string SelectedClipboardFolderPath {
+        public string SelectedApplicationFolderPath {
             get {
                 return ExportTargetFolder?.ContentFolderPath ?? "";
             }
@@ -75,8 +75,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // FileSelectionButtonVisibility
         public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 1 || SelectedIndex == 2);
 
-        // ClipboardFolderSelectionButtonVisibility
-        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
+        // ApplicationFolderSelectionButtonVisibility
+        public Visibility ApplicationFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
@@ -94,15 +94,15 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 switch (SelectedIndex) {
                     case 0:
                         // Excelエクスポート処理
-                        ImportExportUtil.ExportToExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
+                        ImportExportUtil.ExportToExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // Excelインポート処理 ★TODO 自動処理の実装
-                        ImportExportUtil.ImportFromExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
+                        ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
                         break;
                     case 2:
                         // URLリストインポート処理
-                        ImportExportUtil.ImportFromURLList(ClipboardFolderViewModel.Folder, SelectedFileName, afterImport);
+                        ImportExportUtil.ImportFromURLList(ApplicationFolderViewModel.Folder, SelectedFileName, afterImport);
                         break;
                     default:
                         break;
@@ -119,7 +119,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
             // SelectedFileNameが空の場合はデフォルトのファイル名を設定
             if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.Folder.Id.ToString() + ".xlsx";
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ApplicationFolderViewModel.Folder.Id.ToString() + ".xlsx";
                 OnPropertyChanged(nameof(SelectedFileName));
             }
 
@@ -157,11 +157,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenClipboardFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
                     ExportTargetFolder = folderViewModel.Folder;
-                    OnPropertyChanged(nameof(SelectedClipboardFolderPath));
+                    OnPropertyChanged(nameof(SelectedApplicationFolderPath));
                 }
             });
         });

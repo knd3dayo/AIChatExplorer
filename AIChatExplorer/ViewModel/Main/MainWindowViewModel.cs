@@ -195,7 +195,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // OpenImageChatWindow
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
-            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
+            ApplicationItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
             AppViewModelCommands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });

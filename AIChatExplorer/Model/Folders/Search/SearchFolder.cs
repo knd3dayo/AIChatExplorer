@@ -61,7 +61,7 @@ namespace AIChatExplorer.Model.Folders.Search {
             // 何もしない
         }
 
-        // ClipboardItemを削除
+        // ApplicationItemを削除
         public virtual void DeleteItem(ContentItemWrapper item) {
             // 何もしない
         }

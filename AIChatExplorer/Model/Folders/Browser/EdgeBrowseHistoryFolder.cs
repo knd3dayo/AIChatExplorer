@@ -8,7 +8,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 
 namespace AIChatExplorer.Model.Folders.Browser {
-    public class EdgeBrowseHistoryFolder : ClipboardFolder {
+    public class EdgeBrowseHistoryFolder : ApplicationFolder {
 
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
         public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "edge");

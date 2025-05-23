@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using LibUIPythonAI.Resource;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+    public class FileSystemFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : ApplicationFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -41,7 +41,7 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
                 MenuItem createShortCutMenuItem = new() {
                     Header = CommonStringResources.Instance.CreateShortCut,
                     Command = FileSystemFolderViewModel.CreateShortCutCommand,
-                    CommandParameter = ClipboardFolderViewModel
+                    CommandParameter = ApplicationFolderViewModel
                 };
                 return createShortCutMenuItem;
             }

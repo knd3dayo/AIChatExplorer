@@ -52,10 +52,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
+            ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
 
-            SelectedFolder = clipboardItemFolderViewModel;
-            SelectedFolderAbsoluteCollectionName = clipboardItemFolderViewModel.FolderPath;
+            SelectedFolder = applicationItemFolderViewModel;
+            SelectedFolderAbsoluteCollectionName = applicationItemFolderViewModel.FolderPath;
             FolderSelectedAction?.Invoke(SelectedFolder, false);
 
             SelectedFolder.LoadFolderCommand.Execute(null);
