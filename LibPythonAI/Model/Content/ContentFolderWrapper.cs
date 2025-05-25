@@ -225,12 +225,12 @@ namespace LibPythonAI.Model.Content {
             // APIを呼び出して、自分自身とchildrenのContentFolderを更新
             Task.Run(async () => {
                 List<ContentFolderRequest> requests = [];
+                ContentFolderRequest request = new(this);
+                requests.Add(request);
                 foreach (var child in children) {
                     ContentFolderRequest childRequest = new(this);
                     requests.Add(childRequest);
                 }
-                ContentFolderRequest request = new(this);
-                requests.Add(request);
 
                 await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch(requests);
             });

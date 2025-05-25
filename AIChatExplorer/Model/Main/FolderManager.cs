@@ -13,7 +13,7 @@ using PythonAILib.Common;
 namespace AIChatExplorer.Model.Main {
     public class FolderManager : LibPythonAI.Model.Folder.FolderManager {
 
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Application;
+        public static readonly string APPLICATION_ROOT_FOLDER_NAME = CommonStringResources.Instance.Application;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
@@ -23,7 +23,7 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
 
         // 英語名
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ApplicationEnglish;
+        public static readonly string APPLICATION_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ApplicationEnglish;
         public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.SearchFolderEnglish;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ImageChatEnglish;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
@@ -38,7 +38,7 @@ namespace AIChatExplorer.Model.Main {
             using PythonAILibDBContext db = new();
             // ClipboardRootFolder
 
-            var clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_ROOT_FOLDER_NAME_EN);
+            var clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
 
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Application;
@@ -86,19 +86,19 @@ namespace AIChatExplorer.Model.Main {
             get {
                 if (applicationRootFolder == null) {
                     using PythonAILibDBContext db = new();
-                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CLIPBOARD_ROOT_FOLDER_NAME_EN);
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(APPLICATION_ROOT_FOLDER_NAME_EN);
                     if (folderRoot == null) {
                         folderRoot = new() {
-                            FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
-                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_ROOT_FOLDER_NAME_EN)
+                            FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), APPLICATION_ROOT_FOLDER_NAME_EN)
                         };
                         folderRoot.Save();
                     }
                     ApplicationFolder? folder = ContentFolderWrapper.GetFolderById<ApplicationFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
-                            FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
-                            FolderTypeString = CLIPBOARD_ROOT_FOLDER_NAME_EN,
+                            FolderName = APPLICATION_ROOT_FOLDER_NAME,
+                            FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
                         };
                         folder.Save();

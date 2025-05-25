@@ -17,11 +17,11 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ApplicationFolder() : base() {
-            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.APPLICATION_ROOT_FOLDER_NAME_EN;
         }
 
         protected ApplicationFolder(ApplicationFolder? parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = FolderManager.CLIPBOARD_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.APPLICATION_ROOT_FOLDER_NAME_EN;
         }
 
 
