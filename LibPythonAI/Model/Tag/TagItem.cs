@@ -39,9 +39,9 @@ namespace LibPythonAI.Model.Tag {
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new();
-            dict["Id"] = Id;
-            dict["Tag"] = Tag;
-            dict["IsPinned"] = IsPinned.ToString();
+            dict["id"] = Id;
+            dict["tag"] = Tag;
+            dict["is_pinned"] = IsPinned.ToString();
             return dict;
         }
 
@@ -55,9 +55,9 @@ namespace LibPythonAI.Model.Tag {
 
         public static TagItem FromDict(Dictionary<string, object> dict) {
             TagItem item = new() {
-                Id = dict["Id"]?.ToString() ?? "",
-                Tag = dict["Tag"]?.ToString() ?? "",
-                IsPinned = bool.Parse(dict["IsPinned"]?.ToString() ?? "false")
+                Id = dict["id"]?.ToString() ?? "",
+                Tag = dict["tag"]?.ToString() ?? "",
+                IsPinned = bool.Parse(dict["is_pinned"]?.ToString() ?? "false")
             };
             return item;
         }

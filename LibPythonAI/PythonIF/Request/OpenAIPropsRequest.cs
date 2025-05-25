@@ -3,13 +3,13 @@ using PythonAILib.Common;
 
 namespace LibPythonAI.PythonIF.Request {
     public class OpenAIPropsRequest {
-        public const string OPEN_AI_KEY_KEY = "OpenAIKey";
-        public const string OPEN_AI_COMPLETION_MODEL_KEY = "OpenAICompletionModel";
-        public const string OPEN_AI_EMBEDDING_MODEL_KEY = "OpenAIEmbeddingModel";
-        public const string AZURE_OPENAI_KEY = "AzureOpenAI";
-        public const string AZURE_OPENAI_ENDPOINT_KEY = "AzureOpenAIEndpoint";
-        public const string OPENAI_BASE_URL_KEY = "OpenAIBaseURL";
-        public const string AZURE_OPENAI_API_VERSION_KEY = "AzureOpenAIAPIVersion";
+        public const string OPEN_AI_KEY_KEY = "openai_key";
+        public const string OPEN_AI_COMPLETION_MODEL_KEY = "openai_completion_model";
+        public const string OPEN_AI_EMBEDDING_MODEL_KEY = "openai_embedding_model";
+        public const string AZURE_OPENAI_KEY = "azure_openai";
+        public const string AZURE_OPENAI_ENDPOINT_KEY = "azure_openai_endpoint";
+        public const string OPENAI_BASE_URL_KEY = "openai_base_url";
+        public const string AZURE_OPENAI_API_VERSION_KEY = "azure_openai_api_version";
 
         public OpenAIPropsRequest(OpenAIProperties openAIProperties) {
             OpenAIKey = openAIProperties.OpenAIKey;

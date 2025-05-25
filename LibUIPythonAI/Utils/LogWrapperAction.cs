@@ -38,7 +38,7 @@ namespace LibUIPythonAI.Utils {
         // 大文字小文字を区別しない
         // 例： api_key:"12345678" は api_key:"********" に変換
         private static string MaskAPIKey(string message) {
-            string[] maskWords = { "OpenAIKey", "api_key", "OPENAI_API_KEY" };
+            string[] maskWords = { "OpenAIKey", "api_key", "OPENAI_API_KEY", "openai_key" };
             foreach (string maskWord in maskWords) {
                 // 正規表現でマスクする, 大文字小文字を区別しない.後方参照を使う
                 Regex regex = new($"({maskWord}[.:\"]+)[a-zA-Z0-9-]+", RegexOptions.IgnoreCase);
