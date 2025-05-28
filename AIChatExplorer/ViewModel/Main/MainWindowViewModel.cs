@@ -8,6 +8,8 @@ using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Settings;
+using LibPythonAI.Data;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -75,8 +77,6 @@ namespace AIChatExplorer.ViewModel.Main {
             };
             MainTabManager.TabItems.Add(container);
 
-
-
         }
 
         public AppViewModelCommands Commands { get; set; }
@@ -127,12 +127,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             AIChatExplorerPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
-            // VectorDBItemのLoad
-            Task.Run(async () => {
-                await VectorDBItem.LoadItemsAsync();
-                // AutoGenPropertiesの初期化
-                await AutoGenProperties.Init();
-            });
+
 
         }
         // プログレスインジケータ表示更新用のアクション

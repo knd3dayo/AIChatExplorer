@@ -1,6 +1,8 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using System.IO;
@@ -27,11 +29,6 @@ namespace PythonAILib.Common {
 
             Instance = new PythonAILibManager(parmas);
 
-            // DBの初期化
-            PythonAILibDBContext.Init();
-
-            // PromptItemの初期化
-            PromptItem.InitSystemPromptItems();
         }
 
 
@@ -44,7 +41,20 @@ namespace PythonAILib.Common {
             // 言語設定
             PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化
-            PythonExecutor.Init(parameters);
+            PythonExecutor.Init(parameters, afterStartProcess: (process) => {
+                // プロセス開始後の処理
+                Task.Run(async () => {
+
+                    // DBの初期化
+                    PythonAILibDBContext.Init();
+                    // PromptItemの初期化
+                    PromptItem.InitSystemPromptItems();
+
+                    await VectorDBItem.LoadItemsAsync();
+                    // AutoGenPropertiesの初期化
+                    await AutoGenProperties.Init();
+                });
+            });
 
             // LogWrapperの初期化
             string logDirPath = Path.Combine(parameters.GetAppDataPath(), "log");
@@ -52,6 +62,8 @@ namespace PythonAILib.Common {
 
             // LogWrapperのログ出力設定
             LogWrapper.SetActions(parameters.GetLogWrapperAction());
+
+
 
         }
 

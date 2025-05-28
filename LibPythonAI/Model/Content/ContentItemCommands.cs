@@ -150,7 +150,7 @@ namespace LibPythonAI.Model.Content {
                     string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
-                        return;
+                        return; 
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);

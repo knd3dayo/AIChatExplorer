@@ -2,7 +2,11 @@ using System.Text;
 using System.Windows;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.Settings;
-using AIChatExplorer.ViewModel.Main;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using PythonAILib.Common;
@@ -10,11 +14,6 @@ using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using WpfAppCommon.Model;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.Python;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
 
 namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>
@@ -448,7 +447,8 @@ namespace AIChatExplorer.ViewModel.Settings {
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
+            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams, afterStartProcess: (process) => { })
+            ;
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -467,7 +467,7 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
         private async Task<TestResult> TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
+            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams, afterStartProcess: (process) => { });
 
             try {
                 // ChatControllerを作成

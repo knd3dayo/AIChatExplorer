@@ -31,20 +31,22 @@ namespace PythonAILib.PythonIF {
         }
 
         // Initialize Python functions
-        public static void Init(IPythonAILibConfigParams configPrams) {
+        public static void Init(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess ) {
             ConfigPrams = configPrams;
 
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
 
             if (_pythonAIFunctions == null) {
                 if (ConfigPrams.UseInternalAPI()) {
-                    InitInternalAPI(ConfigPrams);
                     string baseUrl = ConfigPrams.GetAPIServerURL();
                     _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
+                    InitInternalAPI(ConfigPrams, afterStartProcess);
 
                 } else if (ConfigPrams.UseExternalAPI()) {
                     string baseUrl = ConfigPrams.GetAPIServerURL();
                     _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
+                    afterStartProcess(null);
+
                 } else {
                     throw new Exception(StringResources.PythonNotInitialized);
                 }
@@ -52,7 +54,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // InitInternalAPI
-        public static void InitInternalAPI(IPythonAILibConfigParams configPrams) {
+        public static void InitInternalAPI(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess) {
 
             LogWrapper.Info("Internal API started");
 
@@ -66,7 +68,7 @@ namespace PythonAILib.PythonIF {
             string serverCmdLine = $"{serverScriptPath} {app_data_path}";
             LogWrapper.Info($"ServerCmdLine:{serverCmdLine}");
 
-            StartPythonConsole(configPrams, serverCmdLine, false, (process) => { });
+            StartPythonConsole(configPrams, serverCmdLine, false, afterStartProcess);
 
             // AIアプリケーションプロセスチェッカーを開始する。
             string url = $"{configPrams.GetAPIServerURL()}/shutdown";
