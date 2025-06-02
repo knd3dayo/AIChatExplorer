@@ -81,6 +81,57 @@ namespace PythonAILib.PythonIF {
 
         }
 
+        private static Dictionary<string, string> SetOpenAIPropsEnvVars(IPythonAILibConfigParams configPrams) {
+            /**
+             IPythonAILibConfigParamsから以下の環境変数を設定する。値がnullまたは空文字列ものがある場合は、例外を投げる。
+            "OPENAI_API_KEY",
+             "AZURE_OPENAI",
+             "AZURE_OPENAI_API_VERSION",
+             "AZURE_OPENAI_ENDPOINT",
+             "OPENAI_BASE_URL"
+            **/
+            Dictionary<string, string> envVars = new();
+            OpenAIProperties openAIProps = configPrams.GetOpenAIProperties();
+            if (!string.IsNullOrEmpty(openAIProps.OpenAIKey)) {
+                envVars["OPENAI_API_KEY"] = openAIProps.OpenAIKey;
+            } else {
+                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAIKey)}");
+            }
+
+            if (openAIProps.AzureOpenAI) {
+                envVars["AZURE_OPENAI"] = "true";
+                if (!string.IsNullOrEmpty(openAIProps.AzureOpenAIAPIVersion)) {
+                    envVars["AZURE_OPENAI_API_VERSION"] = openAIProps.AzureOpenAIAPIVersion;
+                } else {
+                    throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.AzureOpenAIAPIVersion)}");
+                }
+                if (!string.IsNullOrEmpty(openAIProps.AzureOpenAIEndpoint)) {
+                    envVars["AZURE_OPENAI_ENDPOINT"] = openAIProps.AzureOpenAIEndpoint;
+                } else {
+                    throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.AzureOpenAIEndpoint)}");
+                }
+            } else {
+                envVars["AZURE_OPENAI"] = "false";
+            }
+            if (!string.IsNullOrEmpty(openAIProps.OpenAIBaseURL)) {
+                envVars["OPENAI_BASE_URL"] = openAIProps.OpenAIBaseURL;
+            }
+            // OPENAI_COMPLETION_MODEL
+            if (!string.IsNullOrEmpty(openAIProps.OpenAICompletionModel)) {
+                envVars["OPENAI_COMPLETION_MODEL"] = openAIProps.OpenAICompletionModel;
+            } else {
+                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAICompletionModel)}");
+            }
+            // OPENAI_EMBEDDING_MODEL
+            if (!string.IsNullOrEmpty(openAIProps.OpenAIEmbeddingModel)) {
+                envVars["OPENAI_EMBEDDING_MODEL"] = openAIProps.OpenAIEmbeddingModel;
+            } else {
+                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAIEmbeddingModel)}");
+            }
+
+            return envVars;
+
+        }
 
         private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string cmdLine, bool showConsole, Action<Process> afterStart) {
             // Pythonスクリプトを実行するための準備
@@ -97,7 +148,7 @@ namespace PythonAILib.PythonIF {
                 return;
             }
             // Environment variables
-            Dictionary<string, string> envVars = new();
+            Dictionary<string, string> envVars = SetOpenAIPropsEnvVars(configPrams);
 
             // PYTHONPATH
             envVars["PYTHONPATH"] = pythonAILibPath;

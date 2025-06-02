@@ -145,11 +145,8 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 if (VectorSearchItem == null) {
                     return "";
                 }
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
-                    OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
                     VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
                 };
 

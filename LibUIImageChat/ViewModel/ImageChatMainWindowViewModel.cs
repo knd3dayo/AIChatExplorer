@@ -126,9 +126,7 @@ namespace LibUIImageChat.ViewModel {
             PythonAILibManager? libManager = PythonAILibManager.Instance;
             // ChatRequestContextを生成
             ChatRequestContext chatRequestContext = new() {
-                OpenAIPropsRequest = new OpenAIPropsRequest( libManager.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = PromptText,
-
             };
 
             // 画像イメージファイル名がない場合はエラー

@@ -26,8 +26,6 @@ namespace LibPythonAI.Data {
         // MainStatisticsEntity
         public DbSet<MainStatisticsEntity> MainStatistics { get; set; }
 
-        private StreamWriter? logStream;
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 
             // var logFilePath = "logfile.txt";
@@ -41,8 +39,6 @@ namespace LibPythonAI.Data {
 
         public override void Dispose() {
             base.Dispose();
-            logStream?.Close();
-            logStream?.Dispose();
         }
 
 

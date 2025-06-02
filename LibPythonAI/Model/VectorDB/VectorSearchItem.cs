@@ -90,12 +90,9 @@ namespace LibPythonAI.Model.VectorDB {
                 LogWrapper.Warn("InputText is null or empty.");
                 return [];
             }
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchRequests = [new VectorSearchRequest(this)],
-                OpenAIPropsRequest = new(openAIProperties),
                 RAGMode = RAGModeEnum.NormalSearch,
             };
 

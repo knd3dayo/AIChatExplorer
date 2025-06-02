@@ -67,21 +67,6 @@ namespace PythonAILib.Model.AutoGen {
             }
 
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // llm_configの初期設定  
-            AutoGenLLMConfig config = new() {
-                Name = "default",
-                ApiType = ConfigPrams.GetOpenAIProperties().AzureOpenAI ? "azure" : "",
-                ApiVersion = ConfigPrams.GetOpenAIProperties().AzureOpenAIAPIVersion,
-                Model = ConfigPrams.GetOpenAIProperties().OpenAICompletionModel,
-                ApiKey = ConfigPrams.GetOpenAIProperties().OpenAIKey,
-            };
-            if (config.ApiType == "azure") {
-                config.BaseURL = ConfigPrams.GetOpenAIProperties().AzureOpenAIEndpoint;
-            } else {
-                config.BaseURL = ConfigPrams.GetOpenAIProperties().OpenAIBaseURL;
-            }
-
-            await config.SaveAsync();
 
             string work_dir = ConfigPrams.GetAutoGenWorkDir();
 

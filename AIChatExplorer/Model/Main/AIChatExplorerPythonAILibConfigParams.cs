@@ -7,6 +7,7 @@ using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
     public class AIChatExplorerPythonAILibConfigParams : IPythonAILibConfigParams {
+
         public string GetHttpsProxy() {
             return AIChatExplorerConfig.Instance.ProxyURL;
         }

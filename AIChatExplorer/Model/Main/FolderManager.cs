@@ -146,7 +146,6 @@ namespace AIChatExplorer.Model.Main {
                 return searchRootFolder;
             }
         }
-        private static ApplicationFolder? chatRootFolder;
 
         // Local File System Root Folder
         private static FileSystemFolder? fileSystemRootFolder;

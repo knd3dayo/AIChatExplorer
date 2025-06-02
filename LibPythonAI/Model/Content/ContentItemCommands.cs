@@ -51,9 +51,7 @@ namespace LibPythonAI.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                OpenAIPropsRequest = new (openAIProperties),
-            };
+            ChatRequestContext chatRequestContext = new() { };
 
 
             try {
@@ -150,7 +148,7 @@ namespace LibPythonAI.Model.Content {
                     string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
-                        return; 
+                        return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);

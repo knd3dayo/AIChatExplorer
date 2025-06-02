@@ -74,8 +74,6 @@ namespace LibUIMergeChat.Common {
                         RAGMode = context.RAGMode,
                         VectorSearchRequests = context.VectorSearchRequests,
                         AutoGenPropsRequest = context.AutoGenPropsRequest,
-                        OpenAIPropsRequest = context.OpenAIPropsRequest,
-
                     };
                     string contentText = GetTargetData(item, targetDataList);
                     if (string.IsNullOrEmpty(contentText)) {
@@ -133,7 +131,6 @@ namespace LibUIMergeChat.Common {
                 RAGMode = context.RAGMode,
                 VectorSearchRequests = context.VectorSearchRequests,
                 AutoGenPropsRequest = context.AutoGenPropsRequest,
-                OpenAIPropsRequest = context.OpenAIPropsRequest,
             };
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,

@@ -26,7 +26,6 @@ namespace PythonAILib.Model.AutoProcess {
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
-                OpenAIPropsRequest = new (PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
             if (clipboardFolder != null) {

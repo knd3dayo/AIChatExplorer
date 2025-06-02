@@ -1,7 +1,3 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
@@ -64,10 +60,9 @@ namespace LibPythonAI.Model.VectorDB {
 
             // Parallelによる並列処理。4並列
             ChatRequestContext chatRequestContext = new() {
-                OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
             };
 
-            EmbeddingRequest embeddingRequestContext = new (vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
+            EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
             await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
@@ -78,9 +73,7 @@ namespace LibPythonAI.Model.VectorDB {
         public static async Task DeleteEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
-            };
+            ChatRequestContext chatRequestContext = new();
 
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
@@ -94,9 +87,7 @@ namespace LibPythonAI.Model.VectorDB {
             Task.Run(() => {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-                ChatRequestContext chatRequestContext = new() {
-                    OpenAIPropsRequest = new OpenAIPropsRequest(openAIProperties),
-                };
+                ChatRequestContext chatRequestContext = new() {};
                 VectorEmbeddingItem VectorEmbeddingItem = new() {
                     FolderId = folderId,
                 };

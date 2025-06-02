@@ -9,7 +9,6 @@ namespace LibPythonAI.PythonIF.Request {
     // リクエストと共に送信するコンテキスト情報
     public class ChatRequestContext {
 
-        public const string OPENAI_PROPS_KEY = "openai_props";
         public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
         public const string AUTOGEN_PROPS_KEY = "autogen_props";
         public const string SPLIT_TOKEN_COUNT_KEY = "split_token_count";
@@ -20,10 +19,6 @@ namespace LibPythonAI.PythonIF.Request {
         public const string RAG_MODE_KEY = "rag_mode";
         public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
 
-
-        // OpenAIPropsRequest
-        [JsonPropertyName(OPENAI_PROPS_KEY)]
-        public OpenAIPropsRequest? OpenAIPropsRequest { get; set; }
 
         // ベクトル検索
 
@@ -88,7 +83,6 @@ namespace LibPythonAI.PythonIF.Request {
 
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
-                OpenAIPropsRequest = new OpenAIPropsRequest(libManager.ConfigParams.GetOpenAIProperties()),
                 PromptTemplateText = promptTemplateText,
                 RAGMode = ragModeEnum,
                 SplitMode = splitMode,

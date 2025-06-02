@@ -13,7 +13,6 @@ namespace LibPythonAI.PythonIF.Request {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
 
-        public const string OPENAI_PROPS_KEY = "openai_props";
         public const string AUTOGEN_PROPS_KEY = "autogen_props";
         public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
         public const string AUTOGEN_TOOL_REQUEST_KEY = "autogen_tool_request";
@@ -77,9 +76,6 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
 
             if (RequestContextInstance != null) {
-                if (RequestContextInstance.OpenAIPropsRequest != null) {
-                    dict[OPENAI_PROPS_KEY] = RequestContextInstance.OpenAIPropsRequest.ToDict();
-                }
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
 
                 if (RequestContextInstance.VectorSearchRequests.Count > 0) {
