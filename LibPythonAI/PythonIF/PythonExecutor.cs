@@ -58,30 +58,58 @@ namespace PythonAILib.PythonIF {
 
             LogWrapper.Info("Internal API started");
 
+            // python -V を実行してPythonの実行が可能か確認する。
+            bool checkPython = ProcessUtil.CheckCommand("python", "-V");
+            if (!checkPython) {
+                LogWrapper.Error(StringResources.PythonNotFound);
+                return;
+            }
+            // uv -V を実行してuvの実行が可能か確認する。
+            bool checkUv = ProcessUtil.CheckCommand("uv", "-V");
+            if (!checkUv) {
+                LogWrapper.Error(StringResources.UvNotFound);
+                return;
+            }
+
+
             // 自分自身のプロセスIDを取得
             int currentProcessId = Environment.ProcessId;
 
             // AIアプリケーションサーバーを開始する
-            string serverScriptPath = "-m ai_chat_lib.api_modules.ai_app_server";
+            StartAPIServer(configPrams, afterStartProcess);
+
+            // AIアプリケーションプロセスチェッカーを開始する。
+            StartProcessChecker(configPrams, (Process? processCheckerProcess) => { });
+
+        }
+
+        private static void StartAPIServer(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess) {
+            // AIアプリケーションサーバーを開始する
+
+            string pythonAILibPath = configPrams.GetPathToVirtualEnv();
+            string serverScriptPath = $"uv --directory {pythonAILibPath} run -m ai_chat_lib.api_modules.ai_app_server";
             // APP_DATAのパスを取得
             string app_data_path = configPrams.GetAppDataPath();
             string serverCmdLine = $"{serverScriptPath} {app_data_path}";
             LogWrapper.Info($"ServerCmdLine:{serverCmdLine}");
-
             StartPythonConsole(configPrams, serverCmdLine, false, afterStartProcess);
-
-            // AIアプリケーションプロセスチェッカーを開始する。
-            string url = $"{configPrams.GetAPIServerURL()}/shutdown";
-
-            string processCheckerScriptPath = "-m ai_chat_lib.api_modules.ai_app_process_checker";
-            string processCheckerCmdLine = $"{processCheckerScriptPath} {currentProcessId} {url}";
-            LogWrapper.Info($"ProcessCheckerCmdLine:{processCheckerCmdLine}");
-
-            StartPythonConsole(configPrams, processCheckerCmdLine, false, (Process) => { });
-
         }
 
-        private static Dictionary<string, string> SetOpenAIPropsEnvVars(IPythonAILibConfigParams configPrams) {
+        private static void StartProcessChecker(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess) {
+            // AIアプリケーションプロセスチェッカーを開始する。
+
+            string pythonAILibPath = configPrams.GetPathToVirtualEnv();
+            string url = $"{configPrams.GetAPIServerURL()}/shutdown";
+            string processCheckerScriptPath = $"uv --directory {pythonAILibPath} run -m ai_chat_lib.api_modules.ai_app_process_checker";
+            int currentProcessId = Environment.ProcessId;
+            string processCheckerCmdLine = $"{processCheckerScriptPath} {currentProcessId} {url}";
+            LogWrapper.Info($"ProcessCheckerCmdLine:{processCheckerCmdLine}");
+            StartPythonConsole(configPrams, processCheckerCmdLine, false, afterStartProcess);
+        }
+
+        private static Dictionary<string, string> CreateEnvVarsDict(IPythonAILibConfigParams configPrams) {
+
+
             /**
              IPythonAILibConfigParamsから以下の環境変数を設定する。値がnullまたは空文字列ものがある場合は、例外を投げる。
             "OPENAI_API_KEY",
@@ -90,7 +118,7 @@ namespace PythonAILib.PythonIF {
              "AZURE_OPENAI_ENDPOINT",
              "OPENAI_BASE_URL"
             **/
-            Dictionary<string, string> envVars = new();
+            Dictionary<string, string> envVars = [];
             OpenAIProperties openAIProps = configPrams.GetOpenAIProperties();
             if (!string.IsNullOrEmpty(openAIProps.OpenAIKey)) {
                 envVars["OPENAI_API_KEY"] = openAIProps.OpenAIKey;
@@ -129,29 +157,10 @@ namespace PythonAILib.PythonIF {
                 throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAIEmbeddingModel)}");
             }
 
-            return envVars;
-
-        }
-
-        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string cmdLine, bool showConsole, Action<Process> afterStart) {
-            // Pythonスクリプトを実行するための準備
-            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
-            string appDataDir = configPrams.GetAppDataPath();
-            string pythonAILibPath = PythonAILibPath;
+            // Proxy settings
             string httpsProxy = configPrams.GetHttpsProxy();
             string noProxy = configPrams.GetNoProxy();
 
-            // Venv環境が存在するかチェック
-            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
-                string message = StringResources.PythonVenvNotFound;
-                LogWrapper.Error($"{message}:{pathToVirtualEnv}");
-                return;
-            }
-            // Environment variables
-            Dictionary<string, string> envVars = SetOpenAIPropsEnvVars(configPrams);
-
-            // PYTHONPATH
-            envVars["PYTHONPATH"] = pythonAILibPath;
             // Set the proxy settings
             if (!string.IsNullOrEmpty(httpsProxy)) {
                 envVars["HTTPS_PROXY"] = httpsProxy;
@@ -163,21 +172,31 @@ namespace PythonAILib.PythonIF {
             // LOGLEVEL
             envVars["LOGLEVEL"] = "DEBUG";
 
+            // APP_DATA_DIR
+            envVars["APP_DATA_DIR"] = configPrams.GetAppDataPath();
+
+            return envVars;
+
+        }
+
+        private static void StartPythonConsole(IPythonAILibConfigParams configPrams, string mainCmdLine, bool showConsole, Action<Process> afterStart) {
+
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            // Venv環境が存在するかチェック
+            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
+                string message = StringResources.PythonVenvNotFound;
+                LogWrapper.Error($"{message}:{pathToVirtualEnv}");
+                return;
+            }
+            // Environment variables
+            Dictionary<string, string> envVars = CreateEnvVarsDict(configPrams);
+
             // ProcessController 
             List<string> cmdLines = [];
-            // cd to the appDataDir
-            cmdLines.Add($"cd {appDataDir}");
 
             // Set the code page to UTF-8
             cmdLines.Add("chcp 65001");
-            // Activate the venv if it is valid
-            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                envVars["VIRTUAL_ENV"] = pathToVirtualEnv;
-                string venvActivateScript = Path.Combine(pathToVirtualEnv, "Scripts", "activate");
-                cmdLines.Add($"call {venvActivateScript}");
-            }
-
-            cmdLines.Add($"python {cmdLine}");
+            cmdLines.Add(mainCmdLine);
 
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
 

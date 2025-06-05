@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Media.Imaging;
-using LibGit2Sharp;
 using LibPythonAI.Model.Content;
 
 namespace LibPythonAI.Utils.Common {
@@ -19,6 +17,30 @@ namespace LibPythonAI.Utils.Common {
         private static readonly Hashtable contentWriterProcessAfterCloseHashTable = [];
 
 
+        // 指定された文字列をコマンドとして実行して正常終了するかチェックする
+        public static bool CheckCommand(string command, string arguments) {
+            try {
+                ProcessStartInfo procInfo = new() {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    FileName = command,
+                    Arguments = arguments,
+                };
+                using Process process = new() {
+                    StartInfo = procInfo
+                };
+                process.Start();
+                process.WaitForExit();
+                return process.ExitCode == 0;
+            } catch (Exception ex) {
+                // エラーが発生した場合はfalseを返す
+                return false;
+            }
+        }
+
+
         public static Process? StartBackgroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
                         DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
             return StartProcess(fileName, arguments, true, environmentVariables, showConsole, afterOpen, OutputDataReceived, ErrorDataReceived, Exited);
@@ -30,7 +52,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        private static Process? StartProcess(string fileName, string arguments, bool background ,Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
+        private static Process? StartProcess(string fileName, string arguments, bool background, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
                         DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
             ProcessStartInfo procInfo = new() {

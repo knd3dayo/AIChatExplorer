@@ -1,11 +1,10 @@
+using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
-using System.IO;
 
 namespace PythonAILib.Common {
     public class PythonAILibManager {
@@ -37,7 +36,7 @@ namespace PythonAILib.Common {
         private PythonAILibManager(IPythonAILibConfigParams parameters) {
 
             ConfigParams = parameters;
-            
+
             // 言語設定
             PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化

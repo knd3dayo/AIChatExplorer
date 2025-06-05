@@ -85,6 +85,13 @@ namespace PythonAILib.Resources {
         // Python関連の初期化処理が行われていません
         public virtual string PythonNotInitialized { get; } = "Python関連の初期化処理が行われていません";
 
+        // PythonNotFound
+        public virtual string PythonNotFound { get; } = "Pythonが見つかりません。Pythonのパスを確認してください:";
+
+        // UvNotFound
+        public virtual string UvNotFound { get; } = "uvパッケージが見つかりません。pip install uvでインストールしてください。";
+
+
         // "Pythonスクリプトファイルに、{function_name}関数が見つかりません"
         public virtual string FunctionNotFound(string function_name) {
             return $"Pythonスクリプトファイルに、{function_name}関数が見つかりません";
