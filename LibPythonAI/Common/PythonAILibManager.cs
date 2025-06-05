@@ -51,8 +51,6 @@ namespace PythonAILib.Common {
                     PromptItem.InitSystemPromptItems();
 
                     await VectorDBItem.LoadItemsAsync();
-                    // AutoGenPropertiesの初期化
-                    await AutoGenProperties.Init();
                 });
             });
 
