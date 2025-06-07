@@ -1,6 +1,7 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Python;
@@ -10,11 +11,11 @@ using PythonAILib.Model.Chat;
 namespace PythonAILib.Model.AutoProcess {
     public class PromptAutoProcessItem : AutoProcessItem {
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
-        public PromptAutoProcessItem(AutoProcessItemEntity autoProcessItemEntity, PromptItemEntity promptItemEntity) : base(autoProcessItemEntity) {
+        public PromptAutoProcessItem(AutoProcessItemEntity autoProcessItemEntity, PromptItem promptItemEntity) : base(autoProcessItemEntity) {
             PromptItemEntity = promptItemEntity;
         }
 
-        public PromptItemEntity PromptItemEntity { get; set; }
+        public PromptItem PromptItemEntity { get; set; }
 
         public override async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 

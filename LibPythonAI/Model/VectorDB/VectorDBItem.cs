@@ -21,16 +21,6 @@ namespace LibPythonAI.Model.VectorDB {
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        // システム共通のベクトルDB
-        public static VectorDBItem GetDefaultVectorDB() {
-            var item = GetItemByName(SystemCommonVectorDBName);
-            if (item == null) {
-                throw new Exception(PythonAILibStringResources.Instance.VectorDBNotFound(SystemCommonVectorDBName));
-            }
-            return item!;
-        }
-
-
         // 名前
         public string Name { get; set; } = "";
         // 説明
@@ -131,6 +121,16 @@ namespace LibPythonAI.Model.VectorDB {
             // 名前が一致するアイテムを取得
             VectorDBItem? item = items.FirstOrDefault(i => i.Name == name);
             return item;
+        }
+
+
+        // システム共通のベクトルDB
+        public static VectorDBItem GetDefaultVectorDB() {
+            var item = GetItemByName(SystemCommonVectorDBName);
+            if (item == null) {
+                throw new Exception(PythonAILibStringResources.Instance.VectorDBNotFound(SystemCommonVectorDBName));
+            }
+            return item!;
         }
 
         public static List<VectorDBItem> GetExternalVectorDBItems() {

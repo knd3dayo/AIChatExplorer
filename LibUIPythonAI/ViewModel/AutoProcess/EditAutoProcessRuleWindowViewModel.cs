@@ -511,7 +511,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 // キャスト
                 PromptItem promptItem = SelectedPromptItem.PromptItem;
                 AutoProcessItemEntity autoProcessItemEntity = new();
-                PromptAutoProcessItem promptAutoProcessItem = new(autoProcessItemEntity, promptItem.Entity);
+                PromptAutoProcessItem promptAutoProcessItem = new(autoProcessItemEntity, promptItem);
 
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;

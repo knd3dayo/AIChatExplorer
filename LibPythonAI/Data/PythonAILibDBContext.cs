@@ -16,9 +16,7 @@ namespace LibPythonAI.Data {
 
         // SearchRuleEntity
         public DbSet<SearchRuleEntity> SearchRules { get; set; }
-
-        public DbSet<PromptItemEntity> PromptItems { get; set; }
-
+        
         public DbSet<AutoProcessRuleEntity> AutoProcessRules { get; set; }
 
         public DbSet<AutoProcessItemEntity> AutoProcessItems { get; set; }

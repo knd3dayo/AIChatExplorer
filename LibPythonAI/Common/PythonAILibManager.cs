@@ -47,9 +47,10 @@ namespace PythonAILib.Common {
                     // DBの初期化
                     PythonAILibDBContext.Init();
                     // PromptItemの初期化
-                    PromptItem.InitSystemPromptItems();
-
+                    await PromptItem.LoadItemsAsync();
                     await VectorDBItem.LoadItemsAsync();
+
+                   
                 });
             });
 

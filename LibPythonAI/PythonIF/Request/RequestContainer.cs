@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Tag;
-using LibPythonAI.Model.VectorDB;
 
 namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {
@@ -20,6 +19,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string AUTOGEN_GROUP_CHAT_REQUEST_KEY = "autogen_group_chat_request";
         public const string AUTOGEN_LLM_CONFIG_REQUEST_KEY = "autogen_llm_config_request";
         public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
+        public const string PROMPT_ITEM_REQUESTS_KEY = "prompt_item_requests";
         public const string TAG_ITEM_REQUESTS_KEY = "tag_item_requests";
         public const string EMBEDDING_REQUEST_KEY = "embedding_request";
         public const string EXCEL_REQUEST_KEY = "excel_request";
@@ -41,6 +41,8 @@ namespace LibPythonAI.PythonIF.Request {
         // ContentFolderRequests
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
+        // PromptItemsInstance
+        public List<PromptItemRequest> PromptItemsInstance { get; set; } = [];
 
         // VectorDBItemRequestInstance
         public VectorDBItemRequest? VectorDBItemRequestInstance { get; set; } = null;
@@ -113,6 +115,9 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (SessionToken != "") {
                 dict[SESSION_TOKEN_KEY] = SessionToken;
+            }
+            if (PromptItemsInstance.Count > 0) {
+                dict[PROMPT_ITEM_REQUESTS_KEY] = PromptItemRequest.ToDictList(PromptItemsInstance);
             }
             if (TagItemsInstance.Count > 0) {
                 dict[TAG_ITEM_REQUESTS_KEY] = TagItem.ToDictList(TagItemsInstance);

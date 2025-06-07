@@ -107,24 +107,5 @@ namespace LibPythonAI.PythonIF.Request {
         }
 
 
-        public static VectorDBItem FromDict(Dictionary<string, object> dict) {
-            VectorDBItem item = new();
-            item.Id = dict[ID_KEY]?.ToString() ?? "";
-            item.Name = dict[NAME_KEY]?.ToString() ?? "";
-            item.Description = dict[DESCRIPTION_KEY]?.ToString() ?? "";
-            item.VectorDBURL = dict[VECTOR_DB_URL_KEY]?.ToString() ?? "";
-            item.IsUseMultiVectorRetriever = Convert.ToBoolean(dict[IS_USE_MULTI_VECTOR_RETRIEVER_KEY]);
-            item.DocStoreURL = dict[DOC_STORE_URL_KEY]?.ToString() ?? "";
-            item.ChunkSize = Convert.ToInt32(dict[CHUNK_SIZE_KEY]);
-            item.CollectionName = dict[COLLECTION_NAME_KEY]?.ToString() ?? "";
-            item.IsEnabled = Convert.ToBoolean(dict[IS_ENABLED_KEY]);
-            item.IsSystem = Convert.ToBoolean(dict[IS_SYSTEM_KEY]);
-            item.Type = (VectorDBTypeEnum)int.Parse(dict[TYPE_KEY]?.ToString() ?? "0");
-            item.DefaultSearchResultLimit = Convert.ToInt32(dict[DEFAULT_SEARCH_RESULT_LIMIT_KEY]);
-            item.DefaultScoreThreshold = Convert.ToSingle(dict[DEFAULT_SCORE_THREASHOLD_KEY]);
-
-            return item;
-
-        }
     }
 }

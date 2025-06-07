@@ -1,5 +1,6 @@
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.File;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
@@ -12,6 +13,12 @@ namespace PythonAILib.PythonIF {
         public Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
         public Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
+
+        public Task<List<PromptItem>> GetPromptItemsAsync();
+
+        public Task UpdatePromptItemAsync(PromptItemRequest request);
+
+        public Task DeletePromptItemAsync(PromptItemRequest request);
 
 
         public Task UpdateTagItemsAsync(List<TagItem> tagItems);

@@ -192,6 +192,13 @@ namespace PythonAILib.Resources {
         // GetRootContentFoldersExecute
         public override string GetRootContentFoldersExecute { get; } = "Execute GetRootContentFolders";
 
+        // GetPromptItemsExecute
+        public override string GetPromptItemsExecute { get; } = "Execute GetPromptItems";
+        // UpdatePromptItemsExecute
+        public override string UpdatePromptItemsExecute { get; } = "Execute UpdatePromptItems";
+        // DeletePromptItemsExecute
+        public override string DeletePromptItemsExecute { get; } = "Execute DeletePromptItems";
+
         // GetTagItemsExecute
         public override string GetTagItemsExecute { get; } = "Execute GetTagItems";
 

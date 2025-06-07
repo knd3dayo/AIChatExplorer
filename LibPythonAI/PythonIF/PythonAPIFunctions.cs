@@ -6,6 +6,7 @@ using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.File;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Statistics;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
@@ -119,6 +120,88 @@ namespace PythonAILib.PythonIF {
             if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
                 throw new Exception(errorValue);
             }
+        }
+
+
+        public Task<List<PromptItem>> GetPromptItemsAsync() {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new();
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetPromptItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/get_prompt_items";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                    // prompt_itemsを取得
+                    dynamic dictList = resultDict["prompt_items"] ?? "[]";
+                    List<PromptItem> promptItems = [];
+                    foreach (var item in dictList) {
+                        // PromptItemを取得
+                        PromptItem? promptItem = PromptItem.FromDict(item);
+                        if (promptItem != null) {
+                            promptItems.Add(promptItem);
+                        }
+                    }
+                    return promptItems;
+                });
+        }
+
+        public Task UpdatePromptItemAsync(PromptItemRequest request) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                PromptItemsInstance = [request]
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdatePromptItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/update_prompt_items";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                });
+        }
+
+        public Task DeletePromptItemAsync(PromptItemRequest request) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                PromptItemsInstance = [request]
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeletePromptItemsExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{this.base_url}/delete_prompt_items";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                });
         }
 
 

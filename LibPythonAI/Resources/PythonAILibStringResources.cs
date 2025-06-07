@@ -197,6 +197,15 @@ namespace PythonAILib.Resources {
         // DeleteContentFoldersExecute
         public virtual string DeleteContentFoldersExecute { get; } = "ベクトル検索用フォルダ情報を削除します";
 
+        // GetPromptItemsExecute
+        public virtual string GetPromptItemsExecute { get; } = "プロンプトアイテムを取得します";
+
+        // UpdatePromptItemsExecute
+        public virtual string UpdatePromptItemsExecute { get; } = "プロンプトアイテムを更新します";
+        // DeletePromptItemsExecute
+        public virtual string DeletePromptItemsExecute { get; } = "プロンプトアイテムを削除します";
+
+
         // GetTagItemsExecute
         public virtual string GetTagItemsExecute { get; } = "タグアイテムを取得します";
 

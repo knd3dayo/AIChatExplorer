@@ -1,4 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
@@ -13,160 +16,173 @@ using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
-
-        public PromptItemEntity Entity { get; private set; } = new();
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         // ID
-        public string Id {
-            get => Entity.Id;
-        }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         // 名前
-        public string Name {
-            get => Entity.Name;
-            set => Entity.Name = value;
-        }
+        public string Name { get; set; } = string.Empty;
+
         // 説明
-        public string Description {
-            get => Entity.Description;
-            set => Entity.Description = value;
-        }
+        public string Description { get; set; } = string.Empty;
 
         // プロンプト
-        public string Prompt {
-            get => Entity.Prompt;
-            set => Entity.Prompt = value;
-        }
+        public string Prompt { get; set; } = string.Empty;
 
 
         // プロンプトテンプレートの種類
-        public PromptTemplateTypeEnum PromptTemplateType {
-            get => Entity.PromptTemplateType;
-            set => Entity.PromptTemplateType = value;
-        }
+        public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
 
         // プロンプト結果の種類
         public PromptResultTypeEnum PromptResultType {
             get {
-                Entity.ExtendedProperties.TryGetValue("PromptResultType", out object? value);
+                ExtendedProperties.TryGetValue("prompt_result_type", out object? value);
                 // valueのtypeを確認
-                LogWrapper.Debug($"PromptResultType: {value?.GetType()}");
+                LogWrapper.Debug($"prompt_result_type: {value?.GetType()}");
                 if (value is Decimal intValue) {
                     return (PromptResultTypeEnum)intValue;
                 }
                 return PromptResultTypeEnum.TextContent;
             }
             set {
-                Entity.ExtendedProperties["PromptResultType"] = (Decimal)value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["prompt_result_type"] = (Decimal)value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // チャットタイプ
         public OpenAIExecutionModeEnum ChatMode {
             get {
-                Entity.ExtendedProperties.TryGetValue("ChatMode", out object? value);
+                ExtendedProperties.TryGetValue("chat_mode", out object? value);
                 if (value is Decimal intValue) {
                     return (OpenAIExecutionModeEnum)intValue;
                 }
                 return OpenAIExecutionModeEnum.Normal;
             }
             set {
-                Entity.ExtendedProperties["ChatMode"] = (Decimal)value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["chat_mode"] = (Decimal)value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // 分割モード
         public SplitModeEnum SplitMode {
             get {
-                Entity.ExtendedProperties.TryGetValue("SplitMode", out object? value);
+                ExtendedProperties.TryGetValue("split_mode", out object? value);
                 if (value is Decimal decValue) {
                     return (SplitModeEnum)decValue;
                 }
                 return SplitModeEnum.None;
             }
             set {
-                Entity.ExtendedProperties["SplitMode"] = (Decimal)value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["split_mode"] = (Decimal)value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // ベクトルDBを使用する
         public RAGModeEnum RAGMode {
             get {
-                Entity.ExtendedProperties.TryGetValue("RAGMode", out object? value);
+                ExtendedProperties.TryGetValue("rag_mode", out object? value);
                 if (value is Decimal decValue) {
                     return (RAGModeEnum)decValue;
                 }
                 return RAGModeEnum.None;
             }
             set {
-                Entity.ExtendedProperties["RAGMode"] = (Decimal)value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["rag_mode"] = (Decimal)value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // タグ一覧を参照する
         public bool UseTagList {
             get {
-                Entity.ExtendedProperties.TryGetValue("UseTagList", out object? value);
+                ExtendedProperties.TryGetValue("use_taglist", out object? value);
                 if (value is bool boolValue) {
                     return boolValue;
                 }
                 return false;
             }
             set {
-                Entity.ExtendedProperties["UseTagList"] = value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["use_taglist"] = value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // プロンプトの出力タイプ
         public PromptOutputTypeEnum PromptOutputType {
             get {
-                Entity.ExtendedProperties.TryGetValue("PromptOutputType", out object? value);
+                ExtendedProperties.TryGetValue("prompt_output_type", out object? value);
                 if (value is Decimal intValue) {
                     return (PromptOutputTypeEnum)intValue;
                 }
                 return PromptOutputTypeEnum.NewContent;
             }
             set {
-                Entity.ExtendedProperties["PromptOutputType"] = (Decimal)value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["prompt_output_type"] = (Decimal)value;
+                SaveExtendedPropertiesJson();
             }
         }
 
         // PromptInputName
         public string PromptInputName {
             get {
-                Entity.ExtendedProperties.TryGetValue("PromptInputName", out object? value);
+                ExtendedProperties.TryGetValue("PromptInputName", out object? value);
                 if (value is string strValue) {
                     return strValue;
                 }
                 return string.Empty;
             }
             set {
-                Entity.ExtendedProperties["PromptInputName"] = value;
-                Entity.SaveExtendedPropertiesJson();
+                ExtendedProperties["PromptInputName"] = value;
+                SaveExtendedPropertiesJson();
             }
         }
 
+        public Dictionary<string, object?> ExtendedProperties { get; set; } = [];
+
+
+        public string ExtendedPropertiesJson { get; set; } = "{}";
+
+
+        public void SaveExtendedPropertiesJson() {
+            ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+        }
+
         // SaveAsync
-        public void Save() {
-            PromptItemEntity.SaveItems([this.Entity]);
+        public async Task Save() {
+            PromptItemRequest request = new(this);
+            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdatePromptItemAsync(request));
         }
 
 
         // DeleteAsync
-        public void Delete() {
-            using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(Id);
-            if (item != null) {
-                db.PromptItems.Remove(item);
-                db.SaveChanges();
-            }
+        public async Task Delete() {
+            PromptItemRequest request = new(this);
+            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeletePromptItemAsync(request));
+
         }
+        // FromDict
+        public static PromptItem FromDict(Dictionary<string, object> dict) {
+            PromptItem item = new() {
+                Id = dict["id"]?.ToString() ?? "",
+                Name = dict["name"]?.ToString() ?? "",
+                Description = dict["description"]?.ToString() ?? "",
+                Prompt = dict["prompt"]?.ToString() ?? "",
+                PromptTemplateType = (PromptTemplateTypeEnum)(dict["prompt_template_type"] is Decimal dec ? dec : 0),
+            };
+            // 拡張プロパティを設定
+            if (dict.ContainsKey("extended_properties")) {
+                item.ExtendedPropertiesJson = dict["extended_properties"].ToString() ?? "{}";
+            }
+            return item;
+        }
+
         // タグ一覧を参照するプロンプトを生成する.
         public static async Task<string> GenerateTagListPrompt() {
             // タグ一覧を取得
@@ -180,214 +196,47 @@ namespace LibPythonAI.Model.Prompt {
 
         // PromptItemを取得
         public static PromptItem? GetPromptItemById(string id) {
-            using PythonAILibDBContext db = new();
-            var item = db.PromptItems.Find(id);
+            var item = GetPromptItems().Find(x => x.Id == id);
             if (item == null) {
                 return null;
             }
-            return new PromptItem() { Entity = item };
+            return item;
 
         }
         // 名前を指定してPromptItemを取得
         public static PromptItem? GetPromptItemByName(string name) {
             using PythonAILibDBContext db = new();
-            var item = db.PromptItems.FirstOrDefault(x => x.Name == name);
+            var item = GetPromptItems().FirstOrDefault(x => x.Name == name);
             if (item == null) {
                 return null;
             }
-            return new PromptItem() { Entity = item };
+            return item;
         }
 
         // システム定義のPromptItemを取得
         public static List<PromptItem> GetSystemPromptItems() {
             using PythonAILibDBContext db = new();
-            var items = db.PromptItems.Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined));
-            List<PromptItem> promptItems = [];
-            foreach (var item in items) {
-                promptItems.Add(new PromptItem() { Entity = item });
-            }
-            return promptItems;
+            var items = GetPromptItems().Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)).ToList();
+            return items;
         }
 
         // システム定義以外のPromptItemを取得
         public static List<PromptItem> GetUserDefinedPromptItems() {
-            using PythonAILibDBContext db = new();
-            var items = db.PromptItems.Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined);
-            List<PromptItem> promptItems = [];
-            foreach (var item in items) {
-                promptItems.Add(new PromptItem() { Entity = item });
-            }
-            return promptItems;
+            var items = GetPromptItems().Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
+            return items;
         }
 
         // List<PromptItem>を取得
         public static List<PromptItem> GetPromptItems() {
-            using PythonAILibDBContext db = new();
-            List<PromptItem> promptItems = [];
-            foreach (var item in db.PromptItems) {
-                promptItems.Add(new PromptItem() { Entity = item });
-            }
-            return promptItems;
+            return _items;
         }
 
-        // システム定義のPromptItemを取得
-        public static void InitSystemPromptItems() {
-
-            using PythonAILibDBContext db = new();
-
-            // TitleGenerationをDBから取得
-            string name1 = SystemDefinedPromptNames.TitleGeneration.ToString();
-            var titleGeneration = GetPromptItemByName(name1);
-
-            if (titleGeneration == null) {
-                titleGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
-                    Description = PromptStringResource.Instance.TitleGeneration,
-                    Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    // ベクトルDBは使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.OverwriteTitle,
-
-                };
-                titleGeneration.Save();
-            }
-            // BackgroundInformationGenerationをDBから取得
-            string name2 = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-            var backgroundInformationGeneration = GetPromptItemByName(name1);
-            if (backgroundInformationGeneration == null) {
-                backgroundInformationGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
-                    Description = PromptStringResource.Instance.BackgroundInformationGeneration,
-                    Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    // ベクトルDBを使用する
-                    RAGMode = RAGModeEnum.NormalSearch,
-                    PromptOutputType = PromptOutputTypeEnum.NewContent
-                };
-                backgroundInformationGeneration.Save();
-
-            }
-            // SummaryGenerationをDBから取得
-            string name3 = SystemDefinedPromptNames.SummaryGeneration.ToString();
-            var summaryGeneration = GetPromptItemByName(name3);
-
-            if (summaryGeneration == null) {
-                summaryGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
-                    Description = PromptStringResource.Instance.SummaryGeneration,
-                    Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    // ベクトルDBを使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.NewContent
-
-                };
-                summaryGeneration.Save();
-            }
-            // TasksGenerationをDBから取得
-            string name4 = SystemDefinedPromptNames.TasksGeneration.ToString();
-            var tasksGeneration = GetPromptItemByName(name4);
-
-            if (tasksGeneration == null) {
-                tasksGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.TasksGeneration.ToString(),
-                    Description = PromptStringResource.Instance.TasksGeneration,
-                    Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TableContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    // ベクトルDBを使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.NewContent
-
-                };
-                tasksGeneration.Save();
-            }
-
-            // DocumentReliabilityCheckをDBから取得
-            string name5 = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
-            var documentReliabilityCheck = GetPromptItemByName(name5);
-
-            if (documentReliabilityCheck == null) {
-                documentReliabilityCheck = new PromptItem() {
-                    Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
-                    Description = PromptStringResource.Instance.DocumentReliability,
-                    Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TextContent,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    // ベクトルDBを使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.NewContent,
-
-                };
-                documentReliabilityCheck.Save();
-            }
-
-            // TagGenerationをDBから取得
-            string name6 = SystemDefinedPromptNames.TagGeneration.ToString();
-            var tagGeneration = GetPromptItemByName(name6);
-            if (tagGeneration == null) {
-                tagGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.TagGeneration.ToString(),
-                    Description = PromptStringResource.Instance.TagGeneration,
-                    Prompt = PromptStringResource.Instance.TagGenerationPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.ListContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    UseTagList = true,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    // ベクトルDBを使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.AppendTags,
-                };
-                tagGeneration.Save();
-            }
-            // SelectExistingTagsをDBから取得
-            string name7 = SystemDefinedPromptNames.SelectExistingTags.ToString();
-            var selectExistedTags = GetPromptItemByName(name7);
-            if (selectExistedTags == null) {
-                selectExistedTags = new PromptItem() {
-                    Name = SystemDefinedPromptNames.SelectExistingTags.ToString(),
-                    Description = PromptStringResource.Instance.SelectExistingTags,
-                    Prompt = PromptStringResource.Instance.SelectExistingTagsPrompt,
-                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.ListContent,
-                    ChatMode = OpenAIExecutionModeEnum.Normal,
-                    SplitMode = SplitModeEnum.SplitAndSummarize,
-                    UseTagList = true,
-                    // ベクトルDBを使用しない
-                    RAGMode = RAGModeEnum.None,
-                    PromptOutputType = PromptOutputTypeEnum.AppendTags,
-                };
-                selectExistedTags.Save();
-            }
+        private static List<PromptItem> _items = new(); // 修正: 空のリストを初期化
+        public static async Task LoadItemsAsync() {
+            // 修正: 非同期メソッドで 'await' を使用
+            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetPromptItemsAsync());
         }
 
-        // Equals
-        public override bool Equals(object? obj) {
-            if (obj == null || GetType() != obj.GetType()) {
-                return false;
-            }
-            PromptItem item = (PromptItem)obj;
-            return Entity == item.Entity;
-        }
-
-        // GetHashCode
-        public override int GetHashCode() {
-            return Entity.GetHashCode();
-        }
 
         public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
 
@@ -403,7 +252,7 @@ namespace LibPythonAI.Model.Prompt {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.For(0, count, parallelOptions,  (i) => {
+                Parallel.For(0, count, parallelOptions, (i) => {
                     lock (lockObject) {
                         start_count++;
                     }
@@ -531,11 +380,11 @@ namespace LibPythonAI.Model.Prompt {
                         // タグ一覧に存在しない場合は追加
                         if (tagItems.Any(x => x.Tag == tag) == false) {
                             // タグ一覧に追加
-                            TagItem tagItemEntity = new() {
+                            TagItem tagItem = new() {
                                 Tag = tag,
                                 IsPinned = false,
                             };
-                            await tagItemEntity.SaveAsync();
+                            await tagItem.SaveAsync();
                         }
                     }
                     return;
@@ -547,12 +396,12 @@ namespace LibPythonAI.Model.Prompt {
                 return;
             }
         }
+
         // OpenAIを使用してタイトルを生成する
         public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                using PythonAILibDBContext db = new();
-                PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
+                PromptItem? promptItem = GetPromptItems().FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
                 if (promptItem == null) {
                     LogWrapper.Error("PromptItem not found");
                     return;
@@ -569,8 +418,6 @@ namespace LibPythonAI.Model.Prompt {
             // ContentTypeがImageの場合
             item.Description = "Image";
         }
-
-
 
         // 文章の信頼度を判定する
         public async static Task CheckDocumentReliability(ContentItemWrapper item) {
@@ -614,9 +461,6 @@ namespace LibPythonAI.Model.Prompt {
                 item.DocumentReliabilityReason = reason?.ToString() ?? "";
             }
         }
-
-
-
 
     }
 }
