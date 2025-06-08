@@ -177,8 +177,9 @@ namespace LibPythonAI.Model.Prompt {
                 PromptTemplateType = (PromptTemplateTypeEnum)(dict["prompt_template_type"] is Decimal dec ? dec : 0),
             };
             // 拡張プロパティを設定
-            if (dict.ContainsKey("extended_properties")) {
-                item.ExtendedPropertiesJson = dict["extended_properties"].ToString() ?? "{}";
+            if (dict.ContainsKey("extended_properties_json")) {
+                item.ExtendedPropertiesJson = dict["extended_properties_json"].ToString() ?? "{}";
+                item.ExtendedProperties = JsonUtil.ParseJson(item.ExtendedPropertiesJson);
             }
             return item;
         }
