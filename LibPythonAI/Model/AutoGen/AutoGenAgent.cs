@@ -1,10 +1,8 @@
-using System.Data.SQLite;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenAgent {
@@ -89,7 +87,7 @@ namespace LibPythonAI.Model.AutoGen {
         }
 
         // ToJson
-        public  string ToJson() {
+        public string ToJson() {
             // Serialize the object to JSON
             string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
             return jsonString;

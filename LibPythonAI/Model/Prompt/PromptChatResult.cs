@@ -2,9 +2,9 @@ using System.Data;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public class PromptChatResult() {
 
         public Dictionary<string, object> Results { get; set; } = [];
@@ -43,7 +43,7 @@ namespace PythonAILib.Model.Prompt {
                 return DictionaryListToDataTable(list);
             }
 
-            if (values is Object[] list2) {
+            if (values is object[] list2) {
                 var items =  list2.Select(x => (Dictionary<string, object>)x).ToList();
                 return DictionaryListToDataTable(items);
 

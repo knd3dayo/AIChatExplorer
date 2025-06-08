@@ -2,8 +2,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.Common;
-using PythonAILib.Resources;
+using LibPythonAI.Common;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
     /// <summary>
@@ -65,19 +66,19 @@ namespace LibPythonAI.Model.VectorDB {
 
         // SaveAsync
         public async Task SaveAsync() {
-            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this));
         }
 
         // DeleteAsync
         public async Task DeleteAsync() {
-            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this));
         }
 
 
         private static List<VectorDBItem> _items = new(); // 修正: 空のリストを初期化
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
-            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetVectorDBItemsAsync());
+            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetVectorDBItemsAsync());
         }
 
         public VectorSearchItem CreateVectorSearchItem(string? folderId = null, string? folderPath = null) {

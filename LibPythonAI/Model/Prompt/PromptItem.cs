@@ -2,17 +2,17 @@ using System.Collections.ObjectModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
@@ -155,16 +155,16 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // SaveAsync
-        public async Task Save() {
+        public async Task SaveAsync() {
             PromptItemRequest request = new(this);
-            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.UpdatePromptItemAsync(request));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdatePromptItemAsync(request));
         }
 
 
         // DeleteAsync
-        public async Task Delete() {
+        public async Task DeleteAsync() {
             PromptItemRequest request = new(this);
-            await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.DeletePromptItemAsync(request));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeletePromptItemAsync(request));
 
         }
         // FromDict
@@ -234,7 +234,7 @@ namespace LibPythonAI.Model.Prompt {
         private static List<PromptItem> _items = new(); // 修正: 空のリストを初期化
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
-            _items = await Task.Run(() => PythonAILib.PythonIF.PythonExecutor.PythonAIFunctions.GetPromptItemsAsync());
+            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetPromptItemsAsync());
         }
 
 

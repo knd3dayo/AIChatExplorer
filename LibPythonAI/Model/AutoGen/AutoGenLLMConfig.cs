@@ -2,7 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.PythonIF;
+using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenLLMConfig {

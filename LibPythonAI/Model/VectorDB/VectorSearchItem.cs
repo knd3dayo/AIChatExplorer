@@ -2,12 +2,12 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.Common;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.PythonIF;
 
 namespace LibPythonAI.Model.VectorDB {
     public class VectorSearchItem {

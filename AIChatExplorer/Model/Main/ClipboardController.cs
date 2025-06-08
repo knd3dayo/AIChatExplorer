@@ -1,6 +1,5 @@
 using System.Reflection;
 using AIChatExplorer.ViewModel.Settings;
-using PythonAILib.Model.AutoProcess;
 using LibUIPythonAI.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
@@ -8,6 +7,7 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.AutoProcess;
 
 namespace AIChatExplorer.Model.Main {
     /// <summary>

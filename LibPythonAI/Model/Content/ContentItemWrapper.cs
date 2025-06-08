@@ -6,11 +6,11 @@ using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {

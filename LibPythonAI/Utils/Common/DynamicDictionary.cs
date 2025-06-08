@@ -1,6 +1,6 @@
 using System.Dynamic;
 
-namespace PythonAILib.Utils.Common {
+namespace LibPythonAI.Utils.Common {
     // The class derived from DynamicObject.
     public class DynamicDictionary : DynamicObject {
         // The inner dictionary.

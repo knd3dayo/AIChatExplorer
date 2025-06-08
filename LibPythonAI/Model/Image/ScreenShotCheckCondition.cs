@@ -3,10 +3,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.Resources;
+using LibPythonAI.Resources;
 
-namespace PythonAILib.Model.Image
-{
+namespace LibPythonAI.Model.Image {
     // TODO 多言語化
 
     public class ScreenShotCheckCondition

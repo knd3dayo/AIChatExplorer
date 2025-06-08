@@ -1,7 +1,7 @@
 using System.IO;
+using LibPythonAI.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using PythonAILib.Common;
 
 namespace LibPythonAI.Data {
     public class PythonAILibDBContext : DbContext {
@@ -16,10 +16,7 @@ namespace LibPythonAI.Data {
 
         // SearchRuleEntity
         public DbSet<SearchRuleEntity> SearchRules { get; set; }
-        
-        public DbSet<AutoProcessRuleEntity> AutoProcessRules { get; set; }
 
-        public DbSet<AutoProcessItemEntity> AutoProcessItems { get; set; }
 
         // MainStatisticsEntity
         public DbSet<MainStatisticsEntity> MainStatistics { get; set; }

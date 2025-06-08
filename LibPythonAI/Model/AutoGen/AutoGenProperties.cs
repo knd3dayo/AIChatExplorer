@@ -1,10 +1,9 @@
 using System.IO;
-using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Common;
 using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.Model.AutoGen {
     public class AutoGenProperties {
 
         public const string CHAT_TYPE_GROUP = "group";

@@ -8,9 +8,6 @@ using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Image;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Image;
 using LibPythonAI.Model.Content;
@@ -18,6 +15,8 @@ using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Common;
+using LibPythonAI.Model.Chat;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatWindowViewModel : CommonViewModelBase {

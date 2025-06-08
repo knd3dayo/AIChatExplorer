@@ -5,8 +5,8 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class ContentItemEntity {

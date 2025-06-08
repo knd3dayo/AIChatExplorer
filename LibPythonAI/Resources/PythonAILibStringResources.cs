@@ -1,4 +1,4 @@
-namespace PythonAILib.Resources {
+namespace LibPythonAI.Resources {
     public class PythonAILibStringResources {
 
         private static PythonAILibStringResources? _Instance;
@@ -197,6 +197,25 @@ namespace PythonAILib.Resources {
         // DeleteContentFoldersExecute
         public virtual string DeleteContentFoldersExecute { get; } = "ベクトル検索用フォルダ情報を削除します";
 
+
+        // GetAutoProcessRulesExecute
+        public virtual string GetAutoProcessRulesExecute { get; } = "自動処理ルールを取得します";
+        // UpdateAutoProcessRulesExecute
+        public virtual string UpdateAutoProcessRulesExecute { get; } = "自動処理ルールを更新します";
+        // DeleteAutoProcessRulesExecute
+        public virtual string DeleteAutoProcessRulesExecute { get; } = "自動処理ルールを削除します";
+
+        // GetAutoProcessItemsExecute
+        public virtual string GetAutoProcessItemsExecute { get; } = "自動処理アイテムを取得します";
+
+        // UpdateAutoProcessItemsExecute
+        public virtual string UpdateAutoProcessItemsExecute { get; } = "自動処理アイテムを更新します";
+
+        // DeleteAutoProcessItemsExecute
+        public virtual string DeleteAutoProcessItemsExecute { get; } = "自動処理アイテムを削除します";
+
+
+
         // GetPromptItemsExecute
         public virtual string GetPromptItemsExecute { get; } = "プロンプトアイテムを取得します";
 
@@ -276,7 +295,7 @@ namespace PythonAILib.Resources {
 
         // UpdateAutogenLLMConfigExecute
         public virtual string UpdateAutogenLLMConfigExecute { get; } = "UpdateAutogenLLMConfig実行";
-        
+
         // DeleteAutoGenAgentExecute
         public virtual string DeleteAutoGenAgentExecute { get; } = "DeleteAutoGenAgent実行";
 
@@ -329,7 +348,7 @@ namespace PythonAILib.Resources {
 
         // 文章の信頼度
         public virtual string DocumentReliability { get; } = "文章の信頼度";
-        
+
         // 文章カテゴリ概要
         public virtual string DocumentCategorySummary { get; } = "文章カテゴリ";
 

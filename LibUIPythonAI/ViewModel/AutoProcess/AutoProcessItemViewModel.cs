@@ -1,21 +1,11 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Model.AutoProcess;
 using LibUIPythonAI.Resource;
-using PythonAILib.Model.AutoProcess;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class AutoProcessItemViewModel(AutoProcessItem autoProcessItem) : CommonViewModelBase {
         public AutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
-        public string Name {
-            get {
-                return AutoProcessItem.Name;
-            }
-            set {
-                AutoProcessItem.Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
         public string DisplayName {
             get {
                 return AutoProcessItem.DisplayName;
@@ -30,7 +20,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public static ObservableCollection<AutoProcessItemViewModel> SystemAutoProcesses {
             get {
                 ObservableCollection<AutoProcessItemViewModel> autoProcesses = [];
-                foreach (AutoProcessItem item in AutoProcessItem.SystemAutoProcesses) {
+                foreach (AutoProcessItem item in AutoProcessItem.GetSystemDefinedItems()) {
                     autoProcesses.Add(new AutoProcessItemViewModel(item));
                 }
                 return autoProcesses;

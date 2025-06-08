@@ -2,11 +2,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using LibPythonAI.Common;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.PythonIF.Request;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
+using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Utils.Python {
+namespace LibPythonAI.Utils.Python {
     public class DebugUtil {
 
 
@@ -99,7 +100,7 @@ namespace PythonAILib.Utils.Python {
                 $"REM python -m {local_script_path} {options} -d {app_data_path}",
             ];
 
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(scripytCmdLines, beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> cmdLines = GetPythonScriptCommand(scripytCmdLines, beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;
         }
@@ -120,17 +121,17 @@ namespace PythonAILib.Utils.Python {
             // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
             if (chatMode == OpenAIExecutionModeEnum.Normal) {
                 // パラメーターファイルを作成
-                string parametersJson = DebugUtil.CreateParameterJson(chatMode, chatRequestContext, chatRequest);
-                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-                return DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile);
+                string parametersJson = CreateParameterJson(chatMode, chatRequestContext, chatRequest);
+                File.WriteAllText(DebugRequestParametersFile, parametersJson);
+                return CreateOpenAIChatCommandLine(DebugRequestParametersFile);
             }
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
             if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // パラメーターファイルを作成
-                string parametersJson = DebugUtil.CreateParameterJson(chatMode, chatRequestContext, chatRequest);
-                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                string parametersJson = CreateParameterJson(chatMode, chatRequestContext, chatRequest);
+                File.WriteAllText(DebugRequestParametersFile, parametersJson);
 
-                return DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null);
+                return CreateAutoGenGroupChatTest1CommandLine(DebugRequestParametersFile, null);
             }
             return [];
         }
@@ -158,7 +159,7 @@ namespace PythonAILib.Utils.Python {
 
             ];
 
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> cmdLines = GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
 
 
             return cmdLines;
@@ -182,7 +183,7 @@ namespace PythonAILib.Utils.Python {
                 "REM When using a local environment with environment variables, set the application data directory and set the parameters in the environment variables.",
                 $"REM python -m ai_chat_lib.cmd_tools.vector_search_local.py -d {appDataPath}",
             ];
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> cmdLines = GetPythonScriptCommand(mainCmmands, beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;
         }
@@ -192,7 +193,7 @@ namespace PythonAILib.Utils.Python {
             // responseJsonはJsonElementのリスト
             List<JsonElement> jsonElements = JsonSerializer.Deserialize<List<JsonElement>>(responseJson) ?? [];
             foreach (var jsonElement in jsonElements) {
-                Dictionary<string, dynamic?>? dic = Common.JsonUtil.ParseJson(jsonElement.ToString());
+                Dictionary<string, dynamic?>? dic = JsonUtil.ParseJson(jsonElement.ToString());
                 // role, name , contentを取得
                 string role = dic?["role"] ?? "";
                 string name = dic?["name"] ?? "";

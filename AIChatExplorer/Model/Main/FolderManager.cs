@@ -5,10 +5,10 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Folders.ShortCut;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
-using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
     public class FolderManager : LibPythonAI.Model.Folder.FolderManager {

@@ -1,7 +1,7 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Common;
 using LibUIPythonAI.Control.Editor;
-using PythonAILib.Common;
 
 namespace LibUIPythonAI.ViewModel.Common {
     public class CommonViewModelProperties : ObservableObject {

@@ -1,17 +1,15 @@
 using LibPythonAI.Data;
-using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Python;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
     public class PromptAutoProcessItem : AutoProcessItem {
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
-        public PromptAutoProcessItem(AutoProcessItemEntity autoProcessItemEntity, PromptItem promptItemEntity) : base(autoProcessItemEntity) {
+        public PromptAutoProcessItem(PromptItem promptItemEntity) : base() {
             PromptItemEntity = promptItemEntity;
         }
 
@@ -31,10 +29,10 @@ namespace PythonAILib.Model.AutoProcess {
             };
             if (clipboardFolder != null) {
                 chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
-                chatRequestContent.VectorSearchRequests = [ new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
+                chatRequestContent.VectorSearchRequests = [new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
             }
 
-            ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent , (message) => { });
+            ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
             if (result == null) {
                 return;
             }

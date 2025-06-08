@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using LibPythonAI.Data;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentFolderWrapper {
@@ -290,7 +289,7 @@ namespace LibPythonAI.Model.Content {
             // APIを呼び出して、ContentFolderを更新
             Task.Run(async () => {
                 ContentFolderRequest request = new(this);
-                await  PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
+                await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
             });
 
         }
@@ -364,7 +363,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static T? GetFolderById<T>(string? id) where T: ContentFolderWrapper{
+        public static T? GetFolderById<T>(string? id) where T : ContentFolderWrapper {
             if (string.IsNullOrEmpty(id)) {
                 return null;
             }

@@ -10,7 +10,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModel : CommonViewModelBase {

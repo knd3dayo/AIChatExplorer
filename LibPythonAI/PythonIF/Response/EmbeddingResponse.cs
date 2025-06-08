@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
-using PythonAILib.Model.VectorDB;
 
 namespace LibPythonAI.PythonIF.Response {
     public class EmbeddingResponse {

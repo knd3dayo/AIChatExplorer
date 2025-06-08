@@ -9,6 +9,7 @@ using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIAutoGenChat.View.Chat;
 using LibUIImageChat.View;
@@ -28,7 +29,6 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Resources;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.ViewModel.Main {

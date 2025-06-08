@@ -2,8 +2,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.PythonIF.Response {
     public class ChatResponse : PythonScriptResult {

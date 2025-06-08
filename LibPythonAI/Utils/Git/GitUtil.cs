@@ -1,8 +1,8 @@
 using LibGit2Sharp;
 using LibPythonAI.Model.File;
-using PythonAILib.Resources;
+using LibPythonAI.Resources;
 
-namespace PythonAILib.Utils.Git {
+namespace LibPythonAI.Utils.Git {
     public class GitUtil {
 
         public static string GetRemoteURL(string workingDirectory) {
@@ -58,8 +58,8 @@ namespace PythonAILib.Utils.Git {
         }
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        public static List<LibPythonAI.Model.File.FileStatus> GetFileStatusList(string workingDirectory, string? startHash, string? endHash) {
-            List<LibPythonAI.Model.File.FileStatus > fileStatusList = [];
+        public static List<Model.File.FileStatus> GetFileStatusList(string workingDirectory, string? startHash, string? endHash) {
+            List<Model.File.FileStatus > fileStatusList = [];
             // リポジトリの取得
             using (var repository = new Repository(workingDirectory)) {
                 // 現在のブランチのコミット一覧を取得
@@ -91,7 +91,7 @@ namespace PythonAILib.Utils.Git {
                 // コミットの差分を取得
                 var changes = repository.Diff.Compare<TreeChanges>(startTree, endTree);
                 foreach (var change in changes) {
-                    LibPythonAI.Model.File.FileStatus fileStatus = new() {
+                    Model.File.FileStatus fileStatus = new() {
                         Path = change.Path,
                         Status = change.Status switch {
                             ChangeKind.Added => FileStatusEnum.Added,
@@ -112,12 +112,12 @@ namespace PythonAILib.Utils.Git {
         }
 
         // 指定したコミットの次のコミットで処理されたファイルのリストを取得
-        public static List<LibPythonAI.Model.File.FileStatus> GetAfterIndexedCommitFileStatusList(string workingDirectory, string? startHash) {
+        public static List<Model.File.FileStatus> GetAfterIndexedCommitFileStatusList(string workingDirectory, string? startHash) {
             return GetFileStatusList(workingDirectory, startHash, null);
         }
 
         // 指定したコミット以後に処理されたファイルのリストを取得
-        public static List<LibPythonAI.Model.File.FileStatus> GetFileStatusList(string workingDirectory, string startHash) {
+        public static List<Model.File.FileStatus> GetFileStatusList(string workingDirectory, string startHash) {
             return GetFileStatusList(workingDirectory, startHash, "HEAD");
 
         }

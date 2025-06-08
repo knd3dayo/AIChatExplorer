@@ -1,11 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryItemMenu(ContentItemViewModel applicationItemViewModel) : ApplicationItemMenu(applicationItemViewModel) {

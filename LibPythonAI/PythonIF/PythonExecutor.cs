@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using LibPythonAI.Common;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Resources;
 
-namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF {
     public class PythonExecutor {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
@@ -79,7 +79,7 @@ namespace PythonAILib.PythonIF {
             StartAPIServer(configPrams, afterStartProcess);
 
             // AIアプリケーションプロセスチェッカーを開始する。
-            StartProcessChecker(configPrams, (Process? processCheckerProcess) => { });
+            StartProcessChecker(configPrams, (processCheckerProcess) => { });
 
         }
 
@@ -201,7 +201,7 @@ namespace PythonAILib.PythonIF {
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
 
             ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, envVars, showConsole,
-                (Process process) => {
+                (process) => {
                     // 5秒待機した後、processが終了したかどうかを確認する
                     Task.Run(() => {
                         // このスレッドを5秒間待機

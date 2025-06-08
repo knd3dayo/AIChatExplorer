@@ -1,5 +1,5 @@
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Resources;
+using LibPythonAI.Resources;
 
 namespace LibPythonAI.PythonIF.Request {
     public class VectorSearchRequest {

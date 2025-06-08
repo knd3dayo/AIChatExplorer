@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
@@ -13,8 +14,6 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.PromptTemplate;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Chat;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : CommonViewModelBase {
@@ -163,7 +162,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         }
         // SystemAutoProcessRuleのリスト
         public ObservableCollection<AutoProcessItemViewModel> AutoProcessItems { get; set; }
-            = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.SystemAutoProcesses);
+            = new (AutoProcessItemViewModel.SystemAutoProcesses);
 
         // 自動処理ルールの条件リスト
         public ObservableCollection<AutoProcessRuleCondition> Conditions { get; set; } = [];
@@ -374,7 +373,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         // ---　コマンド 
         // OKボタンが押されたときの処理
-        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new(async (window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
@@ -409,12 +408,12 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
-                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity = new() {
+                AutoProcessRuleCondition autoProcessRuleConditionEntity = new() {
                     ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.AllItems,
                 };
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
             } else {
-                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity;
+                AutoProcessRuleCondition autoProcessRuleConditionEntity;
                 // IsDescriptionRuleCheckedがTrueの場合は条件を追加
                 if (IsDescriptionRuleChecked) {
                     // Descriptionを条件に追加
@@ -423,7 +422,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         Keyword = Description
                     };
 
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsContentRuleCheckedがTrueの場合は条件を追加
                 if (IsContentRuleChecked) {
@@ -432,7 +431,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.ContentContains,
                         Keyword = Content
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsSourceApplicationRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationRuleChecked) {
@@ -441,7 +440,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains,
                         Keyword = SourceApplicationName
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsSourceApplicationTitleRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationTitleRuleChecked) {
@@ -450,7 +449,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains,
                         Keyword = SourceApplicationTitle
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // ContentTypeの処理
                 List<ContentItemTypes.ContentItemTypeEnum> contentTypes = [];
@@ -476,7 +475,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     MinLineCount = MinTextLineCountInt
                 };
 
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
 
             }
             // アクションを追加
@@ -510,8 +509,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // キャスト
                 PromptItem promptItem = SelectedPromptItem.PromptItem;
-                AutoProcessItemEntity autoProcessItemEntity = new();
-                PromptAutoProcessItem promptAutoProcessItem = new(autoProcessItemEntity, promptItem);
+                PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
 
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
@@ -519,7 +517,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
 
             // LiteDBに保存
-            TargetAutoProcessRule.Save();
+            await TargetAutoProcessRule.SaveAsync();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

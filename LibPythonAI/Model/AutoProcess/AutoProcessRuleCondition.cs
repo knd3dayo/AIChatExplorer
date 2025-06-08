@@ -1,14 +1,12 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
     public class AutoProcessRuleCondition {
-
-
-        public AutoProcessRuleConditionEntity Entity { get; set; }
-        public AutoProcessRuleCondition(AutoProcessRuleConditionEntity entity) {
-            Entity = entity;
-        }
 
         public enum ConditionTypeEnum {
             AllItems,
@@ -20,66 +18,95 @@ namespace PythonAILib.Model.AutoProcess {
             ContentTypeIs,
 
         }
-        // 条件のキーワード
-        public string Keyword {
+
+        private static JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        // 条件の種類
+        public ConditionTypeEnum ConditionType { get; set; } = ConditionTypeEnum.AllItems;
+
+        // ContentTypesJson
+        // ContentTypesJson
+        public string ContentTypesJson { get; set; } = "[]";
+
+        // アイテムのタイプ種類のリスト
+        [NotMapped]
+        public List<ContentItemTypes.ContentItemTypeEnum> ContentTypes {
             get {
-                return Entity.Keyword;
+                List<ContentItemTypes.ContentItemTypeEnum> result = [];
+                foreach (var item in JsonSerializer.Deserialize<List<int>>(ContentTypesJson, jsonSerializerOptions) ?? []) {
+                    result.Add((ContentItemTypes.ContentItemTypeEnum)item);
+                }
+                return result;
             }
             set {
-                Entity.Keyword = value;
+                List<int> result = [];
+                foreach (var item in value) {
+                    result.Add((int)item);
+                }
+                ContentTypesJson = JsonSerializer.Serialize(result, jsonSerializerOptions);
             }
         }
 
         // 条件の種類
-        public ConditionTypeEnum Type {
-            get {
-                return Entity.ConditionType;
-            }
-            set {
-                Entity.ConditionType = value;
-            }
-        }
+        public ConditionTypeEnum Type { get; set; } = ConditionTypeEnum.AllItems;
 
-        // アイテムのタイプ種類のリスト
-        public List<ContentItemTypes.ContentItemTypeEnum> ContentTypes {
-            get {
-                return Entity.ContentTypes;
-            }
-            set {
-                Entity.ContentTypes = value;
-            }
-        }
+        // 条件のキーワード
+        public string Keyword { get; set; } = "";
 
+        public int MinLineCount { get; set; } = -1;
 
-        public ConditionTypeEnum ConditionType {
-            get {
-                return Entity.ConditionType;
-            }
-            set {
-                Entity.ConditionType = value;
-            }
-        }
+        public int MaxLineCount { get; set; } = -1;
 
-        public int MinLineCount {
-            get {
-                return Entity.MinLineCount;
-            }
-            set {
-                Entity.MinLineCount = value;
-            }
-        }
-
-        public int MaxLineCount {
-            get {
-                return Entity.MaxLineCount;
-            }
-            set {
-                Entity.MaxLineCount = value;
-            }
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> result = new();
+            result["ConditionType"] = ConditionType;
+            result["ContentTypesJson"] = ContentTypesJson;
+            result["Keyword"] = Keyword;
+            result["MinLineCount"] = MinLineCount;
+            result["MaxLineCount"] = MaxLineCount;
+            return result;
         }
 
 
+        public static List<AutoProcessRuleCondition> FromDictList(List<Dictionary<string, dynamic?>> dict) {
 
+            List<AutoProcessRuleCondition> result = [];
+            foreach (var item in dict) {
+                result.Add(FromDict(item));
+            }
+            return result;
+
+        }
+
+        public static AutoProcessRuleCondition FromDict(Dictionary<string, dynamic?> dict) {
+            AutoProcessRuleCondition entity = new();
+
+            if (dict.TryGetValue("Id", out dynamic? value1) && value1 is not null) {
+                entity.Id = (string)value1;
+            }
+            if (dict.TryGetValue("ConditionType", out dynamic? value2) && value2 is not null) {
+                entity.ConditionType = (ConditionTypeEnum)value2;
+            }
+            if (dict.TryGetValue("ContentTypesJson", out dynamic? value3) && value3 is not null) {
+                entity.ContentTypesJson = (string)value3;
+            }
+            if (dict.TryGetValue("Keyword", out dynamic? value4) && value4 is not null) {
+                entity.Keyword = (string)value4;
+            }
+            if (dict.TryGetValue("MinLineCount", out dynamic? value5) && value5 is not null) {
+                entity.MinLineCount = (int)value5;
+            }
+            if (dict.TryGetValue("MaxLineCount", out dynamic? value6) && value6 is not null) {
+                entity.MaxLineCount = (int)value6;
+            }
+
+            return entity;
+        }
 
         //ApplicationItemのDescriptionが指定したキーワードを含むかどうか
         public bool IsDescriptionContains(ContentItemWrapper applicationItem, string keyword) {
@@ -171,7 +198,7 @@ namespace PythonAILib.Model.AutoProcess {
             if (ContentTypes.Contains(applicationItem.ContentType) == false) {
                 return false;
             }
-            if (applicationItem.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
+            if (applicationItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                 return IsContentLineCountOver(applicationItem) && IsContentLineCountUnder(applicationItem);
             }
             return true;

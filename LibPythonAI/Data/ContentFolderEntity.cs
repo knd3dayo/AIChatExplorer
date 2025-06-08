@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class ContentFolderEntity {

@@ -1,7 +1,7 @@
 using System.Windows;
 using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Common {
+namespace LibPythonAI.Common {
     public interface IPythonAILibConfigParams {
 
         public string GetLang();

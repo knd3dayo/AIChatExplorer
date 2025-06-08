@@ -5,8 +5,9 @@ using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Model.AutoProcess;
 
-namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
 
 
@@ -19,6 +20,21 @@ namespace PythonAILib.PythonIF {
         public Task UpdatePromptItemAsync(PromptItemRequest request);
 
         public Task DeletePromptItemAsync(PromptItemRequest request);
+
+        // AutoProcessItem
+        public Task<List<AutoProcessItem>> GetAutoProcessItemsAsync();
+
+        public Task UpdateAutoProcessItemAsync(AutoProcessItemRequest request);
+
+        public Task DeleteAutoProcessItemAsync(AutoProcessItemRequest request);
+
+        // AutoProcessRule
+        public Task<List<AutoProcessRule>> GetAutoProcessRulesAsync();
+
+        public Task UpdateAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+
+        public Task DeleteAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+
 
 
         public Task UpdateTagItemsAsync(List<TagItem> tagItems);

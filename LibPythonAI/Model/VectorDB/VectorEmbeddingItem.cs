@@ -1,10 +1,9 @@
+using LibPythonAI.Common;
 using LibPythonAI.Model.Content;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.VectorDB {
     public class VectorEmbeddingItem {

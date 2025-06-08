@@ -1,5 +1,5 @@
 using System.IO;
-using PythonAILib.Common;
+using LibPythonAI.Common;
 
 namespace AIChatExplorer.ViewModel.Settings {
     public class AIChatExplorerConfig {

@@ -1,7 +1,4 @@
-using System.Text.Json.Serialization;
-using LibPythonAI.Data;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
+using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.Tag {
     public class TagItem {

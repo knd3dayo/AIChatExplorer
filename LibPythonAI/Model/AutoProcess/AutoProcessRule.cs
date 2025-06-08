@@ -1,118 +1,111 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Resources;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
+using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.AutoProcess {
 
+
     public class AutoProcessRule {
 
-        public AutoProcessRule(AutoProcessRuleEntity autoProcessRuleEntity) {
-            Entity = autoProcessRuleEntity;
-        }
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
-        /// <summary>
-        /// 指定した名前のルールを作成する
-        /// </summary>
-        /// <param name="ruleName"></param>
-        public AutoProcessRule(string ruleName) {
-            Entity = new AutoProcessRuleEntity() {
-                RuleName = ruleName
-            };
-        }
+        [Key]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public AutoProcessRuleEntity Entity { get; set; }
-
-        public string Id { get => Entity.Id; }
-
-
-        public string RuleName {
-            get => Entity.RuleName;
-            set => Entity.RuleName = value;
-        }
+        public string RuleName { get; set; } = "";
 
         // このルールを有効にするかどうか
-        public bool IsEnabled {
-            get => Entity.IsEnabled;
-            set => Entity.IsEnabled = value;
-        }
+        public bool IsEnabled { get; set; } = true;
 
         // 優先順位
-        public int Priority {
-            get => Entity.Priority;
-            set => Entity.Priority = value;
-        }
-        private List<AutoProcessRuleCondition>? _condition;
+        public int Priority { get; set; } = -1;
+
+        public string? AutoProcessItemId { get; set; }
+
+        public string? TargetFolderId { get; set; }
+
+        public string? DestinationFolderId { get; set; }
+
+
+        public string ConditionsJson { get; set; } = "[]";
+
+        private List<AutoProcessRuleCondition>? _conditions;
         public List<AutoProcessRuleCondition> Conditions {
             get {
-                if (_condition == null) {
-                    _condition = Entity.Conditions.Select(c => new AutoProcessRuleCondition(c)).ToList();
+                if (_conditions == null) {
+                    List<Dictionary<string, dynamic?>> dict = JsonUtil.ParseJsonArray(ConditionsJson);
+                    _conditions = AutoProcessRuleCondition.FromDictList(dict);
                 }
-                return _condition;
+                return _conditions;
             }
+            set {
+                _conditions = value;
+            }
+
         }
+
+
 
         public AutoProcessItem? RuleAction {
             get {
-                return  AutoProcessItem.GetItemById(Entity?.AutoProcessItemId);
+                return AutoProcessItem.GetItemById(AutoProcessItemId);
             }
             set {
-                Entity.AutoProcessItemId = value?.Id;
+                AutoProcessItemId = value?.Id;
             }
         }
 
 
         public ContentFolderWrapper? DestinationFolder {
             get {
-                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.DestinationFolderId);
+                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(DestinationFolderId);
             }
             set {
-                Entity.DestinationFolderId = value?.Id;
+                DestinationFolderId = value?.Id;
             }
         }
 
         public ContentFolderWrapper? TargetFolder {
             get {
-                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.TargetFolderId);
+                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(TargetFolderId);
             }
             set {
-                Entity.TargetFolderId = value?.Id;
+                TargetFolderId = value?.Id;
             }
         }
 
+        // Load
 
-        // 保存
-        public void Save() {
+        private static List<AutoProcessRule> _items = new(); // 修正: 空のリストを初期化
+        public static async Task LoadItemsAsync() {
+            // 修正: 非同期メソッドで 'await' を使用
+            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetAutoProcessRulesAsync());
+        }
+        public static List<AutoProcessRule> GetItems() {
+            return _items;
+        }
+        //SaveAsync
+        public async Task SaveAsync() {
             // 優先順位が-1の場合は、最大の優先順位を取得して設定
             if (Priority == -1) {
-                Priority = GetAllAutoProcessRules().Count() + 1;
+                Priority = GetItems().Count + 1;
             }
-            Entity.Conditions = Conditions.Select(c => c.Entity).ToList();
-            AutoProcessRuleEntity.SaveItems([ Entity ]);
-
+            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
-        // 削除
-        public void Delete() {
-            using PythonAILibDBContext db = new();
-            var item = db.AutoProcessRules.Find(Id);
-            if (item == null) {
-                return;
-            }
-            db.AutoProcessRules.Remove(item);
+        // DeleteAsync
+        public async Task DeleteAsync() {
+            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
-
-        // 取得
-        public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
-            using PythonAILibDBContext db = new();
-            // 全てのルールを取得
-            var items = db.AutoProcessRules;
-            foreach (var item in items) {
-                yield return new AutoProcessRule(item);
-            }
-
-        }
-
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
         public bool IsMatch(ContentItemWrapper applicationItem) {
@@ -150,7 +143,7 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             // DestinationIdに一致するフォルダを取得
 
-             await RuleAction.Execute(applicationItem, DestinationFolder);
+            await RuleAction.Execute(applicationItem, DestinationFolder);
         }
 
         public string GetDescriptionString() {
@@ -273,8 +266,8 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         // 指定したAutoProcessRuleの優先順位を上げる
-        public static void UpPriority(AutoProcessRule autoProcessRule) {
-            List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
+        public static async Task UpPriority(AutoProcessRule autoProcessRule) {
+            List<AutoProcessRule> autoProcessRules = GetItems().ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexが0以下の場合は何もしない
@@ -289,13 +282,13 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                autoProcessRules[i].Save();
+                await autoProcessRules[i].SaveAsync();
             }
 
         }
         // 指定したAutoProcessRuleの優先順位を下げる
-        public static void DownPriority(AutoProcessRule autoProcessRule) {
-            List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
+        public static async Task DownPriority(AutoProcessRule autoProcessRule) {
+            List<AutoProcessRule> autoProcessRules = GetItems().ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexがリストの最大Index以上の場合は何もしない
@@ -310,41 +303,70 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                autoProcessRules[i].Save();
+                await autoProcessRules[i].SaveAsync();
             }
         }
         // GetItemsByRuleName
         public static List<AutoProcessRule> GetItemsByRuleName(string? ruleName) {
-            List<AutoProcessRule> rules = [];
-            if (ruleName == null) {
-                return rules;
-            }
-            using PythonAILibDBContext db = new();
-            var items = db.AutoProcessRules.Where(x => x.RuleName == ruleName);
-            foreach (var item in items) {
-                rules.Add(new AutoProcessRule(item));
-            }
-            return rules;
+            return  GetItems().Where(x => x.RuleName == ruleName).ToList();
         }
         // GetItemsByTargetFolder
         public static List<AutoProcessRule> GetItemByTargetFolder(ContentFolderWrapper? targetFolder) {
-            List<AutoProcessRule> rules = [];
-            if (targetFolder == null) {
-                return rules;
+            return GetItems().Where(x => x.TargetFolderId == targetFolder?.Id).ToList();
+        }
+
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            var dict = new Dictionary<string, object> {
+                { "id", Id },
+                { "rule_name", RuleName },
+                { "is_enabled", IsEnabled },
+                { "priority", Priority },
+                { "conditions_json", ConditionsJson }
+            };
+            if (AutoProcessItemId != null) {
+                dict.Add("auto_process_item_id", AutoProcessItemId);
             }
-            using PythonAILibDBContext db = new();
-            var items = db.AutoProcessRules.Where(x => x.TargetFolderId == targetFolder.Id);
-            foreach (var item in items) {
-                rules.Add(new AutoProcessRule(item));
+            if (TargetFolderId != null) {
+                dict.Add("target_folder_id", TargetFolderId);
             }
-            return rules;
+            if (DestinationFolderId != null) {
+                dict.Add("destination_folder_id", DestinationFolderId);
+            }
+
+            return dict;
+
+        }
+
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<AutoProcessRule> rules) {
+            List<Dictionary<string, object>> dictList = [];
+            foreach (var rule in rules) {
+                dictList.Add(rule.ToDict());
+            }
+            return dictList;
+        }
+
+        // FromDict
+        public static AutoProcessRule FromDict(Dictionary<string, object> dict) {
+            AutoProcessRule rule = new() {
+                Id = dict["id"] as string ?? Guid.NewGuid().ToString(),
+                RuleName = dict["rule_name"] as string ?? "",
+                IsEnabled = (bool)(dict["is_enabled"] ?? true),
+                Priority = (int)(dict["priority"] ?? -1),
+                AutoProcessItemId = dict["auto_process_item_id"] as string,
+                TargetFolderId = dict["target_folder_id"] as string,
+                DestinationFolderId = dict["destination_folder_id"] as string,
+                ConditionsJson = dict["conditions_json"] as string ?? "[]"
+            };
+            return rule;
         }
 
 
         // GetCopyToMoveToRules
         public static List<AutoProcessRule> GetCopyToMoveToRules() {
-            var copyRules = GetItemsByRuleName(AutoProcessItem.TypeEnum.CopyToFolder.ToString());
-            var moveRules = GetItemsByRuleName(AutoProcessItem.TypeEnum.MoveToFolder.ToString());
+            var copyRules = GetItemsByRuleName(AutoProcessActionTypeEnum.CopyToFolder.ToString());
+            var moveRules = GetItemsByRuleName(AutoProcessActionTypeEnum.MoveToFolder.ToString());
 
             List<AutoProcessRule> rules = [];
             rules.AddRange(copyRules);

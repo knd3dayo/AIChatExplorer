@@ -2,10 +2,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
     public class ApplicationItemMenu : CommonViewModelBase {
@@ -48,7 +47,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 };
                 promptMenuItem.Items.Add(promptItemMenuItem);
             }
- 
+
             // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
             MenuItem otherPromptMenuItem = new() {
                 Header = CommonStringResources.Instance.OtherPrompts,

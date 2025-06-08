@@ -4,12 +4,11 @@ using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
-using PythonAILib.Model.Chat;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Resources;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Utils.Python {
     public class ChatUtil {

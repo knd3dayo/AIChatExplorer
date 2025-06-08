@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public enum PromptOutputTypeEnum {
         // 新規作成
         NewContent = 0,

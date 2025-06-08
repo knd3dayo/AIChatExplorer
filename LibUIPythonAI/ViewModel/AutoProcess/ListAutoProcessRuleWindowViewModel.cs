@@ -24,7 +24,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public ListAutoProcessRuleWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModel) {
             RootFolderViewModels = rootFolderViewModel;
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+            AutoProcessRules = [.. AutoProcessRule.GetItems()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
@@ -58,18 +58,18 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         //-- コマンド
 
         // 優先順位を上げる処理
-        public SimpleDelegateCommand<string> ChangePriorityCommand => new((parameter) => {
+        public SimpleDelegateCommand<string> ChangePriorityCommand => new(async (parameter) => {
             if (SelectedAutoProcessRule == null) {
                 LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
             }
             if (parameter == "down") {
-                AutoProcessRule.DownPriority(SelectedAutoProcessRule);
+               await  AutoProcessRule.DownPriority(SelectedAutoProcessRule);
             } else {
-                AutoProcessRule.UpPriority(SelectedAutoProcessRule);
+                await AutoProcessRule.UpPriority(SelectedAutoProcessRule);
             }
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+            AutoProcessRules = [.. AutoProcessRule.GetItems()];
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
@@ -77,7 +77,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // AutoProcessRuleが更新された後の処理
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                AutoProcessRules = [.. AutoProcessRule.GetItems()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
             // debug
@@ -96,15 +96,15 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                AutoProcessRules = [.. AutoProcessRule.GetItems()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
-            AutoProcessRule rule = new(new LibPythonAI.Data.AutoProcessRuleEntity());
+            AutoProcessRule rule = new();
             EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModels, AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理
-        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new(async (parameter) => {
             AutoProcessRule? rule = SelectedAutoProcessRule;
             if (rule == null) {
                 LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
@@ -115,7 +115,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
             AutoProcessRules.Remove(rule);
             // LiteDBを更新
-            rule.Delete();
+            await rule.DeleteAsync();
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 

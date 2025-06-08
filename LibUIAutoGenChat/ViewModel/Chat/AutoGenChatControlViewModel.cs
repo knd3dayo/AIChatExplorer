@@ -8,15 +8,13 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.PromptTemplate;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Utils.Python;
 using System.ComponentModel;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Chat;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Common;
 
 namespace LibUIAutoGenChat.ViewModel.Chat {
     public class AutoGenChatControlViewModel : CommonViewModelBase {

@@ -1,10 +1,8 @@
-using System.Data.SQLite;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
+using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenTool {
@@ -41,7 +39,7 @@ namespace LibPythonAI.Model.AutoGen {
         }
 
         // CreateEntriesDictList
-        public  Dictionary<string, object> ToDict() {
+        public Dictionary<string, object> ToDict() {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
                 { "name", Name },

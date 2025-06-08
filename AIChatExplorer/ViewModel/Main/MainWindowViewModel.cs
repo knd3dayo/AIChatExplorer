@@ -8,16 +8,12 @@ using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Settings;
-using LibPythonAI.Data;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 
 namespace AIChatExplorer.ViewModel.Main {
     public partial class MainWindowViewModel : CommonViewModelBase {

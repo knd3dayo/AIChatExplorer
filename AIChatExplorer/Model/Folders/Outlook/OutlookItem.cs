@@ -34,7 +34,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                     VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
                         Content = Content,
                         Description = Description,
-                        SourceType = PythonAILib.Model.VectorDB.VectorSourceType.Mail,
+                        SourceType = VectorSourceType.Mail,
                         SourcePath = SourcePath,
                     };
                     await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);

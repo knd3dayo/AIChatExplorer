@@ -5,7 +5,6 @@ using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Common;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
@@ -17,7 +16,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public VectorSearchWindowViewModel(VectorSearchItem vectorSearchItem) {
             VectorSearchItem = vectorSearchItem;
         }
-        
+
         // VectorSearchItem
         private LibPythonAI.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
         public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
@@ -70,7 +69,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public Visibility MultiVectorRetrieverVisibility {
             get {
 
-                var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName); 
+                var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
                 if (item == null) {
                     return Visibility.Collapsed;
                 }
@@ -89,13 +88,13 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         });
 
         // SendCommand
-        public SimpleDelegateCommand<object> SendCommand => new( (parameter) => {
+        public SimpleDelegateCommand<object> SendCommand => new((parameter) => {
             // VectorDBItemがnullの場合は何もしない
             if (VectorSearchItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName); 
+            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
             if (vectorDBItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;

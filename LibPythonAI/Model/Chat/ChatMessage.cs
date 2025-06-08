@@ -1,9 +1,8 @@
 using System.Text.Json.Serialization;
 using System.Windows.Documents;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Resources;
-using PythonAILib.Utils.Common;
 
 namespace LibPythonAI.Model.Chat {
     public class ChatMessage {

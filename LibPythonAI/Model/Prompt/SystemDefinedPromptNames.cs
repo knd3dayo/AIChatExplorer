@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public enum SystemDefinedPromptNames {
         // タイトル生成
         TitleGeneration = 0,

@@ -2,15 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.PythonIF.Request;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.Chat;
 
 namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatContextViewModel : ObservableObject {

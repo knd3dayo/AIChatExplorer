@@ -9,10 +9,9 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resources;
 using WpfAppCommon.Model;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Resources;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModelCommands {

@@ -6,7 +6,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Common;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
 

@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
     public class EditPromptItemWindowViewModel : CommonViewModelBase {
@@ -252,7 +251,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 return;
             }
             // LogWrapper
-            promptItem.Save();
+            promptItem.SaveAsync();
 
             AfterUpdate(ItemViewModel);
 

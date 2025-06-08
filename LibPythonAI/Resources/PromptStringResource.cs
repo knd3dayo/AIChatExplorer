@@ -1,4 +1,4 @@
-namespace PythonAILib.Resources {
+namespace LibPythonAI.Resources {
     public class PromptStringResource {
 
         // Instance

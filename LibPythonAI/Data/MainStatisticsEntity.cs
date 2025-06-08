@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Model.Statistics;
+using LibPythonAI.Model.Statistics;
 
 namespace LibPythonAI.Data {
     public class MainStatisticsEntity {

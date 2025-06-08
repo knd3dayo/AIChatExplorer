@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Common;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
@@ -19,11 +21,6 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {

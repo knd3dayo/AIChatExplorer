@@ -1,12 +1,12 @@
 using System.Diagnostics;
+using LibPythonAI.Common;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemCommands {

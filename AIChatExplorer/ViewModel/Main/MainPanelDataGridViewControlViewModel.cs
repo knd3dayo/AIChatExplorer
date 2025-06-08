@@ -4,11 +4,11 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelDataGridViewControlViewModel(AppViewModelCommands commands) : ObservableObject {

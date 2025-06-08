@@ -1,7 +1,6 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryItem : ContentItemWrapper {
@@ -26,7 +25,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                         Content = Content,
                         FolderId = GetFolder().Id,
                         Description = Description,
-                        SourceType = PythonAILib.Model.VectorDB.VectorSourceType.Web,
+                        SourceType = VectorSourceType.Web,
                         SourcePath = SourcePath,
                     };
                     await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);

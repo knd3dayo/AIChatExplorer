@@ -1,6 +1,4 @@
-using LibPythonAI.Model.Image;
-
-namespace PythonAILib.Model.Image {
+namespace LibPythonAI.Model.Image {
     public class ScreenShotCheckItem {
 
         // チェック条件のリスト

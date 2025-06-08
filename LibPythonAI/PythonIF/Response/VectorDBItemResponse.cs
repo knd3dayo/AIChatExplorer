@@ -1,9 +1,5 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.PythonIF.Request {
     /// <summary>
@@ -78,9 +74,9 @@ namespace LibPythonAI.PythonIF.Request {
         // スコアの閾値
         public float DefaultScoreThreshold { get; set; } = 0.5f;
 
-        public bool IsEnabled { get; set; } 
+        public bool IsEnabled { get; set; }
 
-        public bool IsSystem { get; set; } 
+        public bool IsSystem { get; set; }
 
         public VectorDBItem CreateVectorDBItem() {
             // VectorDBItemを作成する

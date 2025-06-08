@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
+using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Utils.Python;
-using PythonAILib.Common;
 
 namespace LibPythonAI.PythonIF.Request {
     /// <summary>

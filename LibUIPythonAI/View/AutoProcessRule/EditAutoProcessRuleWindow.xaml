@@ -271,8 +271,8 @@
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding AutoProcessItems}"
                         SelectedItem="{Binding SelectedAutoProcessItem}"
-                        SelectedValue="{Binding SelectedAutoProcessItem.Name}"
-                        SelectedValuePath="Name">
+                        SelectedValue="{Binding SelectedAutoProcessItem.AutoProcessItem.Id}"
+                        SelectedValuePath="Id">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand, Mode=OneTime}" />

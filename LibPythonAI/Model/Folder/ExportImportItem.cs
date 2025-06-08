@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Folder {
+namespace LibPythonAI.Model.Folder {
     public class ExportImportItem {
 
         public string Name { get; set; }

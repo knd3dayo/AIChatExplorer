@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.Model.Chat {
     public enum SplitModeEnum {
         None = 0,
         NormalSplit = 1,

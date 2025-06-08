@@ -1,15 +1,13 @@
 using System.Collections.ObjectModel;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
-using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.Prompt;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
@@ -114,7 +112,7 @@ namespace PythonAILib.Model.AutoProcess {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
-            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder());
+            var AutoProcessRules = GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 await rule.RunActionAsync(result);

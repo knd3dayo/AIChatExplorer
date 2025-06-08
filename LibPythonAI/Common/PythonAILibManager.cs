@@ -2,11 +2,12 @@ using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
-namespace PythonAILib.Common {
+namespace LibPythonAI.Common {
     public class PythonAILibManager {
 
         private static PythonAILibManager? _instance;
@@ -48,9 +49,17 @@ namespace PythonAILib.Common {
                     PythonAILibDBContext.Init();
                     // PromptItemの初期化
                     await PromptItem.LoadItemsAsync();
+
+                    // VectorDBItemの初期化
                     await VectorDBItem.LoadItemsAsync();
 
-                   
+                    // AutoProcessItemの初期化
+                    await AutoProcessItem.LoadItemsAsync();
+
+                    // AutoProcessRuleの初期化
+                    await AutoProcessRule.LoadItemsAsync();
+
+
                 });
             });
 

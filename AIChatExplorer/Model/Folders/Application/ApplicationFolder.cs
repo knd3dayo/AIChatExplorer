@@ -7,7 +7,6 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
-using PythonAILib.Model.AutoProcess;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.Clipboard {

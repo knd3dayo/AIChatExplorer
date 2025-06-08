@@ -1,9 +1,9 @@
 using System.IO;
 using System.Windows;
 using AIChatExplorer.ViewModel.Settings;
+using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
-using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
     public class AIChatExplorerPythonAILibConfigParams : IPythonAILibConfigParams {

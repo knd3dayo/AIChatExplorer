@@ -2,17 +2,16 @@ using System.Text;
 using System.Windows;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.Settings;
+using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 using WpfAppCommon.Model;
 
 namespace AIChatExplorer.ViewModel.Settings {

@@ -24,7 +24,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
                         Content = Content,
                         Description = Description,
-                        SourceType = PythonAILib.Model.VectorDB.VectorSourceType.File,
+                        SourceType = VectorSourceType.File,
                         SourcePath = SourcePath,
                     };
                     await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);

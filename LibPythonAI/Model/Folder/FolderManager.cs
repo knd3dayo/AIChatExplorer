@@ -1,8 +1,8 @@
 using System.IO;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using PythonAILib.Common;
-using PythonAILib.Resources;
+using LibPythonAI.Resources;
 
 namespace LibPythonAI.Model.Folder {
     public class FolderManager {

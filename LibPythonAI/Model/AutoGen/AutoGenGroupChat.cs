@@ -1,8 +1,6 @@
-using System.Data.SQLite;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
+using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenGroupChat {

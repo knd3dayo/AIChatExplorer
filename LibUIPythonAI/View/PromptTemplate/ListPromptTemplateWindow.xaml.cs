@@ -1,6 +1,6 @@
 using System.Windows;
+using LibPythonAI.Model.Chat;
 using LibUIPythonAI.ViewModel.PromptTemplate;
-using PythonAILib.Model.Chat;
 
 namespace LibUIPythonAI.View.PromptTemplate {
     /// <summary>

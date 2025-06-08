@@ -1,4 +1,4 @@
-namespace PythonAILib.Resources {
+namespace LibPythonAI.Resources {
 
     public class PythonAILibStringResourcesEn : PythonAILibStringResources {
 
@@ -191,6 +191,32 @@ namespace PythonAILib.Resources {
 
         // GetRootContentFoldersExecute
         public override string GetRootContentFoldersExecute { get; } = "Execute GetRootContentFolders";
+
+        // UpdateContentFoldersExecute
+        public override string UpdateContentFoldersExecute { get; } = "Execute UpdateContentFolders";
+
+        // DeleteContentFoldersExecute
+        public override string DeleteContentFoldersExecute { get; } = "Execute DeleteContentFolders";
+
+        // GetAutoProcessRulesExecute
+        public override string GetAutoProcessRulesExecute { get; } = "Execute GetAutoProcessRules";
+        // UpdateAutoProcessRulesExecute
+        public override string UpdateAutoProcessRulesExecute { get; } = "Execute UpdateAutoProcessRules";
+
+        public override string DeleteAutoProcessRulesExecute { get; } = "Execute UpdateContentFolders";
+
+        // GetAutoProcessItemsExecute
+        public override string GetAutoProcessItemsExecute { get; } = "Execute UpdateContentFolders";
+
+        // UpdateAutoProcessItemsExecute
+        public override string UpdateAutoProcessItemsExecute { get; } = "Execute UpdateContentFolders";
+
+        // DeleteAutoProcessItemsExecute
+        public override string DeleteAutoProcessItemsExecute { get; } = "Execute UpdateContentFolders";
+
+
+
+
 
         // GetPromptItemsExecute
         public override string GetPromptItemsExecute { get; } = "Execute GetPromptItems";

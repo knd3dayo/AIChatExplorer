@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using LibPythonAI.Common;
+using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.Chat;
+using LibPythonAI.Resources;
 
 namespace LibPythonAI.PythonIF.Request {
     // リクエストと共に送信するコンテキスト情報
@@ -48,7 +49,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public SplitModeEnum SplitMode = SplitModeEnum.None;
 
-        public string SummarizePromptText = PythonAILib.Resources.PromptStringResource.Instance.SummarizePromptText;
+        public string SummarizePromptText = PromptStringResource.Instance.SummarizePromptText;
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {

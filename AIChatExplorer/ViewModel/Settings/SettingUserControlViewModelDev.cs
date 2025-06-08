@@ -1,7 +1,4 @@
-using System.Text;
 using System.Windows;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
 
 namespace AIChatExplorer.ViewModel.Settings {
     public partial class SettingUserControlViewModel {

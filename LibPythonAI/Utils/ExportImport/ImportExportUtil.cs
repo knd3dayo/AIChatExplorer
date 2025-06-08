@@ -1,14 +1,14 @@
 using System.IO;
 using System.Text.Json.Nodes;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Folder;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Utils.ExportImport {
     public class ImportExportUtil {
@@ -50,7 +50,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     SplitMode = (SplitModeEnum)Enum.Parse(typeof(SplitModeEnum), row[4]),
                     RAGMode =  (RAGModeEnum)Enum.Parse(typeof(RAGModeEnum), row[5])
                 };
-                promptItem.Save();
+                promptItem.SaveAsync();
             }
         }
 

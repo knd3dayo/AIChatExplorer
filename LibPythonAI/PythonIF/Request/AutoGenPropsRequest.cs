@@ -1,13 +1,8 @@
-using System.IO;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.PythonIF.Request {
     public class AutoGenPropsRequest {
 
 
@@ -25,33 +20,33 @@ namespace PythonAILib.Model.AutoGen {
         }
 
         // autogen_db_path
-        public string AutoGenDBPath { get; set; } 
+        public string AutoGenDBPath { get; set; }
         // venv_path
         public string VenvPath { get; set; }
         // work_dir
         public string WorkDir { get; set; }
 
         // tool_dir
-        public string ToolDir { get; set; } 
+        public string ToolDir { get; set; }
 
         // chat_type
-        public string ChatType { get; set; } 
+        public string ChatType { get; set; }
 
         // chat_name
-        public string ChatName { get; set; } 
+        public string ChatName { get; set; }
 
 
         // terminate_msg
-        public string TerminateMsg { get; set; } 
+        public string TerminateMsg { get; set; }
 
         // max_msg
-        public int MaxMsg { get; set; } 
+        public int MaxMsg { get; set; }
 
         // timeout
-        public int Timeout { get; set; } 
+        public int Timeout { get; set; }
 
         // SessionToken
-        public string SessionToken { get; set; } 
+        public string SessionToken { get; set; }
 
 
         // CreateEntriesDictList

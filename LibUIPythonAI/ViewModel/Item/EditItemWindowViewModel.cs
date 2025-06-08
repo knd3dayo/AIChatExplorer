@@ -2,14 +2,13 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Item {

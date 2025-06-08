@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.AutoProcess;
 
 namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {
@@ -19,6 +20,8 @@ namespace LibPythonAI.PythonIF.Request {
         public const string AUTOGEN_GROUP_CHAT_REQUEST_KEY = "autogen_group_chat_request";
         public const string AUTOGEN_LLM_CONFIG_REQUEST_KEY = "autogen_llm_config_request";
         public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
+        public const string AUTO_PROCESS_ITEMS_KEY = "auto_process_item_requests";
+        public const string AUTO_PROCESS_RULES_KEY = "auto_process_rule_requests";
         public const string PROMPT_ITEM_REQUESTS_KEY = "prompt_item_requests";
         public const string TAG_ITEM_REQUESTS_KEY = "tag_item_requests";
         public const string EMBEDDING_REQUEST_KEY = "embedding_request";
@@ -47,6 +50,11 @@ namespace LibPythonAI.PythonIF.Request {
         // VectorDBItemRequestInstance
         public VectorDBItemRequest? VectorDBItemRequestInstance { get; set; } = null;
 
+        // AutoProcessItemsInstance
+        public List<AutoProcessItemRequest> AutoProcessItemsInstance { get; set; } = [];
+
+        // AutoProcessRulesInstance
+        public List<AutoProcessRuleRequest> AutoProcessRulesInstance { get; set; } = [];
         // TagItemInstance
         public List<TagItem> TagItemsInstance { get; set; } = [];
 
@@ -115,6 +123,12 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (SessionToken != "") {
                 dict[SESSION_TOKEN_KEY] = SessionToken;
+            }
+            if (AutoProcessItemsInstance.Count > 0) {
+                dict[AUTO_PROCESS_ITEMS_KEY] = AutoProcessItemRequest.ToDictList(AutoProcessItemsInstance);
+            }
+            if (AutoProcessRulesInstance.Count > 0) {
+                dict[AUTO_PROCESS_RULES_KEY] = AutoProcessRuleRequest.ToDictList(AutoProcessRulesInstance);
             }
             if (PromptItemsInstance.Count > 0) {
                 dict[PROMPT_ITEM_REQUESTS_KEY] = PromptItemRequest.ToDictList(PromptItemsInstance);
