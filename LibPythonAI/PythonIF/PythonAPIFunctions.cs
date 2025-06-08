@@ -16,6 +16,7 @@ using LibPythonAI.Utils.Common;
 using SocketIOClient;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Resources;
+using LibPythonAI.Model.Search;
 
 namespace LibPythonAI.PythonIF {
 
@@ -121,6 +122,89 @@ namespace LibPythonAI.PythonIF {
                 throw new Exception(errorValue);
             }
         }
+
+        // SearchRule
+        public Task<List<SearchRule>> GetSearchRulesAsync() {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new();
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetSearchRulesExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{base_url}/get_search_rules";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                    // search_rulesを取得
+                    dynamic dictList = resultDict["search_rules"] ?? "[]";
+                    List<SearchRule> searchRules = [];
+                    foreach (var item in dictList) {
+                        // SearchRuleを取得
+                        SearchRule? searchRule = SearchRule.FromDict(item);
+                        if (searchRule != null) {
+                            searchRules.Add(searchRule);
+                        }
+                    }
+                    return searchRules;
+                });
+        }
+
+        public Task UpdateSearchRuleAsync(SearchRuleRequest request) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                SearchRuleRequestsInstance = [request]
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateSearchRulesExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{base_url}/update_search_rules";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                });
+        }
+
+        public Task DeleteSearchRuleAsync(SearchRuleRequest request) {
+            // RequestContainerを作成
+            RequestContainer requestContainer = new() {
+                SearchRuleRequestsInstance = [request]
+            };
+            // RequestContainerをJSON文字列に変換
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteSearchRulesExecute);
+            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+            // PostAsyncを実行する
+            string endpoint = $"{base_url}/delete_search_rules";
+            return PostAsync(endpoint, chatRequestContextJson)
+                .ContinueWith(task => {
+                    string resultString = task.Result;
+                    LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                    // resultStringからDictionaryに変換する。
+                    Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                    // Errorがある場合は例外をスローする
+                    if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                        throw new Exception(errorValue);
+                    }
+                });
+        }
+
 
         // AutoProcessItem
         public Task<List<AutoProcessItem>> GetAutoProcessItemsAsync() {

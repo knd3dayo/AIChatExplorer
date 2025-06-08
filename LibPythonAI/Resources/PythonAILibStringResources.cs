@@ -214,6 +214,15 @@ namespace LibPythonAI.Resources {
         // DeleteAutoProcessItemsExecute
         public virtual string DeleteAutoProcessItemsExecute { get; } = "自動処理アイテムを削除します";
 
+        // GetSearchRulesExecute
+        public virtual string GetSearchRulesExecute { get; } = "検索ルールを取得します";
+
+        // UpdateSearchRulesExecute
+        public virtual string UpdateSearchRulesExecute { get; } = "検索ルールを更新します";
+
+        // DeleteSearchRulesExecute
+        public virtual string DeleteSearchRulesExecute { get; } = "検索ルールを削除します";
+
 
 
         // GetPromptItemsExecute

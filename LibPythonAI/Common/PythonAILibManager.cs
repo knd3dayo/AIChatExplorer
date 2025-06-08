@@ -6,6 +6,7 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Model.Search;
 
 namespace LibPythonAI.Common {
     public class PythonAILibManager {
@@ -59,6 +60,8 @@ namespace LibPythonAI.Common {
                     // AutoProcessRuleの初期化
                     await AutoProcessRule.LoadItemsAsync();
 
+                    // SearchRuleの初期化
+                    await SearchRule.LoadItemsAsync();
 
                 });
             });

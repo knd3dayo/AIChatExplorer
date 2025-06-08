@@ -28,7 +28,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
             // 検索フォルダの親フォルダにこのフォルダを追加
 
             SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
-            SearchRule? searchConditionRule = new(new LibPythonAI.Data.SearchRuleEntity()) {
+            SearchRule? searchConditionRule = new() {
                 SearchFolder = clipboardFolder
             };
 
@@ -57,7 +57,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
             }
 
             SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(Folder);
-            searchConditionRule ??= new(new LibPythonAI.Data.SearchRuleEntity()) {
+            searchConditionRule ??= new() {
                 SearchFolder = Folder
             };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, afterUpdate);

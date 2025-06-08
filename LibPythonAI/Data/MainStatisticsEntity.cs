@@ -7,6 +7,7 @@ using LibPythonAI.Model.Statistics;
 
 namespace LibPythonAI.Data {
     public class MainStatisticsEntity {
+
         private static JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
@@ -29,17 +30,6 @@ namespace LibPythonAI.Data {
                 DailyStatisticsJson = JsonSerializer.Serialize(value, jsonSerializerOptions);
             }
 
-        }
-        // Equals , GetHashCodeのオーバーライド
-        public override bool Equals(object? obj) {
-            if (obj == null || GetType() != obj.GetType()) {
-                return false;
-            }
-            MainStatisticsEntity entity = (MainStatisticsEntity)obj;
-            return Id == entity.Id;
-        }
-        public override int GetHashCode() {
-            return Id.GetHashCode();
         }
     }
 }

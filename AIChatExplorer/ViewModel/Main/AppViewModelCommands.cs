@@ -230,10 +230,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Process to display the search window
         public static void OpenSearchWindowCommandExecute(SearchFolderViewModel searchFolderViewModel, System.Action action) {
-            SearchRule? searchConditionRule = new(
-                new LibPythonAI.Data.SearchRuleEntity() {
+            SearchRule? searchConditionRule = new() {
                     SearchFolderId = searchFolderViewModel.Folder.Id,
-                });
+                };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);
 
         }

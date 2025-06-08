@@ -6,6 +6,7 @@ using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Search;
 
 namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
@@ -20,6 +21,13 @@ namespace LibPythonAI.PythonIF {
         public Task UpdatePromptItemAsync(PromptItemRequest request);
 
         public Task DeletePromptItemAsync(PromptItemRequest request);
+
+        // SearchRule
+        public Task<List<SearchRule>> GetSearchRulesAsync();
+
+        public Task UpdateSearchRuleAsync(SearchRuleRequest request);
+
+        public Task DeleteSearchRuleAsync(SearchRuleRequest request);
 
         // AutoProcessItem
         public Task<List<AutoProcessItem>> GetAutoProcessItemsAsync();

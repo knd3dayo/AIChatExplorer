@@ -13,26 +13,27 @@ namespace LibPythonAI.PythonIF.Request {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
 
-        public const string AUTOGEN_PROPS_KEY = "autogen_props";
+        public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
+        public const string AUTO_PROCESS_ITEMS_KEY = "auto_process_item_requests";
+        public const string AUTO_PROCESS_RULES_KEY = "auto_process_rule_requests";
+        public const string SEARCH_RULE_REQUESTS_KEY = "search_rule_requests";
+        public const string PROMPT_ITEM_REQUESTS_KEY = "prompt_item_requests";
+        public const string TAG_ITEM_REQUESTS_KEY = "tag_item_requests";
+        public const string VECTOR_DB_ITEM_REQUEST_KEY = "vector_db_item_request";
+        public const string EMBEDDING_REQUEST_KEY = "embedding_request";
         public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
+        public const string CHAT_REQUEST_KEY = "chat_request";
+        public const string CHAT_REQUEST_CONTEXT_KEY = "chat_request_context";
+        public const string TOKEN_COUNT_REQUEST_KEY = "token_count_request";
+        public const string AUTOGEN_PROPS_KEY = "autogen_props";
         public const string AUTOGEN_TOOL_REQUEST_KEY = "autogen_tool_request";
         public const string AUTOGEN_AGENT_REQUEST_KEY = "autogen_agent_request";
         public const string AUTOGEN_GROUP_CHAT_REQUEST_KEY = "autogen_group_chat_request";
         public const string AUTOGEN_LLM_CONFIG_REQUEST_KEY = "autogen_llm_config_request";
-        public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
-        public const string AUTO_PROCESS_ITEMS_KEY = "auto_process_item_requests";
-        public const string AUTO_PROCESS_RULES_KEY = "auto_process_rule_requests";
-        public const string PROMPT_ITEM_REQUESTS_KEY = "prompt_item_requests";
-        public const string TAG_ITEM_REQUESTS_KEY = "tag_item_requests";
-        public const string EMBEDDING_REQUEST_KEY = "embedding_request";
+        public const string SESSION_TOKEN_KEY = "session_token";
         public const string EXCEL_REQUEST_KEY = "excel_request";
         public const string FILE_REQUEST_KEY = "file_request";
         public const string WEB_REQUEST_KEY = "web_request";
-        public const string CHAT_REQUEST_KEY = "chat_request";
-        public const string CHAT_REQUEST_CONTEXT_KEY = "chat_request_context";
-        public const string TOKEN_COUNT_REQUEST_KEY = "token_count_request";
-        public const string VECTOR_DB_ITEM_REQUEST_KEY = "vector_db_item_request";
-        public const string SESSION_TOKEN_KEY = "session_token";
         public string SessionToken { get; set; } = "";
 
         public ChatRequestContext? RequestContextInstance { get; set; }
@@ -55,6 +56,10 @@ namespace LibPythonAI.PythonIF.Request {
 
         // AutoProcessRulesInstance
         public List<AutoProcessRuleRequest> AutoProcessRulesInstance { get; set; } = [];
+
+        // SearchRuleRequestsInstance
+        public List<SearchRuleRequest> SearchRuleRequestsInstance { get; set; } = [];
+
         // TagItemInstance
         public List<TagItem> TagItemsInstance { get; set; } = [];
 
@@ -132,6 +137,9 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (PromptItemsInstance.Count > 0) {
                 dict[PROMPT_ITEM_REQUESTS_KEY] = PromptItemRequest.ToDictList(PromptItemsInstance);
+            }
+            if (SearchRuleRequestsInstance.Count > 0) {
+                dict[SEARCH_RULE_REQUESTS_KEY] = SearchRuleRequest.ToDictList(SearchRuleRequestsInstance);
             }
             if (TagItemsInstance.Count > 0) {
                 dict[TAG_ITEM_REQUESTS_KEY] = TagItem.ToDictList(TagItemsInstance);

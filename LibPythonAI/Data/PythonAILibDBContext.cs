@@ -14,9 +14,6 @@ namespace LibPythonAI.Data {
 
         public DbSet<ContentItemEntity> ContentItems { get; set; }
 
-        // SearchRuleEntity
-        public DbSet<SearchRuleEntity> SearchRules { get; set; }
-
 
         // MainStatisticsEntity
         public DbSet<MainStatisticsEntity> MainStatistics { get; set; }

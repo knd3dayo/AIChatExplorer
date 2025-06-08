@@ -214,7 +214,13 @@ namespace LibPythonAI.Resources {
         // DeleteAutoProcessItemsExecute
         public override string DeleteAutoProcessItemsExecute { get; } = "Execute UpdateContentFolders";
 
+        // GetSearchRulesExecute
+        public override string GetSearchRulesExecute { get; } = "Execute GetSearchRules";
+        // UpdateSearchRulesExecute
+        public override string UpdateSearchRulesExecute { get; } = "Execute UpdateSearchRules";
 
+        // DeleteSearchRulesExecute
+        public override string DeleteSearchRulesExecute { get; } = "Execute DeleteSearchRules";
 
 
 
