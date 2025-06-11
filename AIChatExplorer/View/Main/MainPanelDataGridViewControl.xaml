@@ -29,6 +29,7 @@
             Grid.Row="0"
             HorizontalAlignment="Stretch"
             AutoGenerateColumns="False"
+            Background="White"
             BorderThickness="1"
             CanUserAddRows="True"
             CanUserDeleteRows="False"

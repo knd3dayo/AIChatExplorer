@@ -39,6 +39,7 @@
         <TreeView
             x:Name="FolderTreeView"
             Grid.Column="0"
+            Background="White"
             ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
