@@ -72,7 +72,10 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <Grid Grid.Row="1" Margin="10,10,10,10">
+        <Grid
+            Grid.Row="1"
+            Margin="10,10,10,10"
+            Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />

@@ -217,7 +217,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new(async (window) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -250,8 +250,10 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 LogWrapper.Error(CommonStringResources.Instance.EnterDescription);
                 return;
             }
-            // LogWrapper
-            promptItem.SaveAsync();
+
+            await promptItem.SaveAsync();
+
+            await PromptItem.LoadItemsAsync();
 
             AfterUpdate(ItemViewModel);
 

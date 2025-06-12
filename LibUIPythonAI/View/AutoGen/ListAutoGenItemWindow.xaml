@@ -70,6 +70,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.GroupChat}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -112,6 +113,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.Agent}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -152,6 +154,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.Tool}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -197,6 +200,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.LLMConfig}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
