@@ -3,6 +3,7 @@ using LibUIPythonAI.Resource;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Settings;
 using AIChatExplorer.ViewModel.Main;
+using LibPythonAI.PythonIF;
 
 namespace AIChatExplorer {
     /// <summary>
@@ -11,22 +12,10 @@ namespace AIChatExplorer {
     public partial class StartupWindow : Window {
         public StartupWindow() {
             InitializeComponent();
-            // 言語設定
-            // 文字列リソースの言語設定
-            CommonStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+            StartupWindowViewModel startupWindowViewModel = new ();
+            this.DataContext = startupWindowViewModel;
 
-            // DataContextにViewModelを設定
-            MainWindowViewModel mainWindowViewModel = new();
-            // MainWindowを表示
-            MainWindow mainWindow = new() {
-                DataContext = mainWindowViewModel
-            };
-            // mainWindowViewModel.Init();
-
-            mainWindow.Show();
-
-            // このウィンドウを閉じる
-            this.Close();
+            startupWindowViewModel.Startup(this);
         }
     }
 }

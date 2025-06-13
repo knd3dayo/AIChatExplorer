@@ -111,15 +111,6 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // PythonAILibManagerの初期化
         private static void InitPythonAILibManager() {
-            //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
-            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.ProxyURL)) {
-                Environment.SetEnvironmentVariable("HTTP_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
-                Environment.SetEnvironmentVariable("HTTPS_PROXY", AIChatExplorerConfig.Instance.ProxyURL);
-            }
-            // 環境変数NO_PROXYの設定
-            if (!string.IsNullOrEmpty(AIChatExplorerConfig.Instance.NoProxyList)) {
-                Environment.SetEnvironmentVariable("NO_PROXY", AIChatExplorerConfig.Instance.NoProxyList);
-            }
 
             AIChatExplorerPythonAILibConfigParams configParams = new();
             PythonAILibManager.Init(configParams);
@@ -226,7 +217,6 @@ namespace AIChatExplorer.ViewModel.Main {
         });
 
 
-        #region Window全体のInputBinding用のコマンド
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
             // 子フォルダを作成
@@ -259,10 +249,6 @@ namespace AIChatExplorer.ViewModel.Main {
 
             });
         });
-
-        #endregion
-
-
     }
 
 }

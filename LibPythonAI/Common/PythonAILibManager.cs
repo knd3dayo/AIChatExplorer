@@ -27,6 +27,17 @@ namespace LibPythonAI.Common {
         /// </summary>
         /// <param name="parmas"></param>
         public static void Init(IPythonAILibConfigParams parmas) {
+            //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
+            string proxyUrl = parmas.GetHttpsProxy();
+            if (!string.IsNullOrEmpty(proxyUrl)) {
+                Environment.SetEnvironmentVariable("HTTP_PROXY", proxyUrl);
+                Environment.SetEnvironmentVariable("HTTPS_PROXY", proxyUrl);
+            }
+            // 環境変数NO_PROXYの設定
+            string noProxy = parmas.GetNoProxy();
+            if (!string.IsNullOrEmpty(noProxy)) {
+                Environment.SetEnvironmentVariable("NO_PROXY", noProxy);
+            }
 
             Instance = new PythonAILibManager(parmas);
 

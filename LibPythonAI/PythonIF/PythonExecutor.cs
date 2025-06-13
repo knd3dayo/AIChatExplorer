@@ -53,24 +53,30 @@ namespace LibPythonAI.PythonIF {
             }
         }
 
+        public static bool CheckPythonEnvironment() {
+            // Check if Python is installed and accessible
+            bool checkPython = ProcessUtil.CheckCommand("python", "-V");
+            if (!checkPython) {
+                LogWrapper.Error(StringResources.PythonNotFound);
+                return false;
+            }
+            // Check if uv is installed and accessible
+            bool checkUv = ProcessUtil.CheckCommand("uv", "-V");
+            if (!checkUv) {
+                LogWrapper.Error(StringResources.UvNotFound);
+                return false;
+            }
+            return true;
+        }
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess) {
 
             LogWrapper.Info("Internal API started");
 
-            // python -V を実行してPythonの実行が可能か確認する。
-            bool checkPython = ProcessUtil.CheckCommand("python", "-V");
-            if (!checkPython) {
-                LogWrapper.Error(StringResources.PythonNotFound);
+            // 環境チェック
+            if (!CheckPythonEnvironment()) {
                 return;
             }
-            // uv -V を実行してuvの実行が可能か確認する。
-            bool checkUv = ProcessUtil.CheckCommand("uv", "-V");
-            if (!checkUv) {
-                LogWrapper.Error(StringResources.UvNotFound);
-                return;
-            }
-
 
             // 自分自身のプロセスIDを取得
             int currentProcessId = Environment.ProcessId;
@@ -122,21 +128,15 @@ namespace LibPythonAI.PythonIF {
             OpenAIProperties openAIProps = configPrams.GetOpenAIProperties();
             if (!string.IsNullOrEmpty(openAIProps.OpenAIKey)) {
                 envVars["OPENAI_API_KEY"] = openAIProps.OpenAIKey;
-            } else {
-                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAIKey)}");
             }
 
             if (openAIProps.AzureOpenAI) {
                 envVars["AZURE_OPENAI"] = "true";
                 if (!string.IsNullOrEmpty(openAIProps.AzureOpenAIAPIVersion)) {
                     envVars["AZURE_OPENAI_API_VERSION"] = openAIProps.AzureOpenAIAPIVersion;
-                } else {
-                    throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.AzureOpenAIAPIVersion)}");
                 }
                 if (!string.IsNullOrEmpty(openAIProps.AzureOpenAIEndpoint)) {
                     envVars["AZURE_OPENAI_ENDPOINT"] = openAIProps.AzureOpenAIEndpoint;
-                } else {
-                    throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.AzureOpenAIEndpoint)}");
                 }
             } else {
                 envVars["AZURE_OPENAI"] = "false";
@@ -147,14 +147,10 @@ namespace LibPythonAI.PythonIF {
             // OPENAI_COMPLETION_MODEL
             if (!string.IsNullOrEmpty(openAIProps.OpenAICompletionModel)) {
                 envVars["OPENAI_COMPLETION_MODEL"] = openAIProps.OpenAICompletionModel;
-            } else {
-                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAICompletionModel)}");
             }
             // OPENAI_EMBEDDING_MODEL
             if (!string.IsNullOrEmpty(openAIProps.OpenAIEmbeddingModel)) {
                 envVars["OPENAI_EMBEDDING_MODEL"] = openAIProps.OpenAIEmbeddingModel;
-            } else {
-                throw new ArgumentException($"{StringResources.PropertyNotSet} {nameof(openAIProps.OpenAIEmbeddingModel)}");
             }
 
             // Proxy settings

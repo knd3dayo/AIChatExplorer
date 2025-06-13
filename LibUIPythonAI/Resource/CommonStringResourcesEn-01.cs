@@ -144,30 +144,9 @@ namespace LibUIPythonAI.Resource {
         #region Prompt Menu
         public override string PromptMenu { get; } = "Prompt Menu";
 
-        // Generate Title
-        public override string GenerateTitle { get; } = "Generate Title";
 
         // Background Information
         public override string BackgroundInformation { get; } = "Background Information";
-
-        // Generate Background Info
-        public override string GenerateBackgroundInfo { get; } = "Generate Background Info";
-
-        // Generate Summary
-        public override string GenerateSummary { get; } = "Generate Summary";
-        // TaskList
-        public override string TasksList { get; } = "Task List";
-
-        // "Generate the list of Tasks"
-        public override string GenerateTasks { get; } = "Generate the list of Tasks";
-
-        // "The list of Tasks has been generated"
-        public override string GeneratedTasks { get; } = "The list of Tasks has been generated";
-
-        // Checks the document reliability
-        public override string CheckDocumentReliability { get; } = "Checks the document reliability";
-        // "Checked the document reliability"
-        public override string CheckedDocumentReliability { get; } = "Checked the document reliability";
 
         #endregion
 
@@ -343,12 +322,6 @@ namespace LibUIPythonAI.Resource {
                 return $"{AppName} - {EditAutoProcessRule}";
             }
         }
-        // List of Python Scripts
-        public override string ListPythonScriptWindowTitle {
-            get {
-                return $"{AppName} - {ListPythonScript}";
-            }
-        }
 
         // Setting
         public override string SettingWindowTitle {
@@ -363,36 +336,13 @@ namespace LibUIPythonAI.Resource {
             }
         }
 
-        // Edit Git RAG Source
-        public override string EditGitRagSourceWindowTitle {
-            get {
-                return $"{AppName} - {EditGitRagSource}";
-            }
-        }
-        // List of Git RAG Sources
-        public override string ListGitRagSourceWindowTitle {
-            get {
-                return $"{AppName} - List of Git RAG Sources";
-            }
-        }
         // List of Vector DBs
         public override string ListVectorDBWindowTitle {
             get {
                 return $"{AppName} - {ListVectorDB}";
             }
         }
-        // Edit Vector DB
-        public override string EditVectorDBWindowTitle {
-            get {
-                return $"{AppName} - {EditVectorDB}";
-            }
-        }
-        // Select Commit
-        public override string SelectCommitWindowTitle {
-            get {
-                return $"{AppName} - Select Commit";
-            }
-        }
+
         // QA Chat
         public override string QAChatWindowTitle {
             get {
@@ -407,66 +357,22 @@ namespace LibUIPythonAI.Resource {
             }
         }
 
-        // Log Display
-        public override string LogWindowTitle {
-            get {
-                return $"{AppName} - Log Display";
-            }
-        }
         // Prompt Generation for Screenshot Check
         public override string ScreenShotCheckPromptWindowTitle {
             get {
                 return $"{AppName} - Prompt Generation for Screenshot Check";
             }
         }
-        // --- namespace WpfAppCommon.PythonIF ---
 
         // --- DefaultClipboardController.cs ---
         public override string AutoProcessing { get; } = "Auto processing in progress";
         public override string AddItemFailed { get; } = "Failed to add clipboard item";
 
-
         // Execute automatic document reliability check process
         public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
-        // --- EmptyPythonFunctions.cs ---
-        public override string PythonNotEnabledMessage { get; } = "Python is not enabled. Please set PythonExecute in the settings screen.";
-
-        // --- PythonExecutor.cs ---
-        public override string TemplateScript { get; } = "python/script_template.py";
-
-        public override string WpfAppCommonUtilsScript { get; } = "python/ai_app.py";
-
-        public override string TemplateScriptNotFound { get; } = "Template file not found";
 
         // --- PythonNetFunctions.cs ---
         public override string PythonDLLNotFound { get; } = "Python DLL not found. Please check the path of Python DLL:";
-        public override string PythonInitFailed { get; } = "Failed to initialize Python";
-
-        public override string FunctionNotFound(string function_name) {
-            return $"Function {function_name} not found in the Python script file";
-        }
-        public override string PythonExecuteError { get; } = "Error occurred during execution of Python script";
-
-        public override string ModuleNotFound { get; } = "Python module not found. Please install the module with pip install <module name>.";
-
-        public override string PythonExecuteErrorDetail(Exception e) {
-            return $"Message:\n{e.Message}\nStack Trace:\n{e.StackTrace}";
-        }
-        public override string SpacyModelNameNotSet { get; } = "Spacy model name is not set. Please set SPACY_MODEL_NAME in the settings screen";
-
-        public override string MaskingResultNotFound { get; } = "Masking result not found";
-        public override string MaskingResultFailed { get; } = "Failed to retrieve masked string";
-
-        public override string UnmaskingResultNotFound { get; } = "Unmasking result not found";
-        public override string UnmaskingResultFailed { get; } = "Failed to retrieve unmasked string";
-
-        public override string ImageByteFailed { get; } = "Failed to convert image to byte array";
-
-        public override string VectorDBItemsEmpty { get; } = "VectorDBItems is empty";
-
-        public override string OpenAIResponseEmpty { get; } = "OpenAI response is empty";
-
-        public override string FileNotFound { get; } = "File not found";
 
         // -- MainWindowDataGrid1 --
         public override string UpdateDate { get; } = "Update Date";
@@ -521,8 +427,6 @@ namespace LibUIPythonAI.Resource {
         public override string ExecuteOpenAI { get; } = "Execute OpenAI prompt";
 
         public override string OpenAIMode { get; } = "OpenAI execution mode";
-
-        public override string StoreVectorDB { get; } = "Store in VectorDB";
 
         public override string TargetFolderFullPath { get; } = "Target Folder (Full Path)";
 
@@ -644,8 +548,6 @@ namespace LibUIPythonAI.Resource {
         public override string OpenAsNewFile { get; } = "Open as new file";
         public override string OpenFolder { get; } = "Open folder";
         public override string ExtractText { get; } = "Extract text";
-        public override string OpenImage { get; } = "Open image";
-        public override string ExtractTextFromImage { get; } = "Extract text from image";
         public override string MaskData { get; } = "Mask data";
         public override string ClickHereToOpenTheTagEditScreen { get; } = "Click here to open the tag edit screen";
 
@@ -719,9 +621,6 @@ namespace LibUIPythonAI.Resource {
         public override string ExperimentalFunction1 { get; } = "Experimental function 1";
         public override string VectorDBFolder { get; } = "Vector DB (folder)";
 
-        // ここをクリックしてベクトルDB(フォルダ)を追加
-        public override string ClickHereToAddVectorDBFolder { get; } = "Click here to add Vector DB (Folder)";
-
         // ベクトルDB選択
         public override string SelectVectorDB { get; } = "Select Vector DB";
 
@@ -730,7 +629,6 @@ namespace LibUIPythonAI.Resource {
 
         public override string ExcludeFromList { get; } = "Exclude from list";
         public override string VectorDB { get; } = "Vector DB";
-        public override string VectorDBExternal { get; } = "Vector DB (external)";
 
         // CollectionName
         public override string CollectionName { get; } = "Collection Name";
@@ -739,8 +637,6 @@ namespace LibUIPythonAI.Resource {
 
         // ベクトルDB検索結果の最大値
         public override string VectorDBSearchResultMax { get; } = "Maximum value of Vector DB search results";
-        public override string AdditionalItem { get; } = "Additional Item";
-        public override string ClickHereToPasteTheSelectedItem { get; } = "Click here to paste the selected item";
         public override string ImageFile { get; } = "Image file";
         public override string ClickHereToAddImageFile { get; } = "Click here to add image file";
         public override string Chat { get; } = "Chat";
@@ -753,10 +649,6 @@ namespace LibUIPythonAI.Resource {
         public override string FolderEdited { get; } = "Folder edited";
         public override string Reloaded { get; } = "Reloaded";
         public override string SelectFilePlease { get; } = "Select file, please";
-        public override string SelectFolderPlease { get; } = "Select folder, please";
-        public override string FolderExported { get; } = "Folder exported";
-        public override string FolderImported { get; } = "Folder imported";
-        public override string RootFolderCannotBeDeleted { get; } = "Root folder cannot be deleted";
         public override string Confirm { get; } = "Confirm";
         public override string ConfirmDeleteFolder { get; } = "Confirm delete folder?";
         public override string FolderDeleted { get; } = "Folder deleted";
@@ -772,22 +664,9 @@ namespace LibUIPythonAI.Resource {
         public override string SavedChatResult { get; } = "Chat result saved";
 
         // --- ApplicationItemViewModel ---
-
-        public override string MainWindowViewModelIsNull { get; } = "MainWindowViewModel is null";
-
-        // TitleGenerationInProgress
-        public override string TitleGenerationInProgress { get; } = "Title generation in progress";
-
-        public override string TitleGenerationCompleted { get; } = "Generated title information";
         public override string GenerateBackgroundInformation { get; } = "Generate background information";
-        public override string GeneratedBackgroundInformation { get; } = "Generated background information";
-        public override string GenerateSummary2 { get; } = "Generate summary";
-        public override string GeneratedSummary { get; } = "Generated summary";
 
         // Other prompts
-        public override string OtherPrompts { get; } = "Other Prompts";
-        public override string GenerateVectorInProgress { get; } = "Generate vector";
-        public override string CannotExtractTextForNonImageContent { get; } = "Cannot extract text for non-image content";
         public override string EnterANumber { get; } = "Enter a number";
         public override string FolderNotSelected { get; } = "Folder not selected";
         public override string EnterRuleName { get; } = "Enter rule name";
@@ -797,34 +676,24 @@ namespace LibUIPythonAI.Resource {
         public override string CannotCopyOrMoveToTheSameFolder { get; } = "Cannot copy or move to the same folder";
         public override string DetectedAnInfiniteLoopInCopyMoveProcessing { get; } = "Detected an infinite loop in copy/move processing";
         public override string SelectPromptTemplate { get; } = "Select prompt template";
-        public override string SelectPythonScript { get; } = "Select Python script";
-        public override string CannotCopyOrMoveToNonStandardFolders { get; } = "Cannot copy or move to non-standard folders";
-        public override string RootFolderViewModelIsNull { get; } = "RootFolderViewModel is null";
 
         // --- EditPythonScriptWindowViewModel ---
         public override string EnterDescription { get; } = "Enter description";
 
         // --- FolderEditWindowViewModel ---
-        public override string FolderNotSpecified { get; } = "Folder not specified";
         public override string EnterFolderName { get; } = "Enter folder name";
 
         // --- FolderSelectWindowViewModel ---
-        public override string FolderSelectWindowViewModelInstanceNotFound { get; } = "Error occurred. FolderSelectWindowViewModel instance not found";
         public override string SelectedFolderNotFound { get; } = "Error occurred. Selected folder not found";
 
         // --- ListAutoProcessRuleWindowViewModel ---
         public override string AutoProcessRuleNotSelected { get; } = "Auto process rule not selected";
         public override string ConfirmDelete { get; } = "Confirm delete";
-        public override string SavedSystemCommonSettings { get; } = "Saved system common settings";
-        public override string NoChangesToSystemCommonSettings { get; } = "No changes to system common settings";
 
         // --- ListPythonScriptWindowViewModel ---
         public override string Execute { get; } = "Execute";
-        public override string SelectScript { get; } = "Select script";
-
         // --- SearchWindowViewModel ---
         public override string SearchFolder { get; } = "Search folder";
-        public override string Standard { get; } = "Standard";
         public override string SearchConditionRuleIsNull { get; } = "Search condition rule is null";
         public override string NoSearchConditions { get; } = "No search conditions";
 
@@ -832,9 +701,7 @@ namespace LibUIPythonAI.Resource {
         public override string TagIsEmpty { get; } = "Tag is empty";
         public override string TagAlreadyExists { get; } = "Tag already exists";
 
-        #region  ApplicationItemViewModelCommands
         // **********************************************************************************
-        public override string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "Display mode will change when you restart the application";
         public override string Information { get; } = "Information";
         public override string ConfirmExit { get; } = "Confirm exit";
 
@@ -844,10 +711,6 @@ namespace LibUIPythonAI.Resource {
 
         // TextExtractionCompleted
         public override string TextExtractionCompleted { get; } = "Text extraction completed";
-
-
-
-        #endregion
 
         public override string Cut { get; } = "Cut";
         public override string Copied { get; } = "Copied";
@@ -859,8 +722,6 @@ namespace LibUIPythonAI.Resource {
         // --- ImageCHat ---
         public override string ConfirmTheFollowingSentencesAreCorrectOrNot { get; } = "Confirm if the following sentences are correct or not";
         public override string NoImageFileSelected { get; } = "No image file selected";
-        public override string SendPrompt { get; } = "Send prompt";
-        public override string ImageFileName { get; } = "Image file name";
         public override string ErrorOccurred { get; } = "Error occurred";
         public override string SelectImageFilePlease { get; } = "Select image file";
         public override string AllFiles { get; } = "All files";
@@ -871,32 +732,10 @@ namespace LibUIPythonAI.Resource {
 
         // -- ListPromptTemplateWindow -- 
         public override string NewPromptTemplate { get; } = "New prompt template";
-        public override string RAG { get; } = "RAG";
-
-        // -- DevFeatures.cs
-        public override string CannotMaskNonTextContent { get; } = "Cannot mask non-text content";
-        public override string MaskedData { get; } = "Masked data";
-        public override string RestoreMaskingData { get; } = "Restore masking data";
-        public override string CannotGetImage { get; } = "Cannot get image";
-
-        // -- ScriptAutoProcessItem.cs --
-        public override string ExecutedPythonScript { get; } = "Executed Python script";
-
-        // -- SystemAutoProcessItem.cs --
-        public override string AutoProcessItemNotFound { get; } = "Auto process item not found";
-
-        // -- EnumDescription.cs --
-        public override string NotEnumType { get; } = "Not enum type";
-
-        // --- WindowsNotificationController.cs ---
-        public override string AccessDenied { get; } = "Access denied";
 
         // --- EditPromptItemWindowViewModel ---
         public override string EnterName { get; } = "Enter name";
 
-        // --- EditRAGSourceWindowViewModel ---
-        public override string EditRAGSource { get; } = "Edit RAG source";
-        public override string ItemViewModelIsNull { get; } = "ItemViewModel is null";
 
         // EditVectorDBWindowViewModel
         public override string OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported { get; } = "Only Chroma (in-memory) vector DB type is currently supported";
@@ -909,19 +748,6 @@ namespace LibUIPythonAI.Resource {
         public override string ConfirmDeleteSelectedVectorDB { get; } = "Confirm delete selected vector DB";
         public override string SelectVectorDBPlease { get; } = "Select vector DB";
 
-        // RAGManagementWindowViewModel
-        public override string SelectRAGSourceToEdit { get; } = "Select RAG source to edit";
-        public override string SelectRAGSourceToDelete { get; } = "Select RAG source to delete";
-        public override string ConfirmDeleteSelectedRAGSource { get; } = "Confirm delete selected RAG source";
-        public override string SelectCommitPlease { get; } = "Select commit please";
-        public override string SelectTarget { get; } = "Select target";
-        public override string ProcessedFileCount { get; } = "Processed file count";
-        public override string CreatingIndex { get; } = "Creating index";
-        public override string Completed { get; } = "Completed";
-        public override string SkipUnsupportedFileType { get; } = "Skip unsupported file type";
-        public override string Failed { get; } = "Failed";
-        public override string IndexCreationCompleted { get; } = "Index creation completed";
-        public override string IndexCreationInterrupted { get; } = "Index creation interrupted";
         public override string FailedToSendChat { get; } = "Failed to send chat";
 
         public override string PythonSettingCheck { get; } = "Check Python Settings";
@@ -954,25 +780,8 @@ namespace LibUIPythonAI.Resource {
 
         public override string Application { get; } = "Application";
         public override string ChatHistory { get; } = "Chat History";
-        public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
-        public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";
-
-        // 自動処理を適用しました
-        public override string AutoProcessingApplied { get; } = "Auto Processing Applied";
-        public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
-        public override string CreationDateTime { get; } = "Creation Date Time";
-        public override string SourceAppName { get; } = "Source App Name";
-        public override string Pinned { get; } = "Pinned";
-        public override string CannotGetFolder { get; } = "Cannot Get Folder";
-        public override string FailedToRunFile { get; } = "Failed to Run File";
-        public override string OpenAsTextFile { get; } = "Open as Text File";
         public override string ChatItem { get; } = "Chat Item";
         public override string ExportTheFollowingItems { get; } = "Export the Following Items";
-        public override string WorkingDirectory { get; } = "Working Directory";
-        public override string RepositoryURL { get; } = "Repository URL";
-        public override string LastIndexedCommit { get; } = "Last Indexed Commit";
-        public override string NewRAGSource { get; } = "New RAG Source";
-
         public override string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";
         public override string ExampleGeneralVectorDB { get; } = "Example: General Vector DB for Searching Past Documents Based on User Questions";
         public override string DocumentChunkSize { get; } = "Document Chunk Size";
@@ -985,7 +794,6 @@ namespace LibUIPythonAI.Resource {
         public override string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";
         public override string SQLite3LocationForDocStore { get; } = "SQLite3 Location for DocStore";
         public override string ExampleSQLite3Location { get; } = "Example: sqlite:///C:\\Users\\Username\\sqlite3.db";
-        public override string DocumentChunkSizeForMultiVectorRetriever { get; } = "Document Chunk Size for MultiVectorRetriever";
         public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
         public override string ClearChatContents { get; } = "Clear Chat Contents";
@@ -996,9 +804,6 @@ namespace LibUIPythonAI.Resource {
         public override string ReloadContent { get; } = "Reload Content";
 
         public override string ExtractedText { get; } = "Extracted Text";
-
-        // タブ削除
-        public override string DeleteTab { get; } = "Delete Tab";
 
         // デバッグ用のコマンド生成
         public override string GenerateDebugCommand { get; } = "Generate Debug Command";
@@ -1021,5 +826,9 @@ namespace LibUIPythonAI.Resource {
         // タイトルなし
         public override string NoTitle { get; } = "No Title";
 
+        // サマリー
+        public override string Summary { get; } = "Summary";
+
+        
     }
 }
