@@ -57,7 +57,7 @@ namespace LibPythonAI.Utils.Python {
         // Chatを実行してリストの結果を取得する
         public static async Task<List<string>> CreateListChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
 
-            string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
+            string promptText = PromptStringResourceJa.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
             ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
@@ -117,7 +117,7 @@ namespace LibPythonAI.Utils.Python {
         public static async Task<string> ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
             ChatRequest chatRequest = new();
             // Normal Chatを実行
-            chatRequestContext.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
+            chatRequestContext.PromptTemplateText = PromptStringResourceJa.Instance.ExtractTextRequest;
             chatRequest.ContentText = "";
             chatRequest.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
             if (chatRequest.ImageURLs.Count == 0) {

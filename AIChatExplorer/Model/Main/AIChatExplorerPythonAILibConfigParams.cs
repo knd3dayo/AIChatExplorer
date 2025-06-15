@@ -24,10 +24,10 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.PythonVenvPath;
         }
         public string GetAppDataPath() {
-            return AIChatExplorerConfig.Instance.AppDataFolder;
+            return AIChatExplorerConfig.Instance.AppDataPath;
         }
         public string GetContentOutputPath() {
-            return Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "content_output");
+            return Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "content_output");
         }
 
         public OpenAIProperties GetOpenAIProperties() {
@@ -45,7 +45,7 @@ namespace AIChatExplorer.Model.Main {
 
         public string GetDBPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
             string dbPath = Path.Combine(appDataPath, "clipboard.db");
             return dbPath;
@@ -53,7 +53,7 @@ namespace AIChatExplorer.Model.Main {
 
         public string GetMainDBPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
             string dbPath = Path.Combine(appDataPath, "client", "main_db");
             if (!Directory.Exists(dbPath)) {
@@ -64,7 +64,7 @@ namespace AIChatExplorer.Model.Main {
         }
         public string GetPythonLibPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
             string path = Path.Combine(appDataPath, "python_lib");
             return path;
@@ -72,7 +72,7 @@ namespace AIChatExplorer.Model.Main {
         }
 
         public string GetSystemVectorDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "vector_db");
+            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
             if (!Directory.Exists(vectorDBDir)) {
                 Directory.CreateDirectory(vectorDBDir);
             }
@@ -81,7 +81,7 @@ namespace AIChatExplorer.Model.Main {
         }
 
         public string GetSystemDocDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "vector_db");
+            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
             if (!Directory.Exists(vectorDBDir)) {
                 Directory.CreateDirectory(vectorDBDir);
             }
@@ -91,7 +91,7 @@ namespace AIChatExplorer.Model.Main {
 
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {
-            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen", "work");
+            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "work");
             // Create directory if it does not exist
             if (!Directory.Exists(workDir)) {
                 Directory.CreateDirectory(workDir);
@@ -100,7 +100,7 @@ namespace AIChatExplorer.Model.Main {
         }
         // AutoGenToolDir
         public string GetAutoGenToolDir() {
-            string toolDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen", "tools");
+            string toolDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "tools");
             // Create directory if it does not exist
             if (!Directory.Exists(toolDir)) {
                 Directory.CreateDirectory(toolDir);

@@ -49,7 +49,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public SplitModeEnum SplitMode = SplitModeEnum.None;
 
-        public string SummarizePromptText = PromptStringResource.Instance.SummarizePromptText;
+        public string SummarizePromptText = PromptStringResourceJa.Instance.SummarizePromptText;
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {

@@ -550,5 +550,17 @@ namespace AIChatExplorer.Properties {
                 this["MarkdownView"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AppDataPath {
+            get {
+                return ((string)(this["AppDataPath"]));
+            }
+            set {
+                this["AppDataPath"] = value;
+            }
+        }
     }
 }

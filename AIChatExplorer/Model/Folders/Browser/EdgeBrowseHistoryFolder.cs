@@ -11,7 +11,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryFolder : ApplicationFolder {
 
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
-        public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "edge");
+        public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "edge");
         // コンストラクタ
         public EdgeBrowseHistoryFolder() : base() {
             IsAutoProcessEnabled = false;

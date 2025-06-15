@@ -191,7 +191,7 @@ namespace LibPythonAI.Model.Prompt {
             // タグ一覧をカンマ区切りで取得
             string tagList = string.Join(", ", tagItems.Select(x => x.Tag));
 
-            string prompt = PromptStringResource.Instance.TagListPrompt(tagList);
+            string prompt = PromptStringResourceJa.Instance.TagListPrompt(tagList);
             return prompt;
         }
 
@@ -244,7 +244,7 @@ namespace LibPythonAI.Model.Prompt {
             // promptNameからDescriptionを取得
             string description = promptItem.Description;
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.PromptTemplateExecute(description));
             int count = items.Count;
             Task.Run(() => {
                 beforeAction();
@@ -258,7 +258,7 @@ namespace LibPythonAI.Model.Prompt {
                         start_count++;
                     }
                     int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
+                    string message = $"{PythonAILibStringResourcesJa.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
                     LogWrapper.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[index];
 
@@ -269,7 +269,7 @@ namespace LibPythonAI.Model.Prompt {
                 // Execute if obj is an Action
                 afterAction();
                 LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.PromptTemplateExecuted(description));
             });
 
         }
@@ -293,13 +293,13 @@ namespace LibPythonAI.Model.Prompt {
                 contentText = item.PromptChatResult.GetTextContent(promptItem.PromptInputName);
                 // inputContentがない場合は処理しない
                 if (string.IsNullOrEmpty(contentText)) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.InputContentNotFound);
                     return;
                 }
             }
             // Contentがない場合は処理しない
             if (string.IsNullOrEmpty(item.Content)) {
-                LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.InputContentNotFound);
                 return;
             }
             // ヘッダー情報とコンテンツ情報を結合
@@ -443,7 +443,7 @@ namespace LibPythonAI.Model.Prompt {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 RAGMode = RAGModeEnum.NormalSearch,
-                Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
+                Prompt = PromptStringResourceJa.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
             // responseからキー：reliabilityを取得
             if (response.ContainsKey("reliability") == false) {

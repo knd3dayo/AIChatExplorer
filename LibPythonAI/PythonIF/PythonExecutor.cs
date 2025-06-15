@@ -13,12 +13,6 @@ namespace LibPythonAI.PythonIF {
 
         private static IPythonAILibConfigParams? ConfigPrams;
 
-        public static string? PythonPath { get; set; }
-
-        private static string PythonAILibPath { get; set; } = DefaultPythonAILibDir;
-
-        private const string DefaultPythonAILibDir = "python_lib";
-
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
             [MethodImpl(MethodImplOptions.Synchronized)]
@@ -53,28 +47,86 @@ namespace LibPythonAI.PythonIF {
             }
         }
 
-        public static bool CheckPythonEnvironment() {
+        public enum PythonEnvironmentCheckResult {
+            Success,
+            PythonNotFound,
+            UvNotFound,
+            PythonVenvPathNotFound,
+            PythonVenvNotFound,
+            OpenAIKeyNotSet
+        }
+
+        public static PythonEnvironmentCheckResult CheckPythonEnvironment(IPythonAILibConfigParams configPrams) {
             // Check if Python is installed and accessible
             bool checkPython = ProcessUtil.CheckCommand("python", "-V");
             if (!checkPython) {
-                LogWrapper.Error(StringResources.PythonNotFound);
-                return false;
+                return PythonEnvironmentCheckResult.PythonNotFound;
             }
             // Check if uv is installed and accessible
             bool checkUv = ProcessUtil.CheckCommand("uv", "-V");
             if (!checkUv) {
-                LogWrapper.Error(StringResources.UvNotFound);
-                return false;
+                return PythonEnvironmentCheckResult.UvNotFound;
             }
-            return true;
+
+            // Check if the Python virtual environment exists
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            if (string.IsNullOrEmpty(pathToVirtualEnv)) {
+                return PythonEnvironmentCheckResult.PythonVenvPathNotFound;
+            }
+            // Check if the Python virtual environment is set up correctly
+            string pythonVenvPath = Path.Combine(pathToVirtualEnv, "Scripts", "python.exe");
+
+            if (!File.Exists(pythonVenvPath)) {
+                return PythonEnvironmentCheckResult.PythonVenvNotFound;
+            }
+            // Check if OpenAI API key is set
+            OpenAIProperties openAIProps = configPrams.GetOpenAIProperties();
+            if (string.IsNullOrEmpty(openAIProps.OpenAIKey)) {
+                return PythonEnvironmentCheckResult.OpenAIKeyNotSet;
+            }
+
+            return PythonEnvironmentCheckResult.Success;
         }
+
+        // Python Venv環境の作成とライブラリのインストールを行うメソッド
+        public static void CreatePythonVenvAndInstallLibs(IPythonAILibConfigParams configPrams) {
+            // Python仮想環境の作成とライブラリのインストールを行う
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            if (string.IsNullOrEmpty(pathToVirtualEnv)) {
+                throw new Exception(StringResources.PythonVenvPathNotFound);
+            }
+            // Python仮想環境の作成
+            // 必要なライブラリのインストール
+            ProcessUtil.StartWindowsCommandLine(
+                [
+                $"cd {configPrams.GetAppDataPath()}",
+                $"python -m venv {pathToVirtualEnv}",
+                $"curl -L https://github.com/knd3dayo/ai_chat_lib/archive/refs/heads/main.zip -o ai_chat_lib.zip",
+                $"call powershell -command \"Expand-Archive  ai_chat_lib.zip\"",
+                $"call {pathToVirtualEnv}\\Scripts\\Activate",
+                $"pip install ai_chat_lib\\ai_chat_lib-main",
+                $"pause"
+                ],
+                configPrams.GetAppDataPath(),
+                waitForExit: true,
+                (process) => {
+                    if (process.HasExited && process.ExitCode != 0) {
+                        throw new Exception(StringResources.PythonLibsInstallationFailed);
+                    }
+                }
+            );
+        }
+
+
         // InitInternalAPI
         public static void InitInternalAPI(IPythonAILibConfigParams configPrams, Action<Process?> afterStartProcess) {
 
             LogWrapper.Info("Internal API started");
 
             // 環境チェック
-            if (!CheckPythonEnvironment()) {
+            var checkResult = CheckPythonEnvironment(configPrams);
+            if (checkResult != PythonEnvironmentCheckResult.Success) {
+                LogWrapper.Info($"Python environment check failed: {checkResult}");
                 return;
             }
 
@@ -180,7 +232,7 @@ namespace LibPythonAI.PythonIF {
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             // Venv環境が存在するかチェック
             if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
-                string message = StringResources.PythonVenvNotFound;
+                string message = StringResources.PythonVenvPathNotFound;
                 LogWrapper.Error($"{message}:{pathToVirtualEnv}");
                 return;
             }

@@ -7,8 +7,8 @@ using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Folders.Search;
-using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
+using LibPythonAI.Data;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
@@ -21,9 +21,6 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
             Instance = this;
-
-            // PythonAILibManagerの初期化
-            InitPythonAILibManager();
 
             // Commandの初期化
             Commands = new(UpdateIndeterminate, () => {
@@ -109,14 +106,6 @@ namespace AIChatExplorer.ViewModel.Main {
             OnPropertyChanged(propertyName);
         }
 
-        // PythonAILibManagerの初期化
-        private static void InitPythonAILibManager() {
-
-            AIChatExplorerPythonAILibConfigParams configParams = new();
-            PythonAILibManager.Init(configParams);
-
-
-        }
         // プログレスインジケータ表示更新用のアクション
 
         public void UpdateIndeterminate(bool visible) {

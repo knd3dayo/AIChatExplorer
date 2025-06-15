@@ -7,14 +7,14 @@ using LibPythonAI.Resources;
 namespace LibPythonAI.Model.Folder {
     public class FolderManager {
 
-        public static readonly string CHAT_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ChatHistory;
+        public static readonly string CHAT_ROOT_FOLDER_NAME = PythonAILibStringResourcesJa.Instance.ChatHistory;
 
         // 英語名
-        public static readonly string CHAT_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ChatHistoryEnglish;
+        public static readonly string CHAT_ROOT_FOLDER_NAME_EN = PythonAILibStringResourcesJa.Instance.ChatHistoryEnglish;
 
         
         // 言語変更時にルートフォルダ名を変更する
-        public static void ChangeRootFolderNames(PythonAILibStringResources toRes) {
+        public static void ChangeRootFolderNames(PythonAILibStringResourcesJa toRes) {
             using PythonAILibDBContext db = new();
             // ChatRootFolder
             var chatRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN);

@@ -41,11 +41,17 @@ namespace AIChatExplorer.View.Settings {
         // SpecifyPython3Dll
         public static string SpecifyPython3Dll { get; set; } = CommonStringResources.Instance.SpecifyPython3Dll;
 
+        // AppDataPath
+        public static string AppDataPath { get; set; } = CommonStringResources.Instance.AppDataPath;
+
+        // AppDataPathHint
+        public static string AppDataPathHint { get; set; } = CommonStringResources.Instance.AppDataPathHint;
+
         // PythonVenvPath
         public static string PythonVenvPath { get; set; } = CommonStringResources.Instance.PythonVenvPath;
 
         // SpecifyVenvPath
-        public static string SpecifyVenvPath { get; set; } = CommonStringResources.Instance.SpecifyVenvPath;
+        public static string PythonVenvPathHint { get; set; } = CommonStringResources.Instance.PythonVenvPathHint;
 
         // OpenAISettings
         public static string OpenAISettings { get; set; } = CommonStringResources.Instance.OpenAISettings;

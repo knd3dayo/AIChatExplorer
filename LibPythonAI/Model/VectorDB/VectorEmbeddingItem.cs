@@ -63,9 +63,9 @@ namespace LibPythonAI.Model.VectorDB {
 
             EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
             await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
 
         }
 
@@ -76,9 +76,9 @@ namespace LibPythonAI.Model.VectorDB {
 
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
             await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
         }
 
         // DeleteEmbeddingsByFolderAsync

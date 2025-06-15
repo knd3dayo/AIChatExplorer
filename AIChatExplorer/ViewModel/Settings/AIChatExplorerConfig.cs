@@ -52,18 +52,6 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // このアプリケーションのデータ用のフォルダを取得
-        public string AppDataFolder {
-            get {
-                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string appDataFolder = Path.Combine(appDataPath, "AIChatExplorer");
-                if (!Directory.Exists(appDataFolder)) {
-                    Directory.CreateDirectory(appDataFolder);
-                }
-                return appDataFolder;
-            }
-        }
-        // WpfCommon.Properties.Settingsの値をプロパティとして宣言する。
 
         // MonitorTargetAppNames
         private string? _monitorTargetAppNames;
@@ -80,26 +68,51 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // PythonDllPath
-        private string? _pythonDllPath;
-        public string PythonDllPath {
+
+        private string? _appDataPath;
+
+        // このアプリケーションのデータ用のフォルダを取得
+        public string AppDataPath {
             get {
-                if (_pythonDllPath == null) {
-                    _pythonDllPath = Properties.Settings.Default.PythonDllPath;
+                if (_appDataPath == null) {
+                    _appDataPath = Properties.Settings.Default.AppDataPath;
+                    if (string.IsNullOrEmpty(_appDataPath)) {
+                        _appDataPath = DefaultAppDataPath;
+                        Properties.Settings.Default.AppDataPath = _appDataPath;
+                    }
                 }
-                return _pythonDllPath;
+                return _appDataPath;
             }
             set {
-                _pythonDllPath = value;
-                Properties.Settings.Default.PythonDllPath = value;
+                _appDataPath = value;
+                Properties.Settings.Default.AppDataPath = value;
             }
         }
+
+        // このアプリケーションのデータ用のフォルダを取得
+        public static string DefaultAppDataPath {
+            get {
+                string appDataPathRoot = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string appDataFolder = Path.Combine(appDataPathRoot, "AIChatExplorer");
+                if (!Directory.Exists(appDataFolder)) {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+                return appDataFolder;
+            }
+        }
+
+
         // PythonVenvPath
         private string? _pythonVenvPath;
         public string PythonVenvPath {
             get {
                 if (_pythonVenvPath == null) {
                     _pythonVenvPath = Properties.Settings.Default.PythonVenvPath;
+                    if (string.IsNullOrEmpty(_pythonVenvPath)) {
+                        // デフォルトのPython仮想環境パスを設定
+                        _pythonVenvPath = Path.Combine(AppDataPath, "venv");
+                        Properties.Settings.Default.PythonVenvPath = _pythonVenvPath;
+                    }
                 }
                 return _pythonVenvPath;
             }

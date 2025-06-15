@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using System.Windows;
 using AIChatExplorer.Model.Main;
@@ -78,18 +79,19 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // PythonDLLのパス
-        public string PythonDllPath {
+        // AppDataPath
+        public string AppDataPath {
             get {
-                return AIChatExplorerConfig.Instance.PythonDllPath;
+                return AIChatExplorerConfig.Instance.AppDataPath;
             }
             set {
-                AIChatExplorerConfig.Instance.PythonDllPath = value;
-                OnPropertyChanged(nameof(PythonDllPath));
+                AIChatExplorerConfig.Instance.AppDataPath = value;
+                OnPropertyChanged(nameof(AppDataPath));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
             }
         }
+
         // PythonVenvPath
         public string PythonVenvPath {
             get {
@@ -370,37 +372,42 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
 
         public async Task<string> CheckSetting() {
-            StringBuilder stringBuilder = new();
-            bool pythonOK = true;
-            Log(stringBuilder, $"{CommonStringResources.Instance.PythonSettingCheck}...");
-
-            if (string.IsNullOrEmpty(PythonDllPath)) {
-                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonDLLPathNotSet}");
-                pythonOK = false;
-            } else {
-                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonDLLPathSet}");
-            }
-            if (System.IO.File.Exists(PythonDllPath) == false) {
-                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonDLLNotFound}");
-                pythonOK = false;
-            } else {
-                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonDLLFileExists}");
-            }
-            if (pythonOK == true) {
-                // TestPythonを実行
-                Log(stringBuilder, $"{CommonStringResources.Instance.TestRunPythonScript}...");
-                TestResult result = TestPython();
-                Log(stringBuilder, result.Message);
-            }
-
             bool openAIOK = true;
-            Log(stringBuilder, $"{CommonStringResources.Instance.OpenAISettingCheck}...");
-            if (string.IsNullOrEmpty(OpenAIKey)) {
-                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAIKeyNotSet}");
+
+            StringBuilder stringBuilder = new();
+            // 内部APIサーバーを使用する場合
+            if (UseInternalAPI) {
+                Log(stringBuilder, $"{CommonStringResources.Instance.PythonSettingCheck}...");
+                // Venvのパスが設定されているかどうかを確認
+                if (string.IsNullOrEmpty(PythonVenvPath)) {
+                    Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonVenvPathNotSet}");
+                } else {
+                    Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonVenvPathSet}");
+                }
+                // Venv/Scripts/python.exeが存在するかどうかを確認
+                string pythonPath = Path.Combine(PythonVenvPath, "Scripts", "python.exe");
+                if (!File.Exists(pythonPath)) {
+                    Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.PythonVenvNotCreated} {pythonPath}");
+                } else {
+                    Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.PythonVenvCreated} {pythonPath}");
+                }
+                Log(stringBuilder, $"{CommonStringResources.Instance.OpenAISettingCheck}...");
+                if (string.IsNullOrEmpty(OpenAIKey)) {
+                    Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAIKeyNotSet}");
+                    openAIOK = false;
+                } else {
+                    Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.OpenAIKeySet}");
+                }
+            }
+            // URLが設定されているかどうかを確認
+            Log(stringBuilder, $"{CommonStringResources.Instance.APIServerURLCheck}...");
+            if (string.IsNullOrEmpty(APIServerURL)) {
+                Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.APIServerURLNotSet}");
                 openAIOK = false;
             } else {
-                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.OpenAIKeySet}");
+                Log(stringBuilder, $"[OK]:{CommonStringResources.Instance.APIServerURLSet}");
             }
+
             if (string.IsNullOrEmpty(OpenAICompletionModel)) {
                 Log(stringBuilder, $"[NG]:{CommonStringResources.Instance.OpenAICompletionModelNotSet}");
                 openAIOK = false;
@@ -442,27 +449,6 @@ namespace AIChatExplorer.ViewModel.Settings {
         private class TestResult {
             public bool Result { get; set; } = false;
             public string Message { get; set; } = "";
-        }
-
-        private TestResult TestPython() {
-            TestResult testResult = new();
-            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams, afterStartProcess: (process) => { })
-            ;
-            try {
-                string result = PythonExecutor.PythonAIFunctions.HelloWorld();
-                if (result != "Hello World") {
-                    testResult.Message = $"[NG]:{CommonStringResources.Instance.FailedToRunPython}";
-                    testResult.Result = false;
-
-                } else {
-                    testResult.Message = $"[OK]:{CommonStringResources.Instance.PythonRunIsPossible}";
-                    testResult.Result = true;
-                }
-            } catch (Exception ex) {
-                testResult.Message = $"[NG]:{CommonStringResources.Instance.ErrorOccurredAndMessage} ex.Message  \n[{CommonStringResources.Instance.StackTrace}] {ex.StackTrace}";
-                testResult.Result = false;
-            }
-            return testResult;
         }
         private async Task<TestResult> TestOpenAI() {
             TestResult testResult = new();
@@ -540,7 +526,6 @@ namespace AIChatExplorer.ViewModel.Settings {
             return false;
 
         }
-        #region listAutoProcessRuleから移動した処理
 
         // IgnoreLineCountChecked
         public bool IgnoreLineCountChecked {
@@ -650,7 +635,6 @@ namespace AIChatExplorer.ViewModel.Settings {
 
         // InternalVisibility
         public Visibility InternalVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
-        #endregion
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
