@@ -15,7 +15,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         public PromptItem PromptItemEntity { get; set; }
 
-        public override async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
+        public override void Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
 
             ChatRequest chatRequest = new();
@@ -31,16 +31,17 @@ namespace LibPythonAI.Model.AutoProcess {
                 chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
                 chatRequestContent.VectorSearchRequests = [new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
             }
-
-            ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
-            if (result == null) {
-                return;
-            }
-            // ApplicationItemのContentにレスポンスを設定
-            applicationItem.Content = result.Output;
-            // レスポンスをApplicationItemに設定
-            applicationItem.ChatItems.Clear();
-            applicationItem.ChatItems.AddRange(chatRequest.ChatHistory);
+            Task.Run(async () => {
+                ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
+                if (result == null) {
+                    return;
+                }
+                // ApplicationItemのContentにレスポンスを設定
+                applicationItem.Content = result.Output;
+                // レスポンスをApplicationItemに設定
+                applicationItem.ChatItems.Clear();
+                applicationItem.ChatItems.AddRange(chatRequest.ChatHistory);
+            }).Wait();
         }
     }
 

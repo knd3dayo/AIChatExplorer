@@ -50,12 +50,12 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // SaveAsync
-        public async Task SaveAsync() {
-            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        public void SaveAsync() {
+             PythonExecutor.PythonAIFunctions.UpdateAutoProcessItemAsync(new AutoProcessItemRequest(this));
         }
         // DeleteAsync
-        public async Task DeleteAsync() {
-            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        public void DeleteAsync() {
+             PythonExecutor.PythonAIFunctions.DeleteAutoProcessItemAsync(new AutoProcessItemRequest(this));
         }
 
         // ToDict
@@ -133,7 +133,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return TypeName == AutoProcessActionTypeEnum.CopyToFolder || TypeName == AutoProcessActionTypeEnum.MoveToFolder;
         }
 
-        public virtual async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
+        public virtual void Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
             Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolder);
             action(applicationItem);

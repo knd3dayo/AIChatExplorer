@@ -36,7 +36,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                         SourceType = VectorSourceType.File,
                         SourcePath = SourcePath,
                     };
-                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
                 ContentModified = false;
                 DescriptionModified = false;

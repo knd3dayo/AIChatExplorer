@@ -226,7 +226,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             Task.Run(async () => {
-                await SelectedAutoGenLLMConfig.DeleteAsync();
+                SelectedAutoGenLLMConfig.DeleteAsync();
                 await LoadItemsAsync();
             });
         });
@@ -237,7 +237,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             Task.Run(async () => {
-                await SelectedAutoGenAgent.DeleteAsync();
+                SelectedAutoGenAgent.DeleteAsync();
                 await LoadItemsAsync();
             });
         });
@@ -248,7 +248,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             Task.Run(async () => {
-                await SelectedAutoGenTool.DeleteAsync();
+                SelectedAutoGenTool.DeleteAsync();
                 await LoadItemsAsync();
             });
         });
@@ -302,7 +302,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             Task.Run(async () => {
-                await SelectedAutoGenGroupChat.DeleteAsync();
+                SelectedAutoGenGroupChat.DeleteAsync();
                 await LoadItemsAsync();
             });
         });

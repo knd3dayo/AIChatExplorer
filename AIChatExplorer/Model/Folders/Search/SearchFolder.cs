@@ -30,7 +30,7 @@ namespace AIChatExplorer.Model.Folders.Search {
 
 
         // アイテム LiteDBには保存しない。
-        public override List<T> GetItems<T>(bool isSync = false) {
+        public new List<T> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
             List<T> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得

@@ -37,7 +37,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                         SourceType = VectorSourceType.Mail,
                         SourcePath = SourcePath,
                     };
-                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
                 ContentModified = false;
                 DescriptionModified = false;

@@ -517,7 +517,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
 
             // LiteDBに保存
-            await TargetAutoProcessRule.SaveAsync();
+            TargetAutoProcessRule.SaveAsync();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

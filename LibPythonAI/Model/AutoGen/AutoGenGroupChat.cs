@@ -35,15 +35,15 @@ namespace LibPythonAI.Model.AutoGen {
         }
 
         // SaveAsync
-        public async Task SaveAsync() {
+        public void SaveAsync() {
             // APIを呼び出して、設定を保存する
-            await PythonExecutor.PythonAIFunctions.UpdateAutoGenGroupChatAsync(this);
+             PythonExecutor.PythonAIFunctions.UpdateAutoGenGroupChatAsync(this);
         }
 
         // DeleteAsync
-        public async Task DeleteAsync() {
+        public void DeleteAsync() {
             // APIを呼び出して、設定を削除する
-            await PythonExecutor.PythonAIFunctions.DeleteAutoGenGroupChatAsync(this);
+             PythonExecutor.PythonAIFunctions.DeleteAutoGenGroupChatAsync(this);
         }
 
         // GetAutoGenChatListAsync

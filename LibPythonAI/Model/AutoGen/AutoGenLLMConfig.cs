@@ -35,14 +35,14 @@ namespace LibPythonAI.Model.AutoGen {
         [JsonPropertyName("base_url")]
         public string BaseURL { get; set; } = "";
 
-        public async Task SaveAsync() {
+        public void SaveAsync() {
             // APIを呼び出して、設定を保存する
-            await PythonExecutor.PythonAIFunctions.UpdateAutogenLLMConfigAsync(this);
+             PythonExecutor.PythonAIFunctions.UpdateAutogenLLMConfigAsync(this);
         }
 
-        public async Task DeleteAsync() {
+        public void DeleteAsync() {
             // APIを呼び出して、設定を削除する
-            await PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
+             PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
         }
 
         // ToDict

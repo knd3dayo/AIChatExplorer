@@ -84,17 +84,17 @@ namespace LibPythonAI.Model.Search {
             }
         }
         // 保存
-        public async Task Save() {
+        public void Save() {
             // SearchConditionJsonを更新
             SaveSearchConditionJson();
             // APIを呼び出して保存
-            await PythonExecutor.PythonAIFunctions.UpdateSearchRuleAsync(new SearchRuleRequest(this));
+            PythonExecutor.PythonAIFunctions.UpdateSearchRuleAsync(new SearchRuleRequest(this));
         }
 
         // 削除
-        public async Task Delete() {
+        public void Delete() {
             // APIを呼び出して削除
-            await PythonExecutor.PythonAIFunctions.DeleteSearchRuleAsync(new SearchRuleRequest(this));
+             PythonExecutor.PythonAIFunctions.DeleteSearchRuleAsync(new SearchRuleRequest(this));
         }
 
         public List<ContentItemWrapper> SearchItems() {
