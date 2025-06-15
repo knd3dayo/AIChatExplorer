@@ -12,7 +12,7 @@ namespace AIChatExplorer.ViewModel.Help {
 
         public string Title { get; set; } = CommonStringResources.Instance.VersionInformation;
         public VersionWindowViewModel() {
-            Version = "0.6.1";
+            Version = "0.6.2";
             CopyRight = "© 2024 by knd3dayo";
             Url = "https://github.com/knd3dayo/AIChatExplorer";
         }
