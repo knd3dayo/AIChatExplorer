@@ -2,28 +2,26 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.Model.Folders.FileSystem;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILibUI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class RecentFilesFolderViewModel(FileSystemFolder clipboardItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(clipboardItemFolder, commands) {
+    public class RecentFilesFolderViewModel(FileSystemFolder applicationItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                ShortCutFolderMenu clipboardItemMenu = new(this);
-                return clipboardItemMenu.MenuItems;
+                ShortCutFolderMenu applicationItemMenu = new(this);
+                return applicationItemMenu.MenuItems;
             }
         }
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override RecentFilesFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not RecentFilesFolder) {
                 throw new Exception("childFolder is not RecentFilesFolder");
@@ -35,7 +33,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             return childFolderViewModel;
         }
 
-        // LoadItems
+        // LoadLLMConfigListAsync
         public override void LoadItems() {
             LoadItems<RecentFilesItem>();
         }

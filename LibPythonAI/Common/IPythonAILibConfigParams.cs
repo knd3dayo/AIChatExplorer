@@ -1,7 +1,7 @@
 using System.Windows;
 using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Common {
+namespace LibPythonAI.Common {
     public interface IPythonAILibConfigParams {
 
         public string GetLang();
@@ -43,6 +43,9 @@ namespace PythonAILib.Common {
 
         public string GetAutoGenWorkDir();
 
+        public string GetAutoGenToolDir();
+
+
         public bool AutoTag();
 
         // AutoTitle
@@ -80,7 +83,25 @@ namespace PythonAILib.Common {
         // DevFeaturesEnabled
         public bool DevFeaturesEnabled();
 
+        public void UpdateDevFeaturesEnabled(bool value);
+
         // GUI
         public TextWrapping GetTextWrapping();
+
+        // MarkdownView
+        public bool IsMarkdownView();
+
+        public void UpdateMarkdownView(bool value);
+
+        // TextWrapping
+        public bool IsTextWrapping();
+        public void UpdateTextWrapping(TextWrapping value);
+
+        // AutoTextWrapping
+        public bool IsAutoTextWrapping();
+
+        public void UpdateAutoTextWrapping(bool value);
+
+
     }
 }

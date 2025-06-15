@@ -1,11 +1,12 @@
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
-    public class EditVectorDBWindowViewModel : ChatViewModelBase {
+    public class EditVectorDBWindowViewModel : CommonViewModelBase {
 
         private VectorDBItemViewModel? itemViewModel;
         public VectorDBItemViewModel? ItemViewModel {
@@ -54,10 +55,10 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     return "";
                 }
                 if (ItemViewModel.SelectedVectorDBType == VectorDBTypeEnum.Chroma) {
-                    return StringResources.ExampleVectorDBLocationChroma;
+                    return CommonStringResources.Instance.ExampleVectorDBLocationChroma;
                 }
                 if (ItemViewModel.SelectedVectorDBType == VectorDBTypeEnum.PGVector) {
-                    return StringResources.ExampleVectorDBLocationPostgres;
+                    return CommonStringResources.Instance.ExampleVectorDBLocationPostgres;
                 }
                 return "";
             }
@@ -78,10 +79,20 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             if (ItemViewModel == null) {
                 return;
             }
-            // RAGSourceItemを更新
-            ItemViewModel.Item.Save();
+            Task.Run(async () => {
+                await ItemViewModel.Item.SaveAsync(); // Saveメソッドを非同期に変更
+                                                      // VectorDBの初期化
+                await LibPythonAI.Model.VectorDB.VectorDBItem.LoadItemsAsync(); // awaitを追加
 
-            AfterUpdate(ItemViewModel);
+            }).ContinueWith((task) => {
+                if (task.IsFaulted) {
+                    LogWrapper.Error(task.Exception?.Message ?? "An error occurred.");
+                    return;
+                }
+                // 更新されたアイテムを返す
+                AfterUpdate(ItemViewModel);
+            });
+
 
             // ウィンドウを閉じる
             window.Close();
@@ -110,7 +121,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 return;
             }
 
-            LogWrapper.Error(StringResources.OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported);
+            LogWrapper.Error(CommonStringResources.Instance.OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported);
 
         });
 

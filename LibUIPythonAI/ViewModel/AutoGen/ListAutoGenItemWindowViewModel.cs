@@ -2,27 +2,59 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.AutoGen;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class ListAutoGenItemWindowViewModel : ChatViewModelBase {
-
-        public ObservableCollection<AutoGenAgent> AutoGenAgents { get; set; } = [];
-
-        public ObservableCollection<AutoGenTool> AutoGenTools { get; set; } = [];
-
-        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChats { get; set; } = [];
-
-        public ObservableCollection<AutoGenLLMConfig> AutoGenLLMConfigs { get; set; } = [];
+    public class ListAutoGenItemWindowViewModel : CommonViewModelBase {
 
         public ListAutoGenItemWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModels, bool selectGroupChatMode) {
             SelectGroupChatMode = selectGroupChatMode;
             RootFolderViewModels = rootFolderViewModels;
-            LoadItems();
+            Task.Run(async () => {
+                await LoadItemsAsync();
+            });
         }
+
+        private ObservableCollection<AutoGenLLMConfig> _autoGenLLMConfigs = [];
+        public ObservableCollection<AutoGenLLMConfig> AutoGenLLMConfigs {
+            get => _autoGenLLMConfigs;
+            set {
+                _autoGenLLMConfigs = value;
+                OnPropertyChanged(nameof(AutoGenLLMConfigs));
+            }
+        }
+        
+        private ObservableCollection<AutoGenTool> _autoGenTools = [];
+        public ObservableCollection<AutoGenTool> AutoGenTools {
+            get => _autoGenTools;
+            set {
+                _autoGenTools = value;
+                OnPropertyChanged(nameof(AutoGenTools));
+            }
+        }
+
+        private ObservableCollection<AutoGenAgent> _autoGenAgents = [];
+        public ObservableCollection<AutoGenAgent> AutoGenAgents {
+            get => _autoGenAgents;
+            set {
+                _autoGenAgents = value;
+                OnPropertyChanged(nameof(AutoGenAgents));
+            }
+        }
+
+        private ObservableCollection<AutoGenGroupChat> _autoGenGroupChats = [];
+
+        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChats {
+            get => _autoGenGroupChats;
+            set {
+                _autoGenGroupChats = value;
+                OnPropertyChanged(nameof(AutoGenGroupChats));
+            }
+        }
+
 
         public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; } = [];
 
@@ -31,45 +63,70 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         public Visibility SelectGroupChatModeVisibility => Tools.BoolToVisibility(SelectGroupChatMode);
 
         public Visibility NormalModeVisibility => Tools.BoolToVisibility(!SelectGroupChatMode);
-        public void LoadItems() {
-            // Load AutoGenLLMConfigs
-            // Clear
-            AutoGenLLMConfigs.Clear();
 
-            var autoGenLLMConfigs = AutoGenLLMConfig.GetAutoGenLLMConfigList();
+        private async Task LoadLLMConfigListAsync() {
+            // LLMConfigList
+            ObservableCollection<AutoGenLLMConfig> llmConfigList = [];
+            var autoGenLLMConfigs = await AutoGenLLMConfig.GetAutoGenLLMConfigListAsync();
             foreach (var item in autoGenLLMConfigs) {
-                AutoGenLLMConfigs.Add(item);
+                llmConfigList.Add(item);
             }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                AutoGenLLMConfigs = llmConfigList;
+            });
+        }
+        private async Task LoadAutoGenToolListAsync() {
+            // AutoGenToolList
+            ObservableCollection<AutoGenTool> autoGenToolList = [];
+            var autoGenTools = await AutoGenTool.GetAutoGenToolListAsync();
+            foreach (var item in autoGenTools) {
+                autoGenToolList.Add(item);
+            }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                AutoGenTools = autoGenToolList;
+            });
+        }
+
+        private async Task LoadAutoGenAgentListAsync() {
+            // AutoGenAgentList
+            ObservableCollection<AutoGenAgent> autoGenAgentList = [];
+            var autoGenAgents = await AutoGenAgent.GetAutoGenAgentList();
+            foreach (var item in autoGenAgents) {
+                autoGenAgentList.Add(item);
+            }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                AutoGenAgents = autoGenAgentList;
+            });
+
+        }
+        private async Task LoadAutoGenGroupChatListAsync() {
+            // AutoGenGroupChatList
+            ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
+            var autoGenGroupChats = await AutoGenGroupChat.GetAutoGenChatListAsync();
+            foreach (var item in autoGenGroupChats) {
+                autoGenGroupChatList.Add(item);
+            }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                AutoGenGroupChats = autoGenGroupChatList;
+            });
+        }
+
+        private async Task LoadItemsAsync() {
+
+            await LoadLLMConfigListAsync();
 
             // Load AutoGenTools
-            // Clear
-            AutoGenTools.Clear();
-
-            var autoGenTools = AutoGenTool.GetAutoGenToolList();
-            foreach (var item in autoGenTools) {
-                AutoGenTools.Add(item);
-            }
-            OnPropertyChanged(nameof(AutoGenTools));
+            await LoadAutoGenToolListAsync();
 
             // Load AutoGenAgents
-            // Clear
-            AutoGenAgents.Clear();
-
-            var autoGenAgents = AutoGenAgent.GetAutoGenAgentList();
-            foreach (var item in autoGenAgents) {
-                AutoGenAgents.Add(item);
-            }
-            OnPropertyChanged(nameof(AutoGenAgents));
-
+            await LoadAutoGenAgentListAsync();
             // Load AutoGenGroupChats
-            // Clear
-            AutoGenGroupChats.Clear();
+            await LoadAutoGenGroupChatListAsync();
 
-            var autoGenGroupChats = AutoGenGroupChat.GetAutoGenChatList();
-            foreach (var item in autoGenGroupChats) {
-                AutoGenGroupChats.Add(item);
-            }
-            OnPropertyChanged(nameof(AutoGenGroupChats));
         }
         // SelectedAutoGenLLMConfig
         public AutoGenLLMConfig? SelectedAutoGenLLMConfig { get; set; }
@@ -95,7 +152,9 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             EditAutoGenLLMConfigWindow.OpenWindow(SelectedAutoGenLLMConfig, () => {
-                LoadItems();
+                Task.Run(async () => {
+                    await LoadItemsAsync();
+                });
             });
         });
 
@@ -105,7 +164,9 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             EditAutoGenAgentWindow.OpenWindow(SelectedAutoGenAgent, RootFolderViewModels, () => {
-                LoadItems();
+                Task.Run(async () => {
+                    await LoadItemsAsync();
+                });
             });
         });
 
@@ -115,7 +176,9 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             EditAutoGenToolWindow.OpenWindow(SelectedAutoGenTool, () => {
-                LoadItems();
+                Task.Run(async () => {
+                    await LoadItemsAsync();
+                });
             });
         });
 
@@ -125,25 +188,33 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 case 0:
                     AutoGenGroupChat autoGenGroupChat = new();
                     EditAutoGenGroupChatWindow.OpenWindow(autoGenGroupChat, () => {
-                        LoadItems();
+                        Task.Run(async () => {
+                            await LoadItemsAsync();
+                        });
                     });
                     break;
                 case 1:
                     AutoGenAgent autoGenAgent = new();
                     EditAutoGenAgentWindow.OpenWindow(autoGenAgent, RootFolderViewModels, () => {
-                        LoadItems();
+                        Task.Run(async () => {
+                            await LoadItemsAsync();
+                        });
                     });
                     break;
                 case 2:
                     AutoGenTool autoGenTool = new();
                     EditAutoGenToolWindow.OpenWindow(autoGenTool, () => {
-                        LoadItems();
+                        Task.Run(async () => {
+                            await LoadItemsAsync();
+                        });
                     });
                     break;
                 case 3:
                     AutoGenLLMConfig autoGenLLMConfig = new();
                     EditAutoGenLLMConfigWindow.OpenWindow(autoGenLLMConfig, () => {
-                        LoadItems();
+                        Task.Run(async () => {
+                            await LoadItemsAsync();
+                        });
                     });
                     break;
             }
@@ -154,8 +225,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (SelectedAutoGenLLMConfig == null) {
                 return;
             }
-            SelectedAutoGenLLMConfig.Delete();
-            LoadItems();
+            Task.Run(async () => {
+                await SelectedAutoGenLLMConfig.DeleteAsync();
+                await LoadItemsAsync();
+            });
         });
 
         // DeleteAutoGenAgentCommand
@@ -163,8 +236,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (SelectedAutoGenAgent == null) {
                 return;
             }
-            SelectedAutoGenAgent.Delete();
-            LoadItems();
+            Task.Run(async () => {
+                await SelectedAutoGenAgent.DeleteAsync();
+                await LoadItemsAsync();
+            });
         });
 
         // DeleteAutoGenToolCommand
@@ -172,8 +247,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (SelectedAutoGenTool == null) {
                 return;
             }
-            SelectedAutoGenTool.Delete();
-            LoadItems();
+            Task.Run(async () => {
+                await SelectedAutoGenTool.DeleteAsync();
+                await LoadItemsAsync();
+            });
         });
 
         // AutoGenLLMConfigSelectionChangedCommand
@@ -213,7 +290,9 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
                 return;
             }
             EditAutoGenGroupChatWindow.OpenWindow(SelectedAutoGenGroupChat, () => {
-                LoadItems();
+                Task.Run(async () => {
+                    await LoadItemsAsync();
+                });
             });
         });
 
@@ -222,8 +301,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (SelectedAutoGenGroupChat == null) {
                 return;
             }
-            SelectedAutoGenGroupChat.Delete();
-            LoadItems();
+            Task.Run(async () => {
+                await SelectedAutoGenGroupChat.DeleteAsync();
+                await LoadItemsAsync();
+            });
         });
 
         // AutoGenGroupChatSelectionChangedCommand

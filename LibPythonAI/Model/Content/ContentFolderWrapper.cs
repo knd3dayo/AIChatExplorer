@@ -1,31 +1,46 @@
+using System.Collections.ObjectModel;
 using LibPythonAI.Data;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.Content {
     public class ContentFolderWrapper {
 
-        public ContentFolderWrapper(ContentFolderEntity contentFolder) {
-            Entity = contentFolder;
-        }
+        public ContentFolderWrapper() { }
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
-            Entity = new ContentFolderEntity() {
-                ParentId = parent?.Id,
-                FolderName = folderName,
-            };
+            Entity.ParentId = parent?.Id;
+            Entity.FolderName = folderName;
         }
 
-        public ContentFolderEntity Entity { get; set; }
+        public ContentFolderEntity Entity { get; protected set; } = new ContentFolderEntity();
 
         public string Id {
             get {
                 return Entity.Id;
             }
         }
+        public bool IsRootFolder {
+            get {
+                return Entity.IsRootFolder;
+            }
+            set {
+                Entity.IsRootFolder = value;
+            }
+        }
 
+        public string ExtendedPropertiesJson {
+            get {
+                return Entity.ExtendedPropertiesJson;
+            }
+            set {
+                Entity.ExtendedPropertiesJson = value;
+            }
+        }
 
         // Parent
         public ContentFolderWrapper? Parent {
@@ -35,7 +50,7 @@ namespace LibPythonAI.Model.Content {
                 if (parentFolder == null) {
                     return null;
                 }
-                return new ContentFolderWrapper(parentFolder);
+                return new ContentFolderWrapper() { Entity = parentFolder };
             }
             set {
                 Entity.ParentId = value?.Entity.Id;
@@ -90,33 +105,49 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // ルートフォルダか否か
-        public bool IsRootFolder {
-            get {
-                // このオブジェクトのIdと一致するIdをContentFolderRootEntityが存在するか
-                var rootId = Entity.GetRootFolder().Id;
-                return rootId != null && rootId.Equals(Id);
-            }
-        }
 
-        public List<VectorDBProperty> ReferenceVectorSearchProperties {
+        public const string VectorDBPropertiesName = "VectorDBProperties";
+        public ObservableCollection<VectorSearchItem> ReferenceVectorSearchProperties {
             get {
-                List<VectorDBProperty> result = [];
-                var items = Entity.VectorDBProperties;
-                foreach (var item in items) {
-                    result.Add(new VectorDBProperty(item));
+                ObservableCollection<VectorSearchItem> vectorDBProperties = [];
+
+                if (Entity.ExtendedProperties.TryGetValue(VectorDBPropertiesName, out var propList)) {
+                    if (propList is string json) {
+                        // JsonをパースしてVectorSearchItemのリストを取得
+                        vectorDBProperties = [.. VectorSearchItem.FromListJson(json)];
+                    }
                 }
+                // Addイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    if (e.NewItems != null) {
+                        // Entityを更新
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                        Entity.SaveExtendedPropertiesJson();
+                    }
+                };
+                // Removeイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    if (e.OldItems != null) {
+                        // Entityを更新
+                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                        Entity.SaveExtendedPropertiesJson();
+                    }
+                };
+                // Clearイベント発生時の処理
+                vectorDBProperties.CollectionChanged += (sender, e) => {
+                    // Entityを更新
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                    Entity.SaveExtendedPropertiesJson();
+                };
 
-                return result;
+                return vectorDBProperties;
             }
             set {
-                List<VectorDBPropertyEntity> result = [];
-
-                foreach (var item in value) {
-                    result.Add(item.Entity);
-                }
-                Entity.VectorDBProperties = result;
+                // Entityを更新
+                Entity.ExtendedProperties[VectorDBPropertiesName] = VectorSearchItem.ToListJson(value);
+                Entity.SaveExtendedPropertiesJson();
             }
+
         }
 
         //　フォルダ名
@@ -144,37 +175,67 @@ namespace LibPythonAI.Model.Content {
 
         public string FileSystemFolderPath {
             get {
-                if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path)) {
+                if (Entity.ExtendedProperties.TryGetValue(FileSystemFolderPathName, out var path) && path is string) {
                     return (string)path;
-                } else {
-                    return "";
                 }
+                return "";
             }
             set {
                 Entity.ExtendedProperties[FileSystemFolderPathName] = value;
             }
         }
 
-
-
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
-            GetMainVectorSearchProperty().DeleteVectorDBCollection();
+            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
+            // APIを呼び出して、ContentFolderを削除
+            Task.Run(async () => {
+                ContentFolderRequest request = new(this);
+                await PythonExecutor.PythonAIFunctions.DeleteContentFoldersForVectorSearch([request]);
+            });
 
         }
 
 
-        public virtual List<T> GetItems<T>() where T : ContentItemWrapper {
-
-            return [.. Entity.GetContentItems().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
+        public virtual List<T> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
+            if (isSync) {
+                // SyncItems
+                SyncItems();
+            }
+            List<T> items = ContentItemWrapper.GetItems<T>(this);
+            return items;
         }
+
+        public virtual void SyncItems() { }
 
         public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
-            return [.. Entity.GetChildren().Select(x => (T?)Activator.CreateInstance(typeof(T), [x]))];
+            List<T> children = [];
+            foreach (var child in Entity.GetChildren()) {
+                T? childFolder = (T?)Activator.CreateInstance(typeof(T));
+                if (childFolder != null) {
+                    childFolder.Entity = child;
+                    children.Add(childFolder);
+                }
+            }
+            // APIを呼び出して、自分自身とchildrenのContentFolderを更新
+            Task.Run(async () => {
+                List<ContentFolderRequest> requests = [];
+                ContentFolderRequest request = new(this);
+                requests.Add(request);
+                foreach (var child in children) {
+                    ContentFolderRequest childRequest = new(this);
+                    requests.Add(childRequest);
+                }
+
+                await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch(requests);
+            });
+
+
+            return children;
         }
 
         // 親フォルダ
@@ -183,7 +244,13 @@ namespace LibPythonAI.Model.Content {
             if (folder == null) {
                 return null;
             }
-            return (T?)Activator.CreateInstance(typeof(T), [folder]);
+            T? result = (T?)Activator.CreateInstance(typeof(T));
+            if (result == null) {
+                throw new Exception("Failed to create instance of ContentFolderWrapper");
+            }
+            result.Entity = folder;
+
+            return result;
 
         }
 
@@ -219,14 +286,21 @@ namespace LibPythonAI.Model.Content {
             }
             db.SaveChanges();
 
+            // APIを呼び出して、ContentFolderを更新
+            Task.Run(async () => {
+                ContentFolderRequest request = new(this);
+                await PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
+            });
+
         }
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString,
             };
-            return new ContentFolderWrapper(childFolder);
+            return new ContentFolderWrapper() { Entity = childFolder };
         }
 
         // ステータス用の文字列
@@ -243,38 +317,34 @@ namespace LibPythonAI.Model.Content {
             if (applyGlobalAutoAction) {
                 Task.Run(() => {
                     // Apply automatic processing
-                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                     if (updatedItemTask.Result != null) {
                         item = updatedItemTask.Result;
                     }
                     item.Save();
                     afterUpdate?.Invoke(item);
                     // 通知
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
                 });
             } else {
                 // 保存
                 item.Save();
                 afterUpdate?.Invoke(item);
                 // 通知
-                LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             }
         }
 
-        public VectorDBProperty GetMainVectorSearchProperty() {
-            VectorDBPropertyEntity searchPropertyEntity = new() {
-                FolderId = Id,
-                TopK = 4,
-                VectorDBItemId = VectorDBItem.GetDefaultVectorDB().Id,
-            };
-            VectorDBProperty searchProperty = new(searchPropertyEntity);
+        public VectorSearchItem GetMainVectorSearchItem() {
+
+            VectorSearchItem searchProperty = VectorDBItem.GetDefaultVectorDB().CreateVectorSearchItem(Id, ContentFolderPath);
             return searchProperty;
         }
 
-        public List<VectorDBProperty> GetVectorSearchProperties() {
-            List<VectorDBProperty> searchProperties =
+        public ObservableCollection<VectorSearchItem> GetVectorSearchProperties() {
+            ObservableCollection<VectorSearchItem> searchProperties =
             [
-                GetMainVectorSearchProperty(),
+                GetMainVectorSearchItem(),
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
                 .. ReferenceVectorSearchProperties,
             ];
@@ -293,7 +363,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static ContentFolderWrapper? GetFolderById(string? id) {
+        public static T? GetFolderById<T>(string? id) where T : ContentFolderWrapper {
             if (string.IsNullOrEmpty(id)) {
                 return null;
             }
@@ -302,8 +372,55 @@ namespace LibPythonAI.Model.Content {
             if (folder == null) {
                 return null;
             }
-            return new ContentFolderWrapper(folder);
+            T? result = (T?)Activator.CreateInstance(typeof(T));
+            if (result == null) {
+                throw new Exception("Failed to create instance of ContentFolderWrapper");
+            }
+            result.Entity = folder;
+            return result;
         }
 
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            // ExtendedPropertiesをJsonに変換
+            Entity.SaveExtendedPropertiesJson();
+            Dictionary<string, object> dict = new() {
+                { "Id", Id },
+                { "FolderName", FolderName },
+                { "Description", Description },
+                { "IsRootFolder", IsRootFolder },
+                { "FolderTypeString", FolderTypeString },
+                { "ExtendedPropertiesJson", Entity.ExtendedPropertiesJson },
+            };
+            if (Parent != null) {
+                dict["Parent"] = Parent.ToDict();
+            }
+
+            return dict;
+        }
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<ContentFolderWrapper> items) {
+            return items.Select(item => item.ToDict()).ToList();
+        }
+
+        // FromDict
+        public static ContentFolderWrapper FromDict(Dictionary<string, object> dict) {
+            ContentFolderEntity folderEntity = new() {
+                Id = dict["Id"]?.ToString() ?? "",
+                ParentId = dict["ParentId"]?.ToString() ?? null,
+                FolderName = dict["FolderName"]?.ToString() ?? "",
+                Description = dict["Description"]?.ToString() ?? "",
+                FolderTypeString = dict["FolderTypeString"]?.ToString() ?? "",
+                ExtendedPropertiesJson = dict["ExtendedPropertiesJson"].ToString() ?? "{}",
+            };
+            ContentFolderWrapper folder = new() { Entity = folderEntity };
+            return folder;
+
+        }
+
+        // FromDictList
+        public static List<ContentFolderWrapper> FromDictList(IEnumerable<Dictionary<string, object>> dicts) {
+            return dicts.Select(dict => FromDict(dict)).ToList();
+        }
     }
 }

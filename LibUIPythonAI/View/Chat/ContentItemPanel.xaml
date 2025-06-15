@@ -55,7 +55,7 @@
         <!--  ファイルリスト  -->
         <ListBox
             Grid.Row="1"
-            ItemsSource="{Binding ContentItem.ClipboardItemFiles, Mode=OneWay}"
+            ItemsSource="{Binding ContentItem.ApplicationItemFiles, Mode=OneWay}"
             SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
             SelectionMode="Single">
             <ListBox.ItemTemplate>

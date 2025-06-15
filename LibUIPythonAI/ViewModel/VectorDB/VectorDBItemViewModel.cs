@@ -1,9 +1,9 @@
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Model.VectorDB;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
-    public class VectorDBItemViewModel(VectorDBItem item) : ChatViewModelBase {
+    public class VectorDBItemViewModel(VectorDBItem item) : CommonViewModelBase {
         public VectorDBItem Item { get; private set; } = item;
 
 
@@ -116,6 +116,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 OnPropertyChanged(nameof(DefaultSearchResultLimit));
             }
         }
+        // DefaultScoreThreshold
+        public float DefaultScoreThreshold {
+            get => Item.DefaultScoreThreshold;
+            set {
+                Item.DefaultScoreThreshold = value;
+                OnPropertyChanged(nameof(DefaultScoreThreshold));
+            }
+        }
+
 
         // DocStoreURLを表示するか否かのVisibility
         public Visibility DocStoreURLVisibility {

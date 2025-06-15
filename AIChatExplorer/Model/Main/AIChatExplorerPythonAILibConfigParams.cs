@@ -1,12 +1,13 @@
 using System.IO;
 using System.Windows;
 using AIChatExplorer.ViewModel.Settings;
+using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
-using PythonAILib.Common;
 
 namespace AIChatExplorer.Model.Main {
     public class AIChatExplorerPythonAILibConfigParams : IPythonAILibConfigParams {
+
         public string GetHttpsProxy() {
             return AIChatExplorerConfig.Instance.ProxyURL;
         }
@@ -23,10 +24,10 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.PythonVenvPath;
         }
         public string GetAppDataPath() {
-            return AIChatExplorerConfig.Instance.AppDataFolder;
+            return AIChatExplorerConfig.Instance.AppDataPath;
         }
         public string GetContentOutputPath() {
-            return Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "content_output");
+            return Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "content_output");
         }
 
         public OpenAIProperties GetOpenAIProperties() {
@@ -44,7 +45,7 @@ namespace AIChatExplorer.Model.Main {
 
         public string GetDBPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
             string dbPath = Path.Combine(appDataPath, "clipboard.db");
             return dbPath;
@@ -52,18 +53,18 @@ namespace AIChatExplorer.Model.Main {
 
         public string GetMainDBPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
-            string dbPath = Path.Combine(appDataPath, "main_db");
+            string dbPath = Path.Combine(appDataPath, "client", "main_db");
             if (!Directory.Exists(dbPath)) {
                 Directory.CreateDirectory(dbPath);
             }
-            dbPath = Path.Combine(dbPath, "main.db");
+            dbPath = Path.Combine(dbPath, "client_main.db");
             return dbPath;
         }
         public string GetPythonLibPath() {
             /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataFolder;
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
             // Create database file path
             string path = Path.Combine(appDataPath, "python_lib");
             return path;
@@ -71,7 +72,7 @@ namespace AIChatExplorer.Model.Main {
         }
 
         public string GetSystemVectorDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "vector_db");
+            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
             if (!Directory.Exists(vectorDBDir)) {
                 Directory.CreateDirectory(vectorDBDir);
             }
@@ -80,7 +81,7 @@ namespace AIChatExplorer.Model.Main {
         }
 
         public string GetSystemDocDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "vector_db");
+            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
             if (!Directory.Exists(vectorDBDir)) {
                 Directory.CreateDirectory(vectorDBDir);
             }
@@ -90,8 +91,21 @@ namespace AIChatExplorer.Model.Main {
 
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {
-            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "autogen");
+            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "work");
+            // Create directory if it does not exist
+            if (!Directory.Exists(workDir)) {
+                Directory.CreateDirectory(workDir);
+            }
             return workDir;
+        }
+        // AutoGenToolDir
+        public string GetAutoGenToolDir() {
+            string toolDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "tools");
+            // Create directory if it does not exist
+            if (!Directory.Exists(toolDir)) {
+                Directory.CreateDirectory(toolDir);
+            }
+            return toolDir;
         }
 
         public bool AutoTag() {
@@ -154,6 +168,11 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.EnableDevFeatures;
         }
 
+        public void UpdateDevFeaturesEnabled(bool value) {
+            AIChatExplorerConfig.Instance.EnableDevFeatures = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
         // APIServerURL
         public string GetAPIServerURL() {
             return AIChatExplorerConfig.Instance.APIServerURL;
@@ -167,6 +186,33 @@ namespace AIChatExplorer.Model.Main {
         public bool UseExternalAPI() {
             return AIChatExplorerConfig.Instance.UseExternalAPI;
         }
+        // MarkdownView
+        public bool IsMarkdownView() {
+                return AIChatExplorerConfig.Instance.MarkdownView;
+        }
 
+        public void UpdateMarkdownView(bool value) {
+            AIChatExplorerConfig.Instance.MarkdownView = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // TextWrapping
+        public bool IsTextWrapping() {
+            return AIChatExplorerConfig.Instance.TextWrapping == TextWrapping.Wrap;
+        }
+        public void UpdateTextWrapping(TextWrapping value) {
+            AIChatExplorerConfig.Instance.TextWrapping = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // AutoTextWrapping
+        public bool IsAutoTextWrapping() {
+            return AIChatExplorerConfig.Instance.AutoTextWrapping;
+        }
+
+        public void UpdateAutoTextWrapping(bool value) {
+            AIChatExplorerConfig.Instance.AutoTextWrapping = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
     }
 }

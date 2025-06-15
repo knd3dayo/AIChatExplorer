@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Chat {
+namespace LibPythonAI.Model.Chat {
     public enum OpenAIExecutionModeEnum {
         Normal = 0,
         // OpenAIRAG = 1,

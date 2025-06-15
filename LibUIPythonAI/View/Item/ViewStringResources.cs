@@ -20,7 +20,7 @@ namespace LibUIPythonAI.View.Item {
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Save { get; set; } = CommonStringResources.Instance.Save;
@@ -47,7 +47,7 @@ namespace LibUIPythonAI.View.Item {
         // ClickHereToOpenTheTagEditScreen
         public static string ClickHereToOpenTheTagEditScreen { get; set; } = CommonStringResources.Instance.ClickHereToOpenTheTagEditScreen;
 
-        // OpenAIChat
+        // OpenAIChatAsync
         public static string OpenAIChat { get; set; } = CommonStringResources.Instance.OpenAIChat;
 
         // OpenTextAsFile
@@ -86,8 +86,11 @@ namespace LibUIPythonAI.View.Item {
         // ExtractedText
         public static string ExtractedText { get; set; } = CommonStringResources.Instance.ExtractedText;
 
-        // SourcePath
+        // Path
         public static string SourcePath { get; set; } = CommonStringResources.Instance.SourcePath;
+
+        // MarkdownView
+        public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
 
     }
 }

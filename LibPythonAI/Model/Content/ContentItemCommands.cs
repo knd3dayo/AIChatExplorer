@@ -1,20 +1,14 @@
 using System.Diagnostics;
-using System.IO;
-using LibPythonAI.Data;
-using LibPythonAI.Model.Content;
+using LibPythonAI.Common;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
-using PythonAILib.Utils.Python;
+using LibPythonAI.Utils.Python;
 
-namespace PythonAILib.Model.Content {
+namespace LibPythonAI.Model.Content {
     public class ContentItemCommands {
 
 
@@ -22,11 +16,11 @@ namespace PythonAILib.Model.Content {
         // Command to open a folder
         public static void OpenFolder(ContentItemWrapper contentItem) {
             // Open the folder only if the ContentType is File
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.CannotOpenFolderForNonFileContent);
+            if (contentItem.ContentType != ContentItemTypes.ContentItemTypeEnum.Files) {
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
-            string message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
+            string message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
             LogWrapper.Info(message);
 
             // Open the folder with Process.Start
@@ -39,261 +33,42 @@ namespace PythonAILib.Model.Content {
                 };
                 p.Start();
             }
-            message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
+            message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
             LogWrapper.Info(message);
 
         }
-        public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
 
-            // promptNameからDescriptionを取得
-            string description = promptItem.Description;
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
-            int count = items.Count;
-            Task.Run(() => {
-                beforeAction();
-                object lockObject = new();
-                int start_count = 0;
-                ParallelOptions parallelOptions = new() {
-                    MaxDegreeOfParallelism = 4
-                };
-                Parallel.For(0, count, parallelOptions, (i) => {
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
-                    LogWrapper.UpdateInProgress(true, message);
-                    ContentItemWrapper item = items[index];
-
-                    ContentItemCommands.CreateChatResult(item, promptItem.Name);
-                    // Save
-                    item.Save();
-                });
-                // Execute if obj is an Action
-                afterAction();
-                LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
-            });
-
-        }
-        public static void GenerateVectors(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
-
-            Task.Run(() => {
-                beforeAction();
-                ContentItemCommands.UpdateEmbeddings(items);
-                // Save
-                foreach (var item in items) {
-                    item.Save();
-                }
-                LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
-                // Execute if obj is an Action
-                afterAction();
-            });
-
-        }
 
         // OpenAIを使用してイメージからテキスト抽出する。
-        public static void ExtractImageWithOpenAI(ContentItemWrapper item) {
-            ExtractText(item);
+        public static async Task ExtractImageWithOpenAIAsync(ContentItemWrapper item) {
+            await ExtractText(item);
         }
 
-        // OpenAIを使用してタイトルを生成する
-        public static void CreateAutoTitleWithOpenAI(ContentItemWrapper item) {
-            // ContentTypeがTextの場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                using PythonAILibDBContext db = new();
-                PromptItemEntity? promptItem = db.PromptItems.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
-                if (promptItem == null) {
-                    LogWrapper.Error("PromptItem not found");
-                    return;
-                }
-                CreateChatResult(item, promptItem.Name);
-                return;
-            }
-            // ContentTypeがFiles,の場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
-                // ファイル名をタイトルとして使用
-                item.Description += item.FileName;
-                return;
-            }
-            // ContentTypeがImageの場合
-            item.Description = "Image";
-        }
-
-        // ExecuteSystemDefinedPromptを実行する
-        public static void CreateChatResult(ContentItemWrapper item, string promptName) {
-            // システム定義のPromptItemを取得
-            PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
-            // CreateChatResultを実行
-            ContentItemCommands.CreateChatResult(item, promptItem);
-        }
-
-        // 文章の信頼度を判定する
-        public static void CheckDocumentReliability(ContentItemWrapper item) {
-
-            CreateChatResult(item, SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
-            // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得
-            string result = item.PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
-            // resultがない場合は処理しない
-            if (string.IsNullOrEmpty(result)) {
-                return;
-            }
-            // ChatUtl.CreateDictionaryChatResultを実行
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-
-            // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
-                OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-            };
-
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem(new LibPythonAI.Data.PromptItemEntity()) {
-                ChatMode = OpenAIExecutionModeEnum.Normal,
-                // ベクトルDBを使用する
-                UseVectorDB = true,
-                Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
-            }, result);
-            // responseからキー：reliabilityを取得
-            if (response.ContainsKey("reliability") == false) {
-                return;
-            }
-            dynamic? reliability = response["reliability"];
-
-            int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
-
-            // DocumentReliabilityにReliabilityを設定
-            item.DocumentReliability = reliabilityValue;
-            // responseからキー：reasonを取得
-            if (response.ContainsKey("reason")) {
-                dynamic? reason = response["reason"];
-                // DocumentReliabilityReasonにreasonを設定
-                item.DocumentReliabilityReason = reason?.ToString() ?? "";
-            }
-        }
-
-        // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
-        public static void CreateChatResult(ContentItemWrapper item, PromptItem promptItem) {
-
-            // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
-            string contentText;
-            if (string.IsNullOrEmpty(promptItem.PromptInputName) == false) {
-                // PromptInputNameのContentを取得
-                contentText = item.PromptChatResult.GetTextContent(promptItem.PromptInputName);
-                // inputContentがない場合は処理しない
-                if (string.IsNullOrEmpty(contentText)) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
-                    return;
-                }
-            } else {
-                // Contentがない場合は処理しない
-                if (string.IsNullOrEmpty(item.Content)) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
-                    return;
-                }
-                // ヘッダー情報とコンテンツ情報を結合
-                // ★TODO タグ情報を追加する
-                contentText = item.HeaderText + "\n" + item.Content;
-            }
-
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorDBProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder().GetVectorSearchProperties() : [];
-            // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = vectorSearchProperties,
-                OpenAIProperties = openAIProperties,
-                PromptTemplateText = promptItem.Prompt,
-                ChatMode = promptItem.ChatMode,
-                SplitMode = promptItem.SplitMode,
-                SessionToken = Guid.NewGuid().ToString()
-
-            };
-
-
-            // PromptResultTypeがTextContentの場合
-            if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
-                string result = ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
-                if (string.IsNullOrEmpty(result) == false) {
-                    // PromptChatResultに結果を保存
-                    item.PromptChatResult.SetTextContent(promptItem.Name, result);
-                    // PromptOutputTypeがOverwriteTitleの場合はDescriptionに結果を保存
-                    if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteTitle) {
-                        item.Description = result;
-                    }
-                    // PromptOutputTypeがOverwriteContentの場合はContentに結果を保存
-                    if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteContent) {
-                        item.Content = result;
-                    }
-                }
-                return;
-            }
-
-            // PromptResultTypeがTableContentの場合
-            if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
-                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
-                // resultからキー:resultを取得
-                if (response.ContainsKey("result") == false) {
-                    return;
-                }
-                dynamic? results = response["result"];
-                // resultがない場合は処理しない
-                if (results == null) {
-                    return;
-                }
-                if (results.Count > 0) {
-                    // resultからDynamicDictionaryObjectを作成
-                    List<Dictionary<string, object>> resultDictList = [];
-                    foreach (var result in results) {
-                        resultDictList.Add(result);
-                    }
-                    // PromptChatResultに結果を保存
-                    item.PromptChatResult.SetTableContent(promptItem.Name, resultDictList);
-                }
-                return;
-            }
-            // PromptResultTypeがListの場合
-            if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
-                List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
-                if (response.Count > 0) {
-                    // PromptChatResultに結果を保存
-                    item.PromptChatResult.SetListContent(promptItem.Name, response);
-                }
-                return;
-            }
-        }
 
 
         // テキストを抽出する
-        public static void ExtractText(ContentItemWrapper item) {
+        public static async Task ExtractText(ContentItemWrapper item) {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBProperties = item.GetFolder().GetVectorSearchProperties(),
-                OpenAIProperties = openAIProperties,
-                SessionToken = Guid.NewGuid().ToString()
-
-            };
+            ChatRequestContext chatRequestContext = new() { };
 
 
             try {
                 if (item.IsImage()) {
                     string base64 = item.Base64Image;
-                    string result = ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
+                    string result = await ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         item.Content = result;
                     }
-                } else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+                } else if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                     // ファイル名から拡張子を取得
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(item.SourcePath);
                     item.Content = text;
                 }
 
             } catch (UnsupportedFileTypeException) {
-                LogWrapper.Info(PythonAILibStringResources.Instance.UnsupportedFileType);
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UnsupportedFileType);
             }
         }
 
@@ -301,7 +76,7 @@ namespace PythonAILib.Model.Content {
         public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
             int count = items.Count;
             if (count == 0) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoItemSelected);
                 return;
             }
             beforeAction();
@@ -318,108 +93,121 @@ namespace PythonAILib.Model.Content {
                     lock (lockObject) {
                         start_count++;
                     }
-                    string message = $"{PythonAILibStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                    string message = $"{PythonAILibStringResourcesJa.Instance.TextExtractionInProgress} ({start_count}/{count})";
                     LogWrapper.UpdateInProgress(true, message);
                     var item = items[index];
 
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                        LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
+                    if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
+                        LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
-                    ContentItemCommands.ExtractText(item);
-                    // Save the item
+                    ExtractText(item).Wait();
+                    // SaveAsync the item
                     item.Save();
                 });
                 afterAction();
                 LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
+                LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.TextExtracted}");
             });
         }
 
 
-
-        // 自動でコンテキスト情報を付与するコマンド
-        public static void CreateAutoBackgroundInfo(ContentItemWrapper item) {
-            string contentText = item.Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return;
-            }
-            // 標準背景情報を生成
-            CreateChatResult(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-        }
-
         // ベクトルを更新する
         public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
 
-            // VectorDBProperty用のHashSetを作成
-            HashSet<VectorDBProperty> vectorDBProperties = [];
+            Task.Run(() => {
+                // Parallelによる並列処理。4並列
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 4
+                };
+                Parallel.ForEach(items, parallelOptions, (item) => {
 
-            foreach (var item in items) {
-                // VectorDBItemを取得
-                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
-                // VectorDBProperty用のHashSetに存在する場合は取得
-                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
-                    // VectorDBProperty用のHashSetに存在しない場合は追加
-                    vectorDBProperties.Add(folderVectorDBItem);
-                    vectorDBProperty = folderVectorDBItem;
-                }
-            }
-            VectorDBProperty.DeleteEmbeddings([.. vectorDBProperties]);
+                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
+                    if (string.IsNullOrEmpty(vectorDBItemName)) {
+                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                        return;
+                    }
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    vectorDBEntry.SetMetadata(item);
+
+                    VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                });
+            });
         }
 
         // Embeddingを更新する
-        public static void UpdateEmbeddings(List<ContentItemWrapper> items) {
-            // VectorDBProperty用のHashSetを作成
-            HashSet<VectorDBProperty> vectorDBProperties = [];
-
-            foreach (var item in items) {
-                // VectorDBItemを取得
-                VectorDBProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
-                // VectorDBProperty用のHashSetに存在する場合は取得
-                if (vectorDBProperties.TryGetValue(folderVectorDBItem, out VectorDBProperty? vectorDBProperty) == false) {
-                    // VectorDBProperty用のHashSetに存在しない場合は追加
-                    vectorDBProperties.Add(folderVectorDBItem);
-                    vectorDBProperty = folderVectorDBItem;
-                }
-                // IPythonAIFunctions.ClipboardInfoを作成
-                VectorMetadata vectorDBEntry = new(item.Id.ToString());
-
-                // タイトルとHeaderTextを追加
-                string description = item.Description + "\n" + item.HeaderText;
-                if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                    string sourcePath = item.SourcePath;
-                    vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
-                } else {
-                    if (item.IsImage()) {
-                        // 画像からテキスト抽出
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", item.Base64Image);
-
-                    } else {
-                        vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.SourcePath, "", "", "");
+        public static void UpdateEmbeddings(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+            beforeAction();
+            Task.Run(() => {
+                // Parallelによる並列処理。4並列
+                ParallelOptions parallelOptions = new() {
+                    MaxDegreeOfParallelism = 4
+                };
+                Parallel.ForEach(items, parallelOptions, (item) => {
+                    // VectorDBItemを取得
+                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
+                    if (string.IsNullOrEmpty(vectorDBItemName)) {
+                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                        return;
                     }
-                }
-                vectorDBProperty.VectorMetadataList.Add(vectorDBEntry);
-                // ベクトル化日時を更新
-                item.VectorizedAt = DateTime.Now;
-            }
-            VectorDBProperty.UpdateEmbeddings(vectorDBProperties.ToList());
+                    // IPythonAIFunctions.ClipboardInfoを作成
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    vectorDBEntry.SetMetadata(item);
+
+                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    // ベクトル化日時を更新
+                    item.VectorizedAt = DateTime.Now;
+                });
+                // Execute if obj is an Action
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GenerateVectorCompleted);
+                afterAction();
+            });
+
         }
+
         public static void CreateAutoTitle(ContentItemWrapper item) {
             // TextとImageの場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text || item.ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";
             }
             // Fileの場合
-            else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
-                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
+                    item.Description += $" {PythonAILibStringResourcesJa.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
                 } else {
-                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content;
+                    item.Description += $" {PythonAILibStringResourcesJa.Instance.File}:" + item.Content;
                 }
             }
+        }
+
+        public static async Task SaveChatHistoryAsync(ContentItemWrapper contentItem, ContentFolderWrapper chatFolder) {
+
+            contentItem.Save();
+            // チャット履歴用のItemの設定
+            ContentItemWrapper chatHistoryItem = contentItem.Copy();
+            chatHistoryItem.Entity.FolderId = chatFolder.Id;
+            // 更新日時を更新
+            chatHistoryItem.Entity.UpdatedAt = DateTime.Now;
+
+            // ChatItemsTextをContentに設定
+            chatHistoryItem.Content = contentItem.ChatItemsText;
+
+            IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
+
+            if (configParams.AutoTitle()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                CreateAutoTitle(chatHistoryItem);
+
+            } else if (configParams.AutoTitleWithOpenAI()) {
+
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                await PromptItem.CreateAutoTitleWithOpenAIAsync(chatHistoryItem);
+            }
+
+            chatHistoryItem.Save();
+
         }
 
     }

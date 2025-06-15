@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.AutoGen;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.AutoGen;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenGroupChatViewModel : ChatViewModelBase {
+    public class EditAutoGenGroupChatViewModel : CommonViewModelBase {
 
 
         public EditAutoGenGroupChatViewModel(AutoGenGroupChat autoGenGroupChat, Action afterUpdate) {
@@ -13,8 +13,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             AutoGenGroupChat = autoGenGroupChat;
             AfterUpdate = afterUpdate;
 
-            LoadAutoGenAgents();
-            LoadLLMConfig();
+            Task.Run(async () => {
+                await LoadAutoGenAgentsAsync();
+                await LoadLLMConfigAsync();
+            });
         }
 
         public AutoGenGroupChat AutoGenGroupChat { get; set; }
@@ -60,15 +62,30 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
         // LLMConfigList
-        public ObservableCollection<AutoGenLLMConfig> LLMConfigList { get; set; } = [.. AutoGenLLMConfig.GetAutoGenLLMConfigList()];
+        private ObservableCollection<AutoGenLLMConfig> _LLMConfigList = new();
+        public ObservableCollection<AutoGenLLMConfig> LLMConfigList {
+            get => _LLMConfigList;
+            set {
+                _LLMConfigList = value;
+                OnPropertyChanged(nameof(LLMConfigList));
+            }
+        }
 
         // InitAgent
-        public AutoGenLLMConfig? LLMConfig { get; set; }
+        private AutoGenLLMConfig? _llmConfig;
+        public AutoGenLLMConfig? LLMConfig {
+            get => _llmConfig;
+            set {
+                _llmConfig = value;
+                OnPropertyChanged(nameof(LLMConfig));
+            }
+        }
 
-        public void LoadAutoGenAgents() {
+        public async Task LoadAutoGenAgentsAsync() {
             // AutoGenAgentのリストを取得
             ObservableCollection<AutoGenAgentViewModel> autoGenAgents = [];
-            foreach (AutoGenAgent item in AutoGenAgent.GetAutoGenAgentList()) {
+            var list = await AutoGenAgent.GetAutoGenAgentList();
+            foreach (AutoGenAgent item in list) {
                 AutoGenAgentViewModel autoGenAgentViewModel = new(item);
                 // itemのAgentNamesにAutoGenGroupChatのAgentNamesが含まれている場合はIsCheckedをTrueにする
                 if (AutoGenGroupChat.AgentNames.Contains(item.Name)) {
@@ -82,9 +99,16 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             OnPropertyChanged(nameof(AutoGenAgents));
         }
         // LLMConfigを読み込む
-        public void LoadLLMConfig() {
-            LLMConfig = AutoGenLLMConfig.GetAutoGenLLMConfigList().FirstOrDefault(x => x.Name == LLMConfigName);
-            OnPropertyChanged(nameof(LLMConfig));
+        public async Task LoadLLMConfigAsync() {
+            List<AutoGenLLMConfig> list = await AutoGenLLMConfig.GetAutoGenLLMConfigListAsync();
+            var config  = list.FirstOrDefault(x => x.Name == LLMConfigName);
+
+            // MainUIスレッドで実行する
+            MainUITask.Run(() => {
+                if (config != null) {
+                    LLMConfig = config;
+                }
+            });
         }
 
 
@@ -101,7 +125,10 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (LLMConfig != null) {
                 AutoGenGroupChat.LLMConfigName = LLMConfig.Name;
             }
-            AutoGenGroupChat.Save();
+            Task.Run(async () => {
+                // AutoGenGroupChatを保存
+                await AutoGenGroupChat.SaveAsync();
+            });
             AfterUpdate();
 
             window.Close();

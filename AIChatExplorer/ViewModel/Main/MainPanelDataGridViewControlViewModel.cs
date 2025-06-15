@@ -2,20 +2,20 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Resources;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelDataGridViewControlViewModel(AppItemViewModelCommands commands) : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(AppViewModelCommands commands) : ObservableObject {
 
-        private AppItemViewModelCommands Commands { get; set; } = commands;
+        private AppViewModelCommands Commands { get; set; } = commands;
 
-
+        public TabControl? MyTabControl { get; set; } 
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
         private ContentFolderViewModel? _selectedFolder;
@@ -52,35 +52,53 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        // クリップボードアイテムが選択された時の処理
+        public void UpdateView() {
+            // 前回選択していたTabIndexを取得
+            int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
+
+            // SelectedTabIndexを更新する処理
+            if (SelectedItem != null) {
+                /**
+                 * Task.Run(() => {
+                    SelectedItem.ContentItem.Load(() => { }, () => {
+                        MainUITask.Run(() => {
+                            OnPropertyChanged(nameof(SelectedItem));
+                        });
+                    });
+                });
+                OnPropertyChanged(nameof(SelectedItem));
+                **/
+                // SourceがFileの場合は、ファイルの内容を読み込む
+                if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                    ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
+                        MainUITask.Run(() => {
+                            SelectedItem.UpdateView(MyTabControl);
+                            OnPropertyChanged(nameof(SelectedItem));
+                        });
+                    });
+                }
+                // 選択中のアイテムのSelectedTabIndexを更新する
+                SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
+                SelectedItem.UpdateView(MyTabControl);
+                OnPropertyChanged(nameof(SelectedItem));
+
+            }
+        }
+
+        // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid dataGrid) {
-                // 前回選択していたTabIndexを取得
-                int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
-                if (dataGrid.SelectedItem is ContentItemViewModel clipboardItemViewModel) {
+                if (dataGrid.SelectedItem is ContentItemViewModel applicationItemViewModel) {
                     // SelectedItemsをMainWindowViewModelにセット
                     SelectedItems.Clear();
                     foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
                         SelectedItems.Add(item);
                     }
-                    // SelectedTabIndexを更新する処理
-                    if (SelectedItem != null) {
-                        SelectedItem.SelectedTabIndex = lastSelectedTabIndex;
-                        /**
-                         * Task.Run(() => {
-                            SelectedItem.ContentItem.Load(() => { }, () => {
-                                MainUITask.Run(() => {
-                                    OnPropertyChanged(nameof(SelectedItem));
-                                });
-                            });
-                        });
-                        **/
-                        OnPropertyChanged(nameof(SelectedItem));
-                    }
+                    UpdateView();
                 }
             }
 
@@ -94,12 +112,12 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
-            foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
+            foreach (ApplicationItemViewModel applicationItemViewModel in SelectedItems) {
                 Commands.ChangePinCommand.Execute();
             }
         });
 
-        #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
+        #region アイテムのコンテキストメニューのInputBinding用のコマンド
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
             Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
@@ -118,8 +136,8 @@ namespace AIChatExplorer.ViewModel.Main {
 
         #endregion
 
-        #region クリップボードアイテムのInputBinding用のコマンド
-        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        #region アイテムのInputBinding用のコマンド
+        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             SelectedFolder?.DeleteDisplayedItemCommand.Execute();
         });
@@ -131,18 +149,17 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            Commands.CutItemCommand.Execute(this.SelectedItems);
+            AppViewModelCommands.CutItemCommandExecute(this.SelectedItems);
         });
 
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            Commands.CopyToClipboardCommandExecute(this.SelectedItems);
+            AppViewModelCommands.CopyToClipboardCommandExecute(this.SelectedItems);
         });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            Commands.OpenItemCommand.Execute(this.SelectedItem);
-
+            AppViewModelCommands.OpenItemCommandExecute(this.SelectedItem);
         });
 
 

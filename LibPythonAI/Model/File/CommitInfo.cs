@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.File {
+namespace LibPythonAI.Model.File {
     public class CommitInfo {
         // コミットのハッシュ
         public string Hash { get; set; } = "";

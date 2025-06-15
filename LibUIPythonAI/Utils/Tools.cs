@@ -1,6 +1,12 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+using LibPythonAI.Utils.Common;
+using Markdig;
+using Neo.Markdig.Xaml;
+using System.Windows.Documents;
+using System.Xml;
+using System.Windows.Markup;
 
 namespace LibUIPythonAI.Utils {
     public partial class Tools {
@@ -68,5 +74,8 @@ namespace LibUIPythonAI.Utils {
         private static partial Regex MyRegex1();
         [GeneratedRegex(@"(\\\\[a-zA-Z0-9_\-]+)+\\[a-zA-Z0-9_\-ぁ-んァ-ヴー一-龠]+")]
         private static partial Regex MyRegex2();
+
+
+
     }
 }

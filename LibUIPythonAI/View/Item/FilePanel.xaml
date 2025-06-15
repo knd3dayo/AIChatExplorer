@@ -53,7 +53,7 @@
                     Margin="10,3,10,3"
                     IsReadOnly="True"
                     Text="{Binding ContentItem.SourcePath, Mode=OneWay}"
-                    TextWrappingMode="{Binding TextWrappingMode}" />
+                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
 
                 <TextBlock
                     Grid.Row="1"
@@ -68,7 +68,7 @@
                     Margin="10,3,10,3"
                     IsReadOnly="True"
                     Text="{Binding ContentItem.FolderName, Mode=OneWay}"
-                    TextWrappingMode="{Binding TextWrappingMode}" />
+                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="0"
@@ -81,7 +81,7 @@
                     Margin="10,3,10,3"
                     IsReadOnly="True"
                     Text="{Binding ContentItem.FileName, Mode=OneWay}"
-                    TextWrappingMode="{Binding TextWrappingMode}" />
+                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
@@ -94,7 +94,7 @@
                     Margin="10,3,10,3"
                     IsReadOnly="True"
                     Text="{Binding ContentItem.FolderAndFileName, Mode=OneWay}"
-                    TextWrappingMode="{Binding TextWrappingMode}" />
+                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"

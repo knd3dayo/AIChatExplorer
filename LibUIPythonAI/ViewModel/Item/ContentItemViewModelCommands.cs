@@ -8,14 +8,12 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resources;
 using WpfAppCommon.Model;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.Resources;
 
-namespace PythonAILibUI.ViewModel.Item {
+namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModelCommands {
 
         public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };
@@ -28,116 +26,7 @@ namespace PythonAILibUI.ViewModel.Item {
         }
 
 
-        // Command to open a file
-        public void OpenFileExecute(ContentItemViewModel itemViewModel) {
-            ContentItemWrapper contentItem = itemViewModel.ContentItem;
-            // Open the selected item
-            ProcessUtil.OpenClipboardItemFile(contentItem, false);
-        }
 
-        // Command to open a file as a new file
-        public void OpenFileAsNewFileExecute(ContentItemViewModel itemViewModel) {
-            // Open the selected item
-            ProcessUtil.OpenClipboardItemFile(itemViewModel.ContentItem, true);
-        }
-
-        // Command to open text content as a file
-        public void OpenContentAsFileExecute(ContentItemViewModel itemViewModel) {
-            try {
-                // Open the selected item
-                ProcessUtil.OpenClipboardItemContent(itemViewModel.ContentItem);
-            } catch (Exception e) {
-                LogWrapper.Error(e.Message);
-            }
-        }
-
-        // Command to open a folder
-        public void OpenFolderExecute(ContentItemViewModel itemViewModel) {
-            ContentItemCommands.OpenFolder(itemViewModel.ContentItem);
-        }
-
-        // Command to execute a prompt template (複数選択可能)
-        public void ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem, Action beforeAction, Action afterAction) {
-            ContentItemCommands.ExecutePromptTemplate(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
-        }
-
-        // Command to perform vector search
-        public void OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
-                });
-            };
-            var contentItem = itemViewModel.ContentItem;
-            vectorSearchWindowViewModel.VectorSearchProperty = contentItem.GetMainVectorSearchProperty();
-            vectorSearchWindowViewModel.InputText = contentItem.Content;
-            // Execute vector search
-            vectorSearchWindowViewModel.SendCommand.Execute(null);
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-
-        // Command to perform vector search
-        public void OpenFolderVectorSearchWindowCommandExecute(ContentFolderViewModel folderViewModel) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new() {
-                // Action when a vector DB item is selected
-                SelectVectorDBItemAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                        vectorDBItems.Add(vectorDBItemBase);
-                    });
-                }
-            };
-            var folder = folderViewModel.Folder;
-            vectorSearchWindowViewModel.VectorSearchProperty = folder.GetMainVectorSearchProperty();
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-        // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public void DeleteItemsCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
-            // 選択中のアイテムがない場合は処理をしない
-            if (itemViewModels.Count == 0) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
-                return;
-            }
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result != MessageBoxResult.Yes) {
-                return;
-            }
-            beforeAction();
-            ContentItemViewModel.DeleteItems([.. itemViewModels]).ContinueWith((task) => {
-                LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                afterAction();
-            });
-        }
-
-        // Command to reload the folder
-        public void ReloadFolderCommandExecute(ContentFolderViewModel? folderViewModel, Action beforeAction, Action afterAction) {
-            if (folderViewModel == null) {
-                return;
-            }
-            Task.Run(() => {
-                // Display ProgressIndicator until processing is complete
-                beforeAction();
-                folderViewModel.LoadFolderCommand.Execute();
-                LogWrapper.Info(CommonStringResources.Instance.Reloaded);
-                afterAction();
-            });
-        }
-
-        public void ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
-
-            ContentItemCommands.ExtractTexts(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
-        }
-
-        // Command to generate vectors
-        public void GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
-            ContentItemCommands.GenerateVectors(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
-        }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
         // 処理中はプログレスインジケータを表示
@@ -224,6 +113,18 @@ namespace PythonAILibUI.ViewModel.Item {
             ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
         });
 
+        // タグを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateTagsCommand => new((itemViewModels) => {
+            string promptName = SystemDefinedPromptNames.TagGeneration.ToString();
+            PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
+            if (promptItem == null) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTemplateNotFound);
+                return;
+            }
+            ExecutePromptTemplateCommand.Execute((itemViewModels, promptItem));
+        });
+
+
         // 背景情報を生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateBackgroundInfoCommand => new((itemViewModels) => {
             string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
@@ -273,6 +174,7 @@ namespace PythonAILibUI.ViewModel.Item {
         public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
             OpenVectorSearchWindowCommandExecute(itemViewModel);
         });
+
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> DeleteItemsCommand => new((itemViewModels) => {
             DeleteItemsCommandExecute(itemViewModels,
                 () => {
@@ -285,6 +187,120 @@ namespace PythonAILibUI.ViewModel.Item {
                 });
         });
 
+
+        // Command to open a file
+        public static void OpenFileExecute(ContentItemViewModel itemViewModel) {
+            ContentItemWrapper contentItem = itemViewModel.ContentItem;
+            // Open the selected item
+            ProcessUtil.OpenApplicationItemFile(contentItem, false);
+        }
+
+        // Command to open a file as a new file
+        public static void OpenFileAsNewFileExecute(ContentItemViewModel itemViewModel) {
+            // Open the selected item
+            ProcessUtil.OpenApplicationItemFile(itemViewModel.ContentItem, true);
+        }
+
+        // Command to open text content as a file
+        public void OpenContentAsFileExecute(ContentItemViewModel itemViewModel) {
+            try {
+                // Open the selected item
+                ProcessUtil.OpenApplicationItemContent(itemViewModel.ContentItem);
+            } catch (Exception e) {
+                LogWrapper.Error(e.Message);
+            }
+        }
+
+        // Command to open a folder
+        public static void OpenFolderExecute(ContentItemViewModel itemViewModel) {
+            ContentItemCommands.OpenFolder(itemViewModel.ContentItem);
+        }
+
+        // Command to execute a prompt template (複数選択可能)
+        public static void ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem, Action beforeAction, Action afterAction) {
+            PromptItem.ExecutePromptTemplate(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
+        }
+
+        // Command to perform vector search
+        public static void OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
+            VectorSearchItem VectorSearchItem = itemViewModel.ContentItem.GetMainVectorSearchItem();
+            // Open vector search result window
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
+                // Action when a vector DB item is selected
+                SelectVectorDBItemAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                        vectorDBItems.Add(vectorDBItemBase);
+                    });
+                }
+            };
+            var contentItem = itemViewModel.ContentItem;
+            vectorSearchWindowViewModel.VectorSearchItem = contentItem.GetMainVectorSearchItem();
+            vectorSearchWindowViewModel.VectorSearchItem.InputText = contentItem.Content;
+            // Execute vector search
+            vectorSearchWindowViewModel.SendCommand.Execute(null);
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+        }
+
+
+        // Command to perform vector search
+        public static void OpenFolderVectorSearchWindowCommandExecute(ContentFolderViewModel folderViewModel) {
+            // Open vector search result window
+            VectorSearchItem VectorSearchItem = folderViewModel.Folder.GetMainVectorSearchItem();
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
+                // Action when a vector DB item is selected
+                SelectVectorDBItemAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                        vectorDBItems.Add(vectorDBItemBase);
+                    });
+                }
+            };
+            var folder = folderViewModel.Folder;
+            vectorSearchWindowViewModel.VectorSearchItem = folder.GetMainVectorSearchItem();
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+        }
+
+        // Deleteが押された時の処理 選択中のアイテムを削除する処理
+        public static void DeleteItemsCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+            // 選択中のアイテムがない場合は処理をしない
+            if (itemViewModels.Count == 0) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
+                return;
+            }
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteSelectedItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result != MessageBoxResult.Yes) {
+                return;
+            }
+            beforeAction();
+            ContentItemViewModel.DeleteItems([.. itemViewModels]).ContinueWith((task) => {
+                LogWrapper.Info(CommonStringResources.Instance.Deleted);
+                afterAction();
+            });
+        }
+
+        // Command to reload the folder
+        public static void ReloadFolderCommandExecute(ContentFolderViewModel? folderViewModel, Action beforeAction, Action afterAction) {
+            if (folderViewModel == null) {
+                return;
+            }
+            Task.Run(() => {
+                // Display ProgressIndicator until processing is complete
+                beforeAction();
+                folderViewModel.LoadFolderCommand.Execute();
+                LogWrapper.Info(CommonStringResources.Instance.Reloaded);
+                afterAction();
+            });
+        }
+
+        public static void ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+
+            ContentItemCommands.ExtractTexts(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+        }
+
+        // Command to generate vectors
+        public static void GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+            ContentItemCommands.UpdateEmbeddings(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+        }
 
 
     }

@@ -2,9 +2,6 @@ using System.IO;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.PythonIF;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
     public class FileSystemItem : ContentItemWrapper {
@@ -17,20 +14,32 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         ];
 
         // コンストラクタ
-        public FileSystemItem(ContentItemEntity item) : base(item) { }
+        public FileSystemItem() : base() { }
 
         public FileSystemItem(ContentFolderEntity folder) : base(folder) { }
 
         public override FileSystemItem Copy() {
-            return new(Entity.Copy());
+            return new() { Entity = Entity.Copy() };
         }
 
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                Task.Run(async () => {
+                    string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
+                    if (vectorDBItemName == null) {
+                        return;
+                    }
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
+                        Content = Content,
+                        Description = Description,
+                        SourceType = VectorSourceType.File,
+                        SourcePath = SourcePath,
+                    };
+                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
+                ContentModified = false;
+                DescriptionModified = false;
             }
 
             ContentItemEntity.SaveItems([Entity]);

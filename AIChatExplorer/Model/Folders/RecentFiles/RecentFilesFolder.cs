@@ -1,7 +1,6 @@
 using System.IO;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Main;
-using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.FileUtils;
 
@@ -9,9 +8,9 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
 
         // コンストラクタ
-        public RecentFilesFolder(ContentFolderEntity folder) : base(folder) {
+        public RecentFilesFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected RecentFilesFolder(RecentFilesFolder parent, string folderName) : base(parent, folderName) {
@@ -22,7 +21,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -32,20 +31,14 @@ namespace AIChatExplorer.Model.Folders.Browser {
         }
 
 
-        public override List<T> GetItems<T>() {
-            // SyncItems
-            SyncItems();
-            return base.GetItems<T>();
-        }
-
         // 子フォルダ
         public override List<T> GetChildren<T>() {
             return []; ;
         }
 
         public override void SyncItems() {
-            // コレクション
-            var items = Entity.GetContentItems().Select(x => new RecentFilesItem(x)).ToList();
+            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
+            var items = base.GetItems<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemPathDict = [];
@@ -89,16 +82,16 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
+                    ContentType = ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 
                 };
                 contentItem.Save();
                 // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
-                // result.Save();
+                // result.SaveAsync();
             });
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得

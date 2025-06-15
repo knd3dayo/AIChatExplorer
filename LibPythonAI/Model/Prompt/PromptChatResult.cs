@@ -1,9 +1,10 @@
+using System.Data;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Utils.Common;
 
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public class PromptChatResult() {
 
         public Dictionary<string, object> Results { get; set; } = [];
@@ -22,25 +23,89 @@ namespace PythonAILib.Model.Prompt {
             Results[promptName] = content;
         }
 
-        public List<Dictionary<string, object>> GetTableContent(string promptName) {
+        public DataTable GetTableContent(string promptName) {
             Results.TryGetValue(promptName, out object? values);
             if (values == null) {
-                return [];
+                return DictionaryListToDataTable([]);
+            }
+
+            if (values is List<object> objectList) {
+                List<string> stringList = [];
+                foreach (var item in objectList) {
+                    if (item.ToString() is string strValue) {
+                        stringList.Add(strValue);
+                    }
+                }
+                return ListToDataTable(stringList);
             }
 
             if (values is List<Dictionary<string, object>> list) {
-                return list;
+                return DictionaryListToDataTable(list);
             }
-            if (values is Object[] list2) {
-                return list2.Select(x => (Dictionary<string, object>)x).ToList();
+
+            if (values is object[] list2) {
+                var items =  list2.Select(x => (Dictionary<string, object>)x).ToList();
+                return DictionaryListToDataTable(items);
 
             }
 
-            return [];
+            return DictionaryListToDataTable([]);
         }
-        public void SetTableContent(string promptName, List<Dictionary<string, object>> content) {
-            Results[promptName] = content;
+        public void SetTableContent(string promptName, DataTable dataTable) {
+            Results[promptName] = DataTableToList(dataTable);
         }
+        public void SetTableContent(string promptName, List<Dictionary<string, object>> dataTable) {
+            Results[promptName] = dataTable;
+        }
+
+        // stringのListをDataTableに変換
+        private static DataTable ListToDataTable(List<string> list) {
+            DataTable dataTable = new();
+            dataTable.Columns.Add("Value", typeof(string));
+            foreach (var item in list) {
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["Value"] = item;
+                dataTable.Rows.Add(dataRow);
+            }
+            return dataTable;
+        }
+
+        // List<Dictionary<string, object>>からDataTableに変換
+        private static DataTable DictionaryListToDataTable(List<Dictionary<string, object>> tableContent) {
+            DataTable dataTable = new();
+            if (tableContent.Count == 0) {
+                return dataTable;
+            }
+            // tableContentの1番目の要素からキーを取得して、DataTableのカラムを作成
+            var firstRow = tableContent[0];
+            foreach (var key in firstRow.Keys) {
+                dataTable.Columns.Add(key, typeof(string));
+            }
+            // tableContentの各要素をDataTableに追加
+            foreach (var row in tableContent) {
+                DataRow dataRow = dataTable.NewRow();
+                foreach (var key in row.Keys) {
+                    dataRow[key] = row[key];
+                }
+                dataTable.Rows.Add(dataRow);
+            }
+            return dataTable;
+        }
+
+
+        // DataTableからList<Dictionary<string, object>>に変換
+        private List<Dictionary<string, object>> DataTableToList(DataTable dataTable) {
+            List<Dictionary<string, object>> tableContent = [];
+            foreach (DataRow row in dataTable.Rows) {
+                Dictionary<string, object> newRow = new();
+                foreach (DataColumn column in dataTable.Columns) {
+                    ((IDictionary<string, object>)newRow)[column.ColumnName] = row[column];
+                }
+                tableContent.Add(newRow);
+            }
+            return tableContent;
+        }
+
 
         public string ToJson() {
             JsonSerializerOptions jsonSerializerOptions = new() {

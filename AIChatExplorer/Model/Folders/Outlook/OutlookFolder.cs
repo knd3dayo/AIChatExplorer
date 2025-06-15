@@ -9,16 +9,16 @@ using NetOffice.OutlookApi.Enums;
 using NetOfficeOutlook = NetOffice.OutlookApi;
 
 namespace AIChatExplorer.Model.Folders.Outlook {
-    public class OutlookFolder : ClipboardFolder {
+    public class OutlookFolder : ApplicationFolder {
 
         // コンストラクタ
-        public OutlookFolder(ContentFolderEntity folder) : base(folder) {
+        public OutlookFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
         }
 
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
-            FolderTypeString = AIChatExplorerFolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN;
             // フォルダ名を設定
             FolderName = folderName;
             // FolderNameに一致するMAPIFolderがある場合は取得
@@ -56,12 +56,13 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString
             };
-            OutlookFolder child = new(childFolder);
+            OutlookFolder child = new() { Entity = childFolder};
             return child;
         }
 
-        public void SyncItems() {
+        public override void SyncItems() {
             // MAPIFolderが存在しない場合は終了
             if (MAPIFolder == null) {
                 return;
@@ -69,7 +70,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
 
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
-            foreach (var item in GetItems< OutlookItem>()) {
+            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
+            foreach (var item in GetItems< OutlookItem>(false)) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
@@ -87,7 +89,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), outlookItem => {
                 OutlookItem newItem = new(Entity, outlookItem.EntryID) {
                     Description = outlookItem.Subject,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
+                    ContentType = ContentItemTypes.ContentItemTypeEnum.Text,
                     Content = outlookItem.Body,
                 };
                 newItem.Save();
@@ -97,7 +99,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         // 子フォルダ
         public override List<T> GetChildren<T>() {
 
-            // ローカルファイルシステムとClipboardFolderのフォルダを同期
+            // ローカルファイルシステムとApplicationFolderのフォルダを同期
             SyncFolders();
             return base.GetChildren<T>();
         }

@@ -4,9 +4,10 @@ using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.Resource;
 
 namespace LibUIMergeChat.ViewModel {
-    public class MergeTargetPanelViewModel : ChatViewModelBase {
+    public class MergeTargetPanelViewModel : CommonViewModelBase {
 
         private bool _initialized = false;
 

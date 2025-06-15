@@ -1,7 +1,6 @@
 using System.ComponentModel;
 
-namespace PythonAILib.Model.VectorDB
-{
+namespace LibPythonAI.Model.VectorDB {
     /// <summary>
     /// VectorDBの種類。現在はChroma(インメモリ)のみ
     /// </summary>

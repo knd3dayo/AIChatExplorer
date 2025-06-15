@@ -1,24 +1,26 @@
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
+using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Folder;
-using PythonAILib.Utils.Python;
 using WpfAppCommon.Model;
 
 namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
 
-        public static ChatResult MergeChat(
+        public static async Task<ChatResponse> MergeChat(
             ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList = null) {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
-            List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt, sessionToken, targetDataList);
+            List<ChatResponse> preProcessResults = PreProcess(items, context, preProcessPrompt, sessionToken, targetDataList);
 
             // ポストプロセスのリクエストを作成。 プリプロセスの結果を結合してリクエストを作成
-            ChatResult? postProcessResult = PostProcess(preProcessResults, context, postProcessPrompt, sessionToken);
+            ChatResponse? postProcessResult = await PostProcess(preProcessResults, context, postProcessPrompt, sessionToken);
             // ChatUtil.ExecuteChatを実行
             if (postProcessResult == null) {
-                return new ChatResult();
+                return new ChatResponse();
             }
             return postProcessResult;
 
@@ -49,8 +51,8 @@ namespace LibUIMergeChat.Common {
             return targetData;
         }
 
-        private static List<ChatResult> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList) {
-            List<ChatResult> preProcessResults = [];
+        private static List<ChatResponse> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList) {
+            List<ChatResponse> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
                 object lockObject = new();
                 int start_count = 0;
@@ -61,20 +63,17 @@ namespace LibUIMergeChat.Common {
                     // 20並列
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.For(0, count, parallelOptions, (i) => {
+                Parallel.For(0, count, parallelOptions, async (i) => {
                     string message = $"{CommonStringResources.Instance.MergeChatPreprocessingInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[i];
                     ChatRequestContext preProcessRequestContext = new() {
                         PromptTemplateText = preProcessPrompt,
-                        ChatMode = context.ChatMode,
                         SplitMode = context.SplitMode,
                         SplitTokenCount = context.SplitTokenCount,
-                        UseVectorDB = context.UseVectorDB,
-                        VectorDBProperties = context.VectorDBProperties,
-                        AutoGenProperties = context.AutoGenProperties,
-                        OpenAIProperties = context.OpenAIProperties,
-
+                        RAGMode = context.RAGMode,
+                        VectorSearchRequests = context.VectorSearchRequests,
+                        AutoGenPropsRequest = context.AutoGenPropsRequest,
                     };
                     string contentText = GetTargetData(item, targetDataList);
                     if (string.IsNullOrEmpty(contentText)) {
@@ -83,7 +82,9 @@ namespace LibUIMergeChat.Common {
                     ChatRequest preProcessRequest = new() {
                         ContentText = contentText,
                     };
-                    ChatResult? preProcessResult = ChatUtil.ExecuteChat(preProcessRequest, preProcessRequestContext, (text) => { });
+                    ChatResponse? preProcessResult = await Task.Run(async () => {
+                        return await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, preProcessRequest, preProcessRequestContext, (text) => { });
+                    });
                     if (preProcessResult == null) {
                         return;
                     }
@@ -97,7 +98,7 @@ namespace LibUIMergeChat.Common {
                     if (string.IsNullOrEmpty(contentText)) {
                         continue;
                     }
-                    ChatResult chatResult = new() {
+                    ChatResponse chatResult = new() {
                         Output = contentText,
                     };
                     preProcessResults.Add(chatResult);
@@ -108,7 +109,7 @@ namespace LibUIMergeChat.Common {
         }
 
 
-        private static ChatResult? PostProcess(List<ChatResult> preProcessResults, ChatRequestContext context, string postProcessPrompt, string sessionToken) {
+        private static async Task<ChatResponse?> PostProcess(List<ChatResponse> preProcessResults, ChatRequestContext context, string postProcessPrompt, string sessionToken) {
             if (preProcessResults.Count == 0) {
                 LogWrapper.Info("PreProcessResults is empty.");
                 return null;
@@ -118,26 +119,23 @@ namespace LibUIMergeChat.Common {
                 preProcessResultText += result.Output + "\n";
             }
             if (string.IsNullOrEmpty(postProcessPrompt)) {
-                return new ChatResult() {
+                return new ChatResponse() {
                     Output = preProcessResultText,
                 };
             }
 
             ChatRequestContext postProcessRequestContext = new() {
                 PromptTemplateText = postProcessPrompt,
-                ChatMode = context.ChatMode,
                 SplitMode = context.SplitMode,
                 SplitTokenCount = context.SplitTokenCount,
-                UseVectorDB = context.UseVectorDB,
-                VectorDBProperties = context.VectorDBProperties,
-                AutoGenProperties = context.AutoGenProperties,
-                OpenAIProperties = context.OpenAIProperties,
-                SessionToken = sessionToken
+                RAGMode = context.RAGMode,
+                VectorSearchRequests = context.VectorSearchRequests,
+                AutoGenPropsRequest = context.AutoGenPropsRequest,
             };
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,
             };
-            ChatResult? postProcessResult = ChatUtil.ExecuteChat(postProcessRequest, postProcessRequestContext, (text) => { });
+            ChatResponse? postProcessResult = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, postProcessRequest, postProcessRequestContext, (text) => { });
             return postProcessResult;
         }
 

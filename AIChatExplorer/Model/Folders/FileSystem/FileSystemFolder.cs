@@ -8,12 +8,12 @@ using LibPythonAI.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
-    public class FileSystemFolder : ClipboardFolder {
+    public class FileSystemFolder : ApplicationFolder {
 
         // コンストラクタ
-        public FileSystemFolder(ContentFolderEntity folder) : base(folder) {
+        public FileSystemFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
         }
 
         protected FileSystemFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
@@ -24,19 +24,13 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = AIChatExplorerFolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.FILESYSTEM_ROOT_FOLDER_NAME_EN;
 
         }
 
         public override FileSystemFolder CreateChild(string folderName) {
             FileSystemFolder child = new(this , folderName);
             return child;
-        }
-
-        public override List<T> GetItems<T>() {
-            // SyncItems
-            SyncItems();
-            return base.GetItems<T>();
         }
 
         // 子フォルダ
@@ -72,7 +66,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
             // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
-            var folders = Entity.GetChildren().Select(x => new FileSystemFolder(x)).ToList();
+            var folders = Entity.GetChildren().Select(x => new FileSystemFolder() { Entity = x}).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
@@ -122,7 +116,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
 
-        public virtual void SyncItems() {
+        public override void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
@@ -137,8 +131,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
 
-            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
-            var items = Entity.GetContentItems().Select(x => new FileSystemItem(x)).ToList();
+            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
+            var items = base.GetItems<ContentItemWrapper>(false);
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
@@ -177,7 +171,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
-                    ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
+                    ContentType = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 
@@ -185,9 +179,9 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 addItems.Add(contentItem);
                 contentItem.Save();
                 // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
-                // result.Save();
+                // result.SaveAsync();
             });
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得
@@ -205,8 +199,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             });
 
         }
-        // ProcessClipboardItem
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
+        // ProcessApplicationItem
+        public override void ProcessApplicationItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
             // ローカルファイルのフォルダは処理しない
             throw new NotImplementedException();
         }

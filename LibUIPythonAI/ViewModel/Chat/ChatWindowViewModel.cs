@@ -1,8 +1,9 @@
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 
 namespace LibUIPythonAI.ViewModel.Chat {
-    public class ChatWindowViewModel : ChatViewModelBase {
+    public class ChatWindowViewModel : CommonViewModelBase {
 
         //初期化
         public ChatWindowViewModel(QAChatStartupProps props) {

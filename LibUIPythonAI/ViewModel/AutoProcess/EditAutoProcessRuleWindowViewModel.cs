@@ -4,20 +4,19 @@ using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.PromptTemplate;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
-    public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {
+    public class EditAutoProcessRuleWindowViewModel : CommonViewModelBase {
 
         // 初期化
         public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<AutoProcessRule> afterUpdate) {
@@ -90,17 +89,17 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
                         IsNotAllItemsRuleChecked = true;
 
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Text)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Text)) {
                             IsTextItemApplied = true;
                             OnPropertyChanged(nameof(IsTextItemApplied));
                             MinTextLineCount = condition.MinLineCount.ToString();
                             MaxTextLineCount = condition.MaxLineCount.ToString();
                         }
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Image)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Image)) {
                             IsImageItemApplied = true;
                             OnPropertyChanged(nameof(IsImageItemApplied));
                         }
-                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Files)) {
+                        if (condition.ContentTypes.Contains(ContentItemTypes.ContentItemTypeEnum.Files)) {
                             IsFileItemApplied = true;
                             OnPropertyChanged(nameof(IsFileItemApplied));
                         }
@@ -133,14 +132,14 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         }
 
-        // ルール適用対象のClipboardItemFolder
-        private ContentFolderWrapper? _ClipboardItemFolder = null;
+        // ルール適用対象のApplicationItemFolder
+        private ContentFolderWrapper? _ApplicationItemFolder = null;
         public ContentFolderWrapper? TargetFolder {
             get {
-                return _ClipboardItemFolder;
+                return _ApplicationItemFolder;
             }
             set {
-                _ClipboardItemFolder = value;
+                _ApplicationItemFolder = value;
                 OnPropertyChanged(nameof(TargetFolder));
             }
         }
@@ -163,7 +162,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         }
         // SystemAutoProcessRuleのリスト
         public ObservableCollection<AutoProcessItemViewModel> AutoProcessItems { get; set; }
-            = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.SystemAutoProcesses);
+            = new (AutoProcessItemViewModel.SystemAutoProcesses);
 
         // 自動処理ルールの条件リスト
         public ObservableCollection<AutoProcessRuleCondition> Conditions { get; set; } = [];
@@ -235,7 +234,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(StringResources.EnterANumber);
+                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
                     return;
                 }
                 _MinTextLineCount = intValue;
@@ -267,7 +266,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(StringResources.EnterANumber);
+                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
                     return;
                 }
 
@@ -374,27 +373,27 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         // ---　コマンド 
         // OKボタンが押されたときの処理
-        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new(async (window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
-                LogWrapper.Error(StringResources.FolderNotSelected);
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             // RuleNameが空の場合はエラー
             if (string.IsNullOrEmpty(RuleName)) {
-                LogWrapper.Error(StringResources.EnterRuleName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterRuleName);
                 return;
             }
             // SelectedAutoProcessItemが空の場合はエラー
             if (SelectedAutoProcessItem == null) {
-                LogWrapper.Error(StringResources.SelectAction);
+                LogWrapper.Error(CommonStringResources.Instance.SelectAction);
                 return;
             }
 
             // 編集
             else {
                 if (TargetAutoProcessRule == null) {
-                    LogWrapper.Error(StringResources.RuleNotFound);
+                    LogWrapper.Error(CommonStringResources.Instance.RuleNotFound);
                     return;
                 }
                 TargetAutoProcessRule.Conditions.Clear();
@@ -409,12 +408,12 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
-                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity = new() {
+                AutoProcessRuleCondition autoProcessRuleConditionEntity = new() {
                     ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.AllItems,
                 };
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
             } else {
-                AutoProcessRuleConditionEntity autoProcessRuleConditionEntity;
+                AutoProcessRuleCondition autoProcessRuleConditionEntity;
                 // IsDescriptionRuleCheckedがTrueの場合は条件を追加
                 if (IsDescriptionRuleChecked) {
                     // Descriptionを条件に追加
@@ -423,7 +422,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         Keyword = Description
                     };
 
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsContentRuleCheckedがTrueの場合は条件を追加
                 if (IsContentRuleChecked) {
@@ -432,7 +431,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.ContentContains,
                         Keyword = Content
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsSourceApplicationRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationRuleChecked) {
@@ -441,7 +440,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains,
                         Keyword = SourceApplicationName
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // IsSourceApplicationTitleRuleCheckedがTrueの場合は条件を追加
                 if (IsSourceApplicationTitleRuleChecked) {
@@ -450,24 +449,24 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         ConditionType = AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains,
                         Keyword = SourceApplicationTitle
                     };
-                    TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                    TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
                 }
                 // ContentTypeの処理
-                List<ContentTypes.ContentItemTypes> contentTypes = [];
+                List<ContentItemTypes.ContentItemTypeEnum> contentTypes = [];
                 // IsTextItemAppliedがTrueの場合は条件を追加
                 if (IsTextItemApplied) {
                     // TextItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Text);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Text);
                 }
                 // IsImageItemAppliedがTrueの場合は条件を追加
                 if (IsImageItemApplied) {
                     // ImageItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Image);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Image);
                 }
                 // IsFileItemAppliedがTrueの場合は条件を追加
                 if (IsFileItemApplied) {
                     // FileItemを条件に追加
-                    contentTypes.Add(ContentTypes.ContentItemTypes.Files);
+                    contentTypes.Add(ContentItemTypes.ContentItemTypeEnum.Files);
                 }
                 // ContentTypeIsを条件に追加
                 autoProcessRuleConditionEntity = new() {
@@ -476,7 +475,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     MinLineCount = MinTextLineCountInt
                 };
 
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(autoProcessRuleConditionEntity));
+                TargetAutoProcessRule.Conditions.Add(autoProcessRuleConditionEntity);
 
             }
             // アクションを追加
@@ -486,32 +485,31 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
                 if (SelectedAutoProcessItem.IsCopyOrMoveAction()) {
                     if (DestinationFolder == null) {
-                        LogWrapper.Error(StringResources.SelectCopyOrMoveTargetFolder);
+                        LogWrapper.Error(CommonStringResources.Instance.SelectCopyOrMoveTargetFolder);
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
                     if (TargetFolder.Id == DestinationFolder.Id) {
-                        LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
+                        LogWrapper.Error(CommonStringResources.Instance.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
                     TargetAutoProcessRule.DestinationFolder = DestinationFolder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
-                    LogWrapper.Error(StringResources.DetectedAnInfiniteLoopInCopyMoveProcessing);
+                    LogWrapper.Error(CommonStringResources.Instance.DetectedAnInfiniteLoopInCopyMoveProcessing);
                     return;
                 }
             }
             // IsPromptTemplateCheckedがTrueの場合はSelectedPromptItemを追加
             else if (IsPromptTemplateChecked) {
                 if (SelectedPromptItem == null) {
-                    LogWrapper.Error(StringResources.SelectPromptTemplate);
+                    LogWrapper.Error(CommonStringResources.Instance.SelectPromptTemplate);
                     return;
                 }
                 // キャスト
                 PromptItem promptItem = SelectedPromptItem.PromptItem;
-                AutoProcessItemEntity autoProcessItemEntity = new();
-                PromptAutoProcessItem promptAutoProcessItem = new(autoProcessItemEntity, promptItem.Entity);
+                PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
 
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
@@ -519,7 +517,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
 
             // LiteDBに保存
-            TargetAutoProcessRule.Save();
+            await TargetAutoProcessRule.SaveAsync();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);
@@ -537,7 +535,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
             // コピーor移動先が同じフォルダの場合はエラー
             if (folder.Id == TargetFolder?.Id) {
-                LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
+                LogWrapper.Error(CommonStringResources.Instance.CannotCopyOrMoveToTheSameFolder);
                 return;
             }
             DestinationFolder = folder;

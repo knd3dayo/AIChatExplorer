@@ -1,7 +1,6 @@
 using System.Drawing;
-using LibPythonAI.PythonIF.Request;
 
-namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF {
     public interface IPythonMiscFunctions {
 
         public string GetMaskedString(string spacyModel, string text);
@@ -9,9 +8,6 @@ namespace PythonAILib.PythonIF {
 
         public string ExtractTextFromImage(Image image, string tesseractExePath);
 
-        public MaskedData GetMaskedData(string spacyModel, List<string> textList);
-
-        public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList);
 
         public string RunScript(string script, string input);
 

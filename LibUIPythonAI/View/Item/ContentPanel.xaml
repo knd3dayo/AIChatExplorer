@@ -16,28 +16,43 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="25" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/LibUIPythonAI;component/Resource/Dictionary1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
-    <editorControl:MyTextBox
-        x:Name="Editor"
-        Margin="10,3,10,3"
-        materialDesign:HintAssist.Hint="{Binding ContentPanelContentHint}"
-        FontSize="10pt"
-        Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-        TextWrappingMode="{Binding TextWrappingMode}">
-        <editorControl:MyTextBox.ContextMenu>
-            <ContextMenu>
-                <MenuItem Command="ApplicationCommands.Copy" />
-                <MenuItem Command="ApplicationCommands.Cut" />
-                <MenuItem Command="ApplicationCommands.Paste" />
-                <MenuItem Command="ApplicationCommands.SelectAll" />
-                <Separator />
-            </ContextMenu>
-        </editorControl:MyTextBox.ContextMenu>
-    </editorControl:MyTextBox>
+    <Grid>
+
+        <editorControl:MyTextBox
+            x:Name="Editor"
+            Grid.Row="0"
+            Margin="10,3,10,3"
+            materialDesign:HintAssist.Hint="{Binding ContentPanelContentHint}"
+            FontSize="10pt"
+            Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+            TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}"
+            Visibility="{Binding TextVisibility}">
+            <editorControl:MyTextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="ApplicationCommands.Copy" />
+                    <MenuItem Command="ApplicationCommands.Cut" />
+                    <MenuItem Command="ApplicationCommands.Paste" />
+                    <MenuItem Command="ApplicationCommands.SelectAll" />
+                    <Separator />
+                </ContextMenu>
+            </editorControl:MyTextBox.ContextMenu>
+        </editorControl:MyTextBox>
+        <editorControl:BindableRichTextBox
+            Grid.Row="0"
+            Margin="10,10,10,10"
+            VerticalContentAlignment="Top"
+            Document="{Binding MarkdownContent, Mode=OneWay}"
+            FontSize="12"
+            HorizontalScrollBarVisibility="Auto"
+            IsReadOnly="True"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding MarkdownVisibility}" />
+    </Grid>
+
 </UserControl>

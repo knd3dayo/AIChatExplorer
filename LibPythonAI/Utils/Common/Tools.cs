@@ -1,7 +1,12 @@
 using System.IO;
+using System.Windows.Documents;
+using System.Windows.Markup;
+using System.Xml;
+using Markdig;
+using Neo.Markdig.Xaml;
 
-namespace PythonAILib.Utils.Common {
-    internal class Tools {
+namespace LibPythonAI.Utils.Common {
+    public class Tools {
 
         public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive, bool copyOnNewFile) {
             // Get information about the source directory
@@ -41,5 +46,23 @@ namespace PythonAILib.Utils.Common {
         public static string ListToString(List<string> list) {
             return list == null ? "Null" : string.Join(" > ", list);
         }
+
+
+        public static FlowDocument CreateFlowDocument(string content) {
+            var xaml = MarkdownXaml.ToXaml(content,
+                new MarkdownPipelineBuilder()
+                .UseXamlSupportedExtensions()
+                .Build()
+            );
+            xaml = xaml.Replace("StaticResource", "DynamicResource");
+            LogWrapper.Debug($"EditChatItemWindowViewModel.ContentFlowDocument: {xaml}");
+            // XAML文字列をStreamに変換
+            using StringReader stringReader = new(xaml);
+            using XmlReader xmlReader = XmlReader.Create(stringReader);
+            // XAMLをパースしてFlowDocumentオブジェクトを生成
+            FlowDocument flowDocument = (FlowDocument)XamlReader.Load(xmlReader);
+            return flowDocument;
+        }
+
     }
 }

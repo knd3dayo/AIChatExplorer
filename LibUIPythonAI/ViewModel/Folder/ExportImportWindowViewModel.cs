@@ -1,18 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {
+    public class ExportImportWindowViewModel(ContentFolderViewModel ApplicationFolderViewModel, Action AfterUpdate) : CommonViewModelBase {
 
         // ImportItems
         public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();
@@ -52,15 +51,15 @@ namespace LibUIPythonAI.ViewModel.Folder {
             set {
                 _selectedIndex = value;
                 OnPropertyChanged(nameof(FileSelectionButtonVisibility));
-                OnPropertyChanged(nameof(ClipboardFolderSelectionButtonVisibility));
+                OnPropertyChanged(nameof(ApplicationFolderSelectionButtonVisibility));
             }
         }
 
         // 
         public ContentFolderWrapper? ExportTargetFolder { get; set; }
 
-        // 選択したクリップボードフォルダのパス
-        public string SelectedClipboardFolderPath {
+        // 選択したフォルダのパス
+        public string SelectedApplicationFolderPath {
             get {
                 return ExportTargetFolder?.ContentFolderPath ?? "";
             }
@@ -75,40 +74,40 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // FileSelectionButtonVisibility
         public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 1 || SelectedIndex == 2);
 
-        // ClipboardFolderSelectionButtonVisibility
-        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
+        // ApplicationFolderSelectionButtonVisibility
+        public Visibility ApplicationFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
-            UpdateIndeterminate(true);
+            CommonViewModelProperties.UpdateIndeterminate(true);
             // 選択されたインデックスによって処理を分岐
             Task.Run(() => {
                 // Excelインポート処理 ★TODO 自動処理の実装
                 Action<ContentItemWrapper> afterImport = (item) => { };
                 if (IsAutoProcessEnabled) {
                     afterImport = (item) => {
-                        AutoProcessRuleController.ApplyGlobalAutoAction(item).Result.Save();
+                        AutoProcessRuleController.ApplyGlobalAutoActionAsync(item).Result.Save();
                     };
                 }
 
                 switch (SelectedIndex) {
                     case 0:
                         // Excelエクスポート処理
-                        ImportExportUtil.ExportToExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
+                        ImportExportUtil.ExportToExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // Excelインポート処理 ★TODO 自動処理の実装
-                        ImportExportUtil.ImportFromExcel(ClipboardFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
+                        ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
                         break;
                     case 2:
                         // URLリストインポート処理
-                        ImportExportUtil.ImportFromURLList(ClipboardFolderViewModel.Folder, SelectedFileName, afterImport);
+                        ImportExportUtil.ImportFromURLList(ApplicationFolderViewModel.Folder, SelectedFileName, afterImport);
                         break;
                     default:
                         break;
                 }
             }).ContinueWith((task) => {
-                UpdateIndeterminate(false);
+                CommonViewModelProperties.UpdateIndeterminate(false);
                 AfterUpdate();
                 MainUITask.Run(() => {
                     window.Close();
@@ -119,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
             // SelectedFileNameが空の場合はデフォルトのファイル名を設定
             if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.Folder.Id.ToString() + ".xlsx";
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ApplicationFolderViewModel.Folder.Id.ToString() + ".xlsx";
                 OnPropertyChanged(nameof(SelectedFileName));
             }
 
@@ -157,11 +156,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenClipboardFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
                     ExportTargetFolder = folderViewModel.Folder;
-                    OnPropertyChanged(nameof(SelectedClipboardFolderPath));
+                    OnPropertyChanged(nameof(SelectedApplicationFolderPath));
                 }
             });
         });

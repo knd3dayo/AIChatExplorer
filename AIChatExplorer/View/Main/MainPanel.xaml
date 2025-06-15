@@ -25,6 +25,14 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
     </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <!--  TreeView, ListBox  -->
         <Grid.ColumnDefinitions>
@@ -76,12 +84,13 @@
                         FontSize="10pt"
                         IsReadOnly="True"
                         Text="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
+                    <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
                     <TabControl
+                        x:Name="MyTabControl"
                         Grid.Row="1"
                         Margin="10,3,10,3"
                         HorizontalContentAlignment="Left"
-                        ItemsSource="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.TabItems}"
-                        SelectedIndex="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.SelectedTabIndex}" />
+                        SelectedIndex="{Binding MainPanelDataGridViewControlViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
                     <TextBlock
                         Name="headerText"
                         Grid.Row="2"
@@ -91,13 +100,26 @@
                         Text="{Binding Path=MainPanelDataGridViewControlViewModel.SelectedItem.HeaderText}"
                         TextTrimming="None"
                         Visibility="{Binding PropertiesVisibility}" />
-                    <CheckBox
-                        Grid.Row="3"
-                        Margin="10,0,10,10"
-                        HorizontalAlignment="Left"
-                        Content="{x:Static res:ViewStringResources.ShowProperties}"
-                        FontSize="8pt"
-                        IsChecked="{Binding ShowProperties}" />
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox
+                            Grid.Column="0"
+                            Margin="10,0,10,10"
+                            HorizontalAlignment="Left"
+                            Content="{x:Static res:ViewStringResources.MarkdownView}"
+                            FontSize="8pt"
+                            IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox
+                            Grid.Column="1"
+                            Margin="10,0,10,10"
+                            HorizontalAlignment="Left"
+                            Content="{x:Static res:ViewStringResources.ShowProperties}"
+                            FontSize="8pt"
+                            IsChecked="{Binding ShowProperties}" />
+                    </Grid>
                 </Grid>
                 <materialDesign:Card.InputBindings>
                     <!--  Open selected item window by double-clicking  -->

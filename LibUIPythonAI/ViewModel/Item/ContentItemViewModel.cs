@@ -1,24 +1,31 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.ViewModel.Folder;
-using PythonAILib.Model.File;
-using PythonAILib.Model.Prompt;
-using PythonAILibUI.ViewModel.Item;
 
 namespace LibUIPythonAI.ViewModel.Item {
-    public class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) : ChatViewModelBase {
-        public ContentItemWrapper ContentItem { get; set; } = contentItemBase;
+    public class ContentItemViewModel : CommonViewModelBase {
+
+        public ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) {
+            ContentItem = contentItemBase;
+            FolderViewModel = folderViewModel;
+            Commands = FolderViewModel.Commands;
+
+        }
+        public ContentItemWrapper ContentItem { get; set; }
 
         // FolderViewModel
-        public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
+        public ContentFolderViewModel FolderViewModel { get; set; }
 
-        public ContentItemViewModelCommands Commands { get; set; } = folderViewModel.Commands;
+        public ContentItemViewModelCommands Commands { get; set; }
 
         // IsSelected
         private bool isSelected = false;
@@ -44,20 +51,21 @@ namespace LibUIPythonAI.ViewModel.Item {
         }
 
         // Tags
-        public HashSet<string> Tags { 
-            get => ContentItem.Tags; 
+        public HashSet<string> Tags {
+            get => ContentItem.Tags;
             set => ContentItem.Tags = value;
         }
+        // LastSelectedTabIndex
+        public int LastSelectedTabIndex { get; set; } = 0;
 
         // SelectedTabIndex
-        private int selectedTabIndex = 0;
+        private int selectedTabIndex = -1;
         public int SelectedTabIndex {
             get {
                 return selectedTabIndex;
             }
             set {
                 selectedTabIndex = value;
-                // LastSelectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
@@ -83,22 +91,6 @@ namespace LibUIPythonAI.ViewModel.Item {
                 return result;
             }
         }
-
-
-        // GUI関連
-        // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
-        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ContentItem.Description) && ContentItem.Tags.Count() == 0));
-
-        // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
-        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
-
-
-        // ファイルタブの表示可否
-        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
-
-        // ImageVisibility
-        public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
-
 
         public string DescriptionText {
             get {
@@ -141,136 +133,159 @@ namespace LibUIPythonAI.ViewModel.Item {
                 OnPropertyChanged(nameof(IsPinned));
             }
         }
+
+
+        public Visibility MarkdownVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+
+        public Visibility TextVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
+
+        public FlowDocument? MarkdownContent => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.Content) : null;
+
+        public FlowDocument? MarkdownChatItemsText => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.ChatItemsText) : null;
+
         // ContentType
-        public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
+        public ContentItemTypes.ContentItemTypeEnum ContentType => ContentItem.ContentType;
 
         // ContentPanelContentHint
         public string ContentPanelContentHint {
             get {
                 if (ContentItem.SourceType == ContentSourceType.File) {
-                    return StringResources.ExecuteExtractTextToViewFileContent;
+                    return CommonStringResources.Instance.ExecuteExtractTextToViewFileContent;
                 }
                 // URLの場合
                 if (ContentItem.SourceType == ContentSourceType.Url) {
-                    return StringResources.ExecuteDownloadWebPageToViewContent;
+                    return CommonStringResources.Instance.ExecuteDownloadWebPageToViewContent;
                 }
                 // 画像の場合
-                if (ContentItem.ContentType == ContentTypes.ContentItemTypes.Image) {
-                    return StringResources.ExecuteExtractTextToViewFileContent;
+                if (ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
+                    return CommonStringResources.Instance.ExecuteExtractTextToViewFileContent;
                 }
 
                 return "";
             }
         }
 
-        // TabItems 
-        public ObservableCollection<TabItem> TabItems {
-            get {
-                ObservableCollection<TabItem> tabItems = [];
-                // SourcePath 
-                ContentPanel contentPanel = new() {
-                    DataContext = this,
-                };
-                TabItem contentTabItem = new() {
-                    Header = StringResources.Text,
-                    Content = contentPanel,
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = Visibility.Visible
-                };
-                tabItems.Add(contentTabItem);
-                // FileOrImage
-                FilePanel filePanel = new() {
-                    DataContext = this,
-                };
-                TabItem fileTabItem = new() {
-                    Header = StringResources.FileOrImage,
-                    Content = filePanel,
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = FileTabVisibility
-                };
-                tabItems.Add(fileTabItem);
-                // ChatItemsTextのタブ
-                TabItem chatItemsText = new() {
-                    Header = StringResources.ChatContent,
-                    Content = new ChatItemsTextPanel() { DataContext = this },
-                    Height = double.NaN,
-                    Width = double.NaN,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = ChatItemsTextTabVisibility
-                };
-
-                tabItems.Add(chatItemsText);
-
-                // PromptResultのタブ
-                foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
-                    tabItems.Add(promptTabItem);
-                }
-                return tabItems;
+        public void UpdateView(TabControl? tabControl) {
+            // 選択中のタブを更新する処理
+            UpdateTabItems(tabControl);
+        }
+        
+        private void UpdateTabItems(TabControl? tabControl) {
+            if (tabControl == null) {
+                return;
             }
+
+            tabControl.Items.Clear();
+            // Path 
+            ContentPanel contentPanel = new() {
+                DataContext = this,
+            };
+            Binding binding = new() {
+                Source = ThisUserControl
+            };
+
+            TabItem contentTabItem = new();
+            tabControl.Items.Add(contentTabItem);
+
+            contentTabItem.Header = CommonStringResources.Instance.Text;
+            contentTabItem.Content = contentPanel;
+            contentTabItem.Height = double.NaN;
+            contentTabItem.Width = double.NaN;
+            contentTabItem.Margin = new Thickness(3, 0, 3, 0);
+            contentTabItem.Padding = new Thickness(0, 0, 0, 0);
+            contentTabItem.FontSize = 10;
+            contentTabItem.Visibility = Visibility.Visible;
+
+
+
+            // FileOrImage
+            FilePanel filePanel = new() {
+                DataContext = this,
+            };
+            TabItem fileTabItem = new();
+            tabControl.Items.Add(fileTabItem);
+
+            fileTabItem.Header = CommonStringResources.Instance.FileOrImage;
+            fileTabItem.Content = filePanel;
+            fileTabItem.Height = double.NaN;
+            fileTabItem.Width = double.NaN;
+            fileTabItem.Margin = new Thickness(3, 0, 3, 0);
+            fileTabItem.Padding = new Thickness(0, 0, 0, 0);
+            fileTabItem.FontSize = 10;
+            fileTabItem.Visibility = FileTabVisibility;
+
+
+            // ChatItemsTextのタブ
+            TabItem chatItemsText = new();
+            tabControl.Items.Add(chatItemsText);
+
+            chatItemsText.Header = CommonStringResources.Instance.ChatContent;
+            chatItemsText.Content = new ChatItemsTextPanel() { DataContext = this };
+            chatItemsText.Height = double.NaN;
+            chatItemsText.Width = double.NaN;
+            chatItemsText.Margin = new Thickness(3, 0, 3, 0);
+            chatItemsText.Padding = new Thickness(0, 0, 0, 0);
+            chatItemsText.FontSize = 10;
+            chatItemsText.Visibility = ChatItemsTextTabVisibility;
+
+
+            // PromptResultのタブ
+            UpdateSystemPromptResultTabItems(tabControl);
+
+            SelectedTabIndex = LastSelectedTabIndex;
 
         }
 
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
-        private ObservableCollection<TabItem> SystemPromptResultTabItems {
-            get {
-                ObservableCollection<TabItem> tabItems = [];
-                // PromptResultのタブ
-                List<string> promptNames = [
-                    SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
+        private void UpdateSystemPromptResultTabItems(TabControl tabControl) {
+            // PromptResultのタブ
+            List<string> promptNames = [
+                SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     SystemDefinedPromptNames.TasksGeneration.ToString(),
                     SystemDefinedPromptNames.SummaryGeneration.ToString()
-                    ];
-                // PromptChatResultのエントリからPromptItemの名前を取得
-                foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
-                    if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
-                        continue;
-                    }
-                    promptNames.Add(name);
+                ];
+            // PromptChatResultのエントリからPromptItemの名前を取得
+            foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
+                if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                    continue;
+                }
+                promptNames.Add(name);
+            }
+
+            foreach (string promptName in promptNames) {
+                PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
+                PromptItem? item = PromptItem.GetPromptItemByName(promptName);
+                if (item == null) {
+                    continue;
                 }
 
-                foreach (string promptName in promptNames) {
-                    PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
-                    PromptItem? item = PromptItem.GetPromptItemByName(promptName);
-                    if (item == null) {
-                        continue;
-                    }
+                object content = item.PromptResultType switch {
+                    PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.ListContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    PromptResultTypeEnum.DictionaryContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                    _ => ""
+                };
+                Visibility visibility = item.PromptResultType switch {
+                    PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
+                    PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
+                    PromptResultTypeEnum.ListContent => promptViewModel.TableContentVisibility,
+                    PromptResultTypeEnum.DictionaryContent => promptViewModel.TableContentVisibility,
+                    _ => Visibility.Collapsed
+                };
 
-                    object content = item.PromptResultType switch {
-                        PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
-                        PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
-                        _ => ""
-                    };
-                    Visibility visibility = item.PromptResultType switch {
-                        PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
-                        PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
-                        _ => Visibility.Collapsed
-                    };
+                TabItem promptTabItem = new();
+                tabControl.Items.Add(promptTabItem);
 
-                    TabItem promptTabItem = new() {
-                        Header = item.Description,
-                        Content = content,
-                        Height = double.NaN,
-                        Width = double.NaN,
-                        Margin = new Thickness(3, 0, 3, 0),
-                        Padding = new Thickness(0, 0, 0, 0),
-                        FontSize = 10,
-                        Visibility = visibility
-                    };
-                    tabItems.Add(promptTabItem);
-                }
-
-                return tabItems;
+                promptTabItem.Header = item.Description;
+                promptTabItem.Content = content;
+                promptTabItem.Height = double.NaN;
+                promptTabItem.Width = double.NaN;
+                promptTabItem.Margin = new Thickness(3, 0, 3, 0);
+                promptTabItem.Padding = new Thickness(0, 0, 0, 0);
+                promptTabItem.FontSize = 10;
+                promptTabItem.Visibility = visibility;
             }
 
         }
@@ -281,6 +296,22 @@ namespace LibUIPythonAI.ViewModel.Item {
                 ContentItemWrapper.DeleteItems(contentItems);
             });
         }
+
+
+
+        // GUI関連
+        // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
+        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ContentItem.Description) && ContentItem.Tags.Count() == 0));
+
+        // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
+        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
+
+
+        // ファイルタブの表示可否
+        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentItemTypes.ContentItemTypeEnum.Files || ContentType == ContentItemTypes.ContentItemTypeEnum.Image);
+
+        // ImageVisibility
+        public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 
 
     }

@@ -78,7 +78,7 @@
             Grid.Row="1"
             Margin="10,10,0,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -102,15 +102,19 @@
                     VirtualizingStackPanel.IsVirtualizing="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn
-                            Width="100"
+                            Width="150"
                             Binding="{Binding DocId}"
                             Header="DocId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
+                            Binding="{Binding FolderPath}"
+                            Header="FolderPath" />
+                        <DataGridTextColumn
+                            Width="150"
                             Binding="{Binding SourceId}"
                             Header="SourceId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="250"
                             Binding="{Binding SourcePath}"
                             Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
@@ -154,17 +158,21 @@
                             Binding="{Binding Score}"
                             Header="Score" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="150"
                             Binding="{Binding DocId}"
                             Header="DocId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
+                            Binding="{Binding FolderPath}"
+                            Header="FolderPath" />
+                        <DataGridTextColumn
+                            Width="150"
                             Binding="{Binding SourceId}"
                             Header="SourceId" />
                         <DataGridTextColumn
-                            Width="100"
+                            Width="200"
                             Binding="{Binding SourcePath}"
-                            Header="SourcePath" />                        
+                            Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -186,10 +194,7 @@
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.RequestParameterJson}">
                 <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
-                    <TextBox
-                        VerticalAlignment="Top"
-                        Text="{Binding PreviewJson, Mode=OneWay}"
-                        TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                    <TextBox VerticalAlignment="Top" Text="{Binding PreviewJson, Mode=OneWay}" />
                 </ScrollViewer>
             </TabItem>
         </TabControl>
@@ -204,8 +209,8 @@
                 Margin="10,0,10,0"
                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                 AcceptsReturn="True"
-                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                TextWrappingMode="{Binding TextWrappingMode}" />
+                Text="{Binding VectorSearchItem.InputText, UpdateSourceTrigger=PropertyChanged}"
+                TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
         </ScrollViewer>
         <DockPanel Grid.Row="4" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -225,7 +230,16 @@
                 <TextBox
                     Width="100"
                     Margin="10,0,0,0"
-                    Text="{Binding VectorDBSearchResultMax, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding VectorSearchItem.TopK, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="100,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:ViewStringResources.VectorDBSearchScoreThreashold}" />
+                <TextBox
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Text="{Binding VectorSearchItem.ScoreThreshold, UpdateSourceTrigger=PropertyChanged}" />
 
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
@@ -256,7 +270,7 @@
         <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

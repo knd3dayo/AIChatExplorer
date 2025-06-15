@@ -23,6 +23,21 @@ namespace LibPythonAI.Data {
             return folder;
         }
 
+        // 複数アイテムのSave
+        public static void SaveItems(List<ContentFolderRootEntity> items) {
+            using PythonAILibDBContext context = new();
+            foreach (var item in items) {
+                var ExistingItem = context.ContentFolderRoots.FirstOrDefault(x => x.Id == item.Id);
+                if (ExistingItem == null) {
+                    context.ContentFolderRoots.Add(item);
+                } else {
+                    context.Entry(ExistingItem).CurrentValues.SetValues(item);
+                }
+            }
+            context.SaveChanges();
+        }
+
+
         // Equals , GetHashCodeのオーバーライド
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {

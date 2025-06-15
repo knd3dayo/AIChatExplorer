@@ -538,5 +538,29 @@ namespace AIChatExplorer.Properties {
                 this["UsePythonNet"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MarkdownView {
+            get {
+                return ((bool)(this["MarkdownView"]));
+            }
+            set {
+                this["MarkdownView"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AppDataPath {
+            get {
+                return ((string)(this["AppDataPath"]));
+            }
+            set {
+                this["AppDataPath"] = value;
+            }
+        }
     }
 }

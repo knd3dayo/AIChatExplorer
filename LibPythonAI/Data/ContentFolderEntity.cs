@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using Microsoft.EntityFrameworkCore;
-using PythonAILib.Utils.Common;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class ContentFolderEntity {
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };
@@ -33,7 +32,6 @@ namespace LibPythonAI.Data {
         // Description
         public string Description { get; set; } = "";
 
-        public List<VectorDBPropertyEntity> VectorDBProperties { get; set; } = new();
 
         public string ExtendedPropertiesJson { get; set; } = "{}";
 
@@ -49,6 +47,9 @@ namespace LibPythonAI.Data {
             }
         }
 
+        // IsRootFolder
+        public bool IsRootFolder { get; set; } = false;
+
         public void SaveExtendedPropertiesJson() {
             if (_extendedProperties != null) {
                 ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
@@ -56,17 +57,9 @@ namespace LibPythonAI.Data {
         }
 
 
-        public List<ContentItemEntity> GetContentItems() {
-            using PythonAILibDBContext context = new();
-            var items = context.ContentItems
-                .Where(x => x.FolderId == this.Id).ToList();
-            return items;
-        }
-
         public List<ContentFolderEntity> GetChildren() {
             using PythonAILibDBContext context = new();
             var items = context.ContentFolders
-                .Include(b => b.VectorDBProperties)
                 .Where(x => x.ParentId == this.Id).ToList();
             return items;
         }
@@ -98,7 +91,6 @@ namespace LibPythonAI.Data {
             }
             using PythonAILibDBContext context = new();
             var folder = context.ContentFolders
-                .Include(b => b.VectorDBProperties)
                 .FirstOrDefault(x => x.Id == id);
             return folder;
         }

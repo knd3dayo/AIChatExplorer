@@ -22,7 +22,7 @@
         <!--  Exit application  -->
         <KeyBinding
             Key="Q"
-            Command="{Binding ExitCommand, Mode=OneTime}"
+            Command="{Binding Commands.ExitCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Show search dialog  -->
         <KeyBinding
@@ -67,22 +67,30 @@
                         FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.File}">
-                        <!--  Toggle Clipbord Monitoring  -->
+                        <!--  CreateItem  -->
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ToggleClipboardMonitor, Mode=OneTime}"
+                            Command="{Binding CreateItemCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding ClipboardMonitorButtonText}"
-                            ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
+                            Header="{x:Static res:ViewStringResources.CreateItem}" />
+                        <!--  CreateFolderCommand  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding CreateFolderCommand, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{x:Static res:ViewStringResources.CreateFolder}" />
 
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ExitCommand, Mode=OneTime}"
+                            Command="{Binding Commands.ExitCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.Exit}"
@@ -164,7 +172,7 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.TextWrapping}"
                             IsCheckable="True"
-                            IsChecked="{Binding TextWrapping}" />
+                            IsChecked="{Binding CommonViewModelProperties.TextWrapping}" />
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
@@ -173,7 +181,7 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.AutoTextWrapping}"
                             IsCheckable="True"
-                            IsChecked="{Binding AutoTextWrapping}" />
+                            IsChecked="{Binding CommonViewModelProperties.AutoTextWrapping}" />
                     </MenuItem>
                     <!--  Tools  -->
                     <MenuItem
@@ -211,12 +219,20 @@
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenAutoGenChatWindow, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{x:Static res:ViewStringResources.AutoGenChat}" />
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.VectorSearch}" />
                     </MenuItem>
-
+                    <!--  Search  -->
                     <MenuItem
                         Margin="0,0,0,0"
                         Padding="10,0,10,0"
@@ -225,6 +241,26 @@
                         FontSize="12"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="{x:Static res:ViewStringResources.Search}" />
+                    <!--  Monitor  -->
+                    <MenuItem
+                        Margin="0,0,0,0"
+                        Padding="10,0,10,0"
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        FontSize="12"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="{x:Static res:ViewStringResources.Monitor}">
+                        <!--  Clipboard Monitor  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding Commands.ToggleClipboardMonitor, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding ClipboardMonitorButtonText}"
+                            ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
+                    </MenuItem>
+                    <!--  Setting  -->
                     <MenuItem
                         Margin="0,0,0,0"
                         Padding="10,0,10,0"
@@ -252,11 +288,12 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
+        <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
         <TabControl
             Grid.Row="1"
             HorizontalContentAlignment="Left"
-            ItemsSource="{Binding TabItems}"
-            SelectedItem="{Binding SelectedTabItem}">
+            ItemsSource="{Binding MainTabManager.TabItems, FallbackValue={x:Null}}"
+            SelectedIndex="{Binding MainTabManager.SelectedTabIndex, TargetNullValue=-1}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="BorderThickness" Value="10,2,10,2" />
@@ -296,7 +333,7 @@
         <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate, UpdateSourceTrigger=PropertyChanged}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate, UpdateSourceTrigger=PropertyChanged}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

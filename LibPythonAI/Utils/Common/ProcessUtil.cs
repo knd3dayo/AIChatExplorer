@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Media.Imaging;
-using LibGit2Sharp;
 using LibPythonAI.Model.Content;
 
 namespace LibPythonAI.Utils.Common {
@@ -19,86 +17,28 @@ namespace LibPythonAI.Utils.Common {
         private static readonly Hashtable contentWriterProcessAfterCloseHashTable = [];
 
 
-        public static Process? StartBackgroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
-                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
-            return StartProcess(fileName, arguments, true, environmentVariables, showConsole, afterOpen, OutputDataReceived, ErrorDataReceived, Exited);
-        }
-
-        public static Process? StartForegroundProcess(string fileName, string arguments, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
-                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
-            return StartProcess(fileName, arguments, false, environmentVariables, showConsole, afterOpen, OutputDataReceived, ErrorDataReceived, Exited);
-        }
-
-
-        private static Process? StartProcess(string fileName, string arguments, bool background ,Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
-                        DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
-
-            ProcessStartInfo procInfo = new() {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8,
-                UseShellExecute = false,
-                CreateNoWindow = !showConsole,
-                FileName = fileName,
-                Arguments = arguments
-            };
-
-            if (procInfo == null) {
-                return null;
-            }
-            // 環境変数を設定
-            foreach (KeyValuePair<string, string> pair in environmentVariables) {
-                if (procInfo.EnvironmentVariables.ContainsKey(pair.Key)) {
-                    procInfo.EnvironmentVariables[pair.Key] = pair.Value;
-                } else {
-                    procInfo.EnvironmentVariables.Add(pair.Key, pair.Value);
-                }
-            }
-
-            Process process = new() {
-                StartInfo = procInfo
-            };
-
-            process.EnableRaisingEvents = true;
-            // 標準出力イベントハンドラーを設定
-            if (OutputDataReceived != null) {
-                process.OutputDataReceived += OutputDataReceived;
-            }
-            // 標準エラー出力イベントハンドラーを設定
-            if (ErrorDataReceived != null) {
-                process.ErrorDataReceived += ErrorDataReceived;
-            }
-            // プロセス終了イベントハンドラーを設定
-            if (Exited != null) {
-                process.Exited += Exited;
-            }
-            // デフォルトのプロセス終了イベントハンドラーを設定
-            process.Exited += new EventHandler(ProcessExited);
-
-            process.Start();
-
-            // 非同期出力読出し開始
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            // backgroundの場合はプロセスリストにプロセスを追加
-            if (background) {
-                processList.Add(process);
-                // 事後処理を実行
-                afterOpen(process);
-
-                return process;
-            } else {
-                // プロセス終了まで待機
+        // 指定された文字列をコマンドとして実行して正常終了するかチェックする
+        public static bool CheckCommand(string command, string arguments) {
+            try {
+                ProcessStartInfo procInfo = new() {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    FileName = command,
+                    Arguments = arguments,
+                };
+                using Process process = new() {
+                    StartInfo = procInfo
+                };
+                process.Start();
                 process.WaitForExit();
-                // 事後処理を実行
-                afterOpen(process);
-                return process;
+                return process.ExitCode == 0;
+            } catch (Exception ex) {
+                // エラーが発生した場合はfalseを返す
+                return false;
             }
-
         }
-
 
 
         public static void StopProcess(Process process) {
@@ -114,18 +54,6 @@ namespace LibPythonAI.Utils.Common {
             processAfterClose("");
 
         }
-
-        // プロセスリストのプロセスを全て終了
-        public static void StopAllProcess() {
-            foreach (Process process in processList.ToList()) {
-                // processがnullでなく、HasExitedがFalseの場合
-                if (process != null && !process.HasExited) {
-                    StopProcess(process);
-                }
-            }
-        }
-
-
         public static Process? StartWindowsBackgroundCommandLine(List<string> commands, Dictionary<string, string> environmentVariables, bool showConsole, Action<Process> afterOpen,
             DataReceivedEventHandler? OutputDataReceived = null, DataReceivedEventHandler? ErrorDataReceived = null, EventHandler? Exited = null) {
 
@@ -193,7 +121,7 @@ namespace LibPythonAI.Utils.Common {
             return process;
         }
 
-        public static Process? StartWindowsCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen) {
+        public static Process? StartWindowsCommandLine(List<string> commands, string workingDirectory, bool waitForExit, Action<Process> afterOpen) {
 
             string cmd = "cmd";
             // テンポラリファイルにコマンドを書き込む.拡張値は.bat
@@ -227,6 +155,10 @@ namespace LibPythonAI.Utils.Common {
             // プロセスリストにプロセスを追加
             processList.Add(process);
 
+            if (waitForExit) {
+                // プロセスが終了するまで待機
+                process.WaitForExit();
+            }
             // 事後処理を実行
             afterOpen(process);
 
@@ -373,7 +305,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        public static void OpenClipboardItemContent(ContentItemWrapper item) {
+        public static void OpenApplicationItemContent(ContentItemWrapper item) {
 
             ProcessUtil.OpenTempTextFile(item.Content, (process) => { },
             (content) => {
@@ -384,7 +316,7 @@ namespace LibPythonAI.Utils.Common {
 
         }
 
-        public static void OpenClipboardItemFile(ContentItemWrapper item, bool openAsNew = false) {
+        public static void OpenApplicationItemFile(ContentItemWrapper item, bool openAsNew = false) {
             // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
             if (string.IsNullOrEmpty(item.SourcePath)) {
                 // BitmapImageがNullでない場合はファイルを開く

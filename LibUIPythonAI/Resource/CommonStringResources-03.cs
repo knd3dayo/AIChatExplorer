@@ -1,180 +1,165 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace LibUIPythonAI.Resource {
-    public partial class CommonStringResources {
+    public partial class CommonStringResources  {
 
         #region QAChatControl
-
-        // 全チャット内容をエクスポート
-        public virtual string ExportAllChatContents { get; } = "全チャット内容をエクスポート";
-        // 選択したチャット内容をコピー
-        public virtual string CopySelectedChatContents { get; } = "選択したチャット内容をコピー";
-        // 全のチャット内容をコピー
-        public virtual string CopyAllChatContents { get; } = "全のチャット内容をコピー";
+        // Export all chat contents
+        public virtual string ExportAllChatContents { get; } = "Export All Chat Contents";
+        // Copy selected chat contents
+        public virtual string CopySelectedChatContents { get; } = "Copy Selected Chat Contents";
+        // Copy all chat contents
+        public virtual string CopyAllChatContents { get; } = "Copy All Chat Contents";
 
         #endregion
 
         #region AutoGen
-        // AutoGen設定一覧
-        public virtual string AutoGenSettingList { get; } = "AutoGen設定一覧";
+        // AutoGenSettingList
+        public virtual string AutoGenSettingList { get; } = "AutoGenSettingList";
+        // EditAutoGenAgentWindowTitle
+        public virtual string EditAutoGenAgentWindowTitle { get; } = "EditAutoGenAgentWindowTitle";
 
-        // AutoGenエージェント編集
-        public virtual string EditAutoGenAgentWindowTitle { get; } = "AutoGenエージェント編集";
+        // EditAutoGenToolWindowTitle
+        public virtual string EditAutoGenToolWindowTitle { get; } = "EditAutoGenToolWindowTitle";
 
-        // AutoGenLLMConfig編集
-        public virtual string EditAutoGenLLMConfigWindowTitle { get; } = "AutoGenLLMConfig編集";
+        // EditAutoGenLLMConfigWindowTitle
+        public virtual string EditAutoGenLLMConfigWindowTitle { get; } = "EditAutoGenLLMConfigWindowTitle";
 
         // Tools
-        public virtual string Tools { get; } = "Tools";
-
+        public virtual string Tools { get; } = "ToolsForLLM";
         // ToolsForExecution
         public virtual string ToolsForExecution { get; } = "ToolsForExecution";
-
         // SystemMessage
         public virtual string SystemMessage { get; } = "SystemMessage";
-
-        // グループチャット
-        public virtual string GroupChat { get; } = "グループチャット";
-        // 通常チャット
-        public virtual string NormalChat { get; } = "通常チャット";
-
-        // ネストチャット
-        public virtual string NestedChat { get; } = "ネストチャット";
-
-        // エージェント
-        public virtual string Agent { get; } = "エージェント";
-
-        // ソースパス
-        public virtual string SourcePath { get; } = "ソースパス";
-
-        // 初期エージェント
-        public virtual string InitialAgent { get; } = "初期エージェント";
-
-        // エージェントタイプ
-        public virtual string AgentType { get; } = "エージェントタイプ";
-
-        // userproxy
-        public virtual string UserProxy { get; } = "userproxy";
-
-        // assistant
-        public virtual string Assistant { get; } = "assistant";
-
+        // GroupChat
+        public virtual string GroupChat { get; } = "Group Chat";
+        // NormalChat
+        public virtual string NormalChat { get; } = "Normal Chat";
+        // NestedChat
+        public virtual string NestedChat { get; } = "Nested Chat";
+        // Agent
+        public virtual string Agent { get; } = "Agent";
+        // Path
+        public virtual string SourcePath { get; } = "Source Path";
+        // InitialAgent
+        public virtual string InitialAgent { get; } = "Initial Agent";
+        // AgentType
+        public virtual string AgentType { get; } = "Agent Type";
+        // UserProxy
+        public virtual string UserProxy { get; } = "User Proxy";
+        // Assistant
+        public virtual string Assistant { get; } = "Assistant";
         // HumanInputMode
-        public virtual string HumanInputMode { get; } = "HumanInputMode";
-
+        public virtual string HumanInputMode { get; } = "Human Input Mode";
         // NEVER
         public virtual string Never { get; } = "NEVER";
-
         // ALWAYS
         public virtual string Always { get; } = "ALWAYS";
-
         // TERMINATE
-        public virtual string Terminate { get; } = "TERMINATE";
-
+        public virtual string Terminate { get; } = "TERMINIATE";
         // TERMINATEMsg
         public virtual string TerminateMsg { get; } = "TerminateMsg";
-
-        // LLMConfig
-        public virtual string LLMConfig { get; } = "LLMConfig";
-
         // CodeExecution
-        public virtual string CodeExecution { get; } = "CodeExecution";
+        public virtual string CodeExecution { get; } = "Code Execution";
+        // LLMConfig
+        public virtual string LLMConfig { get; } = "LLM Config";
 
         // LLM
         public virtual string LLM { get; } = "LLM";
-
         // AddVectorDB
-        public virtual string AddVectorDB { get; } = "ベクトルDB追加";
+        public virtual string AddVectorDB { get; } = "Add Vector DB";
 
         // ApiType
-        public virtual string ApiType { get; } = "ApiType";
+        public virtual string ApiType { get; } = "Api Type";
 
         // Model
         public virtual string Model { get; } = "Model";
 
         // BaseURL
-        public virtual string BaseURL { get; } = "BaseURL";
+        public virtual string BaseURL { get; } = "Base URL";
 
         // MaxRounds
-        public virtual string MaxRounds { get; } = "MaxRounds";
-
+        public virtual string MaxRounds { get; } = "Max Rounds";
 
         #endregion
 
-
-        // 有効
-        public virtual string Enabled { get; } = "有効";
+        // Enabled
+        public virtual string Enabled { get; } = "Enabled";
 
         #region folder
-        // エクスポート対象
-        public virtual string ExportTarget { get; } = "エクスポート対象";
+        // ExportTarget
+        public virtual string ExportTarget { get; } = "Export Target";
 
-        // インポート対象
-        public virtual string ImportTarget { get; } = "インポート対象";
+        // ImportTarget
+        public virtual string ImportTarget { get; } = "Import Target";
 
-        // 保存用ベクトルDB
-        public virtual string SaveVectorDB { get; } = "保存用ベクトルDB";
+        // SaveVectorDB
+        public virtual string SaveVectorDB { get; } = "Save Vector DB";
 
-        // 参照用ベクトルDB
-        public virtual string ReferenceVectorDB { get; } = "参照用ベクトルDB";
+        // ReferenceVectorDB
+        public virtual string ReferenceVectorDB { get; } = "Reference Vector DB";
 
         #endregion
 
         #region RAG
-        // コミット日時
-        public virtual string CommitDateTime { get; } = "コミット日時";
+        // CommitDateTime
+        public virtual string CommitDateTime { get; } = "Commit Date Time";
 
-        // コミットハッシュ
-        public virtual string CommitHash { get; } = "コミットハッシュ";
+        // CommitHash
+        public virtual string CommitHash { get; } = "Commit Hash";
 
-        // メッセージ
-        public virtual string Message { get; } = "メッセージ";
+        // Message
+        public virtual string Message { get; } = "Message";
 
         // UpdateRAGIndexWindow
-        public virtual string UpdateRAGIndexWindow { get; } = "RAG用ベクトルDB更新";
+        public virtual string UpdateRAGIndexWindow { get; } = "Update RAG Index Window";
 
         // GitRepositoryURL
-        public virtual string GitRepositoryURL { get; } = "GitリポジトリURL";
+        public virtual string GitRepositoryURL { get; } = "Git Repository URL";
 
-        // UpdateEmbeddings
-        public virtual string UpdateIndex { get; } = "インデックス更新";
+        // UpdateEmbeddingsAsync
+        public virtual string UpdateIndex { get; } = "Update Index";
 
-        // 最初のコミットから最新のコミットまでの全ファイルをインデックス化
-        public virtual string IndexAllFilesFromFirstCommitToLatestCommit { get; } = "最初のコミットから最新のコミットまでの全ファイルをインデックス化";
+        // IndexAllFilesFromFirstCommitToLatestCommit
+        public virtual string IndexAllFilesFromFirstCommitToLatestCommit { get; } = "Index All Files From First Commit To Latest Commit";
 
-        // 最後にインデックス化したコミットから最新のコミットまでのファイルをインデックス化
-        public virtual string IndexFilesFromLastIndexedCommitToLatestCommit { get; } = "最後にインデックス化したコミットから最新のコミットまでのファイルをインデックス化";
+        // IndexFilesFromLastIndexedCommitToLatestCommit
+        public virtual string IndexFilesFromLastIndexedCommitToLatestCommit { get; } = "Index Files From Last Indexed Commit To Latest Commit";
 
-        // 最後にインデックス化したコミットのハッシュ値
-        public virtual string LastIndexedCommitHash { get; } = "最後にインデックス化したコミットのハッシュ値";
+        // LastIndexedCommitHash
+        public virtual string LastIndexedCommitHash { get; } = "Last Indexed Commit Hash";
 
-        // インデックス化するコミットの範囲を指定
-        public virtual string SpecifyTheRangeOfCommitsToIndex { get; } = "インデックス化するコミットの範囲を指定";
+        // SpecifyTheRangeOfCommitsToIndex
+        public virtual string SpecifyTheRangeOfCommitsToIndex { get; } = "Specify The Range Of Commits To Index";
 
-        // インデックス化を開始するコミット
-        public virtual string StartCommitForIndexing { get; } = "インデックス化を開始するコミット";
+        // StartCommitForIndexing
+        public virtual string StartCommitForIndexing { get; } = "Start Commit For Indexing";
 
-        // インデックス化処理の状況サマリー
-        public virtual string IndexingSummary { get; } = "インデックス化処理の状況サマリー";
+        // IndexingSummary
+        public virtual string IndexingSummary { get; } = "Indexing Summary";
 
-        // インデックス化処理の状況詳細
-        public virtual string IndexingDetail { get; } = "インデックス化処理の状況詳細";
+        // IndexingDetail
+        public virtual string IndexingDetail { get; } = "Indexing Detail";
 
         #endregion
-
         #region VectorDB
 
-        // ベクトルDB一覧
-        public virtual string VectorDBList { get; } = "ベクトルDB一覧";
+        // VectorDBList
+        public virtual string VectorDBList { get; } = "Vector DB List";
 
-        // マルチベクターリトリーバーの最終的な検索結果
-        public virtual string MultiVectorRetrieverFinalSearchResult { get; } = "マルチベクターリトリーバーの最終的な検索結果";
+        // MultiVectorRetrieverFinalSearchResult
+        public virtual string MultiVectorRetrieverFinalSearchResult { get; } = "Multi Vector Retriever Final Search Result";
 
         #endregion
-
-        // プロンプトテンプレートが存在しません。
-        public virtual string PromptTemplateNotFound { get; } = "プロンプトテンプレートが存在しません。";
+        // PromptTemplateNotFound
+        public virtual string PromptTemplateNotFound { get; } = "Prompt Template Not Found";
 
         // 新規アイテムとしてエクスポート
-        public virtual string ExportAsNewItem { get; } = "新規アイテムとしてエクスポート";
+        public virtual string ExportAsNewItem { get; } = "Export As New Item";
 
     }
 }

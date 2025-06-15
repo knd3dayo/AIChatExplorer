@@ -8,14 +8,14 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
 
 namespace AIChatExplorer.Model.Folders.Browser {
-    public class EdgeBrowseHistoryFolder : ClipboardFolder {
+    public class EdgeBrowseHistoryFolder : ApplicationFolder {
 
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
-        public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataFolder, "edge");
+        public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "edge");
         // コンストラクタ
-        public EdgeBrowseHistoryFolder(ContentFolderEntity folder) : base(folder) {
+        public EdgeBrowseHistoryFolder() : base() {
             IsAutoProcessEnabled = false;
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
         }
 
         protected EdgeBrowseHistoryFolder(EdgeBrowseHistoryFolder parent, string folderName) : base(parent, folderName) {
@@ -26,7 +26,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
                 FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
             }
-            FolderTypeString = AIChatExplorerFolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
+            FolderTypeString = FolderManager.RECENT_FILES_ROOT_FOLDER_NAME_EN;
 
         }
 
@@ -34,15 +34,10 @@ namespace AIChatExplorer.Model.Folders.Browser {
             ContentFolderEntity childFolder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderTypeString = FolderTypeString,
             };
-            EdgeBrowseHistoryFolder child = new(childFolder);
+            EdgeBrowseHistoryFolder child = new() { Entity = childFolder };
             return child;
-        }
-
-        public override List<T> GetItems<T>() {
-            // SyncItems
-            SyncItems();
-            return base.GetItems<T>();
         }
 
         // 子フォルダ
@@ -50,7 +45,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             return []; ;
         }
 
-        public void SyncItems() {
+        public override void SyncItems() {
             // オリジナルのHistoryファイルが存在しない場合は何もしない
             if (!File.Exists(OriginalHistoryFilePath)) {
                 return;
@@ -71,9 +66,8 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 }
             }
 
-            // コレクション
-            // GetItemsを実行すると無限ループになるため、Entity.GetContentItems()を使用
-            var items = Entity.GetContentItems().Select(x => new ContentItemWrapper(x)).ToList();
+            // SyncItemsを呼び出すと無限ループになるため、IsSyncをFalseにする
+            List<ContentItemWrapper> items = GetItems<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];
@@ -124,9 +118,9 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 };
                 contentItem.Save();
                 // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
-                // result.Save();
+                // result.SaveAsync();
             });
 
             //HistoryのURLとItemのURLの和集合

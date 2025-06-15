@@ -6,19 +6,31 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class RecentFilesItem : ContentItemWrapper {
 
         // コンストラクタ
-        public RecentFilesItem(ContentItemEntity item) : base(item) { }
+        public RecentFilesItem() : base() { }
 
         public RecentFilesItem(ContentFolderEntity folder) : base(folder) { }
 
         public override RecentFilesItem Copy() {
-            return new(Entity.Copy());
+            return new() { Entity = Entity.Copy() };
         }
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                Task.Run(async () => {
+                    string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
+                    if (vectorDBItemName == null) {
+                        return;
+                    }
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
+                        Content = Content,
+                        Description = Description,
+                        SourceType = VectorSourceType.File,
+                        SourcePath = SourcePath,
+                    };
+                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
+                ContentModified = false;
+                DescriptionModified = false;
             }
 
             ContentItemEntity.SaveItems([Entity]);

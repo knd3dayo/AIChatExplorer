@@ -1,14 +1,14 @@
 using System.IO;
 using System.Text.Json.Nodes;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.File;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
-using PythonAILib.Model.Folder;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Utils.ExportImport {
     public class ImportExportUtil {
@@ -24,17 +24,17 @@ namespace LibPythonAI.Utils.ExportImport {
                 row.Add(promptItem.Prompt);
                 row.Add(promptItem.ChatMode.ToString());
                 row.Add(promptItem.SplitMode.ToString());
-                row.Add(promptItem.UseVectorDB.ToString());
+                row.Add(promptItem.RAGMode.ToString());
                 data.Add(row);
             }
             CommonDataTable dataTable = new(data);
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+            PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
 
         // ImportPromptItemsFromExcel
-        public static void ImportPromptItemsFromExcel(string fileName) {
+        public static async Task ImportPromptItemsFromExcel(string fileName) {
             // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
                 return;
             }
@@ -42,16 +42,15 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (row.Count == 0) {
                     continue;
                 }
-                PromptItemEntity promptItemEntity = new() {
+                PromptItem promptItem = new() {
                     Name = row[0],
                     Description = row[1],
                     Prompt = row[2],
                     ChatMode = (OpenAIExecutionModeEnum)Enum.Parse(typeof(OpenAIExecutionModeEnum), row[3]),
-                    SplitMode = (SplitOnTokenLimitExceedModeEnum)Enum.Parse(typeof(SplitOnTokenLimitExceedModeEnum), row[4]),
-                    UseVectorDB = bool.Parse(row[5])
+                    SplitMode = (SplitModeEnum)Enum.Parse(typeof(SplitModeEnum), row[4]),
+                    RAGMode =  (RAGModeEnum)Enum.Parse(typeof(RAGModeEnum), row[5])
                 };
-                PromptItem promptItem = new(promptItemEntity);
-                promptItem.Save();
+                promptItem.SaveAsync();
             }
         }
 
@@ -59,27 +58,27 @@ namespace LibPythonAI.Utils.ExportImport {
         public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
-            // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in fromFolder.GetItems<ContentItemWrapper>()) {
+            // ApplicationItemのリスト要素毎に処理を行う
+            foreach (var applicationItem in fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
-                    row.Add(clipboardItem.Description);
+                    row.Add(applicationItem.Description);
                 }
                 bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
                 if (exportText) {
-                    row.Add(clipboardItem.Content);
+                    row.Add(applicationItem.Content);
                 }
-                // SourcePath
+                // Path
                 bool exportSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
                 if (exportSourcePath) {
-                    row.Add(clipboardItem.SourcePath);
+                    row.Add(applicationItem.SourcePath);
                 }
 
                 // PromptItemのリスト要素毎に処理を行う
                 foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
                     if (promptItem.IsChecked) {
-                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
+                        string promptResult = applicationItem.PromptChatResult.GetTextContent(promptItem.Name);
                         row.Add(promptResult);
                     }
                 }
@@ -88,12 +87,12 @@ namespace LibPythonAI.Utils.ExportImport {
             }
             CommonDataTable dataTable = new(data);
 
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+            PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
-        public static void ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
+        public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
 
             // PythonNetの処理を呼び出す。
-            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
                 return;
             }
@@ -107,7 +106,7 @@ namespace LibPythonAI.Utils.ExportImport {
             if (importText) {
                 targetNames.Add("Text");
             }
-            // SourcePath
+            // Path
             bool importSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
             if (importSourcePath) {
                 targetNames.Add("SourcePath");
@@ -155,7 +154,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 string url = item.SourcePath;
                 string tempFilePath = Path.GetTempFileName();
                 try {
-                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
                     // 一時ファイルのパスを取得します
 
                     // データを一時ファイルに書き込みます
@@ -163,7 +162,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // 成功メッセージを表示します
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
                     // 一時ファイルからテキスト抽出
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
                     // itemのContentにTextを設定
                     item.Content = text;
 
@@ -190,7 +189,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
                 string tempFilePath = Path.GetTempFileName();
                 try {
-                    string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                    string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
                     // 一時ファイルのパスを取得します
 
                     // データを一時ファイルに書き込みます
@@ -198,7 +197,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // 成功メッセージを表示します
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
                     // 一時ファイルからテキスト抽出
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
 
                     // アイテムの作成
                     ContentItemWrapper item = new(fromFolder.Entity) {
@@ -222,7 +221,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
             // filePathのファイルが存在しない場合は何もしない
             if (System.IO.File.Exists(filePath) == false) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.FileNotFound);
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FileNotFound);
                 return;
             }
             // ファイルからすべての行を読み込んでリストに格納します
@@ -234,12 +233,12 @@ namespace LibPythonAI.Utils.ExportImport {
         public static void ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.FailedToParseJSONString);
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FailedToParseJSONString);
                 return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                LogWrapper.Error(PythonAILibStringResources.Instance.FailedToParseJSONString);
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FailedToParseJSONString);
                 return;
             }
 

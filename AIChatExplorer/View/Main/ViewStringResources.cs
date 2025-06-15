@@ -20,7 +20,7 @@ namespace AIChatExplorer.View.Main {
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         public static string Save { get; set; } = CommonStringResources.Instance.Save;
@@ -62,7 +62,7 @@ namespace AIChatExplorer.View.Main {
         // SourceTitle
         public static string SourceTitle { get; set; } = CommonStringResources.Instance.SourceTitle;
 
-        // OpenAIChat
+        // OpenAIChatAsync
         public static string OpenAIChat { get; set; } = CommonStringResources.Instance.OpenAIChat;
 
         // ChatMode
@@ -113,6 +113,10 @@ namespace AIChatExplorer.View.Main {
         // CreateItem
         public static string CreateItem { get; set; } = CommonStringResources.Instance.CreateItem;
 
+        // CreateFolder
+        public static string CreateFolder { get; set; } = CommonStringResources.Instance.CreateFolder;
+
+
         // Create
         public static string Create { get; set; } = CommonStringResources.Instance.Create;
 
@@ -134,7 +138,7 @@ namespace AIChatExplorer.View.Main {
         // Tool
         public static string Tool { get; set; } = CommonStringResources.Instance.Tool;
 
-        // VectorSearch
+        // VectorSearchAsync
         public static string VectorSearch { get; set; } = CommonStringResources.Instance.VectorSearch;
 
         // Search
@@ -148,5 +152,15 @@ namespace AIChatExplorer.View.Main {
 
         // ShowProperties
         public static string ShowProperties { get; set; } = CommonStringResources.Instance.ShowProperties;
+
+        // MarkdownView
+        public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
+
+        // AutoGenChat
+        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChat;
+
+        // Monitor
+        public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;
+
     }
 }

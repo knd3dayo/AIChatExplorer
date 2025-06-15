@@ -1,139 +1,79 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
+using LibPythonAI.PythonIF;
 
-namespace PythonAILib.Model.AutoGen {
+namespace LibPythonAI.Model.AutoGen {
     public class AutoGenLLMConfig {
+
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
 
         public static readonly string API_TYPE_AZURE = "azure";
         public static readonly string API_TYPE_OPENAI = "openai";
 
         // name コンフィグ名
+        [JsonPropertyName("name")]
         public string Name { get; set; } = "";
         // api_type api_type (azure, openaiなど)
+        [JsonPropertyName("api_type")]
         public string ApiType { get; set; } = "";
         // api_version apiのバージョン
+        [JsonPropertyName("api_version")]
         public string ApiVersion { get; set; } = "";
         // model llmのモデル
+        [JsonPropertyName("model")]
         public string Model { get; set; } = "";
         // api_key apiキー
+        [JsonPropertyName("api_key")]
         public string ApiKey { get; set; } = "";
         // base_url base_url
+        [JsonPropertyName("base_url")]
         public string BaseURL { get; set; } = "";
 
-        public void Save() {
-            UpdateAutoGenLLMConfig(this.Name, this.ApiType, this.ApiVersion, this.Model, this.ApiKey, this.BaseURL);
+        public async Task SaveAsync() {
+            // APIを呼び出して、設定を保存する
+            await PythonExecutor.PythonAIFunctions.UpdateAutogenLLMConfigAsync(this);
         }
 
-        public void Delete() {
-            DeleteAutoGenLLMConfig(this.Name);
+        public async Task DeleteAsync() {
+            // APIを呼び出して、設定を削除する
+            await PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
         }
 
-        // LLMConfig設定を更新する.
-        public static void UpdateAutoGenLLMConfig(string name, string api_type, string api_version, string model, string api_key, string base_url) {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // DBにテーブルを作成
-            // テーブルが存在しない場合のみ作成
-            // name コンフィグ名
-            // api_type api_type (azure, openaiなど)
-            // api_version apiのバージョン
-            // model llmのモデル
-            // api_key apiキー
-            // base_url base_url
-            using var insertCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS autogen_llm_configs (name TEXT, api_type TEXT, api_version TEXT, model TEXT, api_key TEXT, base_url TEXT)", sqlConn);
-            insertCmd.ExecuteNonQuery();
-            // llm_configの情報をDBに登録
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs WHERE name = @name", sqlConn);
-            checkCmd.Parameters.AddWithValue("@name", name);
-            using var reader = checkCmd.ExecuteReader();
-            if (reader.HasRows == false) {
-                using var insertCmd2 = new SQLiteCommand("INSERT INTO autogen_llm_configs (name, api_type, api_version, model, api_key, base_url) VALUES (@name, @api_type, @api_version, @model, @api_key, @base_url)", sqlConn);
-                insertCmd2.Parameters.AddWithValue("@name", name);
-                insertCmd2.Parameters.AddWithValue("@api_type", api_type);
-                insertCmd2.Parameters.AddWithValue("@api_version", api_version);
-                insertCmd2.Parameters.AddWithValue("@model", model);
-                insertCmd2.Parameters.AddWithValue("@api_key", api_key);
-                insertCmd2.Parameters.AddWithValue("@base_url", base_url);
-                insertCmd2.ExecuteNonQuery();
-            } else {
-                using var insertCmd2 = new SQLiteCommand("UPDATE autogen_llm_configs SET api_type = @api_type, api_version = @api_version, model = @model, api_key = @api_key, base_url = @base_url WHERE name = @name", sqlConn);
-                insertCmd2.Parameters.AddWithValue("@name", name);
-                insertCmd2.Parameters.AddWithValue("@api_type", api_type);
-                insertCmd2.Parameters.AddWithValue("@api_version", api_version);
-                insertCmd2.Parameters.AddWithValue("@model", model);
-                insertCmd2.Parameters.AddWithValue("@api_key", api_key);
-                insertCmd2.Parameters.AddWithValue("@base_url", base_url);
-                insertCmd2.ExecuteNonQuery();
-            }
-            // close
-            sqlConn.Close();
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                ["name"] = Name,
+                ["api_type"] = ApiType,
+                ["api_version"] = ApiVersion,
+                ["model"] = Model,
+                ["api_key"] = ApiKey,
+                ["base_url"] = BaseURL
+            };
+            return dict;
         }
 
-        // LLMConfig設定を削除する.
-        public static void DeleteAutoGenLLMConfig(string name) {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // llm_configの情報をDBから削除
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs WHERE name = @name", sqlConn);
-            checkCmd.Parameters.AddWithValue("@name", name);
-            using var reader = checkCmd.ExecuteReader();
-            if (reader.HasRows == true) {
-                using var insertCmd = new SQLiteCommand("DELETE FROM autogen_llm_configs WHERE name = @name", sqlConn);
-                insertCmd.Parameters.AddWithValue("@name", name);
-                insertCmd.ExecuteNonQuery();
-            }
-            // close
-            sqlConn.Close();
+        public static AutoGenLLMConfig FromDict(Dictionary<string, object> dict) {
+            AutoGenLLMConfig config = new() {
+                Name = dict["name"]?.ToString() ?? "",
+                ApiType = dict["api_type"]?.ToString() ?? "",
+                ApiVersion = dict["api_version"]?.ToString() ?? "",
+                Model = dict["model"]?.ToString() ?? "",
+                ApiKey = dict["api_key"]?.ToString() ?? "",
+                BaseURL = dict["base_url"]?.ToString() ?? "",
+            };
+            return config;
         }
 
-        public static List<AutoGenLLMConfig> GetAutoGenLLMConfigList() {
-            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // SQLITE3 DBに接続
-            string autogenDBURL = ConfigPrams.GetMainDBPath();
-            var sqlConnStr = new SQLiteConnectionStringBuilder(
-                $"Data Source={autogenDBURL};Version=3;"
-                );
-            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
-            // DBに接続
-            sqlConn.Open();
-            // llm_configの情報をDBから取得
-            using var checkCmd = new SQLiteCommand("SELECT * FROM autogen_llm_configs", sqlConn);
-            using var reader = checkCmd.ExecuteReader();
-            List<AutoGenLLMConfig> llmConfigs = [];
-            while (reader.Read()) {
-                AutoGenLLMConfig llmConfig = new() {
-                    Name = reader.GetString(0),
-                    ApiType = reader.GetString(1),
-                    ApiVersion = reader.GetString(2),
-                    Model = reader.GetString(3),
-                    ApiKey = reader.GetString(4),
-                    BaseURL = reader.GetString(5),
-                };
-                llmConfigs.Add(llmConfig);
-            }
-            // close
-            sqlConn.Close();
-            return llmConfigs;
+        public static async Task<List<AutoGenLLMConfig>> GetAutoGenLLMConfigListAsync() {
+            // APIを呼び出して、設定を取得する
+            List<AutoGenLLMConfig> list = await PythonExecutor.PythonAIFunctions.GetAutoGenLLMConfigListAsync();
+            return list;
         }
 
 

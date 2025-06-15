@@ -34,7 +34,13 @@ namespace LibPythonAI.Utils.FileUtils {
             dynamic? lnk = null;     // IWshRuntimeLibrary.IWshShortcut
             try {
                 var type = Type.GetTypeFromProgID("WScript.Shell");
+                if (type == null) {
+                    throw new Exception("WScript.Shell not found");
+                }
                 shell = Activator.CreateInstance(type);
+                if (shell == null) {
+                    throw new Exception("WScript.Shell not found");
+                }
                 lnk = shell.CreateShortcut(shortcutFile);
                 return lnk.TargetPath;
 

@@ -2,20 +2,17 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using PythonAILib.Model.Content;
-using PythonAILibUI.ViewModel.Item;
 using WpfAppCommon.Model;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : ChatViewModelBase {
-
-
+    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : CommonViewModelBase {
         public ContentFolderWrapper Folder { get; set; } = folder;
 
         public ContentItemViewModelCommands Commands { get; set; } = commands;
@@ -52,10 +49,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel: ContentFolderViewModel where Model: ContentFolderWrapper {
+        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<Model>()) {
+            foreach (var child in Folder.GetChildren<Model>().OrderBy(x => x.FolderName)) {
                 if (child == null) {
                     continue;
                 }
@@ -67,20 +64,20 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 _children.Add(childViewModel);
             }
             MainUITask.Run(() => {
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
+                Children = [.. _children];
                 OnPropertyChanged(nameof(Children));
             });
         }
 
-        // LoadItems
+        // LoadItemsAsync
         public virtual void LoadItems() {
             LoadItems<ContentItemWrapper>();
         }
 
 
-        public void LoadItems<Item>() where Item: ContentItemWrapper{
-            // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
+        public void LoadItems<Item>() where Item : ContentItemWrapper {
+            // ApplicationItemFolder.Itemsは別スレッドで実行
+            List<Item> _items = Folder.GetItems<Item>(isSync: false).OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (Item item in _items) {
@@ -124,7 +121,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 //　フォルダを保存
                 this.Folder.Save();
                 LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.FolderEdited);
+                LogWrapper.Info(CommonStringResources.Instance.FolderEdited);
             });
         });
         public void DeleteDisplayedItemCommandExecute(Action beforeAction, Action afterAction) {
@@ -140,7 +137,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             DeleteDisplayedItemCommandExecute(() => {
                 Commands.UpdateIndeterminate(true);
@@ -217,7 +214,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
 
             // フォルダ削除するかどうか確認
-            if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteFolder, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             // 親フォルダを取得
@@ -230,21 +227,24 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 parentFolderViewModel.LoadFolderCommand.Execute();
             }
 
-            LogWrapper.Info(StringResources.FolderDeleted);
+            LogWrapper.Info(CommonStringResources.Instance.FolderDeleted);
         });
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
             Task.Run(() => {
-                try {
-                    // MainWindowViewModelのIsIndeterminateをTrueに設定
-                    UpdateIndeterminate(true);
-                    Folder.GetMainVectorSearchProperty().DeleteVectorDBCollection();
-                    ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>());
-                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>());
-
-                } finally {
-                    UpdateIndeterminate(false);
+                // MainWindowViewModelのIsIndeterminateをTrueに設定
+                string? vectorDBItemName = Folder.GetMainVectorSearchItem().VectorDBItemName;
+                if (vectorDBItemName == null) {
+                    return;
                 }
+                CommonViewModelProperties.UpdateIndeterminate(true);
+                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.Id);
+                ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
+
+                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));
+                    CommonViewModelProperties.UpdateIndeterminate(false);
+                });
+
             });
 
         });

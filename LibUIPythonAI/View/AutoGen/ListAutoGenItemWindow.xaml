@@ -65,11 +65,12 @@
         <TabControl
             Grid.Row="1"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <!--  グループチャット  -->
             <TabItem Header="{x:Static res:ViewStringResources.GroupChat}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -112,6 +113,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.Agent}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -152,6 +154,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.Tool}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"
@@ -183,7 +186,7 @@
                             Header="{x:Static res:ViewStringResources.Description}" />
                         <DataGridTextColumn
                             Width="*"
-                            Binding="{Binding SourcePath}"
+                            Binding="{Binding Path}"
                             Header="{x:Static res:ViewStringResources.SourcePath}" />
                     </DataGrid.Columns>
                     <DataGrid.ContextMenu>
@@ -197,6 +200,7 @@
             <TabItem Header="{x:Static res:ViewStringResources.LLMConfig}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
+                    Background="White"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     CanUserReorderColumns="False"

@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Clipboard;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using LibPythonAI.Model.Content;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
-    public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
+    public class ShortCutFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -22,7 +22,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
                 menuItems.Add(CreateShortCutMenuItem);
 
                 // RootFolderの場合
-                ContentFolderWrapper? parentFolder = ClipboardFolderViewModel.Folder.GetParent<ClipboardFolder>();
+                ContentFolderWrapper? parentFolder = ApplicationFolderViewModel.Folder.GetParent<ApplicationFolder>();
                 if (parentFolder != null && parentFolder.IsRootFolder) {
                     // 削除
                     menuItems.Add(DeleteMenuItem);

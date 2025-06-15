@@ -29,11 +29,11 @@ namespace AIChatExplorer.View.Settings {
         // NoProxyList
         public static string NoProxyList { get; set; } = CommonStringResources.Instance.NoProxyList;
 
-        // ClipboardDBBackupGenerations
-        public static string ClipboardDBBackupGenerations { get; set; } = CommonStringResources.Instance.ClipboardDBBackupGenerations;
+        // ApplicationDBBackupGenerations
+        public static string ApplicationDBBackupGenerations { get; set; } = CommonStringResources.Instance.ApplicationDBBackupGenerations;
 
-        // ClipboardDBBackupGenerationsDescription
-        public static string ClipboardDBBackupGenerationsDescription { get; set; } = CommonStringResources.Instance.ClipboardDBBackupGenerationsDescription;
+        // ApplicationDBBackupGenerationsDescription
+        public static string ApplicationDBBackupGenerationsDescription { get; set; } = CommonStringResources.Instance.ApplicationDBBackupGenerationsDescription;
 
         // PythonDLLPath
         public static string PythonDLLPath { get; set; } = CommonStringResources.Instance.PythonDLLPath;
@@ -41,11 +41,17 @@ namespace AIChatExplorer.View.Settings {
         // SpecifyPython3Dll
         public static string SpecifyPython3Dll { get; set; } = CommonStringResources.Instance.SpecifyPython3Dll;
 
+        // AppDataPath
+        public static string AppDataPath { get; set; } = CommonStringResources.Instance.AppDataPath;
+
+        // AppDataPathHint
+        public static string AppDataPathHint { get; set; } = CommonStringResources.Instance.AppDataPathHint;
+
         // PythonVenvPath
         public static string PythonVenvPath { get; set; } = CommonStringResources.Instance.PythonVenvPath;
 
         // SpecifyVenvPath
-        public static string SpecifyVenvPath { get; set; } = CommonStringResources.Instance.SpecifyVenvPath;
+        public static string PythonVenvPathHint { get; set; } = CommonStringResources.Instance.PythonVenvPathHint;
 
         // OpenAISettings
         public static string OpenAISettings { get; set; } = CommonStringResources.Instance.OpenAISettings;
@@ -127,8 +133,8 @@ namespace AIChatExplorer.View.Settings {
         // AutomaticallyExtractTextFromFile
         public static string AutomaticallyExtractTextFromFile { get; set; } = CommonStringResources.Instance.AutomaticallyExtractTextFromFile;
 
-        // AutomaticallyExtractTextFromFileIfClipboardItemIsFile
-        public static string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; set; } = CommonStringResources.Instance.AutomaticallyExtractTextFromFileIfClipboardItemIsFile;
+        // AutomaticallyExtractTextFromFileIfApplicationItemIsFile
+        public static string AutomaticallyExtractTextFromFileIfApplicationItemIsFile { get; set; } = CommonStringResources.Instance.AutomaticallyExtractTextFromFileIfApplicationItemIsFile;
 
         // AutomaticallyExtractTextFromImage
         public static string AutomaticallyExtractTextFromImage { get; set; } = CommonStringResources.Instance.AutomaticallyExtractTextFromImage;
@@ -157,8 +163,8 @@ namespace AIChatExplorer.View.Settings {
         // AutomaticallyGenerateTags
         public static string AutomaticallyGenerateTags { get; set; } = CommonStringResources.Instance.AutomaticallyGenerateTags;
 
-        // AutomaticallyGenerateTagsFromClipboardContent
-        public static string AutomaticallyGenerateTagsFromClipboardContent { get; set; } = CommonStringResources.Instance.AutomaticallyGenerateTagsFromClipboardContent;
+        // AutomaticallyGenerateTagsFromContent
+        public static string AutomaticallyGenerateTagsFromClipboardContent { get; set; } = CommonStringResources.Instance.AutomaticallyGenerateTagsFromContent;
 
         // AutomaticallyAddBackgroundInformation
         public static string AutomaticallyAddBackgroundInformation { get; set; } = CommonStringResources.Instance.AutomaticallyAddBackgroundInformation;

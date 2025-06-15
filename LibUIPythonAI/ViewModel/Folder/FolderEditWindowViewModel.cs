@@ -2,12 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.VectorDB;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class FolderEditWindowViewModel : ChatViewModelBase {
+    public class FolderEditWindowViewModel : CommonViewModelBase {
 
         // 起動時の処理
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
@@ -52,10 +53,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        public Visibility VectorDBItemButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex == 1);
+        public Visibility VectorDBItemButtonVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 1);
 
-        private ObservableCollection<VectorDBProperty> _vectorSearchProperties = [];
-        public ObservableCollection<VectorDBProperty> VectorSearchProperties {
+        private ObservableCollection<VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -65,22 +66,22 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        private VectorDBProperty? _selectedVectorSearchProperty = null;
-        public VectorDBProperty? SelectedVectorSearchProperty {
+        private VectorSearchItem? _selectedVectorSearchItem = null;
+        public VectorSearchItem? SelectedVectorSearchItem {
             get {
-                return _selectedVectorSearchProperty;
+                return _selectedVectorSearchItem;
             }
             set {
-                _selectedVectorSearchProperty = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
+                _selectedVectorSearchItem = value;
+                OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchProperty != null) {
+            if (SelectedVectorSearchItem != null) {
                 // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
+                VectorSearchProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
@@ -101,14 +102,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
-                LogWrapper.Error(StringResources.EnterFolderName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterFolderName);
                 return;
             }
-            //　説明がない場合はエラー
-            if (FolderViewModel.Description == "") {
-                LogWrapper.Error(StringResources.EnterDescription);
-                return;
-            }
+
             // VectorSearchPropertiesを設定
             FolderViewModel.Folder.ReferenceVectorSearchProperties = [.. VectorSearchProperties];
 

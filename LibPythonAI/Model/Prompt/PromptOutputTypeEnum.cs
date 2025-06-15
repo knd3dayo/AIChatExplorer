@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public enum PromptOutputTypeEnum {
         // 新規作成
         NewContent = 0,
@@ -6,5 +6,7 @@ namespace PythonAILib.Model.Prompt {
         OverwriteContent = 1,
         // タイトルを上書き
         OverwriteTitle = 2,
+        // タグを追加
+        AppendTags = 3,
     }
 }

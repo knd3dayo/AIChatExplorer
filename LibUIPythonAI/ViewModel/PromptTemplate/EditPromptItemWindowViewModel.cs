@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
-    public class EditPromptItemWindowViewModel : ChatViewModelBase {
+    public class EditPromptItemWindowViewModel : CommonViewModelBase {
 
 
         // 初期化
@@ -82,7 +82,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             }
         }
         // InputTypeItemsVisibility
-        public Visibility InputTypeItemsVisibility => Tools.BoolToVisibility(PromptResultToInput);
+        public Visibility InputTypeItemsVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(PromptResultToInput);
 
         // InputTypeItems
         public ObservableCollection<PromptItem> InputTypeItems {
@@ -156,24 +156,24 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                ItemViewModel.PromptItem.SplitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitModeIndex));
             }
         }
-        // UseVectorDB
-        public bool UseVectorDB {
+        // RAGModeIndex
+        public int RAGModeIndex {
             get {
                 if (ItemViewModel == null) {
-                    return false;
+                    return 0;
                 }
-                return ItemViewModel.PromptItem.UseVectorDB;
+                return (int)ItemViewModel.PromptItem.RAGMode;
             }
             set {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.UseVectorDB = value;
-                OnPropertyChanged(nameof(UseVectorDB));
+                ItemViewModel.PromptItem.RAGMode = (RAGModeEnum)value;
+                OnPropertyChanged(nameof(RAGModeIndex));
             }
         }
 
@@ -202,15 +202,22 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
-            ChatModeIndex = index;
+            SplitModeIndex = index;
         });
 
+        // RAGModeSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            RAGModeIndex = index;
+        });
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
 
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new(async (window) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -225,7 +232,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             promptItem.PromptResultType = (PromptResultTypeEnum)PromptResultTypeIndex;
             promptItem.PromptOutputType = (PromptOutputTypeEnum)PromptOutputTypeIndex;
             promptItem.ChatMode = (OpenAIExecutionModeEnum)ChatModeIndex;
-            promptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)SplitModeIndex;
+            promptItem.SplitMode = (SplitModeEnum)SplitModeIndex;
 
             // 入力がプロンプト結果の場合はPromptInputNameを設定
             if (PromptResultToInput) {
@@ -235,16 +242,18 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
             // Nameが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Name)) {
-                LogWrapper.Error(StringResources.EnterName);
+                LogWrapper.Error(CommonStringResources.Instance.EnterName);
                 return;
             }
             // Descriptionが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Description)) {
-                LogWrapper.Error(StringResources.EnterDescription);
+                LogWrapper.Error(CommonStringResources.Instance.EnterDescription);
                 return;
             }
-            // LogWrapper
-            promptItem.Save();
+
+            await promptItem.SaveAsync();
+
+            await PromptItem.LoadItemsAsync();
 
             AfterUpdate(ItemViewModel);
 

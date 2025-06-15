@@ -5,9 +5,10 @@ using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.Content;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.Search {
-    public class SearchWindowViewModel : ChatViewModelBase {
+    public class SearchWindowViewModel : CommonViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
             ContentFolderWrapper searchFolder, 
@@ -54,7 +55,7 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
         }
         
-        public Visibility NameVisibility => Tools.BoolToVisibility(_isSearchFolder == true);
+        public Visibility NameVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_isSearchFolder == true);
 
 
         // 検索フォルダのパス
@@ -111,7 +112,7 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
             set {
                 if (SearchConditionRule == null) {
-                    LogWrapper.Error(StringResources.SearchConditionRuleIsNull);
+                    LogWrapper.Error(CommonStringResources.Instance.SearchConditionRuleIsNull);
                     return;
                 }
                 SearchConditionRule.Name = value;
@@ -129,11 +130,11 @@ namespace LibUIPythonAI.ViewModel.Search {
 
         public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {
-                LogWrapper.Error(StringResources.NoSearchConditions);
+                LogWrapper.Error(CommonStringResources.Instance.NoSearchConditions);
                 return;
             }
             if (_isSearchFolder) {
-                // SearchConditionRuleのSearchFolderにSearchFolderViewModelのClipboardItemFolderを設定
+                // SearchConditionRuleのSearchFolderにSearchFolderViewModelのApplicationItemFolderを設定
                 SearchConditionRule.SearchFolder = SearchFolder;
                 // _isSearchFolderがTrueの場合は、フォルダ名を更新
                 SearchFolder.FolderName = SearchConditionRule.Name;
@@ -151,8 +152,8 @@ namespace LibUIPythonAI.ViewModel.Search {
             window.Close();
         });
 
-        // OpenClipboardFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenClipboardFolderWindowCommand => new((parameter) => {
+        // OpenApplicationFolderWindowCommand
+        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
                     SearchConditionRule.TargetFolder = folderViewModel.Folder;

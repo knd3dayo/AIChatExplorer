@@ -1,95 +1,115 @@
-using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.PythonIF;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Resources;
 
 namespace LibPythonAI.Model.AutoProcess {
+
+    public enum AutoProcessItemTypeEnum {
+        SystemDefined,
+        ModifiedSystemDefined,
+        UserDefined,
+    }
+
+    public enum AutoProcessActionTypeEnum {
+        Ignore,
+        CopyToFolder,
+        MoveToFolder,
+        ExtractText,
+        PromptTemplate,
+    }
+
     // 自動処理の引数用のクラス
     public class AutoProcessItem {
 
-        public enum TypeEnum {
-            Ignore,
-            CopyToFolder,
-            MoveToFolder,
-            ExtractText,
-            PromptTemplate,
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string DisplayName { get; set; } = "";
+        public string Description { get; set; } = "";
+        public AutoProcessActionTypeEnum TypeName { get; set; } = AutoProcessActionTypeEnum.CopyToFolder;
+
+        public AutoProcessItemTypeEnum ItemType { get; set; } = AutoProcessItemTypeEnum.UserDefined;
+
+        private static List<AutoProcessItem> _items = new(); // 修正: 空のリストを初期化
+        public static async Task LoadItemsAsync() {
+            // 修正: 非同期メソッドで 'await' を使用
+            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetAutoProcessItemsAsync());
         }
 
-        public AutoProcessItem(AutoProcessItemEntity entity) {
-            Entity = entity;
+        public static List<AutoProcessItem> GetItems() {
+            return _items;
         }
 
-        public AutoProcessItemEntity Entity { get; set; }
-
-        // Id
-        public string Id {  get => Entity.Id; }
-
-        public string Name {
-            get {
-                return Entity.Name;
-            }
-            set {
-                Entity.Name = value;
-            }
-        }
-        public string DisplayName {
-            get {
-                return Entity.DisplayName;
-            }
-            set {
-                Entity.DisplayName = value;
-            }
-        }
-        public string Description {
-            get {
-                return Entity.Description;
-            }
-            set {
-                Entity.Description = value;
-            }
-        }
-        public TypeEnum TypeName {
-            get {
-                return Entity.TypeName;
-            }
-            set {
-                Entity.TypeName = value;
-            }
+        public static List<AutoProcessItem> GetSystemDefinedItems() {
+            return _items.Where(x => x.ItemType == AutoProcessItemTypeEnum.SystemDefined).ToList();
         }
 
-        public ContentFolderWrapper? DestinationFolder {
-            get {
-                return ContentFolderWrapper.GetFolderById(Entity.DestinationFolderId);
-            }
-            set {
-                Entity.DestinationFolderId = value?.Id;
-            }
+        // GetItemById
+        public static AutoProcessItem? GetItemById(string? id) {
+            return GetItems().FirstOrDefault(x => x.Id == id);
         }
 
-        public static Action<ContentItemWrapper> GetAction(TypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
-            if (typeEnum == TypeEnum.Ignore) {
+        // SaveAsync
+        public async Task SaveAsync() {
+            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        }
+        // DeleteAsync
+        public async Task DeleteAsync() {
+            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        }
+
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                { "id", Id },
+                { "display_name", DisplayName },
+                { "description", Description },
+                { "auto_process_item_type", (int)ItemType },
+                { "action_type", (int)TypeName }
+            };
+            return dict;
+        }
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(List<AutoProcessItem> autoProcessItems) {
+            return autoProcessItems.Select(item => item.ToDict()).ToList();
+        }
+
+        // FromDict
+        public static AutoProcessItem FromDict(Dictionary<string, object> dict) {
+            AutoProcessItem item = new() {
+                Id = dict["id"] as string ?? Guid.NewGuid().ToString(),
+                DisplayName = dict["display_name"] as string ?? "",
+                Description = dict["description"] as string ?? "",
+                ItemType = (AutoProcessItemTypeEnum)(Decimal)(dict["auto_process_item_type"] ?? AutoProcessItemTypeEnum.UserDefined),
+                TypeName = (AutoProcessActionTypeEnum)(Decimal)(dict["action_type"] ?? AutoProcessActionTypeEnum.CopyToFolder)
+            };
+            return item;
+        }
+
+
+        public static Action<ContentItemWrapper> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
+            if (typeEnum == AutoProcessActionTypeEnum.Ignore) {
                 return (args) => {
                     return;
                 };
             }
-            if (typeEnum == TypeEnum.CopyToFolder) {
+            if (typeEnum == AutoProcessActionTypeEnum.CopyToFolder) {
                 return (args) => {
                     if (destinationFolder == null) {
-                        LogWrapper.Warn(PythonAILibStringResources.Instance.NoFolderSelected);
+                        LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
                     }
 
-                    LogWrapper.Info($"{PythonAILibStringResources.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
+                    LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
                     ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
                     destinationFolder.AddItem(newItem);
                 };
             }
-            if (typeEnum == TypeEnum.MoveToFolder) {
+            if (typeEnum == AutoProcessActionTypeEnum.MoveToFolder) {
                 return (args) => {
                     if (destinationFolder == null) {
-                        LogWrapper.Warn(PythonAILibStringResources.Instance.NoFolderSelected);
+                        LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
                     }
                     // Folderに移動
@@ -97,7 +117,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
                 };
             }
-            if (typeEnum == TypeEnum.ExtractText) {
+            if (typeEnum == AutoProcessActionTypeEnum.ExtractText) {
                 return (args) => {
                     List<ContentItemWrapper> contentItemWrappers = [args];
                     ContentItemCommands.ExtractTexts(contentItemWrappers, () => { }, () => { });
@@ -110,124 +130,16 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         public bool IsCopyOrMoveAction() {
-            return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString();
+            return TypeName == AutoProcessActionTypeEnum.CopyToFolder || TypeName == AutoProcessActionTypeEnum.MoveToFolder;
         }
 
-        public virtual void Execute(ContentItemWrapper clipboardItem, ContentFolderWrapper? destinationFolder) {
+        public virtual async Task Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
             Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolder);
-            action(clipboardItem);
+            action(applicationItem);
 
         }
 
 
-        private static List<AutoProcessItem>? _systemAutoProcesses;
-
-        public static List<AutoProcessItem> SystemAutoProcesses {
-            get {
-                if (_systemAutoProcesses == null) {
-                    _systemAutoProcesses = Init();
-                }
-                return _systemAutoProcesses;
-            }
-        }
-
-        public static List<AutoProcessItem> Init() {
-
-            List<AutoProcessItem> items = [];
-
-            using PythonAILibDBContext db = new();
-            // Ignoreコマンド
-            var ignore = db.AutoProcessItems.Where(x => x.Name == "Ignore").FirstOrDefault();
-            if (ignore == null) {
-                ignore = new AutoProcessItemEntity() {
-                    Name = "Ignore",
-                    DisplayName = PythonAILibStringResources.Instance.Ignore,
-                    Description = PythonAILibStringResources.Instance.DoNothing,
-                    TypeName = TypeEnum.Ignore
-                };
-                db.AutoProcessItems.Add(ignore);
-            }
-            items.Add(new AutoProcessItem(ignore));
-
-            // CopyToFolderコマンド
-            var copyToFolder = db.AutoProcessItems.Where(x => x.Name == "CopyToFolder").FirstOrDefault();
-            if (copyToFolder == null) {
-                copyToFolder = new AutoProcessItemEntity() {
-                    Name = "CopyToFolder",
-                    DisplayName = PythonAILibStringResources.Instance.CopyToFolder,
-                    Description = PythonAILibStringResources.Instance.CopyClipboardContentToSpecifiedFolder,
-                    TypeName = TypeEnum.CopyToFolder
-                };
-                db.AutoProcessItems.Add(copyToFolder);
-            }
-            items.Add(new AutoProcessItem(copyToFolder));
-
-            // MoveToFolderコマンド
-            var moveToFolder = db.AutoProcessItems.Where(x => x.Name == "MoveToFolder").FirstOrDefault();
-            if (moveToFolder == null) {
-                moveToFolder = new AutoProcessItemEntity() {
-                    Name = "MoveToFolder",
-                    DisplayName = PythonAILibStringResources.Instance.MoveToFolder,
-                    Description = PythonAILibStringResources.Instance.MoveClipboardContentToSpecifiedFolder,
-                    TypeName = TypeEnum.MoveToFolder
-                };
-                db.AutoProcessItems.Add(moveToFolder);
-            }
-            items.Add(new AutoProcessItem(moveToFolder));
-
-            // ExtractTextコマンド
-            var extractText = db.AutoProcessItems.Where(x => x.Name == "ExtractText").FirstOrDefault();
-            if (extractText == null) {
-                extractText = new AutoProcessItemEntity() {
-                    Name = "ExtractText",
-                    DisplayName = PythonAILibStringResources.Instance.ExtractText,
-                    Description = PythonAILibStringResources.Instance.ExtractClipboardText,
-                    TypeName = TypeEnum.ExtractText
-                };
-                db.AutoProcessItems.Add(extractText);
-            }
-            items.Add(new AutoProcessItem(extractText));
-
-            db.SaveChanges();
-
-            return items;
-
-        }
-
-        // Equals , GetHashCodeのオーバーライド
-        public override bool Equals(object? obj) {
-            if (obj == null || GetType() != obj.GetType()) {
-                return false;
-            }
-            AutoProcessItem item = (AutoProcessItem)obj;
-            return item.Entity == Entity;
-        }
-        public override int GetHashCode() {
-            return Entity.GetHashCode();
-        }
-
-        // GetItemById
-        public static AutoProcessItem? GetItemById(string? id) {
-            if (id == null) {
-                return null;
-            }
-            using PythonAILibDBContext db = new();
-            var item = db.AutoProcessItems.Find(id);
-            if (item == null) {
-                return null;
-            }
-            return new AutoProcessItem(item);
-        }
-
-        // GetItemsByType
-        public static List<AutoProcessItem> GetItemsByType(TypeEnum? typeEnum) {
-            if (typeEnum == null) {
-                return [];
-            }
-            using PythonAILibDBContext db = new();
-            var items = db.AutoProcessItems.Where(x => x.TypeName == typeEnum);
-            return items.Select(x => new AutoProcessItem(x)).ToList();
-        }
     }
 }

@@ -29,6 +29,7 @@
             Grid.Row="0"
             HorizontalAlignment="Stretch"
             AutoGenerateColumns="False"
+            Background="White"
             BorderThickness="1"
             CanUserAddRows="True"
             CanUserDeleteRows="False"
@@ -45,7 +46,7 @@
             VirtualizingStackPanel.IsVirtualizing="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding ApplicationItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.InputBindings>

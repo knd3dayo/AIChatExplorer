@@ -7,10 +7,10 @@ namespace LibUIPythonAI.View.Tag {
         // Open
         public static string Open => CommonStringResources.Instance.Open;
 
-        // Save
+        // SaveAsync
         public static string Save => CommonStringResources.Instance.Save;
 
-        // Delete
+        // DeleteAsync
         public static string Delete => CommonStringResources.Instance.Delete;
 
         // ChatItem
@@ -59,5 +59,10 @@ namespace LibUIPythonAI.View.Tag {
 
         // NewTag
         public static string NewTag => CommonStringResources.Instance.NewTag;
+
+
+        // Search
+        public static string Search => CommonStringResources.Instance.Search;
+
     }
 }

@@ -1,14 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
-using AIChatExplorer.ViewModel.Main;
-using LibGit2Sharp;
-using LibUIPythonAI.Resource;
-using PythonAILibUI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class RecentFilesFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
+    public class RecentFilesFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {

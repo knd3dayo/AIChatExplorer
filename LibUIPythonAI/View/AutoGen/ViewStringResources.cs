@@ -8,6 +8,10 @@ namespace LibUIPythonAI.View.AutoGen {
         // ListAutoGenItemWindow
         public static string ListAutoGenItemWindow { get; set; } = CommonStringResources.Instance.AutoGenSettingList;
 
+        // EditAutoGenAgentWindow
+        public static string EditAutoGenToolWindowTitle { get; set; } = CommonStringResources.Instance.EditAutoGenToolWindowTitle;
+
+
         // EditAutoGenAgentWindowTitle
         public static string EditAutoGenAgentWindowTitle { get; set; } = CommonStringResources.Instance.EditAutoGenAgentWindowTitle;
 
@@ -34,7 +38,7 @@ namespace LibUIPythonAI.View.AutoGen {
         // Enabled
         public static string Enabled { get; set; } = CommonStringResources.Instance.Enabled;
 
-        // Delete
+        // DeleteAsync
         public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
 
         // BasicSettings
@@ -95,7 +99,7 @@ namespace LibUIPythonAI.View.AutoGen {
         // LLM
         public static string LLM { get; set; } = CommonStringResources.Instance.LLM;
 
-        // VectorDB
+        // VectorDBList
         public static string VectorDB { get; set; } = CommonStringResources.Instance.VectorDB;
 
         // AddVectorDB
@@ -118,6 +122,12 @@ namespace LibUIPythonAI.View.AutoGen {
 
         // VectorDBSearchAgent
         public static string VectorDBSearchAgent { get; set; } = CommonStringResources.Instance.VectorDBSearchAgent;
+
+        // InputDescriptionOfThisFolder
+        public static string InputDescriptionOfThisFolder { get; set; } = CommonStringResources.Instance.InputDescriptionOfThisFolder;
+
+        // SelectFile
+        public static string SelectFile { get; set; } = CommonStringResources.Instance.SelectFile;
 
     }
 }

@@ -72,7 +72,10 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <Grid Grid.Row="1" Margin="10,10,10,10">
+        <Grid
+            Grid.Row="1"
+            Margin="10,10,10,10"
+            Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -122,7 +125,6 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsEnabled="True"
                 Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="{Binding TextWrapping, Mode=OneWay}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">
@@ -145,6 +147,26 @@
                     Grid.Row="3"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left">
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static local:ViewStringResources.UseVectorDB}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding RAGModeIndex}">
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
+                        <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                     <CheckBox
                         Margin="10,0,10,0"
                         Content="{x:Static local:ViewStringResources.UseVectorDB}"
@@ -227,6 +249,7 @@
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.StringType}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.ListType}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.TableType}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.DictionaryType}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding PromptResultTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -248,6 +271,7 @@
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.NewTab}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.OverwriteContent}" />
                         <ComboBoxItem Content="{x:Static local:ViewStringResources.OverwriteTitle}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.AppendTags}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding PromptOutputTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

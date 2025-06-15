@@ -1,6 +1,5 @@
 using System.Reflection;
 using AIChatExplorer.ViewModel.Settings;
-using PythonAILib.Model.AutoProcess;
 using LibUIPythonAI.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
@@ -8,6 +7,7 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.AutoProcess;
 
 namespace AIChatExplorer.Model.Main {
     /// <summary>
@@ -45,13 +45,13 @@ namespace AIChatExplorer.Model.Main {
         /// <summary>
         /// コピーされたアイテム
         /// </summary>
-        // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
+        // Ctrl + C or X が押された時のApplicationItem or ApplicationFolder
         public List<object> CopiedObjects { get; set; } = [];
 
         // ClipboardChangedが呼ばれたときの処理
         public Action<ClipboardChangedEventArgs> OnClipboardChanged { get; set; } = (e) => { };
 
-        // Clipboard monitoring enable/disable flag
+        // Application monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard _clipboard;
         private Action<ContentItemWrapper> _afterClipboardChanged = (parameter) => { };
@@ -77,18 +77,18 @@ namespace AIChatExplorer.Model.Main {
         /// </summary>
         /// <param name="item"></param>
         public void SetDataObject(ContentItemWrapper item) {
-            // System.Windows.MessageBox.Show(item.SourcePath);
+            // System.Windows.MessageBox.Show(item.Path);
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard
-            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
+            if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // If ContentType is Files, copy files to clipboard
-            else if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files) {
                 // SourcePathの取得
                 System.Collections.Specialized.StringCollection strings = [item.SourcePath];
                 // Stringsが空の場合は何もしない
@@ -117,7 +117,7 @@ namespace AIChatExplorer.Model.Main {
 
 
             if (IsClipboardMonitorEnabled == false) {
-                // System.Windows.MessageBox.Show("Clipboard monitor disabled");
+                // System.Windows.MessageBox.Show("Application monitor disabled");
                 return;
             }
             // Determine if it is a target application for monitoring
@@ -128,7 +128,7 @@ namespace AIChatExplorer.Model.Main {
             if (_clipboard == null) {
                 return;
             }
-            AIChatExplorerFolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
+            FolderManager.RootFolder.ProcessApplicationItem(e, _afterClipboardChanged);
 
         }
 
@@ -156,7 +156,7 @@ namespace AIChatExplorer.Model.Main {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="_afterClipboardChanged"></param>
-        public static void ProcessClipboardItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
+        public static void ProcessApplicationItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
 
             // Execute in a separate thread
             Task.Run(() => {
@@ -166,7 +166,7 @@ namespace AIChatExplorer.Model.Main {
                 });
                 try {
                     // Apply automatic processing
-                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                     if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;

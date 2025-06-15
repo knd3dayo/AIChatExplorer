@@ -6,10 +6,10 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Resources;
+using LibPythonAI.Resources;
 
 namespace LibUIMergeChat.ViewModel {
-    public class MergeTargetDataGridViewControlViewModel : ChatViewModelBase {
+    public class MergeTargetDataGridViewControlViewModel : CommonViewModelBase {
 
         public MergeTargetDataGridViewControlViewModel(Action<bool> updateIndeterminateAction) {
             UpdateIndeterminateAction = updateIndeterminateAction;
@@ -93,9 +93,9 @@ namespace LibUIMergeChat.ViewModel {
         }
 
 
-        // クリップボードアイテムが選択された時の処理
+        // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {
@@ -112,9 +112,9 @@ namespace LibUIMergeChat.ViewModel {
 
                 // SelectedTabIndexを更新する処理
                 if (SelectedItem != null) {
+                    OnPropertyChanged(nameof(SelectedItem));
                     SelectedItem.SelectedTabIndex = lastSelectedIndex;
                 }
-                OnPropertyChanged(nameof(SelectedItem));
             }
 
         });
@@ -133,8 +133,8 @@ namespace LibUIMergeChat.ViewModel {
         });
 
 
-        #region クリップボードアイテムのInputBinding用のコマンド
-        // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
+        #region アイテムのInputBinding用のコマンド
+        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             Items.Clear();
         });

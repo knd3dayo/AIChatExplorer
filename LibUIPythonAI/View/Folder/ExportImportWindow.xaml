@@ -9,7 +9,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:LibUIPythonAI.View.Folder"
-    Title="{x:Static res:ViewStringResources.ImportClipboardItemsWindow}"
+    Title="{x:Static res:ViewStringResources.ImportApplicationItemsWindow}"
     Width="800"
     Height="500"
     d:DataContext="{d:DesignInstance local:ExportImportWindowViewModel}"
@@ -68,7 +68,7 @@
             Grid.Row="1"
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedIndex}">
+            SelectedIndex="{Binding SelectedIndex, TargetNullValue=-1}">
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -198,19 +198,19 @@
                 Grid.Column="0"
                 Margin="10,0,0,10"
                 HorizontalAlignment="Left"
-                Visibility="{Binding ClipboardFolderSelectionButtonVisibility}">
+                Visibility="{Binding ApplicationFolderSelectionButtonVisibility}">
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     HorizontalAlignment="Left"
-                    Command="{Binding OpenClipboardFolderWindowCommand, Mode=OneTime}"
-                    Content="{x:Static res:ViewStringResources.SelectClipboardFolder}" />
+                    Command="{Binding OpenApplicationFolderWindowCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.SelectApplicationFolder}" />
                 <TextBox
                     Width="300"
                     Margin="10,0,0,0"
                     HorizontalAlignment="Left"
                     IsReadOnly="True"
-                    Text="{Binding SelectedClipboardFolderPath, Mode=OneWay}"
+                    Text="{Binding SelectedApplicationFolderPath, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </DockPanel>
             <DockPanel
@@ -235,7 +235,7 @@
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

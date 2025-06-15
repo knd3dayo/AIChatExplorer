@@ -2,12 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel.AutoProcess {
-    public class ListAutoProcessRuleWindowViewModel : ChatViewModelBase {
+    public class ListAutoProcessRuleWindowViewModel : CommonViewModelBase {
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];
@@ -23,7 +24,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public ListAutoProcessRuleWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModel) {
             RootFolderViewModels = rootFolderViewModel;
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+            AutoProcessRules = [.. AutoProcessRule.GetItems()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
@@ -57,18 +58,18 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         //-- コマンド
 
         // 優先順位を上げる処理
-        public SimpleDelegateCommand<string> ChangePriorityCommand => new((parameter) => {
+        public SimpleDelegateCommand<string> ChangePriorityCommand => new(async (parameter) => {
             if (SelectedAutoProcessRule == null) {
-                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
+                LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
             }
             if (parameter == "down") {
-                AutoProcessRule.DownPriority(SelectedAutoProcessRule);
+               await  AutoProcessRule.DownPriority(SelectedAutoProcessRule);
             } else {
-                AutoProcessRule.UpPriority(SelectedAutoProcessRule);
+                await AutoProcessRule.UpPriority(SelectedAutoProcessRule);
             }
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+            AutoProcessRules = [.. AutoProcessRule.GetItems()];
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
@@ -76,12 +77,12 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // AutoProcessRuleが更新された後の処理
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                AutoProcessRules = [.. AutoProcessRule.GetItems()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
             // debug
             if (SelectedAutoProcessRule == null) {
-                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
+                LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
             }
             // RootFolderViewModelを取得
@@ -95,26 +96,26 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                AutoProcessRules = [.. AutoProcessRule.GetItems()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
-            AutoProcessRule rule = new(new LibPythonAI.Data.AutoProcessRuleEntity());
+            AutoProcessRule rule = new();
             EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModels, AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理
-        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new(async (parameter) => {
             AutoProcessRule? rule = SelectedAutoProcessRule;
             if (rule == null) {
-                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
+                LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
             }
-            if (MessageBox.Show($"{rule.RuleName}{StringResources.ConfirmDelete}", StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show($"{rule.RuleName}{CommonStringResources.Instance.ConfirmDelete}", CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             AutoProcessRules.Remove(rule);
             // LiteDBを更新
-            rule.Delete();
+            await rule.DeleteAsync();
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 

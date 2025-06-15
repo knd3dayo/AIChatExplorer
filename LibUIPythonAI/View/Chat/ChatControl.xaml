@@ -18,12 +18,11 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="25" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/LibUIPythonAI;component/Resource/Dictionary1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -62,7 +61,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Chat, Mode=OneTime}">
+                    Header="{x:Static res:ViewStringResources.Chat}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -103,7 +102,24 @@
                                                 FontSize="8pt"
                                                 Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding ContentWithSources, Mode=OneWay}"
-                                                TextTrimming="WordEllipsis" />
+                                                TextTrimming="WordEllipsis"
+                                                Visibility="{Binding DataContext.TextVisibility, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                                            <editorControl:BindableRichTextBox
+                                                Grid.Row="1"
+                                                Margin="10,10,10,10"
+                                                VerticalContentAlignment="Top"
+                                                Document="{Binding MarkdownContentWithSources, Mode=OneWay}"
+                                                FontSize="12"
+                                                HorizontalScrollBarVisibility="Auto"
+                                                IsReadOnly="True"
+                                                VerticalScrollBarVisibility="Auto"
+                                                Visibility="{Binding DataContext.MarkdownVisibility, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="PreviewMouseUp">
+                                                        <i:InvokeCommandAction Command="{Binding DataContext.OpenChatItemCommand, ElementName=Root}" CommandParameter="{Binding}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </editorControl:BindableRichTextBox>
                                             <Grid.InputBindings>
                                                 <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
                                                 <MouseBinding
@@ -167,7 +183,7 @@
                                     materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                                     AcceptsReturn="True"
                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                                    TextWrappingMode="{Binding TextWrappingMode}" />
+                                    TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                             </ScrollViewer>
                         </Grid>
                     </Grid>
@@ -181,8 +197,7 @@
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding PreviewJson, Mode=OneWay}"
-                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                            Text="{Binding PreviewJson, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <TabItem
@@ -196,8 +211,7 @@
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}"
-                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <i:Interaction.Triggers>
@@ -209,10 +223,19 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel
+                <CheckBox
                     Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="{x:Static res:ViewStringResources.MarkdownView}"
+                    FontSize="8pt"
+                    IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
+
+                <StackPanel
+                    Grid.Column="1"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Visibility="{Binding DebugCommandVisibility}">
@@ -222,7 +245,7 @@
                         Content="{x:Static res:ViewStringResources.ExecuteDebugCommand}" />
                 </StackPanel>
                 <StackPanel
-                    Grid.Column="1"
+                    Grid.Column="2"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">
                     <Button
@@ -230,12 +253,7 @@
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{x:Static res:ViewStringResources.Send}" />
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding CancelAutoGenChatCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{x:Static res:ViewStringResources.Cancel}"
-                        Visibility="{Binding ChatContextViewModelInstance.AutoGenGroupChatVisibility}" />
+
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
@@ -257,7 +275,7 @@
             </Grid>
             <ProgressBar
                 Grid.Row="0"
-                IsIndeterminate="{Binding IsIndeterminate}"
+                IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
                 Style="{StaticResource MaterialDesignCircularProgressBar}"
                 Value="0" />
 

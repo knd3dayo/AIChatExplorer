@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PythonAILib.Utils.Common {
+namespace LibPythonAI.Utils.Common {
     public class JsonUtil {
         // JSON文字列をList<Dictionary<string, dynamic>>型に変換するメソッド
         public static List<Dictionary<string, dynamic?>> ParseJsonArray(string json) {

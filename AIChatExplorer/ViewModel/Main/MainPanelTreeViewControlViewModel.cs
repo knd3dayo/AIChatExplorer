@@ -3,21 +3,19 @@ using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Main;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
 using AIChatExplorer.ViewModel.Folders.Search;
-using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelTreeViewControlViewModel : AppViewModelBase {
+    public class MainPanelTreeViewControlViewModel : CommonViewModelBase {
 
-        private AppItemViewModelCommands Commands { get; set; }
+        private AppViewModelCommands Commands { get; set; }
 
-         // constructor
-         public MainPanelTreeViewControlViewModel(AppItemViewModelCommands commands) {
+        // constructor
+        public MainPanelTreeViewControlViewModel(AppViewModelCommands commands) {
             Commands = commands;
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
@@ -46,7 +44,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
-        // Ctrl + C or X  が押された時のClipboardItemFolder
+        // Ctrl + C or X  が押された時のApplicationItemFolder
         private ContentFolderViewModel? _copiedFolder;
         public ContentFolderViewModel? CopiedFolder {
             get {
@@ -62,7 +60,7 @@ namespace AIChatExplorer.ViewModel.Main {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            Commands.ReloadFolderCommandExecute(this.SelectedFolder,
+            AppViewModelCommands.ReloadFolderCommandExecute(this.SelectedFolder,
                 () => {
                     UpdateIndeterminateAction(true);
                 },
@@ -72,7 +70,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 );
         });
 
-        // クリップボードアイテムを作成する。
+        // アイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
@@ -91,7 +89,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            Commands.CutFolderCommandExecute(this);
+            AppViewModelCommands.CutFolderCommandExecute(this);
         });
 
 
@@ -99,8 +97,8 @@ namespace AIChatExplorer.ViewModel.Main {
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
-            SelectedFolder = clipboardItemFolderViewModel;
+            ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
+            SelectedFolder = applicationItemFolderViewModel;
             if (SelectedFolder != null) {
                 // Load
                 SelectedFolder.LoadFolderCommand.Execute();
@@ -113,8 +111,11 @@ namespace AIChatExplorer.ViewModel.Main {
         public void SelectedTreeViewItemChangeCommandExecute(ContentFolderViewModel folder) {
             TreeView? treeView = ThisUserControl?.FindName("FolderTreeView") as TreeView;
             if (treeView == null) {
+                LogWrapper.Error("FolderTreeView is null.");
                 return;
             }
+            ItemsControl itemsControl = treeView;
+
             List<ContentFolderViewModel> items = [];
             // folderからRootFolderまでのフォルダを取得 
             ContentFolderViewModel? currentFolder = folder;
@@ -122,7 +123,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 items.Add(currentFolder);
                 currentFolder = currentFolder.ParentFolderViewModel;
             }
-            ItemsControl itemsControl = treeView;
             // itemsの順番を逆にして、RootFolderからFolderまでのフォルダをExpandする
             for (int i = items.Count - 1; i >= 0; i--) {
 
@@ -147,38 +147,16 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-        public void CreateSearchFolder() {
-            // 現在の日付 時刻の文字列を取得
-            string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            SearchFolder folder = AIChatExplorerFolderManager.SearchRootFolder.CreateChild(now);
-
-            // 検索フォルダの親フォルダにこのフォルダを追加
-
-            SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
-
-            Commands.OpenSearchWindowCommand(searchFolderViewModel, () => {
-                // 保存と再読み込み
-                searchFolderViewModel.ParentFolderViewModel = RootFolderViewModelContainer.SearchRootFolderViewModel;
-                searchFolderViewModel.SaveFolderCommand.Execute(null);
-                // 親フォルダを保存
-                RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
-                // Load
-                RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
-                () => {
-                    Commands.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        Commands.UpdateIndeterminate(false);
-
-                        SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
-                        // SelectedFolder に　SearchFolderViewModelを設定
-                        SelectedFolder = searchFolderViewModel;
-                    });
-                });
-
-            });
-        }
+        // CreateFolderCommand
+        public SimpleDelegateCommand<object> CreateFolderCommand => new((parameter) => {
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            // フォルダを作成する
+            SelectedFolder.CreateFolderCommand.Execute();
+        });
 
     }
 }

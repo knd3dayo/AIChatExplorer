@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Statistics {
+namespace LibPythonAI.Model.Statistics {
 
     // 日次の統計情報
     public class DailyStatistics {

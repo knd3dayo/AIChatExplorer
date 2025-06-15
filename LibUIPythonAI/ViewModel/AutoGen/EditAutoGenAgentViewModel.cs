@@ -1,20 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.AutoGen;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.VectorDB;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel.AutoGen {
-    public class EditAutoGenAgentViewModel : ChatViewModelBase {
+    public class EditAutoGenAgentViewModel : CommonViewModelBase {
         public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action afterUpdate) {
             AutoGenAgent = autoGenAgent;
             RootFolderViewModels = rootFolderViewModels;
             AfterUpdate = afterUpdate;
-            LoadTools();
+
+            Task.Run(async () => {
+                await LoadLLMConfigListAsync();
+                await LoadTools();
+            });
         }
 
         public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; }
@@ -77,18 +82,29 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
         // LlmConfigList
+        private ObservableCollection<string> _llmConfigNameList = new();
         public ObservableCollection<string> LlmConfigNameList {
-            get {
-               var list = AutoGenLLMConfig.GetAutoGenLLMConfigList();
-                ObservableCollection<string> llmConfigNames = [];
-                foreach (var item in list) {
-                    llmConfigNames.Add(item.Name);
-                }
-                return llmConfigNames;
+            get => _llmConfigNameList;
+            set {
+                _llmConfigNameList = value;
+                OnPropertyChanged();
             }
         }
 
-        // VectorSearchProperty
+        private async Task LoadLLMConfigListAsync() {
+            // LLMConfigList
+            ObservableCollection<string> llmConfigNameList = [];
+            var autoGenLLMConfigs = await AutoGenLLMConfig.GetAutoGenLLMConfigListAsync();
+            foreach (var item in autoGenLLMConfigs) {
+                llmConfigNameList.Add(item.Name);
+            }
+            // MainUIのUIスレッドで実行する
+            MainUITask.Run(() => {
+                LlmConfigNameList = llmConfigNameList;
+            });
+        }
+
+        // VectorSearchItem
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         public VectorDBItemViewModel? SelectedVectorDBItem { get; set; }
@@ -120,10 +136,11 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
         }
 
-        public void LoadTools() {
+        public async Task LoadTools() {
             // Load tools
             ObservableCollection<AutoGenToolViewModel> autoGenTools = [];
-            foreach (AutoGenTool tool in AutoGenTool.GetAutoGenToolList()) {
+            var list = await AutoGenTool.GetAutoGenToolListAsync();
+            foreach (AutoGenTool tool in list) {
                 AutoGenToolViewModel toolViewModel = new(tool);
                 if (AutoGenAgent.ToolNames.Contains(tool.Name)) {
                     toolViewModel.ToolIsChecked = true;
@@ -140,8 +157,8 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 
-            // Save
-            AutoGenAgent.Save();
+            // SaveAsync
+            AutoGenAgent.SaveAsync();
             AfterUpdate();
             window.Close();
         }, null, null);
@@ -150,7 +167,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
-                var item = selectedItem.GetVectorDBItem();
+                var item = VectorDBItem.GetItemByName(selectedItem.VectorDBItemName);
                 if (item == null) {
                     return;
                 }

@@ -39,6 +39,7 @@
         <TreeView
             x:Name="FolderTreeView"
             Grid.Column="0"
+            Background="White"
             ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
@@ -46,7 +47,7 @@
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="local:ApplicationItemFolderViewModel" ItemsSource="{Binding Children}">
                     <!--  Tree item  -->
                     <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                     <DockPanel HorizontalAlignment="Stretch">

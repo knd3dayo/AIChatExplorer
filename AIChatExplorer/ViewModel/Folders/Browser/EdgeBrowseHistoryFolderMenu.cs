@@ -1,14 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.ViewModel.Folders.Clipboard;
-using AIChatExplorer.ViewModel.Folders.FileSystem;
-using AIChatExplorer.ViewModel.Main;
-using LibGit2Sharp;
+using AIChatExplorer.ViewModel.Folders.Application;
 using LibUIPythonAI.Resource;
-using PythonAILibUI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+    public class EdgeBrowseHistoryFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : ApplicationFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -41,7 +37,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             get {
                 MenuItem downloadWebPageCommandMenuItem = new() {
                     Header = CommonStringResources.Instance.DownloadWebPage,
-                    Command = ClipboardFolderViewModel.Commands.DownloadWebPageCommand,
+                    Command = ApplicationFolderViewModel.Commands.DownloadWebPageCommand,
                 };
                 return downloadWebPageCommandMenuItem;
             }

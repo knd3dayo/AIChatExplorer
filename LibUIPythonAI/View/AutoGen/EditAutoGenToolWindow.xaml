@@ -70,7 +70,7 @@
             Grid.Row="1"
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left">
-            <TabItem Header="{Binding StringResources.BasicSettings}">
+            <TabItem Header="{x:Static res:ViewStringResources.EditAutoGenToolWindowTitle}">
                 <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -86,7 +86,7 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Name, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Name}" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="1"
@@ -97,12 +97,12 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Description, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Description}" />
                     <editorControl:MyTextBox
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,10"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.InputDescriptionOfThisFolder, Mode=OneTime}"
+                        materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.InputDescriptionOfThisFolder}"
                         Text="{Binding Description}" />
                     <Button
                         Grid.Row="2"
@@ -111,13 +111,13 @@
                         Margin="10,10,10,10"
                         HorizontalAlignment="Left"
                         Command="{Binding SelectFileCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.SelectFile, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.SelectFile}" />
                     <TextBox
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,10"
                         IsReadOnly="True"
-                        Text="{Binding SourcePath}" />
+                        Text="{Binding Path}" />
                 </Grid>
             </TabItem>
         </TabControl>
@@ -128,13 +128,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding SaveCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

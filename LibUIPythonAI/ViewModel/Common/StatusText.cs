@@ -1,4 +1,3 @@
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppCommon.Model {
@@ -34,8 +33,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        public static List<string> Messages { get; } = new List<string>();
-
         private string _text = _DefaultText;
         public string Text {
             get {
@@ -53,10 +50,6 @@ namespace WpfAppCommon.Model {
             }
             set {
                 _text = value;
-                // InitText以外の場合はメッセージを追加
-                if (value != ReadyText) {
-                    Messages.Add($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {value}");
-                }
                 OnPropertyChanged(nameof(Text));
 
                 // _tokenSourceがnullの場合は初期化

@@ -76,7 +76,7 @@
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding OpenSearchWindowCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Search, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Search}" />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>

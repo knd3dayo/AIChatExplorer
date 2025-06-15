@@ -1,20 +1,21 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using PythonAILib.Model.AutoProcess;
-using PythonAILib.Model.Content;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Model;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Content;
 
 namespace LibUIPythonAI.ViewModel.Item {
     /// <summary>
-    /// クリップボードアイテム編集ウィンドウのViewModel
+    /// アイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : ChatViewModelBase {
+    public class EditItemWindowViewModel : CommonViewModelBase {
 
         public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action afterUpdate) {
 
@@ -27,6 +28,21 @@ namespace LibUIPythonAI.ViewModel.Item {
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(SourcePath));
 
+            // StatusText.Readyにフォルダ名を設定
+            StatusText statusText = StatusText.Instance;
+            statusText.ReadyText = $"{CommonStringResources.Instance.Folder}:[{FolderViewModel.FolderName}]";
+
+            CommonViewModelProperties.PropertyChanged += OnPropertyChanged;
+
+        }
+        private TabControl? MyTabControl { get; set; }
+
+        public override void OnLoadedAction() {
+            base.OnLoadedAction();
+            if (MyTabControl == null) {
+                MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+                ItemViewModel.UpdateView(MyTabControl);
+            }
         }
 
         private ContentItemViewModel itemViewModel;
@@ -50,15 +66,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-        public override void OnActivatedAction() {
-            if (FolderViewModel == null) {
-                return;
-            }
-            // StatusText.Readyにフォルダ名を設定
-            StatusText statusText = StatusText.Instance;
-            statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
-        }
-
         public string Title {
             get {
                 return itemViewModel.ContentItem.Description;
@@ -69,7 +76,7 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         }
 
-        // SourcePath
+        // Path
         public string SourcePath {
             get {
                 return itemViewModel.ContentItem.SourcePath;
@@ -112,11 +119,16 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
 
+        // MarkdownViewVisibility
+        public Visibility MarkdownViewVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+
+
+
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
             if (ItemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません");
+                LogWrapper.Error("アイテムが選択されていません");
                 return;
             }
             TagWindow.OpenTagWindow(ItemViewModel.ContentItem, () => {
@@ -134,26 +146,23 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
             // フォルダに自動処理が設定されている場合は実行
-            ContentItemWrapper? item = AutoProcessRuleController.ApplyFolderAutoAction(ItemViewModel.ContentItem);
-            // ClipboardItemを更新
-            if (item != null) {
-
-                Task.Run(() => {
-                    // ベクトル化
-                    ContentItemCommands.UpdateEmbeddings([item]);
+            Task.Run(async () => {
+                // 自動処理を実行
+                ContentItemWrapper? item = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(ItemViewModel.ContentItem);
+                // ApplicationItemを更新
+                if (item != null) {
                     // 保存
                     item.Save();
                     MainUITask.Run(() => {
                         // 更新後の処理を実行
                         _afterUpdate.Invoke();
                     });
-                });
+                } else {
+                    // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
+                    LogWrapper.Info("自動処理に失敗しました");
+                }
 
-            } else {
-                // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
-                LogWrapper.Info("自動処理に失敗しました");
-            }
-
+            });
         });
         // OKボタンのコマンド
         public SimpleDelegateCommand<object> OKButtonCommand => new((parameter) => {
@@ -172,6 +181,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         });
 
         public override SimpleDelegateCommand<object> CloseCommand => new((parameter) => {
+            CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
             // parameterがWindowの場合
             if (parameter is Window window) {
                 // ウィンドウを閉じる
@@ -184,6 +194,10 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
         });
 
-
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
+                ItemViewModel.UpdateView(MyTabControl);
+            }
+        }
     }
 }

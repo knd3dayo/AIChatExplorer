@@ -1,17 +1,16 @@
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Control.Editor;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace LibUIPythonAI.Resource {
     public abstract class CommonViewModelBase : ObservableObject {
 
-        private static MyTextBox.TextWrappingModeEnum _textWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
-        public static MyTextBox.TextWrappingModeEnum TextWrappingMode {
-            get { return _textWrappingMode; }
-            set { _textWrappingMode = value; }
-        }
+
+
+        public CommonViewModelProperties CommonViewModelProperties { get; set; } = CommonViewModelProperties.Instance;
+
 
 
         public virtual void OnLoadedAction() { }

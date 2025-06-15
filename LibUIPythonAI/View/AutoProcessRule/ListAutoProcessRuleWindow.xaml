@@ -70,7 +70,7 @@
             Grid.Row="1"
             Margin="10,0,10,0"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding TabIndex}">
+            SelectedIndex="{Binding TabIndex, TargetNullValue=-1}">
             <TabItem
                 Width="Auto"
                 Height="Auto"

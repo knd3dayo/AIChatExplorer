@@ -1,3 +1,7 @@
+using System.IO;
+using NLog;
+using NLog.Targets;
+
 namespace LibPythonAI.Utils.Common {
     public class LogWrapper {
 
@@ -6,6 +10,15 @@ namespace LibPythonAI.Utils.Common {
         private static Action<string> WarnAction = (message) => { };
         private static Action<string> ErrorAction = (message) => { };
         private static Action<bool, string> UpdateInProgressAction = (value, message) => { };
+
+        public static void SetLogFolder(string logDirPath) {
+            var target = (FileTarget)LogManager.Configuration.FindTargetByName("logFile");
+            if (!Directory.Exists(logDirPath)) {
+                Directory.CreateDirectory(logDirPath);
+            }
+            target.FileName = Path.Combine(logDirPath, "log.txt");
+            LogManager.ReconfigExistingLoggers();
+        }
         public static void SetActions(ILogWrapperAction logWrapperAction) {
             DebugAction = logWrapperAction.Debug;
             InfoAction = logWrapperAction.Info;

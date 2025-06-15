@@ -10,7 +10,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         public const string EntryIDName = "EntryID";
 
         // コンストラクタ
-        public OutlookItem(ContentItemEntity item) : base(item) { }
+        public OutlookItem() : base() { }
 
         public OutlookItem(ContentFolderEntity folder) : base(folder) { }
 
@@ -19,16 +19,28 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             EntryID = entryID;
         }
 
-        public override FileSystemItem Copy() {
-            return new(Entity.Copy());
+        public override OutlookItem Copy() {
+            return new() { Entity = Entity.Copy() };
         }
 
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(() => {
-                    VectorDBProperty.UpdateEmbeddings([GetFolder().GetMainVectorSearchProperty()]);
+                Task.Run(async () => {
+                    string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
+                    if (vectorDBItemName == null) {
+                        return;
+                    }
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
+                        Content = Content,
+                        Description = Description,
+                        SourceType = VectorSourceType.Mail,
+                        SourcePath = SourcePath,
+                    };
+                    await VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
                 });
+                ContentModified = false;
+                DescriptionModified = false;
             }
 
             ContentItemEntity.SaveItems([Entity]);
@@ -36,7 +48,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
 
         public string EntryID {
             get {
-                if (Entity.ExtendedProperties.TryGetValue(EntryIDName, out var path)) {
+                if (Entity.ExtendedProperties.TryGetValue(EntryIDName, out var path) && path != null) {
                     return (string)path;
                 } else {
                     return "";

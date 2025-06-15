@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.ExportImport;
@@ -8,11 +9,9 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.Prompt;
 
 namespace LibUIPythonAI.ViewModel.PromptTemplate {
-    public class ListPromptTemplateWindowViewModel : ChatViewModelBase {
+    public class ListPromptTemplateWindowViewModel : CommonViewModelBase {
         // 初期化
 
         public enum ActionModeEum {
@@ -88,7 +87,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public string SelectButtonText {
             get {
                 // ActionModeがExecの場合は、"実行"、それ以外は"選択"
-                return ActionMode == ActionModeEum.Exec ? StringResources.Execute : StringResources.Select;
+                return ActionMode == ActionModeEum.Exec ? CommonStringResources.Instance.Execute : CommonStringResources.Instance.Select;
             }
         }
 
@@ -100,16 +99,15 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
             // PromptItemsを更新
             PromptItems.Clear();
-            using PythonAILibDBContext db = new();
+            var promptItems = PromptItem.GetPromptItems();
 
-            foreach (var itemEntity in db.PromptItems) {
-                // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
-                if (!IsShowSystemPromptItems &&
-                    (itemEntity.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
-                       itemEntity.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+            foreach (var item in promptItems) {
+                if ( !IsShowSystemPromptItems &&
+                    (item.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
+                       item.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
                     continue;
                 }
-                PromptItemViewModel itemViewModel = new(new PromptItem(itemEntity));
+                PromptItemViewModel itemViewModel = new(item);
                 PromptItems.Add(itemViewModel);
             }
             OnPropertyChanged(nameof(PromptItems));
@@ -118,7 +116,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         public SimpleDelegateCommand<object> EditPromptItemCommand => new((parameter) => {
             if (SelectedPromptItem == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             EditPromptItemWindow.OpenEditPromptItemWindow(SelectedPromptItem, (PromptItemViewModel) => {
@@ -129,7 +127,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
-            PromptItem item = new(new LibPythonAI.Data.PromptItemEntity());
+            PromptItem item = new();
 
             PromptItemViewModel itemViewModel = new(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
@@ -142,7 +140,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public SimpleDelegateCommand<Window> SelectPromptItemCommand => new((window) => {
             // 選択されていない場合はメッセージを表示
             if (SelectedPromptItem == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             // ChatMode からOpenAIExecutionModeEnumに変換
@@ -158,20 +156,20 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public void DeletePromptItemCommandExecute(object parameter) {
             PromptItemViewModel? itemViewModel = SelectedPromptItem;
             if (itemViewModel == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
             PromptItem? item = SelectedPromptItem?.PromptItem;
             if (item == null) {
-                LogWrapper.Error(StringResources.NoPromptTemplateSelected);
+                LogWrapper.Error(CommonStringResources.Instance.NoPromptTemplateSelected);
                 return;
             }
-            if (MessageBox.Show($"{item.Name}{StringResources.ConfirmDelete}", StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show($"{item.Name}{CommonStringResources.Instance.ConfirmDelete}", CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             PromptItems.Remove(itemViewModel);
             // PromptItemを保存
-            item.Delete();
+            item.DeleteAsync();
 
             OnPropertyChanged(nameof(PromptItems));
         }

@@ -10,7 +10,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:LibUIPythonAI.View.Folder"
-    Title="{x:Static res:ViewStringResources.EditClipboardFolder}"
+    Title="{x:Static res:ViewStringResources.EditApplicationFolder}"
     Width="800"
     Height="400"
     d:DataContext="{d:DesignInstance Type=local:FolderEditWindowViewModel}"
@@ -71,7 +71,7 @@
             Grid.Row="1"
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedTabIndex}">
+            SelectedIndex="{Binding SelectedTabIndex, TargetNullValue=-1}">
             <TabItem Header="{x:Static res:ViewStringResources.BasicSettings}">
                 <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
@@ -124,7 +124,7 @@
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         ItemsSource="{Binding VectorSearchProperties}"
-                        SelectedItem="{Binding SelectedVectorSearchProperty}">
+                        SelectedItem="{Binding SelectedVectorSearchItem}">
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
                                 <Setter Property="BorderThickness" Value="1" />

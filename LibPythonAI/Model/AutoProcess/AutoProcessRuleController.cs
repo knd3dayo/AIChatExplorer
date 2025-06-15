@@ -1,15 +1,13 @@
 using System.Collections.ObjectModel;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
-using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.PythonIF;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using PythonAILib.Common;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.PythonIF;
-using PythonAILib.Resources;
 
-namespace PythonAILib.Model.AutoProcess {
+namespace LibPythonAI.Model.AutoProcess {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
@@ -30,19 +28,19 @@ namespace PythonAILib.Model.AutoProcess {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        public static async Task<ContentItemWrapper> ApplyGlobalAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItemWrapper> ApplyGlobalAutoActionAsync(ContentItemWrapper item) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
 
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= configParams.IgnoreLineCount()) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text && lineCount <= configParams.IgnoreLineCount()) {
                 return item;
             }
             // If AutoFileExtract is set, extract files
             if (configParams.AutoFileExtract() && item.SourceType == ContentSourceType.File) {
-                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.SourcePath);
+                string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(item.SourcePath);
                 item.Content += "\n" + text;
             }
             if (item.IsImage() && item.Image != null) {
@@ -50,8 +48,8 @@ namespace PythonAILib.Model.AutoProcess {
                 // If AutoExtractImageWithPyOCR is set, perform OCR
                 if (configParams.AutoExtractImageWithOpenAI()) {
 
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoExtractImageText);
-                    ContentItemCommands.ExtractImageWithOpenAI(item);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoExtractImageText);
+                    await ContentItemCommands.ExtractImageWithOpenAIAsync(item);
                 }
             }
 
@@ -59,48 +57,48 @@ namespace PythonAILib.Model.AutoProcess {
             var task1 = Task.Run(() => {
                 // If AUTO_TAG is set, automatically set the tags
                 if (configParams.AutoTag()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTag);
-                    // ClipboardItem.CreateAutoTags(item);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTag);
+                    // ApplicationItem.CreateAutoTags(item);
                 }
             });
-            var task2 = Task.Run(() => {
+            var task2 = Task.Run( async () => {
                 // If AUTO_DESCRIPTION is set, automatically set the DisplayText
                 if (configParams.AutoTitle()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
                     ContentItemCommands.CreateAutoTitle(item);
 
                 } else if (configParams.AutoTitleWithOpenAI()) {
 
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
-                    ContentItemCommands.CreateAutoTitleWithOpenAI(item);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                    await PromptItem.CreateAutoTitleWithOpenAIAsync(item);
                 }
             });
-            var task3 = Task.Run(() => {
+            var task3 = Task.Run(async () => {
                 // 背景情報
                 if (configParams.AutoBackgroundInfo()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetBackgroundInfo);
-                    ContentItemCommands.CreateAutoBackgroundInfo(item);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
                 }
             });
-            var task4 = Task.Run(() => {
+            var task4 = Task.Run(async () => {
                 // サマリー
                 if (configParams.AutoSummary()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoCreateSummary);
-                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateSummary);
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
-            var task5 = Task.Run(() => {
+            var task5 = Task.Run(async () => {
                 // Tasks
                 if (configParams.AutoGenerateTasks()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoCreateTaskList);
-                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.TasksGeneration.ToString());
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateTaskList);
+                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
-            var task6 = Task.Run(() => {
+            var task6 = Task.Run(async () => {
                 // Tasks
                 if (configParams.AutoDocumentReliabilityCheck()) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AutoCheckDocumentReliability);
-                    ContentItemCommands.CheckDocumentReliability(item);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCheckDocumentReliability);
+                    await PromptItem.CheckDocumentReliability(item);
                 }
             });
 
@@ -110,17 +108,17 @@ namespace PythonAILib.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static ContentItemWrapper? ApplyFolderAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItemWrapper?> ApplyFolderAutoAction(ContentItemWrapper item) {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
-            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder());
+            var AutoProcessRules = GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                rule.RunAction(result);
+                LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
+                await rule.RunActionAsync(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    LogWrapper.Info(PythonAILibStringResources.Instance.ItemsDeletedByAutoProcessing);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.ItemsDeletedByAutoProcessing);
                     return null;
                 }
             }

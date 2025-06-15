@@ -136,13 +136,13 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.ClipboardDBBackupGenerations}"
+                                Text="{x:Static res:ViewStringResources.ApplicationDBBackupGenerations}"
                                 Visibility="Collapsed" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ClipboardDBBackupGenerationsDescription}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ApplicationDBBackupGenerationsDescription}"
                                 Text="{Binding BackupGeneration}"
                                 Visibility="Collapsed" />
 
@@ -170,14 +170,14 @@
 
                             <!--  外部APIサーバー/内部APIサーバー/Python.Netの選択  -->
                             <RadioButton
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{x:Static res:ViewStringResources.UseInternalAPIServer}"
                                 GroupName="PythonServer"
                                 IsChecked="{Binding UseInternalAPI, UpdateSourceTrigger=PropertyChanged}" />
                             <RadioButton
-                                Grid.Row="1"
+                                Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{x:Static res:ViewStringResources.UseExternalAPIServer}"
@@ -200,7 +200,6 @@
                                 Text="{Binding APIServerURL}"
                                 Visibility="{Binding APIServerVisibility}" />
 
-
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
@@ -211,13 +210,27 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.PythonVenvPath}"
+                                Text="{x:Static res:ViewStringResources.AppDataPath}"
                                 Visibility="{Binding InternalVisibility}" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyVenvPath}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.AppDataPathHint}"
+                                Text="{Binding AppDataPath}"
+                                Visibility="{Binding InternalVisibility}" />
+                            <!--  PythonVenvPth  -->
+                            <TextBlock
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.PythonVenvPath}"
+                                Visibility="{Binding InternalVisibility}" />
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PythonVenvPathHint}"
                                 Text="{Binding PythonVenvPath}"
                                 Visibility="{Binding InternalVisibility}" />
 
@@ -494,7 +507,7 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFileIfApplicationItemIsFile}"
                                 IsChecked="{Binding AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock
@@ -724,7 +737,7 @@
             VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"
-            IsIndeterminate="{Binding IsIndeterminate}"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>

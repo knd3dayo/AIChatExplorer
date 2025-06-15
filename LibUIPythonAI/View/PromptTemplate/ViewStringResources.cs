@@ -9,6 +9,13 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string Clear { get; set; } = CommonStringResources.Instance.Clear;
 
         // Close
+
+        // Edit
+        public static string Edit { get; set; } = CommonStringResources.Instance.Edit;
+
+        // DeleteAsync
+        public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
+
         public static string Close { get; set; } = CommonStringResources.Instance.Close;
 
         // SelectFolder
@@ -57,8 +64,16 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken;
 
 
-        // UseVectorDB
+        // RAGMode
         public static string UseVectorDB { get; set; } = CommonStringResources.Instance.UseVectorDB;
+
+        // RAGMode_None
+        public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
+        // RAGMode_NormalSearch
+        public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
+
+        // RAGMode_PromptSearch
+        public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
 
         // 出力形式
         public static string OutputType { get; set; } = CommonStringResources.Instance.OutputType;
@@ -69,6 +84,10 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string ListType { get; set; } = CommonStringResources.Instance.ListType;
         // テーブル
         public static string TableType { get; set; } = CommonStringResources.Instance.TableType;
+
+        // Dictionary
+        public static string DictionaryType { get; set; } = CommonStringResources.Instance.DictionaryType;
+
         // 出力先
         public static string OutputDestination { get; set; } = CommonStringResources.Instance.OutputDestination;
         // 新規タブ
@@ -77,6 +96,9 @@ namespace LibUIPythonAI.View.PromptTemplate {
         public static string OverwriteContent { get; set; } = CommonStringResources.Instance.OverwriteContent;
         // タイトルを上書き
         public static string OverwriteTitle { get; set; } = CommonStringResources.Instance.OverwriteTitle;
+
+        // タグ追加
+        public static string AppendTags { get; set; } = CommonStringResources.Instance.AppendTags;
         // OK
         public static string OK { get; set; } = CommonStringResources.Instance.OK;
         // ExperimentalFunction1

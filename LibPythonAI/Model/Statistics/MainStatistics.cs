@@ -1,5 +1,5 @@
 using LibPythonAI.Data;
-using PythonAILib.Model.Statistics;
+using LibPythonAI.Resources;
 
 namespace LibPythonAI.Model.Statistics {
     public class MainStatistics {
@@ -83,7 +83,7 @@ namespace LibPythonAI.Model.Statistics {
             return totalTokens;
         }
 
-        // Save
+        // SaveAsync
         public void Save() {
             using PythonAILibDBContext db = new();
             var item = db.MainStatistics.Find(Id);
@@ -102,14 +102,14 @@ namespace LibPythonAI.Model.Statistics {
             MainStatistics mainStatistics = GetMainStatistics();
             // 本日のトークン数
             long totalTokens = mainStatistics.GetTotalTokens();
-            message = PythonAILib.Resources.PythonAILibStringResources.Instance.TotalTokenFormat(totalTokens) + "\n\n";
+            message = PythonAILibStringResourcesJa.Instance.TotalTokenFormat(totalTokens) + "\n\n";
             // 日次トークン数情報
-            message += PythonAILib.Resources.PythonAILibStringResources.Instance.DailyTokenCount + "\n";
+            message += PythonAILibStringResourcesJa.Instance.DailyTokenCount + "\n";
             Dictionary<DateTime, DailyStatistics> keyValuePairs = mainStatistics.DailyStatistics;
             // 日毎のトークン数を表示
             foreach (KeyValuePair<DateTime, DailyStatistics> pair in keyValuePairs) {
                 DailyStatistics dailyStatistics = pair.Value;
-                string dailyMessage = PythonAILib.Resources.PythonAILibStringResources.Instance.DailyTokenFormat(dailyStatistics.Date.ToShortDateString(), dailyStatistics.TotalTokens);
+                string dailyMessage = PythonAILibStringResourcesJa.Instance.DailyTokenFormat(dailyStatistics.Date.ToShortDateString(), dailyStatistics.TotalTokens);
                 message += dailyMessage + "\n";
             }
             return message;

@@ -1,4 +1,4 @@
-namespace PythonAILib.Model.Prompt {
+namespace LibPythonAI.Model.Prompt {
     public enum PromptResultTypeEnum {
         // テキスト
         TextContent = 0,

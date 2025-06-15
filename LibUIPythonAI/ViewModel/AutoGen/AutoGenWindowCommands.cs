@@ -11,8 +11,8 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
 
         // SaveAutoGenAgentCommandExecute
         public void SaveAutoGenAgentCommandExecute(Window window, AutoGenAgent AutoGenAgent, Action AfterUpdate) {
-            // Save
-            AutoGenAgent.Save();
+            // SaveAsync
+            AutoGenAgent.SaveAsync();
             AfterUpdate();
             window.Close();
         }

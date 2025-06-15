@@ -42,7 +42,8 @@
                     FontSize="12"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                     Text="{x:Static res:ViewStringResources.Statistics}"
-                    TextWrapping="NoWrap">
+                    TextWrapping="NoWrap"
+                    Visibility="Collapsed">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding OpenStatisticsWindowCommand}" Gesture="LeftClick" />
                     </TextBlock.InputBindings>

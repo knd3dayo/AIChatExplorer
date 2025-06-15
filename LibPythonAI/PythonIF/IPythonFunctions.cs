@@ -1,41 +1,136 @@
-using PythonAILib.Model.Chat;
-using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
+using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.File;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.Tag;
+using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF.Request;
+using LibPythonAI.PythonIF.Response;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Search;
 
-namespace PythonAILib.PythonIF {
+namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
 
-        public string ExtractFileToText(string path);
 
-        public string ExtractBase64ToText(string base64, string extension);
+        public Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
-        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+        public Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
-        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+        public Task<List<PromptItem>> GetPromptItemsAsync();
+
+        public Task UpdatePromptItemAsync(PromptItemRequest request);
+
+        public Task DeletePromptItemAsync(PromptItemRequest request);
+
+        // SearchRule
+        public Task<List<SearchRule>> GetSearchRulesAsync();
+
+        public Task UpdateSearchRuleAsync(SearchRuleRequest request);
+
+        public Task DeleteSearchRuleAsync(SearchRuleRequest request);
+
+        // AutoProcessItem
+        public Task<List<AutoProcessItem>> GetAutoProcessItemsAsync();
+
+        public Task UpdateAutoProcessItemAsync(AutoProcessItemRequest request);
+
+        public Task DeleteAutoProcessItemAsync(AutoProcessItemRequest request);
+
+        // AutoProcessRule
+        public Task<List<AutoProcessRule>> GetAutoProcessRulesAsync();
+
+        public Task UpdateAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+
+        public Task DeleteAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+
+
+
+        public Task UpdateTagItemsAsync(List<TagItem> tagItems);
+
+        public Task DeleteTagItemsAsync(List<TagItem> tagItems);
+
+        public Task<List<TagItem>> GetTagItemsAsync();
+
+        public Task<string> ExtractFileToTextAsync(string path);
+
+        public Task<string> ExtractBase64ToText(string base64, string extension);
+
+        public Task<ChatResponse> OpenAIChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+
+        public Task<ChatResponse> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
-        public List<VectorMetadata> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
-        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
+        public Task<List<AutoGenLLMConfig>> GetAutoGenLLMConfigListAsync();
 
-        public void DeleteEmbeddings(ChatRequestContext chatRequestContext);
+        public Task<AutoGenLLMConfig?> GetAutoGenLLMConfigAsync(string name);
 
-        public void UpdateEmbeddings(ChatRequestContext chatRequestContext);
+        public Task UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config);
+
+        public Task DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config);
+
+        // AutoGenTool
+        public Task<List<AutoGenTool>> GetAutoGenToolListAsync();
+
+        public Task<AutoGenTool?> GetAutoGenToolAsync(string name);
+
+        public Task UpdateAutoGenToolAsync(AutoGenTool config);
+
+        public Task DeleteAutoGenToolAsync(AutoGenTool config);
+
+        // AutoGenAgent
+        public Task<List<AutoGenAgent>> GetAutoGenAgentListAsync();
+
+        public Task<AutoGenAgent> GetAutoGenAgentAsync(string name);
+
+        public Task UpdateAutoGenAgentAsync(AutoGenAgent config);
+
+        public Task DeleteAutoGenAgentAsync(AutoGenAgent config);
+
+        // AutoGenGroupChat
+        public Task<List<AutoGenGroupChat>> GetAutoGenGroupChatListAsync();
+
+        public Task<AutoGenGroupChat> GetAutoGenGroupChatAsync(string name);
+
+        public Task UpdateAutoGenGroupChatAsync(AutoGenGroupChat config);
+
+        public Task DeleteAutoGenGroupChatAsync(AutoGenGroupChat config);
+
+
+
+        public Task UpdateVectorDBItem(VectorDBItem item);
+
+        public Task DeleteVectorDBItem(VectorDBItem item);
+
+        public Task<List<VectorDBItem>> GetVectorDBItemsAsync();
+
+        public VectorDBItem? GetVectorDBItemById(string id);
+
+        public VectorDBItem? GetVectorDBItemByName(string name);
+
+        public Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
+
+        // delete_embeddings_by_folder
+        public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+
+        public Task DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+
+        public Task UpdateEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
-        public void ExportToExcel(string filePath, CommonDataTable data);
+        public Task ExportToExcelAsync(string filePath, CommonDataTable data);
 
         // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
-        public CommonDataTable ImportFromExcel(string filePath);
+        public Task<CommonDataTable> ImportFromExcel(string filePath);
 
         // GetMimeType
-        public string GetMimeType(string filePath);
+        public Task<string> GetMimeType(string filePath);
 
         // GetTokenCount
-        public long GetTokenCount(ChatRequestContext chatRequestContext, string inputText);
+        public Task<long> GetTokenCount(ChatRequestContext chatRequestContext, TokenCountRequest tokenCountRequest);
 
         // extract_webpage
-        public string ExtractWebPage(string url);
+        public Task<string> ExtractWebPage(string url);
 
         //テスト用
         public string HelloWorld();

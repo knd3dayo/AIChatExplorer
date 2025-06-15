@@ -65,6 +65,9 @@ namespace LibUIPythonAI.View.VectorDB {
         // DefaultSearchResultLimit
         public static string DefaultSearchResultLimit { get; set; } = CommonStringResources.Instance.DefaultSearchResultLimit;
 
+        // DefaultScoreThreshold
+        public static string DefaultScoreThreshold { get; set; } = CommonStringResources.Instance.DefaultScoreThreshold;
+
         // UseMultiVectorRetriever
         public static string UseMultiVectorRetriever { get; set; } = CommonStringResources.Instance.UseMultiVectorRetriever;
 
@@ -83,7 +86,10 @@ namespace LibUIPythonAI.View.VectorDB {
         // VectorSearchResult
         public static string VectorSearchResult { get; set; } = CommonStringResources.Instance.VectorSearchResult;
 
-        
+        // VectorDBSearchScoreThreashold
+        public static string VectorDBSearchScoreThreashold { get; set; } = CommonStringResources.Instance.VectorDBSearchScoreThreashold;
+
+
         // マルチベクターリトリーバーの最終的な検索結果
         public static string MultiVectorRetrieverFinalSearchResult { get; set; } = CommonStringResources.Instance.MultiVectorRetrieverFinalSearchResult;
 
@@ -104,6 +110,9 @@ namespace LibUIPythonAI.View.VectorDB {
 
         // CollectionName
         public static string CollectionName { get; set; } = CommonStringResources.Instance.CollectionName;
+
+        // ExampleGeneralVectorDB
+        public static string ExampleGeneralVectorDB { get; set; } = CommonStringResources.Instance.ExampleGeneralVectorDB;
 
     }
 }

@@ -16,9 +16,6 @@ namespace LibUIPythonAI.Utils {
         public new void Debug(string message) {
             // 親クラスのメソッドを呼び出す
             base.Debug(message);
-            Task.Run(() => {
-                StatusText.Messages.Add(message);
-            });
         }
 
         public new void Info(string message) {

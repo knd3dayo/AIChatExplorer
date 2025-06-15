@@ -41,7 +41,7 @@
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
             Modifiers="Ctrl" />
     </UserControl.InputBindings>
-    <Grid>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -116,12 +116,13 @@
                     </TextBox.InputBindings>
                 </TextBox>
             </Grid>
+            <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
             <TabControl
+                x:Name="MyTabControl"
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding ItemViewModel.TabItems}"
-                SelectedIndex="{Binding ItemViewModel.SelectedTabIndex}" />
+                SelectedIndex="{Binding ItemViewModel.SelectedTabIndex, TargetNullValue=-1}" />
         </Grid>
         <Grid Grid.Row="1">
             <Grid>
@@ -129,15 +130,23 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button
+                <CheckBox
                     Grid.Column="0"
-                    Width="120"
-                    Margin="10,0,10,0"
-                    Command="{Binding ItemViewModel.Commands.OpenOpenAIChatWindowCommand, Mode=OneTime}"
-                    CommandParameter="{Binding ItemViewModel}"
-                    Content="{x:Static local:ViewStringResources.OpenAIChat}"
-                    DockPanel.Dock="Left" />
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="{x:Static local:ViewStringResources.MarkdownView}"
+                    FontSize="8pt"
+                    IsChecked="{Binding CommonViewModelProperties.MarkdownView}" />
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <Button
+                        Grid.Column="0"
+                        Width="120"
+                        Margin="10,0,10,0"
+                        Command="{Binding ItemViewModel.Commands.OpenOpenAIChatWindowCommand, Mode=OneTime}"
+                        CommandParameter="{Binding ItemViewModel}"
+                        Content="{x:Static local:ViewStringResources.OpenAIChat}"
+                        DockPanel.Dock="Left" />
+
                     <Button
                         Width="100"
                         Margin="10,0,10,0"

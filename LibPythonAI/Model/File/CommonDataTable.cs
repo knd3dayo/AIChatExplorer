@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-namespace PythonAILib.Model.File {
+namespace LibPythonAI.Model.File {
     public class CommonDataTable(List<List<string>> rows) {
 
         [JsonPropertyName("rows")]

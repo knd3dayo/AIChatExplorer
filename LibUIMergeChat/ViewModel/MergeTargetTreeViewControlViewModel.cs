@@ -45,8 +45,8 @@ namespace LibUIMergeChat.ViewModel {
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
-            SelectedFolder = clipboardItemFolderViewModel;
+            ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
+            SelectedFolder = applicationItemFolderViewModel;
         });
 
     }
