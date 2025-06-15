@@ -36,6 +36,7 @@ namespace LibPythonAI.Utils.Common {
                 return process.ExitCode == 0;
             } catch (Exception ex) {
                 // エラーが発生した場合はfalseを返す
+                LogWrapper.Info($"Error executing command: {command} {arguments} - {ex.Message}");
                 return false;
             }
         }

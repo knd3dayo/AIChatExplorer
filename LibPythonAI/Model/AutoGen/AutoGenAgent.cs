@@ -75,14 +75,14 @@ namespace LibPythonAI.Model.AutoGen {
         }
 
         // SaveAsync
-        public async Task SaveAsync() {
+        public void SaveAsync() {
             // APIを呼び出して、設定を保存する
-            await PythonExecutor.PythonAIFunctions.UpdateAutoGenAgentAsync(this);
+            PythonExecutor.PythonAIFunctions.UpdateAutoGenAgentAsync(this);
         }
         // DeleteAsync
-        public async Task DeleteAsync() {
+        public void DeleteAsync() {
             // APIを呼び出して、設定を削除する
-            await PythonExecutor.PythonAIFunctions.DeleteAutoGenAgentAsync(this);
+             PythonExecutor.PythonAIFunctions.DeleteAutoGenAgentAsync(this);
 
         }
 

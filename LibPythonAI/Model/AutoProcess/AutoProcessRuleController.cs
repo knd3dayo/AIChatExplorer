@@ -115,7 +115,7 @@ namespace LibPythonAI.Model.AutoProcess {
             var AutoProcessRules = GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                await rule.RunActionAsync(result);
+                rule.RunActionAsync(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
                     LogWrapper.Info(PythonAILibStringResourcesJa.Instance.ItemsDeletedByAutoProcessing);

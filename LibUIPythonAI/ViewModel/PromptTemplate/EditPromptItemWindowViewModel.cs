@@ -251,7 +251,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 return;
             }
 
-            await promptItem.SaveAsync();
+            promptItem.SaveAsync();
 
             await PromptItem.LoadItemsAsync();
 

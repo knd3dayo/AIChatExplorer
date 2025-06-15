@@ -95,16 +95,16 @@ namespace LibPythonAI.Model.AutoProcess {
             return _items;
         }
         //SaveAsync
-        public async Task SaveAsync() {
+        public void SaveAsync() {
             // 優先順位が-1の場合は、最大の優先順位を取得して設定
             if (Priority == -1) {
                 Priority = GetItems().Count + 1;
             }
-            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+             PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
         // DeleteAsync
-        public async Task DeleteAsync() {
-            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+        public void DeleteAsync() {
+            PythonExecutor.PythonAIFunctions.DeleteAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
@@ -126,7 +126,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public async Task RunActionAsync(ContentItemWrapper applicationItem) {
+        public void RunActionAsync(ContentItemWrapper applicationItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.RuleNameIsInvalid(RuleName));
@@ -143,7 +143,7 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             // DestinationIdに一致するフォルダを取得
 
-            await RuleAction.Execute(applicationItem, DestinationFolder);
+            RuleAction.Execute(applicationItem, DestinationFolder);
         }
 
         public string GetDescriptionString() {
@@ -266,7 +266,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         // 指定したAutoProcessRuleの優先順位を上げる
-        public static async Task UpPriority(AutoProcessRule autoProcessRule) {
+        public static void UpPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetItems().ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
@@ -282,12 +282,12 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                await autoProcessRules[i].SaveAsync();
+                autoProcessRules[i].SaveAsync();
             }
 
         }
         // 指定したAutoProcessRuleの優先順位を下げる
-        public static async Task DownPriority(AutoProcessRule autoProcessRule) {
+        public static void DownPriority(AutoProcessRule autoProcessRule) {
             List<AutoProcessRule> autoProcessRules = GetItems().ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
@@ -303,7 +303,7 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                await autoProcessRules[i].SaveAsync();
+                autoProcessRules[i].SaveAsync();
             }
         }
         // GetItemsByRuleName

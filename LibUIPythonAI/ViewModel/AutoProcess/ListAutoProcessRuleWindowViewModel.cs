@@ -64,9 +64,9 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 return;
             }
             if (parameter == "down") {
-               await  AutoProcessRule.DownPriority(SelectedAutoProcessRule);
+                AutoProcessRule.DownPriority(SelectedAutoProcessRule);
             } else {
-                await AutoProcessRule.UpPriority(SelectedAutoProcessRule);
+                AutoProcessRule.UpPriority(SelectedAutoProcessRule);
             }
             // AutoProcessRulesを更新
             AutoProcessRules = [.. AutoProcessRule.GetItems()];
@@ -115,7 +115,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
             AutoProcessRules.Remove(rule);
             // LiteDBを更新
-            await rule.DeleteAsync();
+            rule.DeleteAsync();
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibUIPythonAI.Utils;
 
 namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
@@ -69,21 +70,25 @@ namespace WpfAppCommon.Model {
                 return;
             }
             CancellationToken token = (CancellationToken)obj;
-            for (int i = 0; i < 25; i++) {
+            Task.Run(() => {
+                for (int i = 0; i < 25; i++) {
+                    if (token.IsCancellationRequested) {
+                        return;
+                    }
+                    // 200ms待機
+                    Thread.Sleep(200);
+                }
                 if (token.IsCancellationRequested) {
                     return;
                 }
-                // 200ms待機
-                Thread.Sleep(200);
-            }
-            if (token.IsCancellationRequested) {
-                return;
-            }
-            if (IsInProgress) {
-                Text = InProgressText;
-            } else {
-                Ready();
-            }
+                MainUITask.Run(() => {
+                    if (IsInProgress) {
+                        Text = InProgressText;
+                    } else {
+                        Ready();
+                    }
+                });
+            });
         }
         public void Init() {
             ReadyText = _DefaultText;

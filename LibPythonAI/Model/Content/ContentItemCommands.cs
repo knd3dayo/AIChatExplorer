@@ -130,7 +130,7 @@ namespace LibPythonAI.Model.Content {
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
                     vectorDBEntry.SetMetadata(item);
 
-                    VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
             });
         }
@@ -154,7 +154,7 @@ namespace LibPythonAI.Model.Content {
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
                     vectorDBEntry.SetMetadata(item);
 
-                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry).Wait();
+                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     // ベクトル化日時を更新
                     item.VectorizedAt = DateTime.Now;
                 });

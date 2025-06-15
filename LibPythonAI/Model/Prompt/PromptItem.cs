@@ -155,16 +155,16 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // SaveAsync
-        public async Task SaveAsync() {
+        public void SaveAsync() {
             PromptItemRequest request = new(this);
-            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdatePromptItemAsync(request));
+            PythonExecutor.PythonAIFunctions.UpdatePromptItemAsync(request);
         }
 
 
         // DeleteAsync
-        public async Task DeleteAsync() {
+        public void DeleteAsync() {
             PromptItemRequest request = new(this);
-            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeletePromptItemAsync(request));
+            PythonExecutor.PythonAIFunctions.DeletePromptItemAsync(request);
 
         }
         // FromDict

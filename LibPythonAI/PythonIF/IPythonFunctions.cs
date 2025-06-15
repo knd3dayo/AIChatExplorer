@@ -12,42 +12,42 @@ namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
 
 
-        public Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
+        public void UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
-        public Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
+        public void DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
 
         public Task<List<PromptItem>> GetPromptItemsAsync();
 
-        public Task UpdatePromptItemAsync(PromptItemRequest request);
+        public void UpdatePromptItemAsync(PromptItemRequest request);
 
-        public Task DeletePromptItemAsync(PromptItemRequest request);
+        public void DeletePromptItemAsync(PromptItemRequest request);
 
         // SearchRule
         public Task<List<SearchRule>> GetSearchRulesAsync();
 
-        public Task UpdateSearchRuleAsync(SearchRuleRequest request);
+        public void UpdateSearchRuleAsync(SearchRuleRequest request);
 
-        public Task DeleteSearchRuleAsync(SearchRuleRequest request);
+        public void DeleteSearchRuleAsync(SearchRuleRequest request);
 
         // AutoProcessItem
         public Task<List<AutoProcessItem>> GetAutoProcessItemsAsync();
 
-        public Task UpdateAutoProcessItemAsync(AutoProcessItemRequest request);
+        public void UpdateAutoProcessItemAsync(AutoProcessItemRequest request);
 
-        public Task DeleteAutoProcessItemAsync(AutoProcessItemRequest request);
+        public void DeleteAutoProcessItemAsync(AutoProcessItemRequest request);
 
         // AutoProcessRule
         public Task<List<AutoProcessRule>> GetAutoProcessRulesAsync();
 
-        public Task UpdateAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+        public void UpdateAutoProcessRuleAsync(AutoProcessRuleRequest rule);
 
-        public Task DeleteAutoProcessRuleAsync(AutoProcessRuleRequest rule);
+        public void DeleteAutoProcessRuleAsync(AutoProcessRuleRequest rule);
 
 
 
-        public Task UpdateTagItemsAsync(List<TagItem> tagItems);
+        public void UpdateTagItemsAsync(List<TagItem> tagItems);
 
-        public Task DeleteTagItemsAsync(List<TagItem> tagItems);
+        public void DeleteTagItemsAsync(List<TagItem> tagItems);
 
         public Task<List<TagItem>> GetTagItemsAsync();
 
@@ -65,60 +65,60 @@ namespace LibPythonAI.PythonIF {
 
         public Task<AutoGenLLMConfig?> GetAutoGenLLMConfigAsync(string name);
 
-        public Task UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config);
+        public void UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config);
 
-        public Task DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config);
+        public void DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config);
 
         // AutoGenTool
         public Task<List<AutoGenTool>> GetAutoGenToolListAsync();
 
         public Task<AutoGenTool?> GetAutoGenToolAsync(string name);
 
-        public Task UpdateAutoGenToolAsync(AutoGenTool config);
+        public void UpdateAutoGenToolAsync(AutoGenTool config);
 
-        public Task DeleteAutoGenToolAsync(AutoGenTool config);
+        public void DeleteAutoGenToolAsync(AutoGenTool config);
 
         // AutoGenAgent
         public Task<List<AutoGenAgent>> GetAutoGenAgentListAsync();
 
         public Task<AutoGenAgent> GetAutoGenAgentAsync(string name);
 
-        public Task UpdateAutoGenAgentAsync(AutoGenAgent config);
+        public void UpdateAutoGenAgentAsync(AutoGenAgent config);
 
-        public Task DeleteAutoGenAgentAsync(AutoGenAgent config);
+        public void DeleteAutoGenAgentAsync(AutoGenAgent config);
 
         // AutoGenGroupChat
         public Task<List<AutoGenGroupChat>> GetAutoGenGroupChatListAsync();
 
         public Task<AutoGenGroupChat> GetAutoGenGroupChatAsync(string name);
 
-        public Task UpdateAutoGenGroupChatAsync(AutoGenGroupChat config);
+        public void UpdateAutoGenGroupChatAsync(AutoGenGroupChat config);
 
-        public Task DeleteAutoGenGroupChatAsync(AutoGenGroupChat config);
+        public void DeleteAutoGenGroupChatAsync(AutoGenGroupChat config);
 
 
 
-        public Task UpdateVectorDBItem(VectorDBItem item);
+        public void UpdateVectorDBItem(VectorDBItem item);
 
-        public Task DeleteVectorDBItem(VectorDBItem item);
+        public void DeleteVectorDBItem(VectorDBItem item);
 
         public Task<List<VectorDBItem>> GetVectorDBItemsAsync();
 
-        public VectorDBItem? GetVectorDBItemById(string id);
+        public Task<VectorDBItem?> GetVectorDBItemById(string id);
 
-        public VectorDBItem? GetVectorDBItemByName(string name);
+        public Task<VectorDBItem?> GetVectorDBItemByName(string name);
 
         public Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
 
         // delete_embeddings_by_folder
-        public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public void DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public Task DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public void DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
-        public Task UpdateEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
+        public void UpdateEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
-        public Task ExportToExcelAsync(string filePath, CommonDataTable data);
+        public void ExportToExcelAsync(string filePath, CommonDataTable data);
 
         // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
         public Task<CommonDataTable> ImportFromExcel(string filePath);

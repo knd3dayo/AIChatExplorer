@@ -53,7 +53,7 @@ namespace LibPythonAI.Model.VectorDB {
             }
         }
 
-        public static async Task UpdateEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
+        public static void UpdateEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
@@ -64,12 +64,12 @@ namespace LibPythonAI.Model.VectorDB {
             EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-            await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
+            PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
 
         }
 
-        public static async Task DeleteEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
+        public static void DeleteEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new();
@@ -77,7 +77,7 @@ namespace LibPythonAI.Model.VectorDB {
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
-            await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
+            PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
         }
 

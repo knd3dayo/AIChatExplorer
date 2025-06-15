@@ -127,7 +127,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             }
             Task.Run(async () => {
                 // AutoGenGroupChatを保存
-                await AutoGenGroupChat.SaveAsync();
+                AutoGenGroupChat.SaveAsync();
             });
             AfterUpdate();
 
