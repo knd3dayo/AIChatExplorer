@@ -3,6 +3,9 @@ using LibPythonAI.PythonIF;
 namespace LibPythonAI.Model.Tag {
     public class TagItem {
 
+        public TagItem(string id) {
+            Id = id;
+        }
         // Id
         public string Id { get; set; } = "";
 
@@ -51,8 +54,8 @@ namespace LibPythonAI.Model.Tag {
         }
 
         public static TagItem FromDict(Dictionary<string, object> dict) {
-            TagItem item = new() {
-                Id = dict["id"]?.ToString() ?? "",
+            string id = dict["id"]?.ToString() ?? "";
+            TagItem item = new(id) {
                 Tag = dict["tag"]?.ToString() ?? "",
                 IsPinned = bool.Parse(dict["is_pinned"]?.ToString() ?? "false")
             };

@@ -52,10 +52,9 @@ namespace LibUIPythonAI.ViewModel.Tag {
                 }
             }
 
-            TagItem tagItem = new() { Tag = tag };
+            TagItem tagItem = new(tag) { Tag = tag };
             await tagItem.SaveAsync();
 
-            TagList.Add(new TagItemViewModel(tagItem));
             NewTag = "";
             // LiteDBから再読み込み
             await ReloadTagListAsync();
