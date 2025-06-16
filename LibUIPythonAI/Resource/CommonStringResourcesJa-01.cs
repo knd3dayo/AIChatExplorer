@@ -83,6 +83,12 @@ namespace LibUIPythonAI.Resource {
         // Import
         public override string ImportFromExcel { get; } = "Excelからインポート";
 
+        // Standard
+        public override string Standard { get; } = "標準";
+
+        // RAG
+        public override string RAG { get; } = "RAG";
+
         // ImportFromRULList
         public override string ImportFromRULList { get; } = "URLリストからインポート";
 

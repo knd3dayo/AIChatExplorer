@@ -254,6 +254,12 @@ namespace LibUIPythonAI.Resource {
         // Import
         public virtual string ImportFromExcel { get; } = "Import from Excel";
 
+        // Standard
+        public virtual string Standard { get; } = "Standard";
+
+        // RAG
+        public virtual string RAG { get; } = "RAG";
+
         // ImportFromRULList
         public virtual string ImportFromRULList { get; } = "Import from URL List";
 

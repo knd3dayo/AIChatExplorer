@@ -47,13 +47,13 @@ namespace LibPythonAI.PythonIF.Request {
         public string ConditionsJson { get; set; }
 
         // auto_process_item_id
-        public string AutoProcessItemId { get; set; }
+        public string? AutoProcessItemId { get; set; }
 
         // target_folder_id
-        public string TargetFolderId { get; set; }
+        public string? TargetFolderId { get; set; }
 
         // destination_folder_id
-        public string DestinationFolderId { get; set; }
+        public string? DestinationFolderId { get; set; }
 
         // ToDict
         public Dictionary<string, object> ToDict() {
@@ -63,10 +63,17 @@ namespace LibPythonAI.PythonIF.Request {
                 { IS_ENABLED_KEY, IsEnabled },
                 { PRIORITY_KEY, Priority },
                 { CONDITIONS_JSON_KEY, ConditionsJson },
-                { AUTO_PROCESS_ITEM_ID_KEY, AutoProcessItemId },
-                { TARGET_FOLDER_ID_KEY, TargetFolderId },
-                { DESTINATION_FOLDER_ID_KEY, DestinationFolderId }
             };
+            if (AutoProcessItemId != null) {
+                dict[AUTO_PROCESS_ITEM_ID_KEY] = AutoProcessItemId;
+            }
+            if (TargetFolderId != null) {
+                dict[TARGET_FOLDER_ID_KEY] = TargetFolderId;
+            }
+            if (DestinationFolderId != null) {
+                dict[DESTINATION_FOLDER_ID_KEY] = DestinationFolderId;
+            }
+
             return dict;
         }
 

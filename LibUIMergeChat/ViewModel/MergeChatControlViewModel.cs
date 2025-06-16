@@ -47,7 +47,7 @@ namespace LibUIMergeChat.ViewModel {
         // SessionToken
         public string SessionToken { get; set; } = Guid.NewGuid().ToString();
 
-        public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; }
+        public MergeTargetPanelViewModel? MergeTargetPanelViewModel { get; set; }
 
         private void PreProcessPromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -173,8 +173,8 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private AutoGenProperties _autoGenProperties;
-        public AutoGenProperties AutoGenProperties {
+        private AutoGenProperties? _autoGenProperties;
+        public AutoGenProperties? AutoGenProperties {
             get {
                 return _autoGenProperties;
             }
@@ -201,7 +201,7 @@ namespace LibUIMergeChat.ViewModel {
         
         private void UpdateVectorDBProperties() {
             if (_ragMode != RAGModeEnum.None) {
-                var folder = MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
+                var folder = MergeTargetPanelViewModel?.MergeTargetTreeViewControlViewModel.SelectedFolder;
                 if (folder == null) {
                     return;
                 }
@@ -247,9 +247,9 @@ namespace LibUIMergeChat.ViewModel {
                 // プログレスバーを表示
                 CommonViewModelProperties.UpdateIndeterminate(true);
 
-                ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid;
+                ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel?.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid ?? [];
                 // itemViewModelsからContentItemをSelect
-                List<ContentItemWrapper> items = itemViewModels.Select(x => x.ContentItem).ToList();
+                List<ContentItemWrapper> items = itemViewModels?.Select(x => x.ContentItem).ToList() ?? [];
                 // チャット内容を更新
                 await Task.Run(async () => {
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
@@ -329,7 +329,7 @@ namespace LibUIMergeChat.ViewModel {
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // タブが変更されたときの処理
-                MergeTargetPanelViewModel.UpdateCheckedItems();
+                MergeTargetPanelViewModel?.UpdateCheckedItems();
                 // リクエストのメッセージをアップデート
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
                 ChatRequest request = new() {
