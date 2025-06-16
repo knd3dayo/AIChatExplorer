@@ -580,7 +580,7 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run(async () => {
+                Task.Run( () => {
                     string? vectorDBItemName = GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
@@ -630,7 +630,7 @@ namespace LibPythonAI.Model.Content {
                     // 更新日時を設定
                     item.UpdatedAt = DateTime.Now;
                     // ベクトルを更新
-                    Task.Run(async () => {
+                    Task.Run( () => {
                         string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                         if (string.IsNullOrEmpty(vectorDBItemName)) {
                             LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);

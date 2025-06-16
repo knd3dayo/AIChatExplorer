@@ -125,7 +125,7 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
             if (LLMConfig != null) {
                 AutoGenGroupChat.LLMConfigName = LLMConfig.Name;
             }
-            Task.Run(async () => {
+            Task.Run( () => {
                 // AutoGenGroupChatを保存
                 AutoGenGroupChat.SaveAsync();
             });

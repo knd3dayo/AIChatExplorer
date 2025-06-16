@@ -373,7 +373,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         // ---　コマンド 
         // OKボタンが押されたときの処理
-        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new(async (window) => {
+        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new( (window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);

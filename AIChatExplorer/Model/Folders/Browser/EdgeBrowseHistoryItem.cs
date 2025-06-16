@@ -16,7 +16,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(async () => {
+                Task.Run(() => {
                     string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
                     if (vectorDBItemName == null) {
                         return;

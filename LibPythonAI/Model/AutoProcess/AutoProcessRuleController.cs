@@ -108,7 +108,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static async Task<ContentItemWrapper?> ApplyFolderAutoAction(ContentItemWrapper item) {
+        public static ContentItemWrapper? ApplyFolderAutoAction(ContentItemWrapper item) {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得

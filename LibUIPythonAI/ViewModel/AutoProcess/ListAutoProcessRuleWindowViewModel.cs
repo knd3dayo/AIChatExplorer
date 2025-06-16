@@ -58,7 +58,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         //-- コマンド
 
         // 優先順位を上げる処理
-        public SimpleDelegateCommand<string> ChangePriorityCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<string> ChangePriorityCommand => new( (parameter) => {
             if (SelectedAutoProcessRule == null) {
                 LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
@@ -104,7 +104,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         });
 
         // 自動処理を削除する処理
-        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new((parameter) => {
             AutoProcessRule? rule = SelectedAutoProcessRule;
             if (rule == null) {
                 LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
