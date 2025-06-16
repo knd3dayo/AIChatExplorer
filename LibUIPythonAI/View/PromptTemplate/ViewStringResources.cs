@@ -122,5 +122,10 @@ namespace LibUIPythonAI.View.PromptTemplate {
         // Import
         public static string ImportFromExcel { get; set; } = CommonStringResources.Instance.ImportFromExcel;
 
+        // Standard
+        public static string Standard { get; set; } = CommonStringResources.Instance.Standard;
+
+        // RAG
+        public static string RAG { get; set; } = CommonStringResources.Instance.RAG;
     }
 }

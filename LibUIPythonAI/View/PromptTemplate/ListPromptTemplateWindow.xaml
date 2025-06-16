@@ -85,8 +85,8 @@
             Orientation="Vertical"
             Visibility="{Binding ModeVisibility}">
             <ComboBox materialDesign:HintAssist.Hint="モード" SelectedIndex="{Binding Mode}">
-                <ComboBoxItem Content="{Binding Source={StaticResource StringResources}, Path=Instance.Standard}" />
-                <ComboBoxItem Content="{Binding Source={StaticResource StringResources}, Path=Instance.RAG}" />
+                <ComboBoxItem Content="{x:Static res:ViewStringResources.Standard}" />
+                <ComboBoxItem Content="{x:Static res:ViewStringResources.RAG}" />
             </ComboBox>
         </StackPanel>
         <!--  プロンプトテンプレート一覧のListBox  -->
@@ -149,7 +149,7 @@
                     Margin="10,10,10,10"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

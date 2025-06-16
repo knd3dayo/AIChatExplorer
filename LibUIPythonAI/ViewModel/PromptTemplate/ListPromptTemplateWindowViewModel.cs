@@ -74,14 +74,14 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public Visibility ExecButtonVisibility {
             get {
                 // ActionModeがExecまたはSelectの場合は、Visible
-                return ActionMode == ActionModeEum.Exec || ActionMode == ActionModeEum.Select ? Visibility.Visible : Visibility.Collapsed;
+                return LibUIPythonAI.Utils.Tools.BoolToVisibility(ActionMode == ActionModeEum.Exec || ActionMode == ActionModeEum.Select);
             }
         }
         // Modeの表示
         public Visibility ModeVisibility {
             get {
                 // ActionModeがExecの場合は、Visible
-                return ActionMode == ActionModeEum.Exec ? Visibility.Visible : Visibility.Collapsed;
+                return LibUIPythonAI.Utils.Tools.BoolToVisibility(ActionMode == ActionModeEum.Exec);
             }
         }
         public string SelectButtonText {
@@ -94,12 +94,12 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
 
-        public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ReloadCommand => new(async (parameter) => {
 
-
+            await PromptItem.LoadItemsAsync();
+            var promptItems = PromptItem.GetPromptItems();
             // PromptItemsを更新
             PromptItems.Clear();
-            var promptItems = PromptItem.GetPromptItems();
 
             foreach (var item in promptItems) {
                 if ( !IsShowSystemPromptItems &&

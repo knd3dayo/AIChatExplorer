@@ -381,7 +381,7 @@ namespace LibPythonAI.Model.Prompt {
                         // タグ一覧に存在しない場合は追加
                         if (tagItems.Any(x => x.Tag == tag) == false) {
                             // タグ一覧に追加
-                            TagItem tagItem = new() {
+                            TagItem tagItem = new(tag) {
                                 Tag = tag,
                                 IsPinned = false,
                             };
