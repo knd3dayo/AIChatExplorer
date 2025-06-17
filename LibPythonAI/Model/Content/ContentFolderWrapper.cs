@@ -23,6 +23,9 @@ namespace LibPythonAI.Model.Content {
             get {
                 return Entity.Id;
             }
+            set {
+                Entity.Id = value;
+            }
         }
         public bool IsRootFolder {
             get {
