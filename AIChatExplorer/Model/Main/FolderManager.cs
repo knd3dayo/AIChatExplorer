@@ -78,6 +78,12 @@ namespace AIChatExplorer.Model.Main {
             if (recentFilesRootFolder != null) {
                 recentFilesRootFolder.FolderName = toRes.RecentFiles;
             }
+            // ChatRootFolder
+            var applicationRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
+            if (applicationRootFolder != null) {
+                applicationRootFolder.FolderName = toRes.Application;
+            }
+            db.SaveChanges();
         }
 
         //--------------------------------------------------------------------------------
