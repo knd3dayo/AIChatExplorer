@@ -43,7 +43,7 @@
                 Margin="10,0,10,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.Title, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Title}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -131,8 +131,7 @@
                         AcceptsReturn="True"
                         FontSize="12"
                         IsReadOnly="True"
-                        Text="{Binding ResultText, Mode=OneWay}"
-                        TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                        Text="{Binding ResultText, Mode=OneWay}" />
                 </ScrollViewer>
                 <GridSplitter
                     Grid.Row="1"
@@ -167,8 +166,7 @@
                             materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                             AcceptsReturn="True"
                             FontSize="12"
-                            Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                            TextWrapping="{Binding TextWrapping, Mode=OneWay}">
+                            Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
                             </TextBox.InputBindings>

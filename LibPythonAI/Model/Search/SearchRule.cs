@@ -15,7 +15,7 @@ namespace LibPythonAI.Model.Search {
     // このクラスのオブジェクトはLiteDBに保存される
 
     public class SearchRule {
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };
@@ -89,6 +89,10 @@ namespace LibPythonAI.Model.Search {
             SaveSearchConditionJson();
             // APIを呼び出して保存
             PythonExecutor.PythonAIFunctions.UpdateSearchRuleAsync(new SearchRuleRequest(this));
+
+            // Load
+            Task.Run(async () => { await LoadItemsAsync(); });
+
         }
 
         // 削除
@@ -99,22 +103,18 @@ namespace LibPythonAI.Model.Search {
 
         public List<ContentItemWrapper> SearchItems() {
             List<ContentItemWrapper> result = [];
-            if (TargetFolder == null) {
-                return result;
-            }
-            if (TargetFolder == null) {
-                return result;
-            }
             // GlobalSearchの場合は全フォルダを検索
             if (IsGlobalSearch) {
                 return ContentItemWrapper.SearchAll(SearchCondition);
-            } else {
+            }
+            if (TargetFolder != null) {
                 return ContentItemWrapper.Search(SearchCondition, TargetFolder, IsIncludeSubFolder);
             }
+            return result;
         }
 
         public SearchRule Copy() {
-            SearchRule rule = new SearchRule() {
+            SearchRule rule = new () {
                 Name = Name,
                 SearchFolderId = SearchFolderId,
                 TargetFolderId = TargetFolderId,
@@ -127,7 +127,7 @@ namespace LibPythonAI.Model.Search {
         }
 
         public static SearchRule FromDict(Dictionary<string, dynamic?> dict) {
-            SearchRule rule = new SearchRule();
+            SearchRule rule = new ();
             if (dict.Count == 0) {
                 return rule;
             }

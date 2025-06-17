@@ -10,6 +10,8 @@ namespace LibPythonAI.PythonIF.Request {
 
 
         public const string ID_KEY = "id";
+        // Name
+        public const string NAME_KEY = "name";
         // SearchConditionJson
         public const string SEARCH_CONDITION_JSON_KEY = "search_condition_json";
         // SearchFolderId
@@ -23,6 +25,7 @@ namespace LibPythonAI.PythonIF.Request {
 
         public SearchRuleRequest(SearchRule rule) {
             Id = rule.Id;
+            Name = rule.Name;
             SearchConditionJson = rule.SearchConditionJson;
             SearchFolderId = rule.SearchFolder?.Id;
             TargetFolderId = rule.TargetFolder?.Id;
@@ -32,6 +35,8 @@ namespace LibPythonAI.PythonIF.Request {
 
         // Id
         public string Id { get; set; }
+        // Name
+        public string Name { get; set; } = string.Empty;
         // SearchConditionJson
         public string SearchConditionJson { get; set; }
 
@@ -51,6 +56,7 @@ namespace LibPythonAI.PythonIF.Request {
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { ID_KEY, Id },
+                { NAME_KEY, Name },
                 { SEARCH_CONDITION_JSON_KEY, SearchConditionJson },
                 { IS_INCLUDE_SUB_FOLDER_KEY, IsIncludeSubFolder },
                 { IS_GLOBAL_SEARCH_KEY, IsGlobalSearch }

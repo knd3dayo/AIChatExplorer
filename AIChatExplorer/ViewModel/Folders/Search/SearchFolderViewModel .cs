@@ -3,16 +3,20 @@ using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class SearchFolderViewModel(SearchFolder applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var searchFolderViewModel = new SearchFolderViewModel(childFolder, Commands) {
+            if (childFolder is not SearchFolder) {
+                throw new ArgumentException("Child folder must be a SearchFolder.");
+            }
+            var searchFolderViewModel = new SearchFolderViewModel((SearchFolder)childFolder, Commands) {
                 // 検索フォルダの親フォルダにこのフォルダを追加
                 ParentFolderViewModel = this
             };
@@ -44,7 +48,19 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
         }
         // LoadLLMConfigListAsync
         public override void LoadItems() {
-            LoadItems<ContentItemWrapper>();
+            Task.Run(() => {
+                if (Folder is not SearchFolder searchFolder) {
+                    throw new InvalidOperationException("Folder is not a SearchFolder.");
+                }
+                List<ContentItemWrapper> _items = searchFolder.GetItems().OrderByDescending(x => x.UpdatedAt).ToList();
+                MainUITask.Run(() => {
+                    Items.Clear();
+                    foreach (ContentItemWrapper item in _items) {
+                        Items.Add(CreateItemViewModel(item));
+                    }
+                    OnPropertyChanged(nameof(Items));
+                });
+            });
         }
 
         // LoadChildren

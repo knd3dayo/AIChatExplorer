@@ -59,5 +59,8 @@ namespace LibUIImageChat.View {
 
         // EditImageEvidenceCheckItem
         public static string EditImageEvidenceCheckItem => CommonStringResources.EditImageEvidenceCheckItem;
+
+        // Title
+        public static string Title => CommonStringResources.Title;
     }
 }

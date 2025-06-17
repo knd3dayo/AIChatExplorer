@@ -30,14 +30,14 @@ namespace AIChatExplorer.Model.Folders.Search {
 
 
         // アイテム LiteDBには保存しない。
-        public new List<T> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
-            List<T> _items = [];
+        public  List<ContentItemWrapper> GetItems(bool isSync = true) {
+            List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             // フォルダに検索条件が設定されている場合
             SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
-            if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
-                _items = searchConditionRule.SearchItems().Select(x => (T)x).ToList();
+            if (searchConditionRule != null) {
+                _items = searchConditionRule.SearchItems().Select(x => (ContentItemWrapper)x).ToList();
 
             }
             return _items;
