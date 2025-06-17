@@ -11,16 +11,16 @@ namespace LibPythonAI.Model.Image {
     public class ScreenShotCheckCondition
     {
 
-        public static readonly string CheckTypeEqual = PythonAILibStringResourcesJa.Instance.CheckTypeEqual;
-        public static readonly string CheckTypeNotEqual = PythonAILibStringResourcesJa.Instance.CheckTypeNotEqual;
-        public static readonly string CheckTypeInclude = PythonAILibStringResourcesJa.Instance.CheckTypeInclude;
-        public static readonly string CheckTypeNotInclude = PythonAILibStringResourcesJa.Instance.CheckTypeNotInclude;
-        public static readonly string CheckTypeStartWith = PythonAILibStringResourcesJa.Instance.CheckTypeStartWith;
-        public static readonly string CheckTypeNotStartWith = PythonAILibStringResourcesJa.Instance.CheckTypeNotStartWith;
-        public static readonly string CheckTypeEndWith = PythonAILibStringResourcesJa.Instance.CheckTypeEndWith;
-        public static readonly string CheckTypeNotEndWith = PythonAILibStringResourcesJa.Instance.CheckTypeNotEndWith;
-        public static readonly string CheckTypeEmpty = PythonAILibStringResourcesJa.Instance.CheckTypeEmpty;
-        public static readonly string CheckTypeCheckBox = PythonAILibStringResourcesJa.Instance.CheckTypeCheckBox;
+        public static readonly string CheckTypeEqual = PythonAILibStringResources.Instance.CheckTypeEqual;
+        public static readonly string CheckTypeNotEqual = PythonAILibStringResources.Instance.CheckTypeNotEqual;
+        public static readonly string CheckTypeInclude = PythonAILibStringResources.Instance.CheckTypeInclude;
+        public static readonly string CheckTypeNotInclude = PythonAILibStringResources.Instance.CheckTypeNotInclude;
+        public static readonly string CheckTypeStartWith = PythonAILibStringResources.Instance.CheckTypeStartWith;
+        public static readonly string CheckTypeNotStartWith = PythonAILibStringResources.Instance.CheckTypeNotStartWith;
+        public static readonly string CheckTypeEndWith = PythonAILibStringResources.Instance.CheckTypeEndWith;
+        public static readonly string CheckTypeNotEndWith = PythonAILibStringResources.Instance.CheckTypeNotEndWith;
+        public static readonly string CheckTypeEmpty = PythonAILibStringResources.Instance.CheckTypeEmpty;
+        public static readonly string CheckTypeCheckBox = PythonAILibStringResources.Instance.CheckTypeCheckBox;
 
         public ObservableCollection<string> CheckTypeList
         {
@@ -101,56 +101,56 @@ namespace LibPythonAI.Model.Image {
 
         public string ToPromptString()
         {
-            string result = $"{PythonAILibStringResourcesJa.Instance.SettingValueIs(SettingItem, SettingValue)}";
+            string result = $"{PythonAILibStringResources.Instance.SettingValueIs(SettingItem, SettingValue)}";
             // CheckType.CheckTypeがEqualの場合
             if (CheckTypeString == CheckTypeEqual)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueIs(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueIs(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotEqualの場合
             if (CheckTypeString == CheckTypeNotEqual)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueIsNot(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueIsNot(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがIncludeの場合
             if (CheckTypeString == CheckTypeInclude)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueContains(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueContains(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotIncludeの場合
             if (CheckTypeString == CheckTypeNotInclude)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueNotContain(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueNotContain(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがStartWithの場合
             if (CheckTypeString == CheckTypeStartWith)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueStartsWith(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueStartsWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotStartWithの場合
             if (CheckTypeString == CheckTypeNotStartWith)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueNotStartWith(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueNotStartWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがEndWithの場合
             if (CheckTypeString == CheckTypeEndWith)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueEndsWith(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueEndsWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotEndWithの場合
             if (CheckTypeString == CheckTypeNotEndWith)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueNotEndWith(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueNotEndWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがEmptyの場合
             if (CheckTypeString == CheckTypeEmpty)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueIsEmpty(SettingItem)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueIsEmpty(SettingItem)}";
             }
             // CheckType.CheckTypeがCheckBoxの場合
             if (CheckTypeString == CheckTypeCheckBox)
             {
-                result = $"{PythonAILibStringResourcesJa.Instance.SettingValueIsChecked(SettingItem, SettingValue)}";
+                result = $"{PythonAILibStringResources.Instance.SettingValueIsChecked(SettingItem, SettingValue)}";
             }
             return result;
         }

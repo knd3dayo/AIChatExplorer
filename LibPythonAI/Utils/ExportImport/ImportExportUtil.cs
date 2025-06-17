@@ -221,7 +221,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
             // filePathのファイルが存在しない場合は何もしない
             if (System.IO.File.Exists(filePath) == false) {
-                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FileNotFound);
+                LogWrapper.Error(PythonAILibStringResources.Instance.FileNotFound);
                 return;
             }
             // ファイルからすべての行を読み込んでリストに格納します
@@ -233,12 +233,12 @@ namespace LibPythonAI.Utils.ExportImport {
         public static void ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FailedToParseJSONString);
+                LogWrapper.Error(PythonAILibStringResources.Instance.FailedToParseJSONString);
                 return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FailedToParseJSONString);
+                LogWrapper.Error(PythonAILibStringResources.Instance.FailedToParseJSONString);
                 return;
             }
 

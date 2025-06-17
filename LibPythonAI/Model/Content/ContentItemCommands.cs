@@ -17,10 +17,10 @@ namespace LibPythonAI.Model.Content {
         public static void OpenFolder(ContentItemWrapper contentItem) {
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentItemTypes.ContentItemTypeEnum.Files) {
-                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.CannotOpenFolderForNonFileContent);
+                LogWrapper.Error(PythonAILibStringResources.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
-            string message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
+            string message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
             LogWrapper.Info(message);
 
             // Open the folder with Process.Start
@@ -33,7 +33,7 @@ namespace LibPythonAI.Model.Content {
                 };
                 p.Start();
             }
-            message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
+            message = $"{PythonAILibStringResources.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
             LogWrapper.Info(message);
 
         }
@@ -68,7 +68,7 @@ namespace LibPythonAI.Model.Content {
                 }
 
             } catch (UnsupportedFileTypeException) {
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UnsupportedFileType);
+                LogWrapper.Info(PythonAILibStringResources.Instance.UnsupportedFileType);
             }
         }
 
@@ -76,7 +76,7 @@ namespace LibPythonAI.Model.Content {
         public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
             int count = items.Count;
             if (count == 0) {
-                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoItemSelected);
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             beforeAction();
@@ -93,12 +93,12 @@ namespace LibPythonAI.Model.Content {
                     lock (lockObject) {
                         start_count++;
                     }
-                    string message = $"{PythonAILibStringResourcesJa.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                    string message = $"{PythonAILibStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
                     LogWrapper.UpdateInProgress(true, message);
                     var item = items[index];
 
                     if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                        LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
+                        LogWrapper.Info(PythonAILibStringResources.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
                     ExtractText(item).Wait();
@@ -107,7 +107,7 @@ namespace LibPythonAI.Model.Content {
                 });
                 afterAction();
                 LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.TextExtracted}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
             });
         }
 
@@ -124,7 +124,7 @@ namespace LibPythonAI.Model.Content {
 
                     string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                        LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
@@ -147,7 +147,7 @@ namespace LibPythonAI.Model.Content {
                     // VectorDBItemを取得
                     string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                        LogWrapper.Error(PythonAILibStringResources.Instance.NoVectorDBSet);
                         return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
@@ -159,7 +159,7 @@ namespace LibPythonAI.Model.Content {
                     item.VectorizedAt = DateTime.Now;
                 });
                 // Execute if obj is an Action
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GenerateVectorCompleted);
+                LogWrapper.Info(PythonAILibStringResources.Instance.GenerateVectorCompleted);
                 afterAction();
             });
 
@@ -175,9 +175,9 @@ namespace LibPythonAI.Model.Content {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
-                    item.Description += $" {PythonAILibStringResourcesJa.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
+                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
                 } else {
-                    item.Description += $" {PythonAILibStringResourcesJa.Instance.File}:" + item.Content;
+                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content;
                 }
             }
         }
@@ -197,12 +197,12 @@ namespace LibPythonAI.Model.Content {
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
             if (configParams.AutoTitle()) {
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
                 CreateAutoTitle(chatHistoryItem);
 
             } else if (configParams.AutoTitleWithOpenAI()) {
 
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                LogWrapper.Info(PythonAILibStringResources.Instance.AutoSetTitle);
                 await PromptItem.CreateAutoTitleWithOpenAIAsync(chatHistoryItem);
             }
 

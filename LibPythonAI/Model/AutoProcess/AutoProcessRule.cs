@@ -129,16 +129,16 @@ namespace LibPythonAI.Model.AutoProcess {
         public void RunActionAsync(ContentItemWrapper applicationItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.RuleNameIsInvalid(RuleName));
+                LogWrapper.Info(PythonAILibStringResources.Instance.RuleNameIsInvalid(RuleName));
                 return;
             }
 
             if (!IsMatch(applicationItem)) {
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.NoMatch);
+                LogWrapper.Info(PythonAILibStringResources.Instance.NoMatch);
                 return;
             }
             if (RuleAction == null) {
-                LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoActionSet);
+                LogWrapper.Warn(PythonAILibStringResources.Instance.NoActionSet);
                 return;
             }
             // DestinationIdに一致するフォルダを取得
@@ -147,40 +147,40 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         public string GetDescriptionString() {
-            string result = $"{PythonAILibStringResourcesJa.Instance.Condition}\n";
+            string result = $"{PythonAILibStringResources.Instance.Condition}\n";
             foreach (var condition in Conditions) {
                 // ConditionTypeごとに処理
                 switch (condition.Type) {
                     case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
-                        result += PythonAILibStringResourcesJa.Instance.DescriptionContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.DescriptionContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
-                        result += PythonAILibStringResourcesJa.Instance.ContentContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.ContentContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
-                        result += PythonAILibStringResourcesJa.Instance.SourceApplicationNameContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationNameContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
-                        result += PythonAILibStringResourcesJa.Instance.SourceApplicationTitleContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationTitleContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationPathContains:
-                        result += PythonAILibStringResourcesJa.Instance.SourceApplicationPathContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationPathContains(condition.Keyword) + "\n";
                         break;
                 }
                 // AutoProcessItemが設定されている場合
                 if (RuleAction != null) {
-                    result += $"{PythonAILibStringResourcesJa.Instance.Action}:{RuleAction.Description}\n";
+                    result += $"{PythonAILibStringResources.Instance.Action}:{RuleAction.Description}\n";
                 } else {
-                    result += $"{PythonAILibStringResourcesJa.Instance.ActionNone}\n";
+                    result += $"{PythonAILibStringResources.Instance.ActionNone}\n";
                 }
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
                 if (RuleAction != null && RuleAction.IsCopyOrMoveAction()) {
 
 
                     if (DestinationFolder != null) {
-                        result += $"{PythonAILibStringResourcesJa.Instance.Folder}:{DestinationFolder.ContentFolderPath}\n";
+                        result += $"{PythonAILibStringResources.Instance.Folder}:{DestinationFolder.ContentFolderPath}\n";
                     } else {
-                        result += $"{PythonAILibStringResourcesJa.Instance.FolderNone}\n";
+                        result += $"{PythonAILibStringResources.Instance.FolderNone}\n";
                     }
                 }
             }
@@ -246,7 +246,7 @@ namespace LibPythonAI.Model.AutoProcess {
             };
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
             if (pathList.Distinct().Count() != pathList.Count) {
-                LogWrapper.Warn($"{PythonAILibStringResourcesJa.Instance.DetectedAnInfiniteLoop}\n{Tools.ListToString(pathList)}");
+                LogWrapper.Warn($"{PythonAILibStringResources.Instance.DetectedAnInfiniteLoop}\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得

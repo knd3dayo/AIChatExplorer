@@ -129,7 +129,7 @@ namespace LibPythonAI.Model.VectorDB {
         public static VectorDBItem GetDefaultVectorDB() {
             var item = GetItemByName(SystemCommonVectorDBName);
             if (item == null) {
-                throw new Exception(PythonAILibStringResourcesJa.Instance.VectorDBNotFound(SystemCommonVectorDBName));
+                throw new Exception(PythonAILibStringResources.Instance.VectorDBNotFound(SystemCommonVectorDBName));
             }
             return item!;
         }

@@ -13,7 +13,7 @@ namespace LibPythonAI.Utils.Git {
                 }
                 Repository repo = new(workingDirectory);
                 // リモートリポジトリのURLを取得
-                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(PythonAILibStringResourcesJa.Instance.NoRemoteRepositorySet);
+                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(PythonAILibStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 return remoteURL.Value;
 

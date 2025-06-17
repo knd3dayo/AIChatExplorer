@@ -32,7 +32,7 @@ namespace LibPythonAI.Model.Chat {
                 if (SourceDocuments.Count == 0) {
                     return Content;
                 }
-                return Content + "\n\n" + PythonAILibStringResourcesJa.Instance.ReferenceDocument + "\n" + string.Join("  \n", SourceDocuments.Select(x => x.SourcePath));
+                return Content + "\n\n" + PythonAILibStringResources.Instance.ReferenceDocument + "\n" + string.Join("  \n", SourceDocuments.Select(x => x.SourcePath));
             }
         }
         [JsonIgnore]

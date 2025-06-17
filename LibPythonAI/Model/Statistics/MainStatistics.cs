@@ -102,14 +102,14 @@ namespace LibPythonAI.Model.Statistics {
             MainStatistics mainStatistics = GetMainStatistics();
             // 本日のトークン数
             long totalTokens = mainStatistics.GetTotalTokens();
-            message = PythonAILibStringResourcesJa.Instance.TotalTokenFormat(totalTokens) + "\n\n";
+            message = PythonAILibStringResources.Instance.TotalTokenFormat(totalTokens) + "\n\n";
             // 日次トークン数情報
-            message += PythonAILibStringResourcesJa.Instance.DailyTokenCount + "\n";
+            message += PythonAILibStringResources.Instance.DailyTokenCount + "\n";
             Dictionary<DateTime, DailyStatistics> keyValuePairs = mainStatistics.DailyStatistics;
             // 日毎のトークン数を表示
             foreach (KeyValuePair<DateTime, DailyStatistics> pair in keyValuePairs) {
                 DailyStatistics dailyStatistics = pair.Value;
-                string dailyMessage = PythonAILibStringResourcesJa.Instance.DailyTokenFormat(dailyStatistics.Date.ToShortDateString(), dailyStatistics.TotalTokens);
+                string dailyMessage = PythonAILibStringResources.Instance.DailyTokenFormat(dailyStatistics.Date.ToShortDateString(), dailyStatistics.TotalTokens);
                 message += dailyMessage + "\n";
             }
             return message;
