@@ -70,7 +70,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
         // TextContentが空の場合はCollapsed,それ以外はVisible
-        public Visibility TextContentVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(TextContent) == false && MarkdownView == false);
+        public Visibility TextContentVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(TextContent) == false);
 
         // MarkdownViewがTrueの場合はCollapsed,それ以外はVisible
         public Visibility MarkdownViewVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(TextContent) == false && MarkdownView == true);
