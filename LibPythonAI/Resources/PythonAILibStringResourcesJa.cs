@@ -1,7 +1,7 @@
 using LibPythonAI.Common;
 
 namespace LibPythonAI.Resources {
-    public class PythonAILibStringResources: PythonAILibStringResources {
+    public class PythonAILibStringResourcesJa: PythonAILibStringResources {
 
 
         // PythonAILibManagerIsNotInitialized

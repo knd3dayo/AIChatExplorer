@@ -9,12 +9,12 @@ namespace LibPythonAI.Resources {
                 if (_Instance == null || _LangChanged) {
                     _LangChanged = false;
                     if ( Lang.ToLower().StartsWith("ja")) {
-                        _Instance = new PythonAILibStringResources();
+                        _Instance = new PythonAILibStringResourcesJa();
                         // PromptStringResourceもここで設定
                         PromptStringResource.Instance = new PromptStringResourceJa();
 
                     }else {
-                        _Instance = new PythonAILibStringResources();
+                        _Instance = new PythonAILibStringResourcesJa();
                         // PromptStringResourceもここで設定
                         PromptStringResource.Instance = new PromptStringResource();
                     }

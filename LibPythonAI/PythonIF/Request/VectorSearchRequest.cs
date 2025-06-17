@@ -75,10 +75,10 @@ namespace LibPythonAI.PythonIF.Request {
 
         public Dictionary<string, object> ToDict() {
             if (string.IsNullOrEmpty(Name)) {
-                throw new Exception(PythonAILibStringResources.Instance.PropertyNotSet(NAME_KEY));
+                throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(NAME_KEY));
             }
             if (string.IsNullOrEmpty(Model)) {
-                throw new Exception(PythonAILibStringResources.Instance.PropertyNotSet(MODEL_KEY));
+                throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(MODEL_KEY));
             }
 
             Dictionary<string, object> dict = [];

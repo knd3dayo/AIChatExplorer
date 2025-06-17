@@ -96,11 +96,11 @@ namespace LibPythonAI.Model.AutoProcess {
             if (typeEnum == AutoProcessActionTypeEnum.CopyToFolder) {
                 return (args) => {
                     if (destinationFolder == null) {
-                        LogWrapper.Warn(PythonAILibStringResources.Instance.NoFolderSelected);
+                        LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
                     }
 
-                    LogWrapper.Info($"{PythonAILibStringResources.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
+                    LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
                     ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
                     destinationFolder.AddItem(newItem);
@@ -109,7 +109,7 @@ namespace LibPythonAI.Model.AutoProcess {
             if (typeEnum == AutoProcessActionTypeEnum.MoveToFolder) {
                 return (args) => {
                     if (destinationFolder == null) {
-                        LogWrapper.Warn(PythonAILibStringResources.Instance.NoFolderSelected);
+                        LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
                     }
                     // Folderに移動

@@ -14,7 +14,7 @@ namespace LibPythonAI.Common {
         private static PythonAILibManager? _instance;
         public static PythonAILibManager Instance {
             get {
-                return _instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                return _instance ?? throw new Exception(PythonAILibStringResourcesJa.Instance.PythonAILibManagerIsNotInitialized);
             }
             private set {
                 _instance = value;
@@ -51,7 +51,7 @@ namespace LibPythonAI.Common {
             ConfigParams = parameters;
 
             // 言語設定
-            PythonAILibStringResources.Lang = parameters.GetLang();
+            PythonAILibStringResourcesJa.Lang = parameters.GetLang();
             // Python処理機能の初期化
             PythonExecutor.Init(parameters, afterStartProcess: (process) => {
                 // プロセス開始後の処理

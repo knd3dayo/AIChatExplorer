@@ -86,13 +86,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                // LogWrapper.Info(PythonAILibStringResources.Instance.UpdateContentFoldersExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                // LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateContentFoldersExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_content_folders";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -110,13 +110,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                // LogWrapper.Info(PythonAILibStringResources.Instance.DeleteContentFoldersExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                // LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteContentFoldersExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_content_folders";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -133,12 +133,12 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetSearchRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetSearchRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_search_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -169,12 +169,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateSearchRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateSearchRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_search_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -194,12 +194,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteSearchRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteSearchRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_search_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -218,12 +218,12 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetAutoProcessItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetAutoProcessItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_auto_process_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -253,12 +253,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoProcessItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutoProcessItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_auto_process_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -277,12 +277,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoProcessItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutoProcessItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_auto_process_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -301,12 +301,12 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetAutoProcessRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetAutoProcessRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_auto_process_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -337,12 +337,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoProcessRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutoProcessRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_auto_process_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -361,12 +361,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoProcessRulesExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutoProcessRulesExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_auto_process_rules";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -383,12 +383,12 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetPromptItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetPromptItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_prompt_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -420,12 +420,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdatePromptItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdatePromptItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_prompt_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -444,12 +444,12 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeletePromptItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletePromptItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_prompt_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -466,13 +466,13 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetTagItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetTagItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_tag_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -503,13 +503,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateTagItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateTagItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_tag_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -527,13 +527,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteTagItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteTagItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_tag_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -553,14 +553,14 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetTokenCountExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetTokenCountExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 long totalTokens = 0;
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_token_count";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -591,8 +591,8 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestContextJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.OpenAIExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestContextJson}");
 
                 // ChatResultを作成
                 ChatResponse chatResult = new();
@@ -600,7 +600,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/openai_chat";
                 string resultString = await PostAsync(endpoint, requestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 chatResult.LoadFromJson(resultString);
 
@@ -634,7 +634,7 @@ namespace LibPythonAI.PythonIF {
                 string requestContextJson = requestContainer.ToJson();
 
 
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestContextJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestContextJson}");
 
                 ChatResponse chatResult = new();
                 string endpoint = $"{base_url}/autogen_group_chat";
@@ -715,7 +715,7 @@ namespace LibPythonAI.PythonIF {
             // SessionToken: sessionTokenを持つJSON文字列を作成
             string sessionTokenJson = JsonSerializer.Serialize(new { session_token = sessionToken }, jsonSerializerOptions);
             // Log出力
-            LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{sessionTokenJson}");
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{sessionTokenJson}");
             // cancel_request
             // PostAsyncを実行する
             string endpoint = $"{base_url}/cancel_autogen_chat";
@@ -748,7 +748,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/extract_text_from_file";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 result.LoadFromJson(resultString);
                 // Errorがある場合はLogWrapper.Errorを呼び出す
                 if (!string.IsNullOrEmpty(result.Error)) {
@@ -773,7 +773,7 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
 
 
                 // ResultContainerを作成
@@ -782,7 +782,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/extract_base64_to_text";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 // resultStringからDictionaryに変換する。
                 result.LoadFromJson(resultString);
@@ -805,13 +805,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBItemExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateVectorDBItemExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_vector_db_item";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
@@ -832,13 +832,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBItemExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteVectorDBItemExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_vector_db_item";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
@@ -857,13 +857,13 @@ namespace LibPythonAI.PythonIF {
                 RequestContainer requestContainer = new();
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemsExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetVectorDBItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_vector_db_items";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
@@ -896,13 +896,13 @@ namespace LibPythonAI.PythonIF {
 
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemByIdExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetVectorDBItemByIdExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_vector_db_item_by_id";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
@@ -927,13 +927,13 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.GetVectorDBItemByNameExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetVectorDBItemByNameExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/get_vector_db_item_by_name";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
 
@@ -961,9 +961,9 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.VectorSearchExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.VectorSearchRequest}:{query}");
 
                 // vector_search
 
@@ -971,7 +971,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/vector_search";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
@@ -1019,15 +1019,15 @@ namespace LibPythonAI.PythonIF {
                 };
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbeddingsByFolderExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteEmbeddingsByFolderExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // delete_embeddings_by_folder
                 // endpointを作成
                 string endpoint = $"{base_url}/delete_embeddings_by_folder";
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
                 if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
@@ -1050,15 +1050,15 @@ namespace LibPythonAI.PythonIF {
                 string chatRequestContextJson = requestContainer.ToJson();
 
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateEmbeddingExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateEmbeddingExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // delete_embeddings
                 // endpointを作成
                 string endpoint = $"{base_url}/delete_embeddings";
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
 
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
@@ -1085,15 +1085,15 @@ namespace LibPythonAI.PythonIF {
                 string chatRequestContextJson = requestContainer.ToJson();
 
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateEmbeddingExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateEmbeddingExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
                 // update_embeddings
                 // endpointを作成
                 string endpoint = $"{base_url}/update_embeddings";
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1116,8 +1116,8 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.ExportToExcelExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{chatRequestContextJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.ExportToExcelExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{chatRequestContextJson}");
 
                 // export_to_excel
                 // PostAsyncを実行する
@@ -1125,7 +1125,7 @@ namespace LibPythonAI.PythonIF {
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
 
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1158,7 +1158,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/import_from_excel";
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
                 if (resultDict == null) {
@@ -1228,7 +1228,7 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string chatRequestContextJson = requestContainer.ToJson();
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {chatRequestContextJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
 
                 // ResultContainerを作成
                 PythonScriptResult result = new();
@@ -1238,7 +1238,7 @@ namespace LibPythonAI.PythonIF {
                 string resultString = await PostAsync(endpoint, chatRequestContextJson);
 
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 result.LoadFromJson(resultString);
                 // Errorがある場合はLogWrapper.Errorを呼び出す
@@ -1259,7 +1259,7 @@ namespace LibPythonAI.PythonIF {
                 string resultString = await PostAsync(endpoint, "{}");
 
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1303,11 +1303,11 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/get_autogen_llm_config";
 
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{requestJson}");
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1336,13 +1336,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutogenLLMConfigExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutogenLLMConfigExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_autogen_llm_config";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
 
             });
         }
@@ -1357,13 +1357,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutogenLLMConfigExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutogenLLMConfigExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_autogen_llm_config";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
         }
 
@@ -1374,7 +1374,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/get_autogen_tool_list";
                 string resultString = await PostAsync(endpoint, "{}");
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1417,11 +1417,11 @@ namespace LibPythonAI.PythonIF {
 
                 string endpoint = $"{base_url}/get_autogen_tool";
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{requestJson}");
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1451,13 +1451,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenToolExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutoGenToolExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_autogen_tool";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
         }
 
@@ -1471,13 +1471,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenToolExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutoGenToolExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_autogen_tool";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
         }
 
@@ -1488,7 +1488,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/get_autogen_agent_list";
                 string resultString = await PostAsync(endpoint, "{}");
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1526,11 +1526,11 @@ namespace LibPythonAI.PythonIF {
 
                 string endpoint = $"{base_url}/get_autogen_agent";
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{requestJson}");
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1556,13 +1556,13 @@ namespace LibPythonAI.PythonIF {
                 string requestJson = requestContainer.ToJson();
 
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenAgentExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutoGenAgentExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_autogen_agent";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
 
         }
@@ -1577,13 +1577,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenAgentExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutoGenAgentExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_autogen_agent";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
         }
 
@@ -1594,7 +1594,7 @@ namespace LibPythonAI.PythonIF {
                 string endpoint = $"{base_url}/get_autogen_group_chat_list";
                 string resultString = await PostAsync(endpoint, "{}");
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1631,11 +1631,11 @@ namespace LibPythonAI.PythonIF {
                 string requestJson = requestContainer.ToJson();
                 string endpoint = $"{base_url}/get_autogen_group_chat";
                 // Log出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo}:{requestJson}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{requestJson}");
                 // PostAsyncを実行する
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // Errorがある場合は例外をスローする
@@ -1659,13 +1659,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.UpdateAutoGenGroupChatExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateAutoGenGroupChatExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/update_autogen_group_chat";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
 
         }
@@ -1680,13 +1680,13 @@ namespace LibPythonAI.PythonIF {
                 // RequestContainerをJSON文字列に変換
                 string requestJson = requestContainer.ToJson();
 
-                LogWrapper.Info(PythonAILibStringResources.Instance.DeleteAutoGenGroupChatExecute);
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.RequestInfo} {requestJson}");
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteAutoGenGroupChatExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {requestJson}");
                 // PostAsyncを実行する
                 string endpoint = $"{base_url}/delete_autogen_group_chat";
                 string resultString = await PostAsync(endpoint, requestJson);
                 // resultStringをログに出力
-                LogWrapper.Debug($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             });
         }
     }

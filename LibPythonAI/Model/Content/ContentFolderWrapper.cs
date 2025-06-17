@@ -321,14 +321,14 @@ namespace LibPythonAI.Model.Content {
                     item.Save();
                     afterUpdate?.Invoke(item);
                     // 通知
-                    LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
                 });
             } else {
                 // 保存
                 item.Save();
                 afterUpdate?.Invoke(item);
                 // 通知
-                LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             }
         }
 

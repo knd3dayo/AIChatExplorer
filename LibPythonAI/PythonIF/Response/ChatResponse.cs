@@ -36,7 +36,7 @@ namespace LibPythonAI.PythonIF.Response {
             // resultStringからDictionaryに変換する。
             Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json, jsonSerializerOptions);
             if (resultDict == null) {
-                throw new Exception(PythonAILibStringResources.Instance.OpenAIResponseEmpty);
+                throw new Exception(PythonAILibStringResourcesJa.Instance.OpenAIResponseEmpty);
             }
             // documentsがある場合は取得
             if (resultDict.ContainsKey("documents")) {
