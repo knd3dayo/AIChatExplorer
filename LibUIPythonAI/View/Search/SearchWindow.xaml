@@ -339,10 +339,8 @@
         </Grid>
 
         <!--  ボタン  -->
-        <Grid
-            Grid.Row="6"
-            VerticalAlignment="Bottom"
-            Background="White">
+        <Grid Grid.Row="6" VerticalAlignment="Bottom"             Background="White"
+>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

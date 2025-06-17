@@ -1,6 +1,5 @@
 namespace LibUIMergeChat.Resources {
-    public class MergeChatStringResources {
-
+    public class MergeChatStringResources  {
 
         private static MergeChatStringResources? _instance;
         public static MergeChatStringResources Instance {
@@ -9,10 +8,10 @@ namespace LibUIMergeChat.Resources {
                     _LangChanged = false;
                     switch (Lang) {
                         case "ja-JP":
-                            _instance = new MergeChatStringResources();
+                            _instance = new MergeChatStringResourcesJa();
                             break;
                         default:
-                            _instance = new MergeChatStringResourcesEn();
+                            _instance = new MergeChatStringResources();
                             break;
                     }
                 }
@@ -32,29 +31,23 @@ namespace LibUIMergeChat.Resources {
         }
 
 
-        // MergeTarget
-        public virtual string MergeTarget { get; set; } = "マージ対象";
 
-        // MergeTargetItemSelection
-        public virtual string MergeTargetItemSelection { get; set; } = "マージ対象アイテム選択";
+        // マージ対象
+        public virtual string MergeTarget { get; set; } = "Merge Target";
 
-        // MergeTargetDataSelection
-        public virtual string MergeTargetDataSelection { get; set; } = "マージ対象データ";
+        // マージ対象アイテム
+        public virtual string MergeTargetItemSelection { get; set; } = "Merge Target Item";
+
+        // マージ対象データ
+        public virtual string MergeTargetDataSelection { get; set; } = "Merge Target Data";
 
         // 事前処理用プロンプト マージ前に各アイテムに対して事前処理を行うためのプロンプト。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
-        public virtual string PreProcessingPromptHint { get; set; } = """
-            事前処理用プロンプト マージ前に各アイテムに対して事前処理を行うためのプロンプト。
-            ダブルクリックするとプロンプトテンプレート選択画面が開きます。
-            """;
+        public virtual string PreProcessingPromptHint { get; set; } = " Pre-processing prompt for performing pre-processing on each item before merging. Double-click to open the prompt template selection screen.";
 
         // 事後処理用プロンプト マージ後のアイテムに対して事後処理を行うためのプロンプト。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
-        public virtual string PostProcessingPromptHint { get; set; } = """
-            事後処理用プロンプト マージ後のアイテムに対して事後処理を行うためのプロンプト
-            ダブルクリックするとプロンプトテンプレート選択画面が開きます。
-            """;
+        public virtual string PostProcessingPromptHint { get; set; } = "Post-processing prompt for performing post-processing on items after merging. Double-click to open the prompt template selection screen.";
 
         // OutputFolderSelection
-        public virtual string OutputFolderSelection { get; set; } = "出力フォルダ選択";
-
+        public virtual string OutputFolderSelection { get; set; } = "Output Folder Selection";
     }
 }

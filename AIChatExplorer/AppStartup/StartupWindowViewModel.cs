@@ -14,8 +14,6 @@ using LibUIPythonAI.Resource;
 namespace AIChatExplorer.AppStartup {
 
     public class StartupWindowViewModel {
-
-
         public static void Startup() {
 
             try {
@@ -30,6 +28,9 @@ namespace AIChatExplorer.AppStartup {
 
                 // 言語設定
                 CommonStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+                // MergeChatの言語設定
+                LibUIMergeChat.Resources.MergeChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+                // ImageChatの言語設定
 
                 // Python環境のチェック
                 CheckEnvironment(configParams);

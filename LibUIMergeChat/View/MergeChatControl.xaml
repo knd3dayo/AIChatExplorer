@@ -43,7 +43,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
         <TabControl
             Grid.Row="0"
             Margin="10,5,10,5"
@@ -55,7 +54,7 @@
                 Padding="0"
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.Chat}">
-                <Grid>
+                <Grid Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="280" />
                         <ColumnDefinition Width="5" />
@@ -115,6 +114,7 @@
                 Height="Auto"
                 Margin="10,0,10,0"
                 Padding="0"
+                Background="White"
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.MergeTargetItemSelection}">
                 <local:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
@@ -127,7 +127,7 @@
                 Padding="0"
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.MergeTargetDataSelection}">
-                <Grid>
+                <Grid Background="White">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -140,6 +140,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Top"
                         AutoGenerateColumns="False"
+                        Background="White"
                         ItemsSource="{Binding ExportItems}"
                         SelectionMode="Single">
                         <DataGrid.Columns>
@@ -160,7 +161,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </TabControl>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

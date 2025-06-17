@@ -15,7 +15,10 @@
     mc:Ignorable="d">
     <Grid>
         <!--  Folder TreeView  -->
-        <TreeView Grid.Column="0" ItemsSource="{Binding FolderViewModels}">
+        <TreeView
+            Grid.Column="0"
+            Background="White"
+            ItemsSource="{Binding FolderViewModels}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="Margin" Value="3,3,3,3" />
