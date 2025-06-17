@@ -318,7 +318,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x)).ToList(),
+                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x) { Query = contentText}).ToList(),
                 RAGMode = promptItem.RAGMode,
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
