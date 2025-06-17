@@ -40,6 +40,7 @@ namespace LibPythonAI.Model.Folder {
                     ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById< ContentFolderWrapper>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = CHAT_ROOT_FOLDER_NAME,
                             FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                         };
