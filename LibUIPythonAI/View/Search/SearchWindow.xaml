@@ -72,7 +72,10 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <Grid Grid.Row="1" Visibility="{Binding NameVisibility}">
+        <Grid
+            Grid.Row="1"
+            Background="White"
+            Visibility="{Binding NameVisibility}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -89,7 +92,7 @@
                 Text="{Binding Name}" />
         </Grid>
         <!--  検索対象  -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Background="White">
             <TextBlock
                 Margin="10,10,10,3"
                 VerticalAlignment="Center"
@@ -97,7 +100,7 @@
                 Text="{x:Static res:ViewStringResources.SearchTarget}" />
         </Grid>
 
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -151,14 +154,14 @@
         </Grid>
 
         <!--  検索条件  -->
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="4" Background="White">
             <TextBlock
                 Margin="10,10,10,3"
                 VerticalAlignment="Center"
                 FontSize="14"
                 Text="{x:Static res:ViewStringResources.SearchCondition}" />
         </Grid>
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="5" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -336,7 +339,10 @@
         </Grid>
 
         <!--  ボタン  -->
-        <Grid Grid.Row="6" VerticalAlignment="Bottom">
+        <Grid
+            Grid.Row="6"
+            VerticalAlignment="Bottom"
+            Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
