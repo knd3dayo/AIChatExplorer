@@ -97,6 +97,7 @@ namespace AIChatExplorer.Model.Main {
                     ApplicationFolder? folder = ContentFolderWrapper.GetFolderById<ApplicationFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = APPLICATION_ROOT_FOLDER_NAME,
                             FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -129,6 +130,7 @@ namespace AIChatExplorer.Model.Main {
                     SearchFolder? folder = ContentFolderWrapper.GetFolderById<SearchFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = SEARCH_ROOT_FOLDER_NAME,
                             FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -163,6 +165,7 @@ namespace AIChatExplorer.Model.Main {
                     FileSystemFolder? folder = ContentFolderWrapper.GetFolderById<FileSystemFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
                             FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -197,6 +200,7 @@ namespace AIChatExplorer.Model.Main {
                     ShortCutFolder? folder = ContentFolderWrapper.GetFolderById<ShortCutFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = SHORTCUT_ROOT_FOLDER_NAME,
                             FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -231,6 +235,7 @@ namespace AIChatExplorer.Model.Main {
                     OutlookFolder? folder = ContentFolderWrapper.GetFolderById<OutlookFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = OUTLOOK_ROOT_FOLDER_NAME,
                             FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -267,6 +272,7 @@ namespace AIChatExplorer.Model.Main {
                     EdgeBrowseHistoryFolder? folder = ContentFolderWrapper.GetFolderById<EdgeBrowseHistoryFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
                             FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
@@ -302,6 +308,7 @@ namespace AIChatExplorer.Model.Main {
                     RecentFilesFolder? folder = ContentFolderWrapper.GetFolderById<RecentFilesFolder>(folderRoot.Id);
                     if (folder == null) {
                         folder = new() {
+                            Id = folderRoot.Id,
                             FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
                             FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                             IsRootFolder = true,
