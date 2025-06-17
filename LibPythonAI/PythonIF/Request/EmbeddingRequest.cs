@@ -32,12 +32,8 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
             dict[NAME_KEY] = Name;
             dict[MODEL_KEY] = Model;
-
             dict[DOC_ID_KEY] = Embedding.DocId;
-            // folder_id
-            if (Embedding.FolderId != null) {
-                dict[FOLDER_ID_KEY] = Embedding.FolderId;
-            }
+
             // folder_path
             if (Embedding.FolderPath != null) {
                 dict[FOLDER_PATH_KEY] = Embedding.FolderPath;

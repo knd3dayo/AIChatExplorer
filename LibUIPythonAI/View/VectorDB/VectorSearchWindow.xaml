@@ -89,6 +89,7 @@
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
+                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
@@ -141,6 +142,7 @@
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
+                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
@@ -239,7 +241,7 @@
                 <TextBox
                     Width="100"
                     Margin="10,0,0,0"
-                    Text="{Binding VectorSearchItem.ScoreThreshold, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding VectorSearchItem.ScoreThreshold}" />
 
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">

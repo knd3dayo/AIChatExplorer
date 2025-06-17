@@ -13,10 +13,8 @@ namespace LibPythonAI.Model.VectorDB {
 
         public VectorEmbeddingItem(string source_id, string folderId) {
             SourceId = source_id;
-            FolderId = folderId;
+            FolderPath = folderId;
         }
-
-        public string? FolderId { get; set; } = null;
 
         public string? FolderPath { get; set; } = null;
 
@@ -82,13 +80,13 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // DeleteEmbeddingsByFolderAsync
-        public static void DeleteEmbeddingsByFolder(string vectorDBItemName, string folderId) {
+        public static void DeleteEmbeddingsByFolder(string vectorDBItemName, string folderPath) {
             Task.Run(() => {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
                 ChatRequestContext chatRequestContext = new() {};
                 VectorEmbeddingItem VectorEmbeddingItem = new() {
-                    FolderId = folderId,
+                    FolderPath = folderPath,
                 };
                 EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
                 PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);

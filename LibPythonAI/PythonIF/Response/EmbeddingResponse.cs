@@ -55,7 +55,7 @@ namespace LibPythonAI.PythonIF.Response {
         public string FolderId { get; set; } = "";
 
         [JsonPropertyName(FOLDER_PATH_KEY)]
-        public string? FolderPath { get; set; } = null;
+        public string FolderPath { get; set; } = "";
 
         [JsonPropertyName(SOURCE_ID_KEY)]
         public string SourceId { get; set; } = "";
@@ -83,7 +83,7 @@ namespace LibPythonAI.PythonIF.Response {
         public List<EmbeddingResponse> SubDocs { get; set; } = [];
 
         public VectorEmbeddingItem CreateVectorEmbeddingItem() {
-            VectorEmbeddingItem embedding = new(SourceId, FolderId);
+            VectorEmbeddingItem embedding = new(SourceId, FolderPath);
             embedding.SourceType = SourceType;
             embedding.Description = Description;
             embedding.Content = Content;

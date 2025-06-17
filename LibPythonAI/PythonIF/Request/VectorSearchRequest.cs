@@ -21,7 +21,6 @@ namespace LibPythonAI.PythonIF.Request {
             Model = vectorSearchItem.Model;
             Query = vectorSearchItem.InputText;
             TopK = vectorSearchItem.TopK;
-            FolderId = vectorSearchItem.FolderId;
             FolderPath = vectorSearchItem.FolderPath;
             ScoreThreshold = vectorSearchItem.ScoreThreshold;
         }
@@ -37,9 +36,6 @@ namespace LibPythonAI.PythonIF.Request {
         // score_threshold
         public float ScoreThreshold { get; set; } = 0.5f;
 
-        // FolderId
-        public string? FolderId { get; set; } = null;
-
         // FolderPath
         public string? FolderPath { get; set; } = null;
 
@@ -53,10 +49,7 @@ namespace LibPythonAI.PythonIF.Request {
             };
             // filter 
             Dictionary<string, object> filter = new();
-            // folder_idが指定されている場合
-            if (FolderId != null) {
-                filter[FOLDER_ID_KEY] = FolderId;
-            }
+
             // folder_pathが指定されている場合
             if (FolderPath != null) {
                 filter[FOLDER_PATH_KEY] = FolderPath;
@@ -90,9 +83,6 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (!string.IsNullOrEmpty(Query)) {
                 dict[QUERY_KEY] = Query;
-            }
-            if (!string.IsNullOrEmpty(FolderId)) {
-                dict[FOLDER_ID_KEY] = FolderId;
             }
             return dict;
         }

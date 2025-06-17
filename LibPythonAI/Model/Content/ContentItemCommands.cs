@@ -127,7 +127,7 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
                     vectorDBEntry.SetMetadata(item);
 
                     VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
@@ -151,7 +151,7 @@ namespace LibPythonAI.Model.Content {
                         return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
                     vectorDBEntry.SetMetadata(item);
 
                     VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);

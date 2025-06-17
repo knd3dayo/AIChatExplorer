@@ -21,9 +21,8 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     if (vectorDBItemName == null) {
                         return;
                     }
-                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
                         Content = Content,
-                        FolderId = GetFolder().Id,
                         Description = Description,
                         SourceType = VectorSourceType.Web,
                         SourcePath = SourcePath,

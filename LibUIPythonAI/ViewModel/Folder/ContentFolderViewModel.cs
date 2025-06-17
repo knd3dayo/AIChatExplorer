@@ -239,7 +239,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                     return;
                 }
                 CommonViewModelProperties.UpdateIndeterminate(true);
-                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.Id);
+                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.ContentFolderPath);
                 ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
 
                     ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));

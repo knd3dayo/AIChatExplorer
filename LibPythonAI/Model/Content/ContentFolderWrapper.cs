@@ -191,7 +191,7 @@ namespace LibPythonAI.Model.Content {
         // 削除
         public virtual void Delete() {
             // ベクトルを全削除
-            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, Id);
+            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, ContentFolderPath);
             using PythonAILibDBContext db = new();
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();

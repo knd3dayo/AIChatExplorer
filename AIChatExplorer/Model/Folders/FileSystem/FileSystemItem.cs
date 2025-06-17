@@ -30,7 +30,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                     if (vectorDBItemName == null) {
                         return;
                     }
-                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().Id) {
+                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
                         Content = Content,
                         Description = Description,
                         SourceType = VectorSourceType.File,

@@ -586,7 +586,7 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().Id);
+                    VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
                     vectorDBEntry.SetMetadata(this);
                     VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
@@ -636,7 +636,7 @@ namespace LibPythonAI.Model.Content {
                             LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                             return;
                         }
-                        VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().Id);
+                        VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
                         vectorDBEntry.SetMetadata(item);
                         VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
