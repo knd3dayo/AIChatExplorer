@@ -1,5 +1,5 @@
 namespace LibPythonAI.Resources {
-    public class PromptStringResourceJa : PromptStringResource{
+    public class PromptStringResourceJa : PromptStringResource {
 
         // SummarizePromptText 
         public override string SummarizePromptText { get; } = "単純に結合しただけなので、文章のつながりがよくない箇所があるかもしれません。 文章のつながりがよくなるように整形してください。 出力言語は日本語にしてください。\n";

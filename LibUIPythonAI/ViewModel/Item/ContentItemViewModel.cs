@@ -236,11 +236,15 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         }
 
-        // システム定義のPromptItemの結果表示用のタブを作成
+        // PromptItemの結果表示用のタブを作成
         // TabItems 
         private void UpdatePromptResultTabItems(TabControl tabControl) {
             // PromptResultのタブ
             foreach (string promptName in ContentItem.PromptChatResult.Results.Keys) {
+                // TitleGenerationの場合は除外
+                if ( promptName == SystemDefinedPromptNames.TitleGeneration.ToString()) {
+                    continue;
+                }
                 PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
                 PromptItem? item = PromptItem.GetPromptItemByName(promptName);
                 if (item == null) {
