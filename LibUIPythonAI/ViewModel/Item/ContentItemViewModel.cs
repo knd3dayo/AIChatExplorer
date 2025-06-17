@@ -230,7 +230,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
             // PromptResultのタブ
-            UpdateSystemPromptResultTabItems(tabControl);
+            UpdatePromptResultTabItems(tabControl);
 
             SelectedTabIndex = LastSelectedTabIndex;
 
@@ -238,22 +238,9 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
-        private void UpdateSystemPromptResultTabItems(TabControl tabControl) {
+        private void UpdatePromptResultTabItems(TabControl tabControl) {
             // PromptResultのタブ
-            List<string> promptNames = [
-                SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
-                    SystemDefinedPromptNames.TasksGeneration.ToString(),
-                    SystemDefinedPromptNames.SummaryGeneration.ToString()
-                ];
-            // PromptChatResultのエントリからPromptItemの名前を取得
-            foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
-                if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
-                    continue;
-                }
-                promptNames.Add(name);
-            }
-
-            foreach (string promptName in promptNames) {
+            foreach (string promptName in ContentItem.PromptChatResult.Results.Keys) {
                 PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
                 PromptItem? item = PromptItem.GetPromptItemByName(promptName);
                 if (item == null) {
