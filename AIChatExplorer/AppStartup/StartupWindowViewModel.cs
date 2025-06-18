@@ -14,7 +14,7 @@ using LibUIPythonAI.Resource;
 namespace AIChatExplorer.AppStartup {
 
     public class StartupWindowViewModel {
-        public static async Task Startup() {
+        public static void Startup() {
 
             try {
 
@@ -38,7 +38,7 @@ namespace AIChatExplorer.AppStartup {
                 // PythonAILibManagerの初期化
                 PythonAILibManager.Init(configParams);
                 // DBの初期化
-                await PythonAILibDBContext.Init();
+                PythonAILibDBContext.Init();
                 // DataContextにViewModelを設定
                 MainWindowViewModel mainWindowViewModel = new();
                 // MainWindowを表示
