@@ -128,8 +128,16 @@ namespace LibPythonAI.Data {
         }
 
 
+        // SaveObjectToJson
+        public void SaveObjectToJson() {
+            this.SaveExtendedPropertiesJson();
+            this.SavePromptChatResultJson();
+            this.SaveChatMessagesJson();
+            this.SaveTagString();
+        }
         // Copy
         public ContentItemEntity Copy() {
+            SaveObjectToJson();
             ContentItemEntity newItem = new() {
                 CreatedAt = CreatedAt,
                 UpdatedAt = UpdatedAt,
@@ -151,10 +159,7 @@ namespace LibPythonAI.Data {
         public static void SaveItems(List<ContentItemEntity> items) {
             using PythonAILibDBContext context = new();
             foreach (var item in items) {
-                item.SaveExtendedPropertiesJson();
-                item.SavePromptChatResultJson();
-                item.SaveChatMessagesJson();
-                item.SaveTagString();
+                item.SaveObjectToJson();
                 var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
                 if (ExistingItem == null) {
                     context.ContentItems.Add(item);

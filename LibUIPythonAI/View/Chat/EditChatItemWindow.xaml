@@ -74,7 +74,10 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <Grid Grid.Row="1" Visibility="{Binding MarkdownVisibility}">
+        <Grid
+            Grid.Row="1"
+            Background="White"
+            Visibility="{Binding MarkdownVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="150" />
@@ -98,7 +101,10 @@
                 IsReadOnly="True"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
-        <Grid Grid.Row="1" Visibility="{Binding TextVisibility}">
+        <Grid
+            Grid.Row="1"
+            Background="White"
+            Visibility="{Binding TextVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="150" />

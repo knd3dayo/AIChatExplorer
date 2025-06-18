@@ -14,6 +14,8 @@ using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
+
+        public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
         public ContentItemWrapper() { }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
@@ -23,7 +25,7 @@ namespace LibPythonAI.Model.Content {
         public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
 
         // ID
-        public string Id { get => Entity.Id; }
+        public string Id { get => Entity.Id; set{ Entity.Id = value; } }
 
         // FolderId
         public string? FolderId {
@@ -576,6 +578,10 @@ namespace LibPythonAI.Model.Content {
 
 
         public virtual void Save() {
+            // IdがTEMPORARY_ITEM_IDの場合は保存しない
+            if (Id == TEMPORARY_ITEM_ID) {
+                return;
+            }
             if (ContentModified || DescriptionModified) {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;

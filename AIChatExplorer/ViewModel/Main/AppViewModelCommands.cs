@@ -168,6 +168,8 @@ namespace AIChatExplorer.ViewModel.Main {
             ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
             ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
+                // TEMPORARY_ITEM_ID
+                Id = ApplicationItem.TEMPORARY_ITEM_ID,
                 // タイトルを日付 + 元のタイトルにする
                 Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
             };
@@ -188,6 +190,8 @@ namespace AIChatExplorer.ViewModel.Main {
             ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
             // チャット履歴用のItemの設定
             ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
+                // Idを一時的なIDに設定
+                Id = ApplicationItem.TEMPORARY_ITEM_ID,
                 // タイトルを日付 + 元のタイトルにする
                 Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
             };
