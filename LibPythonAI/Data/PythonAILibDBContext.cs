@@ -34,12 +34,14 @@ namespace LibPythonAI.Data {
         }
 
 
-        public static void Init() {
-            using var context = new PythonAILibDBContext();
-            context.Database.EnsureCreated();
-            
-            context.SaveChanges();
+        public static async Task Init() {
+            await Task.Run(() => {
+                using var context = new PythonAILibDBContext();
+                context.Database.EnsureCreated();
 
+                context.SaveChanges();
+
+            });
         }
     }
 }

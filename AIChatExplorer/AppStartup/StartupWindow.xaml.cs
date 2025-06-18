@@ -8,8 +8,11 @@ namespace AIChatExplorer.AppStartup {
         public StartupWindow() {
             InitializeComponent();
 
-            StartupWindowViewModel.Startup();
+            _ = Startup();
+        }
 
+        private async Task Startup() {
+            await StartupWindowViewModel.Startup();
             this.Close();
         }
     }
