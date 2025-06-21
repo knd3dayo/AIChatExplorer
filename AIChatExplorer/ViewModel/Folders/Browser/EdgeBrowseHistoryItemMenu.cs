@@ -46,7 +46,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             get {
                 MenuItem downloadWebPageCommandMenuItem = new() {
                     Header = CommonStringResources.Instance.DownloadWebPage,
-                    Command = AppCommands.DownloadWebPageCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.DownloadWebPageCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
                 };
                 return downloadWebPageCommandMenuItem;

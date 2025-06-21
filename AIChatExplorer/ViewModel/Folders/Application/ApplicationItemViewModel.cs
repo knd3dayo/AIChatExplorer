@@ -1,12 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Item;
 using AIChatExplorer.ViewModel.Folders.Application;
-using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -15,9 +12,6 @@ namespace AIChatExplorer.ViewModel.Content {
 
         // コンストラクタ
         public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
-            if (folderViewModel.Commands == null) {
-                throw new Exception("folderViewModel.Commands is null");
-            }
             ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;

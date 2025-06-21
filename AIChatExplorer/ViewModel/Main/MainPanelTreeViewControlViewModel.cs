@@ -12,10 +12,10 @@ using LibUIPythonAI.ViewModel.Folder;
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelTreeViewControlViewModel : CommonViewModelBase {
 
-        private AppViewModelCommands Commands { get; set; }
+        private AppViewModelCommandExecutes Commands { get; set; }
 
         // constructor
-        public MainPanelTreeViewControlViewModel(AppViewModelCommands commands) {
+        public MainPanelTreeViewControlViewModel(AppViewModelCommandExecutes commands) {
             Commands = commands;
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
@@ -60,7 +60,7 @@ namespace AIChatExplorer.ViewModel.Main {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            AppViewModelCommands.ReloadFolderCommandExecute(this.SelectedFolder,
+            AppViewModelCommandExecutes.ReloadFolderCommandExecute(this.SelectedFolder,
                 () => {
                     UpdateIndeterminateAction(true);
                 },
@@ -89,7 +89,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            AppViewModelCommands.CutFolderCommandExecute(this);
+            AppViewModelCommandExecutes.CutFolderCommandExecute(this);
         });
 
 
@@ -101,7 +101,7 @@ namespace AIChatExplorer.ViewModel.Main {
             SelectedFolder = applicationItemFolderViewModel;
             if (SelectedFolder != null) {
                 // Load
-                SelectedFolder.LoadFolderCommand.Execute();
+                SelectedFolder.FolderCommands.LoadFolderCommand.Execute();
                 SelectedFolderChangedAction(SelectedFolder);
             }
         });
@@ -155,7 +155,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 return;
             }
             // フォルダを作成する
-            SelectedFolder.CreateFolderCommand.Execute();
+            SelectedFolder.FolderCommands.CreateFolderCommand.Execute();
         });
 
     }

@@ -1,5 +1,3 @@
-using AIChatExplorer.Model.Folders.Clipboard;
-using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
@@ -7,23 +5,34 @@ using LibPythonAI.Model.Content;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using AIChatExplorer.Model.Item;
+using LibUIPythonAI.ViewModel.Common;
+using AIChatExplorer.ViewModel.Folders.FileSystem;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace AIChatExplorer.ViewModel.Folders.Chat {
-    public class ChatFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var chatFolderViewModel = new ChatFolderViewModel(childFolder, commands) {
+            var chatFolderViewModel = new ChatHistoryFolderViewModel(childFolder, commands) {
                 // チャットフォルダの親フォルダにこのフォルダを追加
                 ParentFolderViewModel = this
             };
             return chatFolderViewModel;
         }
 
+        public override ObservableCollection<MenuItem> FolderMenuItems {
+            get {
+                ChatHistoryFolderMenu menu = new(this);
+                return menu.MenuItems;
+            }
+        }
+
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
-            ApplicationItem applicationItem = new(Folder.Entity);
+            ContentItemWrapper applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
             QAChatStartupProps props = new(applicationItemViewModel.ContentItem);
             LibUIPythonAI.View.Chat.ChatWindow.OpenOpenAIChatWindow(props);
@@ -32,9 +41,9 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
-            ApplicationFolder childFolder = (ApplicationFolder)Folder.CreateChild("");
+            ContentFolderWrapper childFolder = Folder.CreateChild("");
             childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
-            ChatFolderViewModel childFolderViewModel = new(childFolder, commands);
+            ChatHistoryFolderViewModel childFolderViewModel = new(childFolder, commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
@@ -45,8 +54,8 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
+        public override void EditFolderCommandExecute( Action afterUpdate) {
+            FolderEditWindow.OpenFolderEditWindow(this, afterUpdate);
         }
 
         // LoadLLMConfigListAsync
@@ -56,7 +65,7 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
 
         // LoadChildren
         public override void LoadChildren(int nestLevel) {
-            LoadChildren<ChatFolderViewModel, ApplicationFolder>(nestLevel);
+            LoadChildren<ChatHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
         }
     }
 }

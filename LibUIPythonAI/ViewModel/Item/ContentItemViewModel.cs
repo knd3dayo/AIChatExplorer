@@ -9,6 +9,7 @@ using LibPythonAI.Model.Prompt;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel.Item {
@@ -17,16 +18,15 @@ namespace LibUIPythonAI.ViewModel.Item {
         public ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) {
             ContentItem = contentItemBase;
             FolderViewModel = folderViewModel;
-            Commands = FolderViewModel.Commands;
 
         }
+
         public ContentItemWrapper ContentItem { get; set; }
 
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; }
 
-        public ContentItemViewModelCommands Commands { get; set; }
-
+        public ContentItemViewModelCommands ItemCommands => new(this, FolderViewModel.FolderCommands.CommandExecutes);
         // IsSelected
         private bool isSelected = false;
         public bool IsSelected {

@@ -9,9 +9,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
 
         // コンストラクタ
         public EdgeBrowseHistoryItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
-            if (folderViewModel.Commands == null) {
-                throw new Exception("folderViewModel.Commands is null");
-            }
+
             ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;

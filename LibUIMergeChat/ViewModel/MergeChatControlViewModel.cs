@@ -280,7 +280,7 @@ namespace LibUIMergeChat.ViewModel {
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         LogWrapper.Info(CommonStringResources.Instance.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行
-                        OutputFolder.LoadFolderCommand.Execute();
+                        OutputFolder.FolderCommands.LoadFolderCommand.Execute();
                         // Close
                         MainUITask.Run(() => {
                             CloseCommand.Execute();

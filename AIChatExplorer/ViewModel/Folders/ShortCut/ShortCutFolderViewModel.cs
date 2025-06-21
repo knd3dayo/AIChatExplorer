@@ -4,11 +4,11 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.ShortCut;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using LibPythonAI.Model.Content;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
-    public class ShortCutFolderViewModel(FileSystemFolder applicationItemFolder, ContentItemViewModelCommands commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {
+    public class ShortCutFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -25,7 +25,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
             if (childFolder is not FileSystemFolder) {
                 throw new Exception("childFolder is not FileSystemFolder");
             }
-            var childFolderViewModel = new ShortCutFolderViewModel((FileSystemFolder)childFolder, Commands) {
+            var childFolderViewModel = new ShortCutFolderViewModel((FileSystemFolder)childFolder, commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };

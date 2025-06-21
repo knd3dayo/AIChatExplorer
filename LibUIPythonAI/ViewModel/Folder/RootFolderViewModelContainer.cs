@@ -1,15 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Common;
 using System.Collections.ObjectModel;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class RootFolderViewModelContainer(ContentItemViewModelCommands commands) : ObservableObject {
+    public class RootFolderViewModelContainer(CommonViewModelCommandExecutes commands) : ObservableObject {
 
         // ApplicationFolder
         public static ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = [];
 
         // Commands
-        public ContentItemViewModelCommands Commands { get; set; } = commands;
+        public CommonViewModelCommandExecutes Commands { get; set; } = commands;
 
 
     }

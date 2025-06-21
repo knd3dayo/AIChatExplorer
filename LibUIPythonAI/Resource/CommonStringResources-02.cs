@@ -88,6 +88,9 @@ namespace LibUIPythonAI.Resource {
         // RecentFiles
         public virtual string RecentFiles { get; } = "Recent Files";
 
+        // ClipboardHistory
+        public virtual string ClipboardHistory { get; } = "Clipboard History";
+
         // ProxyURL
         public virtual string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList

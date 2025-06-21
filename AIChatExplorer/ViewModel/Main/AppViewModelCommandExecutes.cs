@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using AIChatExplorer.Model.Folders.Clipboard;
+using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Settings;
@@ -16,50 +16,21 @@ using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
-using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.View.Search;
-using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Chat;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class AppViewModelCommands(Action<bool> updateIndeterminate, Action updateView) : ContentItemViewModelCommands(updateIndeterminate, updateView) {
+    public class AppViewModelCommandExecutes(Action<bool> updateIndeterminate, Action updateView) : CommonViewModelCommandExecutes(updateIndeterminate, updateView) {
 
-
-        // フォルダを開くコマンド
-        public SimpleDelegateCommand<ContentItemViewModel> OpenFolderCommand => new((itemViewModel) => {
-            OpenFolderExecute(itemViewModel);
-        });
-
-        // テキストをファイルとして開くコマンド
-        public SimpleDelegateCommand<ContentItemViewModel> OpenContentAsFileCommand => new((itemViewModel) => {
-            OpenFolderExecute(itemViewModel);
-        });
-
-        // ファイルを開くコマンド
-        public SimpleDelegateCommand<ContentItemViewModel> OpenFileCommand => new((itemViewModel) => {
-            OpenFolderExecute(itemViewModel);
-        });
-
-        // ファイルを新規ファイルとして開くコマンド
-        public SimpleDelegateCommand<ContentItemViewModel> OpenFileAsNewFileCommand => new((itemViewModel) => {
-            OpenFileAsNewFileExecute(itemViewModel);
-        });
-
-
-        // アイテム保存
-        public SimpleDelegateCommand<ContentItemViewModel> SaveApplicationItemCommand => new((itemViewModel) => {
-            itemViewModel.ContentItem.Save();
-        });
 
 
         // OpenContentItemCommand
@@ -73,13 +44,6 @@ namespace AIChatExplorer.ViewModel.Main {
             OpenOpenAIChatWindowCommandExecute(itemViewModel);
         });
 
-        public SimpleDelegateCommand<ContentItemViewModel> OpenVectorSearchWindowCommand => new((itemViewModel) => {
-            OpenVectorSearchWindowCommandExecute(itemViewModel);
-        });
-        // OpenFolderVectorSearchWindowCommand
-        public SimpleDelegateCommand<ContentFolderViewModel> OpenFolderVectorSearchWindowCommand => new((folderViewModel) => {
-            OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
-        });
 
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CutItemCommand => new((itemViewModels) => {
             CutItemCommandExecute(itemViewModels);
@@ -103,35 +67,7 @@ namespace AIChatExplorer.ViewModel.Main {
             StartStopClipboardMonitorCommandExecute();
         });
 
-        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            // Display exit confirmation dialog. If Yes, exit the application
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                Application.Current.Shutdown();
-            }
-        });
 
-
-        //---------------------
-
-
-        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
-        public static void OpenListPromptTemplateWindowCommandExecute() {
-            // ListPromptTemplateWindowを開く
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => { });
-        }
-        // メニューの「自動処理ルールを編集」をクリックしたときの処理
-        public static void OpenListAutoProcessRuleWindowCommandExecute() {
-            // ListAutoProcessRuleWindowを開く
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
-
-        }
-        // メニューの「タグ編集」をクリックしたときの処理
-        public static void OpenTagWindowCommandExecute() {
-            // TagWindowを開く
-            TagWindow.OpenTagWindow(null, () => { });
-
-        }
 
         public static void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
             if (itemViewModel == null) {
@@ -142,7 +78,7 @@ namespace AIChatExplorer.ViewModel.Main {
             EditItemControl editItemControl = EditItemControl.CreateEditItemControl(folderViewModel, itemViewModel,
                 () => {
                     // フォルダ内のアイテムを再読み込み
-                    folderViewModel.LoadFolderCommand.Execute();
+                    folderViewModel.FolderCommands.LoadFolderCommand.Execute();
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
@@ -212,14 +148,6 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
-        // Process when "Vector DB Management" is clicked in the menu
-        public static void OpenVectorDBManagementWindowCommand() {
-            // Open VectorDBManagementWindow
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, RootFolderViewModelContainer.FolderViewModels, (vectorDBItem) => { });
-        }
-
-
-
         // Process when "Settings" is clicked in the menu
         public static void SettingCommandExecute() {
             // Open UserControl settings window
@@ -235,12 +163,11 @@ namespace AIChatExplorer.ViewModel.Main {
         // Process to display the search window
         public static void OpenSearchWindowCommandExecute(SearchFolderViewModel searchFolderViewModel, System.Action action) {
             SearchRule? searchConditionRule = new() {
-                    SearchFolderId = searchFolderViewModel.Folder.Id,
-                };
+                SearchFolderId = searchFolderViewModel.Folder.Id,
+            };
             SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel.Folder, action);
 
         }
-
 
         // Process when Ctrl + X is pressed on a folder
         public static void CutFolderCommandExecute(MainPanelTreeViewControlViewModel model) {
@@ -310,11 +237,11 @@ namespace AIChatExplorer.ViewModel.Main {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
+                        model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel?.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
-                        model.RootFolderViewModelContainer.RootFolderViewModel?.LoadFolderCommand.Execute();
+                        model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
                     });
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);

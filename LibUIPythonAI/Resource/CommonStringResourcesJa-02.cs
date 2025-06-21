@@ -421,6 +421,9 @@ namespace LibUIPythonAI.Resource {
         // RecentFiles
         public override string RecentFiles { get; } = "最近のファイル";
 
+        // ClipboardHistory
+        public override string ClipboardHistory { get; } = "クリップボード履歴";
+
         // RecentFiles 英語名
         public override string RecentFilesEnglish { get; } = "RecentFiles";
 

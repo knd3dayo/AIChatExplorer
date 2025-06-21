@@ -21,13 +21,7 @@ namespace LibPythonAI.Common {
         public bool UseExternalAPI();
         #endregion
 
-        public string GetDBPath();
-
         public string GetMainDBPath();
-
-        public string GetSystemVectorDBPath();
-
-        public string GetSystemDocDBPath();
 
         public string GetAppDataPath();
 

@@ -86,20 +86,14 @@
                             Header="{x:Static local:ViewStringResources.OpenAsNewFile}" />
                         <!--  フォルダを開く  -->
                         <MenuItem
-                            Command="{Binding ItemViewModel.Commands.OpenFolderCommand}"
+                            Command="{Binding ItemViewModel.Commands.OpenFolderInExplorerCommand}"
                             CommandParameter="{Binding ItemViewModel}"
                             Header="{x:Static local:ViewStringResources.OpenFolder}" />
                         <!--  テキスト抽出  -->
                         <MenuItem
-                            Command="{Binding ItemViewModel.Commands.ExtractTextCommand}"
+                            Command="{Binding ItemViewModel.ItemCommands.ExtractTextCommand}"
                             CommandParameter="{Binding ItemViewModel}"
                             Header="{x:Static local:ViewStringResources.ExtractText}" />
-
-                        <MenuItem
-                            Command="{Binding ItemViewModel.MaskDataCommand}"
-                            CommandParameter="{Binding ItemViewModel}"
-                            Header="{x:Static local:ViewStringResources.MaskData}"
-                            Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
                     </MenuItem>
                 </Menu>
             </materialDesign:ColorZone>

@@ -1,6 +1,7 @@
 using System.IO;
+using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.Browser;
-using AIChatExplorer.Model.Folders.Clipboard;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.Model.Folders.Search;
@@ -21,6 +22,8 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME = CommonStringResources.Instance.Outlook;
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.EdgeBrowseHistory;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
+        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.ClipboardHistory;
+
 
         // 英語名
         public static readonly string APPLICATION_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ApplicationEnglish;
@@ -31,6 +34,7 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.OutlookEnglish;
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.EdgeBrowseHistoryEnglish;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.RecentFilesEnglish;
+        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardHistoryEnglish;
 
 
         // 言語変更時にルートフォルダ名を変更する
@@ -38,10 +42,10 @@ namespace AIChatExplorer.Model.Main {
             using PythonAILibDBContext db = new();
             // ClipboardRootFolder
 
-            var clipboardRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
+            var applicationRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
 
-            if (clipboardRootFolder != null) {
-                clipboardRootFolder.FolderName = toRes.Application;
+            if (applicationRootFolder != null) {
+                applicationRootFolder.FolderName = toRes.Application;
             }
             // SearchRootFolder
             var searchRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
@@ -78,11 +82,9 @@ namespace AIChatExplorer.Model.Main {
             if (recentFilesRootFolder != null) {
                 recentFilesRootFolder.FolderName = toRes.RecentFiles;
             }
-            // ChatRootFolder
-            var applicationRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
-            if (applicationRootFolder != null) {
-                applicationRootFolder.FolderName = toRes.Application;
-            }
+            // ClipboardHistoryRootFolder
+            var clipboardHistoryRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN);
+
             db.SaveChanges();
         }
 
@@ -332,6 +334,40 @@ namespace AIChatExplorer.Model.Main {
                 return recentFilesRootFolder;
             }
         }
+        // ClipboardHistory Root Folder
+        private static ClipboardHistoryFolder? clipboardHistoryRootFolder;
+        public static ClipboardHistoryFolder ClipboardHistoryRootFolder {
+            get {
+                if (clipboardHistoryRootFolder == null) {
+                    using PythonAILibDBContext db = new();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN);
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN)
+                        };
+                        folderRoot.Save();
+                    }
+                    ClipboardHistoryFolder? folder = ContentFolderWrapper.GetFolderById<ClipboardHistoryFolder>(folderRoot.Id);
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME,
+                            FolderTypeString = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
+                        };
+                        folder.Save();
+                    }
+                    clipboardHistoryRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (clipboardHistoryRootFolder.IsRootFolder == false) {
+                    clipboardHistoryRootFolder.IsRootFolder = true;
+                    clipboardHistoryRootFolder.Save();
+                }
+                return clipboardHistoryRootFolder;
+            }
 
+        }
     }
 }

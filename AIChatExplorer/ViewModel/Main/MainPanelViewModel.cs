@@ -7,7 +7,7 @@ using LibUIPythonAI.Utils;
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelViewModel : CommonViewModelBase {
 
-        public MainPanelViewModel(AppViewModelCommands commands) : base() {
+        public MainPanelViewModel(AppViewModelCommandExecutes commands) : base() {
             Commands = commands;
             MainPanelTreeViewControlViewModel = new MainPanelTreeViewControlViewModel(Commands);
             MainPanelDataGridViewControlViewModel = new MainPanelDataGridViewControlViewModel(Commands);
@@ -26,7 +26,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         }
 
-        public AppViewModelCommands Commands { get; set; }
+        public AppViewModelCommandExecutes Commands { get; set; }
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }

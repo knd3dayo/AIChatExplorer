@@ -520,7 +520,7 @@ namespace LibPythonAI.Resources {
         // ファイル以外のコンテンツはテキストを抽出できません
         public override string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
 
-        // OpenFolder
+        // OpenFolderInExplorer
 
         // ファイル以外のコンテンツはフォルダを開けません
         public override string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";

@@ -58,7 +58,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             SelectedFolderAbsoluteCollectionName = applicationItemFolderViewModel.FolderPath;
             FolderSelectedAction?.Invoke(SelectedFolder, false);
 
-            SelectedFolder.LoadFolderCommand.Execute(null);
+            SelectedFolder.FolderCommands.LoadFolderCommand.Execute(null);
 
         });
     }

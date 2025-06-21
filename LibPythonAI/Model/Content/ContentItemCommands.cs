@@ -14,7 +14,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // Command to open a folder
-        public static void OpenFolder(ContentItemWrapper contentItem) {
+        public static void OpenFolderInExplorer(ContentItemWrapper contentItem) {
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentItemTypes.ContentItemTypeEnum.Files) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.CannotOpenFolderForNonFileContent);

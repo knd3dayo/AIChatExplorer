@@ -2,14 +2,17 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
+using AIChatExplorer.Model.Folders.ShortCut;
+using AIChatExplorer.Model.Main;
+using AIChatExplorer.Model.Folders.FileSystem;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : ApplicationFolderMenu(clipboardFolderViewModel) {
+    public class FileSystemFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : ApplicationFolderMenu(applicationFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
             get {
-                #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
 
@@ -29,8 +32,6 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
                 menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
-
-                #endregion
             }
 
         }
@@ -40,11 +41,32 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
             get {
                 MenuItem createShortCutMenuItem = new() {
                     Header = CommonStringResources.Instance.CreateShortCut,
-                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
+                    Command = CreateShortCutCommand,
                     CommandParameter = ApplicationFolderViewModel
                 };
                 return createShortCutMenuItem;
             }
         }
+
+
+        // ショートカット登録コマンド
+        public static SimpleDelegateCommand<FileSystemFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
+
+            FileSystemFolder fileSystemFolder = (FileSystemFolder)folderViewModel.Folder;
+            // ショートカット登録
+            // ShortCutRootFolderを取得
+            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
+            // ショートカットフォルダを作成
+            ShortCutFolder contentFolder = new() {
+                FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
+                Description = folderViewModel.FolderName,
+                FolderName = folderViewModel.FolderName,
+                Parent = shortCutRootFolder,
+                FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
+            };
+            contentFolder.Save();
+
+        });
+
     }
 }

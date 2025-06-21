@@ -8,7 +8,7 @@ using AIChatExplorer.ViewModel.Folders.Mail;
 using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : RootFolderViewModelContainer {
@@ -20,7 +20,7 @@ namespace AIChatExplorer.ViewModel.Main {
         public SearchFolderViewModel SearchRootFolderViewModel { get; private set; }
 
         // チャットフォルダのClipboardViewModel
-        public ChatFolderViewModel ChatRootFolderViewModel { get; private set; }
+        public ChatHistoryFolderViewModel ChatRootFolderViewModel { get; private set; }
 
         // ローカルファイルシステムのフォルダのViewModel
         public FileSystemFolderViewModel FileSystemFolderViewModel { get; private set; }
@@ -37,15 +37,19 @@ namespace AIChatExplorer.ViewModel.Main {
         // OutlookフォルダのViewModel
         public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
 
+        // ClipboardHistoryフォルダのViewModel
+        public ApplicationFolderViewModel ClipboardHistoryFolderViewModel { get; private set; }
+
         // コンストラクタ
-        public FolderViewModelManager(ContentItemViewModelCommands commands) : base(commands) {
+        public FolderViewModelManager(CommonViewModelCommandExecutes commands) : base(commands) {
             RootFolderViewModel = new ApplicationFolderViewModel(FolderManager.RootFolder, commands);
             SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder, commands);
-            ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder, commands);
+            ChatRootFolderViewModel = new ChatHistoryFolderViewModel(FolderManager.ChatRootFolder, commands);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder, MainWindowViewModel.Instance.Commands);
             ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder, commands);
             RecentFilesFolderViewModel = new RecentFilesFolderViewModel(FolderManager.RecentFilesRootFolder, commands);
             EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(FolderManager.EdgeBrowseHistoryRootFolder, commands);
+            ClipboardHistoryFolderViewModel = new ApplicationFolderViewModel(FolderManager.ClipboardHistoryRootFolder, commands);
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
@@ -60,6 +64,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
+            FolderViewModels.Add(ClipboardHistoryFolderViewModel);
 
             OnPropertyChanged(nameof(FolderViewModels));
         }

@@ -9,7 +9,7 @@ using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace AIChatExplorer.Model.Folders.Clipboard {
+namespace AIChatExplorer.Model.Folders.Application {
     public partial class ApplicationFolder : ContentFolderWrapper {
 
 
@@ -69,23 +69,23 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
             
             ContentItemTypes.ContentItemTypeEnum contentItemTypes;
             string sourceType;
-            if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Text) {
-                contentItemTypes = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text;
+            if (e.ContentType == ContentTypes.Text) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Text;
                 sourceType = ContentSourceType.Application;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Files) {
-                contentItemTypes = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files;
+            } else if (e.ContentType == ContentTypes.Files) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Files;
                 sourceType = ContentSourceType.File;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Image) {
-                contentItemTypes = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Image;
+            } else if (e.ContentType == ContentTypes.Image) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Image;
                 sourceType = ContentSourceType.Application;
-            } else if (e.ContentType == WK.Libraries.SharpClipboardNS.SharpClipboard.ContentTypes.Other) {
+            } else if (e.ContentType == ContentTypes.Other) {
                 return result;
             } else {
                 return result;
             }
 
             // If ContentType is Text, set text data
-            if (contentItemTypes == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Text) {
                 ApplicationItem item = new(clipboardFolder.Entity) {
                     ContentType = contentItemTypes,
                     SourceType = sourceType
@@ -97,7 +97,7 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
             }
 
             // If ContentType is BitmapImage, set image data
-            if (contentItemTypes == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Image) {
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Image) {
                 ApplicationItem item = new(clipboardFolder.Entity) {
                     ContentType = contentItemTypes,
                     SourceType = sourceType
@@ -106,13 +106,13 @@ namespace AIChatExplorer.Model.Folders.Clipboard {
                 SetApplicationInfo(item, e);
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 // byte
-                item.Base64Image = LibPythonAI.Model.Content.ContentItemTypes.GetBase64StringFromImage(image);
+                item.Base64Image = ContentItemTypes.GetBase64StringFromImage(image);
                 result.Add(item);
                 return result;
             }
 
             // If ContentType is Files, set file data
-            if (contentItemTypes == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files) {
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Files) {
                 string[] files = (string[])e.Content;
 
                 // Get the cut/copied file/files.

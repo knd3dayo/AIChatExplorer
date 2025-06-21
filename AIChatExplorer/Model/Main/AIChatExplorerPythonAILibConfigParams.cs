@@ -43,13 +43,6 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.TextWrapping;
         }
 
-        public string GetDBPath() {
-            /// Get AppData folder path
-            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
-            // Create database file path
-            string dbPath = Path.Combine(appDataPath, "clipboard.db");
-            return dbPath;
-        }
 
         public string GetMainDBPath() {
             /// Get AppData folder path
@@ -71,23 +64,6 @@ namespace AIChatExplorer.Model.Main {
 
         }
 
-        public string GetSystemVectorDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
-            if (!Directory.Exists(vectorDBDir)) {
-                Directory.CreateDirectory(vectorDBDir);
-            }
-            string vectorDBPath = Path.Combine(vectorDBDir, "clipboard_vector_db");
-            return vectorDBPath;
-        }
-
-        public string GetSystemDocDBPath() {
-            string vectorDBDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "vector_db");
-            if (!Directory.Exists(vectorDBDir)) {
-                Directory.CreateDirectory(vectorDBDir);
-            }
-            string docDBPath = Path.Combine(vectorDBDir, "clipboard_doc_store.db");
-            return docDBPath;
-        }
 
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {

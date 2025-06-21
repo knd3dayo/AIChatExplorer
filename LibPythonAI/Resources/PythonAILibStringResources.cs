@@ -435,7 +435,7 @@ namespace LibPythonAI.Resources {
 
         public virtual string CannotExtractTextForNonFileContent { get; } = "Cannot extract text for non-file content";
 
-        // OpenFolder
+        // OpenFolderInExplorer
         public virtual string CannotOpenFolderForNonFileContent { get; } = "Cannot open folder for non-file content";
 
         // ExecuteOpenFolder

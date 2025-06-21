@@ -63,10 +63,6 @@
                             Foreground="#616161"
                             Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
                             Text="{Binding FolderName}" />
-                        <DockPanel.InputBindings>
-                            <!--  Open folder on left click  -->
-                            <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
-                        </DockPanel.InputBindings>
                         <DockPanel.ContextMenu>
                             <!--  Folder context menu  -->
                             <ContextMenu FontSize="12" ItemsSource="{Binding FolderMenuItems}" />

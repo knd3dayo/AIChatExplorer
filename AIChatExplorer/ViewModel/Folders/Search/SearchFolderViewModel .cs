@@ -5,18 +5,18 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Search;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Search {
-    public class SearchFolderViewModel(SearchFolder applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class SearchFolderViewModel(SearchFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
             if (childFolder is not SearchFolder) {
                 throw new ArgumentException("Child folder must be a SearchFolder.");
             }
-            var searchFolderViewModel = new SearchFolderViewModel((SearchFolder)childFolder, Commands) {
+            var searchFolderViewModel = new SearchFolderViewModel((SearchFolder)childFolder, commands) {
                 // 検索フォルダの親フォルダにこのフォルダを追加
                 ParentFolderViewModel = this
             };
@@ -31,17 +31,17 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
-            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, Commands);
+            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, commands);
             SearchRule? searchConditionRule = new() {
                 SearchFolder = clipboardFolder
             };
 
             SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, () => {
                 // 保存と再読み込み
-                searchFolderViewModel.SaveFolderCommand.Execute(null);
+                searchFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
-                folderViewModel.SaveFolderCommand.Execute(null);
-                folderViewModel.LoadFolderCommand.Execute(null);
+                folderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
+                folderViewModel.FolderCommands.LoadFolderCommand.Execute(null);
 
             });
 
@@ -67,7 +67,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
         public override void LoadChildren(int nestLevel) {
             LoadChildren<SearchFolderViewModel, SearchFolder>(nestLevel);
         }
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void EditFolderCommandExecute(Action afterUpdate) {
             if (Folder is not SearchFolder searchFolder) {
                 return;
             }

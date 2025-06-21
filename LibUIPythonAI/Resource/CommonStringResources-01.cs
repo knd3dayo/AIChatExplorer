@@ -19,6 +19,9 @@ namespace LibUIPythonAI.Resource {
         // RecentFiles (English name)
         public virtual string RecentFilesEnglish { get; } = "RecentFiles";
 
+        // Clipboard History (English name)
+        public virtual string ClipboardHistoryEnglish { get; } = "ClipboardHistory";
+
         // Application (English name)
         public virtual string ApplicationEnglish { get; } = "Application";
 

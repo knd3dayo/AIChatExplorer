@@ -7,15 +7,16 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class MainPanelDataGridViewControlViewModel(AppViewModelCommands commands) : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(AppViewModelCommandExecutes commands) : ObservableObject {
 
-        private AppViewModelCommands Commands { get; set; } = commands;
+        private AppViewModelCommandExecutes Commands { get; set; } = commands;
 
-        public TabControl? MyTabControl { get; set; } 
+        public TabControl? MyTabControl { get; set; }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
 
         private ContentFolderViewModel? _selectedFolder;
@@ -117,7 +118,7 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         });
 
-        #region アイテムのコンテキストメニューのInputBinding用のコマンド
+
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
             Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
@@ -125,45 +126,47 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
-            Commands.GenerateVectorCommand.Execute(this.SelectedItems);
+            SelectedFolder?.FolderCommands.GenerateVectorCommand.Execute(this.SelectedItems);
         });
 
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
-            Commands.VectorSearchCommand.Execute(SelectedItem);
+            CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
         });
 
-        #endregion
 
-        #region アイテムのInputBinding用のコマンド
         // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
-            SelectedFolder?.DeleteDisplayedItemCommand.Execute();
+            SelectedFolder?.FolderCommands.DeleteDisplayedItemCommand.Execute();
         });
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
-            Commands.DeleteItemsCommand.Execute(this.SelectedItems);
+            CommonViewModelCommandExecutes.DeleteItemsCommandExecute(SelectedItems, () => {
+                // プログレスインジケータを表示
+                commands.UpdateIndeterminate(true);
+            },
+            () => {
+                commands.UpdateIndeterminate(false);
+                UpdateView();
+            });
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            AppViewModelCommands.CutItemCommandExecute(this.SelectedItems);
+            AppViewModelCommandExecutes.CutItemCommandExecute(this.SelectedItems);
         });
 
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            AppViewModelCommands.CopyToClipboardCommandExecute(this.SelectedItems);
+            AppViewModelCommandExecutes.CopyToClipboardCommandExecute(this.SelectedItems);
         });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            AppViewModelCommands.OpenItemCommandExecute(this.SelectedItem);
+            AppViewModelCommandExecutes.OpenItemCommandExecute(this.SelectedItem);
         });
-
-
-        #endregion
 
 
 

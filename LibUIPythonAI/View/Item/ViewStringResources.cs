@@ -56,7 +56,7 @@ namespace LibUIPythonAI.View.Item {
         // OpenFile
         public static string OpenFile { get; set; } = CommonStringResources.Instance.OpenFile;
 
-        // OpenFolder
+        // OpenFolderInExplorer
         public static string OpenFolder { get; set; } = CommonStringResources.Instance.OpenFolder;
 
         // OpenAsNewFile

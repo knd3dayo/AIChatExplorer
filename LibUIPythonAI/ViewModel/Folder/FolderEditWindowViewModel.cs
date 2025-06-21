@@ -109,7 +109,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // VectorSearchPropertiesを設定
             FolderViewModel.Folder.ReferenceVectorSearchProperties = [.. VectorSearchProperties];
 
-            FolderViewModel.SaveFolderCommand.Execute(null);
+            FolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
             // フォルダ作成後に実行するコマンドが設定されている場合
             AfterUpdate?.Invoke();
             // ウィンドウを閉じる

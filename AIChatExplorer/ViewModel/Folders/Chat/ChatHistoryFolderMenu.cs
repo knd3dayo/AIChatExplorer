@@ -1,10 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Resource;
 
-namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : ApplicationFolderMenu(applicationFolderViewModel) {
+namespace AIChatExplorer.ViewModel.Folders.Chat {
+    public class ChatHistoryFolderMenu : ApplicationFolderMenu {
+
+        public ChatHistoryFolderViewModel FolderViewModel { get; private set; }
+
+        public ChatHistoryFolderMenu(ChatHistoryFolderViewModel folderViewModel) : base(folderViewModel) {
+            FolderViewModel = folderViewModel;
+        }
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
@@ -16,8 +23,9 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
                 // 編集
                 menuItems.Add(EditMenuItem);
 
-                // Webぺージをダウンロード
-                menuItems.Add(DownloadWebPageCommandMenuItem);
+                //テキストの抽出
+                menuItems.Add(ExtractTextMenuItem);
+
                 // ベクトルのリフレッシュ
                 menuItems.Add(RefreshMenuItem);
 
@@ -28,20 +36,8 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
 
                 #endregion
             }
-
         }
 
-        // DownloadWebPageCommandMenuItem
-
-        public MenuItem DownloadWebPageCommandMenuItem {
-            get {
-                MenuItem downloadWebPageCommandMenuItem = new() {
-                    Header = CommonStringResources.Instance.DownloadWebPage,
-                    Command = ApplicationFolderViewModel.FolderCommands.DownloadWebPageCommand,
-                };
-                return downloadWebPageCommandMenuItem;
-            }
-        }
 
     }
 }

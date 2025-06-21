@@ -1,23 +1,21 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Folders.Clipboard;
+using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Content;
 
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
-    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ContentFolderViewModel(applicationItemFolder, commands) {
+    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ContentFolderViewModel(applicationItemFolder, commands) {
         public override ApplicationItemViewModel CreateItemViewModel(ContentItemWrapper item) {
             return new ApplicationItemViewModel(this, item);
         }
@@ -27,10 +25,14 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             return MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel;
         }
 
+        public override ObservableCollection<ContentItemViewModel> GetSelectedItems() {
+            // MainWindowViewModelのSelectedItemsを取得
+            return MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems ?? new ObservableCollection<ContentItemViewModel>();
+        }
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var childFolderViewModel = new ApplicationFolderViewModel(childFolder, Commands) {
+            var childFolderViewModel = new ApplicationFolderViewModel(childFolder, commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
@@ -55,25 +57,6 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             }
         }
 
-        // フォルダ作成コマンドの実装
-        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            // 子フォルダを作成する
-            ApplicationFolder childFolder = (ApplicationFolder)Folder.CreateChild("");
-            ApplicationFolderViewModel childFolderViewModel = new(childFolder, Commands);
-
-            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
-
-        }
-
-        /// <summary>
-        ///  フォルダ編集コマンド
-        ///  フォルダ編集ウィンドウを表示する処理
-        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
-        /// </summary>
-        /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
-        }
 
         public override void CreateItemCommandExecute() {
             ApplicationItem applicationItem = new(Folder.Entity);
@@ -84,17 +67,17 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             EditItemControl editItemControl = EditItemControl.CreateEditItemControl(this, ItemViewModel,
                 () => {
                     // フォルダ内のアイテムを再読み込み
-                    LoadFolderCommand.Execute();
+                    FolderCommands.LoadFolderCommand.Execute();
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
             MainTabContent container = new("New Item", editItemControl);
 
             // UserControlをクローズする場合の処理を設定
-            editItemControl.SetCloseUserControl(() => { 
+            editItemControl.SetCloseUserControl(() => {
                 MainWindowViewModel.Instance.MainTabManager.RemoveTabItem(container);
             });
-           MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
+            MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
         public virtual void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
@@ -115,31 +98,15 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
                         folder.MoveTo(toFolder.Folder);
                         // 元のフォルダの親フォルダを再読み込み
-                        folderViewModel.ParentFolderViewModel?.LoadFolderCommand.Execute();
+                        folderViewModel.ParentFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
                     }
                 }
 
             }
-            toFolder.LoadFolderCommand.Execute();
+            toFolder.FolderCommands.LoadFolderCommand.Execute();
 
             LogWrapper.Info(CommonStringResources.Instance.Pasted);
         }
 
-        // -----------------------------------------------------------------------------------
-        #region プログレスインジケーター表示の処理
-
-
-        // ExtractTextCommand
-        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            // ContentTypes.Files, ContentTypes.Imageのアイテムを取得
-            var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files || x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files);
-            Commands.ExtractTextCommand.Execute(MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems);
-
-        });
-
-
-        #endregion
-
-        //
     }
 }

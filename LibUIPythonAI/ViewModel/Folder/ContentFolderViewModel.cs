@@ -1,36 +1,45 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Model;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, ContentItemViewModelCommands commands) : CommonViewModelBase {
+    public abstract class ContentFolderViewModel(ContentFolderWrapper folder, CommonViewModelCommandExecutes commands) : CommonViewModelBase {
         public ContentFolderWrapper Folder { get; set; } = folder;
 
-        public ContentItemViewModelCommands Commands { get; set; } = commands;
+        public ContentFolderViewModelCommands FolderCommands => new(this, commands);
 
 
         // フォルダ作成コマンドの実装
-        public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
         public abstract void CreateItemCommandExecute();
-        public abstract void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
+
         public abstract ContentItemViewModel CreateItemViewModel(ContentItemWrapper item);
 
         public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
+
+        public abstract ObservableCollection<ContentItemViewModel> GetSelectedItems();
 
         // RootFolderのViewModelを取得する
         public abstract ContentFolderViewModel GetRootFolderViewModel();
 
         public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder);
+
+        // フォルダ作成コマンドの実装
+        public virtual void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+
+            FolderEditWindow.OpenFolderEditWindow(CreateChildFolderViewModel(Folder.CreateChild("")), afterUpdate);
+        }
+
+        public virtual void EditFolderCommandExecute(Action afterUpdate) {
+            FolderEditWindow.OpenFolderEditWindow(this, afterUpdate);
+        }
 
         // フォルダを読み込む
         public virtual void LoadFolderExecute(Action beforeAction, Action afterAction) {
@@ -75,7 +84,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
 
-        public void LoadItems<Item>() where Item : ContentItemWrapper {
+        protected void LoadItems<Item>() where Item : ContentItemWrapper {
             Task.Run(() => {
                 List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
                 MainUITask.Run(() => {
@@ -87,71 +96,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         }
 
-        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            LoadFolderExecute(
-                () => {
-                    Commands.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        Commands.UpdateIndeterminate(false);
-                        UpdateStatusText();
-                    });
-                });
-        });
-
-        // フォルダー保存コマンド
-        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            Folder.Save();
-        });
-        // 新規フォルダ作成コマンド
-        public SimpleDelegateCommand<object> CreateFolderCommand => new((parameter) => {
-
-            CreateFolderCommandExecute(this, () => {
-                // 親フォルダを保存
-                this.Folder.Save();
-                this.LoadFolderCommand.Execute();
-
-            });
-        });
-
-        // フォルダ編集コマンド
-        public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {
-
-            EditFolderCommandExecute(this, () => {
-                //　フォルダを保存
-                this.Folder.Save();
-                LoadFolderCommand.Execute();
-                LogWrapper.Info(CommonStringResources.Instance.FolderEdited);
-            });
-        });
-        public void DeleteDisplayedItemCommandExecute(Action beforeAction, Action afterAction) {
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                beforeAction();
-                ContentItemViewModel.DeleteItems([.. Items]).ContinueWith((task) => {
-                    // 全ての削除処理が終了した後、後続処理を実行
-                    // フォルダ内のアイテムを再読み込む
-                    afterAction();
-                });
-            }
-        }
-
-        // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
-        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
-            DeleteDisplayedItemCommandExecute(() => {
-                Commands.UpdateIndeterminate(true);
-            }, () => {
-                // 全ての削除処理が終了した後、後続処理を実行
-                // フォルダ内のアイテムを再読み込む
-                MainUITask.Run(() => {
-                    LoadFolderCommand.Execute();
-                });
-                LogWrapper.Info(CommonStringResources.Instance.Deleted);
-                Commands.UpdateIndeterminate(false);
-            });
-        });
 
         // GetItems
         public ObservableCollection<ContentItemViewModel> Items { get; } = [];
@@ -167,11 +111,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         public ContentFolderViewModel? ParentFolderViewModel { get; set; }
-
-        // アイテム保存コマンド
-        public SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new((item) => {
-            Folder.AddItem(item.ContentItem);
-        });
 
         // DisplayText
         public string Description {
@@ -212,58 +151,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
-
-            // フォルダ削除するかどうか確認
-            if (MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteFolder, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
-                return;
-            }
-            // 親フォルダを取得
-            ContentFolderViewModel? parentFolderViewModel = this.ParentFolderViewModel;
-
-            this.Folder.Delete();
-
-            // 親フォルダが存在する場合は、親フォルダを再読み込み
-            if (parentFolderViewModel != null) {
-                parentFolderViewModel.LoadFolderCommand.Execute();
-            }
-
-            LogWrapper.Info(CommonStringResources.Instance.FolderDeleted);
-        });
-        // ベクトルのリフレッシュ
-        public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            Task.Run(() => {
-                // MainWindowViewModelのIsIndeterminateをTrueに設定
-                string? vectorDBItemName = Folder.GetMainVectorSearchItem().VectorDBItemName;
-                if (vectorDBItemName == null) {
-                    return;
-                }
-                CommonViewModelProperties.UpdateIndeterminate(true);
-                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, Folder.ContentFolderPath);
-                ContentItemCommands.UpdateEmbeddings(Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
-
-                    ContentItemWrapper.SaveItems(Folder.GetItems<ContentItemWrapper>(isSync: false));
-                    CommonViewModelProperties.UpdateIndeterminate(false);
-                });
-
-            });
-
-        });
-        // ExportImportFolderCommand
-        public SimpleDelegateCommand<object> ExportImportFolderCommand => new((parameter) => {
-            // ExportImportFolderWindowを開く
-            ExportImportWindow.OpenExportImportFolderWindow(this, () => {
-                // ファイルを再読み込み
-                this.LoadFolderCommand.Execute();
-            });
-        });
-
-        protected virtual void UpdateStatusText() {
+        public virtual void UpdateStatusText() {
             string message = Folder.GetStatusText();
             StatusText.Instance.ReadyText = message;
             StatusText.Instance.Text = message;
         }
-
 
     }
 }

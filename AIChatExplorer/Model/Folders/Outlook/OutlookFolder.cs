@@ -1,5 +1,4 @@
-using AIChatExplorer.Model.Folders.Clipboard;
-using AIChatExplorer.Model.Folders.FileSystem;
+using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
@@ -58,7 +57,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 FolderName = folderName,
                 FolderTypeString = FolderTypeString
             };
-            OutlookFolder child = new() { Entity = childFolder};
+            OutlookFolder child = new() { Entity = childFolder };
             return child;
         }
 
@@ -71,7 +70,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
             // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            foreach (var item in GetItems< OutlookItem>(false)) {
+            foreach (var item in GetItems<OutlookItem>(false)) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
