@@ -38,6 +38,7 @@ namespace LibPythonAI.Model.AutoProcess {
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text && lineCount <= configParams.IgnoreLineCount()) {
                 return item;
             }
+
             // If AutoFileExtract is set, extract files
             if (configParams.AutoFileExtract() && item.SourceType == ContentSourceType.File) {
                 string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(item.SourcePath);

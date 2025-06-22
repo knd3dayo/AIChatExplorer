@@ -11,6 +11,9 @@ using LibPythonAI.Model.AutoProcess;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Folders.Application;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Resources;
+using LibPythonAI.Common;
 
 namespace AIChatExplorer.Model.Folders.ClipboardHistory {
     /// <summary>
@@ -252,21 +255,28 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
         /// <param name="_afterClipboardChanged"></param>
         public static void ProcessApplicationItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
 
+            IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
             // Execute in a separate thread
-            Task.Run(() => {
+            Task.Run(async () => {
                 StatusText statusText = StatusText.Instance;
                 MainUITask.Run(() => {
                     statusText.UpdateInProgress(true, CommonStringResources.Instance.AutoProcessing);
                 });
                 try {
                     // Apply automatic processing
-                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                    if (updatedItemTask.Result == null) {
+                    ContentItemWrapper updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                    if (updatedItemTask == null) {
                         // If the item is ignored, return
                         return;
                     }
+                    // アイテムの内容からユーザーの意図を推測する。
+                    if (configParams.AutoPredictUserIntent()) {
+                        LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
+                        await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromClipboard.ToString());
+                    }
+
                     // Notify the completion of processing
-                    _afterClipboardChanged(updatedItemTask.Result);
+                    _afterClipboardChanged(updatedItemTask);
 
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");

@@ -417,50 +417,6 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
 
 
-        #region 開発中機能関連の設定
-        // UseSpacy
-        private bool? _useSpacy;
-        public bool UseSpacy {
-            get {
-                if (_useSpacy == null) {
-                    _useSpacy = Properties.Settings.Default.UseSpacy;
-                }
-                return _useSpacy.Value;
-            }
-            set {
-                _useSpacy = value;
-                Properties.Settings.Default.UseSpacy = value;
-            }
-        }
-        // SpacyModel
-        private string? _spacyModel;
-        public string SpacyModel {
-            get {
-                if (_spacyModel == null) {
-                    _spacyModel = Properties.Settings.Default.SpacyModel;
-                }
-                return _spacyModel;
-            }
-            set {
-                _spacyModel = value;
-                Properties.Settings.Default.SpacyModel = value;
-            }
-        }
-        // TesseractExePath
-        private string? _tesseractExePath;
-        public string TesseractExePath {
-            get {
-                if (_tesseractExePath == null) {
-                    _tesseractExePath = Properties.Settings.Default.TesseractExePath;
-                }
-                return _tesseractExePath;
-            }
-            set {
-                _tesseractExePath = value;
-                Properties.Settings.Default.TesseractExePath = value;
-            }
-        }
-
         // AutoTag
         private bool? _autoTag;
         public bool AutoTag {
@@ -620,8 +576,20 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.UseExternalAPI = value;
             }
         }
-
-        #endregion
+        // AutoPredictUserIntent
+        private bool? _autoPredictUserIntent;
+        public bool AutoPredictUserIntent {
+            get {
+                if (_autoPredictUserIntent == null) {
+                    _autoPredictUserIntent = Properties.Settings.Default.AutoPredictUserIntent;
+                }
+                return _autoPredictUserIntent.Value;
+            }
+            set {
+                _autoPredictUserIntent = value;
+                Properties.Settings.Default.AutoPredictUserIntent = value;
+            }
+        }
 
 
         public void Save() {

@@ -2,8 +2,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Item;
+using AIChatExplorer.Model.Main;
+using LibPythonAI.Common;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
@@ -98,8 +102,9 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
                 LogWrapper.Error($"{CommonStringResources.Instance.Folder} is null.");
                 return;
             }
+            IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
             // Execute in a separate thread
-            Task.Run(() => {
+            Task.Run(async () => {
                 while (Instance.IsScreenMonitorEnabled) {
                     StatusText statusText = StatusText.Instance;
                     MainUITask.Run(() => {
@@ -115,13 +120,19 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
                         // Create a new ApplicationItem
                         ApplicationItem item = CreateApplicationItem(Folder, image);
                         // Apply automatic processing
-                        Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                        if (updatedItemTask.Result == null) {
+                        ContentItemWrapper updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                        if (updatedItemTask == null) {
                             // If the item is ignored, return
                             return;
                         }
+                        // アイテムの内容からユーザーの意図を推測する。
+                        if (configParams.AutoPredictUserIntent()) {
+                            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
+                            await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromImage.ToString());
+                        }
+
                         // Notify the completion of processing
-                        AfterTakeScreenShot(updatedItemTask.Result);
+                        AfterTakeScreenShot(updatedItemTask);
 
                     } catch (System.Exception ex) {
                         LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");

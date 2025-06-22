@@ -68,11 +68,11 @@ namespace LibPythonAI.Common {
         // AutoExtractImageWithOpenAI
         public bool AutoExtractImageWithOpenAI();
 
+        // AutoPredictUserIntent
+        public bool AutoPredictUserIntent();
+
         // IgnoreLineCount
         public int IgnoreLineCount();
-
-        // TesseractExePath
-        public string TesseractExePath();
 
         // DevFeaturesEnabled
         public bool DevFeaturesEnabled();

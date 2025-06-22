@@ -19,6 +19,8 @@ namespace LibUIPythonAI.ViewModel.Item {
              ItemViewModel = itemViewModel;
         }
 
+
+
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> DeleteItemsCommand => new((itemViewModels) => {
             CommonViewModelCommandExecutes.DeleteItemsCommandExecute(itemViewModels,
                 () => {

@@ -142,6 +142,9 @@ namespace LibUIPythonAI.Resource {
         // ScreenMonitoringInterval
         public override string ScreenMonitoringInterval { get; } = "画面監視間隔";
 
+        // AutoPredictUserIntent
+        public override string AutoPredictUserIntent { get; } = "ユーザーの意図を自動予測する";
+
         // UsePythonNet
         public override string UsePythonNet { get; } = "PythonNetを使用する";
 

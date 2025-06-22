@@ -364,18 +364,6 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.PythonSpacySettings}" />
-                            <!--  SpacyModel  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.SpacyModelName}" />
-                            <TextBox
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetSpacyModelName}"
-                                Text="{Binding SpacyModel}" />
                         </Grid>
                         <!--  Python OCR設定  -->
                         <Grid Grid.Row="4" Visibility="{Binding EnableDevFeaturesVisibility}">
@@ -392,17 +380,6 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.PythonOCRSettings}" />
-                            <!--  TesseractExePath  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.TesseractPath}" />
-                            <TextBox
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                Margin="10,10,10,0"
-                                Text="{Binding TesseractExePath}" />
                         </Grid>
                         <!--  その他  -->
                         <Grid Grid.Row="5">
@@ -659,6 +636,7 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <!--  Monitoring  -->
                             <TextBlock
@@ -671,39 +649,17 @@
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{Binding ScreenMonitoringInterval}" />
-                        </Grid>
-                        <Grid Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <!--  Extract Entity/Data Masking  -->
                             <TextBlock
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.EntityExtractionDataMasking}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                                Text="{x:Static res:ViewStringResources.AutoPredictUserIntent}" />
                             <CheckBox
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent}"
-                                IsChecked="{Binding UseSpacy}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
-
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.MaskPersonalInformationInDataSentToOpenAI}"
-                                IsChecked="{Binding UserMaskedDataInOpenAI}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                                Content="{x:Static res:ViewStringResources.AutoPredictUserIntent}"
+                                IsChecked="{Binding AutoPredictUserIntent}" />
                         </Grid>
                     </Grid>
                 </ScrollViewer>
@@ -727,13 +683,13 @@
                 Margin="10,0,10,0"
                 HorizontalAlignment="Right">
                 <Button
-                    Width="150"
+                    Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding SaveCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
-                    Width="150"
+                    Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"

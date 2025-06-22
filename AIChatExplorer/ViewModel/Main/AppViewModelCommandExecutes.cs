@@ -413,8 +413,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 });
         }
 
-        // -----------------------------------------------------------------------------------
-
         public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper applicationItem) {
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;

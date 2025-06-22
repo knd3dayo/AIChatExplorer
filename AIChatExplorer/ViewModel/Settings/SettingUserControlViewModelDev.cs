@@ -27,46 +27,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        #region 開発中機能関連の設定
-        // TesseractExePath
-        public string TesseractExePath {
-            get {
-                return AIChatExplorerConfig.Instance.TesseractExePath;
-            }
-            set {
-                AIChatExplorerConfig.Instance.TesseractExePath = value;
-                OnPropertyChanged(nameof(TesseractExePath));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
-        // UseSpacy
-        public bool UseSpacy {
-            get {
-                return AIChatExplorerConfig.Instance.UseSpacy;
-            }
-            set {
-                AIChatExplorerConfig.Instance.UseSpacy = value;
-                OnPropertyChanged(nameof(UseSpacy));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // SpacyModel
-        public string SpacyModel {
-            get {
-                return AIChatExplorerConfig.Instance.SpacyModel;
-            }
-            set {
-                AIChatExplorerConfig.Instance.SpacyModel = value;
-                OnPropertyChanged(nameof(SpacyModel));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
 
         // UserMaskedDataInOpenAI
         public bool UserMaskedDataInOpenAI {
@@ -120,12 +81,5 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-
-        #endregion
-
-
-
-
-
     }
 }

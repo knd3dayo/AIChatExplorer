@@ -378,6 +378,19 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
+        // AutoPredictUserIntent
+        public bool AutoPredictUserIntent {
+            get {
+                return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
+            }
+            set {
+                AIChatExplorerConfig.Instance.AutoPredictUserIntent = value;
+                OnPropertyChanged(nameof(AutoPredictUserIntent));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);

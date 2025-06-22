@@ -135,10 +135,7 @@ namespace AIChatExplorer.Model.Main {
         public int IgnoreLineCount() {
             return AIChatExplorerConfig.Instance.IgnoreLineCount;
         }
-        // TesseractExePath
-        public string TesseractExePath() {
-            return AIChatExplorerConfig.Instance.TesseractExePath;
-        }
+
         // public bool DevFeaturesEnabled();
         public bool DevFeaturesEnabled() {
             return AIChatExplorerConfig.Instance.EnableDevFeatures;
@@ -189,6 +186,10 @@ namespace AIChatExplorer.Model.Main {
         public void UpdateAutoTextWrapping(bool value) {
             AIChatExplorerConfig.Instance.AutoTextWrapping = value;
             AIChatExplorerConfig.Instance.Save();
+        }
+        // AutoPredictUserIntent
+        public bool AutoPredictUserIntent() {
+            return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
         }
     }
 }

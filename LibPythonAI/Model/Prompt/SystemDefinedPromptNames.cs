@@ -14,6 +14,10 @@ namespace LibPythonAI.Model.Prompt {
         TagGeneration = 5,
         // 既存のタグを選択
         SelectExistingTags = 6,
+        // クリップボードの内容からユーザーの意図を推測
+        PredictUserIntentFromClipboard = 7,
+        // 画像からユーザーの意図を推測
+        PredictUserIntentFromImage = 8,
 
     }
 }

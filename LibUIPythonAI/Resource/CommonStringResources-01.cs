@@ -173,6 +173,9 @@ namespace LibUIPythonAI.Resource {
         // ScreenMonitoringInterval
         public virtual string ScreenMonitoringInterval { get; } = "Screen Monitoring Interval";
 
+        // AutoPredictUserIntent
+        public virtual string AutoPredictUserIntent { get; } = "Auto Predict User Intent";
+
         public virtual string AppName { get; } = "AIChatExplorer";
         // File
         public virtual string File { get; } = "File";
