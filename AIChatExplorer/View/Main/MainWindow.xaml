@@ -259,6 +259,26 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding ClipboardMonitorButtonText}"
                             ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
+                        <!--  Screen Monitor  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding Commands.ToggleScreenMonitor, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding ScreenMonitorButtonText}"
+                            ToolTip="{x:Static res:ViewStringResources.ToggleScreenWatchToolTop}" />
+                        <!--  Integrated Monitor  -->
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Padding="10,0,10,0"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding Commands.ToggleIntegratedMonitor, Mode=OneTime}"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding IntegratedMonitorButtonText}"
+                            ToolTip="{x:Static res:ViewStringResources.ToggleIntegratedMonitorToolTop}" />
                     </MenuItem>
                     <!--  Setting  -->
                     <MenuItem

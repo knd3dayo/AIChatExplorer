@@ -1,12 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using AIChatExplorer.Model.Folders.Application;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
+using AIChatExplorer.Model.Folders.ScreenShot;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
+using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Resources;
@@ -20,12 +23,10 @@ using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.View.Search;
-using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.VectorDB;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.ViewModel.Main {
@@ -64,9 +65,40 @@ namespace AIChatExplorer.ViewModel.Main {
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            StartStopClipboardMonitorCommandExecute();
+            bool currentState = MainWindowViewModel.Instance.IsClipboardMonitoringActive;
+            if (currentState) {
+                StopClipboardMonitorCommandExecute();
+            } else {
+                // クリップボード監視を開始する
+                MainWindowViewModel model = MainWindowViewModel.Instance;
+                // クリップボード履歴のルートフォルダを取得
+                StartClipboardMonitorCommandExecute(model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel);
+            }
         });
 
+        // 画面監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleScreenMonitor => new((parameter) => {
+            bool currentState = MainWindowViewModel.Instance.IsScreenMonitoringActive;
+            if (currentState) {
+                StopScreenMonitorCommandExecute();
+            } else {
+                MainWindowViewModel model = MainWindowViewModel.Instance;
+                StartScreenMonitorCommandExecute(model.RootFolderViewModelContainer.ScreenShotHistoryFolderViewModel);
+            }
+        });
+
+        // 統合モニター開始終了フラグを反転させる
+        public SimpleDelegateCommand<object> ToggleIntegratedMonitor => new((parameter) => {
+            bool currentState = MainWindowViewModel.Instance.IsIntegratedMonitorActive;
+            if (currentState) {
+                StopIntegratedMonitorCommandExecute();
+            } else {
+                // 統合モニターを開始する
+                MainWindowViewModel model = MainWindowViewModel.Instance;
+                StartIntegratedMonitorCommandExecute(model.RootFolderViewModelContainer.IntegratedMonitorHistoryFolderViewModel);
+            }
+        });
 
 
         public static void OpenItemCommandExecute(ContentItemViewModel? itemViewModel) {
@@ -229,30 +261,104 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
         // Command to start/stop clipboard monitoring
-        public static void StartStopClipboardMonitorCommandExecute() {
+        public static void StartClipboardMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
             MainWindowViewModel model = MainWindowViewModel.Instance;
-            model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
-            if (model.IsClipboardMonitoringActive) {
-                ClipboardController.Instance.Start(async (applicationItem) => {
+            model.IsClipboardMonitoringActive = true;
+            ClipboardController.Instance.Start(
+                (ApplicationFolder)targetFolderViewModel.Folder,
+                async (applicationItem) => {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel?.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
-                        model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
+                        targetFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
                     });
                 });
-                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
-            } else {
-                ClipboardController.Instance.Stop();
-                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
-            }
+            LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
             // Notification
             model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
             // Change button text
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
+        }
+
+        public static void StopClipboardMonitorCommandExecute() {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsClipboardMonitoringActive = false;
+            ClipboardController.Instance.Stop();
+            LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
+        }
+        // Command to start/stop screen monitoring
+        public static void StartScreenMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsScreenMonitoringActive = true;
+            // ScreenMonitoringInterval
+            int ScreenMonitoringInterval = AIChatExplorerConfig.Instance.ScreenMonitoringInterval; // Default 10 seconds interval
+            ScreenShotController.Instance.Start(
+                (ApplicationFolder)targetFolderViewModel.Folder,
+                ScreenMonitoringInterval,
+                async (applicationItem) => {
+                    // Process when a clipboard item is added
+                    // フォルダのルートフォルダに追加
+                    await Task.Run(() => {
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
+                    });
+                    // フォルダのルートフォルダを更新
+                    MainUITask.Run(() => {
+                        targetFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
+                    });
+                });
+            LogWrapper.Info(CommonStringResources.Instance.StartScreenWatchMessage);
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsScreenMonitoringActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.ScreenMonitorButtonText));
+        }
+
+        public static void StopScreenMonitorCommandExecute() {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsScreenMonitoringActive = false;
+            ScreenShotController.Instance.Stop();
+            LogWrapper.Info(CommonStringResources.Instance.StopScreenWatchMessage);
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsScreenMonitoringActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.ScreenMonitorButtonText));
+        }
+
+        // Command to start/stop integrated monitoring
+        public static void StartIntegratedMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsIntegratedMonitorActive = true;
+            // いったんクリップボード監視を停止
+            StopClipboardMonitorCommandExecute();
+            // いったん画面監視を停止
+            StopScreenMonitorCommandExecute();
+
+            StartClipboardMonitorCommandExecute(targetFolderViewModel);
+            StartScreenMonitorCommandExecute(targetFolderViewModel);
+            LogWrapper.Info(CommonStringResources.Instance.StartIntegratedMonitorMessage);
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsIntegratedMonitorActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.IntegratedMonitorButtonText));
+        }
+        public static void StopIntegratedMonitorCommandExecute() {
+            MainWindowViewModel model = MainWindowViewModel.Instance;
+            model.IsIntegratedMonitorActive = false;
+            StopClipboardMonitorCommandExecute();
+            StopScreenMonitorCommandExecute();
+            LogWrapper.Info(CommonStringResources.Instance.StopIntegratedMonitorMessage);
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsIntegratedMonitorActive));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.IntegratedMonitorButtonText));
         }
 
 
@@ -293,7 +399,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         private void ProcessApplicationItem(ApplicationFolder clipboardFolder, ClipboardChangedEventArgs lastClipboardChangedEventArgs) {
             UpdateIndeterminate(true);
-            clipboardFolder.ProcessApplicationItem(lastClipboardChangedEventArgs,
+            ClipboardController.ProcessClipboardItem(lastClipboardChangedEventArgs, clipboardFolder,
                 async (applicationItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {

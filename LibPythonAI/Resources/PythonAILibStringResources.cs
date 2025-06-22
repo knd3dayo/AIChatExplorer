@@ -14,7 +14,7 @@ namespace LibPythonAI.Resources {
                         PromptStringResource.Instance = new PromptStringResourceJa();
 
                     }else {
-                        _Instance = new PythonAILibStringResourcesJa();
+                        _Instance = new PythonAILibStringResources();
                         // PromptStringResourceもここで設定
                         PromptStringResource.Instance = new PromptStringResource();
                     }

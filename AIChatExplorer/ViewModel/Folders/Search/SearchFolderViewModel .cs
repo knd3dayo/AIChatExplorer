@@ -1,5 +1,5 @@
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.Search;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;

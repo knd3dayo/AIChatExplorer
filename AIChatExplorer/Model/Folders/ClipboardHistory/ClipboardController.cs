@@ -8,8 +8,11 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.AutoProcess;
+using AIChatExplorer.Model.Main;
+using AIChatExplorer.Model.Item;
+using AIChatExplorer.Model.Folders.Application;
 
-namespace AIChatExplorer.Model.Main {
+namespace AIChatExplorer.Model.Folders.ClipboardHistory {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -42,6 +45,8 @@ namespace AIChatExplorer.Model.Main {
         }
         public CutFlagEnum CutFlag { get; set; } = CutFlagEnum.None;
 
+        public ApplicationFolder? Folder { get; set; } = null;
+
         /// <summary>
         /// コピーされたアイテム
         /// </summary>
@@ -60,7 +65,9 @@ namespace AIChatExplorer.Model.Main {
         /// Start clipboard monitoring
         /// </summary>
         /// <param name="afterClipboardChanged"></param>
-        public void Start(Action<ContentItemWrapper> afterClipboardChanged) {
+        public void Start(ApplicationFolder contentFolder, Action<ContentItemWrapper> afterClipboardChanged) {
+            // Set the folder to save clipboard history
+            Folder = contentFolder;
             _afterClipboardChanged = afterClipboardChanged;
             // Enable clipboard monitoring
             IsClipboardMonitorEnabled = true;
@@ -81,14 +88,14 @@ namespace AIChatExplorer.Model.Main {
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard
-            if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Text) {
+            if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // If ContentType is Files, copy files to clipboard
-            else if (item.ContentType == LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files) {
+            else if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
                 // SourcePathの取得
                 System.Collections.Specialized.StringCollection strings = [item.SourcePath];
                 // Stringsが空の場合は何もしない
@@ -128,9 +135,96 @@ namespace AIChatExplorer.Model.Main {
             if (_clipboard == null) {
                 return;
             }
-            FolderManager.RootFolder.ProcessApplicationItem(e, _afterClipboardChanged);
+            if (Folder == null) {
+                // If Folder is not set, do not process
+                return;
+            }
+            ProcessClipboardItem(e, Folder, _afterClipboardChanged);
 
         }
+
+
+        /// Create ContentItem
+        public static List<ApplicationItem> CreateApplicationItem(
+            ApplicationFolder clipboardFolder, ClipboardChangedEventArgs e) {
+
+            List<ApplicationItem> result = [];
+
+            ContentItemTypes.ContentItemTypeEnum contentItemTypes;
+            string sourceType;
+            if (e.ContentType == ContentTypes.Text) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Text;
+                sourceType = ContentSourceType.Application;
+            } else if (e.ContentType == ContentTypes.Files) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Files;
+                sourceType = ContentSourceType.File;
+            } else if (e.ContentType == ContentTypes.Image) {
+                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Image;
+                sourceType = ContentSourceType.Application;
+            } else if (e.ContentType == ContentTypes.Other) {
+                return result;
+            } else {
+                return result;
+            }
+
+            // If ContentType is Text, set text data
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Text) {
+                ApplicationItem item = new(clipboardFolder.Entity) {
+                    ContentType = contentItemTypes,
+                    SourceType = sourceType
+                };
+                ApplicationFolder.SetApplicationInfo(item, e);
+                item.Content = (string)e.Content;
+                result.Add(item);
+                return result;
+            }
+
+            // If ContentType is BitmapImage, set image data
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Image) {
+                ApplicationItem item = new(clipboardFolder.Entity) {
+                    ContentType = contentItemTypes,
+                    SourceType = sourceType
+
+                };
+                ApplicationFolder.SetApplicationInfo(item, e);
+                System.Drawing.Image image = (System.Drawing.Image)e.Content;
+                // byte
+                item.Base64Image = ContentItemTypes.GetBase64StringFromImage(image);
+                result.Add(item);
+                return result;
+            }
+
+            // If ContentType is Files, set file data
+            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Files) {
+                string[] files = (string[])e.Content;
+
+                // Get the cut/copied file/files.
+                for (int i = 0; i < files.Length; i++) {
+                    ApplicationItem item = new(clipboardFolder.Entity) {
+                        ContentType = contentItemTypes,
+                        SourceType = sourceType
+                    };
+                    ApplicationFolder.SetApplicationInfo(item, e);
+                    item.SourcePath = files[i];
+                    item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
+                    result.Add(item);
+                }
+                return result;
+            }
+            return result;
+        }
+
+        public static void ProcessClipboardItem(ClipboardChangedEventArgs e, ApplicationFolder folder, Action<ContentItemWrapper> _afterClipboardChanged) {
+
+            // Get the cut/copied text.
+            List<ApplicationItem> items = CreateApplicationItem(folder, e);
+
+            foreach (var item in items) {
+                // Process clipboard applicationItem
+                ProcessApplicationItem(item, _afterClipboardChanged);
+            }
+        }
+
 
         /// <summary>
         /// Determine if the clipboard item is a monitoring target

@@ -226,5 +226,8 @@ namespace AIChatExplorer.View.Settings {
         // InternalAPIServerSettings
         public static string InternalAPIServerSettings { get; set; } = CommonStringResources.Instance.InternalAPIServerSettings;
 
+        // ScreenMonitoringInterval
+        public static string ScreenMonitoringInterval { get; set; } = CommonStringResources.Instance.ScreenMonitoringInterval;
+
     }
 }

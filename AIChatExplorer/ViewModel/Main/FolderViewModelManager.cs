@@ -9,6 +9,7 @@ using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Common;
+using AIChatExplorer.ViewModel.Folders.ScreenShot;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : RootFolderViewModelContainer {
@@ -40,6 +41,12 @@ namespace AIChatExplorer.ViewModel.Main {
         // ClipboardHistoryフォルダのViewModel
         public ApplicationFolderViewModel ClipboardHistoryFolderViewModel { get; private set; }
 
+        // ScreenShotHistoryフォルダのViewModel
+        public ScreenShotHistoryFolderViewModel ScreenShotHistoryFolderViewModel { get; private set; }
+
+        // IntegratedMonitorHistoryフォルダのViewModel
+        public IntegratedMonitorHistoryFolderViewModel IntegratedMonitorHistoryFolderViewModel { get; private set; }
+
         // コンストラクタ
         public FolderViewModelManager(CommonViewModelCommandExecutes commands) : base(commands) {
             RootFolderViewModel = new ApplicationFolderViewModel(FolderManager.RootFolder, commands);
@@ -50,6 +57,9 @@ namespace AIChatExplorer.ViewModel.Main {
             RecentFilesFolderViewModel = new RecentFilesFolderViewModel(FolderManager.RecentFilesRootFolder, commands);
             EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(FolderManager.EdgeBrowseHistoryRootFolder, commands);
             ClipboardHistoryFolderViewModel = new ApplicationFolderViewModel(FolderManager.ClipboardHistoryRootFolder, commands);
+            ScreenShotHistoryFolderViewModel = new ScreenShotHistoryFolderViewModel(FolderManager.ScreenShotHistoryRootFolder, commands);
+            IntegratedMonitorHistoryFolderViewModel = new IntegratedMonitorHistoryFolderViewModel(FolderManager.IntegratedMonitorHistoryRootFolder, commands);
+
 
             FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
@@ -65,6 +75,8 @@ namespace AIChatExplorer.ViewModel.Main {
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
             FolderViewModels.Add(ClipboardHistoryFolderViewModel);
+            FolderViewModels.Add(ScreenShotHistoryFolderViewModel);
+            FolderViewModels.Add(IntegratedMonitorHistoryFolderViewModel);
 
             OnPropertyChanged(nameof(FolderViewModels));
         }

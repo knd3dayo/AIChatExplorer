@@ -199,11 +199,6 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             });
 
         }
-        // ProcessApplicationItem
-        public override void ProcessApplicationItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
-            // ローカルファイルのフォルダは処理しない
-            throw new NotImplementedException();
-        }
 
     }
 }

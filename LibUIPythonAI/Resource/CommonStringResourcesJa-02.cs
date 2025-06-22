@@ -139,6 +139,9 @@ namespace LibUIPythonAI.Resource {
         // InternalAPIServerSettings
         public override string InternalAPIServerSettings { get; } = "内部APIサーバー設定";
 
+        // ScreenMonitoringInterval
+        public override string ScreenMonitoringInterval { get; } = "画面監視間隔";
+
         // UsePythonNet
         public override string UsePythonNet { get; } = "PythonNetを使用する";
 
@@ -312,7 +315,9 @@ namespace LibUIPythonAI.Resource {
         // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
         public override string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
 
-        
+        // 開始：画面監視を開始します。停止：画面監視を停止します。
+        public override string ToggleScreenWatchToolTop { get; } = "開始：画面監視を開始します。停止：画面監視を停止します。";
+
         #endregion
 
         #region イベント
@@ -322,7 +327,20 @@ namespace LibUIPythonAI.Resource {
         public override string StartClipboardWatchMessage { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました
         public override string StopClipboardWatchMessage { get; } = "クリップボード監視を停止しました";
-        
+
+        // 画面監視を開始しました
+        public override string StartScreenWatchMessage { get; } = "画面監視を開始しました";
+
+        // 画面監視を停止しました
+        public override string StopScreenWatchMessage { get; } = "画面監視を停止しました";
+
+        // 統合監視を開始しました
+        public override string StartIntegratedMonitorMessage { get; } = "統合監視を開始しました";
+
+        // 統合監視を停止しました
+        public override string StopIntegratedMonitorMessage { get; } = "統合監視を停止しました";
+
+
         // 自動処理を実行中
         public override string AutoProcessing { get; } = "自動処理を実行中";
         // アイテムの追加処理が失敗しました。
@@ -423,6 +441,12 @@ namespace LibUIPythonAI.Resource {
 
         // ClipboardHistory
         public override string ClipboardHistory { get; } = "クリップボード履歴";
+
+        // ScreenShotHistory
+        public override string ScreenShotHistory { get; } = "スクリーンショット履歴";
+
+        // IntegratedMonitorHistory
+        public override string IntegratedMonitorHistory { get; } = "統合モニター履歴";
 
         // RecentFiles 英語名
         public override string RecentFilesEnglish { get; } = "RecentFiles";

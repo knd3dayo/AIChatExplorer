@@ -132,6 +132,14 @@ namespace AIChatExplorer.View.Main {
         // ToggleClipboardWatchToolTop
         public static string ToggleClipboardWatchToolTop { get; set; } = CommonStringResources.Instance.ToggleClipboardWatchToolTop;
 
+        // ToggleScreenWatchToolTop
+        public static string ToggleScreenWatchToolTop { get; set; } = CommonStringResources.Instance.ToggleScreenWatchToolTop;
+
+        // ToggleIntegratedMonitorToolTop
+        public static string ToggleIntegratedMonitorToolTop { get; set; } = CommonStringResources.Instance.ToggleIntegratedMonitorToolTop;
+
+
+
         // View
         public static string View { get; set; } = CommonStringResources.Instance.View;
 
@@ -161,6 +169,7 @@ namespace AIChatExplorer.View.Main {
 
         // Monitor
         public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;
+
 
     }
 }

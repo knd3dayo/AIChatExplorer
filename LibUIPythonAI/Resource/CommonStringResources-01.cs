@@ -22,6 +22,12 @@ namespace LibUIPythonAI.Resource {
         // Clipboard History (English name)
         public virtual string ClipboardHistoryEnglish { get; } = "ClipboardHistory";
 
+        // ScreenShot History (English name)
+        public virtual string ScreenShotHistoryEnglish { get; } = "ScreenShotHistory";
+
+        // Integrated Monitor (English name)
+        public virtual string IntegratedMonitorHistoryEnglish { get; } = "IntegratedMonitorHistory";
+
         // Application (English name)
         public virtual string ApplicationEnglish { get; } = "Application";
 
@@ -163,6 +169,9 @@ namespace LibUIPythonAI.Resource {
 
         // InternalAPIServerSettings
         public virtual string InternalAPIServerSettings { get; } = "Internal API Server Settings";
+
+        // ScreenMonitoringInterval
+        public virtual string ScreenMonitoringInterval { get; } = "Screen Monitoring Interval";
 
         public virtual string AppName { get; } = "AIChatExplorer";
         // File

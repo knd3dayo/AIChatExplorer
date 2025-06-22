@@ -21,21 +21,41 @@ namespace LibUIPythonAI.Resource {
 
         #region ToolTip
         // Start: Start Application Watch. Stop: Stop Application Watch.
-        public virtual string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.";
+        public virtual string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard monitoring. Stop: Stop Clipboard monitoring.";
+
+        // Start: Start Screen Watch. Stop: Stop Screen Watch.
+        public virtual string ToggleScreenWatchToolTop { get; } = "Start: Start Screen monitoring. Stop: Stop Screen monitoring.";
+
+        // Start: Start Integrated Monitor Watch. Stop: Stop Integrated Monitor Watch.
+        public virtual string ToggleIntegratedMonitorToolTop { get; } = "Start: Start Integrated monitoring (Clipboard and Screen). Stop: Stop Integrated monitoring.";
 
         #endregion
         #region  MainWindow
 
         // Start Application Watch
-        public virtual string StartClipboardWatch { get; } = "Start Clipboard Watch";
+        public virtual string StartClipboardWatch { get; } = "Start Clipboard monitoring";
         // Stop Application Watch
-        public virtual string StopClipboardWatch { get; } = "Stop Clipboard Watch";
+        public virtual string StopClipboardWatch { get; } = "Stop Clipboard monitoring";
 
         // Started Application Watch
-        public virtual string StartClipboardWatchMessage { get; } = "Started Clipboard Watch";
+        public virtual string StartClipboardWatchMessage { get; } = "Clipboard monitoring has started.";
         // Stopped Application Watch
-        public virtual string StopClipboardWatchMessage { get; } = "Stopped Clipboard Watch";
+        public virtual string StopClipboardWatchMessage { get; } = "Clipboard monitoring has stopped ";
 
+        // Start Screen Watch
+        public virtual string StartScreenWatch { get; } = "Start Screen monitoring";
+        // Stop Screen Watch
+        public virtual string StopScreenWatch { get; } = "Stop Screen monitoring";
+
+        // Started Screen Watch
+        public virtual string StartScreenWatchMessage { get; } = "Screen monitoring has started.";
+        // Stopped Screen Watch
+        public virtual string StopScreenWatchMessage { get; } = "Screen monitoring has stopped ";
+
+        // Start Integrated Monitor
+        public virtual string StartIntegratedMonitorMessage { get; } = "Start Integrated monitoring (Clipboard and Screen)";
+        // StopIntegratedMonitor
+        public virtual string StopIntegratedMonitorMessage { get; } = "Stop Integrated monitoring";
 
         // Edit Tag
         public virtual string EditTag { get; } = "Edit Tag";
@@ -90,6 +110,12 @@ namespace LibUIPythonAI.Resource {
 
         // ClipboardHistory
         public virtual string ClipboardHistory { get; } = "Clipboard History";
+
+        // ScreenShotHistory
+        public virtual string ScreenShotHistory { get; } = "Screen Shot History";
+
+        // IntegratedMonitorHistory
+        public virtual string IntegratedMonitorHistory { get; } = "Integrated Monitor History";
 
         // ProxyURL
         public virtual string ProxyURL { get; } = "Proxy Server URL";

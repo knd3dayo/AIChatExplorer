@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
@@ -91,10 +92,29 @@ namespace AIChatExplorer.ViewModel.Main {
         // クリップボード監視が実行中であるかどうか
         public bool IsClipboardMonitoringActive { get; set; } = false;
 
+
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
                 return IsClipboardMonitoringActive ? CommonStringResources.Instance.StopClipboardWatch : CommonStringResources.Instance.StartClipboardWatch;
+            }
+        }
+
+        // 画面監視が実行中であるかどうか
+        public bool IsScreenMonitoringActive { get; set; } = false;
+
+        // 画面監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string ScreenMonitorButtonText {
+            get {
+                return IsScreenMonitoringActive ? CommonStringResources.Instance.StopScreenWatch : CommonStringResources.Instance.StartScreenWatch;
+            }
+        }
+        // IsIntegratedMonitorActive
+        public bool IsIntegratedMonitorActive { get; set; } = false;
+        // 監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string IntegratedMonitorButtonText {
+            get {
+                return IsIntegratedMonitorActive ? CommonStringResources.Instance.StopIntegratedMonitorMessage : CommonStringResources.Instance.StartIntegratedMonitorMessage;
             }
         }
 

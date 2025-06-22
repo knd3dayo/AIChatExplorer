@@ -365,6 +365,19 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
+        // ScreenMonitoringInterval
+        public int ScreenMonitoringInterval {
+            get {
+                return AIChatExplorerConfig.Instance.ScreenMonitoringInterval;
+            }
+            set {
+                AIChatExplorerConfig.Instance.ScreenMonitoringInterval = value;
+                OnPropertyChanged(nameof(ScreenMonitoringInterval));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);

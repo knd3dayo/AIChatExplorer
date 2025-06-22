@@ -355,7 +355,20 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-
+        // ScreenMonitoringInterval
+        private int _ScreenMonitoringInterval = -1;
+        public int ScreenMonitoringInterval {
+            get {
+                if (_ScreenMonitoringInterval == -1) {
+                    _ScreenMonitoringInterval = Properties.Settings.Default.ScreenMonitoringInterval;
+                }
+                return _ScreenMonitoringInterval;
+            }
+            set {
+                _ScreenMonitoringInterval = value;
+                Properties.Settings.Default.ScreenMonitoringInterval = value;
+            }
+        }
 
         // TextWrapping
         private bool _textWrapping = false;
@@ -402,6 +415,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.IgnoreLineCount = value;
             }
         }
+
+
         #region 開発中機能関連の設定
         // UseSpacy
         private bool? _useSpacy;

@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using LibPythonAI.Data;
@@ -35,20 +36,6 @@ namespace AIChatExplorer.Model.Folders.Application {
             return child;
         }
 
-        #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public virtual void ProcessApplicationItem(ClipboardChangedEventArgs e, Action<ContentItemWrapper> _afterClipboardChanged) {
-
-            // Get the cut/copied text.
-            List<ApplicationItem> items = CreateApplicationItem(this, e);
-
-            foreach (var item in items) {
-                // Process clipboard applicationItem
-                ClipboardController.ProcessApplicationItem(item, _afterClipboardChanged);
-            }
-        }
-        #endregion
-
-
         /// <summary>
         /// Set application information from ClipboardChangedEventArgs
         /// </summary>
@@ -59,76 +46,6 @@ namespace AIChatExplorer.Model.Folders.Application {
             item.SourceApplicationTitle = sender.SourceApplication.Title;
             item.SourceApplicationID = sender.SourceApplication.ID;
             item.SourceApplicationPath = sender.SourceApplication.Path;
-        }
-
-        /// Create ContentItem
-        public static List<ApplicationItem> CreateApplicationItem(
-            ApplicationFolder clipboardFolder, ClipboardChangedEventArgs e) {
-
-            List<ApplicationItem> result = [];
-            
-            ContentItemTypes.ContentItemTypeEnum contentItemTypes;
-            string sourceType;
-            if (e.ContentType == ContentTypes.Text) {
-                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Text;
-                sourceType = ContentSourceType.Application;
-            } else if (e.ContentType == ContentTypes.Files) {
-                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Files;
-                sourceType = ContentSourceType.File;
-            } else if (e.ContentType == ContentTypes.Image) {
-                contentItemTypes = ContentItemTypes.ContentItemTypeEnum.Image;
-                sourceType = ContentSourceType.Application;
-            } else if (e.ContentType == ContentTypes.Other) {
-                return result;
-            } else {
-                return result;
-            }
-
-            // If ContentType is Text, set text data
-            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Text) {
-                ApplicationItem item = new(clipboardFolder.Entity) {
-                    ContentType = contentItemTypes,
-                    SourceType = sourceType
-                };
-                SetApplicationInfo(item, e);
-                item.Content = (string)e.Content;
-                result.Add(item);
-                return result;
-            }
-
-            // If ContentType is BitmapImage, set image data
-            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Image) {
-                ApplicationItem item = new(clipboardFolder.Entity) {
-                    ContentType = contentItemTypes,
-                    SourceType = sourceType
-
-                };
-                SetApplicationInfo(item, e);
-                System.Drawing.Image image = (System.Drawing.Image)e.Content;
-                // byte
-                item.Base64Image = ContentItemTypes.GetBase64StringFromImage(image);
-                result.Add(item);
-                return result;
-            }
-
-            // If ContentType is Files, set file data
-            if (contentItemTypes == ContentItemTypes.ContentItemTypeEnum.Files) {
-                string[] files = (string[])e.Content;
-
-                // Get the cut/copied file/files.
-                for (int i = 0; i < files.Length; i++) {
-                    ApplicationItem item = new(clipboardFolder.Entity) {
-                        ContentType = contentItemTypes,
-                        SourceType = sourceType
-                    };
-                    SetApplicationInfo(item, e);
-                    item.SourcePath = files[i];
-                    item.LastModified = new System.IO.FileInfo(item.SourcePath).LastWriteTime.Ticks;
-                    result.Add(item);
-                }
-                return result;
-            }
-            return result;
         }
 
 

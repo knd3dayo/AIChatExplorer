@@ -443,6 +443,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  自動処理 モニタリング/Embedding  -->
                         <Grid Grid.Row="0">
@@ -658,13 +659,22 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
+                            <!--  Monitoring  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.ScreenMonitoringInterval}" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding ScreenMonitoringInterval}" />
                         </Grid>
                         <Grid Grid.Row="3">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="300" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>

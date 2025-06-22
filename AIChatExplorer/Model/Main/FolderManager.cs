@@ -4,6 +4,7 @@ using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.Outlook;
+using AIChatExplorer.Model.Folders.ScreenShot;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Folders.ShortCut;
 using LibPythonAI.Common;
@@ -23,6 +24,8 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.EdgeBrowseHistory;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
         public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.ClipboardHistory;
+        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.ScreenShotHistory;
+        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.IntegratedMonitorHistory;
 
 
         // 英語名
@@ -35,6 +38,8 @@ namespace AIChatExplorer.Model.Main {
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.EdgeBrowseHistoryEnglish;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.RecentFilesEnglish;
         public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardHistoryEnglish;
+        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ScreenShotHistoryEnglish;
+        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.IntegratedMonitorHistoryEnglish;
 
 
         // 言語変更時にルートフォルダ名を変更する
@@ -84,7 +89,20 @@ namespace AIChatExplorer.Model.Main {
             }
             // ClipboardHistoryRootFolder
             var clipboardHistoryRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN);
+            if (clipboardHistoryRootFolder != null) {
+                clipboardHistoryRootFolder.FolderName = toRes.ClipboardHistory;
+            }
 
+            // ScreenShotHistoryRootFolder
+            var screenShotHistoryRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN);
+            if (screenShotHistoryRootFolder != null) {
+                screenShotHistoryRootFolder.FolderName = toRes.ScreenShotHistory;
+            }
+            // IntegratedMonitorHistoryRootFolder
+            var integratedMonitorHistoryRootFolder = db.ContentFolders.FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN);
+            if (integratedMonitorHistoryRootFolder != null) {
+                integratedMonitorHistoryRootFolder.FolderName = toRes.IntegratedMonitorHistory;
+            }
             db.SaveChanges();
         }
 
@@ -368,6 +386,74 @@ namespace AIChatExplorer.Model.Main {
                 return clipboardHistoryRootFolder;
             }
 
+        }
+        // ScreenShotHistory Root Folder
+        private static ScreenShotHistoryFolder? screenShotHistoryRootFolder;
+        public static ScreenShotHistoryFolder ScreenShotHistoryRootFolder {
+            get {
+                if (screenShotHistoryRootFolder == null) {
+                    using PythonAILibDBContext db = new();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN);
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN)
+                        };
+                        folderRoot.Save();
+                    }
+                    ScreenShotHistoryFolder? folder = ContentFolderWrapper.GetFolderById<ScreenShotHistoryFolder>(folderRoot.Id);
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME,
+                            FolderTypeString = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
+                        };
+                        folder.Save();
+                    }
+                    screenShotHistoryRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (screenShotHistoryRootFolder.IsRootFolder == false) {
+                    screenShotHistoryRootFolder.IsRootFolder = true;
+                    screenShotHistoryRootFolder.Save();
+                }
+                return screenShotHistoryRootFolder;
+            }
+        }
+        // IntegratedMonitorHistory Root Folder
+        private static IntegratedMonitorHistoryFolder? integratedMonitorHistoryRootFolder;
+        public static IntegratedMonitorHistoryFolder IntegratedMonitorHistoryRootFolder {
+            get {
+                if (integratedMonitorHistoryRootFolder == null) {
+                    using PythonAILibDBContext db = new();
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN);
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN)
+                        };
+                        folderRoot.Save();
+                    }
+                    IntegratedMonitorHistoryFolder? folder = ContentFolderWrapper.GetFolderById<IntegratedMonitorHistoryFolder>(folderRoot.Id);
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME,
+                            FolderTypeString = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN,
+                            IsRootFolder = true,
+                        };
+                        folder.Save();
+                    }
+                    integratedMonitorHistoryRootFolder = folder;
+                }
+                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
+                if (integratedMonitorHistoryRootFolder.IsRootFolder == false) {
+                    integratedMonitorHistoryRootFolder.IsRootFolder = true;
+                    integratedMonitorHistoryRootFolder.Save();
+                }
+                return integratedMonitorHistoryRootFolder;
+            }
         }
     }
 }
