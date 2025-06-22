@@ -325,17 +325,32 @@ namespace LibUIPythonAI.Resource {
 
         #region イベント
 
+        // クリップボード監視開始
+        public override string StartClipboardWatch { get; } = "クリップボード監視開始";
+        // クリップボード監視停止
+        public override string StopClipboardWatch { get; } = "クリップボード監視停止";
 
         // クリップボード監視を開始しました
         public override string StartClipboardWatchMessage { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました
         public override string StopClipboardWatchMessage { get; } = "クリップボード監視を停止しました";
 
+        // 画面監視開始
+        public override string StartScreenWatch { get; } = "画面監視開始";
+
+        // 画面監視停止
+        public override string StopScreenWatch { get; } = "画面監視停止";
+
         // 画面監視を開始しました
         public override string StartScreenWatchMessage { get; } = "画面監視を開始しました";
 
         // 画面監視を停止しました
         public override string StopScreenWatchMessage { get; } = "画面監視を停止しました";
+
+        // 統合監視開始
+        public override string StartIntegratedMonitorWatch { get; } = "統合監視開始";
+        // 統合監視停止
+        public override string StopIntegratedMonitorWatch { get; } = "統合監視停止";
 
         // 統合監視を開始しました
         public override string StartIntegratedMonitorMessage { get; } = "統合監視を開始しました";
@@ -368,12 +383,7 @@ namespace LibUIPythonAI.Resource {
 
         #region  MainWindow
 
-        // クリップボード監視開始
-        public override string StartClipboardWatch { get; } = "クリップボード監視開始";
-        // クリップボード監視停止
-        public override string StopClipboardWatch { get; } = "クリップボード監視停止";
-
-
+        
         // タグ編集
         public override string EditTag { get; } = "タグ編集";
         // 自動処理ルール編集

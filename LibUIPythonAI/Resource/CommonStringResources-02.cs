@@ -37,9 +37,9 @@ namespace LibUIPythonAI.Resource {
         // Stop Application Watch
         public virtual string StopClipboardWatch { get; } = "Stop Clipboard monitoring";
 
-        // Started Application Watch
+        // Started Application Watch Message
         public virtual string StartClipboardWatchMessage { get; } = "Clipboard monitoring has started.";
-        // Stopped Application Watch
+        // Stopped Application Watch Message
         public virtual string StopClipboardWatchMessage { get; } = "Clipboard monitoring has stopped ";
 
         // Start Screen Watch
@@ -47,15 +47,20 @@ namespace LibUIPythonAI.Resource {
         // Stop Screen Watch
         public virtual string StopScreenWatch { get; } = "Stop Screen monitoring";
 
-        // Started Screen Watch
+        // Start Screen Watch Message
         public virtual string StartScreenWatchMessage { get; } = "Screen monitoring has started.";
-        // Stopped Screen Watch
+        // Stopped Screen Watch Message
         public virtual string StopScreenWatchMessage { get; } = "Screen monitoring has stopped ";
 
-        // Start Integrated Monitor
-        public virtual string StartIntegratedMonitorMessage { get; } = "Start Integrated monitoring (Clipboard and Screen)";
-        // StopIntegratedMonitor
-        public virtual string StopIntegratedMonitorMessage { get; } = "Stop Integrated monitoring";
+        // Start Integrated Monitor Watch
+        public virtual string StartIntegratedMonitorWatch { get; } = "Start Integrated monitoring (Clipboard and Screen)";
+
+        // Stop Integrated Monitor Watch
+        public virtual string StopIntegratedMonitorWatch { get; } = "Stop Integrated monitoring";
+        // Start Integrated Monitor Message
+        public virtual string StartIntegratedMonitorMessage { get; } = "Integrated monitoring has started";
+        // StopIntegratedMonitor Message
+        public virtual string StopIntegratedMonitorMessage { get; } = " Integrated monitoring has stopped";
 
         // Edit Tag
         public virtual string EditTag { get; } = "Edit Tag";

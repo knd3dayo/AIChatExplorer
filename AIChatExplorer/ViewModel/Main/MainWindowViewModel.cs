@@ -114,7 +114,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // 監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string IntegratedMonitorButtonText {
             get {
-                return IsIntegratedMonitorActive ? CommonStringResources.Instance.StopIntegratedMonitorMessage : CommonStringResources.Instance.StartIntegratedMonitorMessage;
+                return IsIntegratedMonitorActive ? CommonStringResources.Instance.StopIntegratedMonitorWatch : CommonStringResources.Instance.StartIntegratedMonitorWatch;
             }
         }
 

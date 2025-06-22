@@ -4,7 +4,6 @@ using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.ScreenShot;
 using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
