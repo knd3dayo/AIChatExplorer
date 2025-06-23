@@ -4,6 +4,7 @@ using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -124,7 +125,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             get {
                 MenuItem openMenuItem = new() {
                     Header = CommonStringResources.Instance.Open,
-                    Command = AppCommands.OpenItemCommand,
+                    Command = OpenItemCommand,
                     CommandParameter = ApplicationItemViewModel,
                     InputGestureText = "Ctrl+O"
                 };
@@ -217,5 +218,10 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 return mergeChatMenuItem;
             }
         }
+
+        // OpenContentItemCommand
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+           AppViewModelCommandExecutes.OpenItemCommandExecute(itemViewModel);
+        });
     }
 }
