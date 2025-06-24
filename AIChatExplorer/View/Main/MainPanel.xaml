@@ -43,7 +43,72 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!--  Folder TreeView  -->
-        <local:MainPanelTreeViewControl Grid.Column="0" DataContext="{Binding MainPanelTreeViewControlViewModel}" />
+        <Grid>
+            <!--  Folder TreeView  -->
+            <TreeView
+                x:Name="FolderTreeView"
+                Grid.Column="0"
+                Background="White"
+                ItemsSource="{Binding MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.FolderViewModels}">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="Margin" Value="3,3,3,3" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="local:ApplicationItemFolderViewModel" ItemsSource="{Binding Children}">
+                        <!--  Tree item  -->
+                        <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon
+                                Width="18"
+                                Height="18"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                Kind="Folder" />
+                            <TextBlock
+                                Margin="0,3,0,0"
+                                DockPanel.Dock="Left"
+                                FontSize="12"
+                                Foreground="#616161"
+                                Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
+                                Text="{Binding FolderName}" />
+                            <DockPanel.ContextMenu>
+                                <!--  Folder context menu  -->
+                                <ContextMenu FontSize="12" ItemsSource="{Binding FolderMenuItems}" />
+                            </DockPanel.ContextMenu>
+                        </DockPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding MainPanelTreeViewControlViewModel.FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TreeView.InputBindings />
+            </TreeView>
+            <Grid.InputBindings>
+                <!--  Reload items from LiteDB  -->
+                <KeyBinding
+                    Key="R"
+                    Command="{Binding MainPanelTreeViewControlViewModel.ReloadCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Cut Folder  -->
+                <KeyBinding
+                    Key="X"
+                    Command="{Binding MainPanelTreeViewControlViewModel.CutFolderCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <KeyBinding
+                    Key="N"
+                    Command="{Binding MainPanelTreeViewControlViewModel.CreateItemCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Paste items into selected folder  -->
+                <KeyBinding
+                    Key="V"
+                    Command="{Binding MainPanelTreeViewControlViewModel.PasteCommand, Mode=OneTime}"
+                    CommandParameter="{Binding}"
+                    Modifiers="Control" />
+            </Grid.InputBindings>
+        </Grid>
         <GridSplitter
             Grid.Column="1"
             Width="5"
@@ -56,7 +121,123 @@
                 <RowDefinition Height="5" />
                 <RowDefinition Height="0.6*" />
             </Grid.RowDefinitions>
-            <local:MainPanelDataGridViewControl Grid.Row="0" DataContext="{Binding MainPanelDataGridViewControlViewModel}" />
+            <Grid>
+                <DataGrid
+                    Grid.Row="0"
+                    HorizontalAlignment="Stretch"
+                    AutoGenerateColumns="False"
+                    Background="White"
+                    BorderThickness="1"
+                    CanUserAddRows="True"
+                    CanUserDeleteRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="True"
+                    CanUserResizeRows="False"
+                    CanUserSortColumns="True"
+                    ItemsSource="{Binding MainPanelDataGridViewControlViewModel.SelectedFolder.Items, UpdateSourceTrigger=PropertyChanged}"
+                    RowHeaderWidth="0"
+                    SelectionMode="Extended"
+                    SelectionUnit="FullRow"
+                    VerticalScrollBarVisibility="Auto"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    VirtualizingStackPanel.IsVirtualizing="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding MainPanelDataGridViewControlViewModel.ApplicationItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.InputBindings>
+                        <!--  Open selected item window by double-clicking  -->
+                        <MouseBinding
+                            Command="{Binding MainPanelDataGridViewControlViewModel.OpenSelectedItemCommand}"
+                            CommandParameter="{Binding}"
+                            MouseAction="LeftDoubleClick" />
+                        <!--  Open selected item  -->
+                        <KeyBinding
+                            Key="O"
+                            Command="{Binding MainPanelDataGridViewControlViewModel.OpenSelectedItemCommand, Mode=OneTime}"
+                            CommandParameter="{Binding}"
+                            Modifiers="Control" />
+                        <!--  Open selected item as file  -->
+                        <KeyBinding
+                            Key="O"
+                            Command="{Binding MainPanelDataGridViewControlViewModel.OpenContentAsFileCommand, Mode=OneTime}"
+                            CommandParameter="{Binding}"
+                            Modifiers="Control+Shift" />
+
+                        <KeyBinding
+                            Key="X"
+                            Command="{Binding MainPanelDataGridViewControlViewModel.CutItemCommand, Mode=OneTime}"
+                            CommandParameter="{Binding}"
+                            Modifiers="Control" />
+                        <!--  Delete selected item  -->
+                        <KeyBinding Key="Delete" Command="{Binding MainPanelDataGridViewControlViewModel.DeleteItemCommand, Mode=OneTime}" />
+                        <!--  Delete displayed item  -->
+                        <KeyBinding
+                            Key="Delete"
+                            Command="{Binding MainPanelDataGridViewControlViewModel.DeleteDisplayedItemCommand, Mode=OneTime}"
+                            CommandParameter="{Binding}"
+                            Modifiers="Control" />
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <!--  IsPinned  -->
+                        <DataGridCheckBoxColumn
+                            Width="100"
+                            Binding="{Binding IsPinned}"
+                            Header="{x:Static res:ViewStringResources.Pin}" />
+                        <!--  CreatedAt, UpdatedAt  -->
+                        <DataGridTextColumn
+                            Width="150"
+                            MaxWidth="300"
+                            Binding="{Binding CreatedAtString}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.CreateDate}"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn
+                            Width="150"
+                            MaxWidth="300"
+                            Binding="{Binding UpdatedAtString}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.UpdateDate}"
+                            IsReadOnly="True" />
+                        <!--  ContentType  -->
+                        <DataGridTextColumn
+                            Width="100"
+                            Binding="{Binding ContentTypeString}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.Type}"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn
+                            Width="100"
+                            Binding="{Binding TagsText}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.Tag}"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding DescriptionText}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.Title}"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding SourceApplicationTitleText}"
+                            ElementStyle="{StaticResource SingleLineTextBlock}"
+                            Header="{x:Static res:ViewStringResources.SourceTitle}"
+                            IsReadOnly="True" />
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="ContextMenu" Value="{StaticResource GridRowContextMenu}" />
+                            <Setter Property="Margin" Value="0,5,0,0" />
+
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell" />
+                    </DataGrid.CellStyle>
+                </DataGrid>
+            </Grid>
             <GridSplitter
                 Grid.Row="1"
                 Height="5"
