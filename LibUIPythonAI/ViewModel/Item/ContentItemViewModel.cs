@@ -26,6 +26,9 @@ namespace LibUIPythonAI.ViewModel.Item {
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; }
 
+        public CommonViewModelCommandExecutes Commands => FolderViewModel.FolderCommands.CommandExecutes;
+
+
         public ContentItemViewModelCommands ItemCommands => new(this, FolderViewModel.FolderCommands.CommandExecutes);
         // IsSelected
         private bool isSelected = false;

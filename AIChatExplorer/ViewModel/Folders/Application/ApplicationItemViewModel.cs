@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -26,6 +27,7 @@ namespace AIChatExplorer.ViewModel.Content {
 
         }
 
+        
         // Context Menu
 
         public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
