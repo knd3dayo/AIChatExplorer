@@ -269,7 +269,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel(), applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
@@ -306,7 +306,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, applicationItem));
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel(), applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
@@ -430,7 +430,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {
 
-                    FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
+                    FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folder, finished) => {
                         if (finished) {
                             ApplicationItem chatHistoryItem = new(folder.Folder.Entity);
                             // タイトルを日付 + 元のタイトルにする

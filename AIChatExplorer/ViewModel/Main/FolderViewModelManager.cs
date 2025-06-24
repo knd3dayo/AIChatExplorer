@@ -12,13 +12,20 @@ using LibUIPythonAI.ViewModel.Common;
 using AIChatExplorer.ViewModel.Folders.ScreenShot;
 
 namespace AIChatExplorer.ViewModel.Main {
-    public class FolderViewModelManager : RootFolderViewModelContainer {
+    public class FolderViewModelManager : FolderViewModelManagerBase {
+
+        public override ContentFolderViewModel GetApplicationRootFolderViewModel() {
+            return RootFolderViewModel;
+        }
+        public override ContentFolderViewModel GetSearchRootFolderViewModel() {
+            return SearchRootFolderViewModel;
+        }
 
         // RootFolderのClipboardViewModel
-        public ApplicationFolderViewModel RootFolderViewModel { get; private set; }
+        private ApplicationFolderViewModel RootFolderViewModel { get; set; }
 
         // 検索フォルダのClipboardViewModel
-        public SearchFolderViewModel SearchRootFolderViewModel { get; private set; }
+        private SearchFolderViewModel SearchRootFolderViewModel { get; set; }
 
         // チャットフォルダのClipboardViewModel
         public ChatHistoryFolderViewModel ChatRootFolderViewModel { get; private set; }

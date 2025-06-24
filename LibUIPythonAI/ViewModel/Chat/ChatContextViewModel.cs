@@ -203,7 +203,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                     // UseFolderVectorSearchItemがFalseの場合、ContentItemに追加
                     if (UseFolderVectorSearchItem == false) {

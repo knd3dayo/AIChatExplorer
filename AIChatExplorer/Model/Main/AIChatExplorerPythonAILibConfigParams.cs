@@ -191,5 +191,14 @@ namespace AIChatExplorer.Model.Main {
         public bool AutoPredictUserIntent() {
             return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
         }
+
+        // ShowProperties
+        public bool IsShowProperties() {
+            return AIChatExplorerConfig.Instance.ShowProperties;
+        }
+        public void UpdateShowProperties(bool value) {
+            AIChatExplorerConfig.Instance.ShowProperties = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
     }
 }

@@ -355,7 +355,7 @@ namespace LibUIMergeChat.ViewModel {
         // 出力先フォルダを選択するコマンド
         public SimpleDelegateCommand<object> SelectOutputFolderCommand => new((parameter) => {
             // フォルダを選択
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, isSelect) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, isSelect) => {
                 if (isSelect) {
                     OutputFolder = folderViewModel;
                 }
@@ -375,7 +375,7 @@ namespace LibUIMergeChat.ViewModel {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                 });
 

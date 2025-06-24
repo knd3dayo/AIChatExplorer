@@ -154,7 +154,7 @@ namespace LibUIPythonAI.ViewModel.Search {
 
         // OpenApplicationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
                     SearchConditionRule.TargetFolder = folderViewModel.Folder;
                     TargetFolderPath = folderViewModel.FolderPath;

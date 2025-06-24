@@ -75,7 +75,7 @@ namespace LibUIPythonAI.ViewModel.Common {
         // Process when "Vector DB Management" is clicked in the menu
         public static void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, RootFolderViewModelContainer.FolderViewModels, (vectorDBItem) => { });
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, FolderViewModelManagerBase.FolderViewModels, (vectorDBItem) => { });
         }
 
 
@@ -93,7 +93,7 @@ namespace LibUIPythonAI.ViewModel.Common {
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public static void OpenListAutoProcessRuleWindowCommandExecute() {
             // ListAutoProcessRuleWindowを開く
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.FolderViewModelManagerBase.FolderViewModels);
 
         }
         // メニューの「タグ編集」をクリックしたときの処理
@@ -163,7 +163,7 @@ namespace LibUIPythonAI.ViewModel.Common {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
                 // Action when a vector DB item is selected
                 SelectVectorDBItemAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
                         vectorDBItems.Add(vectorDBItemBase);
                     });
                 }
@@ -184,7 +184,7 @@ namespace LibUIPythonAI.ViewModel.Common {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
                 // Action when a vector DB item is selected
                 SelectVectorDBItemAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
                         vectorDBItems.Add(vectorDBItemBase);
                     });
                 }

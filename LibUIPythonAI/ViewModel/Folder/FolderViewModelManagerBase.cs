@@ -3,7 +3,7 @@ using LibUIPythonAI.ViewModel.Common;
 using System.Collections.ObjectModel;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class RootFolderViewModelContainer(CommonViewModelCommandExecutes commands) : ObservableObject {
+    public abstract class FolderViewModelManagerBase(CommonViewModelCommandExecutes commands) : ObservableObject {
 
         // ApplicationFolder
         public static ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = [];
@@ -11,6 +11,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // Commands
         public CommonViewModelCommandExecutes Commands { get; set; } = commands;
 
+        public abstract ContentFolderViewModel GetApplicationRootFolderViewModel();
+
+        public abstract ContentFolderViewModel GetSearchRootFolderViewModel();
 
     }
 }

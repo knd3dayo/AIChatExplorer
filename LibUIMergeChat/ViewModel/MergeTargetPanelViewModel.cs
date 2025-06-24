@@ -250,7 +250,7 @@ namespace LibUIMergeChat.ViewModel {
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }
-        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = RootFolderViewModelContainer.FolderViewModels;
+        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = FolderViewModelManagerBase.FolderViewModels;
 
 
         // フォルダが選択された時の処理

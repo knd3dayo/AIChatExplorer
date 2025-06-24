@@ -44,9 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\Main\MainPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Properties\Misc.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -56,6 +53,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="View\Main\MainPanel.xaml.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\Settings\SettingUserControl.xaml.cs">
       <SubType>Code</SubType>

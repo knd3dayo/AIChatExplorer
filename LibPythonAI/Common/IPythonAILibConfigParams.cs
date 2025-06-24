@@ -96,6 +96,10 @@ namespace LibPythonAI.Common {
 
         public void UpdateAutoTextWrapping(bool value);
 
+        // ShowProperties
+        public bool IsShowProperties();
+
+        public void UpdateShowProperties(bool value);
 
     }
 }

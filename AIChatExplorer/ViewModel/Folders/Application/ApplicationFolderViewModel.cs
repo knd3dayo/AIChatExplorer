@@ -22,7 +22,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
 
         // RootFolderのViewModelを取得する
         public override ContentFolderViewModel GetRootFolderViewModel() {
-            return MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel;
+            return MainWindowViewModel.Instance.RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
         }
 
         public override ObservableCollection<ContentItemViewModel> GetSelectedItems() {
