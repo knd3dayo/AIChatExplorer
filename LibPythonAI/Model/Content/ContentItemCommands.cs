@@ -196,11 +196,11 @@ namespace LibPythonAI.Model.Content {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
-            if (configParams.AutoTitle()) {
+            if (configParams.IsAutoTitleEnabled()) {
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
                 CreateAutoTitle(chatHistoryItem);
 
-            } else if (configParams.AutoTitleWithOpenAI()) {
+            } else if (configParams.IsAutoTitleWithOpenAIEnabled()) {
 
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
                 await PromptItem.CreateAutoTitleWithOpenAIAsync(chatHistoryItem);

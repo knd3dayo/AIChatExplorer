@@ -126,7 +126,7 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
                             return;
                         }
                         // アイテムの内容からユーザーの意図を推測する。
-                        if (configParams.AutoPredictUserIntent()) {
+                        if (configParams.IsAutoPredictUserIntentEnabled()) {
                             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
                             await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromImage.ToString());
                         }

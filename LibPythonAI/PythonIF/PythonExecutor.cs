@@ -31,12 +31,12 @@ namespace LibPythonAI.PythonIF {
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
 
             if (_pythonAIFunctions == null) {
-                if (ConfigPrams.UseInternalAPI()) {
+                if (ConfigPrams.IsUseInternalAPI()) {
                     string baseUrl = ConfigPrams.GetAPIServerURL();
                     _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
                     InitInternalAPI(ConfigPrams, afterStartProcess);
 
-                } else if (ConfigPrams.UseExternalAPI()) {
+                } else if (ConfigPrams.IsUseExternalAPI()) {
                     string baseUrl = ConfigPrams.GetAPIServerURL();
                     _pythonAIFunctions = new PythonAPIFunctions(baseUrl);
                     afterStartProcess(null);

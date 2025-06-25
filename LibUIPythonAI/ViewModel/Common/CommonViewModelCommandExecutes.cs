@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
-using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
@@ -11,7 +10,6 @@ using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoProcessRule;
 using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.View.Search;
 using LibUIPythonAI.View.Tag;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
@@ -21,7 +19,11 @@ using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Common {
-    public class CommonViewModelCommandExecutes {
+    public abstract class CommonViewModelCommandExecutes {
+
+        public abstract ObservableCollection<ContentItemViewModel> GetSelectedItems();
+
+        public abstract void PasteFromClipboardCommandExecute();
 
         public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };
 
@@ -32,6 +34,16 @@ namespace LibUIPythonAI.ViewModel.Common {
             UpdateView = updateView;
         }
 
+        // ピン留めの切り替えコマンド (複数選択可能)
+        public SimpleDelegateCommand<ContentItemViewModel> ChangePinCommand => new((itemViewModel) => {
+            foreach (var item in GetSelectedItems()) {
+                if (item is ContentItemViewModel applicationItemViewModel) {
+                    applicationItemViewModel.IsPinned = !applicationItemViewModel.IsPinned;
+                    // ピン留めの時は更新日時を変更しない
+                    SaveApplicationItemCommand.Execute(applicationItemViewModel);
+                }
+            }
+        });
 
         // フォルダを開くコマンド
         public SimpleDelegateCommand<ContentItemViewModel> OpenFolderInExplorerCommand => new((itemViewModel) => {

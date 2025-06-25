@@ -16,9 +16,9 @@ namespace LibPythonAI.Common {
         #region APIサーバー関連
         public string GetAPIServerURL();
 
-        public bool UseInternalAPI();
+        public bool IsUseInternalAPI();
 
-        public bool UseExternalAPI();
+        public bool IsUseExternalAPI();
         #endregion
 
         public string GetMainDBPath();
@@ -40,42 +40,39 @@ namespace LibPythonAI.Common {
         public string GetAutoGenToolDir();
 
 
-        public bool AutoTag();
+        public bool IsAutoTagEnabled();
 
-        // AutoTitle
-        public bool AutoTitle();
-        // AutoTitleWithOpenAI
-        public bool AutoTitleWithOpenAI();
+        // IsAutoTitleEnabled
+        public bool IsAutoTitleEnabled();
+        // IsAutoTitleWithOpenAIEnabled
+        public bool IsAutoTitleWithOpenAIEnabled();
 
-        // AutoBackgroundInfo
-        public bool AutoBackgroundInfo();
+        // IsAutoBackgroundInfoEnabled
+        public bool IsAutoBackgroundInfoEnabled();
 
-        // AutoSummary
-        public bool AutoSummary();
+        // IsAutoSummaryElabled
+        public bool IsAutoSummaryElabled();
 
-        // AutoGenerateTasks
-        public bool AutoGenerateTasks();
+        // IsAutoGenerateTasksEnabled
+        public bool IsAutoGenerateTasksEnabled();
 
-        // AutoDocumentReliabilityCheck
-        public bool AutoDocumentReliabilityCheck();
+        // IsAutoDocumentReliabilityCheckEnabled
+        public bool IsAutoDocumentReliabilityCheckEnabled();
 
-        // AutoFileExtract
-        public bool AutoFileExtract();
+        // IsAutoFileExtractEnabled
+        public bool IsAutoFileExtractEnabled();
         
-        // AutoExtractImageWithPyOCR
-        public bool AutoExtractImageWithPyOCR();
+        // IsAutoExtractImageWithOpenAIEnabled
+        public bool IsAutoExtractImageWithOpenAIEnabled();
 
-        // AutoExtractImageWithOpenAI
-        public bool AutoExtractImageWithOpenAI();
+        // IsAutoPredictUserIntentEnabled
+        public bool IsAutoPredictUserIntentEnabled();
 
-        // AutoPredictUserIntent
-        public bool AutoPredictUserIntent();
+        // GetIgnoreLineCount
+        public int GetIgnoreLineCount();
 
-        // IgnoreLineCount
-        public int IgnoreLineCount();
-
-        // DevFeaturesEnabled
-        public bool DevFeaturesEnabled();
+        // IsDevFeaturesEnabled
+        public bool IsDevFeaturesEnabled();
 
         public void UpdateDevFeaturesEnabled(bool value);
 
@@ -100,6 +97,9 @@ namespace LibPythonAI.Common {
         public bool IsShowProperties();
 
         public void UpdateShowProperties(bool value);
+
+        // ClipboardMonitoring
+        public string GetMonitorTargetAppNames();
 
     }
 }

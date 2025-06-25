@@ -1,19 +1,17 @@
 using System.Reflection;
-using AIChatExplorer.ViewModel.Settings;
+using AIChatExplorer.Model.Folders.Application;
+using AIChatExplorer.Model.Item;
+using LibPythonAI.Common;
+using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Prompt;
+using LibPythonAI.Resources;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
-using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Utils;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.AutoProcess;
-using AIChatExplorer.Model.Main;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Folders.Application;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Resources;
-using LibPythonAI.Common;
 
 namespace AIChatExplorer.Model.Folders.ClipboardHistory {
     /// <summary>
@@ -236,10 +234,11 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
         /// <returns></returns>
         private static bool IsMonitorTargetApp(ClipboardChangedEventArgs e) {
             // If MonitorTargetAppNames is not an empty string and does not contain in MonitorTargetAppNames, do not process
-            if (AIChatExplorerConfig.Instance.MonitorTargetAppNames != "") {
+            var names = PythonAILibManager.Instance.ConfigParams.GetMonitorTargetAppNames();
+            if (names != "") {
                 // Compare uppercase letters
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
-                string upperMonitorTargetAppNames = AIChatExplorerConfig.Instance.MonitorTargetAppNames.ToUpper();
+                string upperMonitorTargetAppNames = names.ToUpper();
                 if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return false;
                 }
@@ -270,7 +269,7 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
                         return;
                     }
                     // アイテムの内容からユーザーの意図を推測する。
-                    if (configParams.AutoPredictUserIntent()) {
+                    if (configParams.IsAutoPredictUserIntentEnabled()) {
                         LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
                         await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromClipboard.ToString());
                     }

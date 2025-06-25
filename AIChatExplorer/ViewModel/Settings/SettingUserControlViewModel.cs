@@ -196,7 +196,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // AutoBackgroundInfo
+        // IsAutoBackgroundInfoEnabled
         public bool AutoBackgroundInfo {
             get {
                 return AIChatExplorerConfig.Instance.AutoBackgroundInfo;
@@ -209,7 +209,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoSummary
+        // IsAutoSummaryElabled
         public bool AutoSummary {
             get {
                 return AIChatExplorerConfig.Instance.AutoSummary;
@@ -268,7 +268,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        //　AutoExtractImageWithOpenAI
+        //　IsAutoExtractImageWithOpenAIEnabled
         public bool AutoExtractImageWithOpenAI {
             get {
                 return AIChatExplorerConfig.Instance.AutoExtractImageWithOpenAI;
@@ -281,7 +281,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoGenerateTasks
+        // IsAutoGenerateTasksEnabled
         public bool AutoGenerateTasks {
             get {
                 return AIChatExplorerConfig.Instance.AutoGenerateTasks;
@@ -378,7 +378,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // AutoPredictUserIntent
+        // IsAutoPredictUserIntentEnabled
         public bool AutoPredictUserIntent {
             get {
                 return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
@@ -589,7 +589,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 OnPropertyChanged(nameof(IgnoreLineCountText));
             }
         }
-        // AutoDocumentReliabilityCheck
+        // IsAutoDocumentReliabilityCheckEnabled
         public bool AutoDocumentReliabilityCheck {
             get {
                 return AIChatExplorerConfig.Instance.AutoDocumentReliabilityCheck;
@@ -614,7 +614,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // UseInternalAPI
+        // IsUseInternalAPI
         public bool UseInternalAPI {
             get {
                 return AIChatExplorerConfig.Instance.UseInternalAPI;
@@ -632,7 +632,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // UseExternalAPI
+        // IsUseExternalAPI
         public bool UseExternalAPI {
             get {
                 return AIChatExplorerConfig.Instance.UseExternalAPI;

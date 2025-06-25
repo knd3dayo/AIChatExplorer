@@ -31,7 +31,9 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace AIChatExplorer.ViewModel.Main {
     public class AppViewModelCommandExecutes(Action<bool> updateIndeterminate, Action updateView) : CommonViewModelCommandExecutes(updateIndeterminate, updateView) {
 
-
+        public override ObservableCollection<ContentItemViewModel> GetSelectedItems() {
+            return MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems;
+        }
 
         // OpenContentItemCommand
         public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
@@ -50,16 +52,6 @@ namespace AIChatExplorer.ViewModel.Main {
         });
 
 
-        // ピン留めの切り替えコマンド (複数選択可能)
-        public SimpleDelegateCommand<ApplicationItemViewModel> ChangePinCommand => new((itemViewModel) => {
-            foreach (var item in MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems) {
-                if (item is ApplicationItemViewModel applicationItemViewModel) {
-                    applicationItemViewModel.IsPinned = !applicationItemViewModel.IsPinned;
-                    // ピン留めの時は更新日時を変更しない
-                    SaveApplicationItemCommand.Execute(applicationItemViewModel);
-                }
-            }
-        });
 
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
@@ -365,7 +357,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // プログレスインジケーター表示の処理
 
         // Process when Ctrl + V is pressed
-        public void PasteFromClipboardCommandExecute() {
+        public override void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
             ContentFolderViewModel? folder = windowViewModel.MainPanelTreeViewControlViewModel?.SelectedFolder;
             if (folder is not ApplicationFolderViewModel SelectedFolder) {

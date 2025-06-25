@@ -229,7 +229,7 @@ namespace AIChatExplorer.View.Settings {
         // ScreenMonitoringInterval
         public static string ScreenMonitoringInterval { get; set; } = CommonStringResources.Instance.ScreenMonitoringInterval;
 
-        // AutoPredictUserIntent
+        // IsAutoPredictUserIntentEnabled
         public static string AutoPredictUserIntent { get; set; } = CommonStringResources.Instance.AutoPredictUserIntent;
     }
 }

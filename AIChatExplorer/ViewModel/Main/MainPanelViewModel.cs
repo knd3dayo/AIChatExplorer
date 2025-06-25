@@ -16,7 +16,7 @@ using LibUIPythonAI.ViewModel.Item;
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelViewModel : CommonViewModelBase {
 
-        public MainPanelViewModel(AppViewModelCommandExecutes commands) : base() {
+        public MainPanelViewModel(CommonViewModelCommandExecutes commands) : base() {
             Commands = commands;
             MainPanelTreeViewControlViewModel = new MainPanelTreeViewControlViewModel(Commands);
             MainPanelDataGridViewControlViewModel = new MainPanelDataGridViewControlViewModel(Commands);
@@ -35,7 +35,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         }
 
-        public AppViewModelCommandExecutes Commands { get; set; }
+        public CommonViewModelCommandExecutes Commands { get; set; }
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
@@ -66,10 +66,10 @@ namespace AIChatExplorer.ViewModel.Main {
 
     public class MainPanelTreeViewControlViewModel : CommonViewModelBase {
 
-        private AppViewModelCommandExecutes Commands { get; set; }
+        private CommonViewModelCommandExecutes Commands { get; set; }
 
         // constructor
-        public MainPanelTreeViewControlViewModel(AppViewModelCommandExecutes commands) {
+        public MainPanelTreeViewControlViewModel(CommonViewModelCommandExecutes commands) {
             Commands = commands;
         }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
@@ -214,9 +214,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
     }
 
-    public class MainPanelDataGridViewControlViewModel(AppViewModelCommandExecutes commands) : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(CommonViewModelCommandExecutes commands) : ObservableObject {
 
-        private AppViewModelCommandExecutes Commands { get; set; } = commands;
+        private CommonViewModelCommandExecutes Commands { get; set; } = commands;
 
         public TabControl? MyTabControl { get; set; }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };

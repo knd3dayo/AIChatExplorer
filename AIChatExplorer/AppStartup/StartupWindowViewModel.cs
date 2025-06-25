@@ -52,7 +52,7 @@ namespace AIChatExplorer.AppStartup {
 
         }
 
-        private static void CheckEnvironment(AIChatExplorerPythonAILibConfigParams configParams) {
+        private static void CheckEnvironment(IPythonAILibConfigParams configParams) {
 
             PythonExecutor.PythonEnvironmentCheckResult result = PythonExecutor.CheckPythonEnvironment(configParams);
             if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonNotFound) {

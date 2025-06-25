@@ -42,7 +42,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoTag
+        // IsAutoTagEnabled
         public bool AutoTag {
             get {
                 return AIChatExplorerConfig.Instance.AutoTag;
