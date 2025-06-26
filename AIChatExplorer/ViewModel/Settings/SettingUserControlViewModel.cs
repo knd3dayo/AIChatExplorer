@@ -209,7 +209,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // IsAutoSummaryElabled
+        // IsAutoSummaryEnabled
         public bool AutoSummary {
             get {
                 return AIChatExplorerConfig.Instance.AutoSummary;

@@ -50,8 +50,8 @@ namespace LibPythonAI.Common {
         // IsAutoBackgroundInfoEnabled
         public bool IsAutoBackgroundInfoEnabled();
 
-        // IsAutoSummaryElabled
-        public bool IsAutoSummaryElabled();
+        // IsAutoSummaryEnabled
+        public bool IsAutoSummaryEnabled();
 
         // IsAutoGenerateTasksEnabled
         public bool IsAutoGenerateTasksEnabled();

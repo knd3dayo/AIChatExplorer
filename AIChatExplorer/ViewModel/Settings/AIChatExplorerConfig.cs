@@ -271,7 +271,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.AutoBackgroundInfo = value;
             }
         }
-        // IsAutoSummaryElabled
+        // IsAutoSummaryEnabled
         private bool? _autoSummary;
         public bool AutoSummary {
             get {
@@ -724,7 +724,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             return AIChatExplorerConfig.Instance.AutoBackgroundInfo;
         }
 
-        // IsAutoSummaryElabled
+        // IsAutoSummaryEnabled
         public bool IsAutoSummaryElabled() {
             return AIChatExplorerConfig.Instance.AutoSummary;
         }

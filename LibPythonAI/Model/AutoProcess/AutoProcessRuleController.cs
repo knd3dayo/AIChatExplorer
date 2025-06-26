@@ -83,7 +83,7 @@ namespace LibPythonAI.Model.AutoProcess {
             });
             var task4 = Task.Run(async () => {
                 // サマリー
-                if (configParams.IsAutoSummaryElabled()) {
+                if (configParams.IsAutoSummaryEnabled()) {
                     LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateSummary);
                     await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }

@@ -35,15 +35,6 @@ namespace AIChatExplorer.Model.Main {
         }
 
 
-        public ILogWrapperAction GetLogWrapperAction() {
-            return new LogWrapperAction();
-        }
-
-        public TextWrapping GetTextWrapping() {
-            return AIChatExplorerConfig.Instance.TextWrapping;
-        }
-
-
         public string GetMainDBPath() {
             /// Get AppData folder path
             string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
@@ -84,60 +75,56 @@ namespace AIChatExplorer.Model.Main {
             return toolDir;
         }
 
-        public bool AutoTag() {
+        public bool IsAutoTagEnabled() {
             return AIChatExplorerConfig.Instance.AutoTag;
         }
 
-        // AutoTitle
-        public bool AutoTitle() {
+        // IsAutoTitleEnabled
+        public bool IsAutoTitleEnabled() {
             return AIChatExplorerConfig.Instance.AutoDescription;
         }
-        // AutoTitleWithOpenAI
-        public bool AutoTitleWithOpenAI() {
+        // IsAutoTitleWithOpenAIEnabled
+        public bool IsAutoTitleWithOpenAIEnabled() {
             return AIChatExplorerConfig.Instance.AutoDescriptionWithOpenAI;
         }
 
-        // AutoBackgroundInfo
-        public bool AutoBackgroundInfo() {
+        // IsAutoBackgroundInfoEnabled
+        public bool IsAutoBackgroundInfoEnabled() {
             return AIChatExplorerConfig.Instance.AutoBackgroundInfo;
         }
 
-        // AutoSummary
-        public bool AutoSummary() {
+        // IsAutoSummaryEnabled
+        public bool IsAutoSummaryEnabled() {
             return AIChatExplorerConfig.Instance.AutoSummary;
         }
 
-        // AutoGenerateTasks
-        public bool AutoGenerateTasks() {
+        // IsAutoGenerateTasksEnabled
+        public bool IsAutoGenerateTasksEnabled() {
             return AIChatExplorerConfig.Instance.AutoGenerateTasks;
         }
 
-        // AutoDocumentReliabilityCheck
-        public bool AutoDocumentReliabilityCheck() {
+        // IsAutoDocumentReliabilityCheckEnabled
+        public bool IsAutoDocumentReliabilityCheckEnabled() {
             return AIChatExplorerConfig.Instance.AutoDocumentReliabilityCheck;
         }
 
-        // AutoFileExtract
-        public bool AutoFileExtract() {
+        // sAutoFileExtractEnabled
+        public bool IsAutoFileExtractEnabled() {
             return AIChatExplorerConfig.Instance.AutoFileExtract;
         }
 
-        // AutoExtractImageWithPyOCR
-        public bool AutoExtractImageWithPyOCR() {
-            return AIChatExplorerConfig.Instance.AutoExtractImageWithPyOCR;
-        }
 
-        // AutoExtractImageWithOpenAI
-        public bool AutoExtractImageWithOpenAI() {
+        // IsAutoExtractImageWithOpenAIEnabled
+        public bool IsAutoExtractImageWithOpenAIEnabled() {
             return AIChatExplorerConfig.Instance.AutoExtractImageWithOpenAI;
         }
         // IgnoreLineCount
-        public int IgnoreLineCount() {
+        public int GetIgnoreLineCount() {
             return AIChatExplorerConfig.Instance.IgnoreLineCount;
         }
 
         // public bool DevFeaturesEnabled();
-        public bool DevFeaturesEnabled() {
+        public bool IsDevFeaturesEnabled() {
             return AIChatExplorerConfig.Instance.EnableDevFeatures;
         }
 
@@ -152,11 +139,11 @@ namespace AIChatExplorer.Model.Main {
         }
 
         // UseInternalAPI
-        public bool UseInternalAPI() {
+        public bool IsUseInternalAPI() {
             return AIChatExplorerConfig.Instance.UseInternalAPI;
         }
         // UseAPI
-        public bool UseExternalAPI() {
+        public bool IsUseExternalAPI() {
             return AIChatExplorerConfig.Instance.UseExternalAPI;
         }
         // MarkdownView
@@ -188,7 +175,7 @@ namespace AIChatExplorer.Model.Main {
             AIChatExplorerConfig.Instance.Save();
         }
         // AutoPredictUserIntent
-        public bool AutoPredictUserIntent() {
+        public bool IsAutoPredictUserIntentEnabled() {
             return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
         }
 
@@ -200,5 +187,18 @@ namespace AIChatExplorer.Model.Main {
             AIChatExplorerConfig.Instance.ShowProperties = value;
             AIChatExplorerConfig.Instance.Save();
         }
+
+        public ILogWrapperAction GetLogWrapperAction() {
+            return new LogWrapperAction();
+        }
+
+        public TextWrapping GetTextWrapping() {
+            return AIChatExplorerConfig.Instance.TextWrapping;
+        }
+        // MonitorTargetAppNames
+        public string GetMonitorTargetAppNames() {
+            return AIChatExplorerConfig.Instance.MonitorTargetAppNames;
+        }
+
     }
 }
