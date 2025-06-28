@@ -49,5 +49,8 @@ namespace LibUIMergeChat.Resources {
 
         // OutputFolderSelection
         public virtual string OutputFolderSelection { get; set; } = "Output Folder Selection";
+
+        public virtual string ExcludeFromList { get; } = "Exclude from list";
+
     }
 }

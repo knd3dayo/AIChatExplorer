@@ -25,5 +25,8 @@ namespace LibUIMergeChat.Resources {
         // OutputFolderSelection
         public override string OutputFolderSelection { get; set; } = "出力フォルダ選択";
 
+        // リストから除外
+        public override string ExcludeFromList { get; } = "リストから除外";
+
     }
 }

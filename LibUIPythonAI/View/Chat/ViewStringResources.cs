@@ -93,11 +93,11 @@ namespace LibUIPythonAI.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
-        // RAGMode None
+        // RAGModeValue None
         public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
-        // RAGMode NormalSearch
+        // RAGModeValue NormalSearch
         public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
-        // RAGMode PromptSearch
+        // RAGModeValue PromptSearch
         public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
 
 
@@ -156,7 +156,7 @@ namespace LibUIPythonAI.View.Chat {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // RAGMode
+        // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // ExcludeFromList
@@ -170,6 +170,36 @@ namespace LibUIPythonAI.View.Chat {
 
         // フォルダに設定されたベクトルを使用
         public static string UseVectorDBSettingInFolder => CommonStringResources.Instance.UseVectorDBSettingInFolder;
+
+        // Select
+        public static string Select => CommonStringResources.Instance.Select;
+
+        // CreateDate
+        public static string CreateDate => CommonStringResources.Instance.CreateDate;
+
+        // UpdateDate
+        public static string UpdateDate => CommonStringResources.Instance.UpdateDate;
+
+        // Type
+        public static string Type => CommonStringResources.Instance.Type;
+
+        // Tag
+        public static string Tag => CommonStringResources.Instance.Tag;
+
+        // Title
+        public static string Title => CommonStringResources.Instance.Title;
+
+        // SourceTitle
+        public static string SourceTitle => CommonStringResources.Instance.SourceTitle;
+
+        // ShowProperties
+        public static string ShowProperties => CommonStringResources.Instance.ShowProperties;
+
+        // ItemSelection
+        public static string ItemSelection => CommonStringResources.Instance.ItemSelection;
+
+        // TargetDataSelection
+        public static string TargetDataSelection => CommonStringResources.Instance.TargetDataSelection;
 
     }
 }

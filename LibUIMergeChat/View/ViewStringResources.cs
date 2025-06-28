@@ -152,7 +152,7 @@ namespace LibUIMergeChat.View {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // RAGMode
+        // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // MergeTarget
@@ -196,5 +196,9 @@ namespace LibUIMergeChat.View {
 
         // Chat
         public static string Chat => CommonStringResources.Instance.Chat;
+
+        // ExcludeFromList
+        public static string ExcludeFromList => MergeChatStringResources.Instance.ExcludeFromList;
+
     }
 }

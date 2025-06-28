@@ -228,6 +228,12 @@ namespace LibUIPythonAI.Resource {
         // ShowProperties
         public virtual string ShowProperties { get; } = "Show Properties";
 
+        // ItemSelection
+        public virtual string ItemSelection { get; } = "Item Selection";
+
+        // TargetDataSelection
+        public virtual string TargetDataSelection { get; } = "Target Data Selection";
+
         // MarkdownView
         public virtual string MarkdownView { get; } = "Markdown View";
 

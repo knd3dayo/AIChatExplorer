@@ -58,6 +58,9 @@ namespace LibUIPythonAI.ViewModel.Item {
             get => ContentItem.Tags;
             set => ContentItem.Tags = value;
         }
+
+        // TabItems
+        public ObservableCollection<TabItem> TabItems { get; set; } = [];
         // LastSelectedTabIndex
         public int LastSelectedTabIndex { get; set; } = 0;
 
@@ -235,7 +238,11 @@ namespace LibUIPythonAI.ViewModel.Item {
             // PromptResultのタブ
             UpdatePromptResultTabItems(tabControl);
 
+            // タブの選択状態を更新
             SelectedTabIndex = LastSelectedTabIndex;
+
+            // TabItemsの更新
+            TabItems = new ObservableCollection<TabItem>(tabControl.Items.OfType<TabItem>());
 
         }
 

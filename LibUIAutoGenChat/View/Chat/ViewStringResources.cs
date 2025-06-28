@@ -152,7 +152,7 @@ namespace LibUIAutoGenChat.View.Chat {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // RAGMode
+        // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // ExcludeFromList

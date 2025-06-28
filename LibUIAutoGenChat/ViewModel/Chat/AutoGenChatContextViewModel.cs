@@ -124,7 +124,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
-        // RAGMode
+        // RAGModeValue
         private RAGModeEnum _ragMode = RAGModeEnum.None;
         public int RAGMode {
             get {

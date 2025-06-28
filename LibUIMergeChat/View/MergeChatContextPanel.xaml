@@ -55,13 +55,13 @@
                 <ComboBox
                     Grid.Column="1"
                     Margin="10,0,10,0"
-                    SelectedIndex="{Binding SplitMode}">
+                    SelectedIndex="{Binding ChatRequestContextViewModel.SplitMode}">
                     <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
                     <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
                     <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            <i:InvokeCommandAction Command="{Binding ChatRequestContextViewModel.SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ComboBox>
@@ -70,7 +70,7 @@
                 Grid.Row="4"
                 Margin="10,20,0,10"
                 HorizontalAlignment="Left"
-                Visibility="{Binding SplitMOdeVisibility}">
+                Visibility="{Binding ChatRequestContextViewModel.SplitMOdeVisibility}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="170" />
                     <ColumnDefinition Width="80" />
@@ -84,7 +84,7 @@
                     Grid.Column="1"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
-                    Text="{Binding SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding ChatRequestContextViewModel.SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
 
             </Grid>
             <Grid
@@ -120,19 +120,19 @@
         <ComboBox
             Grid.Row="1"
             Margin="10,20,0,10"
-            SelectedIndex="{Binding RAGMode}">
+            SelectedIndex="{Binding ChatRequestContextViewModel.RAGModeValue}">
             <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
             <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
             <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding ChatRequestContextViewModel.RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ComboBox>
 
         <!--  ベクトルDB設定  -->
-        <Grid Grid.Row="2" Visibility="{Binding VectorDBItemVisibility}">
+        <Grid Grid.Row="2" Visibility="{Binding ChatRequestContextViewModel.VectorDBItemVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -165,7 +165,7 @@
                             FontSize="10"
                             Text="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}">
                             <TextBlock.InputBindings>
-                                <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                                <MouseBinding Command="{Binding ChatRequestContextViewModel.AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                             </TextBlock.InputBindings>
                         </TextBlock>
                     </Grid>
@@ -174,8 +174,8 @@
                         Margin="0,10,0,10"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
-                        ItemsSource="{Binding VectorSearchProperties}"
-                        SelectedItem="{Binding SelectedVectorSearchItem}">
+                        ItemsSource="{Binding ChatRequestContextViewModel.VectorSearchProperties}"
+                        SelectedItem="{Binding ChatRequestContextViewModel.SelectedVectorSearchItem}">
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
                                 <Setter Property="BorderThickness" Value="1" />
@@ -190,7 +190,7 @@
                         </ListBox.ItemTemplate>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
+                                <MenuItem Command="{Binding ChatRequestContextViewModel.RemoveVectorDBItemCommand, Mode=OneTime}" Header="{x:Static res:ViewStringResources.ExcludeFromList}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -215,7 +215,7 @@
                     Grid.Column="1"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
-                    Text="{Binding VectorDBSearchResultMax}" />
+                    Text="{Binding ChatRequestContextViewModel.VectorDBSearchResultMax}" />
             </Grid>
 
         </Grid>

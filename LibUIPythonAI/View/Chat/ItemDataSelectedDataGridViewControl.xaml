@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="LibUIMergeChat.View.MergeTargetSelectedDataGridViewControl"
+    x:Class="LibUIPythonAI.View.Chat.ItemDataSelectedDataGridViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource;assembly=LibUIPythonAI"
@@ -8,10 +8,10 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:LibUIMergeChat.View"
-    xmlns:viewModel="clr-namespace:LibUIMergeChat.ViewModel"
+    xmlns:res="clr-namespace:LibUIPythonAI.View.Chat"
+    xmlns:viewModel="clr-namespace:LibUIPythonAI.ViewModel.Chat"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:MergeTargetDataGridViewControlViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewModel:RelatedItemsDataGridViewControlViewModel}"
     mc:Ignorable="d">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -42,7 +42,7 @@
             CanUserResizeColumns="True"
             CanUserResizeRows="False"
             CanUserSortColumns="True"
-            ItemsSource="{Binding Items}"
+            ItemsSource="{Binding CheckedItems}"
             RowHeaderWidth="0"
             SelectionMode="Extended"
             SelectionUnit="FullRow"
@@ -74,7 +74,7 @@
                 <DataGridCheckBoxColumn
                     Width="100"
                     Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
-                    Header="{x:Static res:ViewStringResources.MergeTarget}" />
+                    Header="{x:Static res:ViewStringResources.Select}" />
                 <!--  CreatedAt, UpdatedAt  -->
                 <DataGridTextColumn
                     Width="150"

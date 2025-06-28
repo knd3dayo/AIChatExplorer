@@ -38,6 +38,12 @@ namespace LibUIPythonAI.Resource {
         // プロパティ表示
         public override string ShowProperties { get; } = "プロパティ表示";
 
+        // ItemSelection
+        public override string ItemSelection { get; } = "アイテム選択";
+
+        // TargetDataSelection
+        public override string TargetDataSelection { get; } = "対象データ選択";
+
         // MarkdownView
         public override string MarkdownView { get; } = "マークダウン表示";
 

@@ -39,30 +39,31 @@
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </UserControl.InputBindings>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <local:ChatContextPanel Grid.Column="0" DataContext="{Binding ChatContextViewModelInstance}" />
-        <GridSplitter Grid.Column="1" Width="5" />
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TabControl
-                Grid.Row="0"
-                Margin="10,5,10,5"
-                HorizontalContentAlignment="Left">
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{x:Static res:ViewStringResources.Chat}">
-                    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TabControl
+            Grid.Row="0"
+            Margin="10,5,10,5"
+            HorizontalContentAlignment="Left">
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.Chat}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <local:ChatContextPanel Grid.Column="0" DataContext="{Binding ChatContextViewModelInstance}" />
+                    <GridSplitter Grid.Column="1" Width="5" />
+
+                    <Grid Grid.Column="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="5" />
@@ -187,98 +188,144 @@
                             </ScrollViewer>
                         </Grid>
                     </Grid>
-                </TabItem>
-                <TabItem
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{x:Static res:ViewStringResources.RequestParameterJson}">
-                    <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
-                        <TextBox
-                            Margin="10,10,10,10"
-                            VerticalAlignment="Top"
-                            Text="{Binding PreviewJson, Mode=OneWay}" />
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{x:Static res:ViewStringResources.GenerateDebugCommand}">
-                    <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
-                        <TextBox
-                            Margin="10,10,10,10"
-                            VerticalAlignment="Top"
-                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}" />
-                    </ScrollViewer>
-                </TabItem>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </TabControl>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    Grid.Column="0"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
-                    Content="{x:Static res:ViewStringResources.MarkdownView}"
-                    FontSize="8pt"
-                    IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </TabItem>
+            <!--  マージ対象アイテム  -->
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                Background="White"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.ItemSelection}">
+                <local:RelatedItemsPanel DataContext="{Binding RelatedItemsPanelViewModel}" />
+            </TabItem>
+            <!--  マージ対象データ  -->
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.TargetDataSelection}">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  エクスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
+                    <DataGrid
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="False"
+                        Background="White"
+                        ItemsSource="{Binding ExportItems}"
+                        SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.TargetDataSelection}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.RequestParameterJson}">
+                <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
+                    <TextBox
+                        Margin="10,10,10,10"
+                        VerticalAlignment="Top"
+                        Text="{Binding PreviewJson, Mode=OneWay}" />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.GenerateDebugCommand}">
+                <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
+                    <TextBox
+                        Margin="10,10,10,10"
+                        VerticalAlignment="Top"
+                        Text="{Binding GeneratedDebugCommand, Mode=OneWay}" />
+                </ScrollViewer>
+            </TabItem>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TabControl>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <CheckBox
+                Grid.Column="0"
+                Margin="10,0,10,10"
+                HorizontalAlignment="Left"
+                Content="{x:Static res:ViewStringResources.MarkdownView}"
+                FontSize="8pt"
+                IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
 
-                <StackPanel
-                    Grid.Column="1"
-                    HorizontalAlignment="Left"
-                    Orientation="Horizontal"
-                    Visibility="{Binding DebugCommandVisibility}">
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding DebugCommand, Mode=OneTime}"
-                        Content="{x:Static res:ViewStringResources.ExecuteDebugCommand}" />
-                </StackPanel>
-                <StackPanel
-                    Grid.Column="2"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal">
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding SendChatCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{x:Static res:ViewStringResources.Send}" />
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Left"
+                Orientation="Horizontal"
+                Visibility="{Binding DebugCommandVisibility}">
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding DebugCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.ExecuteDebugCommand}" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding SendChatCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Send}" />
 
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
-                        Content="{x:Static res:ViewStringResources.ClearChatContents}" />
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding ClearInputTextCommand, Mode=OneTime}"
-                        Content="{x:Static res:ViewStringResources.ClearContent}" />
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
-                        Content="{x:Static res:ViewStringResources.ReloadContent}" />
-                    <Button
-                        Margin="10,0,10,5"
-                        Command="{Binding SaveAndCloseCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{x:Static res:ViewStringResources.Close}" />
-                </StackPanel>
-            </Grid>
-            <ProgressBar
-                Grid.Row="0"
-                IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
-                Style="{StaticResource MaterialDesignCircularProgressBar}"
-                Value="0" />
-
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.ClearChatContents}" />
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ClearInputTextCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.ClearContent}" />
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.ReloadContent}" />
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding SaveAndCloseCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Close}" />
+            </StackPanel>
         </Grid>
+        <ProgressBar
+            Grid.Row="0"
+            IsIndeterminate="{Binding CommonViewModelProperties.IsIndeterminate}"
+            Style="{StaticResource MaterialDesignCircularProgressBar}"
+            Value="0" />
     </Grid>
 </UserControl>

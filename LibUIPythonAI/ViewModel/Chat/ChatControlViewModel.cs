@@ -43,6 +43,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
+
         // ChatContextPanelViewModel
         public ChatContextViewModel ChatContextViewModelInstance { get; set; }
 

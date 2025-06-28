@@ -141,7 +141,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
-        // RAGMode
+        // RAGModeValue
         private RAGModeEnum _ragMode = RAGModeEnum.None;
         public int RAGMode {
             get {
