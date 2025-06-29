@@ -71,7 +71,8 @@ namespace LibPythonAI.Resources {
         public override string FileNotFound { get; } = "ファイルが存在しません";
 
         // --- ChatItem.cs ---
-
+        // Reference Information
+        public override string ReferenceInformation { get; } = "参照情報";
         // <参照元ドキュメントルート>
         public override string ReferenceDocument { get; } = "<参考ドキュメント>";
 
@@ -552,7 +553,15 @@ namespace LibPythonAI.Resources {
             return $"ベクトルDB[{name}]が見つかりません";
         }
 
-        
+        // Properties
+        public override string Properties { get; } = "プロパティ";
+        // Text
+        public override string Text { get; } = "テキスト";
+
+        // Image
+        public override string Image { get; } = "画像";
+
+
         // 日次トークン数
         public override string DailyTokenCount { get; } = "日次トークン数";
         // 総トークン数

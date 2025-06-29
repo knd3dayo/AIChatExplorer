@@ -27,6 +27,7 @@ using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using LibUINormalChat.View;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class AppViewModelCommandExecutes(Action<bool> updateIndeterminate, Action updateView) : CommonViewModelCommandExecutes(updateIndeterminate, updateView) {
@@ -168,6 +169,12 @@ namespace AIChatExplorer.ViewModel.Main {
         // Command to Open Merge Chat
         public static void OpenMergeChatWindowCommand(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
             MergeChatWindow.OpenWindow(folderViewModel, selectedItems);
+        }
+
+        // Command to Open Normal Chat
+        public static void OpenNormalChatWindowCommand(ContentItemViewModel itemViewModel) {
+            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
+            NormalChatWindow.OpenWindow(qAChatStartupProps);
         }
 
 

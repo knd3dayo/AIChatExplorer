@@ -95,6 +95,12 @@ namespace LibUIPythonAI.Resource {
         // AutoGenChat
         public virtual string AutoGenChat { get; } = "AutoGen Chat";
 
+        // AutoGenChat (In Development)
+        public virtual string AutoGenChatInDevelopment { get; } = "AutoGen Chat (In Development)";
+
+        // Normal Chat (In Development)
+        public virtual string NormalChatInDevelopment { get; } = "Normal Chat (In Development)";
+
         // Monitor
         public virtual string Monitor { get; } = "Monitor";
 

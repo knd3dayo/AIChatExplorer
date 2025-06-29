@@ -7,9 +7,9 @@ using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
+using AIChatExplorer.ViewModel.Content;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
-using LibPythonAI.Common;
-using LibPythonAI.Data;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.AutoGen;
@@ -198,6 +198,22 @@ namespace AIChatExplorer.ViewModel.Main {
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
             AppViewModelCommandExecutes.OpenMergeChatWindowCommand(folderViewModel, []);
 
+        });
+
+        // OpenNormalChatWindow
+        public SimpleDelegateCommand<object> OpenNormalChatWindow => new((parameter) => {
+            // チャット履歴用のItemの設定
+            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            // チャット履歴用のItemの設定
+            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
+                // TEMPORARY_ITEM_ID
+                Id = ApplicationItem.TEMPORARY_ITEM_ID,
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
+            };
+            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
+
+            AppViewModelCommandExecutes.OpenNormalChatWindowCommand(applicationItemViewModel);
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {

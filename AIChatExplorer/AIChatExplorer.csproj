@@ -40,6 +40,7 @@
     <ProjectReference Include="..\LibUIAutoGenChat\LibUIAutoGenChat.csproj" />
     <ProjectReference Include="..\LibUIImageChat\LibUIImageChat.csproj" />
     <ProjectReference Include="..\LibUIMergeChat\LibUIMergeChat.csproj" />
+    <ProjectReference Include="..\LibUINormalChat\LibUINormalChat.csproj" />
     <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
   </ItemGroup>
 

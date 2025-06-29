@@ -12,7 +12,7 @@ namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
 
         public static async Task<ChatResponse> MergeChat(
-            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList = null) {
+            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList = null) {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
             List<ChatResponse> preProcessResults = PreProcess(items, context, preProcessPrompt, sessionToken, targetDataList);
 
@@ -26,7 +26,7 @@ namespace LibUIMergeChat.Common {
 
         }
         // ContentItemとExportImportItemを受け取り、対象データを取得する
-        private static string GetTargetData(ContentItemWrapper contentItem, List<ExportImportItem>? targetDataList) {
+        private static string GetTargetData(ContentItemWrapper contentItem, List<ContentItemDataDefinition>? targetDataList) {
             string targetData = "";
             if (targetDataList == null) {
                 return contentItem.Content;
@@ -51,7 +51,7 @@ namespace LibUIMergeChat.Common {
             return targetData;
         }
 
-        private static List<ChatResponse> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ExportImportItem>? targetDataList) {
+        private static List<ChatResponse> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList) {
             List<ChatResponse> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
                 object lockObject = new();

@@ -234,6 +234,9 @@ namespace LibUIPythonAI.Resource {
         // TargetDataSelection
         public virtual string TargetDataSelection { get; } = "Target Data Selection";
 
+        // ReferenceItemList
+        public virtual string ReferenceItemList { get; } = "Reference Item List";
+
         // MarkdownView
         public virtual string MarkdownView { get; } = "Markdown View";
 

@@ -113,6 +113,8 @@ namespace LibPythonAI.Resources {
         public virtual string FileNotFound { get; } = "File not found";
 
         // --- ChatItem.cs ---
+        // Reference Information
+        public virtual string ReferenceInformation { get; } = "Reference Information";
 
         public virtual string ReferenceDocument { get; } = "Reference Document";
 
@@ -464,6 +466,15 @@ namespace LibPythonAI.Resources {
         public virtual string VectorDBNotFound(string vectorDBName) {
             return $"Vector DB '{vectorDBName}' not found";
         }
+
+        // Properties
+        public virtual string Properties { get; } = "Properties";
+
+        // Text
+        public virtual string Text { get; } = "Text";
+
+        // Image
+        public virtual string Image { get; } = "Image";
 
         #region Statistics and Logging
 

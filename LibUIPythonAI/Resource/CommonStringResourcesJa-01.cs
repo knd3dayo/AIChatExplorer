@@ -44,6 +44,9 @@ namespace LibUIPythonAI.Resource {
         // TargetDataSelection
         public override string TargetDataSelection { get; } = "対象データ選択";
 
+        // ReferenceItemList
+        public override string ReferenceItemList { get; } = "参照アイテム一覧";
+
         // MarkdownView
         public override string MarkdownView { get; } = "マークダウン表示";
 

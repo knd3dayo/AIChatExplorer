@@ -1,9 +1,8 @@
 using LibUIPythonAI.Resource;
+using LibUINormalChat.Resources;
 
-namespace LibUIPythonAI.View.Chat {
+namespace LibUINormalChat.View {
     public class ViewStringResources {
-        public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
-
         // Open
         public static string Open => CommonStringResources.Instance.Open;
 
@@ -93,26 +92,23 @@ namespace LibUIPythonAI.View.Chat {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
-        // RAGModeValue None
+        // RAGMode_None
         public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
-        // RAGModeValue NormalSearch
+
+        // RAGMode_NormalSearch
         public static string RAGMode_NormalSearch => CommonStringResources.Instance.RAGMode_NormalSearch;
-        // RAGModeValue PromptSearch
+
+        // RAGMode_PromptSearch
         public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
 
-
-
         // VectorDBList
-        public static string VectorDBList => CommonStringResources.Instance.VectorDBList;
+        public static string VectorDB => CommonStringResources.Instance.VectorDB;
 
         // ClickHereToAddVectorDB
         public static string ClickHereToAddVectorDB => CommonStringResources.Instance.ClickHereToAddVectorDB;
 
         // ベクトルDB検索結果の最大値
         public static string VectorDBSearchResultMax => CommonStringResources.Instance.VectorDBSearchResultMax;
-
-        // ScoreThreshold
-        public static string VectorDBSearchScoreThreashold => CommonStringResources.Instance.VectorDBSearchScoreThreashold;
 
         // RequestParameterJson
         public static string RequestParameterJson => CommonStringResources.Instance.RequestParameterJson;
@@ -159,23 +155,6 @@ namespace LibUIPythonAI.View.Chat {
         // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
-        // ExcludeFromList
-        public static string ExcludeFromList => CommonStringResources.Instance.ExcludeFromList;
-
-        // MarkdownView
-        public static string MarkdownView => CommonStringResources.Instance.MarkdownView;
-
-        // Chat
-        public static string Chat => CommonStringResources.Instance.Chat;
-
-        // フォルダに設定されたベクトルを使用
-        public static string UseVectorDBSettingInFolder => CommonStringResources.Instance.UseVectorDBSettingInFolder;
-
-        // Select
-        public static string Select => CommonStringResources.Instance.Select;
-
-        // CreateDate
-        public static string CreateDate => CommonStringResources.Instance.CreateDate;
 
         // UpdateDate
         public static string UpdateDate => CommonStringResources.Instance.UpdateDate;
@@ -183,11 +162,11 @@ namespace LibUIPythonAI.View.Chat {
         // Type
         public static string Type => CommonStringResources.Instance.Type;
 
-        // Tag
-        public static string Tag => CommonStringResources.Instance.Tag;
-
         // Title
         public static string Title => CommonStringResources.Instance.Title;
+
+        // Tag
+        public static string Tag => CommonStringResources.Instance.Tag;
 
         // SourceTitle
         public static string SourceTitle => CommonStringResources.Instance.SourceTitle;
@@ -195,12 +174,37 @@ namespace LibUIPythonAI.View.Chat {
         // ShowProperties
         public static string ShowProperties => CommonStringResources.Instance.ShowProperties;
 
+        // CreateDate
+        public static string CreateDate => CommonStringResources.Instance.CreateDate;
+
+        // Chat
+        public static string Chat => CommonStringResources.Instance.Chat;
+
+        // ExcludeFromList
+        public static string ExcludeFromList => NormalChatStringResources.Instance.ExcludeFromList;
+
+        // ReferenceItemList
+        public static string ReferenceItemList => CommonStringResources.Instance.ReferenceItemList;
+
+        // View
+        public static string View => CommonStringResources.Instance.View;
+
+
+        // 選択
+        public static string Select => CommonStringResources.Instance.Select;
+
         // ItemSelection
         public static string ItemSelection => CommonStringResources.Instance.ItemSelection;
 
         // TargetDataSelection
         public static string TargetDataSelection => CommonStringResources.Instance.TargetDataSelection;
+        // MergeTargetItemSelection
+        public static string MergeTargetItemSelection => NormalChatStringResources.Instance.MergeTargetItemSelection;
 
-        
+        // MergeTargetDataSelection
+        public static string MergeTargetDataSelection => NormalChatStringResources.Instance.MergeTargetDataSelection;
+
+
+
     }
 }

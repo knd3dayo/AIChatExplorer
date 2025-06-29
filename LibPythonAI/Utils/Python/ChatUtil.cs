@@ -2,6 +2,8 @@ using System.Text;
 using System.Text.Json;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.File;
+using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF;
@@ -182,6 +184,51 @@ namespace LibPythonAI.Utils.Python {
             string base64String = Convert.ToBase64String(imageBytes);
             string result = CreateImageURL(base64String);
             return result;
+        }
+
+        public static List<(ContentItemTypes.ContentItemTypeEnum, string)> CreatePromptTextByRelatedItems(List<ContentItemWrapper> items, List<ContentItemDataDefinition> dataDefinitions) {
+            // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、PromptTextを作成する
+            StringBuilder promptBuilder = new();
+            // PythonNetの処理を呼び出す。
+            List<(ContentItemTypes.ContentItemTypeEnum, string)> data = [];
+            // ApplicationItemのリスト要素毎に処理を行う
+            foreach (var applicationItem in items) {
+                bool exportProperties = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.PropertiesName)?.IsChecked ?? false;
+                if (exportProperties) {
+                    // Propertiesを追加
+                        data.Add((ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.HeaderText));
+                }
+                bool exportTitle = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.TitleName)?.IsChecked ?? false;
+                if (exportTitle) {
+                    data.Add(( ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.Description));
+                }
+                // Path
+                bool exportSourcePath = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.SourcePathName)?.IsChecked ?? false;
+                if (exportSourcePath) {
+                    data.Add((ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.SourcePath));
+                }
+                // Text
+                bool exportText = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.TextName)?.IsChecked ?? false;
+                if (exportText) {
+                    data.Add((ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.Content));
+                }
+                // Image
+                bool exportImage = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.ImageName)?.IsChecked ?? false;
+                if (exportImage) {
+                    var imageURL = CreateImageURL(applicationItem.Base64Image);
+                    data.Add((ContentItemTypes.ContentItemTypeEnum.Image, imageURL));
+                }
+
+                // PromptItemのリスト要素毎に処理を行う
+                foreach (var promptItem in dataDefinitions.Where(x => x.IsPromptItem)) {
+                    if (promptItem.IsChecked) {
+                        string promptResult = applicationItem.PromptChatResult.GetTextContent(promptItem.Name);
+                        data.Add((ContentItemTypes.ContentItemTypeEnum.Text, promptResult));
+                    }
+                }
+
+            }
+            return data;
         }
 
 

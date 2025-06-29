@@ -55,7 +55,7 @@ namespace LibPythonAI.Utils.ExportImport {
         }
 
         // --- Export/Import
-        public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items) {
+        public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ApplicationItemのリスト要素毎に処理を行う
@@ -89,7 +89,7 @@ namespace LibPythonAI.Utils.ExportImport {
 
             PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
-        public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ExportImportItem> items, Action<ContentItemWrapper> afterImport) {
+        public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items, Action<ContentItemWrapper> afterImport) {
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);

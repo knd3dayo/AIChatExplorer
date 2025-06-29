@@ -71,7 +71,7 @@ namespace AIChatExplorer.View.Main {
         // ImageChat
         public static string ImageChat { get; set; } = CommonStringResources.Instance.ImageChat;
 
-        // MergeChat
+        // NormalChat
         public static string MergeChat { get; set; } = CommonStringResources.Instance.MergeChat;
 
         // Help
@@ -165,7 +165,10 @@ namespace AIChatExplorer.View.Main {
         public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
 
         // AutoGenChat
-        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChat;
+        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChatInDevelopment;
+
+        // NormalChat
+        public static string NormalChat { get; set; } = CommonStringResources.Instance.NormalChatInDevelopment;
 
         // Monitor
         public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;

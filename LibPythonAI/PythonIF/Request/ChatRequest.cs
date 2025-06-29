@@ -1,6 +1,10 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Python;
 
 namespace LibPythonAI.PythonIF.Request {
@@ -52,6 +56,28 @@ namespace LibPythonAI.PythonIF.Request {
             return lastAssistantChatItem;
         }
 
+        public void ApplyReletedItems(List<ContentItemWrapper> items, List<ContentItemDataDefinition> dataDefinition) {
+            // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、ChatHistoryに追加する
+            List<(ContentItemTypes.ContentItemTypeEnum, string)> values = ChatUtil.CreatePromptTextByRelatedItems(items, dataDefinition);
+            StringBuilder sb = new();
+            foreach (var value in values) {
+                // ContentItemTypes.ContentItemTypeEnumの値に応じて、ChatMessageを作成
+                if (value.Item1 == ContentItemTypes.ContentItemTypeEnum.Text) {
+                    sb.AppendLine(value.Item2);
+                } else if (value.Item1 == ContentItemTypes.ContentItemTypeEnum.Image) {
+                    if (string.IsNullOrEmpty(value.Item2) == false) {
+                        // 画像の場合は、ImageURLを設定する
+                        ImageURLs.Add(value.Item2);
+                    }
+                }
+            }
+            // ContentTextに +\n---参考情報---+\n + sbの内容を追加
+            if (sb.Length > 0) {
+                ContentText += $"\n---{PythonAILibStringResources.Instance.ReferenceInformation}---\n" + sb.ToString();
+            }
+
+        }
+
         public Dictionary<string, object> ToDict() {
             // OpenAIのAPIに送信するJSONを作成
 
@@ -79,6 +105,20 @@ namespace LibPythonAI.PythonIF.Request {
             }
 
             return dc;
+        }
+
+        public ChatRequest Copy() {
+            // ChatRequestのコピーを作成
+            ChatRequest result = new() {
+                Model = Model,
+                Temperature = Temperature,
+                MaxTokens = MaxTokens,
+                ContentText = ContentText,
+                JsonMode = JsonMode,
+                ImageURLs = [.. ImageURLs],
+                ChatHistory = [.. ChatHistory]
+            };
+            return result;
         }
 
     }

@@ -228,18 +228,16 @@ namespace LibUIMergeChat.ViewModel {
 
 
         // ExportItems
-        public ObservableCollection<ExportImportItem> ExportItems { get; set; } = CreateExportItems();
+        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; } = CreateExportItems();
 
-        private static ObservableCollection<ExportImportItem> CreateExportItems() {
+        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
             List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
-            ObservableCollection<ExportImportItem> items = [
-                new ExportImportItem("Properties", CommonStringResources.Instance.Properties, true, false),
-                new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
-            ];
+            ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
+
             foreach (PromptItem promptItem in promptItems) {
-                items.Add(new ExportImportItem(promptItem.Name, promptItem.Description, false, true));
+                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
             }
             return items;
         }

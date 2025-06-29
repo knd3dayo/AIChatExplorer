@@ -421,6 +421,12 @@ namespace LibUIPythonAI.Resource {
         // AutoGenChat
         public override string AutoGenChat { get; } = "AutoGenチャット";
 
+        // AutoGenChat (In Development)
+        public override string AutoGenChatInDevelopment { get; } = "AutoGenチャット (開発中)";
+
+        // Normal Chat (In Development)
+        public override string NormalChatInDevelopment { get; } = "通常チャット (開発中)";
+
         // Monitor
         public override string Monitor { get; } = "監視";
 
