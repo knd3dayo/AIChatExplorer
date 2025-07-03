@@ -16,9 +16,9 @@ namespace AIChatExplorer.AppStartup {
     public class StartupWindowViewModel {
         public static void Startup() {
 
+            AIChatExplorerPythonAILibConfigParams configParams = new();
             try {
 
-                AIChatExplorerPythonAILibConfigParams configParams = new();
                 // LogWrapperの初期化
                 string logDirPath = Path.Combine(configParams.GetAppDataPath(), "log");
                 LogWrapper.SetLogFolder(logDirPath);
@@ -35,20 +35,20 @@ namespace AIChatExplorer.AppStartup {
                 // Python環境のチェック
                 CheckEnvironment(configParams);
 
-                // PythonAILibManagerの初期化
-                PythonAILibManager.Init(configParams);
-                // DBの初期化
-                PythonAILibDBContext.Init();
-                // DataContextにViewModelを設定
-                MainWindowViewModel mainWindowViewModel = new();
-                // MainWindowを表示
-                MainWindow mainWindow = new() {
-                    DataContext = mainWindowViewModel
-                };
-                mainWindow.Show();
             } catch (Exception ex) {
                 LogWrapper.Error($"MainWindowの表示に失敗しました: {ex.Message}");
             }
+            // PythonAILibManagerの初期化
+            PythonAILibManager.Init(configParams);
+            // DBの初期化
+            PythonAILibDBContext.Init();
+            // DataContextにViewModelを設定
+            MainWindowViewModel mainWindowViewModel = new();
+            // MainWindowを表示
+            MainWindow mainWindow = new() {
+                DataContext = mainWindowViewModel
+            };
+            mainWindow.Show();
 
         }
 

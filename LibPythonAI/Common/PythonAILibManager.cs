@@ -38,9 +38,11 @@ namespace LibPythonAI.Common {
             if (!string.IsNullOrEmpty(noProxy)) {
                 Environment.SetEnvironmentVariable("NO_PROXY", noProxy);
             }
-
-            Instance = new PythonAILibManager(parmas);
-
+            try {
+                Instance = new PythonAILibManager(parmas);
+            } catch (Exception ex) {
+                throw new Exception(PythonAILibStringResourcesJa.Instance.PythonAILibManagerInitializationFailed, ex);
+            }
         }
 
 

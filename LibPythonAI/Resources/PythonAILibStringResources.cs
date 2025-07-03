@@ -76,6 +76,9 @@ namespace LibPythonAI.Resources {
         // PythonAILibManagerIsNotInitialized
         public virtual string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManager is not initialized";
 
+        // PythonAILibManagerInitializationFailed
+        public virtual string PythonAILibManagerInitializationFailed { get; } = "PythonAILibManager initialization failed. Please check the Python path and environment settings.";
+
         // Running automatic title setting process
         public virtual string AutoSetTitle { get; } = "Running automatic title setting process";
 

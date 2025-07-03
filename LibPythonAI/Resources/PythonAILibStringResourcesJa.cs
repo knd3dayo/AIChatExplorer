@@ -7,6 +7,8 @@ namespace LibPythonAI.Resources {
         // PythonAILibManagerIsNotInitialized
         public override string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManagerが初期化されていません";
 
+        // PythonAILibManagerInitializationFailed
+        public override string PythonAILibManagerInitializationFailed { get; } = "PythonAILibManagerの初期化に失敗しました。Pythonのパスを確認してください。";
 
         // 自動タイトル設定処理を実行します
         public override string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";
