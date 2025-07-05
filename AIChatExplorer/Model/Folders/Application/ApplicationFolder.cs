@@ -62,10 +62,10 @@ namespace AIChatExplorer.Model.Folders.Application {
         }
 
         // ステータス用のテキストを作成
-        public override string GetStatusText() {
+        public override async Task<string> GetStatusText() {
             string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
             // AutoProcessRuleが設定されている場合
-            var rules = AutoProcessRuleController.GetAutoProcessRules(this);
+            var rules = await AutoProcessRuleController.GetAutoProcessRules(this);
             if (rules.Count > 0) {
                 message += $" {CommonStringResources.Instance.AutoProcessingIsSet}[";
                 foreach (AutoProcessRule item in rules) {

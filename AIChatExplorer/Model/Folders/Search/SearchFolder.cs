@@ -22,20 +22,18 @@ namespace AIChatExplorer.Model.Folders.Search {
 
         }
 
-        public SearchRule? SearchRule {
-            get {
-                return SearchRule.GetItemBySearchFolder(this);
-            }
+        public async Task<SearchRule?> GetSearchRule() {
+            return await SearchRule.GetItemBySearchFolder(this);
         }
 
 
         // アイテム LiteDBには保存しない。
-        public  List<ContentItemWrapper> GetItems(bool isSync = true) {
+        public  async Task<List<ContentItemWrapper>> GetItems(bool isSync = true) {
             List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             // フォルダに検索条件が設定されている場合
-            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
+            SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
             if (searchConditionRule != null) {
                 _items = searchConditionRule.SearchItems().Select(x => (ContentItemWrapper)x).ToList();
 
@@ -67,19 +65,19 @@ namespace AIChatExplorer.Model.Folders.Search {
         }
 
         public override void Delete() {
-            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
-            if (searchConditionRule != null) {
-                searchConditionRule.Delete();
-            }
-
-            base.Delete();
+            Task.Run(async () => {
+                // SearchRuleを削除
+                SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
+                searchConditionRule?.Delete();
+                base.Delete();
+            });
         }
 
 
-        public override string GetStatusText() {
+        public override async Task<string> GetStatusText() {
             string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
             // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(this);
+            SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合
             if (searchCondition != null && !searchCondition.IsEmpty()) {

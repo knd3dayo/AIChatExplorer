@@ -2,12 +2,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Utils.Common;
+using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Resources;
-using LibPythonAI.PythonIF;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.AutoProcess {
 
@@ -56,15 +55,13 @@ namespace LibPythonAI.Model.AutoProcess {
 
 
 
-        public AutoProcessItem? RuleAction {
-            get {
-                return AutoProcessItem.GetItemById(AutoProcessItemId);
-            }
-            set {
-                AutoProcessItemId = value?.Id;
-            }
+        public async Task<AutoProcessItem?> GetRuleAction() {
+            return await AutoProcessItem.GetItemById(AutoProcessItemId);
         }
 
+        public void SetRuleAction(AutoProcessItem? autoProcessItem) {
+            AutoProcessItemId = autoProcessItem?.Id;
+        }
 
         public ContentFolderWrapper? DestinationFolder {
             get {
@@ -85,22 +82,34 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // Load
+        private static bool _isInitialized = false;
 
-        private static List<AutoProcessRule> _items = new(); // 修正: 空のリストを初期化
+        private static List<AutoProcessRule> _items = [];
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
             _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetAutoProcessRulesAsync());
+            if (_items != null) {
+                _isInitialized = true;
+            }
         }
-        public static List<AutoProcessRule> GetItems() {
+        public static async Task<List<AutoProcessRule>> GetItems() {
+            if (!_isInitialized) {
+                await LoadItemsAsync();
+            }
             return _items;
         }
         //SaveAsync
         public void SaveAsync() {
-            // 優先順位が-1の場合は、最大の優先順位を取得して設定
-            if (Priority == -1) {
-                Priority = GetItems().Count + 1;
-            }
-             PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+            Task.Run(async () => {
+                // ConditionsJsonを更新
+                ConditionsJson = JsonSerializer.Serialize(Conditions, jsonSerializerOptions);
+                // 優先順位が-1の場合は、最大の優先順位を取得して設定
+                if (Priority == -1) {
+                    var items = await GetItems();
+                    Priority = items.Count + 1;
+                }
+                PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+            });
         }
         // DeleteAsync
         public void DeleteAsync() {
@@ -126,7 +135,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public void RunActionAsync(ContentItemWrapper applicationItem) {
+        public async Task RunActionAsync(ContentItemWrapper applicationItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.RuleNameIsInvalid(RuleName));
@@ -137,17 +146,18 @@ namespace LibPythonAI.Model.AutoProcess {
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.NoMatch);
                 return;
             }
-            if (RuleAction == null) {
+            // DestinationIdに一致するフォルダを取得
+            var ruleAction = await GetRuleAction();
+            if (ruleAction == null) {
                 LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoActionSet);
                 return;
             }
-            // DestinationIdに一致するフォルダを取得
-
-            RuleAction.Execute(applicationItem, DestinationFolder);
+            ruleAction.Execute(applicationItem, DestinationFolder);
         }
 
-        public string GetDescriptionString() {
+        public async Task<string> GetDescriptionString() {
             string result = $"{PythonAILibStringResourcesJa.Instance.Condition}\n";
+            var ruleAction = await GetRuleAction();
             foreach (var condition in Conditions) {
                 // ConditionTypeごとに処理
                 switch (condition.Type) {
@@ -168,13 +178,13 @@ namespace LibPythonAI.Model.AutoProcess {
                         break;
                 }
                 // AutoProcessItemが設定されている場合
-                if (RuleAction != null) {
-                    result += $"{PythonAILibStringResourcesJa.Instance.Action}:{RuleAction.Description}\n";
+                if (ruleAction != null) {
+                    result += $"{PythonAILibStringResourcesJa.Instance.Action}:{ruleAction.Description}\n";
                 } else {
                     result += $"{PythonAILibStringResourcesJa.Instance.ActionNone}\n";
                 }
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
-                if (RuleAction != null && RuleAction.IsCopyOrMoveAction()) {
+                if (ruleAction != null && ruleAction.IsCopyOrMoveAction()) {
 
 
                     if (DestinationFolder != null) {
@@ -188,20 +198,21 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         // 無限ループなコピーまたは移動の可能性をチェックする
-        public static bool CheckInfiniteLoop(AutoProcessRule rule) {
+        public static async Task<bool> CheckInfiniteLoop(AutoProcessRule rule) {
             // ruleがNullの場合はFalseを返す
             if (rule == null) {
                 return false;
             }
+            var ruleAction = await rule.GetRuleAction();
             // rule.RuleActionがNullの場合はFalseを返す
-            if (rule.RuleAction == null) {
+            if (ruleAction == null) {
                 return false;
             }
             // ruleがCopyToFolderまたはMoveToFolder以外の場合はFalseを返す
-            if (rule.RuleAction.IsCopyOrMoveAction() == false) {
+            if (ruleAction.IsCopyOrMoveAction() == false) {
                 return false;
             }
-            IEnumerable<AutoProcessRule> copyToMoveToRules = AutoProcessRuleController.GetCopyToMoveToRules();
+            IEnumerable<AutoProcessRule> copyToMoveToRules = await AutoProcessRuleController.GetCopyToMoveToRules();
 
             // ルールがない場合はFalseを返す
             if (!copyToMoveToRules.Any()) {
@@ -266,8 +277,9 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         // 指定したAutoProcessRuleの優先順位を上げる
-        public static void UpPriority(AutoProcessRule autoProcessRule) {
-            List<AutoProcessRule> autoProcessRules = GetItems().ToList();
+        public static async Task UpPriority(AutoProcessRule autoProcessRule) {
+            var items = await GetItems();
+            List<AutoProcessRule> autoProcessRules = items.ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexが0以下の場合は何もしない
@@ -287,8 +299,9 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         // 指定したAutoProcessRuleの優先順位を下げる
-        public static void DownPriority(AutoProcessRule autoProcessRule) {
-            List<AutoProcessRule> autoProcessRules = GetItems().ToList();
+        public static async Task DownPriority(AutoProcessRule autoProcessRule) {
+            var items = await GetItems();
+            List<AutoProcessRule> autoProcessRules = items.ToList();
             // 引数のAutoProcessRuleのIndexを取得
             int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
             // indexがリストの最大Index以上の場合は何もしない
@@ -307,12 +320,14 @@ namespace LibPythonAI.Model.AutoProcess {
             }
         }
         // GetItemsByRuleName
-        public static List<AutoProcessRule> GetItemsByRuleName(string? ruleName) {
-            return  GetItems().Where(x => x.RuleName == ruleName).ToList();
+        public static async Task<List<AutoProcessRule>> GetItemsByRuleName(string? ruleName) {
+            var items = await GetItems();
+            return items.Where(x => x.RuleName == ruleName).ToList();
         }
         // GetItemsByTargetFolder
-        public static List<AutoProcessRule> GetItemByTargetFolder(ContentFolderWrapper? targetFolder) {
-            return GetItems().Where(x => x.TargetFolderId == targetFolder?.Id).ToList();
+        public static async Task<List<AutoProcessRule>> GetItemByTargetFolder(ContentFolderWrapper? targetFolder) {
+            var items = await GetItems();
+            return items.Where(x => x.TargetFolderId == targetFolder?.Id).ToList();
         }
 
         // ToDict
@@ -364,9 +379,9 @@ namespace LibPythonAI.Model.AutoProcess {
 
 
         // GetCopyToMoveToRules
-        public static List<AutoProcessRule> GetCopyToMoveToRules() {
-            var copyRules = GetItemsByRuleName(AutoProcessActionTypeEnum.CopyToFolder.ToString());
-            var moveRules = GetItemsByRuleName(AutoProcessActionTypeEnum.MoveToFolder.ToString());
+        public static async Task<List<AutoProcessRule>> GetCopyToMoveToRules() {
+            var copyRules = await GetItemsByRuleName(AutoProcessActionTypeEnum.CopyToFolder.ToString());
+            var moveRules = await GetItemsByRuleName(AutoProcessActionTypeEnum.MoveToFolder.ToString());
 
             List<AutoProcessRule> rules = [];
             rules.AddRange(copyRules);

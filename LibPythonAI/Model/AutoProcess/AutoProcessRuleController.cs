@@ -11,16 +11,17 @@ namespace LibPythonAI.Model.AutoProcess {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
-        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ContentFolderWrapper targetFolder) {
+        public static async Task<ObservableCollection<AutoProcessRule>> GetAutoProcessRules(ContentFolderWrapper targetFolder) {
             ObservableCollection<AutoProcessRule> rules = [];
             using var db = new PythonAILibDBContext();
-            var items = AutoProcessRule.GetItemByTargetFolder(targetFolder);
+            var items = await AutoProcessRule.GetItemByTargetFolder(targetFolder);
             return [.. items];
 
         }
         // TypeがCopyTo または MoveToのルールをLiteDBから取得する。
-        public static ObservableCollection<AutoProcessRule> GetCopyToMoveToRules() {
-            return [ .. AutoProcessRule.GetCopyToMoveToRules()];
+        public static async Task<ObservableCollection<AutoProcessRule>> GetCopyToMoveToRules() {
+            var rules = await AutoProcessRule.GetCopyToMoveToRules();
+            return [ .. rules];
         }
 
         /// <summary>
@@ -109,14 +110,14 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static ContentItemWrapper? ApplyFolderAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItemWrapper?> ApplyFolderAutoAction(ContentItemWrapper item) {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
-            var AutoProcessRules = GetAutoProcessRules(item.GetFolder());
+            var AutoProcessRules = await GetAutoProcessRules(item.GetFolder());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                rule.RunActionAsync(result);
+                await rule.RunActionAsync(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
                     LogWrapper.Info(PythonAILibStringResourcesJa.Instance.ItemsDeletedByAutoProcessing);

@@ -19,7 +19,10 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : CommonViewModelBase {
 
         // 初期化
-        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<AutoProcessRule> afterUpdate) {
+        public EditAutoProcessRuleWindowViewModel(
+            AutoProcessRule autoProcessRule, 
+            ObservableCollection<ContentFolderViewModel> rootFolderViewModels, 
+            Action<AutoProcessRule> afterUpdate) {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
@@ -39,13 +42,16 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         private async Task LoadConditions() {
             // autoProcessRuleがNullでない場合は初期化
-            if (TargetAutoProcessRule.RuleAction == null) {
+            if (TargetAutoProcessRule.GetRuleAction == null) {
                 return;
             }
             RuleName = TargetAutoProcessRule.RuleName;
             OnPropertyChanged(nameof(RuleName));
             Conditions = new ObservableCollection<AutoProcessRuleCondition>(TargetAutoProcessRule.Conditions);
-            SelectedAutoProcessItem = new AutoProcessItemViewModel(TargetAutoProcessRule.RuleAction);
+            var ruleAction = await TargetAutoProcessRule.GetRuleAction();
+            if (ruleAction != null) {
+                SelectedAutoProcessItem = new AutoProcessItemViewModel(ruleAction);
+            }
 
             foreach (var condition in TargetAutoProcessRule.Conditions) {
                 switch (condition.Type) {
@@ -112,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 FolderSelectionPanelEnabled = true;
             }
             // PromptAutoProcessItemの場合
-            if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
+            if (ruleAction is PromptAutoProcessItem promptAutoProcessItem) {
                 if (promptAutoProcessItem.PromptItemEntity == null) {
                     return;
                 }
@@ -373,7 +379,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
         // ---　コマンド 
         // OKボタンが押されたときの処理
-        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new( (window) => {
+        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new( async (window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
@@ -481,7 +487,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             // アクションを追加
             // IsBasicProcessCheckedがTrueの場合はSelectedAutoProcessItemを追加
             if (IsBasicProcessChecked) {
-                TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem.AutoProcessItem;
+                TargetAutoProcessRule.SetRuleAction( SelectedAutoProcessItem.AutoProcessItem);
                 // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
                 if (SelectedAutoProcessItem.IsCopyOrMoveAction()) {
                     if (DestinationFolder == null) {
@@ -496,7 +502,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                     TargetAutoProcessRule.DestinationFolder = DestinationFolder;
                 }
                 // 無限ループのチェック処理
-                if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
+                var checkResult = await AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule);
+                if (checkResult) {
                     LogWrapper.Error(CommonStringResources.Instance.DetectedAnInfiniteLoopInCopyMoveProcessing);
                     return;
                 }
@@ -513,7 +520,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
 
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
-                TargetAutoProcessRule.RuleAction = promptAutoProcessItem;
+                TargetAutoProcessRule.SetRuleAction(promptAutoProcessItem);
             }
 
             // LiteDBに保存

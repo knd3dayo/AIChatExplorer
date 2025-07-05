@@ -141,23 +141,32 @@ namespace LibPythonAI.Model.Search {
             return rule;
         }
 
-        private static List<SearchRule> _items = new(); // 修正: 空のリストを初期化
+        private static bool _isInitialized = false;
+        private static List<SearchRule> _items = [];
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
             _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetSearchRulesAsync());
+            if (_items != null) {
+                _isInitialized = true;
+            }
         }
-        public static List<SearchRule> GetItems() {
+        public static async Task<List<SearchRule>> GetItems() {
+            if (!_isInitialized) {
+                await LoadItemsAsync();
+            }
             return _items;
         }
 
         // GetItemByName
-        public static SearchRule? GetItemByName(string name) {
-            return GetItems().FirstOrDefault(x => x.Name == name);
+        public static async Task<SearchRule?> GetItemByName(string name) {
+            var items = await GetItems();
+            return items.FirstOrDefault(x => x.Name == name);
         }
 
         // GetItmByFolder
-        public static SearchRule? GetItemBySearchFolder(ContentFolderWrapper folder) {
-            return GetItems().FirstOrDefault(x => x.SearchFolderId == folder.Id);
+        public static async Task<SearchRule?> GetItemBySearchFolder(ContentFolderWrapper folder) {
+            var items = await GetItems();
+            return items.FirstOrDefault(x => x.SearchFolderId == folder.Id);
         }
     }
 }

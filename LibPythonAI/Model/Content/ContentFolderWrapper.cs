@@ -301,7 +301,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ステータス用の文字列
-        public virtual string GetStatusText() {
+        public virtual async Task<string> GetStatusText() {
             return "";
         }
 

@@ -48,11 +48,12 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
         }
         // LoadLLMConfigListAsync
         public override void LoadItems() {
-            Task.Run(() => {
+            Task.Run(async () => {
                 if (Folder is not SearchFolder searchFolder) {
                     throw new InvalidOperationException("Folder is not a SearchFolder.");
                 }
-                List<ContentItemWrapper> _items = searchFolder.GetItems().OrderByDescending(x => x.UpdatedAt).ToList();
+                var items = await searchFolder.GetItems();
+                List<ContentItemWrapper> _items = items.OrderByDescending(x => x.UpdatedAt).ToList();
                 MainUITask.Run(() => {
                     Items.Clear();
                     foreach (ContentItemWrapper item in _items) {
@@ -71,12 +72,17 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
             if (Folder is not SearchFolder searchFolder) {
                 return;
             }
-
-            SearchRule? searchConditionRule = SearchRule.GetItemBySearchFolder(Folder);
-            searchConditionRule ??= new() {
-                SearchFolder = Folder
-            };
-            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, afterUpdate);
+            Task.Run(async () => {
+                // SearchRuleを取得
+                SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(searchFolder);
+                searchConditionRule ??= new() {
+                    SearchFolder = searchFolder
+                };
+                MainUITask.Run(() => {
+                    // 検索ウィンドウを開く
+                    SearchWindow.OpenSearchWindow(searchConditionRule, searchFolder, afterUpdate);
+                });
+            });
 
         }
 

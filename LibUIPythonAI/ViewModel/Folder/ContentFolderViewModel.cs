@@ -152,9 +152,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         public virtual void UpdateStatusText() {
-            string message = Folder.GetStatusText();
-            StatusText.Instance.ReadyText = message;
-            StatusText.Instance.Text = message;
+            Task.Run(async () => {
+                string message = await Folder.GetStatusText();
+                StatusText.Instance.ReadyText = message;
+                StatusText.Instance.Text = message;
+            });
         }
 
     }

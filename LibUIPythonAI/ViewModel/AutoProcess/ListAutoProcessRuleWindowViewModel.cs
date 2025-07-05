@@ -24,8 +24,11 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         public ListAutoProcessRuleWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModel) {
             RootFolderViewModels = rootFolderViewModel;
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetItems()];
-            OnPropertyChanged(nameof(AutoProcessRules));
+            Task.Run(async () => {
+                var rules = await AutoProcessRule.GetItems();
+                AutoProcessRules = [.. rules];
+                OnPropertyChanged(nameof(AutoProcessRules));
+            });
 
         }
         // RootFolderViewModel
@@ -58,27 +61,30 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         //-- コマンド
 
         // 優先順位を上げる処理
-        public SimpleDelegateCommand<string> ChangePriorityCommand => new( (parameter) => {
+        public SimpleDelegateCommand<string> ChangePriorityCommand => new(async (parameter) => {
             if (SelectedAutoProcessRule == null) {
                 LogWrapper.Error(CommonStringResources.Instance.AutoProcessRuleNotSelected);
                 return;
             }
             if (parameter == "down") {
-                AutoProcessRule.DownPriority(SelectedAutoProcessRule);
+                await AutoProcessRule.DownPriority(SelectedAutoProcessRule);
             } else {
-                AutoProcessRule.UpPriority(SelectedAutoProcessRule);
+                await AutoProcessRule.UpPriority(SelectedAutoProcessRule);
             }
             // AutoProcessRulesを更新
-            AutoProcessRules = [.. AutoProcessRule.GetItems()];
+            AutoProcessRules = [.. await AutoProcessRule.GetItems()];
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
-        public SimpleDelegateCommand<object> EditAutoProcessRuleCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> EditAutoProcessRuleCommand => new(async (parameter) => {
             // AutoProcessRuleが更新された後の処理
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetItems()];
-                OnPropertyChanged(nameof(AutoProcessRules));
+                Task.Run(async () => {
+                    // AutoProcessRulesを更新
+                    AutoProcessRules = [.. await AutoProcessRule.GetItems()];
+                    OnPropertyChanged(nameof(AutoProcessRules));
+                });
             }
             // debug
             if (SelectedAutoProcessRule == null) {
@@ -96,8 +102,10 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
                 // AutoProcessRulesを更新
-                AutoProcessRules = [.. AutoProcessRule.GetItems()];
-                OnPropertyChanged(nameof(AutoProcessRules));
+                Task.Run(async () => {
+                    AutoProcessRules = [.. await AutoProcessRule.GetItems()];
+                    OnPropertyChanged(nameof(AutoProcessRules));
+                });
             }
             AutoProcessRule rule = new();
             EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModels, AutoProcessRuleUpdated);
