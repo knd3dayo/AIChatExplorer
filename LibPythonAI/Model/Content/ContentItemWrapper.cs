@@ -16,7 +16,7 @@ namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
 
         public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
-        public ContentItemWrapper() { 
+        public ContentItemWrapper() {
             Task.Run(async () => {
                 VectorDBProperties = await UpdateVectorDBProperties();
             });
@@ -32,63 +32,32 @@ namespace LibPythonAI.Model.Content {
         public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
 
         // ID
-        public string Id { get => Entity.Id; set{ Entity.Id = value; } }
+        public string Id { get => Entity.Id; set { Entity.Id = value; } }
 
         // FolderId
-        public string? FolderId {
-            get {
-                return Entity.FolderId;
-            }
-            set {
-                Entity.FolderId = value;
-            }
-        }
+        public string? FolderId { get => Entity.FolderId; set { Entity.FolderId = value; } }
 
         // 生成日時
-        public DateTime CreatedAt {
-            get {
-                return Entity.CreatedAt;
-            }
-            set {
-                Entity.CreatedAt = value;
-            }
-        }
+        public DateTime CreatedAt { get => Entity.CreatedAt; set { Entity.CreatedAt = value; } }
         // 更新日時
-        public DateTime UpdatedAt {
-            get {
-                return Entity.UpdatedAt;
-            }
-            set {
-                Entity.UpdatedAt = value;
-            }
-        }
+        public DateTime UpdatedAt { get => Entity.UpdatedAt; set { Entity.UpdatedAt = value; } }
         // ベクトル化日時
-        public DateTime VectorizedAt {
-            get {
-                return Entity.VectorizedAt;
-            }
-            set {
-                Entity.VectorizedAt = value;
-            }
-        }
+        public DateTime VectorizedAt { get => Entity.VectorizedAt; set { Entity.VectorizedAt = value; } }
 
         public bool ContentModified { get; set; } = false;
         // クリップボードの内容
         public string Content {
-            get {
-                return Entity.Content;
-            }
+            get => Entity.Content;
             set {
                 Entity.Content = value;
                 ContentModified = true;
             }
         }
         public bool DescriptionModified { get; set; } = false;
+
         //説明
         public string Description {
-            get {
-                return Entity.Description;
-            }
+            get => Entity.Description;
             set {
                 Entity.Description = value;
                 DescriptionModified = true;
@@ -96,49 +65,21 @@ namespace LibPythonAI.Model.Content {
         }
 
         // クリップボードの内容の種類
-        public ContentItemTypes.ContentItemTypeEnum ContentType {
-            get {
-                return Entity.ContentType;
-            }
-            set {
-                Entity.ContentType = value;
-            }
-        }
+        public ContentItemTypes.ContentItemTypeEnum ContentType { get => Entity.ContentType; set { Entity.ContentType = value; } }
 
 
         // OpenAIチャットのChatItemコレクション
         // LiteDBの同一コレクションで保存されているオブジェクト。ApplicationItemオブジェクト生成時にロード、Save時に保存される。
-        public List<ChatMessage> ChatItems {
-            get {
-                return Entity.ChatItems;
-            }
-        }
+        public List<ChatMessage> ChatItems { get => Entity.ChatItems; }
 
         // プロンプトテンプレートに基づくチャットの結果
-        public PromptChatResult PromptChatResult {
-            get {
-                return Entity.PromptChatResult;
-            }
-        }
+        public PromptChatResult PromptChatResult { get => Entity.PromptChatResult; }
 
         //Tags
-        public HashSet<string> Tags {
-            get {
-                return Entity.Tags;
-            }
-            set {
-                Entity.Tags = value;
-            }
-        }
+        public HashSet<string> Tags { get => Entity.Tags; set { Entity.Tags = value; } }
+
         // ピン留め
-        public bool IsPinned {
-            get {
-                return Entity.IsPinned;
-            }
-            set {
-                Entity.IsPinned = value;
-            }
-        }
+        public bool IsPinned { get => Entity.IsPinned; set { Entity.IsPinned = value; } }
 
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
         public string Base64Image {
@@ -276,7 +217,7 @@ namespace LibPythonAI.Model.Content {
         }
         // このアイテムに紐付けらされたVectorSearchItem
         // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchItemを使用する
-        public ObservableCollection<VectorSearchItem> VectorDBProperties { get; private set; }
+        public ObservableCollection<VectorSearchItem> VectorDBProperties { get; private set; } = [];
 
         private async Task<ObservableCollection<VectorSearchItem>> UpdateVectorDBProperties() {
             ObservableCollection<VectorSearchItem> vectorDBProperties = [];
@@ -593,7 +534,7 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run( async () => {
+                Task.Run(async () => {
                     var item = await GetMainVectorSearchItem();
                     string? vectorDBItemName = item.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {

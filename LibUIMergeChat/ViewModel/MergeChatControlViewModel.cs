@@ -215,7 +215,7 @@ namespace LibUIMergeChat.ViewModel {
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
 
-                // OnPropertyChanged(nameof(MergeTargetSummaryDataGridViewModel.Items));
+                // OnPropertyChanged(nameof(MergeTargetSummaryDataGridViewModel.ContentItems));
             }
         });
 

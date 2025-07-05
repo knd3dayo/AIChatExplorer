@@ -29,7 +29,8 @@ namespace LibUINormalChat.ViewModel {
             ChatRequest = new();
 
             // InputTextを設定
-            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.ContentItem.Content;
+
             // ApplicationItemがある場合は、ChatItemsを設定
             if (QAChatStartupPropsInstance.ContentItem != null) {
                 ChatRequest.ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
@@ -204,20 +205,6 @@ namespace LibUINormalChat.ViewModel {
 
         });
 
-        // チャット内容のリストを更新するメソッド
-        public void UpdateChatHistoryPosition() {
-            OnPropertyChanged(nameof(ChatHistoryViewModel));
-            // ListBoxの一番最後のアイテムに移動
-            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
-            if (userControl != null) {
-
-                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
-                if (listBox != null) {
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                    listBox.ScrollIntoView(listBox.SelectedItem);
-                }
-            }
-        }
 
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
@@ -282,14 +269,12 @@ namespace LibUINormalChat.ViewModel {
             Clipboard.SetText(text);
         });
 
-
-
         private string CreateChatRequestJson() {
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
             // ChatRequestのコピーを作成
             ChatRequest chatRequest = ChatRequest.Copy();
             // 関連アイテムを適用
-            chatRequest.ApplyReletedItems(RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList(), DataDefinitions.Where(x => x.IsChecked).ToList());
+            chatRequest.ApplyReletedItems(CreateChateRelatedItems());
             ChatUtil.PrepareNormalRequest(chatRequestContext, chatRequest);
             return DebugUtil.CreateParameterJson(OpenAIExecutionModeEnum.Normal, chatRequestContext, chatRequest);
         }
@@ -303,6 +288,20 @@ namespace LibUINormalChat.ViewModel {
                 return false;
             }
             return true;
+        }
+        // チャット内容のリストを更新するメソッド
+        private void UpdateChatHistoryPosition() {
+            OnPropertyChanged(nameof(ChatHistoryViewModel));
+            // ListBoxの一番最後のアイテムに移動
+            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
+            if (userControl != null) {
+
+                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
+                if (listBox != null) {
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
+                    listBox.ScrollIntoView(listBox.SelectedItem);
+                }
+            }
         }
 
         private void AfterSendChatCommand() {
@@ -319,15 +318,28 @@ namespace LibUINormalChat.ViewModel {
             });
 
         }
+        private ChatRelatedItems CreateChateRelatedItems() {
+            // 参照アイテム情報を設定
+            List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
+            List<ContentItemDataDefinition> dataDefinitions = DataDefinitions.Where(x => x.IsChecked).ToList();
+            bool sendRelatedItemsOnlyFirstRequest = ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequest == 0;
+
+            ChatRelatedItems chatRelatedItems = new() {
+                ContentItems = items,
+                DataDefinitions = dataDefinitions,
+                SendRelatedItemsOnlyFirstRequest = sendRelatedItemsOnlyFirstRequest
+            };
+            return chatRelatedItems;
+        }
+
         private async Task<ChatResponse?> ExecuteChat() {
             // ChatRequestContextを準備
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
 
             // 参照アイテム情報を設定
-            List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
-            List<ContentItemDataDefinition> dataDefinitions = DataDefinitions.Where(x => x.IsChecked).ToList();
+            ChatRelatedItems chatRelatedItems = CreateChateRelatedItems();
             // OpenAIChatAsync or LangChainChatを実行
-            ChatResponse? result = await NormalChatUtil.ExecuteChat(ChatRequest, chatRequestContext, items, dataDefinitions, (message) => { });
+            ChatResponse? result = await NormalChatUtil.ExecuteChat(ChatRequest, chatRequestContext, chatRelatedItems, (message) => { });
 
             return result;
 

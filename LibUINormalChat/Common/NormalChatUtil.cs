@@ -11,9 +11,9 @@ namespace LibUINormalChat.Common {
         public static async Task<ChatResponse?> ExecuteChat(
             ChatRequest chatRequest,
             ChatRequestContext chatRequestContext,
-            List<ContentItemWrapper> items, List<ContentItemDataDefinition> dataDefinition, Action<string> afterUpdate) {
+            ChatRelatedItems relatedItems, Action<string> afterUpdate) {
 
-            chatRequest.ApplyReletedItems(items, dataDefinition);
+            chatRequest.ApplyReletedItems(relatedItems);
 
 
             return await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, afterUpdate);

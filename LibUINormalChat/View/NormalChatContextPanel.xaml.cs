@@ -8,5 +8,6 @@ namespace LibUINormalChat.View {
         public NormalChatContextPanel() {
             InitializeComponent();
         }
+
     }
 }

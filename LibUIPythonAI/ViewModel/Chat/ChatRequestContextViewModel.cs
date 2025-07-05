@@ -18,6 +18,18 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         private ChatRequestContext ChatRequestContext { get; set; } = new ChatRequestContext();
 
+        // SendRelatedItemsOnlyFirstRequest
+        private int _SendRelatedItemsOnlyFirstRequest = 0;
+        public int SendRelatedItemsOnlyFirstRequest {
+            get {
+                return _SendRelatedItemsOnlyFirstRequest;
+            }
+            set {
+                _SendRelatedItemsOnlyFirstRequest = value;
+                OnPropertyChanged(nameof(SendRelatedItemsOnlyFirstRequest));
+            }
+        }
+
         public int SplitMode {
             get {
                 return (int)ChatRequestContext.SplitMode;
@@ -133,6 +145,13 @@ namespace LibUIPythonAI.ViewModel.Chat {
             OnPropertyChanged(nameof(VectorDBItemVisibility));
         });
 
+        // SendRelatedItemsOnlyFirstRequestModeが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> SendRelatedItemsOnlyFirstRequestModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            SendRelatedItemsOnlyFirstRequest = comboBox.SelectedIndex;
+            OnPropertyChanged(nameof(SendRelatedItemsOnlyFirstRequest));
+        });
 
 
 

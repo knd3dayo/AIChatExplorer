@@ -340,6 +340,12 @@ namespace LibUIPythonAI.Resource {
         // RAGMode_PromptSearch プロンプトを指定してベクトル検索を行う
         public virtual string RAGMode_PromptSearch { get; } = "Perform vector search with specified prompt";
 
+        // SendRelatedItemsOnlyFirstRequest_True
+        public virtual string SendRelatedItemsOnlyFirstRequest_True { get; } = "Send related items only for the first request";
+
+        // SendRelatedItemsOnlyFirstRequest_False
+        public virtual string SendRelatedItemsOnlyFirstRequest_False { get; } = "Send related items for all requests";
+
         // NumberOfTokensToSplitRequest
         public virtual string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 

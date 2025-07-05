@@ -195,10 +195,10 @@
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenOpenAIWindowCommand, Mode=OneTime}"
+                            Command="{Binding OpenNormalChatWindow, Mode=OneTime}"
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.OpenAIChat}" />
+                            Header="{x:Static res:ViewStringResources.NormalChat}" />
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
@@ -223,14 +223,6 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.AutoGenChat}" />
-                        <MenuItem
-                            Margin="0,0,0,0"
-                            Padding="10,0,10,0"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenNormalChatWindow, Mode=OneTime}"
-                            FontSize="12"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.NormalChat}" />
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"

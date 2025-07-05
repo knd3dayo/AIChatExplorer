@@ -35,60 +35,17 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
                 Margin="10,0,10,5"
                 Text="{x:Static res:ViewStringResources.Setting}" />
             <Separator Grid.Row="1" />
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Grid.Column="0"
-                    Margin="10,0,10,0"
-                    VerticalAlignment="Center"
-                    FontWeight="Bold"
-                    Text="{x:Static res:ViewStringResources.SplitMode}" />
-                <ComboBox
-                    Grid.Column="1"
-                    Margin="10,0,10,0"
-                    SelectedIndex="{Binding ChatRequestContextViewModel.SplitMode}">
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ChatRequestContextViewModel.SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ComboBox>
-            </Grid>
+            <!--  Temperature  -->
             <Grid
-                Grid.Row="4"
-                Margin="10,20,0,10"
-                HorizontalAlignment="Left"
-                Visibility="{Binding ChatRequestContextViewModel.SplitMOdeVisibility}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="170" />
-                    <ColumnDefinition Width="80" />
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Static res:ViewStringResources.NumberOfTokensToSplitRequest}" />
-                <!--  書式は整数  -->
-                <TextBox
-                    Grid.Column="1"
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
-                    Text="{Binding ChatRequestContextViewModel.SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
-
-            </Grid>
-            <Grid
-                Grid.Row="5"
+                Grid.Row="2"
                 Margin="10,20,0,10"
                 HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
@@ -114,12 +71,73 @@
                     VerticalAlignment="Center"
                     Text="{Binding Temperature, StringFormat={}{0:F2}}" />
             </Grid>
+            <Separator Grid.Row="3" />
+            <!--  SplitMode  -->
+            <Grid Grid.Row="4" Margin="0,20,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="{x:Static res:ViewStringResources.SplitMode}" />
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="10,0,10,0"
+                    SelectedIndex="{Binding ChatRequestContextViewModel.SplitMode}">
+                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
+                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
+                    <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ChatRequestContextViewModel.SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </Grid>
+            <Grid
+                Grid.Row="5"
+                Margin="10,20,0,10"
+                HorizontalAlignment="Left"
+                Visibility="{Binding ChatRequestContextViewModel.SplitMOdeVisibility}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:ViewStringResources.NumberOfTokensToSplitRequest}" />
+                <!--  書式は整数  -->
+                <TextBox
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding ChatRequestContextViewModel.SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
             <Separator Grid.Row="6" />
+            <ComboBox
+                Grid.Row="7"
+                Margin="10,30,0,10"
+                SelectedIndex="{Binding ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequest}">
+                <ComboBoxItem Content="{x:Static local:ViewStringResources.SendRelatedItemsOnlyFirstRequest_True}" />
+                <ComboBoxItem Content="{x:Static local:ViewStringResources.SendRelatedItemsOnlyFirstRequest_False}" />
+                <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequestModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+            <Separator Grid.Row="8" />
         </Grid>
 
         <ComboBox
             Grid.Row="1"
-            Margin="10,20,0,10"
+            Margin="10,30,0,10"
             SelectedIndex="{Binding ChatRequestContextViewModel.RAGModeValue}">
             <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
             <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />

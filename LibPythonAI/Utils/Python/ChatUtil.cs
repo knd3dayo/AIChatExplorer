@@ -186,7 +186,9 @@ namespace LibPythonAI.Utils.Python {
             return result;
         }
 
-        public static List<(ContentItemTypes.ContentItemTypeEnum, string)> CreatePromptTextByRelatedItems(List<ContentItemWrapper> items, List<ContentItemDataDefinition> dataDefinitions) {
+        public static List<(ContentItemTypes.ContentItemTypeEnum, string)> CreatePromptTextByRelatedItems(ChatRelatedItems relatedItems) {
+            List<ContentItemWrapper> items = relatedItems.ContentItems;
+            List<ContentItemDataDefinition> dataDefinitions = relatedItems.DataDefinitions;
             // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、PromptTextを作成する
             StringBuilder promptBuilder = new();
             // PythonNetの処理を呼び出す。

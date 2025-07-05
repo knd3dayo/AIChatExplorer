@@ -56,9 +56,13 @@ namespace LibPythonAI.PythonIF.Request {
             return lastAssistantChatItem;
         }
 
-        public void ApplyReletedItems(List<ContentItemWrapper> items, List<ContentItemDataDefinition> dataDefinition) {
+        public void ApplyReletedItems(ChatRelatedItems relatedItems) {
+            // relaedItemsのSendRelatedItemsOnlyFirstRequestがtrueの場合かつChatHistoryが1より大きい場合は、関連アイテムを送信しない
+            if (relatedItems.SendRelatedItemsOnlyFirstRequest && ChatHistory.Count > 1) {
+                return;
+            }
             // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、ChatHistoryに追加する
-            List<(ContentItemTypes.ContentItemTypeEnum, string)> values = ChatUtil.CreatePromptTextByRelatedItems(items, dataDefinition);
+            List<(ContentItemTypes.ContentItemTypeEnum, string)> values = ChatUtil.CreatePromptTextByRelatedItems(relatedItems);
             StringBuilder sb = new();
             foreach (var value in values) {
                 // ContentItemTypes.ContentItemTypeEnumの値に応じて、ChatMessageを作成

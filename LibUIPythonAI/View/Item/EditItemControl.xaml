@@ -142,7 +142,7 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,0,10,0"
-                        Command="{Binding ItemViewModel.Commands.OpenOpenAIChatWindowCommand, Mode=OneTime}"
+                        Command="{Binding ItemViewModel.Commands.OpenNormalChatWindowComman, Mode=OneTime}"
                         CommandParameter="{Binding ItemViewModel}"
                         Content="{x:Static local:ViewStringResources.OpenAIChat}"
                         DockPanel.Dock="Left" />

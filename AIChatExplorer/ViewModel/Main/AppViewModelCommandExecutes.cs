@@ -41,12 +41,11 @@ namespace AIChatExplorer.ViewModel.Main {
             OpenItemCommandExecute(itemViewModel);
         });
 
-        public SimpleDelegateCommand<ContentItemViewModel> OpenOpenAIChatWindowCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<ContentItemViewModel> OpenNormalChatWindowComman => new((itemViewModel) => {
 
             // QAChatControlのDrawerを開く
-            OpenOpenAIChatWindowCommandExecute(itemViewModel);
+            OpenNormalChatWindowCommandExecute(itemViewModel);
         });
-
 
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> CutItemCommand => new((itemViewModels) => {
             CutItemCommandExecute(itemViewModels);
@@ -116,29 +115,6 @@ namespace AIChatExplorer.ViewModel.Main {
             MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
-        // Command to open OpenAI Chat
-        public static void OpenOpenAIChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
-
-            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
-            ChatWindow.OpenOpenAIChatWindow(qAChatStartupProps);
-        }
-
-        public static void OpenOpenAIChatWindowCommandExecute() {
-            // チャット履歴用のItemの設定
-            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
-            // チャット履歴用のItemの設定
-            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
-                // TEMPORARY_ITEM_ID
-                Id = ApplicationItem.TEMPORARY_ITEM_ID,
-                // タイトルを日付 + 元のタイトルにする
-                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
-            };
-            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
-
-            OpenOpenAIChatWindowCommandExecute(applicationItemViewModel);
-
-        }
-
         public static void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
@@ -172,7 +148,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Command to Open Normal Chat
-        public static void OpenNormalChatWindowCommand(ContentItemViewModel itemViewModel) {
+        public static void OpenNormalChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
             NormalChatWindow.OpenWindow(qAChatStartupProps);
         }

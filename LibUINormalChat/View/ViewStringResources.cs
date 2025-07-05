@@ -101,6 +101,11 @@ namespace LibUINormalChat.View {
         // RAGMode_PromptSearch
         public static string RAGMode_PromptSearch => CommonStringResources.Instance.RAGMode_PromptSearch;
 
+        // SendRelatedItemsOnlyFirstRequest_True
+        public static string SendRelatedItemsOnlyFirstRequest_True => CommonStringResources.Instance.SendRelatedItemsOnlyFirstRequest_True;
+        // SendRelatedItemsOnlyFirstRequest_False
+        public static string SendRelatedItemsOnlyFirstRequest_False => CommonStringResources.Instance.SendRelatedItemsOnlyFirstRequest_False;
+
         // VectorDBList
         public static string VectorDB => CommonStringResources.Instance.VectorDB;
 

@@ -155,7 +155,11 @@ namespace LibUIPythonAI.Resource {
         // RAGMode_PromptSearch
         public override string RAGMode_PromptSearch { get; } = "プロンプトを指定してベクトル検索を行う";
 
+        // SendRelatedItemsOnlyFirstRequest_True
+        public override string SendRelatedItemsOnlyFirstRequest_True { get; } = "関連アイテムを最初のリクエスト時のみ送信する";
 
+        // SendRelatedItemsOnlyFirstRequest_False
+        public override string SendRelatedItemsOnlyFirstRequest_False { get; } = "関連アイテムをすべてのリクエストで送信する";
 
         // リクエストを分割するトークン数
         public override string NumberOfTokensToSplitRequest { get; } = "リクエストを分割するトークン数";

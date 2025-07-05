@@ -6,7 +6,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public QAChatStartupProps(ContentItemWrapper applicationItem) {
             ContentItem = applicationItem;
         }
-        public ContentItemWrapper ContentItem { get; set; }
+        public ContentItemWrapper ContentItem { get; private set; }
 
         public Action<ContentItemWrapper, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 

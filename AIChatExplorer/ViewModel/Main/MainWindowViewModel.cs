@@ -19,69 +19,81 @@ using LibUIPythonAI.ViewModel.Item;
 namespace AIChatExplorer.ViewModel.Main {
     public partial class MainWindowViewModel : CommonViewModelBase {
         public MainWindowViewModel() {
-
-
             Instance = this;
 
             // Commandの初期化
-            Commands = new(UpdateIndeterminate, () => {
-                // 現在選択中のフォルダをReload
-                MainUITask.Run(() => {
-                    MainPanelTreeViewControlViewModel?.SelectedFolder?.FolderCommands.LoadFolderCommand.Execute();
-                });
-            });
+            Commands = InitCommands();
 
             // フォルダの初期化
             RootFolderViewModelContainer = new(Commands);
 
             // ClipboardControllerのOnClipboardChangedに処理をセット
+            InitClipboardController();
+
+            // MainPanelDataGridViewControlViewModel,MainPanelTreeViewControlViewModelの初期化
+            (MainPanelDataGridViewControlViewModel,  MainPanelTreeViewControlViewModel)  = InitMainPanelControls();
+
+            // パネルの初期化
+            InitPanel();
+        }
+
+        // Commandsの初期化
+        private AppViewModelCommandExecutes InitCommands() {
+            AppViewModelCommandExecutes commands = new(UpdateIndeterminate, () => {
+                // 現在選択中のフォルダをReload
+                MainUITask.Run(() => {
+                    MainPanelTreeViewControlViewModel?.SelectedFolder?.FolderCommands.LoadFolderCommand.Execute();
+                });
+            });
+            return commands;
+        }
+        // ClipboardControllerの初期化
+        private void InitClipboardController() {
+            // ClipboardControllerの初期化
             ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア
                 ClipboardController.Instance.CopiedObjects.Clear();
             };
-
-
+        }
+        private (MainPanelDataGridViewControlViewModel, MainPanelTreeViewControlViewModel) InitMainPanelControls() {
             // MainPanelDataGridViewControlViewModelの初期化
-            MainPanelDataGridViewControlViewModel = new(Commands) {
+            MainPanelDataGridViewControlViewModel dataGridViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
-
             };
-
             // MainPanelTreeViewControlViewModelの初期化
-            MainPanelTreeViewControlViewModel = new(Commands) {
+            MainPanelTreeViewControlViewModel treeViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
                 RootFolderViewModelContainer = RootFolderViewModelContainer,
                 SelectedFolderChangedAction = ((selectedFolder) => {
                     MainPanelDataGridViewControlViewModel.SelectedFolder = selectedFolder;
                 })
             };
-
+            return (dataGridViewModel, treeViewModel);
+        }
+        private void InitPanel() {
             MainPanelViewModel mainPanelViewModel = new(Commands) {
                 MainPanelTreeViewControlViewModel = MainPanelTreeViewControlViewModel,
                 MainPanelDataGridViewControlViewModel = MainPanelDataGridViewControlViewModel
             };
 
-            // TabItemsの初期化
             MainPanel mainPanel = new() {
                 DataContext = mainPanelViewModel
             };
 
+            // TabItemsの初期化
             MainTabContent container = new("main", mainPanel) {
                 CloseButtonVisibility = Visibility.Collapsed
             };
             MainTabManager.TabItems.Add(container);
-
         }
 
         public AppViewModelCommandExecutes Commands { get; set; }
+
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
 
-
-
         // Null許容型
-        [AllowNull]
         public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         [AllowNull]
@@ -135,7 +147,6 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-
         // アイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
@@ -165,14 +176,6 @@ namespace AIChatExplorer.ViewModel.Main {
         // バージョン情報画面を開く処理
         public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
             VersionWindow.OpenVersionWindow();
-        });
-
-        // メニューの「OpenAIチャット」をクリックしたときの処理。
-        // チャット履歴フォルダーに新規作成
-        public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-
-            AppViewModelCommandExecutes.OpenOpenAIChatWindowCommandExecute();
-
         });
 
         // メニューの「AutoGenチャット」をクリックしたときの処理。
@@ -213,7 +216,7 @@ namespace AIChatExplorer.ViewModel.Main {
             };
             ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
 
-            AppViewModelCommandExecutes.OpenNormalChatWindowCommand(applicationItemViewModel);
+            AppViewModelCommandExecutes.OpenNormalChatWindowCommandExecute(applicationItemViewModel);
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
@@ -225,9 +228,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new(async (parameter) => {
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
-            AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+            await AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
 

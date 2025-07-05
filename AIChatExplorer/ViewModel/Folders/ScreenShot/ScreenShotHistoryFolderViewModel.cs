@@ -34,7 +34,7 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
             ContentItemWrapper applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
             QAChatStartupProps props = new(applicationItemViewModel.ContentItem);
-            LibUIPythonAI.View.Chat.ChatWindow.OpenOpenAIChatWindow(props);
+            LibUINormalChat.View.NormalChatWindow.OpenWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
