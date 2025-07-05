@@ -168,7 +168,7 @@
                                     Margin="10,0,10,0"
                                     materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PromptTemplate}"
                                     AcceptsReturn="True"
-                                    Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
+                                    Text="{Binding PromptTemplateText, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.InputBindings>
                                         <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
                                     </TextBox.InputBindings>

@@ -101,5 +101,8 @@ namespace LibPythonAI.Common {
         // ClipboardMonitoring
         public string GetMonitorTargetAppNames();
 
+        public int GetEditorFontSize();
+
+
     }
 }

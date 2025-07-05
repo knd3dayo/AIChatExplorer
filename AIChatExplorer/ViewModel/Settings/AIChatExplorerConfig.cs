@@ -594,6 +594,21 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
+        // EditorFontSize
+        private int _editorFontSize = -1;
+        public int EditorFontSize {
+            get {
+                if (_editorFontSize == -1) {
+                    _editorFontSize = Properties.Settings.Default.EditorFontSize;
+                }
+                return _editorFontSize;
+            }
+            set {
+                _editorFontSize = value;
+                Properties.Settings.Default.EditorFontSize = value;
+            }
+        }
+
 
         public void Save() {
             Properties.Settings.Default.Save();
@@ -701,6 +716,8 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
             return toolDir;
         }
+
+        
 
         #region IPythonAILibConfigParamsの実装
 

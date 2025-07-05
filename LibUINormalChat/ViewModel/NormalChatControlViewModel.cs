@@ -21,7 +21,6 @@ using LibUIPythonAI.ViewModel.PromptTemplate;
 namespace LibUINormalChat.ViewModel {
     public class NormalChatControlViewModel : CommonViewModelBase {
 
-
         //初期化
         public NormalChatControlViewModel(RelatedItemsPanelViewModel relatedItemsPanelViewModel, QAChatStartupProps qAChatStartupPropsInstance) {
 
@@ -68,12 +67,16 @@ namespace LibUINormalChat.ViewModel {
             });
         }
 
+        // ChatRequest
+        private ChatRequest ChatRequest { get; set; }
+
+        private QAChatStartupProps QAChatStartupPropsInstance { get; set; }
+
+        private bool ChatExecuted { get; set; } = false;
+
+
         // DataDefinitions
-        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; }
-
-
-        // SessionToken
-        public string SessionToken { get; set; } = Guid.NewGuid().ToString();
+        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
 
         public RelatedItemDataGridViewModel RelatedItemSummaryDataGridViewModel { get; set; } = null!; // 初期化時に設定されるため、null許容型ではない
 
@@ -82,19 +85,22 @@ namespace LibUINormalChat.ViewModel {
         public ChatRequestContextViewModel ChatRequestContextViewModel { get; set; } = new();
 
 
-        public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
 
-        // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
-            PromptTemplateCommandExecute(parameter);
-        });
+        // Temperature
+        public double Temperature {
+            get {
+                return ChatRequest.Temperature;
+            }
+            set {
+                ChatRequest.Temperature = value;
+                OnPropertyChanged(nameof(Temperature));
+            }
+        }
 
-        // ChatRequest
-        public ChatRequest ChatRequest { get; set; } 
 
         public static ChatMessage? SelectedItem { get; set; }
 
-        public ChatHistoryViewModel ChatHistoryViewModel { get; set; } 
+        public ChatHistoryViewModel ChatHistoryViewModel { get; set; }
 
         public string InputText {
             get {
@@ -107,14 +113,13 @@ namespace LibUINormalChat.ViewModel {
         }
 
         // プロンプトの文字列
-        private string _PromptText = "";
-        public string PromptText {
+        public string PromptTemplateText {
             get {
-                return _PromptText;
+                return ChatRequestContextViewModel.PromptTemplateText;
             }
             set {
-                _PromptText = value;
-                OnPropertyChanged(nameof(PromptText));
+                ChatRequestContextViewModel.PromptTemplateText = value;
+                OnPropertyChanged(nameof(PromptTemplateText));
             }
         }
 
@@ -130,26 +135,21 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-
-        public Visibility MarkdownVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
-
-        public Visibility TextVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
-
-        // DebugCommandVisibility
-        public Visibility DebugCommandVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
+        // SelectedTabIndex
+        private int _SelectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return _SelectedTabIndex;
+            }
+            set {
+                _SelectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
 
 
         public string PreviewJson {
-            get {
-                ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-                // ChatRequestのコピーを作成
-                ChatRequest chatRequest =　ChatRequest.Copy();
-                // 関連アイテムを適用
-                chatRequest.ApplyReletedItems(RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList(), DataDefinitions.Where(x => x.IsChecked).ToList());
-
-                ChatUtil.PrepareNormalRequest(chatRequestContext, chatRequest);
-                return DebugUtil.CreateParameterJson(OpenAIExecutionModeEnum.Normal, chatRequestContext, chatRequest);
-            }
+            get => CreateChatRequestJson();
         }
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
@@ -160,6 +160,91 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
+
+        public Visibility MarkdownVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+        public Visibility TextVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
+        // DebugCommandVisibility
+        public Visibility DebugCommandVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
+
+
+
+        // チャットを送信するコマンド
+        public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
+
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
+
+            // OpenAIにチャットを送信してレスポンスを受け取る
+            try {
+                ChatResponse? result = null;
+                // プログレスバーを表示
+                CommonViewModelProperties.UpdateIndeterminate(true);
+
+                // チャット内容を更新
+                await Task.Run(async () => {
+
+                    // SplitModeが有効な場合で、PromptTextが空の場合はエラー
+                    if (!IsSplitModePreconditionMet()) {
+                        CommonViewModelProperties.UpdateIndeterminate(false);
+                        return;
+                    }
+                    // チャットを実行
+                    result = await ExecuteChat();
+                    if (result == null) {
+                        CommonViewModelProperties.UpdateIndeterminate(false);
+                        LogWrapper.Error(CommonStringResources.Instance.FailedToSendChat);
+                        return;
+                    }
+                    // チャット内容を更新
+                    AfterSendChatCommand();
+                });
+
+            } catch (Exception e) {
+                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
+            }
+
+        });
+
+        // チャット内容のリストを更新するメソッド
+        public void UpdateChatHistoryPosition() {
+            OnPropertyChanged(nameof(ChatHistoryViewModel));
+            // ListBoxの一番最後のアイテムに移動
+            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
+            if (userControl != null) {
+
+                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
+                if (listBox != null) {
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
+                    listBox.ScrollIntoView(listBox.SelectedItem);
+                }
+            }
+        }
+
+        // Tabが変更されたときの処理       
+        public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // SelectedTabIndexを更新
+                SelectedTabIndex = tabControl.SelectedIndex;
+                OnPropertyChanged(nameof(PreviewJson));
+                OnPropertyChanged(nameof(GeneratedDebugCommand));
+            }
+        });
+
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+
+            ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
+            foreach (PromptItem promptItem in promptItems) {
+                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
+            }
+            return items;
+        }
+        // プロンプトテンプレート画面を開くコマンド
+        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
+            PromptTemplateCommandExecute(parameter);
+        });
+
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
@@ -167,10 +252,9 @@ namespace LibUINormalChat.ViewModel {
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(OpenAIExecutionModeEnum.Normal, chatRequestContext, ChatRequest));
         });
 
-        public bool ChatExecuted { get; set; } = false;
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
+                PromptTemplateText = promptTemplateWindowViewModel.PromptItem.Prompt;
             });
         }
 
@@ -199,125 +283,55 @@ namespace LibUINormalChat.ViewModel {
         });
 
 
-        // Temperature
-        private double _Temperature = 0.5;
-        public double Temperature {
-            get {
-                return _Temperature;
-            }
-            set {
-                _Temperature = value;
-                OnPropertyChanged(nameof(Temperature));
-            }
+
+        private string CreateChatRequestJson() {
+            ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
+            // ChatRequestのコピーを作成
+            ChatRequest chatRequest = ChatRequest.Copy();
+            // 関連アイテムを適用
+            chatRequest.ApplyReletedItems(RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList(), DataDefinitions.Where(x => x.IsChecked).ToList());
+            ChatUtil.PrepareNormalRequest(chatRequestContext, chatRequest);
+            return DebugUtil.CreateParameterJson(OpenAIExecutionModeEnum.Normal, chatRequestContext, chatRequest);
         }
-        // チャットを送信するコマンド
-        public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
-            PythonAILibManager? libManager = PythonAILibManager.Instance;
+        // SplitModeの前提をチェックするメソッド
+        private bool IsSplitModePreconditionMet() {
+            // SplitModeが有効な場合、PromptTemplateTextが空でないことを確認
+            ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
+            if (chatRequestContext.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PromptTemplateText)) {
+                LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
+                return false;
+            }
+            return true;
+        }
 
-            // OpenAIにチャットを送信してレスポンスを受け取る
-            try {
-                ChatResponse? result = null;
-                // プログレスバーを表示
-                CommonViewModelProperties.UpdateIndeterminate(true);
-
-                // チャット内容を更新
-                await Task.Run(async () => {
-
-                    ChatRequest.Temperature = Temperature;
-
-                    ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-                    // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    if (chatRequestContext.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PromptText)) {
-                        LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
-                        return;
-                    }
-
-                    List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
-                    List<ContentItemDataDefinition> dataDefinitions = DataDefinitions.Where(x => x.IsChecked).ToList();
-                    // OpenAIChatAsync or LangChainChatを実行
-                    result = await NormalChatUtil.ExecuteChat(ChatRequest, chatRequestContext, items, dataDefinitions,  (message) => {
-                        MainUITask.Run(() => {
-                            // チャット内容を更新
-                            UpdateChatHistoryPosition();
-                        });
-                    });
-                });
+        private void AfterSendChatCommand() {
+            MainUITask.Run(() => {
                 CommonViewModelProperties.UpdateIndeterminate(false);
-
-                if (result == null) {
-                    LogWrapper.Error(CommonStringResources.Instance.FailedToSendChat);
-                    return;
-                }
                 // チャット内容を更新
                 UpdateChatHistoryPosition();
-
                 // inputTextをクリア
                 InputText = "";
+                // プロンプトテンプレートをクリア
+                PromptTemplateText = "";
                 // ChatExecutedをTrueに設定
                 ChatExecuted = true;
+            });
 
-            } catch (Exception e) {
-                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
-            }
-
-        });
-
-
-        private int _SelectedTabIndex = 0;
-        public int SelectedTabIndex {
-            get {
-                return _SelectedTabIndex;
-            }
-            set {
-                _SelectedTabIndex = value;
-                OnPropertyChanged(nameof(SelectedTabIndex));
-            }
         }
+        private async Task<ChatResponse?> ExecuteChat() {
+            // ChatRequestContextを準備
+            ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
 
-        // チャット内容のリストを更新するメソッド
-        public void UpdateChatHistoryPosition() {
-            OnPropertyChanged(nameof(ChatHistoryViewModel));
-            // ListBoxの一番最後のアイテムに移動
-            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
-            if (userControl != null) {
+            // 参照アイテム情報を設定
+            List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
+            List<ContentItemDataDefinition> dataDefinitions = DataDefinitions.Where(x => x.IsChecked).ToList();
+            // OpenAIChatAsync or LangChainChatを実行
+            ChatResponse? result = await NormalChatUtil.ExecuteChat(ChatRequest, chatRequestContext, items, dataDefinitions, (message) => { });
 
-                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
-                if (listBox != null) {
-                    listBox.SelectedIndex = listBox.Items.Count - 1;
-                    listBox.ScrollIntoView(listBox.SelectedItem);
-                }
-            }
+            return result;
+
         }
-
-        // Tabが変更されたときの処理       
-        public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is TabControl tabControl) {
-                // リクエストのメッセージをアップデート
-                ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-                ChatRequest request = new() {
-                    // request.Temperature;
-                    Temperature = Temperature
-                };
-                // SelectedTabIndexを更新
-                SelectedTabIndex = tabControl.SelectedIndex;
-
-                OnPropertyChanged(nameof(PreviewJson));
-            }
-        });
-
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
-            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
-            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
-
-            ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
-            foreach (PromptItem promptItem in promptItems) {
-                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
-            }
-            return items;
-        }
-
 
     }
 

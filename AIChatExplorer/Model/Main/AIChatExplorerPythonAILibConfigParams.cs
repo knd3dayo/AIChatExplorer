@@ -200,5 +200,9 @@ namespace AIChatExplorer.Model.Main {
             return AIChatExplorerConfig.Instance.MonitorTargetAppNames;
         }
 
+        public int GetEditorFontSize() {
+            return AIChatExplorerConfig.Instance.EditorFontSize;
+        }
+
     }
 }

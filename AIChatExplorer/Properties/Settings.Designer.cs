@@ -586,5 +586,17 @@ namespace AIChatExplorer.Properties {
                 this["AutoPredictUserIntent"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public int EditorFontSize {
+            get {
+                return ((int)(this["EditorFontSize"]));
+            }
+            set {
+                this["EditorFontSize"] = value;
+            }
+        }
     }
 }
