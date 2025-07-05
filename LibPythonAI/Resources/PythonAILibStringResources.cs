@@ -452,6 +452,9 @@ namespace LibPythonAI.Resources {
         // Execute the prompt template [promptName].
         public virtual string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
 
+        // PromptItemsNotLoaded
+        public virtual string PromptItemsNotLoaded { get; } = "Prompt items not loaded. Please load the prompt items first.";
+
         // プロンプトテンプレート[promptName]を実行中
         public virtual string PromptTemplateInProgress(string promptName) => $"Executing the prompt template [{promptName}].";
 

@@ -97,7 +97,7 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public SimpleDelegateCommand<object> ReloadCommand => new(async (parameter) => {
 
             await PromptItem.LoadItemsAsync();
-            var promptItems = PromptItem.GetPromptItems();
+            var promptItems = await PromptItem.GetPromptItems();
             // PromptItemsを更新
             PromptItems.Clear();
 

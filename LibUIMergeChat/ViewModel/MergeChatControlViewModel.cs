@@ -32,8 +32,11 @@ namespace LibUIMergeChat.ViewModel {
             if (folder == null) {
                 return;
             }
-            // ChatRequestContextViewModelを設定
-            ChatRequestContextViewModel.VectorSearchProperties = [.. folder.Folder.GetVectorSearchProperties()];
+            Task.Run(async () => {
+                // ChatRequestContextViewModelを設定
+                var item = await folder.Folder.GetVectorSearchProperties();
+                ChatRequestContextViewModel.VectorSearchProperties = [.. item];
+            });
 
             // MergeTargetPanelViewModelを設定
             MergeTargetPanelViewModel = mergeTargetPanelViewModel;
@@ -46,7 +49,17 @@ namespace LibUIMergeChat.ViewModel {
 
             // MergeTargetSummaryDataGridViewModelのItemsを設定
             MergeTargetSummaryDataGridViewModel.Items = mergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItems;
+
+            Task.Run(async () => {
+                ExportItems = await CreateExportItems();
+                OnPropertyChanged(nameof(ExportItems));
+            });
         }
+
+        // ExportItems
+        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; }
+
+
 
         // SessionToken
         public string SessionToken { get; set; } = Guid.NewGuid().ToString();
@@ -227,12 +240,10 @@ namespace LibUIMergeChat.ViewModel {
         });
 
 
-        // ExportItems
-        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; } = CreateExportItems();
-
-        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
 

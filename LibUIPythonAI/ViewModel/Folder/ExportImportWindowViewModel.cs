@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
@@ -11,21 +12,39 @@ using LibUIPythonAI.View.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace LibUIPythonAI.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ContentFolderViewModel ApplicationFolderViewModel, Action AfterUpdate) : CommonViewModelBase {
+    public class ExportImportWindowViewModel : CommonViewModelBase {
+
+        public ExportImportWindowViewModel(ContentFolderViewModel applicationFolderViewModel, Action afterUpdate) {
+            ApplicationFolderViewModel = applicationFolderViewModel;
+            AfterUpdate = afterUpdate;
+            Task.Run(async () => {
+                ExportItems = await CreateExportItems();
+                OnPropertyChanged(nameof(ExportItems));
+                ImportItems = await CreateImportItems();
+                OnPropertyChanged(nameof(ImportItems));
+
+            });
+        }
+        // ApplicationFolderViewModel
+        public ContentFolderViewModel ApplicationFolderViewModel { get; set; }
+        // AfterUpdate
+        public Action AfterUpdate { get; set; }
+
 
         // ImportItems
-        public ObservableCollection<ContentItemDataDefinition> ImportItems { get; set; } = CreateImportItems();
+        public ObservableCollection<ContentItemDataDefinition> ImportItems { get; set; }
 
         // ExportItems
-        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; } = CreateExportItems();
+        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; }
 
-        private static ObservableCollection<ContentItemDataDefinition> CreateImportItems() {
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateImportItems() {
             return [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
         }
 
-        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [
                 new ContentItemDataDefinition("Title", CommonStringResources.Instance.Title, true, false),

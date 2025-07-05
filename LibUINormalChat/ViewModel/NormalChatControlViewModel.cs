@@ -43,8 +43,11 @@ namespace LibUINormalChat.ViewModel {
             if (folder == null) {
                 return;
             }
-            // ChatRequestContextViewModelを設定
-            ChatRequestContextViewModel.VectorSearchProperties = [.. folder.Folder.GetVectorSearchProperties()];
+            Task.Run(async () => {
+                // ChatRequestContextViewModelを設定
+                var item = await folder.Folder.GetVectorSearchProperties();
+                ChatRequestContextViewModel.VectorSearchProperties = [.. item];
+            });
 
             // RelatedItemsPanelViewModelを設定
             RelatedItemsPanelViewModel = relatedItemsPanelViewModel;
@@ -55,7 +58,19 @@ namespace LibUINormalChat.ViewModel {
             // RelatedItemSummaryDataGridViewModelのItemsを設定
             RelatedItemSummaryDataGridViewModel.Items = relatedItemsPanelViewModel.RelatedItemsDataGridViewModel.CheckedItems;
             QAChatStartupPropsInstance = qAChatStartupPropsInstance;
+
+            Task.Run(async () => {
+                // DataDefinitionsを初期化
+                DataDefinitions = await CreateExportItems();
+            }).ContinueWith((task) => {
+                // DataDefinitionsの変更を通知
+                OnPropertyChanged(nameof(DataDefinitions));
+            });
         }
+
+        // DataDefinitions
+        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; }
+
 
         // SessionToken
         public string SessionToken { get; set; } = Guid.NewGuid().ToString();
@@ -291,12 +306,10 @@ namespace LibUINormalChat.ViewModel {
             }
         });
 
-        // DataDefinitions
-        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = CreateExportItems();
-
-        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
             foreach (PromptItem promptItem in promptItems) {

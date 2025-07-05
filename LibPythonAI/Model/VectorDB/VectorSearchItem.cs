@@ -17,6 +17,8 @@ namespace LibPythonAI.Model.VectorDB {
             Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel;
             TopK = vectorDBItem.DefaultSearchResultLimit;
             ScoreThreshold = vectorDBItem.DefaultScoreThreshold;
+
+            UpdateDisplayText();
         }
 
 
@@ -42,24 +44,31 @@ namespace LibPythonAI.Model.VectorDB {
         // FolderPath
         public string? FolderPath { get; set; } = null;
 
-        public string DisplayText {
-            get {
-                VectorDBItem? item = VectorDBItem.GetItemByName(VectorDBItemName);
+        public string DisplayText { get; private set; } = "";
+
+        private void UpdateDisplayText() {
+            Task.Run(async () => {
+                // DisplayTextを更新する
+                VectorDBItem? item = await VectorDBItem.GetItemByName(VectorDBItemName);
                 if (item == null) {
-                    return "";
+                    DisplayText = "";
+
+                } else if (string.IsNullOrEmpty(item.CollectionName)) {
+                    DisplayText = item.Name;
+                    return;
+                } else if (FolderId == null) {
+                    DisplayText = item.Name;
+                    return;
+                } else {
+                    ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
+                    if (folder == null) {
+                        DisplayText = item.Name;
+                        return;
+                    }
+                    DisplayText = $"{item.Name}:{folder.ContentFolderPath}";
                 }
-                if (string.IsNullOrEmpty(item.CollectionName)) {
-                    return item.Name;
-                }
-                if (FolderId == null) {
-                    return item.Name;
-                }
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
-                if (folder == null) {
-                    return item.Name;
-                }
-                return $"{item.Name}:{folder.ContentFolderPath}";
-            }
+                
+            });
         }
 
 

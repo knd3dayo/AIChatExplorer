@@ -115,14 +115,14 @@ namespace LibPythonAI.Model.Content {
         // ベクトルを更新する
         public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
 
-            Task.Run(() => {
+            Task.Run( () => {
                 // Parallelによる並列処理。4並列
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, (item) => {
-
-                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
+                Parallel.ForEach(items, parallelOptions, async (item) => {
+                    var vectorDBItem = await item.GetMainVectorSearchItem();
+                    string? vectorDBItemName = vectorDBItem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
@@ -143,9 +143,10 @@ namespace LibPythonAI.Model.Content {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, (item) => {
+                Parallel.ForEach(items, parallelOptions, async (item) => {
                     // VectorDBItemを取得
-                    string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
+                    var vectorDBitem = await item.GetMainVectorSearchItem();
+                    string? vectorDBItemName = vectorDBitem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;

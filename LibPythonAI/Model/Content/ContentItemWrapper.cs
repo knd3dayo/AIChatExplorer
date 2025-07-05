@@ -16,10 +16,17 @@ namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
 
         public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
-        public ContentItemWrapper() { }
+        public ContentItemWrapper() { 
+            Task.Run(async () => {
+                VectorDBProperties = await UpdateVectorDBProperties();
+            });
+        }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
             FolderId = folder.Id;
+            Task.Run(async () => {
+                VectorDBProperties = await UpdateVectorDBProperties();
+            });
         }
 
         public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
@@ -269,46 +276,46 @@ namespace LibPythonAI.Model.Content {
         }
         // このアイテムに紐付けらされたVectorSearchItem
         // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchItemを使用する
-        public ObservableCollection<VectorSearchItem> VectorDBProperties {
-            get {
-                ObservableCollection<VectorSearchItem> vectorDBProperties = [];
-                if (UseFolderVectorSearchItem) {
-                    vectorDBProperties = [.. GetFolder().GetVectorSearchProperties()];
-                }
+        public ObservableCollection<VectorSearchItem> VectorDBProperties { get; private set; }
 
-                if (Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value) ) {
-                    if (value is string strValue) {
-                        vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
-                    } else if (value is List<VectorSearchItem> list) {
-                        vectorDBProperties = [.. list];
-                    }
-                }
-
-                // Addイベント発生時の処理
-                vectorDBProperties.CollectionChanged += (sender, e) => {
-                    if (e.NewItems != null) {
-                        // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
-                        Entity.SaveExtendedPropertiesJson();
-                    }
-                };
-                // Removeイベント発生時の処理
-                vectorDBProperties.CollectionChanged += (sender, e) => {
-                    if (e.OldItems != null) {
-                        // Entityを更新
-                        Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
-                        Entity.SaveExtendedPropertiesJson();
-                    }
-                };
-                // Clearイベント発生時の処理
-                vectorDBProperties.CollectionChanged += (sender, e) => {
-                    // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties); 
-                    Entity.SaveExtendedPropertiesJson();
-                };
-
-                return vectorDBProperties;
+        private async Task<ObservableCollection<VectorSearchItem>> UpdateVectorDBProperties() {
+            ObservableCollection<VectorSearchItem> vectorDBProperties = [];
+            if (UseFolderVectorSearchItem) {
+                var items = await GetFolder().GetVectorSearchProperties();
+                vectorDBProperties = [.. items];
             }
+
+            if (Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value)) {
+                if (value is string strValue) {
+                    vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
+                } else if (value is List<VectorSearchItem> list) {
+                    vectorDBProperties = [.. list];
+                }
+            }
+
+            // Addイベント発生時の処理
+            vectorDBProperties.CollectionChanged += (sender, e) => {
+                if (e.NewItems != null) {
+                    // Entityを更新
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                    Entity.SaveExtendedPropertiesJson();
+                }
+            };
+            // Removeイベント発生時の処理
+            vectorDBProperties.CollectionChanged += (sender, e) => {
+                if (e.OldItems != null) {
+                    // Entityを更新
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                    Entity.SaveExtendedPropertiesJson();
+                }
+            };
+            // Clearイベント発生時の処理
+            vectorDBProperties.CollectionChanged += (sender, e) => {
+                // Entityを更新
+                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                Entity.SaveExtendedPropertiesJson();
+            };
+            return vectorDBProperties;
         }
 
         //　貼り付け元のアプリケーション名
@@ -572,8 +579,8 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual VectorSearchItem GetMainVectorSearchItem() {
-            return GetFolder().GetMainVectorSearchItem();
+        public virtual async Task<VectorSearchItem> GetMainVectorSearchItem() {
+            return await GetFolder().GetMainVectorSearchItem();
         }
 
 
@@ -586,8 +593,9 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run( () => {
-                    string? vectorDBItemName = GetMainVectorSearchItem().VectorDBItemName;
+                Task.Run( async () => {
+                    var item = await GetMainVectorSearchItem();
+                    string? vectorDBItemName = item.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
@@ -636,8 +644,9 @@ namespace LibPythonAI.Model.Content {
                     // 更新日時を設定
                     item.UpdatedAt = DateTime.Now;
                     // ベクトルを更新
-                    Task.Run( () => {
-                        string? vectorDBItemName = item.GetMainVectorSearchItem().VectorDBItemName;
+                    Task.Run(async () => {
+                        var searchItem = await item.GetMainVectorSearchItem();
+                        string? vectorDBItemName = searchItem.VectorDBItemName;
                         if (string.IsNullOrEmpty(vectorDBItemName)) {
                             LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                             return;

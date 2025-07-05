@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -248,7 +249,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // PromptItemの結果表示用のタブを作成
         // TabItems 
-        private void UpdatePromptResultTabItems(TabControl tabControl) {
+        private async Task UpdatePromptResultTabItems(TabControl tabControl) {
             // PromptResultのタブ
             foreach (string promptName in ContentItem.PromptChatResult.Results.Keys) {
                 // TitleGenerationの場合は除外
@@ -256,7 +257,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                     continue;
                 }
                 PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
-                PromptItem? item = PromptItem.GetPromptItemByName(promptName);
+                PromptItem? item =await PromptItem.GetPromptItemByName(promptName);
                 if (item == null) {
                     continue;
                 }

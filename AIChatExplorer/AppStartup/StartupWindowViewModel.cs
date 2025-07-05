@@ -17,31 +17,21 @@ namespace AIChatExplorer.AppStartup {
         public static void Startup() {
 
             AIChatExplorerPythonAILibConfigParams configParams = new();
-            try {
+            // 言語設定
+            SetupLanguage();
 
-                // LogWrapperの初期化
-                string logDirPath = Path.Combine(configParams.GetAppDataPath(), "log");
-                LogWrapper.SetLogFolder(logDirPath);
+            // ログ設定
+            SetupLog();
 
-                // LogWrapperのログ出力設定
-                LogWrapper.SetActions(configParams.GetLogWrapperAction());
+            // Python環境のチェック
+            CheckEnvironment(configParams);
 
-                // 言語設定
-                CommonStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
-                // MergeChatの言語設定
-                LibUIMergeChat.Resources.MergeChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
-                // ImageChatの言語設定
-
-                // Python環境のチェック
-                CheckEnvironment(configParams);
-
-            } catch (Exception ex) {
-                LogWrapper.Error($"MainWindowの表示に失敗しました: {ex.Message}");
-            }
             // PythonAILibManagerの初期化
             PythonAILibManager.Init(configParams);
+
             // DBの初期化
             PythonAILibDBContext.Init();
+
             // DataContextにViewModelを設定
             MainWindowViewModel mainWindowViewModel = new();
             // MainWindowを表示
@@ -52,6 +42,30 @@ namespace AIChatExplorer.AppStartup {
 
         }
 
+        private static void SetupLanguage() {
+            // 言語設定
+            CommonStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+            // MergeChatの言語設定
+            LibUIMergeChat.Resources.MergeChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+            // ImageChatの言語設定
+            // LibUIImageChat.Resources.ImageChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+            // AutogetnChatの言語設定
+            // LibUIAutoGenChat.Resources.AutoGenChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+
+            // NormalChatの言語設定
+            LibUINormalChat.Resources.NormalChatStringResources.Lang = AIChatExplorerConfig.Instance.ActualLang;
+
+        }
+
+        private static void SetupLog() {
+            // LogWrapperの初期化
+            string logDirPath = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "log");
+            LogWrapper.SetLogFolder(logDirPath);
+            // LogWrapperのログ出力設定
+            LogWrapper.SetActions(AIChatExplorerConfig.Instance.GetLogWrapperAction());
+        }
+
+
         private static void CheckEnvironment(IPythonAILibConfigParams configParams) {
 
             PythonExecutor.PythonEnvironmentCheckResult result = PythonExecutor.CheckPythonEnvironment(configParams);
@@ -59,18 +73,14 @@ namespace AIChatExplorer.AppStartup {
                 // 環境チェックに失敗した場合、エラーメッセージを表示
                 string errorMessage = PythonAILibStringResources.Instance.PythonNotFound;
                 MessageBox.Show(errorMessage);
-                // アプリケーションを終了
-                Application.Current.Shutdown();
+
             } else if (result == PythonExecutor.PythonEnvironmentCheckResult.UvNotFound) {
                 // uvが見つからない場合、エラーメッセージを表示
                 string errorMessage = PythonAILibStringResources.Instance.UvNotFound;
                 MessageBox.Show(errorMessage);
-                // アプリケーションを終了
-                Application.Current.Shutdown();
+
             } else if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvPathNotFound) {
                 // Python仮想環境が見つからない場合、エラーメッセージを表示
-                string errorMessage = PythonAILibStringResources.Instance.PythonVenvPathNotFound;
-                MessageBox.Show(errorMessage);
 
             } else if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvNotFound) {
                 // Python仮想環境が見つからない場合はVenvを作成するか確認

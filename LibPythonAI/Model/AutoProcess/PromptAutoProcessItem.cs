@@ -27,11 +27,14 @@ namespace LibPythonAI.Model.AutoProcess {
             ChatRequestContext chatRequestContent = new() {
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
-            if (clipboardFolder != null) {
-                chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
-                chatRequestContent.VectorSearchRequests = [new VectorSearchRequest(clipboardFolder.GetMainVectorSearchItem())];
-            }
             Task.Run(async () => {
+
+                if (clipboardFolder != null) {
+                    chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
+                    var item = await clipboardFolder.GetMainVectorSearchItem();
+                    chatRequestContent.VectorSearchRequests = [new VectorSearchRequest(item)];
+                }
+
                 ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
                 if (result == null) {
                     return;

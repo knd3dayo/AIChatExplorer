@@ -332,16 +332,17 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        public VectorSearchItem GetMainVectorSearchItem() {
-
-            VectorSearchItem searchProperty = VectorDBItem.GetDefaultVectorDB().CreateVectorSearchItem(Id, ContentFolderPath);
+        public async Task<VectorSearchItem> GetMainVectorSearchItem() {
+            var item = await VectorDBItem.GetDefaultVectorDB();
+            VectorSearchItem searchProperty = item.CreateVectorSearchItem(Id, ContentFolderPath);
             return searchProperty;
         }
 
-        public ObservableCollection<VectorSearchItem> GetVectorSearchProperties() {
+        public async Task<ObservableCollection<VectorSearchItem>> GetVectorSearchProperties() {
+            var item = await GetMainVectorSearchItem();
             ObservableCollection<VectorSearchItem> searchProperties =
             [
-                GetMainVectorSearchItem(),
+                item,
                 // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
                 .. ReferenceVectorSearchProperties,
             ];

@@ -7,7 +7,7 @@ using LibUIPythonAI.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryItemMenu(ContentItemViewModel applicationItemViewModel) : ApplicationItemMenu(applicationItemViewModel) {
-        public override ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
+        public override async Task<ObservableCollection<MenuItem>> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
 
             ObservableCollection<MenuItem> menuItems =
             [
@@ -24,7 +24,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             ];
 
             // プロンプトメニュー
-            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
+            MenuItem promptMenuItem = await CreatePromptMenuItems(itemViewModel);
             menuItems.Add(promptMenuItem);
 
             // ベクトル生成

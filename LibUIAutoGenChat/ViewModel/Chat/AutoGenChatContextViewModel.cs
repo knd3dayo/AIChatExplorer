@@ -138,17 +138,6 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
             }
         }
-        private void UpdateVectorDBProperties() {
-            if (_ragMode != RAGModeEnum.None) {
-                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
-                foreach (var item in items) {
-                    VectorSearchProperties.Add(item);
-                }
-            } else {
-                VectorSearchProperties.Clear();
-            }
-            OnPropertyChanged(nameof(VectorDBItemVisibility));
-        }
 
 
         public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_ragMode != RAGModeEnum.None);
@@ -183,14 +172,14 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
 
 
 
-        private void InitVectorDBProperties() {
+        private async Task InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (_ragMode != RAGModeEnum.None) {
                 ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
-                    items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    items = await QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

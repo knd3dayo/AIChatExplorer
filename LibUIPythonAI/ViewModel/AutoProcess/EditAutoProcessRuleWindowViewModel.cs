@@ -37,7 +37,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         // RootFolderViewModel
         public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; } = [];
 
-        private void LoadConditions() {
+        private async Task LoadConditions() {
             // autoProcessRuleがNullでない場合は初期化
             if (TargetAutoProcessRule.RuleAction == null) {
                 return;
@@ -118,7 +118,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 IsPromptTemplateChecked = true;
                 // PromptItemを取得
-                var promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemEntity.Id);
+                var promptItem = await PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemEntity.Id);
                 if (promptItem == null) {
                     return;
                 }

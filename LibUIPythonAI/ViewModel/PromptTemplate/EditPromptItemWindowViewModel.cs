@@ -25,6 +25,12 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
             OnPropertyChanged(nameof(ChatModeIndex));
             OnPropertyChanged(nameof(InputTypeItems));
 
+            Task.Run(async () => {
+                // InputTypeItemsの初期化
+                InputTypeItems = await LoadInputTypeItemsAsync();
+                OnPropertyChanged(nameof(InputTypeItems));
+            });
+
         }
 
         private PromptItemViewModel? itemViewModel;
@@ -85,13 +91,15 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
         public Visibility InputTypeItemsVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(PromptResultToInput);
 
         // InputTypeItems
-        public ObservableCollection<PromptItem> InputTypeItems {
-            get {
-                // DBからプロンプトテンプレートを取得し、選択させる
-                List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
-                return [.. promptItems];
-            }
+        public ObservableCollection<PromptItem> InputTypeItems { get; private set; } = [];
+
+        private async Task<ObservableCollection<PromptItem>> LoadInputTypeItemsAsync() {
+            // DBからプロンプトテンプレートを取得し、選択させる
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(x => x.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+            return [.. promptItems];
         }
+
 
         // SelectedInputTypeItem
         public PromptItem? SelectedInputItem { get; set; }

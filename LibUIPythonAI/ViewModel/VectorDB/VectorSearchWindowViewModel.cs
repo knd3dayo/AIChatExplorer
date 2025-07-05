@@ -22,29 +22,34 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
             get => _VectorSearchItem;
             set {
-                var item = VectorDBItem.GetItemByName(value?.VectorDBItemName);
-                if (item == null) {
-                    // VectorDBItemがnullの場合はエラーを表示
-                    LogWrapper.Error("VectorDBItem is null.");
-                    return;
-                }
-                _VectorSearchItem = value;
-
-                // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
-                if (item.IsUseMultiVectorRetriever) {
-                    SelectedTabIndex = MultiVectorRetrieverTabIndex;
-                } else {
-                    SelectedTabIndex = VectorRetrieverTabIndex;
-                }
-
-                // StatusTextを更新
-                UpdateStatusText();
-
-                OnPropertyChanged(nameof(VectorSearchItem));
-                OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
-                OnPropertyChanged(nameof(VectorSearchResults));
-
+                Task.Run(async () => {
+                    await UpdateVectorSearchItemAsync(value);
+                    await UpdateMultiVectorRetrieverVisibilityAsync();
+                });
             }
+        }
+        private async Task UpdateVectorSearchItemAsync(VectorSearchItem? value) {
+            var item = await VectorDBItem.GetItemByName(value?.VectorDBItemName);
+            if (item == null) {
+                // VectorDBItemがnullの場合はエラーを表示
+                LogWrapper.Error("VectorDBItem is null.");
+                return;
+            }
+            _VectorSearchItem = value;
+
+            // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
+            if (item.IsUseMultiVectorRetriever) {
+                SelectedTabIndex = MultiVectorRetrieverTabIndex;
+            } else {
+                SelectedTabIndex = VectorRetrieverTabIndex;
+            }
+
+            // StatusTextを更新
+            UpdateStatusText();
+
+            OnPropertyChanged(nameof(VectorSearchItem));
+            OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
+            OnPropertyChanged(nameof(VectorSearchResults));
         }
 
         public ObservableCollection<VectorEmbeddingItem> MultiVectorSearchResults { get; set; } = [];
@@ -66,19 +71,20 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             }
         }
         // MultiVectorRetrieverの場合のVisibility 
-        public Visibility MultiVectorRetrieverVisibility {
-            get {
+        public Visibility MultiVectorRetrieverVisibility { get; private set; } = Visibility.Collapsed;
 
-                var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
-                if (item == null) {
-                    return Visibility.Collapsed;
-                }
-                if (item.IsUseMultiVectorRetriever) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
+        private async Task UpdateMultiVectorRetrieverVisibilityAsync() {
+            // VectorDBItemを取得
+            var item = await VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
+            if (item == null) {
+                MultiVectorRetrieverVisibility = Visibility.Collapsed;
+            } else {
+                MultiVectorRetrieverVisibility = item.IsUseMultiVectorRetriever ? Visibility.Visible : Visibility.Collapsed;
             }
+            OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
         }
+
+
 
         // クリアボタンのコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
@@ -94,14 +100,15 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
-            if (vectorDBItem == null) {
-                LogWrapper.Error("VectorDBItem is null.");
-                return;
-            }
 
             CommonViewModelProperties.UpdateIndeterminate(true);
             Task.Run(async () => {
+                var vectorDBItem = await VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
+                if (vectorDBItem == null) {
+                    LogWrapper.Error("VectorDBItem is null.");
+                    return;
+                }
+
                 List<VectorEmbeddingItem> vectorSearchResults = [];
                 // ベクトル検索を実行
                 try {

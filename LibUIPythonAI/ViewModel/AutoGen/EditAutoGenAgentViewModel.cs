@@ -167,14 +167,16 @@ namespace LibUIPythonAI.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
-                var item = VectorDBItem.GetItemByName(selectedItem.VectorDBItemName);
-                if (item == null) {
-                    return;
-                }
-                VectorDBItems.Add(new VectorDBItemViewModel(item));
+                Task.Run(async () => {
+                    var item = await VectorDBItem.GetItemByName(selectedItem.VectorDBItemName);
+                    if (item == null) {
+                        return;
+                    }
+                    VectorDBItems.Add(new VectorDBItemViewModel(item));
+                    OnPropertyChanged(nameof(VectorDBItems));
+                });
             });
-            OnPropertyChanged(nameof(VectorDBItems));
-        }, null, null);
+        });
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {

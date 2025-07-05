@@ -26,8 +26,9 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         public override void Save() {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
-                Task.Run(() => {
-                    string? vectorDBItemName = GetFolder().GetMainVectorSearchItem()?.VectorDBItemName;
+                Task.Run(async () => {
+                    var item = await GetFolder().GetMainVectorSearchItem();
+                    string? vectorDBItemName = item?.VectorDBItemName;
                     if (vectorDBItemName == null) {
                         return;
                     }

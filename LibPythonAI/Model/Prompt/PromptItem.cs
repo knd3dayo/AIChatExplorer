@@ -196,8 +196,9 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // PromptItemを取得
-        public static PromptItem? GetPromptItemById(string id) {
-            var item = GetPromptItems().Find(x => x.Id == id);
+        public static async Task<PromptItem?> GetPromptItemById(string id) {
+            var items = await GetPromptItems();
+            var item = items.FirstOrDefault(x => x.Id == id);
             if (item == null) {
                 return null;
             }
@@ -205,9 +206,10 @@ namespace LibPythonAI.Model.Prompt {
 
         }
         // 名前を指定してPromptItemを取得
-        public static PromptItem? GetPromptItemByName(string name) {
+        public static async Task<PromptItem?> GetPromptItemByName(string name) {
             using PythonAILibDBContext db = new();
-            var item = GetPromptItems().FirstOrDefault(x => x.Name == name);
+            var items = await GetPromptItems();
+            var item = items.FirstOrDefault(x => x.Name == name);
             if (item == null) {
                 return null;
             }
@@ -215,27 +217,38 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // システム定義のPromptItemを取得
-        public static List<PromptItem> GetSystemPromptItems() {
+        public static async Task<List<PromptItem>> GetSystemPromptItems() {
             using PythonAILibDBContext db = new();
-            var items = GetPromptItems().Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)).ToList();
+            var items = await GetPromptItems();
+            items = items.Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)).ToList();
             return items;
         }
 
         // システム定義以外のPromptItemを取得
-        public static List<PromptItem> GetUserDefinedPromptItems() {
-            var items = GetPromptItems().Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
+        public static async Task<List<PromptItem>> GetUserDefinedPromptItems() {
+            var items = await GetPromptItems();
+            items = items.Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
             return items;
         }
+        private static bool isInitialized = false;
+
+        private static List<PromptItem> _items = [];
 
         // List<PromptItem>を取得
-        public static List<PromptItem> GetPromptItems() {
+        public static async Task<List<PromptItem>> GetPromptItems() {
+            if (!isInitialized ) {
+                await LoadItemsAsync();
+            }
             return _items;
         }
 
-        private static List<PromptItem> _items = new(); // 修正: 空のリストを初期化
         public static async Task LoadItemsAsync() {
             // 修正: 非同期メソッドで 'await' を使用
             _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetPromptItemsAsync());
+            if (_items == null) {
+                throw new Exception(PythonAILibStringResources.Instance.PromptItemsNotLoaded);
+            }
+            isInitialized = true;
         }
 
 
@@ -244,7 +257,7 @@ namespace LibPythonAI.Model.Prompt {
             // promptNameからDescriptionを取得
             string description = promptItem.Description;
 
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.PromptTemplateExecute(description));
+            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
             int count = items.Count;
             Task.Run(() => {
                 beforeAction();
@@ -258,7 +271,7 @@ namespace LibPythonAI.Model.Prompt {
                         start_count++;
                     }
                     int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{PythonAILibStringResourcesJa.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
+                    string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
                     LogWrapper.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[index];
 
@@ -269,14 +282,15 @@ namespace LibPythonAI.Model.Prompt {
                 // Execute if obj is an Action
                 afterAction();
                 LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.PromptTemplateExecuted(description));
+                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
             });
 
         }
         // ExecuteSystemDefinedPromptを実行する
         public static async Task CreateChatResultAsync(ContentItemWrapper item, string promptName) {
             // システム定義のPromptItemを取得
-            PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
+
+            PromptItem promptItem = await PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
             // CreateChatResultを実行
             await CreateChatResultAsync(item, promptItem);
         }
@@ -293,13 +307,13 @@ namespace LibPythonAI.Model.Prompt {
                 contentText = item.PromptChatResult.GetTextContent(promptItem.PromptInputName);
                 // inputContentがない場合は処理しない
                 if (string.IsNullOrEmpty(contentText)) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.InputContentNotFound);
+                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
                     return;
                 }
             }
             // Contentがない場合は処理しない
             if (string.IsNullOrEmpty(item.Content)) {
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.InputContentNotFound);
+                LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
                 return;
             }
             // ヘッダー情報とコンテンツ情報を結合
@@ -402,7 +416,8 @@ namespace LibPythonAI.Model.Prompt {
         public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                PromptItem? promptItem = GetPromptItems().FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
+                var items = await GetPromptItems();
+                PromptItem? promptItem = items.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
                 if (promptItem == null) {
                     LogWrapper.Error("PromptItem not found");
                     return;

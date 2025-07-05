@@ -120,14 +120,14 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
-        private void InitVectorDBProperties() {
+        private async Task InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (_ragMode != RAGModeEnum.None) {
                 ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
-                    items = QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    items = await QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

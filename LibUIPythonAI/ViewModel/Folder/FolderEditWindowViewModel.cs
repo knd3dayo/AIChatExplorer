@@ -14,8 +14,12 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             FolderViewModel = folderViewModel;
-
             OnPropertyChanged(nameof(FolderViewModel));
+            // VectorDBItemsを非同期でロード
+            Task.Run(async () => {
+                VectorDBItems = await LoadVectorDBItemsAsync();
+                OnPropertyChanged(nameof(VectorDBItems));
+            });
         }
 
         public ContentFolderViewModel FolderViewModel { get; set; }
@@ -34,11 +38,14 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
         }
 
-        public ObservableCollection<VectorDBItem> VectorDBItems {
-            get {
-                return [.. VectorDBItem.GetVectorDBItems(true)];
-            }
+        public ObservableCollection<VectorDBItem> VectorDBItems { get; private set; } =  [];
+
+        private async Task<ObservableCollection<VectorDBItem>> LoadVectorDBItemsAsync() {
+            // VectorDBItemsを非同期でロード
+            var vectorDBItems = await VectorDBItem.GetVectorDBItems(true);
+            return [.. vectorDBItems];
         }
+
 
         private int _selectedTabIndex = 0;
         public int SelectedTabIndex {

@@ -537,6 +537,9 @@ namespace LibPythonAI.Resources {
         // プロンプトテンプレート[promptName]を実行します.
         public override string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
 
+        // PromptItemsNotLoaded
+        public override string PromptItemsNotLoaded { get; } = "プロンプトアイテムが読み込まれていません";
+
         // プロンプトテンプレート[promptName]を実行中
         public override string PromptTemplateInProgress(string promptName) => $"プロンプトテンプレート[{promptName}]を実行中";
 
