@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
@@ -10,13 +8,8 @@ using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.AutoProcess {
 
-
     public class AutoProcessRule {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -102,7 +95,7 @@ namespace LibPythonAI.Model.AutoProcess {
         public void SaveAsync() {
             Task.Run(async () => {
                 // ConditionsJsonを更新
-                ConditionsJson = JsonSerializer.Serialize(Conditions, jsonSerializerOptions);
+                ConditionsJson = JsonSerializer.Serialize(Conditions, JsonUtil.JsonSerializerOptions);
                 // 優先順位が-1の場合は、最大の優先順位を取得して設定
                 if (Priority == -1) {
                     var items = await GetItems();

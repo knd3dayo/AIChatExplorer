@@ -8,12 +8,6 @@ using LibPythonAI.Utils.Common;
 namespace LibPythonAI.PythonIF.Response {
     public class ChatResponse : PythonScriptResult {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-
-
         public List<VectorEmbeddingItem> SourceDocuments { get; set; } = [];
         public long TotalTokens { get; set; } = 0;
 
@@ -34,7 +28,7 @@ namespace LibPythonAI.PythonIF.Response {
             }
 
             // resultStringからDictionaryに変換する。
-            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json, jsonSerializerOptions);
+            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json, JsonUtil.JsonSerializerOptions);
             if (resultDict == null) {
                 throw new Exception(PythonAILibStringResourcesJa.Instance.OpenAIResponseEmpty);
             }

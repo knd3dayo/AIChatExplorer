@@ -490,7 +490,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                 chatRequest.ChatHistory = chatItems;
 
                 // ChatRequestContextを作成
-                ChatRequestContext chatRequestContext = new();
+                ChatSettings chatSettings = new();
+                ChatRequestContext chatRequestContext = new(chatSettings);
 
                 ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
                 string resultString = result?.Output ?? "";

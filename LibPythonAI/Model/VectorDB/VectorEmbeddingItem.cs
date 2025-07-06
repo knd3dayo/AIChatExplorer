@@ -1,4 +1,5 @@
 using LibPythonAI.Common;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
@@ -56,8 +57,8 @@ namespace LibPythonAI.Model.VectorDB {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
             // Parallelによる並列処理。4並列
-            ChatRequestContext chatRequestContext = new() {
-            };
+            ChatSettings chatSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
@@ -70,7 +71,8 @@ namespace LibPythonAI.Model.VectorDB {
         public static void DeleteEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new();
+            ChatSettings chatSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
 
@@ -84,7 +86,8 @@ namespace LibPythonAI.Model.VectorDB {
             Task.Run(() => {
                 PythonAILibManager libManager = PythonAILibManager.Instance;
                 OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-                ChatRequestContext chatRequestContext = new() {};
+                ChatSettings chatSettings = new();
+                ChatRequestContext chatRequestContext = new(chatSettings);
                 VectorEmbeddingItem VectorEmbeddingItem = new() {
                     FolderPath = folderPath,
                 };

@@ -14,7 +14,7 @@ namespace LibUINormalChat.View {
             InitializeComponent();
         }
 
-        public static void OpenWindow(QAChatStartupProps qAChatStartupProps) {
+        public static void OpenWindow(QAChatStartupPropsBase qAChatStartupProps) {
             LibUINormalChat.View.NormalChatWindow openAIChatWindow = new();
             NormalChatWindowViewModel mainWindowViewModel = new(qAChatStartupProps);
             openAIChatWindow.DataContext = mainWindowViewModel;

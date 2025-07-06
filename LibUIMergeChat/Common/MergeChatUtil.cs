@@ -67,7 +67,7 @@ namespace LibUIMergeChat.Common {
                     string message = $"{CommonStringResources.Instance.MergeChatPreprocessingInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItemWrapper item = items[i];
-                    ChatRequestContext preProcessRequestContext = new() {
+                    ChatSettings chatSettings = new() {
                         PromptTemplateText = preProcessPrompt,
                         SplitMode = context.SplitMode,
                         SplitTokenCount = context.SplitTokenCount,
@@ -75,6 +75,8 @@ namespace LibUIMergeChat.Common {
                         VectorSearchRequests = context.VectorSearchRequests,
                         AutoGenPropsRequest = context.AutoGenPropsRequest,
                     };
+                    ChatRequestContext preProcessRequestContext = new(chatSettings);
+
                     string contentText = GetTargetData(item, targetDataList);
                     if (string.IsNullOrEmpty(contentText)) {
                         return;
@@ -123,8 +125,7 @@ namespace LibUIMergeChat.Common {
                     Output = preProcessResultText,
                 };
             }
-
-            ChatRequestContext postProcessRequestContext = new() {
+            ChatSettings chatSettings = new() {
                 PromptTemplateText = postProcessPrompt,
                 SplitMode = context.SplitMode,
                 SplitTokenCount = context.SplitTokenCount,
@@ -132,6 +133,8 @@ namespace LibUIMergeChat.Common {
                 VectorSearchRequests = context.VectorSearchRequests,
                 AutoGenPropsRequest = context.AutoGenPropsRequest,
             };
+            ChatRequestContext postProcessRequestContext = new(chatSettings);
+
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,
             };

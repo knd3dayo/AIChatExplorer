@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.File {
     public class CommonDataTable(List<List<string>> rows) {
@@ -16,18 +17,14 @@ namespace LibPythonAI.Model.File {
                 JsonArray jsonRow = [.. row];
                 jsonArray.Add(jsonRow);
             }
-            return JsonSerializer.Serialize(dataTable, jsonSerializerOptions);
+            return JsonSerializer.Serialize(dataTable, JsonUtil.JsonSerializerOptions);
         }
 
         public static CommonDataTable FromJson(string json) {
-            List<List<string>> result = JsonSerializer.Deserialize<List<List<string>>>(json, jsonSerializerOptions) ?? [];
+            List<List<string>> result = JsonSerializer.Deserialize<List<List<string>>>(json, JsonUtil.JsonSerializerOptions) ?? [];
             return new CommonDataTable(result);
 
         }
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true,
-        };
     }
 }

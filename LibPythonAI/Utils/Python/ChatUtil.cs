@@ -21,14 +21,15 @@ namespace LibPythonAI.Utils.Python {
         };
 
         // Chatを実行して文字列の結果を取得する
-        public static async Task<string> CreateTextChatResult(ChatRequestContext chatRequestContext, PromptItem promptText, string content) {
+        public static async Task<string> CreateTextChatResult(ChatSettings chatSettings, PromptItem promptText, string content) {
             ChatRequest chatRequest = new() {
                 // NormalChat, OpenAI+RAG Chat, LangChainChatを実行
                 ContentText = content,
             };
 
-            chatRequestContext.PromptTemplateText = promptText.Prompt;
-            chatRequestContext.SplitMode = promptText.SplitMode;
+            chatSettings.PromptTemplateText = promptText.Prompt;
+            chatSettings.SplitMode = promptText.SplitMode;
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             ChatResponse? result = await ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
@@ -38,14 +39,15 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, ChatRequestContext chatRequestContext, List<VectorSearchItem> vectorDBProperties, List<string> promptList, string content) {
+        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, ChatSettings chatSettings, List<VectorSearchItem> vectorDBProperties, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatRequest = new() {
                     ContentText = resultString,
                 };
 
-                chatRequestContext.PromptTemplateText = prompt;
+                chatSettings.PromptTemplateText = prompt;
+                ChatRequestContext chatRequestContext = new(chatSettings);
 
 
                 ChatResponse? result = await ExecuteChat(chatMode, chatRequest, chatRequestContext, (message) => { });
@@ -57,7 +59,7 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // Chatを実行してリストの結果を取得する
-        public static async Task<List<string>> CreateListChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<List<string>> CreateListChatResult(ChatSettings chatSettings, PromptItem promptItem, string content) {
 
             string promptText = PromptStringResourceJa.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
             ChatRequest chatRequest = new() {
@@ -65,8 +67,9 @@ namespace LibPythonAI.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.PromptTemplateText = promptText;
-            chatRequestContext.SplitMode = promptItem.SplitMode;
+            chatSettings.PromptTemplateText = promptText;
+            chatSettings.SplitMode = promptItem.SplitMode;
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -79,15 +82,16 @@ namespace LibPythonAI.Utils.Python {
             return [];
         }
         // CHatを実行してDictionary<string, object>の結果を取得する
-        public static async Task<Dictionary<string, dynamic?>> CreateDictionaryChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<Dictionary<string, dynamic?>> CreateDictionaryChatResult(ChatSettings chatSettings, PromptItem promptItem, string content) {
             ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
                 JsonMode = true
             };
 
-            chatRequestContext.PromptTemplateText = promptItem.Prompt;
-            chatRequestContext.SplitMode = promptItem.SplitMode;
+            chatSettings.PromptTemplateText = promptItem.Prompt;
+            chatSettings.SplitMode = promptItem.SplitMode;
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -98,14 +102,15 @@ namespace LibPythonAI.Utils.Python {
 
 
         // Chatを実行して複雑な結果を取得する
-        public static async Task<Dictionary<string, dynamic?>> CreateTableChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
+        public static async Task<Dictionary<string, dynamic?>> CreateTableChatResult(ChatSettings chatSettings, PromptItem promptItem, string content) {
             ChatRequest chatRequest = new() {
                 // OpenAI+RAG Chatを実行
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.PromptTemplateText = promptItem.Prompt;
-            chatRequestContext.SplitMode = promptItem.SplitMode;
+            chatSettings.PromptTemplateText = promptItem.Prompt;
+            chatSettings.SplitMode = promptItem.SplitMode;
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -116,15 +121,17 @@ namespace LibPythonAI.Utils.Python {
         }
 
         // 画像からテキストを抽出する
-        public static async Task<string> ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
+        public static async Task<string> ExtractTextFromImage(ChatSettings chatSettings, List<string> ImageBase64List) {
             ChatRequest chatRequest = new();
             // Normal Chatを実行
-            chatRequestContext.PromptTemplateText = PromptStringResourceJa.Instance.ExtractTextRequest;
+
             chatRequest.ContentText = "";
             chatRequest.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
             if (chatRequest.ImageURLs.Count == 0) {
                 return "";
             }
+            chatSettings.PromptTemplateText = PromptStringResourceJa.Instance.ExtractTextRequest;
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             ChatResponse? result = await ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {

@@ -9,6 +9,7 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
+using AIChatExplorer.ViewModel.Main;
 
 namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
     public class ScreenShotHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
@@ -33,7 +34,7 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
         public override void CreateItemCommandExecute() {
             ContentItemWrapper applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
-            QAChatStartupProps props = new(applicationItemViewModel.ContentItem);
+            QAChatStartupPropsBase props = new QAChatStartupProps(applicationItemViewModel.ContentItem);
             LibUINormalChat.View.NormalChatWindow.OpenWindow(props);
         }
 

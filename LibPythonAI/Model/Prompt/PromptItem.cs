@@ -16,10 +16,6 @@ using LibPythonAI.Utils.Python;
 
 namespace LibPythonAI.Model.Prompt {
     public partial class PromptItem {
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         // ID
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -151,7 +147,7 @@ namespace LibPythonAI.Model.Prompt {
 
 
         public void SaveExtendedPropertiesJson() {
-            ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+            ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, JsonUtil.JsonSerializerOptions);
         }
 
         // SaveAsync
@@ -236,7 +232,7 @@ namespace LibPythonAI.Model.Prompt {
 
         // List<PromptItem>を取得
         public static async Task<List<PromptItem>> GetPromptItems() {
-            if (!isInitialized ) {
+            if (!isInitialized) {
                 await LoadItemsAsync();
             }
             return _items;
@@ -331,8 +327,8 @@ namespace LibPythonAI.Model.Prompt {
             ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? item.VectorDBProperties : [];
 
             // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x) { Query = contentText}).ToList(),
+            ChatSettings chatSettings = new() {
+                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x) { Query = contentText }).ToList(),
                 RAGMode = promptItem.RAGMode,
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
@@ -341,7 +337,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
-                string result = await ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
+                string result = await ChatUtil.CreateTextChatResult(chatSettings, promptItem, contentText);
                 if (string.IsNullOrEmpty(result)) {
                     return;
                 }
@@ -361,7 +357,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがTableContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
-                Dictionary<string, dynamic?> response = await ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
+                Dictionary<string, dynamic?> response = await ChatUtil.CreateTableChatResult(chatSettings, promptItem, contentText);
                 // resultからキー:resultを取得
                 if (response.ContainsKey("result") == false) {
                     return;
@@ -385,7 +381,7 @@ namespace LibPythonAI.Model.Prompt {
 
             // PromptResultTypeがListの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
-                List<string> response = await ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
+                List<string> response = await ChatUtil.CreateListChatResult(chatSettings, promptItem, contentText);
                 // PromptOutputTypeがOverwriteTagsの場合はTagsに結果を保存
                 if (promptItem.PromptOutputType == PromptOutputTypeEnum.AppendTags) {
                     // タグ一覧を取得
@@ -450,11 +446,11 @@ namespace LibPythonAI.Model.Prompt {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
             // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
+            ChatSettings chatSettings = new() {
                 RAGMode = RAGModeEnum.None,
             };
 
-            Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
+            Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatSettings, new PromptItem() {
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 // ベクトルDBを使用する
                 RAGMode = RAGModeEnum.NormalSearch,

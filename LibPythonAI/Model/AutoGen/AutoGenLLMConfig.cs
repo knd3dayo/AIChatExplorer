@@ -1,16 +1,8 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.PythonIF;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenLLMConfig {
-
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
 
         public static readonly string API_TYPE_AZURE = "azure";
@@ -37,12 +29,12 @@ namespace LibPythonAI.Model.AutoGen {
 
         public void SaveAsync() {
             // APIを呼び出して、設定を保存する
-             PythonExecutor.PythonAIFunctions.UpdateAutogenLLMConfigAsync(this);
+            PythonExecutor.PythonAIFunctions.UpdateAutogenLLMConfigAsync(this);
         }
 
         public void DeleteAsync() {
             // APIを呼び出して、設定を削除する
-             PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
+            PythonExecutor.PythonAIFunctions.DeleteAutogenLLMConfigAsync(this);
         }
 
         // ToDict

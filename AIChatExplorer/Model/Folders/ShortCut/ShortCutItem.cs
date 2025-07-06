@@ -10,7 +10,10 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
         public ShortCutItem(ContentFolderEntity folder) : base(folder) { }
 
         public override ShortCutItem Copy() {
-            return new() { Entity = Entity.Copy() };
+            return new() {
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
     }
 }

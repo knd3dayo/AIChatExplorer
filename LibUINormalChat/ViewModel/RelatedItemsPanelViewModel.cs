@@ -1,12 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folder;
+using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Item;
+using LibUIPythonAI.ViewModel.Chat;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -15,20 +20,53 @@ namespace LibUINormalChat.ViewModel {
     public class RelatedItemsPanelViewModel : CommonViewModelBase {
 
 
-        public RelatedItemsPanelViewModel(Action<bool> updateIndeterminate) {
+        public RelatedItemsPanelViewModel(QAChatStartupPropsBase qAChatStartupPropsBase) {
 
-            RelatedItemsDataGridViewModel = new(updateIndeterminate);
+            ChatSettings chatSettings = qAChatStartupPropsBase.GetContentItem().ChatSettings;
 
-            Action<ContentFolderViewModel> selectFolderAction = (folder) => {
-                RelatedItemsDataGridViewModel.Items = folder.Items;
-            };
-            RelatedItemTreeViewControlViewModel = new(selectFolderAction, updateIndeterminate);
+            RelatedItemsDataGridViewModel = new(qAChatStartupPropsBase);
 
+            void selectFolderAction(ContentFolderViewModel folder) {
+                // フォルダ選択変更時の処理。
+                // 選択したファルダ内のItemがCheckedItemsに含まれている場合はIsCheckedをTrueにする。
+                MainUITask.Run(() => {
+                    foreach (var _item in folder.Items) {
+                        if (RelatedItemsDataGridViewModel.CheckedItems.Select(x => x.ContentItem.Id).Contains(_item.ContentItem.Id)) {
+                            _item.IsChecked = true;
+                        }
+                    }
+                    RelatedItemsDataGridViewModel.Items = folder.Items;
+                });
+
+            }
+            RelatedItemTreeViewControlViewModel = new(selectFolderAction);
+
+
+            Task.Run(async () => {
+                // DataDefinitionsが空の場合は、デフォルトのDataDefinitionsを作成
+                DataDefinitions = await CreateExportItems();
+                // DataDefinitionsを初期化
+                List<ContentItemDataDefinition> savedDataDefinitions = [.. chatSettings.RelatedItems.DataDefinitions];
+                // DataDefinitionsに保存されているDataDefinitionsの状態を反映
+                foreach (ContentItemDataDefinition dataDefinition in DataDefinitions) {
+                    ContentItemDataDefinition? savedDataDefinition = savedDataDefinitions.FirstOrDefault(x => x.Name == dataDefinition.Name);
+                    if (savedDataDefinition != null) {
+                        // 保存されているDataDefinitionの状態を反映
+                        dataDefinition.IsChecked = savedDataDefinition.IsChecked;
+                    }
+                }
+
+
+                // DataDefinitionsの変更を通知
+                OnPropertyChanged(nameof(DataDefinitions));
+            });
         }
 
-        public ObservableCollection<ContentItemViewModel> SelectedItems { get; set; } = [];
+        public override void OnLoadedAction() {
+            base.OnLoadedAction();
+            RelatedItemsDataGridViewModel.MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
 
-
+        }
         public RelatedItemDataGridViewModel RelatedItemsDataGridViewModel { get; set; }
 
         public RelatedItemsTreeViewControlViewModel RelatedItemTreeViewControlViewModel { get; set; }
@@ -45,24 +83,46 @@ namespace LibUINormalChat.ViewModel {
                 OnPropertyChanged(nameof(PropertiesVisibility));
             }
         }
+
+        // DataDefinitions
+        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
+
         // PropertiesVisibility
         public Visibility PropertiesVisibility {
             get {
                 return LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties);
             }
         }
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
+            ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
+            foreach (PromptItem promptItem in promptItems) {
+                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
+            }
+            return items;
+        }
     }
 
     public class RelatedItemDataGridViewModel : CommonViewModelBase {
 
-        public RelatedItemDataGridViewModel(Action<bool> updateIndeterminateAction) {
-            UpdateIndeterminateAction = updateIndeterminateAction;
-        }
-        public Action<bool> UpdateIndeterminateAction { get; set; }
+        public RelatedItemDataGridViewModel(QAChatStartupPropsBase qAChatStartupProps) {
+            ChatSettings chatSettings = qAChatStartupProps.GetContentItem().ChatSettings;
+            FolderViewModelManagerBase folderViewModelManager = qAChatStartupProps.GetViewModelManager();
 
-        // CheckedItems
-        public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = [];
+            foreach (var item in chatSettings.RelatedItems.ContentItems) {
+                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(item.FolderId);
+                if (folder == null) {
+                    LogWrapper.Info($"Folder with ID {item.FolderId} not found.");
+                    continue;
+                }
+                ContentItemViewModel contentItemViewModel = folderViewModelManager.CreateItemViewModel(item);
+                contentItemViewModel.PropertyChanged += Item_PropertyChanged;
+                contentItemViewModel.IsChecked = true;
+            }
+        }
 
         private void SubscribeToItemsPinnedChanged() {
             foreach (var item in Items) {
@@ -82,24 +142,26 @@ namespace LibUINormalChat.ViewModel {
                 // IsCheckedが変更されたときの処理をここに記述
                 // 例: 必要に応じてUI更新や他のロジックを呼び出す
                 if (sender is ContentItemViewModel item) {
+                    // CheckedItemsからIdがマッチする既存アイテムを削除
+                    var delItems = CheckedItems.Where(x => x.ContentItem.Id == item.ContentItem.Id);
+                    foreach (var delItem in delItems.ToList()) {
+                        CheckedItems.Remove(delItem);
+                    }
+                    // IsCheckedがTrueの場合はCheckedItemsに追加
                     if (item.IsChecked) {
-                        // IsCheckedがTrueになった場合、CheckedItemsに追加
-                        if (!CheckedItems.Contains(item)) {
-                            CheckedItems.Add(item);
-                        }
-                    } else {
-                        // IsCheckedがFalseになった場合、CheckedItemsから削除
-                        if (CheckedItems.Contains(item)) {
-                            CheckedItems.Remove(item);
-                        }
+                        CheckedItems.Add(item);
                     }
                 }
+
             }
         }
 
+        // CheckedItems
+        public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = [];
+
         private ObservableCollection<ContentItemViewModel> _items = [];
 
-        // Itemsプロパティのsetterを修正
+        // フォルダ内のアイテム一覧
         public ObservableCollection<ContentItemViewModel> Items {
             get {
                 return _items;
@@ -202,6 +264,8 @@ namespace LibUINormalChat.ViewModel {
                     OnPropertyChanged(nameof(SelectedItem));
                     SelectedItem.SelectedTabIndex = lastSelectedIndex;
                 }
+
+                UpdateView();
             }
 
         });
@@ -254,12 +318,37 @@ namespace LibUINormalChat.ViewModel {
 
         });
 
-    }
-    public class RelatedItemsTreeViewControlViewModel : ObservableObject {
 
-        public RelatedItemsTreeViewControlViewModel(Action<ContentFolderViewModel> selectFolderAction, Action<bool> updateIndeterminateAction) {
+        public TabControl? MyTabControl { get; set; }
+
+        public void UpdateView() {
+            // 前回選択していたTabIndexを取得
+            int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
+
+            // SelectedTabIndexを更新する処理
+            if (SelectedItem != null) {
+                if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                    ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
+                        MainUITask.Run(() => {
+                            SelectedItem.UpdateView(MyTabControl);
+                            OnPropertyChanged(nameof(SelectedItem));
+                        });
+                    });
+                }
+                // 選択中のアイテムのSelectedTabIndexを更新する
+                SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
+                SelectedItem.UpdateView(MyTabControl);
+                OnPropertyChanged(nameof(SelectedItem));
+
+            }
+        }
+
+    }
+    public class RelatedItemsTreeViewControlViewModel : CommonViewModelBase {
+
+        public RelatedItemsTreeViewControlViewModel(Action<ContentFolderViewModel> selectFolderAction) {
             SelectFolderAction = selectFolderAction;
-            UpdateIndeterminateAction = updateIndeterminateAction;
+            UpdateIndeterminateAction = CommonViewModelProperties.UpdateIndeterminate;
             FolderViewModels = FolderViewModelManagerBase.FolderViewModels;
             OnPropertyChanged(nameof(FolderViewModels));
             SelectedFolder = FolderViewModels[0];
@@ -291,7 +380,7 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } 
+        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; }
 
 
         // フォルダが選択された時の処理
@@ -301,6 +390,8 @@ namespace LibUINormalChat.ViewModel {
             ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
             SelectedFolder = applicationItemFolderViewModel;
         });
+
+
 
     }
 

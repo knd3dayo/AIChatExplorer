@@ -9,11 +9,6 @@ using LibPythonAI.Utils.Common;
 namespace LibPythonAI.Data {
     public class ContentFolderEntity {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-
 
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -52,7 +47,7 @@ namespace LibPythonAI.Data {
 
         public void SaveExtendedPropertiesJson() {
             if (_extendedProperties != null) {
-                ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, jsonSerializerOptions);
+                ExtendedPropertiesJson = JsonSerializer.Serialize(ExtendedProperties, JsonUtil.JsonSerializerOptions);
             }
         }
 

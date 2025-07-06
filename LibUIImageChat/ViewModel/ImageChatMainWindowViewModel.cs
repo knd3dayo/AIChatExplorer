@@ -124,9 +124,10 @@ namespace LibUIImageChat.ViewModel {
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             PythonAILibManager? libManager = PythonAILibManager.Instance;
             // ChatRequestContextを生成
-            ChatRequestContext chatRequestContext = new() {
+            ChatSettings chatSettings = new() {
                 PromptTemplateText = PromptText,
             };
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {

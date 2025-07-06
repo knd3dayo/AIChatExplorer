@@ -1,7 +1,21 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace LibPythonAI.Utils.Common {
     public class JsonUtil {
+
+        public static JsonSerializerOptions JsonSerializerOptions {
+            
+            get {
+                JsonSerializerOptions jsonSerializerOptions = new() {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true,
+                };
+                return jsonSerializerOptions;
+            }
+        }
+
         // JSON文字列をList<Dictionary<string, dynamic>>型に変換するメソッド
         public static List<Dictionary<string, dynamic?>> ParseJsonArray(string json) {
             var list = JsonSerializer.Deserialize<List<JsonElement>>(json);

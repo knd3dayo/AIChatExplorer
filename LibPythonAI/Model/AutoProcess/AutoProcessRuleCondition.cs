@@ -19,10 +19,6 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
 
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -38,7 +34,7 @@ namespace LibPythonAI.Model.AutoProcess {
         public List<ContentItemTypes.ContentItemTypeEnum> ContentTypes {
             get {
                 List<ContentItemTypes.ContentItemTypeEnum> result = [];
-                foreach (var item in JsonSerializer.Deserialize<List<int>>(ContentTypesJson, jsonSerializerOptions) ?? []) {
+                foreach (var item in JsonSerializer.Deserialize<List<int>>(ContentTypesJson, JsonUtil.JsonSerializerOptions) ?? []) {
                     result.Add((ContentItemTypes.ContentItemTypeEnum)item);
                 }
                 return result;
@@ -48,7 +44,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 foreach (var item in value) {
                     result.Add((int)item);
                 }
-                ContentTypesJson = JsonSerializer.Serialize(result, jsonSerializerOptions);
+                ContentTypesJson = JsonSerializer.Serialize(result, JsonUtil.JsonSerializerOptions);
             }
         }
 

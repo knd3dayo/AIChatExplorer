@@ -3,13 +3,10 @@ using System.Text.Json.Serialization;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenAgent {
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -89,14 +86,14 @@ namespace LibPythonAI.Model.AutoGen {
         // ToJson
         public string ToJson() {
             // Serialize the object to JSON
-            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(this, JsonUtil.JsonSerializerOptions);
             return jsonString;
         }
         // FromDict
         public static AutoGenAgent FromDict(Dictionary<string, object> dict) {
             // Deserialize the dictionary to an object
-            string jsonString = JsonSerializer.Serialize(dict, jsonSerializerOptions);
-            AutoGenAgent data = JsonSerializer.Deserialize<AutoGenAgent>(jsonString, jsonSerializerOptions)!;
+            string jsonString = JsonSerializer.Serialize(dict, JsonUtil.JsonSerializerOptions);
+            AutoGenAgent data = JsonSerializer.Deserialize<AutoGenAgent>(jsonString, JsonUtil.JsonSerializerOptions)!;
             return data;
         }
 

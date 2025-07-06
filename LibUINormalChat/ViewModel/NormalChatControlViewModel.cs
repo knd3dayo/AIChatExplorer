@@ -1,11 +1,9 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Folder;
-using LibPythonAI.Model.Prompt;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
@@ -17,29 +15,32 @@ using LibUIPythonAI.View.Chat;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.PromptTemplate;
+using NLog;
 
 namespace LibUINormalChat.ViewModel {
     public class NormalChatControlViewModel : CommonViewModelBase {
 
         //初期化
-        public NormalChatControlViewModel(RelatedItemsPanelViewModel relatedItemsPanelViewModel, QAChatStartupProps qAChatStartupPropsInstance) {
+        public NormalChatControlViewModel(QAChatStartupPropsBase qAChatStartupPropsInstance) {
 
             QAChatStartupPropsInstance = qAChatStartupPropsInstance;
+
             // ChatRequestを初期化
-            ChatRequest = new();
+            ChatRequest = new() {
+                // ApplicationItemがある場合は、ChatItemsを設定
+                ChatHistory = [.. QAChatStartupPropsInstance.GetContentItem().ChatItems],
+                // InputTextを設定
+                ContentText = QAChatStartupPropsInstance.GetContentItem().Content
 
-            // InputTextを設定
-            InputText = QAChatStartupPropsInstance.ContentItem.Content;
-
-            // ApplicationItemがある場合は、ChatItemsを設定
-            if (QAChatStartupPropsInstance.ContentItem != null) {
-                ChatRequest.ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
-            }
+            };
 
             ChatHistoryViewModel = new(ChatRequest);
 
+            // RelatedItemsPanelViewModelを設定
+            RelatedItemsPanelViewModel = new(QAChatStartupPropsInstance);
+
             // VectorDBItemsを設定 ApplicationFolderのベクトルDBを取得
-            var folder = relatedItemsPanelViewModel.RelatedItemTreeViewControlViewModel.SelectedFolder;
+            var folder = RelatedItemsPanelViewModel.RelatedItemTreeViewControlViewModel.SelectedFolder;
             if (folder == null) {
                 return;
             }
@@ -49,35 +50,28 @@ namespace LibUINormalChat.ViewModel {
                 ChatRequestContextViewModel.VectorSearchProperties = [.. item];
             });
 
-            // RelatedItemsPanelViewModelを設定
-            RelatedItemsPanelViewModel = relatedItemsPanelViewModel;
 
             // RelatedItemSummaryDataGridViewModel
-            RelatedItemSummaryDataGridViewModel = new((flag) => { });
+            RelatedItemSummaryDataGridViewModel = new(QAChatStartupPropsInstance) {
+                // RelatedItemSummaryDataGridViewModelのItemsを設定
+                Items = RelatedItemsPanelViewModel.RelatedItemsDataGridViewModel.CheckedItems
+            };
 
-            // RelatedItemSummaryDataGridViewModelのItemsを設定
-            RelatedItemSummaryDataGridViewModel.Items = relatedItemsPanelViewModel.RelatedItemsDataGridViewModel.CheckedItems;
-            QAChatStartupPropsInstance = qAChatStartupPropsInstance;
-
-            Task.Run(async () => {
-                // DataDefinitionsを初期化
-                DataDefinitions = await CreateExportItems();
-            }).ContinueWith((task) => {
-                // DataDefinitionsの変更を通知
-                OnPropertyChanged(nameof(DataDefinitions));
-            });
+            CommonViewModelProperties.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
+                    RelatedItemsPanelViewModel.RelatedItemsDataGridViewModel.UpdateView();
+                }
+            };
         }
 
         // ChatRequest
         private ChatRequest ChatRequest { get; set; }
 
-        private QAChatStartupProps QAChatStartupPropsInstance { get; set; }
+        private QAChatStartupPropsBase QAChatStartupPropsInstance { get; set; }
 
         private bool ChatExecuted { get; set; } = false;
 
 
-        // DataDefinitions
-        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
 
         public RelatedItemDataGridViewModel RelatedItemSummaryDataGridViewModel { get; set; } = null!; // 初期化時に設定されるため、null許容型ではない
 
@@ -85,21 +79,8 @@ namespace LibUINormalChat.ViewModel {
 
         public ChatRequestContextViewModel ChatRequestContextViewModel { get; set; } = new();
 
+        public static ChatMessage? SelectedChatItem { get; set; }
 
-
-        // Temperature
-        public double Temperature {
-            get {
-                return ChatRequest.Temperature;
-            }
-            set {
-                ChatRequest.Temperature = value;
-                OnPropertyChanged(nameof(Temperature));
-            }
-        }
-
-
-        public static ChatMessage? SelectedItem { get; set; }
 
         public ChatHistoryViewModel ChatHistoryViewModel { get; set; }
 
@@ -216,17 +197,6 @@ namespace LibUINormalChat.ViewModel {
             }
         });
 
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
-            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
-            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
-
-            ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
-            foreach (PromptItem promptItem in promptItems) {
-                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
-            }
-            return items;
-        }
         // プロンプトテンプレート画面を開くコマンド
         public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
             PromptTemplateCommandExecute(parameter);
@@ -238,12 +208,6 @@ namespace LibUINormalChat.ViewModel {
             ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(OpenAIExecutionModeEnum.Normal, chatRequestContext, ChatRequest));
         });
-
-        private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                PromptTemplateText = promptTemplateWindowViewModel.PromptItem.Prompt;
-            });
-        }
 
         // チャットアイテムを編集するコマンド
         public SimpleDelegateCommand<ChatMessage> OpenChatItemCommand => new((chatItem) => {
@@ -269,10 +233,50 @@ namespace LibUINormalChat.ViewModel {
             Clipboard.SetText(text);
         });
 
+        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
+
+            // ChatRequestの内容をContentItemに保存
+            ContentItemWrapper contentItem = QAChatStartupPropsInstance.GetContentItem();
+            contentItem.ChatItems.Clear();
+            foreach (var item in ChatHistoryViewModel.ChatHistory) {
+                contentItem.ChatItems.Add(item);
+            }
+            contentItem.ChatSettings.RelatedItems = CreateChateRelatedItems();
+            QAChatStartupPropsInstance.SaveCommand(contentItem, ChatExecuted);
+            window.Close();
+        });
+
+        // 本文を再読み込みコマンド
+        public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
+            InputText = QAChatStartupPropsInstance.GetContentItem()?.Content ?? "";
+            OnPropertyChanged(nameof(InputText));
+        });
+
+        // 本文をクリアコマンド
+        public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
+            InputText = "";
+            OnPropertyChanged(nameof(InputText));
+
+            PromptTemplateText = "";
+            OnPropertyChanged(nameof(PromptTemplateText));
+
+        });
+        // チャット履歴をクリアコマンド
+        public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
+            ChatHistoryViewModel.ClearChatHistory();
+            // ApplicationItemがある場合は、ChatItemsをクリア
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
+
+        });
+
+
+
         private string CreateChatRequestJson() {
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
             // ChatRequestのコピーを作成
             ChatRequest chatRequest = ChatRequest.Copy();
+            chatRequest.Temperature = ChatRequestContextViewModel.Temperature;
+
             // 関連アイテムを適用
             chatRequest.ApplyReletedItems(CreateChateRelatedItems());
             ChatUtil.PrepareNormalRequest(chatRequestContext, chatRequest);
@@ -321,7 +325,7 @@ namespace LibUINormalChat.ViewModel {
         private ChatRelatedItems CreateChateRelatedItems() {
             // 参照アイテム情報を設定
             List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
-            List<ContentItemDataDefinition> dataDefinitions = DataDefinitions.Where(x => x.IsChecked).ToList();
+            List<ContentItemDataDefinition> dataDefinitions = RelatedItemsPanelViewModel.DataDefinitions.Where(x => x.IsChecked).ToList();
             bool sendRelatedItemsOnlyFirstRequest = ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequest == 0;
 
             ChatRelatedItems chatRelatedItems = new() {
@@ -344,6 +348,13 @@ namespace LibUINormalChat.ViewModel {
             return result;
 
         }
+
+        private void PromptTemplateCommandExecute(object parameter) {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                PromptTemplateText = promptTemplateWindowViewModel.PromptItem.Prompt;
+            });
+        }
+
 
     }
 

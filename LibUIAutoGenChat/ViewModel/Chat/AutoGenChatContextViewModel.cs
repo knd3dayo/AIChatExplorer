@@ -15,9 +15,9 @@ using LibUIPythonAI.ViewModel.VectorDB;
 namespace LibUIAutoGenChat.ViewModel.Chat {
     public class AutoGenChatContextViewModel : ObservableObject {
 
-        private QAChatStartupProps QAChatStartupPropsInstance { get; set; }
+        private QAChatStartupPropsBase QAChatStartupPropsInstance { get; set; }
 
-        public AutoGenChatContextViewModel(QAChatStartupProps qaChatStartupProps) {
+        public AutoGenChatContextViewModel(QAChatStartupPropsBase qaChatStartupProps) {
             QAChatStartupPropsInstance = qaChatStartupProps;
             // VectorSearchRequests = [.. qaChatStartupProps.ContentItem.GetFolder().GetVectorSearchProperties()];
             // AutoGenPropertiesを設定
@@ -148,10 +148,10 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         // フォルダのベクトルDBを使用するか否か
         public bool UseFolderVectorSearchItem {
             get {
-                return QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem;
+                return QAChatStartupPropsInstance.GetContentItem().UseFolderVectorSearchItem;
             }
             set {
-                QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem = value;
+                QAChatStartupPropsInstance.GetContentItem().UseFolderVectorSearchItem = value;
 
                 InitVectorDBProperties();
                 OnPropertyChanged(nameof(UseFolderVectorSearchItem));
@@ -179,13 +179,13 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
-                    items = await QAChatStartupPropsInstance.ContentItem.GetFolder().GetVectorSearchProperties();
+                    items = await QAChatStartupPropsInstance.GetContentItem().GetFolder().GetVectorSearchProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
                 } else {
                     // ContentItemのベクトルDBを取得
-                    items = QAChatStartupPropsInstance.ContentItem.VectorDBProperties;
+                    items = QAChatStartupPropsInstance.GetContentItem().VectorDBProperties;
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }

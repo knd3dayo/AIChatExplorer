@@ -15,10 +15,7 @@ namespace LibPythonAI.Model.Search {
     // このクラスのオブジェクトはLiteDBに保存される
 
     public class SearchRule {
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
+
 
         // Id
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -47,7 +44,7 @@ namespace LibPythonAI.Model.Search {
                 return _searchCondition;
             }
             set {
-                SearchConditionJson = JsonSerializer.Serialize(value.ToDict(), jsonSerializerOptions);
+                SearchConditionJson = JsonSerializer.Serialize(value.ToDict(), JsonUtil.JsonSerializerOptions);
             }
         }
 
@@ -80,7 +77,7 @@ namespace LibPythonAI.Model.Search {
 
         public void SaveSearchConditionJson() {
             if (_searchCondition != null) {
-                SearchConditionJson = JsonSerializer.Serialize(_searchCondition.ToDict(), jsonSerializerOptions);
+                SearchConditionJson = JsonSerializer.Serialize(_searchCondition.ToDict(), JsonUtil.JsonSerializerOptions);
             }
         }
         // 保存

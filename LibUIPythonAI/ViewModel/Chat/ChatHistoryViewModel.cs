@@ -17,5 +17,9 @@ namespace LibUIPythonAI.ViewModel.Chat {
             get => [.. ChatRequest.ChatHistory ];
         }
 
+        public void ClearChatHistory() {
+            ChatRequest.ChatHistory.Clear();
+            OnPropertyChanged(nameof(ChatHistory));
+        }
     }
 }

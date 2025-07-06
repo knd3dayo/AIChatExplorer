@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
+using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
@@ -33,7 +34,7 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
         public override void CreateItemCommandExecute() {
             ContentItemWrapper applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
-            QAChatStartupProps props = new(applicationItemViewModel.ContentItem);
+            QAChatStartupPropsBase props = new QAChatStartupProps(applicationItemViewModel.ContentItem);
             LibUINormalChat.View.NormalChatWindow.OpenWindow(props);
         }
 

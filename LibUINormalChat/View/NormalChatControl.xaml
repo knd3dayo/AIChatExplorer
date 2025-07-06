@@ -72,10 +72,10 @@
                         <ListBox
                             x:Name="ChatContentList"
                             Grid.Row="0"
-                            ItemsSource="{Binding ChatHistoryViewModel.ChatHistory, Mode=OneWay}"
+                            ItemsSource="{Binding ChatHistoryViewModel.ChatHistory}"
                             ScrollViewer.CanContentScroll="False"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                            SelectedItem="{Binding SelectedItem}">
+                            SelectedItem="{Binding SelectedChatItem}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <materialDesign:Card
@@ -223,8 +223,6 @@
                         <Grid Background="White">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <!--  エクスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
                             <DataGrid
@@ -234,7 +232,7 @@
                                 VerticalAlignment="Top"
                                 AutoGenerateColumns="False"
                                 Background="White"
-                                ItemsSource="{Binding DataDefinitions}"
+                                ItemsSource="{Binding RelatedItemsPanelViewModel.DataDefinitions}"
                                 SelectionMode="Single">
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.Select}">
@@ -317,6 +315,24 @@
                 Grid.Column="0"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
+                <!--  本文を再読み込み  -->
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.ReloadContent}" />
+                <!--  本文をクリア  -->
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ClearInputTextCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.ClearContent}" />
+                <!--  チャット履歴をクリア  -->
+                <Button
+                    Margin="10,0,10,5"
+                    Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.ClearChatContents}" />
                 <Button
                     Margin="10,0,10,5"
                     Command="{Binding SendChatCommand, Mode=OneTime}"
@@ -324,7 +340,7 @@
                     Content="{x:Static res:ViewStringResources.Send}" />
                 <Button
                     Margin="10,0,10,5"
-                    Command="{Binding CloseCommand, Mode=OneTime}"
+                    Command="{Binding SaveAndCloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.Close}" />
             </StackPanel>

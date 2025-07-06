@@ -5,11 +5,6 @@ using LibPythonAI.PythonIF;
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenGroupChat {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
-            WriteIndented = true
-        };
-
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
 

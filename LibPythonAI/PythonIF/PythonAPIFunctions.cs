@@ -24,11 +24,6 @@ namespace LibPythonAI.PythonIF {
 
         private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-
         private static HttpClient CreateHttpClient() {
             HttpClient client = new(new HttpClientHandler() {
                 UseProxy = false,
@@ -713,7 +708,7 @@ namespace LibPythonAI.PythonIF {
 
         public void CancelAutoGenChat(string sessionToken) {
             // SessionToken: sessionTokenを持つJSON文字列を作成
-            string sessionTokenJson = JsonSerializer.Serialize(new { session_token = sessionToken }, jsonSerializerOptions);
+            string sessionTokenJson = JsonSerializer.Serialize(new { session_token = sessionToken }, JsonUtil.JsonSerializerOptions);
             // Log出力
             LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo}:{sessionTokenJson}");
             // cancel_request
@@ -1160,7 +1155,7 @@ namespace LibPythonAI.PythonIF {
                 // resultStringをログに出力
                 LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, JsonUtil.JsonSerializerOptions);
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }

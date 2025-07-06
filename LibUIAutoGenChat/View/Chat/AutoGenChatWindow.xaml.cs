@@ -10,7 +10,7 @@ namespace LibUIAutoGenChat.View.Chat {
             InitializeComponent();
         }
 
-        public static void OpenWindow(LibUIPythonAI.ViewModel.Chat.QAChatStartupProps props) {
+        public static void OpenWindow(LibUIPythonAI.ViewModel.Chat.QAChatStartupPropsBase props) {
             AutoGenChatWindow openAIChatWindow = new();
             AutoGenChatWindowViewModel mainWindowViewModel = new(props);
             openAIChatWindow.DataContext = mainWindowViewModel;

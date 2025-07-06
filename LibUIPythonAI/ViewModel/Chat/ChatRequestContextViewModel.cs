@@ -16,55 +16,66 @@ namespace LibUIPythonAI.ViewModel.Chat {
             // コンストラクタ
         }
 
-        private ChatRequestContext ChatRequestContext { get; set; } = new ChatRequestContext();
+        public ChatSettings ChatSettings { get; set; } = new ();
 
         // SendRelatedItemsOnlyFirstRequest
-        private int _SendRelatedItemsOnlyFirstRequest = 0;
         public int SendRelatedItemsOnlyFirstRequest {
             get {
-                return _SendRelatedItemsOnlyFirstRequest;
+                return ChatSettings.SendRelatedItemsOnlyFirstRequest ? 0 : 1;
             }
             set {
-                _SendRelatedItemsOnlyFirstRequest = value;
+                ChatSettings.SendRelatedItemsOnlyFirstRequest = value == 0;
                 OnPropertyChanged(nameof(SendRelatedItemsOnlyFirstRequest));
             }
         }
 
-        public int SplitMode {
+        // Temperature
+        public double Temperature {
             get {
-                return (int)ChatRequestContext.SplitMode;
+                return ChatSettings.Temperature;
             }
             set {
-                ChatRequestContext.SplitMode = (SplitModeEnum)value;
+                ChatSettings.Temperature = value;
+                OnPropertyChanged(nameof(Temperature));
+            }
+        }
+
+
+        public int SplitMode {
+            get {
+                return (int)ChatSettings.SplitMode;
+            }
+            set {
+                ChatSettings.SplitMode = (SplitModeEnum)value;
                 OnPropertyChanged(nameof(SplitMode));
             }
         }
 
         public int SplitTokenCount {
             get {
-                return ChatRequestContext.SplitTokenCount;
+                return ChatSettings.SplitTokenCount;
             }
             set {
-                ChatRequestContext.SplitTokenCount = value;
+                ChatSettings.SplitTokenCount = value;
                 OnPropertyChanged(nameof(SplitTokenCount));
             }
         }
         public string PromptTemplateText {
             get {
-                return ChatRequestContext.PromptTemplateText;
+                return ChatSettings.PromptTemplateText;
             }
             set {
-                ChatRequestContext.PromptTemplateText = value;
+                ChatSettings.PromptTemplateText = value;
                 OnPropertyChanged(nameof(PromptTemplateText));
             }
         }
 
         public int RAGModeValue {
             get {
-                return (int)ChatRequestContext.RAGMode;
+                return (int)ChatSettings.RAGMode;
             }
             set {
-                ChatRequestContext.RAGMode = (RAGModeEnum)value;
+                ChatSettings.RAGMode = (RAGModeEnum)value;
                 OnPropertyChanged(nameof(RAGModeValue));
             }
         }
@@ -85,13 +96,15 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         // _vectorSearchPropertiesをChatRequestContext.VectorSearchRequestsに適用
         public ChatRequestContext  GetChatRequestContext() {
-            ChatRequestContext.VectorSearchRequests.Clear();
+            ChatSettings.VectorSearchRequests.Clear();
             foreach (var item in VectorSearchProperties) {
-                ChatRequestContext.VectorSearchRequests.Add(new VectorSearchRequest(item) {
+                ChatSettings.VectorSearchRequests.Add(new VectorSearchRequest(item) {
                     TopK = VectorDBSearchResultMax
                 });
             }
-            return ChatRequestContext;
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new(ChatSettings);
+            return new ChatRequestContext(ChatSettings);
         }
 
         // Splitモードが変更されたときの処理
@@ -155,9 +168,9 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
 
 
-        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(ChatRequestContext.RAGMode != RAGModeEnum.None);
+        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(ChatSettings.RAGMode != RAGModeEnum.None);
 
-        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(ChatRequestContext.SplitMode != SplitModeEnum.None);
+        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(ChatSettings.SplitMode != SplitModeEnum.None);
 
     }
 }

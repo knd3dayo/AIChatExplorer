@@ -64,12 +64,12 @@
                     Minimum="0"
                     TickFrequency="0.1"
                     TickPlacement="BottomRight"
-                    Value="{Binding Temperature}" />
+                    Value="{Binding ChatRequestContextViewModel.Temperature}" />
                 <TextBlock
                     Grid.Column="2"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
-                    Text="{Binding Temperature, StringFormat={}{0:F2}}" />
+                    Text="{Binding ChatRequestContextViewModel.Temperature, StringFormat={}{0:F2}}" />
             </Grid>
             <Separator Grid.Row="3" />
             <!--  SplitMode  -->

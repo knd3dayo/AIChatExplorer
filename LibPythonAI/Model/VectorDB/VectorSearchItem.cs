@@ -73,22 +73,14 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         public static List<VectorSearchItem> FromListJson(string json) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Deserialize<List<VectorSearchItem>>(json, options) ?? [];
+
+            return JsonSerializer.Deserialize<List<VectorSearchItem>>(json, JsonUtil.JsonSerializerOptions) ?? [];
         }
 
         // ToListJson
         public static string ToListJson(IEnumerable<VectorSearchItem> items) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Serialize(items, options);
+
+            return JsonSerializer.Serialize(items, JsonUtil.JsonSerializerOptions);
         }
 
 
@@ -100,10 +92,11 @@ namespace LibPythonAI.Model.VectorDB {
                 return [];
             }
             // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new() {
+            ChatSettings chatSettings = new() {
                 VectorSearchRequests = [new VectorSearchRequest(this)],
                 RAGMode = RAGModeEnum.NormalSearch,
             };
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
             // ベクトル検索を実行
             List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, InputText);

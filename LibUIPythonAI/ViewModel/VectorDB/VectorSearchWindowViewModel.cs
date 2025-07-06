@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
@@ -152,9 +153,10 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     return "";
                 }
                 // ChatRequestContextを作成
-                ChatRequestContext chatRequestContext = new() {
+                ChatSettings chatSettings = new() {
                     VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
                 };
+                ChatRequestContext chatRequestContext = new(chatSettings);
 
                 RequestContainer requestContainer = new() {
                     RequestContextInstance = chatRequestContext,

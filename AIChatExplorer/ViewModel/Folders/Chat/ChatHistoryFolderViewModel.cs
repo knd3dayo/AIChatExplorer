@@ -10,6 +10,7 @@ using LibUIPythonAI.ViewModel.Common;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using AIChatExplorer.ViewModel.Main;
 
 namespace AIChatExplorer.ViewModel.Folders.Chat {
     public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
@@ -34,7 +35,7 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
         public override void CreateItemCommandExecute() {
             ContentItemWrapper applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
-            QAChatStartupProps props = new(applicationItemViewModel.ContentItem);
+            QAChatStartupPropsBase props = new QAChatStartupProps(applicationItemViewModel.ContentItem);
             LibUINormalChat.View.NormalChatWindow.OpenWindow(props);
         }
 

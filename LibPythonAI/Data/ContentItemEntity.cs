@@ -11,10 +11,6 @@ using LibPythonAI.Utils.Common;
 namespace LibPythonAI.Data {
     public class ContentItemEntity {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
         // 日時のダミー初期値。2000/1/1 0:0:0
         public static readonly DateTime InitialDateTime = new(2000, 1, 1, 0, 0, 0);
 
@@ -106,7 +102,7 @@ namespace LibPythonAI.Data {
 
         public void SaveExtendedPropertiesJson() {
             if (_extendedProperties != null) {
-                ExtendedPropertiesJson = JsonSerializer.Serialize(_extendedProperties, jsonSerializerOptions);
+                ExtendedPropertiesJson = JsonSerializer.Serialize(_extendedProperties, JsonUtil.JsonSerializerOptions);
             }
         }
         public void SavePromptChatResultJson() {
@@ -117,7 +113,7 @@ namespace LibPythonAI.Data {
 
         public void SaveChatMessagesJson() {
             if (_chatItems != null) {
-                ChatMessagesJson = JsonSerializer.Serialize(_chatItems, jsonSerializerOptions);
+                ChatMessagesJson = JsonSerializer.Serialize(_chatItems, JsonUtil.JsonSerializerOptions);
             }
         }
 

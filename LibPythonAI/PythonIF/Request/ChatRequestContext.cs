@@ -4,65 +4,58 @@ using LibPythonAI.Common;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Resources;
 
 namespace LibPythonAI.PythonIF.Request {
     // リクエストと共に送信するコンテキスト情報
     public class ChatRequestContext {
 
-        public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
-        public const string AUTOGEN_PROPS_KEY = "autogen_props";
-        public const string SPLIT_TOKEN_COUNT_KEY = "split_token_count";
-        public const string PROMPT_TEMPLATE_TEXT_KEY = "prompt_template_text";
-        public const string SPLIT_MODE_KEY = "split_mode";
-        public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
-        public const string RELATED_INFORMATION_PROMPT_TEXT_KEY = "related_information_prompt_text";
-        public const string RAG_MODE_KEY = "rag_mode";
-        public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
-
+        public ChatRequestContext(ChatSettings chatSettings) {
+            ChatSettings = chatSettings;
+        }
+        public ChatSettings ChatSettings { get; private set; }
 
         // ベクトル検索
 
-        [JsonPropertyName(VECTOR_SEARCH_REQUESTS_KEY)]
-        public List<VectorSearchRequest> VectorSearchRequests { get; set; } = [];
+        [JsonPropertyName(ChatSettings.VECTOR_SEARCH_REQUESTS_KEY)]
+        public List<VectorSearchRequest> VectorSearchRequests { get => ChatSettings.VectorSearchRequests; }
 
         // AutoGenPropsRequest
-        [JsonPropertyName(AUTOGEN_PROPS_KEY)]
-        public AutoGenPropsRequest? AutoGenPropsRequest { get; set; }
+        [JsonPropertyName(ChatSettings.AUTOGEN_PROPS_KEY)]
+        public AutoGenPropsRequest? AutoGenPropsRequest { get => ChatSettings.AutoGenPropsRequest; }
 
         // リクエストを分割するトークン数
-        [JsonPropertyName(SPLIT_TOKEN_COUNT_KEY)]
-        public int SplitTokenCount { get; set; } = 8000;
+        [JsonPropertyName(ChatSettings.SPLIT_TOKEN_COUNT_KEY)]
+        public int SplitTokenCount { get => ChatSettings.SplitTokenCount; }
 
         // PromptTemplateText
-        [JsonPropertyName(PROMPT_TEMPLATE_TEXT_KEY)]
-        public string PromptTemplateText { get; set; } = "";
+        [JsonPropertyName(ChatSettings.PROMPT_TEMPLATE_TEXT_KEY)]
+        public string PromptTemplateText { get => ChatSettings.PromptTemplateText; }
 
         // RAGを使用するかどうか
-        [JsonPropertyName(RAG_MODE_KEY)]
-        public RAGModeEnum RAGMode { get; set; } = RAGModeEnum.None;
+        [JsonPropertyName(ChatSettings.RAG_MODE_KEY)]
+        public RAGModeEnum RAGMode { get => ChatSettings.RAGMode; }
 
         // RAGを使用する場合のプロンプト
-        [JsonPropertyName(RAG_MODE_PROMPT_TEXT_KEY)]
-        public string RagModePromptText { get; set; } = "";
+        [JsonPropertyName(ChatSettings.RAG_MODE_PROMPT_TEXT_KEY)]
+        public string RagModePromptText { get => ChatSettings.RagModePromptText; }
 
 
-        public SplitModeEnum SplitMode = SplitModeEnum.None;
+        public SplitModeEnum SplitMode { get => ChatSettings.SplitMode; }
 
-        public string SummarizePromptText = PromptStringResourceJa.Instance.SummarizePromptText;
+        public string SummarizePromptText { get => ChatSettings.SummarizePromptText; }
 
         public Dictionary<string, object> ToChatRequestContextDict() {
             Dictionary<string, object> requestContext = new() {
-                { SPLIT_MODE_KEY, SplitMode.ToString() },
-                { RAG_MODE_KEY, RAGMode.ToString() },
+                { ChatSettings.SPLIT_MODE_KEY, SplitMode.ToString() },
+                { ChatSettings.RAG_MODE_KEY, RAGMode.ToString() },
             };
             if (RAGMode != RAGModeEnum.None) {
-                requestContext[RAG_MODE_PROMPT_TEXT_KEY] = RagModePromptText;
+                requestContext[ChatSettings.RAG_MODE_PROMPT_TEXT_KEY] = RagModePromptText;
             }
             if (SplitMode != SplitModeEnum.None) {
-                requestContext[PROMPT_TEMPLATE_TEXT_KEY] = PromptTemplateText;
-                requestContext[SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText;
-                requestContext[SPLIT_TOKEN_COUNT_KEY] = SplitTokenCount;
+                requestContext[ChatSettings.PROMPT_TEMPLATE_TEXT_KEY] = PromptTemplateText;
+                requestContext[ChatSettings.SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText;
+                requestContext[ChatSettings.SPLIT_TOKEN_COUNT_KEY] = SplitTokenCount;
             }
             return requestContext;
 
@@ -81,18 +74,18 @@ namespace LibPythonAI.PythonIF.Request {
                 ObservableCollection<VectorSearchItem> vectorSearchItems, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-
-            ChatRequestContext chatRequestContext = new() {
-                VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
+            ChatSettings chatSettings = new() {
                 PromptTemplateText = promptTemplateText,
                 RAGMode = ragModeEnum,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
+                VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
             };
             if (autoGenProperties != null) {
-                chatRequestContext.AutoGenPropsRequest = new AutoGenPropsRequest(autoGenProperties);
+                chatSettings.AutoGenPropsRequest = new AutoGenPropsRequest(autoGenProperties);
             }
 
+            ChatRequestContext chatRequestContext = new(chatSettings);
             return chatRequestContext;
         }
 

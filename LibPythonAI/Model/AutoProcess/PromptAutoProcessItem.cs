@@ -23,17 +23,18 @@ namespace LibPythonAI.Model.AutoProcess {
             // PromptItemを取得
             ContentFolderWrapper? clipboardFolder = applicationItem.GetFolder();
 
-            // ChatRequestContentを作成
-            ChatRequestContext chatRequestContent = new() {
-                PromptTemplateText = PromptItemEntity.Prompt,
-            };
             Task.Run(async () => {
 
+                // ChatRequestContentを作成
+                ChatSettings chatSettings = new() {
+                    PromptTemplateText = PromptItemEntity.Prompt,
+                };
                 if (clipboardFolder != null) {
-                    chatRequestContent.RAGMode = RAGModeEnum.NormalSearch;
+                    chatSettings.RAGMode = RAGModeEnum.NormalSearch;
                     var item = await clipboardFolder.GetMainVectorSearchItem();
-                    chatRequestContent.VectorSearchRequests = [new VectorSearchRequest(item)];
+                    chatSettings.VectorSearchRequests = [new VectorSearchRequest(item)];
                 }
+                ChatRequestContext chatRequestContent = new(chatSettings);
 
                 ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
                 if (result == null) {

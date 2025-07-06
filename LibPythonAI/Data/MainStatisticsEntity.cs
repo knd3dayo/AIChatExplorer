@@ -4,14 +4,10 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibPythonAI.Model.Statistics;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Data {
     public class MainStatisticsEntity {
-
-        private static JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -23,11 +19,11 @@ namespace LibPythonAI.Data {
         [NotMapped]
         public Dictionary<DateTime, DailyStatistics> DailyStatistics {
             get {
-                Dictionary<DateTime, DailyStatistics>? items = JsonSerializer.Deserialize<Dictionary<DateTime, DailyStatistics>>(DailyStatisticsJson, jsonSerializerOptions);
+                Dictionary<DateTime, DailyStatistics>? items = JsonSerializer.Deserialize<Dictionary<DateTime, DailyStatistics>>(DailyStatisticsJson, JsonUtil.JsonSerializerOptions);
                 return items ?? [];
             }
             set {
-                DailyStatisticsJson = JsonSerializer.Serialize(value, jsonSerializerOptions);
+                DailyStatisticsJson = JsonSerializer.Serialize(value, JsonUtil.JsonSerializerOptions);
             }
 
         }

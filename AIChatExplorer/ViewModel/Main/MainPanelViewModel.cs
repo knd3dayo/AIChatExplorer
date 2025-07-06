@@ -263,13 +263,13 @@ namespace AIChatExplorer.ViewModel.Main {
             if (SelectedItem != null) {
                 /**
                  * Task.Run(() => {
-                    SelectedItem.ContentItem.Load(() => { }, () => {
+                    SelectedChatItem.ContentItem.Load(() => { }, () => {
                         MainUITask.Run(() => {
-                            OnPropertyChanged(nameof(SelectedItem));
+                            OnPropertyChanged(nameof(SelectedChatItem));
                         });
                     });
                 });
-                OnPropertyChanged(nameof(SelectedItem));
+                OnPropertyChanged(nameof(SelectedChatItem));
                 **/
                 // SourceがFileの場合は、ファイルの内容を読み込む
                 if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
@@ -345,13 +345,16 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
-            CommonViewModelCommandExecutes.DeleteItemsCommandExecute(SelectedItems, () => {
+            ObservableCollection<ContentItemViewModel> items = [.. SelectedItems];
+            CommonViewModelCommandExecutes.DeleteItemsCommandExecute(items, () => {
                 // プログレスインジケータを表示
                 commands.UpdateIndeterminate(true);
             },
             () => {
+                foreach (var itemViewModel in items) {
+                    CommonViewModelCommandExecutes.ReloadFolderCommandExecute(itemViewModel.FolderViewModel, () => { }, () => { });
+                }
                 commands.UpdateIndeterminate(false);
-                UpdateView();
             });
         });
 

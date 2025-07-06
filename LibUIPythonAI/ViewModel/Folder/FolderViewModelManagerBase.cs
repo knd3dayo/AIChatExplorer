@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Common;
+using LibUIPythonAI.ViewModel.Item;
 using System.Collections.ObjectModel;
 
 namespace LibUIPythonAI.ViewModel.Folder {
@@ -14,6 +16,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public abstract ContentFolderViewModel GetApplicationRootFolderViewModel();
 
         public abstract ContentFolderViewModel GetSearchRootFolderViewModel();
+
+        public abstract ContentFolderViewModel CreateFolderViewModel(string folderId, string type);
+
+        public abstract ContentItemViewModel CreateItemViewModel(ContentItemWrapper item);
 
     }
 }

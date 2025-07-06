@@ -209,6 +209,10 @@ namespace LibUINormalChat.View {
         // MergeTargetDataSelection
         public static string MergeTargetDataSelection => NormalChatStringResources.Instance.MergeTargetDataSelection;
 
+        
+        // MarkdownView
+        public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
+
 
 
     }

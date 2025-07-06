@@ -4,14 +4,11 @@ using System.Text.Unicode;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {
 
-        static readonly JsonSerializerOptions options = new() {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-        };
 
         public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
         public const string AUTO_PROCESS_ITEMS_KEY = "auto_process_item_requests";
@@ -163,7 +160,7 @@ namespace LibPythonAI.PythonIF.Request {
             return dict;
         }
         public string ToJson() {
-            return JsonSerializer.Serialize(ToDict(), options);
+            return JsonSerializer.Serialize(ToDict(), JsonUtil.JsonSerializerOptions);
         }
 
     }

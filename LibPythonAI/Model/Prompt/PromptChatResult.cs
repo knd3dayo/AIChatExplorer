@@ -108,12 +108,7 @@ namespace LibPythonAI.Model.Prompt {
 
 
         public string ToJson() {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            JsonSerializerOptions options = jsonSerializerOptions;
-            return JsonSerializer.Serialize(this, options);
+            return JsonSerializer.Serialize(this, JsonUtil.JsonSerializerOptions);
         }
 
         public static PromptChatResult? FromDict(Dictionary<string, dynamic?> dict) {

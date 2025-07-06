@@ -1,5 +1,8 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.Resources;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.PythonIF.Request {
     public class VectorSearchRequest {
@@ -24,21 +27,40 @@ namespace LibPythonAI.PythonIF.Request {
             FolderPath = vectorSearchItem.FolderPath;
             ScoreThreshold = vectorSearchItem.ScoreThreshold;
         }
+
+        [JsonConstructor]
+        public VectorSearchRequest(string? name, string? model, string? query, int topK, float scoreThreshold, string? folderPath, string contentType) {
+            Name = name;
+            Model = model;
+            Query = query;
+            TopK = topK;
+            ScoreThreshold = scoreThreshold;
+            FolderPath = folderPath;
+            ContentType = contentType;
+        }
+
+        [JsonPropertyName(NAME_KEY)]
         public string? Name { init; get; } = null;
 
+        [JsonPropertyName(MODEL_KEY)]
         public string? Model { get; set; } = null;
 
+        [JsonPropertyName(QUERY_KEY)]
         public string? Query { get; set; } = null;
 
         //TopK
+        [JsonPropertyName(TOP_K_KEY)]
         public int TopK { get; set; } = 5; // デフォルト値
 
         // score_threshold
+        [JsonPropertyName(SCORE_THRESHOLD_KEY)]
         public float ScoreThreshold { get; set; } = 0.5f;
 
         // FolderPath
+        [JsonPropertyName(FOLDER_PATH_KEY)]
         public string? FolderPath { get; set; } = null;
 
+        [JsonPropertyName(CONTENT_TYPE_KEY)]
         public string ContentType { init; get; } = string.Empty;
 
         // SearchKWargs
@@ -91,6 +113,19 @@ namespace LibPythonAI.PythonIF.Request {
         public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchRequest> items) {
             return items.Select(item => item.ToDict()).ToList();
         }
+
+
+        public static List<VectorSearchRequest> FromListJson(string json) {
+
+            return JsonSerializer.Deserialize<List<VectorSearchRequest>>(json, JsonUtil.JsonSerializerOptions) ?? [];
+        }
+
+        // ToListJson
+        public static string ToListJson(IEnumerable<VectorSearchRequest> items) {
+
+            return JsonSerializer.Serialize(items, JsonUtil.JsonSerializerOptions);
+        }
+
 
     }
 }

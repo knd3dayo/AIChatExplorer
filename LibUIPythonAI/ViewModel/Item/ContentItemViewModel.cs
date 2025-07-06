@@ -174,7 +174,9 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         public void UpdateView(TabControl? tabControl) {
             // 選択中のタブを更新する処理
-            UpdateTabItems(tabControl);
+            MainUITask.Run(() => {
+                UpdateTabItems(tabControl);
+            });
         }
         
         private void UpdateTabItems(TabControl? tabControl) {

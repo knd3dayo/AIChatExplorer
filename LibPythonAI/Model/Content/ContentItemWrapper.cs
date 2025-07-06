@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Chat;
@@ -20,6 +18,7 @@ namespace LibPythonAI.Model.Content {
             Task.Run(async () => {
                 VectorDBProperties = await UpdateVectorDBProperties();
             });
+            ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
@@ -27,6 +26,7 @@ namespace LibPythonAI.Model.Content {
             Task.Run(async () => {
                 VectorDBProperties = await UpdateVectorDBProperties();
             });
+            ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
         public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
@@ -131,7 +131,6 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-
         public string ContentTypeString {
             get {
                 ContentItemTypes.ContentItemTypeEnum ContentType = Entity.ContentType;
@@ -147,7 +146,6 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty(FileName)) {
@@ -156,7 +154,6 @@ namespace LibPythonAI.Model.Content {
                 return FileName;
             }
         }
-
 
         // フォルダ名
         public string FolderName => Path.GetDirectoryName(SourcePath) ?? "";
@@ -190,10 +187,11 @@ namespace LibPythonAI.Model.Content {
         // ベクトル化日時の文字列
         public string VectorizedAtString {
             get {
-                Entity.ExtendedProperties.TryGetValue("VectorizedAtString", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("VectorizedAtString", null);
                 if (value is string strValue) {
                     return strValue;
                 }
+                Entity.ExtendedProperties["VectorizedAtString"] = string.Empty;
                 return string.Empty;
             }
             set {
@@ -204,10 +202,11 @@ namespace LibPythonAI.Model.Content {
         // フォルダに設定されたVerctorDBPropertyを使うかどうか
         public bool UseFolderVectorSearchItem {
             get {
-                Entity.ExtendedProperties.TryGetValue("UseFolderVectorSearchItem", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("UseFolderVectorSearchItem", null);
                 if (value is bool boolValue) {
                     return boolValue;
                 }
+                Entity.ExtendedProperties["UseFolderVectorSearchItem"] = true;
                 return true;
             }
             set {
@@ -225,13 +224,13 @@ namespace LibPythonAI.Model.Content {
                 var items = await GetFolder().GetVectorSearchProperties();
                 vectorDBProperties = [.. items];
             }
-
-            if (Entity.ExtendedProperties.TryGetValue("VectorDBProperties", out object? value)) {
-                if (value is string strValue) {
-                    vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
-                } else if (value is List<VectorSearchItem> list) {
-                    vectorDBProperties = [.. list];
-                }
+            var value = Entity.ExtendedProperties.GetValueOrDefault("VectorDBProperties", null);
+            if (value is string strValue) {
+                vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
+            } else if (value is List<VectorSearchItem> list) {
+                vectorDBProperties = [.. list];
+            } else {
+                vectorDBProperties = [];
             }
 
             // Addイベント発生時の処理
@@ -262,10 +261,11 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーション名
         public string? SourceApplicationName {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourceApplicationName", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationName", null);
                 if (value is string strValue) {
                     return strValue;
                 }
+                Entity.ExtendedProperties["SourceApplicationName"] = string.Empty;
                 return string.Empty;
             }
             set {
@@ -276,7 +276,7 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourceApplicationTitle", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationTitle", null);
                 if (value is string strValue) {
                     return strValue;
                 }
@@ -290,7 +290,7 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーションのID
         public int SourceApplicationID {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourceApplicationID", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationID", null);
                 if (value is Decimal intValue) {
                     return Decimal.ToInt32(intValue);
                 }
@@ -307,7 +307,7 @@ namespace LibPythonAI.Model.Content {
         //　貼り付け元のアプリケーションのパス
         public string SourceApplicationPath {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourceApplicationPath", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationPath", null);
                 if (value is string strValue) {
                     return strValue;
                 }
@@ -322,7 +322,7 @@ namespace LibPythonAI.Model.Content {
         // 文書の信頼度(0-100)
         public int DocumentReliability {
             get {
-                Entity.ExtendedProperties.TryGetValue("DocumentReliability", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("DocumentReliability", null);
                 if (value is Decimal intValue) {
                     return Decimal.ToInt32(intValue);
                 }
@@ -339,7 +339,7 @@ namespace LibPythonAI.Model.Content {
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason {
             get {
-                Entity.ExtendedProperties.TryGetValue("DocumentReliabilityReason", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("DocumentReliabilityReason", null);
                 if (value is string strValue) {
                     return strValue;
                 }
@@ -354,7 +354,7 @@ namespace LibPythonAI.Model.Content {
         // Path
         public string SourcePath {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourcePath", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourcePath", null);
                 if (value is string strValue) {
                     return strValue;
                 }
@@ -369,28 +369,54 @@ namespace LibPythonAI.Model.Content {
         // SourceType 
         public string SourceType {
             get {
-                Entity.ExtendedProperties.TryGetValue("SourceType", out object? value);
+                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceType", null);
                 string? sourceTypeString = value?.ToString();
                 if (!string.IsNullOrEmpty(sourceTypeString)) {
                     return sourceTypeString;
-                } else {
-                    return ContentSourceType.Application;
                 }
+                // デフォルト値を設定
+                return ContentSourceType.Application;
             }
             set {
                 Entity.ExtendedProperties["SourceType"] = value.ToString();
+                Entity.SaveExtendedPropertiesJson();
             }
         }
         // ファイルの最終更新日時
 
         public long LastModified {
             get {
-                Entity.ExtendedProperties.TryGetValue("LastModified", out object? value);
-                return value != null ? (long)value : 0;
+                var value = Entity.ExtendedProperties.GetValueOrDefault("LastModified", null);
+                if (value is long longValue) {
+                    return longValue;
+                }
+                if (value is decimal decimalValue) {
+                    return Convert.ToInt64(decimalValue);
+                }
+                return 0L;
             }
             set {
                 Entity.ExtendedProperties["LastModified"] = value;
+                Entity.SaveExtendedPropertiesJson();
             }
+        }
+
+        // ChatSettings
+        public ChatSettings ChatSettings { get; set; }
+
+        private ChatSettings LoadChatSettingsFromExtendedProperties() {
+            var value = Entity.ExtendedProperties.GetValueOrDefault("ChatSettingsJson", null);
+            ChatSettings chatSettings;
+            if (value is string) {
+                chatSettings = ChatSettings.FromJson(value.ToString() ?? "{}");
+                return chatSettings;
+            }
+            return new ChatSettings();
+        }
+
+        private void SaveChatSettingsToExtendedProperties() {
+            Entity.ExtendedProperties["ChatSettingsJson"] = ChatSettings.ToJson();
+            Entity.SaveExtendedPropertiesJson();
         }
 
 
@@ -424,7 +450,10 @@ namespace LibPythonAI.Model.Content {
         }
 
         public virtual ContentItemWrapper Copy() {
-            return new ContentItemWrapper() { Entity = Entity.Copy() };
+            return new ContentItemWrapper() { 
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
 
 
@@ -547,6 +576,8 @@ namespace LibPythonAI.Model.Content {
                 });
             }
 
+            // ChatSettingsをExtendedPropertiesに保存
+            SaveChatSettingsToExtendedProperties();
             ContentItemEntity.SaveItems([Entity]);
             ContentModified = false;
             DescriptionModified = false;
@@ -566,9 +597,23 @@ namespace LibPythonAI.Model.Content {
             foreach (var item in items) {
                 if (Activator.CreateInstance(typeof(T)) is T newItem) {
                     newItem.Entity = item;
+                    newItem.ChatSettings = newItem.LoadChatSettingsFromExtendedProperties();
                     result.Add(newItem);
                 }
             }
+            return result;
+        }
+
+        public static T? GetItem<T>(string id) where T : ContentItemWrapper, new() {
+            using PythonAILibDBContext db = new();
+            var item = db.ContentItems.FirstOrDefault(x => x.Id == id);
+            if (item == null) {
+                return null;
+            }
+            T result = new T() { 
+                Entity = item,
+            };
+            result.ChatSettings = result.LoadChatSettingsFromExtendedProperties();
             return result;
         }
 
@@ -584,6 +629,7 @@ namespace LibPythonAI.Model.Content {
                 if (item.ContentModified || item.DescriptionModified) {
                     // 更新日時を設定
                     item.UpdatedAt = DateTime.Now;
+
                     // ベクトルを更新
                     Task.Run(async () => {
                         var searchItem = await item.GetMainVectorSearchItem();
@@ -597,6 +643,8 @@ namespace LibPythonAI.Model.Content {
                         VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     });
                 }
+                // ChatSettingsをExtendedPropertiesに保存
+                item.SaveChatSettingsToExtendedProperties();
             }
             if (applyAutoProcess) {
                 // 自動処理を適用
@@ -606,23 +654,13 @@ namespace LibPythonAI.Model.Content {
 
         // ApplicationItemをJSON文字列に変換する
         public static string ToJson(ContentItemWrapper item) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            var options = jsonSerializerOptions;
-            return JsonSerializer.Serialize(item, options);
+            return JsonSerializer.Serialize(item, JsonUtil.JsonSerializerOptions);
         }
 
 
         // JSON文字列をApplicationItemに変換する
         public static ContentItemWrapper? FromJson(string json) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            var options = jsonSerializerOptions;
-            ContentItemWrapper? item = JsonSerializer.Deserialize<ContentItemWrapper>(json, options);
+            ContentItemWrapper? item = JsonSerializer.Deserialize<ContentItemWrapper>(json, JsonUtil.JsonSerializerOptions);
             return item;
 
         }

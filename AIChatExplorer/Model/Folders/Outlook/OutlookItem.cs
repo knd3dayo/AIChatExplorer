@@ -20,7 +20,10 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         }
 
         public override OutlookItem Copy() {
-            return new() { Entity = Entity.Copy() };
+            return new() { 
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
 
         public override void Save() {

@@ -1,9 +1,7 @@
 using System.Text;
-using System.Text.Json.Serialization;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Python;
 

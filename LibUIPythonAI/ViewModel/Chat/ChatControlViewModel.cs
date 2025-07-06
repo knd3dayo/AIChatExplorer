@@ -17,18 +17,18 @@ namespace LibUIPythonAI.ViewModel.Chat {
     public class ChatControlViewModel : CommonViewModelBase {
 
         //初期化
-        public ChatControlViewModel(QAChatStartupProps props) {
+        public ChatControlViewModel(QAChatStartupPropsBase props) {
 
             QAChatStartupPropsInstance = props;
 
             ChatRequest = new();
 
             // InputTextを設定
-            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.GetContentItem()?.Content ?? "";
 
             // ApplicationItemがある場合は、ChatItemsを設定
-            if (QAChatStartupPropsInstance.ContentItem != null) {
-                ChatRequest.ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
+            if (QAChatStartupPropsInstance.GetContentItem() != null) {
+                ChatRequest.ChatHistory = [.. QAChatStartupPropsInstance.GetContentItem().ChatItems];
             }
             // ChatHistoryViewModelを設定
             ChatHistoryViewModel = new(ChatRequest);
@@ -43,7 +43,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         // ChatContextPanelViewModel
         public ChatContextViewModel ChatContextViewModelInstance { get; set; }
 
-        public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
+        public QAChatStartupPropsBase QAChatStartupPropsInstance { get; set; }
 
         // ChatRequest
         public ChatRequest ChatRequest { get; set; }
@@ -224,13 +224,13 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistoryViewModel.ChatHistory.Clear();
             // ApplicationItemがある場合は、ChatItemsをクリア
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
 
         });
 
         // 本文を再読み込みコマンド
         public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
-            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.GetContentItem()?.Content ?? "";
             OnPropertyChanged(nameof(InputText));
         });
 
@@ -299,16 +299,16 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
 
             // ChatRequestの内容をContentItemに保存
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
             foreach (var item in ChatHistoryViewModel.ChatHistory) {
-                QAChatStartupPropsInstance.ContentItem.ChatItems.Add(item);
+                QAChatStartupPropsInstance.GetContentItem().ChatItems.Add(item);
             }
-            QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Clear();
+            QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Clear();
             foreach (var item in ChatContextViewModelInstance.VectorSearchProperties) {
-                QAChatStartupPropsInstance.ContentItem.VectorDBProperties.Add(item);
+                QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Add(item);
             }
 
-            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
+            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.GetContentItem(), ChatExecuted);
             window.Close();
         });
 

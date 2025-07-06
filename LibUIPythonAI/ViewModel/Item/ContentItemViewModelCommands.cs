@@ -30,6 +30,9 @@ namespace LibUIPythonAI.ViewModel.Item {
                 () => {
                     CommandExecutes.UpdateIndeterminate(false);
                     CommandExecutes.UpdateView();
+                    foreach (var itemViewModel in itemViewModels) {
+                        CommonViewModelCommandExecutes.ReloadFolderCommandExecute(itemViewModel.FolderViewModel, () => { }, () => { });
+                    }
                 });
         });
 

@@ -1,16 +1,11 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.PythonIF;
+using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Model.AutoGen {
     public class AutoGenTool {
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -24,7 +19,7 @@ namespace LibPythonAI.Model.AutoGen {
         // ToJson
         public string ToJson() {
             // Serialize the object to JSON
-            string jsonString = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(this, JsonUtil.JsonSerializerOptions);
             return jsonString;
         }
 
@@ -59,12 +54,12 @@ namespace LibPythonAI.Model.AutoGen {
 
         public void SaveAsync() {
             // APIを呼び出して、設定を保存する
-             PythonExecutor.PythonAIFunctions.UpdateAutoGenToolAsync(this);
+            PythonExecutor.PythonAIFunctions.UpdateAutoGenToolAsync(this);
         }
 
         public void DeleteAsync() {
             // APIを呼び出して、設定を削除する
-             PythonExecutor.PythonAIFunctions.DeleteAutoGenToolAsync(this);
+            PythonExecutor.PythonAIFunctions.DeleteAutoGenToolAsync(this);
         }
 
         // GetAutoGenToolListAsync

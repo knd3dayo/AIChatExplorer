@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using LibPythonAI.Common;
+using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF;
@@ -51,13 +52,13 @@ namespace LibPythonAI.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() { };
+            ChatSettings chatSettings = new() ;
 
 
             try {
                 if (item.IsImage()) {
                     string base64 = item.Base64Image;
-                    string result = await ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
+                    string result = await ChatUtil.ExtractTextFromImage(chatSettings, [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         item.Content = result;
                     }

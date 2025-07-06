@@ -11,7 +11,10 @@ namespace AIChatExplorer.Model.Folders.Browser {
         public RecentFilesItem(ContentFolderEntity folder) : base(folder) { }
 
         public override RecentFilesItem Copy() {
-            return new() { Entity = Entity.Copy() };
+            return new() { 
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
         public override void Save() {
             if (ContentModified || DescriptionModified) {

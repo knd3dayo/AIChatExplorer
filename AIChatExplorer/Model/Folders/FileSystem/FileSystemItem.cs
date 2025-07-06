@@ -19,7 +19,10 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         public FileSystemItem(ContentFolderEntity folder) : base(folder) { }
 
         public override FileSystemItem Copy() {
-            return new() { Entity = Entity.Copy() };
+            return new() { 
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
 
         public override void Save() {

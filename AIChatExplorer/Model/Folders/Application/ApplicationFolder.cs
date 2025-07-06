@@ -7,6 +7,7 @@ using AIChatExplorer.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -51,12 +52,7 @@ namespace AIChatExplorer.Model.Folders.Application {
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string fileName) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            string jsonString = JsonSerializer.Serialize(GetItems<ApplicationItem>(isSync: false), jsonSerializerOptions);
-
+            string jsonString = JsonSerializer.Serialize(GetItems<ApplicationItem>(isSync: false), JsonUtil.JsonSerializerOptions);
             System.IO.File.WriteAllText(fileName, jsonString);
 
         }

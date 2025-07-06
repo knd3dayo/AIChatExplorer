@@ -11,7 +11,10 @@ namespace AIChatExplorer.Model.Folders.Browser {
         public EdgeBrowseHistoryItem(ContentFolderEntity folder) : base(folder) { }
 
         public override EdgeBrowseHistoryItem Copy() {
-            return new() { Entity = Entity.Copy() };
+            return new() { 
+                Entity = Entity.Copy(),
+                ChatSettings = ChatSettings
+            };
         }
         public override void Save() {
             if (ContentModified || DescriptionModified) {

@@ -1,3 +1,4 @@
+using LibPythonAI.Common;
 using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Folder;
 using LibPythonAI.Model.VectorDB;
@@ -66,6 +67,21 @@ namespace LibPythonAI.PythonIF.Request {
                 { "session_token", SessionToken },
             };
             return dict;
+        }
+        // FromDict
+        public static AutoGenPropsRequest FromDict(Dictionary<string, dynamic> dict) {
+            return new AutoGenPropsRequest(new AutoGenProperties {
+                AutoGenDBPath = dict.GetValueOrDefault("autogen_db_path", PythonAILibManager.Instance.ConfigParams.GetMainDBPath()),
+                VenvPath = dict.GetValueOrDefault("venv_path", PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv()),
+                WorkDir = dict.GetValueOrDefault("work_dir", PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir()),
+                ToolDir = dict.GetValueOrDefault("tool_dir", PythonAILibManager.Instance.ConfigParams.GetAutoGenToolDir()),
+                ChatType = dict.GetValueOrDefault("chat_type", AutoGenProperties.CHAT_TYPE_GROUP),
+                ChatName = dict.GetValueOrDefault("chat_name", "default"),
+                TerminateMsg = dict.GetValueOrDefault("terminate_msg", "TERMINATE"),
+                MaxMsg = dict.GetValueOrDefault("max_msg", 15),
+                Timeout = dict.GetValueOrDefault("timeout", 120),
+                SessionToken = dict.GetValueOrDefault("session_token", Guid.NewGuid().ToString())
+            });
         }
 
     }

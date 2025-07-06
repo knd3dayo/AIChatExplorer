@@ -28,6 +28,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using LibUINormalChat.View;
+using LibPythonAI.Model.Chat;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class AppViewModelCommandExecutes(Action<bool> updateIndeterminate, Action updateView) : CommonViewModelCommandExecutes(updateIndeterminate, updateView) {
@@ -117,7 +118,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         public static void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
 
-            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
+            QAChatStartupPropsBase qAChatStartupProps = new QAChatStartupProps(itemViewModel.ContentItem);
             AutoGenChatWindow.OpenWindow(qAChatStartupProps);
         }
 
@@ -149,7 +150,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // Command to Open Normal Chat
         public static void OpenNormalChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
-            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(itemViewModel.ContentItem);
+            QAChatStartupPropsBase qAChatStartupProps = new QAChatStartupProps(itemViewModel.ContentItem);
             NormalChatWindow.OpenWindow(qAChatStartupProps);
         }
 
@@ -387,49 +388,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 });
         }
 
-        public static QAChatStartupProps CreateQAChatStartupProps(ContentItemWrapper applicationItem) {
-
-            MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
-            QAChatStartupProps props = new(applicationItem) {
-                // Closeアクション
-                SaveCommand = (item, saveChatHistory) => {
-                    if (!saveChatHistory) {
-                        return;
-                    }
-                    Task.Run(async () => {
-                        ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                        await ContentItemCommands.SaveChatHistoryAsync(item, chatFolder);
-
-                    });
-                },
-                // ExportChatアクション
-                ExportChatCommand = (chatHistory) => {
-
-                    FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folder, finished) => {
-                        if (finished) {
-                            ApplicationItem chatHistoryItem = new(folder.Folder.Entity);
-                            // タイトルを日付 + 元のタイトルにする
-                            chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
-                            if (!string.IsNullOrEmpty(applicationItem.Description)) {
-                                chatHistoryItem.Description += " " + applicationItem.Description;
-                            }
-                            // chatHistoryItemの内容をテキスト化
-                            string chatHistoryText = "";
-                            foreach (var item in chatHistory) {
-                                chatHistoryText += $"--- {item.Role} ---\n";
-                                chatHistoryText += item.ContentWithSources + "\n\n";
-                            }
-                            chatHistoryItem.Content = chatHistoryText;
-                            chatHistoryItem.Save();
-                        }
-                    });
-
-                }
-            };
-
-            return props;
-        }
-        // QAChatButtonCommand
 
     }
 }
