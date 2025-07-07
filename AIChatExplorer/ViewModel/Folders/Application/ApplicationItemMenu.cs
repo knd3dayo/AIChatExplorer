@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
@@ -24,16 +25,14 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             }
             AppCommands = commands;
 
-            Task.Run(async () => {
-                // コンテキストメニューの初期化
-                ContentItemMenuItems = await CreateBasicItemContextMenuItems(applicationItemViewModel);
-                OnPropertyChanged(nameof(ContentItemMenuItems));
-            });
         }
 
         // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems { get; private set; } = [];
-
+        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
+            get {
+                return CreateBasicItemContextMenuItems(ApplicationItemViewModel).Result;
+            }
+        }
         public async Task<MenuItem> CreatePromptMenuItems(ContentItemViewModel itemViewModel) {
 
 

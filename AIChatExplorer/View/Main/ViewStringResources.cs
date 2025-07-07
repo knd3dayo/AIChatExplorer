@@ -5,51 +5,16 @@ namespace AIChatExplorer.View.Main {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
 
-
-        // Name
-        public static string Name { get; set; } = CommonStringResources.Instance.Name;
-        // DisplayText
-        public static string Description { get; set; } = CommonStringResources.Instance.Description;
-
-        // Add
-        public static string Add { get; set; } = CommonStringResources.Instance.Add;
-
-        // OK
-        public static string OK { get; set; } = CommonStringResources.Instance.OK;
-
-        // Cancel
-        public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
-
-        // DeleteAsync
-        public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
-
-        public static string Save { get; set; } = CommonStringResources.Instance.Save;
-
-        // Close
-        public static string Close { get; set; } = CommonStringResources.Instance.Close;
-
-        // Select
-        public static string Select { get; set; } = CommonStringResources.Instance.Select;
-
         // Edit
         public static string Edit { get; set; } = CommonStringResources.Instance.Edit;
-
-
         // Title
         public static string Title { get; set; } = CommonStringResources.Instance.Title;
-
-        // Text
-        public static string Text { get; set; } = CommonStringResources.Instance.Text;
-
         // Pin
         public static string Pin { get; set; } = CommonStringResources.Instance.Pin;
-
         // UpdateDate
         public static string UpdateDate { get; set; } = CommonStringResources.Instance.UpdateDate;
-
         // UpdateDate
         public static string CreateDate { get; set; } = CommonStringResources.Instance.CreateDate;
-
         // VectorizedDate
         public static string VectorizedDate { get; set; } = CommonStringResources.Instance.VectorizedDate;
 
