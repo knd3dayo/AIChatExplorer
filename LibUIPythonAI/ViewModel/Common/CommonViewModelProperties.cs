@@ -18,6 +18,18 @@ namespace LibUIPythonAI.ViewModel.Common {
                 OnPropertyChanged(nameof(MarkdownView));
             }
         }
+
+        // IsShowProperties
+        public bool IsShowProperties {
+            get {
+                return PythonAILibManager.Instance.ConfigParams.IsShowProperties();
+            }
+            set {
+                PythonAILibManager.Instance.ConfigParams.UpdateShowProperties(value);
+                OnPropertyChanged(nameof(IsShowProperties));
+            }
+        }
+
         private  MyTextBox.TextWrappingModeEnum _textWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
         public  MyTextBox.TextWrappingModeEnum TextWrappingMode {
             get { return _textWrappingMode; }

@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;

@@ -26,7 +26,51 @@ namespace LibUINormalChat.ViewModel {
 
             RelatedItemsDataGridViewModel = new(qAChatStartupPropsBase);
 
-            void selectFolderAction(ContentFolderViewModel folder) {
+            RelatedItemTreeViewControlViewModel = new(CreateSelectFolderAction());
+
+            InitDataDefinitions(chatSettings);
+        }
+
+        public override void OnLoadedAction() {
+            base.OnLoadedAction();
+            RelatedItemsDataGridViewModel.MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+        }
+        public RelatedItemDataGridViewModel RelatedItemsDataGridViewModel { get; set; }
+
+        public RelatedItemsTreeViewControlViewModel RelatedItemTreeViewControlViewModel { get; set; }
+
+        // ShowProperties
+        public bool ShowProperties {
+            get {
+                return CommonViewModelProperties.Instance.IsShowProperties;
+            }
+            set {
+                CommonViewModelProperties.Instance.IsShowProperties = value;
+                OnPropertyChanged(nameof(ShowProperties));
+                OnPropertyChanged(nameof(PropertiesVisibility));
+            }
+        }
+
+        // DataDefinitions
+        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
+
+        // PropertiesVisibility
+        public Visibility PropertiesVisibility { get => LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties); }
+
+        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
+            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+
+            ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
+            foreach (PromptItem promptItem in promptItems) {
+                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
+            }
+            return items;
+        }
+
+        private Action<ContentFolderViewModel> CreateSelectFolderAction() {
+            return (folder) => {
                 // フォルダ選択変更時の処理。
                 // 選択したファルダ内のItemがCheckedItemsに含まれている場合はIsCheckedをTrueにする。
                 MainUITask.Run(() => {
@@ -37,10 +81,9 @@ namespace LibUINormalChat.ViewModel {
                     }
                     RelatedItemsDataGridViewModel.Items = folder.Items;
                 });
-
-            }
-            RelatedItemTreeViewControlViewModel = new(selectFolderAction);
-
+            };
+        }
+        private void InitDataDefinitions(ChatSettings chatSettings) {
 
             Task.Run(async () => {
                 // DataDefinitionsが空の場合は、デフォルトのDataDefinitionsを作成
@@ -55,54 +98,9 @@ namespace LibUINormalChat.ViewModel {
                         dataDefinition.IsChecked = savedDataDefinition.IsChecked;
                     }
                 }
-
-
                 // DataDefinitionsの変更を通知
                 OnPropertyChanged(nameof(DataDefinitions));
             });
-        }
-
-        public override void OnLoadedAction() {
-            base.OnLoadedAction();
-            RelatedItemsDataGridViewModel.MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
-
-        }
-        public RelatedItemDataGridViewModel RelatedItemsDataGridViewModel { get; set; }
-
-        public RelatedItemsTreeViewControlViewModel RelatedItemTreeViewControlViewModel { get; set; }
-
-        private bool _showProperties = false;
-        // ShowProperties
-        public bool ShowProperties {
-            get {
-                return _showProperties;
-            }
-            set {
-                _showProperties = value;
-                OnPropertyChanged(nameof(ShowProperties));
-                OnPropertyChanged(nameof(PropertiesVisibility));
-            }
-        }
-
-        // DataDefinitions
-        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
-
-        // PropertiesVisibility
-        public Visibility PropertiesVisibility {
-            get {
-                return LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties);
-            }
-        }
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
-            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
-            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
-
-            ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
-            foreach (PromptItem promptItem in promptItems) {
-                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
-            }
-            return items;
         }
     }
 
@@ -123,39 +121,6 @@ namespace LibUINormalChat.ViewModel {
                 contentItemViewModel.IsChecked = true;
             }
         }
-
-        private void SubscribeToItemsPinnedChanged() {
-            foreach (var item in Items) {
-                item.PropertyChanged -= Item_PropertyChanged;
-                item.PropertyChanged += Item_PropertyChanged;
-            }
-        }
-
-        private void UnsubscribeFromItemsPinnedChanged() {
-            foreach (var item in Items) {
-                item.PropertyChanged -= Item_PropertyChanged;
-            }
-        }
-
-        private void Item_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(ContentItemViewModel.IsChecked)) {
-                // IsCheckedが変更されたときの処理をここに記述
-                // 例: 必要に応じてUI更新や他のロジックを呼び出す
-                if (sender is ContentItemViewModel item) {
-                    // CheckedItemsからIdがマッチする既存アイテムを削除
-                    var delItems = CheckedItems.Where(x => x.ContentItem.Id == item.ContentItem.Id);
-                    foreach (var delItem in delItems.ToList()) {
-                        CheckedItems.Remove(delItem);
-                    }
-                    // IsCheckedがTrueの場合はCheckedItemsに追加
-                    if (item.IsChecked) {
-                        CheckedItems.Add(item);
-                    }
-                }
-
-            }
-        }
-
         // CheckedItems
         public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = [];
 
@@ -179,32 +144,14 @@ namespace LibUINormalChat.ViewModel {
                 OnPropertyChanged(nameof(Items));
             }
         }
-
-        // Itemsコレクションの変更に対応
-        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
-            if (e.OldItems != null) {
-                foreach (ContentItemViewModel item in e.OldItems) {
-                    item.PropertyChanged -= Item_PropertyChanged;
-                }
-            }
-            if (e.NewItems != null) {
-                foreach (ContentItemViewModel item in e.NewItems) {
-                    item.PropertyChanged += Item_PropertyChanged;
-                }
-            }
-        }
-
-
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ContentItemViewModel> _selectedItems = [];
         public ObservableCollection<ContentItemViewModel> SelectedItems {
             get {
                 return _selectedItems;
-
             }
             set {
                 _selectedItems = value;
-
                 OnPropertyChanged(nameof(SelectedItems));
             }
         }
@@ -219,12 +166,12 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-
         public DataGrid? RelatedItemDataSelectionDataGrid {
             get {
                 return ThisUserControl?.FindName("RelatedItemDataSelectionDataGrid") as DataGrid;
             }
         }
+        public TabControl? MyTabControl { get; set; }
 
         public ObservableCollection<ContentItemViewModel> CheckedItemsInRelatedItemDataSelectionDataGrid {
             get {
@@ -241,33 +188,27 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-
         // アイテムが選択された時の処理
-        // ListBoxで、SelectionChangedが発生したときの処理
+        // DataGridで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
+            // routedEventArgsはDataGridの前提。DataGrid以外の場合はキャスト時に例外が発生する。
+            DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+            // 前回選択していたTabIndexを取得
 
-            // DataGridの場合
-            if (routedEventArgs.OriginalSource is DataGrid) {
-                // 前回選択していたTabIndexを取得
-                int lastSelectedIndex = SelectedItem?.SelectedTabIndex ?? 0;
+            int lastSelectedIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
-                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-
-                // SelectedItemsをMainWindowViewModelにセット
-                SelectedItems.Clear();
-                foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
-                    SelectedItems.Add(item);
-                }
-
-                // SelectedTabIndexを更新する処理
-                if (SelectedItem != null) {
-                    OnPropertyChanged(nameof(SelectedItem));
-                    SelectedItem.SelectedTabIndex = lastSelectedIndex;
-                }
-
-                UpdateView();
+            // SelectedItemsをMainWindowViewModelにセット
+            SelectedItems.Clear();
+            foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
+                SelectedItems.Add(item);
             }
 
+            // SelectedTabIndexを更新する処理
+            if (SelectedItem != null) {
+                OnPropertyChanged(nameof(SelectedItem));
+                SelectedItem.SelectedTabIndex = lastSelectedIndex;
+            }
+            UpdateView();
         });
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
@@ -283,16 +224,14 @@ namespace LibUINormalChat.ViewModel {
             }
         });
 
-
         // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             Items.Clear();
         });
 
-
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-
             if (SelectedItem == null) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             ContentFolderViewModel folderViewModel = SelectedItem.FolderViewModel;
@@ -318,9 +257,6 @@ namespace LibUINormalChat.ViewModel {
 
         });
 
-
-        public TabControl? MyTabControl { get; set; }
-
         public void UpdateView() {
             // 前回選択していたTabIndexを取得
             int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
@@ -343,6 +279,51 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
+        // Itemsコレクションの変更に対応
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
+            if (e.OldItems != null) {
+                foreach (ContentItemViewModel item in e.OldItems) {
+                    item.PropertyChanged -= Item_PropertyChanged;
+                }
+            }
+            if (e.NewItems != null) {
+                foreach (ContentItemViewModel item in e.NewItems) {
+                    item.PropertyChanged += Item_PropertyChanged;
+                }
+            }
+        }
+
+        private void SubscribeToItemsPinnedChanged() {
+            foreach (var item in Items) {
+                item.PropertyChanged -= Item_PropertyChanged;
+                item.PropertyChanged += Item_PropertyChanged;
+            }
+        }
+        private void UnsubscribeFromItemsPinnedChanged() {
+            foreach (var item in Items) {
+                item.PropertyChanged -= Item_PropertyChanged;
+            }
+        }
+
+        private void Item_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(ContentItemViewModel.IsChecked)) {
+                // IsCheckedが変更されたときの処理をここに記述
+                // 例: 必要に応じてUI更新や他のロジックを呼び出す
+                if (sender is ContentItemViewModel item) {
+                    // CheckedItemsからIdがマッチする既存アイテムを削除
+                    var delItems = CheckedItems.Where(x => x.ContentItem.Id == item.ContentItem.Id);
+                    foreach (var delItem in delItems.ToList()) {
+                        CheckedItems.Remove(delItem);
+                    }
+                    // IsCheckedがTrueの場合はCheckedItemsに追加
+                    if (item.IsChecked) {
+                        CheckedItems.Add(item);
+                    }
+                }
+
+            }
+        }
+
     }
     public class RelatedItemsTreeViewControlViewModel : CommonViewModelBase {
 
@@ -354,10 +335,11 @@ namespace LibUINormalChat.ViewModel {
             SelectedFolder = FolderViewModels[0];
         }
 
+        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; }
+
         public Action<bool> UpdateIndeterminateAction { get; set; }
 
         public Action<ContentFolderViewModel> SelectFolderAction { get; set; } = (folder) => { };
-
 
         // 選択中のフォルダ
         private ContentFolderViewModel? _selectedFolder;
@@ -380,9 +362,6 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-        public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; }
-
-
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
@@ -390,11 +369,5 @@ namespace LibUINormalChat.ViewModel {
             ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
             SelectedFolder = applicationItemFolderViewModel;
         });
-
-
-
     }
-
-
-
 }
