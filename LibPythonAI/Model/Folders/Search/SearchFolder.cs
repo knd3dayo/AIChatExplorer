@@ -1,7 +1,7 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
-using LibUIPythonAI.Resource;
+using LibPythonAI.Resources;
 
 namespace AIChatExplorer.Model.Folders.Search {
     public partial class SearchFolder : ContentFolderWrapper {
@@ -27,7 +27,7 @@ namespace AIChatExplorer.Model.Folders.Search {
 
 
         // アイテム LiteDBには保存しない。
-        public  async Task<List<ContentItemWrapper>> GetItems(bool isSync = true) {
+        public async Task<List<ContentItemWrapper>> GetItems(bool isSync = true) {
             List<ContentItemWrapper> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
@@ -74,13 +74,13 @@ namespace AIChatExplorer.Model.Folders.Search {
 
 
         public override async Task<string> GetStatusText() {
-            string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
+            string message = $"{PythonAILibStringResources.Instance.Folder}[{FolderName}]";
             // folderが検索フォルダの場合
             SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合
             if (searchCondition != null && !searchCondition.IsEmpty()) {
-                message += $" {CommonStringResources.Instance.SearchCondition}[";
+                message += $" {PythonAILibStringResources.Instance.SearchCondition}[";
                 message += searchCondition.ToStringSearchCondition();
                 message += "]";
             }

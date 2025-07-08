@@ -52,7 +52,7 @@ namespace LibPythonAI.Model.AutoGen {
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
                 { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id },
-                { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id },
+                { "chat_history_folder_id" , FolderManagerBase.ChatRootFolder.Id },
                 { "session_token", SessionToken },
             };
             return dict;

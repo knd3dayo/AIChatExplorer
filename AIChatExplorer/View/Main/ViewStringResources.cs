@@ -1,3 +1,4 @@
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 
 namespace AIChatExplorer.View.Main {
@@ -34,7 +35,7 @@ namespace AIChatExplorer.View.Main {
         public static string Mode { get; set; } = CommonStringResources.Instance.ChatMode;
 
         // ImageChat
-        public static string ImageChat { get; set; } = CommonStringResources.Instance.ImageChat;
+        public static string ImageChat { get; set; } = PythonAILibStringResources.Instance.ImageChat;
 
         // NormalChat
         public static string MergeChat { get; set; } = CommonStringResources.Instance.MergeChat;

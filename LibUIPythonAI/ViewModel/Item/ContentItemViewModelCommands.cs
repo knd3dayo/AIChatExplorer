@@ -5,7 +5,6 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Common;
-using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Item {
     public class ContentItemViewModelCommands : ObservableObject {

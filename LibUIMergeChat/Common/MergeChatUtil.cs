@@ -6,7 +6,7 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
-using WpfAppCommon.Model;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace LibUIMergeChat.Common {
     public class MergeChatUtil {

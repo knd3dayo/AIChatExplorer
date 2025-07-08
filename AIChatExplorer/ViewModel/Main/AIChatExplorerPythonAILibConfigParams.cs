@@ -5,7 +5,7 @@ using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
 
-namespace AIChatExplorer.Model.Main {
+namespace AIChatExplorer.ViewModel.Main {
     public class AIChatExplorerPythonAILibConfigParams : IPythonAILibConfigParams {
 
         public string GetHttpsProxy() {

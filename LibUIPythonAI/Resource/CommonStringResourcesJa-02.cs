@@ -407,13 +407,6 @@ namespace LibUIPythonAI.Resource {
         public override string Tool { get; } = "ツール";
         // OpenAIチャット
         public override string OpenAIChat { get; } = "OpenAIチャット";
-        // イメージチャット
-        public override string ImageChat { get; } = "イメージチャット";
-
-        // イメージチャット 英語名
-        public override string ImageChatEnglish { get; } = "ImageChat";
-
-
 
         // マージチャット
         public override string MergeChat { get; } = "マージチャット";
@@ -430,45 +423,6 @@ namespace LibUIPythonAI.Resource {
         // Monitor
         public override string Monitor { get; } = "監視";
 
-
-        // ローカルファイルシステム
-        public override string FileSystem { get; } = "ファイルシステム";
-
-        // ローカルファイルシステム 英語名
-        public override string FileSystemEnglish { get; } = "FileSystem";
-
-        // Shortcut
-        public override string Shortcut { get; } = "ショートカット";
-
-        // Shortcut 英語名
-        public override string ShortcutEnglish { get; } = "Shortcut";
-
-        // Outlook
-        public override string Outlook { get; } = "Outlook";
-
-        // Outlook 英語名
-        public override string OutlookEnglish { get; } = "Outlook";
-
-        // Edgeのブラウズ履歴
-        public override string EdgeBrowseHistory { get; } = "Edgeの閲覧履歴";
-
-        // Edgeのブラウズ履歴 英語名
-        public override string EdgeBrowseHistoryEnglish { get; } = "EdgeBrowseHistory";
-
-        // RecentFiles
-        public override string RecentFiles { get; } = "最近のファイル";
-
-        // ClipboardHistory
-        public override string ClipboardHistory { get; } = "クリップボード履歴";
-
-        // ScreenShotHistory
-        public override string ScreenShotHistory { get; } = "スクリーンショット履歴";
-
-        // IntegratedMonitorHistory
-        public override string IntegratedMonitorHistory { get; } = "統合モニター履歴";
-
-        // RecentFiles 英語名
-        public override string RecentFilesEnglish { get; } = "RecentFiles";
 
         #endregion
     }

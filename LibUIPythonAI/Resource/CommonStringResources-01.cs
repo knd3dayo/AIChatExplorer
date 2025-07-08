@@ -1,4 +1,4 @@
-using WpfAppCommon.Model;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace LibUIPythonAI.Resource {
     public  partial class CommonStringResources  {
@@ -8,41 +8,6 @@ namespace LibUIPythonAI.Resource {
 
         // Other Prompts
         public virtual string OtherPrompts { get; } = "Other Prompts";
-
-        // Search Folder (English name)
-        public virtual string SearchFolderEnglish { get; } = "SearchFolder";
-
-        // Edge Browse History (English name)
-        public virtual string EdgeBrowseHistoryEnglish { get; } = "EdgeBrowseHistory";
-
-
-        // RecentFiles (English name)
-        public virtual string RecentFilesEnglish { get; } = "RecentFiles";
-
-        // Clipboard History (English name)
-        public virtual string ClipboardHistoryEnglish { get; } = "ClipboardHistory";
-
-        // ScreenShot History (English name)
-        public virtual string ScreenShotHistoryEnglish { get; } = "ScreenShotHistory";
-
-        // Integrated Monitor (English name)
-        public virtual string IntegratedMonitorHistoryEnglish { get; } = "IntegratedMonitorHistory";
-
-        // Application (English name)
-        public virtual string ApplicationEnglish { get; } = "Application";
-
-        // Image Chat (English name)
-        public virtual string ImageChatEnglish { get; } = "ImageChat";
-
-        // Local File System (English name)
-        public virtual string FileSystemEnglish { get; } = "FileSystem";
-
-        // Shortcut (English name)
-        public virtual string ShortcutEnglish { get; } = "Shortcut";
-
-        // Outlook (English name)
-        public virtual string OutlookEnglish { get; } = "Outlook";
-
 
         // Version Information
         public virtual string VersionInformation { get; } = "Version Information";
@@ -652,8 +617,7 @@ namespace LibUIPythonAI.Resource {
         // 全フォルダ
         public virtual string AllFolders { get; } = "All folders";
 
-        // 検索条件
-        public virtual string SearchCondition { get; } = "Search condition";
+
 
         public virtual string SearchTargetFolder { get; } = "Search target folder";
         public virtual string Exclude { get; } = "Exclude";
@@ -724,7 +688,6 @@ namespace LibUIPythonAI.Resource {
         public virtual string Copy { get; } = "Copy";
 
         // --- ApplicationFolderViewModel ---
-        public virtual string AutoProcessingIsSet { get; } = "Auto processing is set";
         public virtual string FolderEdited { get; } = "Folder edited";
         public virtual string Reloaded { get; } = "Reloaded";
         public virtual string SelectFilePlease { get; } = "Select file, please";
@@ -772,7 +735,6 @@ namespace LibUIPythonAI.Resource {
         // --- ListPythonScriptWindowViewModel ---
         public virtual string Execute { get; } = "Execute";
         // --- SearchWindowViewModel ---
-        public virtual string SearchFolder { get; } = "Search folder";
         public virtual string SearchConditionRuleIsNull { get; } = "Search condition rule is null";
         public virtual string NoSearchConditions { get; } = "No search conditions";
 
@@ -878,8 +840,6 @@ namespace LibUIPythonAI.Resource {
 
         public virtual string Statistics { get; } = "Statistics";
 
-        public virtual string Application { get; } = "Application";
-        public virtual string ChatHistory { get; } = "Chat History";
         public virtual string ChatItem { get; } = "Chat Item";
         public virtual string ExportTheFollowingItems { get; } = "Export the Following Items";
         public virtual string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";

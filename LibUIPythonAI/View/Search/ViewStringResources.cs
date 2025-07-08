@@ -1,3 +1,4 @@
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.View.Search {
@@ -53,7 +54,7 @@ namespace LibUIPythonAI.View.Search {
 
 
         // SearchCondition
-        public static string SearchCondition { get; set; } = CommonStringResources.Instance.SearchCondition;
+        public static string SearchCondition { get; set; } = PythonAILibStringResources.Instance.SearchCondition;
 
         // SearchTargetFolder
         public static string SearchTargetFolder { get; set; } = CommonStringResources.Instance.SearchTargetFolder;

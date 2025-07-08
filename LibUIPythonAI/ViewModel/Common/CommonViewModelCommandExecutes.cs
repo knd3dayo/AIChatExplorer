@@ -16,7 +16,6 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
-using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Common {
     public abstract class CommonViewModelCommandExecutes {

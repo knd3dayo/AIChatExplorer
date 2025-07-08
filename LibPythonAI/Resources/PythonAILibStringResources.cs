@@ -35,6 +35,79 @@ namespace LibPythonAI.Resources {
             }
         }
 
+
+        #region LibUIPythonAIから移動
+        public virtual string Application { get; } = "Application";
+        public virtual string ChatHistory { get; } = "Chat History";
+        public virtual string SearchFolder { get; } = "Search folder";
+        // BitmapImage Chat
+        public virtual string ImageChat { get; } = "Image Chat";
+        // Local FileSystem
+        public virtual string FileSystem { get; } = "Local FileSystem";
+
+        // Shortcut
+        public virtual string Shortcut { get; } = "Shortcut";
+
+        // Outlook
+        public virtual string Outlook { get; } = "Outlook";
+
+        // EdgeBrowseHistory
+        public virtual string EdgeBrowseHistory { get; } = "Edge Browse History";
+
+        // RecentFiles
+        public virtual string RecentFiles { get; } = "Recent Files";
+
+        // ClipboardHistory
+        public virtual string ClipboardHistory { get; } = "Clipboard History";
+
+        // ScreenShotHistory
+        public virtual string ScreenShotHistory { get; } = "Screen Shot History";
+
+        // IntegratedMonitorHistory
+        public virtual string IntegratedMonitorHistory { get; } = "Integrated Monitor History";
+
+        // Search Folder (English name)
+        public virtual string SearchFolderEnglish { get; } = "SearchFolder";
+
+        // Edge Browse History (English name)
+        public virtual string EdgeBrowseHistoryEnglish { get; } = "EdgeBrowseHistory";
+
+
+        // RecentFiles (English name)
+        public virtual string RecentFilesEnglish { get; } = "RecentFiles";
+
+        // Clipboard History (English name)
+        public virtual string ClipboardHistoryEnglish { get; } = "ClipboardHistory";
+
+        // ScreenShot History (English name)
+        public virtual string ScreenShotHistoryEnglish { get; } = "ScreenShotHistory";
+
+        // Integrated Monitor (English name)
+        public virtual string IntegratedMonitorHistoryEnglish { get; } = "IntegratedMonitorHistory";
+
+        // Application (English name)
+        public virtual string ApplicationEnglish { get; } = "Application";
+
+        // Image Chat (English name)
+        public virtual string ImageChatEnglish { get; } = "ImageChat";
+
+        // Local File System (English name)
+        public virtual string FileSystemEnglish { get; } = "FileSystem";
+
+        // Shortcut (English name)
+        public virtual string ShortcutEnglish { get; } = "Shortcut";
+
+        // Outlook (English name)
+        public virtual string OutlookEnglish { get; } = "Outlook";
+
+        public virtual string AutoProcessingIsSet { get; } = "Auto processing is set";
+
+        // 検索条件
+        public virtual string SearchCondition { get; } = "Search condition";
+        #endregion
+
+
+
         // PythonNotFound
         public virtual string PythonNotFound { get; } = "Python not found. Please check the Python path:";
 
@@ -173,8 +246,6 @@ namespace LibPythonAI.Resources {
         // GetTokenCountExecute
         public virtual string GetTokenCountExecute { get; } = "Execute GetTokenCount";
 
-        // Chat history
-        public virtual string ChatHistory { get; } = "Chat history";
 
         // Chat history (English)
         public virtual string ChatHistoryEnglish { get; } = "Chat history (English)";

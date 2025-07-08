@@ -1,7 +1,7 @@
 using System.Data.SQLite;
 using System.IO;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.ViewModel.Settings;
+using LibPythonAI.Common;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
@@ -10,7 +10,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryFolder : ApplicationFolder {
 
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
-        public static string CopiedHistoryFilePath = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "edge");
+        public static string CopiedHistoryFilePath = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetAppDataPath(), "edge");
         // コンストラクタ
         public EdgeBrowseHistoryFolder() : base() {
             IsAutoProcessEnabled = false;

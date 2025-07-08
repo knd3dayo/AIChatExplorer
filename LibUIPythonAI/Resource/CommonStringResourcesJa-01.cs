@@ -498,8 +498,7 @@ namespace LibUIPythonAI.Resource {
         // 検索対象
         public override string SearchTarget { get; } = "検索対象";
 
-        // 検索条件
-        public override string SearchCondition { get; } = "検索条件";
+
 
         // 全フォルダ
         public override string AllFolders { get; } = "全フォルダ";
@@ -620,8 +619,6 @@ namespace LibUIPythonAI.Resource {
         public override string RequestParameterJson { get; } = "リクエストパラメーター(JSON)";
 
         // --- ApplicationFolderViewModel ---
-        // 自動処理が設定されています
-        public override string AutoProcessingIsSet { get; } = "自動処理が設定されています";
 
         // フォルダを編集しました
         public override string FolderEdited { get; } = "フォルダを編集しました";
@@ -723,11 +720,7 @@ namespace LibUIPythonAI.Resource {
         public override string ConfirmDelete { get; } = "を削除しますか？";
 
         // --- SearchWindowViewModel ---
-        // 検索フォルダ
-        public override string SearchFolder { get; } = "検索フォルダ";
 
-        // 検索フォルダ 英語名
-        public override string SearchFolderEnglish { get; } = "SearchFolder";
 
 
         // SearchConditionRuleがNullです
@@ -865,11 +858,6 @@ namespace LibUIPythonAI.Resource {
         public override string Statistics { get; } = "統計";
 
         // --- ApplicationFolder.cs ---
-        // クリップボード
-        public override string Application { get; } = "アプリケーション";
-
-        // チャット履歴
-        public override string ChatHistory { get; } = "チャット履歴";
 
         // --- EditChatItem ---
         // チャットアイテム
@@ -946,7 +934,6 @@ namespace LibUIPythonAI.Resource {
         // サマリー
         public override string Summary { get; } = "サマリー";
 
-        // ApplicationEnglish
-        public override string ApplicationEnglish { get; } = "Application";
+
     }
 }

@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibUIPythonAI.Utils;
 
-namespace WpfAppCommon.Model {
+namespace LibUIPythonAI.ViewModel.Common {
     public class StatusText : ObservableObject {
 
         private static StatusText? _instance;

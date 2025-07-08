@@ -1,3 +1,4 @@
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 
 namespace LibUIImageChat.View {
@@ -34,7 +35,7 @@ namespace LibUIImageChat.View {
         public static string ScreenShotCheckPromptWindowTitle => CommonStringResources.ScreenShotCheckPromptWindowTitle;
 
         // ImageChat
-        public static string ImageChat => CommonStringResources.ImageChat;
+        public static string ImageChat => PythonAILibStringResources.Instance.ImageChat;
 
         // SettingItem
         public static string SettingItem => CommonStringResources.SettingItem;

@@ -1,3 +1,4 @@
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.View.Chat {
@@ -35,7 +36,7 @@ namespace LibUIPythonAI.View.Chat {
         public static string EnterYourQuestionHere => CommonStringResources.Instance.EnterYourQuestionHere;
 
         // ImageChat
-        public static string ImageChat => CommonStringResources.Instance.ImageChat;
+        public static string ImageChat => PythonAILibStringResources.Instance.ImageChat;
 
         // File
         public static string File => CommonStringResources.Instance.File;

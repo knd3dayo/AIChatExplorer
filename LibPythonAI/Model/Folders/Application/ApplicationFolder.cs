@@ -2,8 +2,8 @@ using System.Text.Json;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.Application {
@@ -54,11 +54,11 @@ namespace AIChatExplorer.Model.Folders.Application {
 
         // ステータス用のテキストを作成
         public override async Task<string> GetStatusText() {
-            string message = $"{CommonStringResources.Instance.Folder}[{FolderName}]";
+            string message = $"{PythonAILibStringResources.Instance.Folder}[{FolderName}]";
             // AutoProcessRuleが設定されている場合
             var rules = await AutoProcessRuleController.GetAutoProcessRules(this);
             if (rules.Count > 0) {
-                message += $" {CommonStringResources.Instance.AutoProcessingIsSet}[";
+                message += $" {PythonAILibStringResources.Instance.AutoProcessingIsSet}[";
                 foreach (AutoProcessRule item in rules) {
                     message += item.RuleName + " ";
                 }

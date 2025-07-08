@@ -1,6 +1,5 @@
 using System.IO;
 using System.Windows;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;

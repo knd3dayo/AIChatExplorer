@@ -86,9 +86,6 @@ namespace LibUIPythonAI.Resource {
         public virtual string Tool { get; } = "Tool";
         // OpenAI Chat
         public virtual string OpenAIChat { get; } = "OpenAI Chat";
-        // BitmapImage Chat
-        public virtual string ImageChat { get; } = "Image Chat";
-
         // マージチャット
         public virtual string MergeChat { get; } = "Merge Chat";
 
@@ -103,30 +100,6 @@ namespace LibUIPythonAI.Resource {
 
         // Monitor
         public virtual string Monitor { get; } = "Monitor";
-
-        // Local FileSystem
-        public virtual string FileSystem { get; } = "Local FileSystem";
-
-        // Shortcut
-        public virtual string Shortcut { get; } = "Shortcut";
-
-        // Outlook
-        public virtual string Outlook { get; } = "Outlook";
-
-        // EdgeBrowseHistory
-        public virtual string EdgeBrowseHistory { get; } = "Edge Browse History";
-
-        // RecentFiles
-        public virtual string RecentFiles { get; } = "Recent Files";
-
-        // ClipboardHistory
-        public virtual string ClipboardHistory { get; } = "Clipboard History";
-
-        // ScreenShotHistory
-        public virtual string ScreenShotHistory { get; } = "Screen Shot History";
-
-        // IntegratedMonitorHistory
-        public virtual string IntegratedMonitorHistory { get; } = "Integrated Monitor History";
 
         // ProxyURL
         public virtual string ProxyURL { get; } = "Proxy Server URL";

@@ -10,40 +10,40 @@ using AIChatExplorer.Model.Folders.ShortCut;
 using LibPythonAI.Common;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.Resource;
+using LibPythonAI.Resources;
 
 namespace AIChatExplorer.Model.Folders {
-    public class FolderManager : LibPythonAI.Model.Folders.Base.FolderManager {
+    public class FolderManager : LibPythonAI.Model.Folders.Base.FolderManagerBase {
 
-        public static readonly string APPLICATION_ROOT_FOLDER_NAME = CommonStringResources.Instance.Application;
-        public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
-        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
-        public static readonly string SHORTCUT_ROOT_FOLDER_NAME = CommonStringResources.Instance.Shortcut;
-        public static readonly string OUTLOOK_ROOT_FOLDER_NAME = CommonStringResources.Instance.Outlook;
-        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.EdgeBrowseHistory;
-        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = CommonStringResources.Instance.RecentFiles;
-        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.ClipboardHistory;
-        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.ScreenShotHistory;
-        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME = CommonStringResources.Instance.IntegratedMonitorHistory;
+        public static readonly string APPLICATION_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Application;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.SearchFolder;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ImageChat;
+        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.FileSystem;
+        public static readonly string SHORTCUT_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Shortcut;
+        public static readonly string OUTLOOK_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Outlook;
+        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.EdgeBrowseHistory;
+        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.RecentFiles;
+        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ClipboardHistory;
+        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ScreenShotHistory;
+        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.IntegratedMonitorHistory;
 
 
         // 英語名
-        public static readonly string APPLICATION_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ApplicationEnglish;
-        public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.SearchFolderEnglish;
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ImageChatEnglish;
-        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.FileSystemEnglish;
-        public static readonly string SHORTCUT_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ShortcutEnglish;
-        public static readonly string OUTLOOK_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.OutlookEnglish;
-        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.EdgeBrowseHistoryEnglish;
-        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.RecentFilesEnglish;
-        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ClipboardHistoryEnglish;
-        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.ScreenShotHistoryEnglish;
-        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN = CommonStringResources.Instance.IntegratedMonitorHistoryEnglish;
+        public static readonly string APPLICATION_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ApplicationEnglish;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.SearchFolderEnglish;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ImageChatEnglish;
+        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.FileSystemEnglish;
+        public static readonly string SHORTCUT_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ShortcutEnglish;
+        public static readonly string OUTLOOK_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.OutlookEnglish;
+        public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.EdgeBrowseHistoryEnglish;
+        public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.RecentFilesEnglish;
+        public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ClipboardHistoryEnglish;
+        public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ScreenShotHistoryEnglish;
+        public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.IntegratedMonitorHistoryEnglish;
 
 
         // 言語変更時にルートフォルダ名を変更する
-        public static void ChangeRootFolderNames(CommonStringResources toRes) {
+        public static void ChangeRootFolderNames(PythonAILibStringResources toRes) {
             using PythonAILibDBContext db = new();
             // ClipboardRootFolder
 

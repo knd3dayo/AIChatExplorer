@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using LibPythonAI.Utils.Common;
+using LibUIPythonAI.ViewModel.Common;
 using NLog;
-using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.Utils {
     public class LogWrapperAction : ILogWrapperAction {

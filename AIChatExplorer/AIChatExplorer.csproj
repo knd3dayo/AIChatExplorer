@@ -10,13 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Model\AutoProcess\**" />
     <Compile Remove="ViewModel\VectorDB\**" />
-    <EmbeddedResource Remove="Model\AutoProcess\**" />
     <EmbeddedResource Remove="ViewModel\VectorDB\**" />
-    <None Remove="Model\AutoProcess\**" />
     <None Remove="ViewModel\VectorDB\**" />
-    <Page Remove="Model\AutoProcess\**" />
     <Page Remove="ViewModel\VectorDB\**" />
   </ItemGroup>
 

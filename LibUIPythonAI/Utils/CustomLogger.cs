@@ -1,6 +1,6 @@
 using System.Windows;
+using LibUIPythonAI.ViewModel.Common;
 using NLog;
-using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.Utils {
     public class CustomLogger : Logger {

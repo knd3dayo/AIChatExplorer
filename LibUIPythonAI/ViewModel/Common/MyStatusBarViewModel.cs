@@ -5,7 +5,6 @@ using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Common;
-using WpfAppCommon.Model;
 
 namespace LibUIPythonAI.ViewModel.Common {
     public class MyStatusBarViewModel : ObservableObject {

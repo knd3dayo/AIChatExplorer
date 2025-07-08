@@ -1,5 +1,6 @@
 using LibUIPythonAI.Resource;
 using LibUINormalChat.Resources;
+using LibPythonAI.Resources;
 
 namespace LibUINormalChat.View {
     public class ViewStringResources {
@@ -34,7 +35,7 @@ namespace LibUINormalChat.View {
         public static string EnterYourQuestionHere => CommonStringResources.Instance.EnterYourQuestionHere;
 
         // ImageChat
-        public static string ImageChat => CommonStringResources.Instance.ImageChat;
+        public static string ImageChat => PythonAILibStringResources.Instance.ImageChat;
 
         // File
         public static string File => CommonStringResources.Instance.File;

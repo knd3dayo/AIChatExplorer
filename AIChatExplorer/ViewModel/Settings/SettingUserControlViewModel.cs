@@ -13,7 +13,7 @@ using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using WpfAppCommon.Model;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>
@@ -667,7 +667,7 @@ namespace AIChatExplorer.ViewModel.Settings {
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             if (Save()) {
                 //追加設定.言語を変更
-                FolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
+                FolderManager.ChangeRootFolderNames(PythonAILibStringResources.Instance);
                 LogWrapper.Info(CommonStringResources.Instance.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(CommonStringResources.Instance.RestartAppToApplyChanges, CommonStringResources.Instance.Information, MessageBoxButton.OK);

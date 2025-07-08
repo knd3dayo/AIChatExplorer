@@ -3,6 +3,66 @@ using LibPythonAI.Common;
 namespace LibPythonAI.Resources {
     public class PythonAILibStringResourcesJa: PythonAILibStringResources {
 
+        #region LibUIPythonAIからコピー
+        // クリップボード
+        public override string Application { get; } = "アプリケーション";
+
+        // チャット履歴
+        public override string ChatHistory { get; } = "チャット履歴";
+
+        // 検索フォルダ
+        public override string SearchFolder { get; } = "検索フォルダ";
+
+        // 検索フォルダ 英語名
+        public override string SearchFolderEnglish { get; } = "SearchFolder";
+
+        // イメージチャット
+        public override string ImageChat { get; } = "イメージチャット";
+
+        // イメージチャット 英語名
+        public override string ImageChatEnglish { get; } = "ImageChat";
+
+        // ローカルファイルシステム
+        public override string FileSystem { get; } = "ファイルシステム";
+
+        // ローカルファイルシステム 英語名
+        public override string FileSystemEnglish { get; } = "FileSystem";
+
+        // Shortcut
+        public override string Shortcut { get; } = "ショートカット";
+
+        // Shortcut 英語名
+        public override string ShortcutEnglish { get; } = "Shortcut";
+
+        // Outlook
+        public override string Outlook { get; } = "Outlook";
+
+        // Outlook 英語名
+        public override string OutlookEnglish { get; } = "Outlook";
+
+        // Edgeのブラウズ履歴
+        public override string EdgeBrowseHistory { get; } = "Edgeの閲覧履歴";
+
+        // Edgeのブラウズ履歴 英語名
+        public override string EdgeBrowseHistoryEnglish { get; } = "EdgeBrowseHistory";
+
+        // RecentFiles
+        public override string RecentFiles { get; } = "最近のファイル";
+
+        // ClipboardHistory
+        public override string ClipboardHistory { get; } = "クリップボード履歴";
+
+        // ScreenShotHistory
+        public override string ScreenShotHistory { get; } = "スクリーンショット履歴";
+
+        // IntegratedMonitorHistory
+        public override string IntegratedMonitorHistory { get; } = "統合モニター履歴";
+
+        // 自動処理が設定されています
+        public override string AutoProcessingIsSet { get; } = "自動処理が設定されています";
+        // 検索条件
+        public override string SearchCondition { get; } = "検索条件";
+        #endregion
 
         // PythonAILibManagerIsNotInitialized
         public override string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManagerが初期化されていません";
@@ -87,9 +147,6 @@ namespace LibPythonAI.Resources {
 
         // OpenAI実行
         public override string OpenAIExecute { get; } = "OpenAI実行";
-
-        // チャット履歴
-        public override string ChatHistory { get; } = "チャット履歴";
 
         // チャット履歴(英語)
         public override string ChatHistoryEnglish { get; } = "ChatHistory";

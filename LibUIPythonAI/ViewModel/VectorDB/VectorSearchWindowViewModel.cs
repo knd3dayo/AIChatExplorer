@@ -6,7 +6,7 @@ using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using WpfAppCommon.Model;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : CommonViewModelBase {

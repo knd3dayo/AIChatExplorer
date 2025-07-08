@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Main;
 using LibPythonAI.Common;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
@@ -10,7 +9,7 @@ using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using WpfAppCommon.Model;
+using LibUIPythonAI.ViewModel.Common;
 
 namespace AIChatExplorer.Model.Folders.ScreenShot {
     /// <summary>
@@ -38,7 +37,7 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
         public ApplicationFolder? Folder { get; set; }
 
         public int Interval { get; set; } = 10; // Interval in seconds for taking screenshots
-        public void Start(ApplicationFolder folder, int interval,  Action<ContentItemWrapper> afterClipboardChanged) {
+        public void Start(ApplicationFolder folder, int interval, Action<ContentItemWrapper> afterClipboardChanged) {
             AfterTakeScreenShot = afterClipboardChanged;
             // Enable clipboard monitoring
             IsScreenMonitorEnabled = true;

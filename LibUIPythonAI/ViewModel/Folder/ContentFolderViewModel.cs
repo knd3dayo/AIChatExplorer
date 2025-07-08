@@ -6,7 +6,6 @@ using LibUIPythonAI.Utils;
 using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Item;
-using WpfAppCommon.Model;
 
 
 namespace LibUIPythonAI.ViewModel.Folder {

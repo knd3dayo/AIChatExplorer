@@ -5,11 +5,11 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
-using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.Utils;
+using LibPythonAI.Utils.Common;
 using WK.Libraries.SharpClipboardNS;
-using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.Model.Folders.ClipboardHistory {
