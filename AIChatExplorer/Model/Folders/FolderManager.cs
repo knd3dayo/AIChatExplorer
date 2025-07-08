@@ -12,8 +12,8 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.Resource;
 
-namespace AIChatExplorer.Model.Main {
-    public class FolderManager : LibPythonAI.Model.Folder.FolderManager {
+namespace AIChatExplorer.Model.Folders {
+    public class FolderManager : LibPythonAI.Model.Folders.Base.FolderManager {
 
         public static readonly string APPLICATION_ROOT_FOLDER_NAME = CommonStringResources.Instance.Application;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;

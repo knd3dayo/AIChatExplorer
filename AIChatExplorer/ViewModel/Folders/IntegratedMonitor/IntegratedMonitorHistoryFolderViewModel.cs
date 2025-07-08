@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
@@ -10,6 +8,8 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
+using AIChatExplorer.Model.Folders.Application;
+using AIChatExplorer.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
     public class IntegratedMonitorHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {

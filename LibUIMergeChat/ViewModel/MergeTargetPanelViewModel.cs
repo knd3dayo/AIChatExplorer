@@ -14,17 +14,12 @@ using LibUIPythonAI.ViewModel.Item;
 namespace LibUIMergeChat.ViewModel {
     public class MergeTargetPanelViewModel : CommonViewModelBase {
 
-        private bool _initialized = false;
-
         public MergeTargetPanelViewModel(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems, Action<bool> updateIndeterminate) {
             SelectedItems = selectedItems;
-
             MergeTargetDataGridViewControlViewModel = new(updateIndeterminate);
-
             Action<ContentFolderViewModel> selectFolderAction = (folder) => {
                 MergeTargetDataGridViewControlViewModel.Items = folder.Items;
             };
-
 
             MergeTargetTreeViewControlViewModel = new(selectFolderAction, updateIndeterminate) {
                 // アイテムの選択処理
@@ -34,7 +29,6 @@ namespace LibUIMergeChat.ViewModel {
         }
 
         public ObservableCollection<ContentItemViewModel> SelectedItems { get; set; } = [];
-
 
         public MergeTargetDataGridViewControlViewModel MergeTargetDataGridViewControlViewModel { get; set; }
 

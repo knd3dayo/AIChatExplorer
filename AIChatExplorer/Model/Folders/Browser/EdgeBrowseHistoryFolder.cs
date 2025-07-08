@@ -1,7 +1,6 @@
 using System.Data.SQLite;
 using System.IO;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;

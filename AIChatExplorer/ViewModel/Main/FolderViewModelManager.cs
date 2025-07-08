@@ -1,5 +1,4 @@
 using AIChatExplorer.Model.Folders.Outlook;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Folders.Browser;
 using AIChatExplorer.ViewModel.Folders.Chat;
 using AIChatExplorer.ViewModel.Folders.Application;
@@ -16,6 +15,7 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.ViewModel.Content;
+using AIChatExplorer.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : FolderViewModelManagerBase {

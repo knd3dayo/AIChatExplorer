@@ -1,6 +1,5 @@
 using System.Reflection;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Item;
 using LibPythonAI.Common;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;

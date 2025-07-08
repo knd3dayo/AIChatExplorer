@@ -1,5 +1,4 @@
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;

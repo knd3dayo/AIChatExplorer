@@ -1,4 +1,4 @@
-using AIChatExplorer.Model.Item;
+using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibUIPythonAI.View.Folder;

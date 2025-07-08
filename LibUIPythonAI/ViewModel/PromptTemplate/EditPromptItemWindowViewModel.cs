@@ -168,6 +168,22 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 OnPropertyChanged(nameof(SplitModeIndex));
             }
         }
+        // SplitTokenCount
+        public int SplitTokenCount {
+            get {
+                if (ItemViewModel == null) {
+                    return 8000;
+                }
+                return ItemViewModel.PromptItem.SplitTokenCount;
+            }
+            set {
+                if (ItemViewModel == null) {
+                    return;
+                }
+                ItemViewModel.PromptItem.SplitTokenCount = value;
+                OnPropertyChanged(nameof(SplitTokenCount));
+            }
+        }
         // RAGModeIndex
         public int RAGModeIndex {
             get {

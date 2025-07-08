@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 using System.Windows;
-using AIChatExplorer.Model.Main;
+using AIChatExplorer.Model.Folders;
 using AIChatExplorer.Settings;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;

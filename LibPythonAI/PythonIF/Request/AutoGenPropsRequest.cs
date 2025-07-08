@@ -1,12 +1,10 @@
 using LibPythonAI.Common;
 using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.Folder;
+using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.VectorDB;
 
 namespace LibPythonAI.PythonIF.Request {
     public class AutoGenPropsRequest {
-
-
         public AutoGenPropsRequest(AutoGenProperties autoGenProperties) {
             AutoGenDBPath = autoGenProperties.AutoGenDBPath;
             VenvPath = autoGenProperties.VenvPath;

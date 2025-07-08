@@ -80,6 +80,22 @@ namespace LibPythonAI.Model.Prompt {
             }
         }
 
+        // SplitTokenCount
+        public int SplitTokenCount {
+            get {
+                ExtendedProperties.TryGetValue("split_token_count", out object? value);
+                if (value is int intValue) {
+                    return intValue;
+                }
+                return 8000; // デフォルト値
+            }
+            set {
+                ExtendedProperties["split_token_count"] = value;
+                SaveExtendedPropertiesJson();
+            }
+        }
+
+
         // ベクトルDBを使用する
         public RAGModeEnum RAGMode {
             get {

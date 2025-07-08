@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.ClipboardHistory;
-using AIChatExplorer.Model.Item;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Content;

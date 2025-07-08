@@ -132,7 +132,9 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -145,57 +147,7 @@
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
                     Text="{x:Static local:ViewStringResources.AutoProcessSetting}" />
                 <DockPanel
-                    Grid.Row="3"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left">
-                    <TextBlock
-                        Margin="10,0,10,0"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Text="{x:Static local:ViewStringResources.UseVectorDB}" />
-                    <ComboBox
-                        Width="100"
-                        Margin="10,0,10,0"
-                        FontSize="12"
-                        SelectedIndex="{Binding RAGModeIndex}">
-                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
-                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
-                        <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
-
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <CheckBox
-                        Margin="10,0,10,0"
-                        Content="{x:Static local:ViewStringResources.UseVectorDB}"
-                        FontSize="12"
-                        IsChecked="{Binding UseVectorDB}" />
-                    <CheckBox
-                        Margin="10,0,10,0"
-                        VerticalAlignment="Center"
-                        Content="{x:Static local:ViewStringResources.PromptResultToInput}"
-                        FontSize="12"
-                        IsChecked="{Binding PromptResultToInput}" />
-                    <TextBlock
-                        Margin="10,0,10,0"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Text="{x:Static local:ViewStringResources.PromptInputName}"
-                        Visibility="{Binding InputTypeItemsVisibility}" />
-                    <ComboBox
-                        Width="100"
-                        Margin="10,0,10,0"
-                        DisplayMemberPath="Description"
-                        FontSize="12"
-                        ItemsSource="{Binding InputTypeItems}"
-                        SelectedItem="{Binding SelectedInputItem}"
-                        Visibility="{Binding InputTypeItemsVisibility}" />
-                </DockPanel>
-                <DockPanel
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left">
                     <TextBlock
@@ -236,6 +188,70 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static local:ViewStringResources.NumberOfTokensToSplitRequest}" />
+                    <!--  書式は整数  -->
+                    <TextBox
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{Binding SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left">
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static local:ViewStringResources.UseVectorDB}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding RAGModeIndex}">
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_None}" />
+                        <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_NormalSearch}" />
+                        <!-- <ComboBoxItem Content="{x:Static local:ViewStringResources.RAGMode_PromptSearch}" /> -->
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding RAGModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="3"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left">
+                    <CheckBox
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        Content="{x:Static local:ViewStringResources.PromptResultToInput}"
+                        FontSize="12"
+                        IsChecked="{Binding PromptResultToInput}" />
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static local:ViewStringResources.PromptInputName}"
+                        Visibility="{Binding InputTypeItemsVisibility}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        DisplayMemberPath="Description"
+                        FontSize="12"
+                        ItemsSource="{Binding InputTypeItems}"
+                        SelectedItem="{Binding SelectedInputItem}"
+                        Visibility="{Binding InputTypeItemsVisibility}" />
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="4"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left">
                     <TextBlock
                         Margin="10,0,10,0"
                         HorizontalAlignment="Left"

@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using AIChatExplorer.Model.Folders;
+using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.Search;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Content;

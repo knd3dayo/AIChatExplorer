@@ -4,7 +4,7 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
 
-namespace LibPythonAI.Model.Folder {
+namespace LibPythonAI.Model.Folders.Base {
     public class FolderManager {
 
         public static readonly string CHAT_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ChatHistory;

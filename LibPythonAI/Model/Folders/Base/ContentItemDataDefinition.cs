@@ -1,7 +1,6 @@
-
 using LibPythonAI.Resources;
 
-namespace LibPythonAI.Model.Folder {
+namespace LibPythonAI.Model.Folders.Base {
     public class ContentItemDataDefinition {
 
         public static readonly string PropertiesName = "Properties";

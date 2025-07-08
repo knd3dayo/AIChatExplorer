@@ -127,5 +127,8 @@ namespace LibUIPythonAI.View.PromptTemplate {
 
         // RAG
         public static string RAG { get; set; } = CommonStringResources.Instance.RAG;
+
+        // SplitTokenCount
+        public static string NumberOfTokensToSplitRequest { get; set; } = CommonStringResources.Instance.NumberOfTokensToSplitRequest;
     }
 }

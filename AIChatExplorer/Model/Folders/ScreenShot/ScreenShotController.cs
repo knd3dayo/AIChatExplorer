@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Item;
 using AIChatExplorer.Model.Main;
 using LibPythonAI.Common;
 using LibPythonAI.Model.AutoProcess;

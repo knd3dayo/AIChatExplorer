@@ -17,9 +17,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public abstract ContentFolderViewModel GetSearchRootFolderViewModel();
 
-        public abstract ContentFolderViewModel CreateFolderViewModel(string folderId, string type);
+        public abstract ContentFolderViewModel? CreateFolderViewModel(string folderId, string type);
 
-        public abstract ContentItemViewModel CreateItemViewModel(ContentItemWrapper item);
+        public abstract ContentItemViewModel? CreateItemViewModel(ContentItemWrapper item);
 
     }
 }

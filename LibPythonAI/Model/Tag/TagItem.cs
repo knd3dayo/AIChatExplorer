@@ -7,7 +7,7 @@ namespace LibPythonAI.Model.Tag {
             Id = id;
         }
         // Id
-        public string Id { get; set; } = "";
+        private string Id { get; set; } = "";
 
         public string Tag { get; set; } = "";
 
@@ -54,16 +54,16 @@ namespace LibPythonAI.Model.Tag {
         }
 
         public static TagItem FromDict(Dictionary<string, object> dict) {
-            string id = dict["id"]?.ToString() ?? "";
+            var id = dict.GetValueOrDefault("id", "").ToString() ?? "";
             TagItem item = new(id) {
-                Tag = dict["tag"]?.ToString() ?? "",
-                IsPinned = bool.Parse(dict["is_pinned"]?.ToString() ?? "false")
+                Tag = dict.GetValueOrDefault("tag", "").ToString() ?? "",
+                IsPinned = bool.Parse(dict.GetValueOrDefault("is_pinned", "").ToString() ?? "false")
             };
             return item;
         }
 
         public static List<TagItem> FromDictList(List<Dictionary<string, object>> dictList) {
-            List<TagItem> items = new();
+            List<TagItem> items = [];
             foreach (var dict in dictList) {
                 items.Add(FromDict(dict));
             }

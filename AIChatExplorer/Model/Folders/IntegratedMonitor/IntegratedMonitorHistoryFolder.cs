@@ -1,5 +1,4 @@
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Main;
 
 namespace AIChatExplorer.Model.Folders.ScreenShot {
     public class IntegratedMonitorHistoryFolder : ApplicationFolder {

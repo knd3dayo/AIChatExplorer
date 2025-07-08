@@ -1,6 +1,6 @@
 using System.IO;
 using LibPythonAI.Common;
-using LibPythonAI.Model.Folder;
+using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.VectorDB;
 
 namespace LibPythonAI.Model.AutoGen {

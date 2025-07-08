@@ -333,8 +333,12 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
-            CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
+        public SimpleDelegateCommand<object> VectorSearchCommand => new(async (parameter) => {
+            if (SelectedItem == null) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
+                return;
+            }
+            await CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
         });
 
 

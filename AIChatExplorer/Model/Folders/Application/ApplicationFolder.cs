@@ -1,9 +1,4 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using AIChatExplorer.Model.Folders.ClipboardHistory;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;

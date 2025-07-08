@@ -346,7 +346,7 @@ namespace LibUIPythonAI.Resource {
         // SendRelatedItemsOnlyFirstRequest_False
         public virtual string SendRelatedItemsOnlyFirstRequest_False { get; } = "Send related items for all requests";
 
-        // NumberOfTokensToSplitRequest
+        // SplitTokenCount
         public virtual string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 
         // DataGridIsNotFound

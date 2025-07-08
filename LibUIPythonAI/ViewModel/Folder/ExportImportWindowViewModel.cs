@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
+using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Utils.ExportImport;
 using LibUIPythonAI.Resource;

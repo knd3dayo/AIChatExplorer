@@ -4,7 +4,7 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
-using LibPythonAI.Model.Folder;
+using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
