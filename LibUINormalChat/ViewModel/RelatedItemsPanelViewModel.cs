@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;

@@ -1,5 +1,4 @@
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folders.Base;
 
 namespace LibPythonAI.Model.Chat {
     public class ChatRelatedItems {

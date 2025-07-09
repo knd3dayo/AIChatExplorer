@@ -1,6 +1,5 @@
-using System.IO;
+using AIChatExplorer.Model.Folders;
 using LibPythonAI.Common;
-using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.VectorDB;
 
 namespace LibPythonAI.Model.AutoGen {
@@ -52,7 +51,7 @@ namespace LibPythonAI.Model.AutoGen {
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
                 { "main_vector_db_id" , VectorDBItem.GetDefaultVectorDB().Id },
-                { "chat_history_folder_id" , FolderManagerBase.ChatRootFolder.Id },
+                { "chat_history_folder_id" , FolderManager.ChatRootFolder.Id },
                 { "session_token", SessionToken },
             };
             return dict;

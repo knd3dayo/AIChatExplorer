@@ -13,7 +13,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
 
 namespace AIChatExplorer.Model.Folders {
-    public class FolderManager : LibPythonAI.Model.Folders.Base.FolderManagerBase {
+    public class FolderManager  {
 
         public static readonly string APPLICATION_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Application;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.SearchFolder;
@@ -23,9 +23,13 @@ namespace AIChatExplorer.Model.Folders {
         public static readonly string OUTLOOK_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Outlook;
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.EdgeBrowseHistory;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.RecentFiles;
+        public static readonly string CHAT_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ChatHistory;
         public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ClipboardHistory;
         public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.ScreenShotHistory;
         public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.IntegratedMonitorHistory;
+
+
+        // 英語名
 
 
         // 英語名
@@ -38,6 +42,7 @@ namespace AIChatExplorer.Model.Folders {
         public static readonly string EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.EdgeBrowseHistoryEnglish;
         public static readonly string RECENT_FILES_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.RecentFilesEnglish;
         public static readonly string CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ClipboardHistoryEnglish;
+        public static readonly string CHAT_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ChatHistoryEnglish;
         public static readonly string SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.ScreenShotHistoryEnglish;
         public static readonly string INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN = PythonAILibStringResources.Instance.IntegratedMonitorHistoryEnglish;
 
@@ -387,6 +392,35 @@ namespace AIChatExplorer.Model.Folders {
             }
 
         }
+        //--------------------------------------------------------------------------------
+        private static ContentFolderWrapper? chatRootFolder;
+
+        public static ContentFolderWrapper ChatRootFolder {
+            get {
+                if (chatRootFolder == null) {
+                    ContentFolderRoot? folderRoot = ContentFolderRoot.GetFolderRootByFolderType(CHAT_ROOT_FOLDER_NAME_EN);
+                    if (folderRoot == null) {
+                        folderRoot = new() {
+                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
+                            ContentOutputFolderPrefix = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetContentOutputPath(), CHAT_ROOT_FOLDER_NAME_EN)
+                        };
+                        folderRoot.Save();
+                    }
+                    ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(folderRoot.Id);
+                    if (folder == null) {
+                        folder = new() {
+                            Id = folderRoot.Id,
+                            FolderName = CHAT_ROOT_FOLDER_NAME,
+                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
+                        };
+                        folder.Save();
+                    }
+                    chatRootFolder = folder;
+                }
+                return chatRootFolder;
+            }
+        }
+
         // ScreenShotHistory Root Folder
         private static ScreenShotHistoryFolder? screenShotHistoryRootFolder;
         public static ScreenShotHistoryFolder ScreenShotHistoryRootFolder {

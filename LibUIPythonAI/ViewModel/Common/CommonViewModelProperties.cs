@@ -105,6 +105,12 @@ namespace LibUIPythonAI.ViewModel.Common {
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
             }
         }
+
+        public int EditorFontSize {
+            get {
+                return PythonAILibManager.Instance.ConfigParams.GetEditorFontSize();
+            }
+        }
         // 開発中機能の表示
         public Visibility EnableDevFeaturesVisibility => Utils.Tools.BoolToVisibility(PythonAILibManager.Instance.ConfigParams.IsAutoTextWrapping());
 

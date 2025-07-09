@@ -1,4 +1,4 @@
-namespace LibPythonAI.Model.Folders.Base {
+namespace LibPythonAI.Model.Folders {
     public class FolderTypeEnum {
 
         public string Name { get; private set; } = "";

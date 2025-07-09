@@ -3,7 +3,6 @@ using System.Text.Json;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
-using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF;

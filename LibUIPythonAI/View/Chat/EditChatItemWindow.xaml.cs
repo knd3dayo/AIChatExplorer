@@ -12,8 +12,9 @@ namespace LibUIPythonAI.View.Chat {
         }
 
         public static void OpenEditChatItemWindow(ChatMessage chatItem) {
-            var window = new EditChatItemWindow();
-            window.DataContext = new EditChatItemWindowViewModel(chatItem);
+            var window = new EditChatItemWindow {
+                DataContext = new EditChatItemWindowViewModel(chatItem)
+            };
             window.Show();
         }
 

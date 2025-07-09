@@ -32,6 +32,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public Visibility TextVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
 
 
+        // EditorFontSize
+        public double EditorFontSize => CommonViewModelProperties.EditorFontSize;
 
         // FlowDocument
         public FlowDocument ContentFlowDocument => LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ChatItem.Content);

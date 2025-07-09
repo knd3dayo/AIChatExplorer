@@ -92,7 +92,7 @@
                                                 Grid.Row="0"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
-                                                FontSize="8pt"
+                                                FontSize="{Binding EditorFontSize}"
                                                 Text="{Binding Role, Mode=OneWay}" />
                                             <!--  コンテンツ  -->
                                             <TextBlock
@@ -100,7 +100,7 @@
                                                 MinHeight="30"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
-                                                FontSize="8pt"
+                                                FontSize="{Binding EditorFontSize}"
                                                 Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding ContentWithSources, Mode=OneWay}"
                                                 TextTrimming="WordEllipsis"
@@ -110,7 +110,7 @@
                                                 Margin="10,10,10,10"
                                                 VerticalContentAlignment="Top"
                                                 Document="{Binding MarkdownContentWithSources, Mode=OneWay}"
-                                                FontSize="12"
+                                                FontSize="{Binding EditorFontSize}"
                                                 HorizontalScrollBarVisibility="Auto"
                                                 IsReadOnly="True"
                                                 VerticalScrollBarVisibility="Auto"
@@ -183,6 +183,7 @@
                                     Margin="10,0,10,0"
                                     materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                                     AcceptsReturn="True"
+                                    FontSize="{Binding EditorFontSize}"
                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                                     TextWrappingMode="{Binding CommonViewModelProperties.TextWrappingMode}" />
                             </ScrollViewer>

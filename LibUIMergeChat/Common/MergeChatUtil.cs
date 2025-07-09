@@ -1,6 +1,5 @@
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;

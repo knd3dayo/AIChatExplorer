@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folders.Base;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
@@ -71,7 +70,8 @@ namespace LibUINormalChat.ViewModel {
 
         private bool ChatExecuted { get; set; } = false;
 
-
+        // EditorFontSize
+        public int EditorFontSize => CommonViewModelProperties.EditorFontSize;
 
         public RelatedItemDataGridViewModel RelatedItemSummaryDataGridViewModel { get; set; } = null!; // 初期化時に設定されるため、null許容型ではない
 
