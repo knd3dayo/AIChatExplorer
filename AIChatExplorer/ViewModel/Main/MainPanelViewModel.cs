@@ -33,6 +33,7 @@ namespace AIChatExplorer.ViewModel.Main {
             MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
             MainPanelDataGridViewControlViewModel.MyTabControl = MyTabControl;
 
+            MainPanelTreeViewControlViewModel.FolderTreeView = ThisUserControl?.FindName("FolderTreeView") as TreeView;
         }
 
         public CommonViewModelCommandExecutes Commands { get; set; }
@@ -109,7 +110,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 OnPropertyChanged(nameof(CopiedFolder));
             }
         }
-
+        public TreeView? FolderTreeView { get; set; }
 
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
@@ -163,12 +164,11 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // SelectedTreeViewItemChangeCommandExecute
         public void SelectedTreeViewItemChangeCommandExecute(ContentFolderViewModel folder) {
-            TreeView? treeView = ThisUserControl?.FindName("FolderTreeView") as TreeView;
-            if (treeView == null) {
+            if (FolderTreeView == null) {
                 LogWrapper.Error("FolderTreeView is null.");
                 return;
             }
-            ItemsControl itemsControl = treeView;
+            ItemsControl itemsControl = FolderTreeView;
 
             List<ContentFolderViewModel> items = [];
             // folderからRootFolderまでのフォルダを取得 

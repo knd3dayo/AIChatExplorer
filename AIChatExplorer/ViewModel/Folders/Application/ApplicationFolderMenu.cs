@@ -57,7 +57,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             get {
                 MenuItem editMenuItem = new() {
                     Header = CommonStringResources.Instance.Edit,
-                    Command = ApplicationFolderViewModel.FolderCommands.LoadFolderCommand,
+                    Command = ApplicationFolderViewModel.FolderCommands.EditFolderCommand,
                 };
                 return editMenuItem;
             }
