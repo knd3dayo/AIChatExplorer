@@ -196,7 +196,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["VectorizedAtString"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         // フォルダに設定されたVerctorDBPropertyを使うかどうか
@@ -211,7 +210,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["UseFolderVectorSearchItem"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         // このアイテムに紐付けらされたVectorSearchItem
@@ -238,7 +236,6 @@ namespace LibPythonAI.Model.Content {
                 if (e.NewItems != null) {
                     // Entityを更新
                     Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
-                    Entity.SaveExtendedPropertiesJson();
                 }
             };
             // Removeイベント発生時の処理
@@ -246,14 +243,12 @@ namespace LibPythonAI.Model.Content {
                 if (e.OldItems != null) {
                     // Entityを更新
                     Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
-                    Entity.SaveExtendedPropertiesJson();
                 }
             };
             // Clearイベント発生時の処理
             vectorDBProperties.CollectionChanged += (sender, e) => {
                 // Entityを更新
                 Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
-                Entity.SaveExtendedPropertiesJson();
             };
             return vectorDBProperties;
         }
@@ -270,7 +265,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourceApplicationName"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         //　貼り付け元のアプリケーションのタイトル
@@ -284,7 +278,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourceApplicationTitle"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         //　貼り付け元のアプリケーションのID
@@ -301,7 +294,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourceApplicationID"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         //　貼り付け元のアプリケーションのパス
@@ -315,7 +307,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourceApplicationPath"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
 
@@ -333,7 +324,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["DocumentReliability"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         // 文書の信頼度の判定理由
@@ -347,7 +337,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["DocumentReliabilityReason"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
 
@@ -362,7 +351,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourcePath"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
 
@@ -379,7 +367,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["SourceType"] = value.ToString();
-                Entity.SaveExtendedPropertiesJson();
             }
         }
         // ファイルの最終更新日時
@@ -397,7 +384,6 @@ namespace LibPythonAI.Model.Content {
             }
             set {
                 Entity.ExtendedProperties["LastModified"] = value;
-                Entity.SaveExtendedPropertiesJson();
             }
         }
 
@@ -416,7 +402,6 @@ namespace LibPythonAI.Model.Content {
 
         private void SaveChatSettingsToExtendedProperties() {
             Entity.ExtendedProperties["ChatSettingsJson"] = ChatSettings.ToJson();
-            Entity.SaveExtendedPropertiesJson();
         }
 
 

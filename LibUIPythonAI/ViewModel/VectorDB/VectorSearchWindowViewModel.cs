@@ -95,7 +95,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         });
 
         // SendCommand
-        public SimpleDelegateCommand<object> SendCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SendCommand => new(async (parameter) => {
             // VectorDBItemがnullの場合は何もしない
             if (VectorSearchItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
@@ -103,46 +103,44 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             }
 
             CommonViewModelProperties.UpdateIndeterminate(true);
-            Task.Run(async () => {
-                var vectorDBItem = await VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
-                if (vectorDBItem == null) {
-                    LogWrapper.Error("VectorDBItem is null.");
-                    return;
-                }
+            var vectorDBItem = await VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
+            if (vectorDBItem == null) {
+                LogWrapper.Error("VectorDBItem is null.");
+                return;
+            }
 
-                List<VectorEmbeddingItem> vectorSearchResults = [];
-                // ベクトル検索を実行
-                try {
-                    var searchResults = await VectorSearchItem.VectorSearchAsync();
-                    vectorSearchResults.AddRange(searchResults);
-                } finally {
-                    CommonViewModelProperties.UpdateIndeterminate(false);
-                }
-                MainUITask.Run(() => {
-                    // VectorSearchResultsを更新
-                    MultiVectorSearchResults.Clear();
-                    VectorSearchResults.Clear();
+            List<VectorEmbeddingItem> vectorSearchResults = [];
+            // ベクトル検索を実行
+            try {
+                var searchResults = await VectorSearchItem.VectorSearchAsync();
+                vectorSearchResults.AddRange(searchResults);
+            } finally {
+                CommonViewModelProperties.UpdateIndeterminate(false);
+            }
+            MainUITask.Run(() => {
+                // VectorSearchResultsを更新
+                MultiVectorSearchResults.Clear();
+                VectorSearchResults.Clear();
 
-                    if (vectorDBItem.IsUseMultiVectorRetriever) {
-                        foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
-                            MultiVectorSearchResults.Add(vectorSearchResult);
-                            // sub_docsを追加
-                            foreach (VectorEmbeddingItem subDoc in vectorSearchResult.SubDocs) {
-                                VectorSearchResults.Add(subDoc);
-                            }
-                        }
-                    } else {
-                        // VectorSearchResultsを更新
-                        VectorSearchResults.Clear();
-                        foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
-                            VectorSearchResults.Add(vectorSearchResult);
+                if (vectorDBItem.IsUseMultiVectorRetriever) {
+                    foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
+                        MultiVectorSearchResults.Add(vectorSearchResult);
+                        // sub_docsを追加
+                        foreach (VectorEmbeddingItem subDoc in vectorSearchResult.SubDocs) {
+                            VectorSearchResults.Add(subDoc);
                         }
                     }
+                } else {
+                    // VectorSearchResultsを更新
+                    VectorSearchResults.Clear();
+                    foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
+                        VectorSearchResults.Add(vectorSearchResult);
+                    }
+                }
 
-                    OnPropertyChanged(nameof(MultiVectorSearchResults));
-                    OnPropertyChanged(nameof(VectorSearchResults));
+                OnPropertyChanged(nameof(MultiVectorSearchResults));
+                OnPropertyChanged(nameof(VectorSearchResults));
 
-                });
             });
         });
 
