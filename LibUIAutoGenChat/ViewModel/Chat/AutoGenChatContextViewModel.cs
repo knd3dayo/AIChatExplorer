@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Common;
-using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.PythonIF.Request;
 using LibUIPythonAI.Utils;
