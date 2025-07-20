@@ -51,9 +51,12 @@ namespace LibPythonAI.PythonIF.Response {
                     } else if (kvp.Key == SCORE_KEY) {
                         response.Score = Convert.ToDouble(kvp.Value);
                     } else if (kvp.Key == "sub_docs") {
-                        if (kvp.Value is List<Dictionary<string, object>> subDocs) {
+                        var type = kvp.Value.GetType().ToString();
+                        if (kvp.Value is List<object> subDocs) {
                             foreach (var subDoc in subDocs) {
-                                response.SubDocs.Add(VectorSearchResponse.FromDict(subDoc));
+                                if (subDoc is Dictionary<string, object> subDocDict) {
+                                    response.SubDocs.Add(VectorSearchResponse.FromDict(subDocDict));
+                                }
                             }
                         }
                     }
