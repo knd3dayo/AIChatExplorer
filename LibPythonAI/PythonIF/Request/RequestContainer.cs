@@ -1,9 +1,5 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Tag;
-using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.PythonIF.Request {
@@ -72,18 +68,6 @@ namespace LibPythonAI.PythonIF.Request {
         // EmbeddingRequest
         public EmbeddingRequest? EmbeddingRequestInstance { get; set; }
 
-        // AutoGenLLMConfig
-        public AutoGenLLMConfig? AutoGenLLMConfigInstance { get; set; } = null;
-
-        // AutoGenTool
-        public AutoGenTool? AutoGenToolInstance { get; set; } = null;
-
-        // AutoGenAgent
-        public AutoGenAgent? AutoGenAgentInstance { get; set; } = null;
-
-        // AutoGenGroupChat
-        public AutoGenGroupChat? AutoGenGroupChatInstance { get; set; } = null;
-
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
 
@@ -92,10 +76,6 @@ namespace LibPythonAI.PythonIF.Request {
 
                 if (RequestContextInstance.VectorSearchRequests.Count > 0) {
                     dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBRequestDict();
-                }
-
-                if (RequestContextInstance.AutoGenPropsRequest != null) {
-                    dict[AUTOGEN_PROPS_KEY] = RequestContextInstance.AutoGenPropsRequest.ToDict();
                 }
             }
 
@@ -144,19 +124,6 @@ namespace LibPythonAI.PythonIF.Request {
             if (ContentFolderRequestsInstance.Count > 0) {
                 dict[CONTENT_FOLDER_REQUESTS_KEY] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
             }
-            if (AutoGenLLMConfigInstance != null) {
-                dict[AUTOGEN_LLM_CONFIG_REQUEST_KEY] = AutoGenLLMConfigInstance.ToDict();
-            }
-            if (AutoGenToolInstance != null) {
-                dict[AUTOGEN_TOOL_REQUEST_KEY] = AutoGenToolInstance.ToDict();
-            }
-            if (AutoGenAgentInstance != null) {
-                dict[AUTOGEN_AGENT_REQUEST_KEY] = AutoGenAgentInstance.ToDict();
-            }
-            if (AutoGenGroupChatInstance != null) {
-                dict[AUTOGEN_GROUP_CHAT_REQUEST_KEY] = AutoGenGroupChatInstance.ToDict();
-            }
-
             return dict;
         }
         public string ToJson() {

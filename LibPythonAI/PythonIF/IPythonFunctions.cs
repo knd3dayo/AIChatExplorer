@@ -1,12 +1,11 @@
-using LibPythonAI.Model.AutoGen;
+using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Prompt;
+using LibPythonAI.Model.Search;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Model.AutoProcess;
-using LibPythonAI.Model.Search;
 
 namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
@@ -60,43 +59,6 @@ namespace LibPythonAI.PythonIF {
         public Task<ChatResponse> AutoGenGroupChatAsync(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public void CancelAutoGenChat(string sessionToken);
-
-        public Task<List<AutoGenLLMConfig>> GetAutoGenLLMConfigListAsync();
-
-        public Task<AutoGenLLMConfig?> GetAutoGenLLMConfigAsync(string name);
-
-        public void UpdateAutogenLLMConfigAsync(AutoGenLLMConfig config);
-
-        public void DeleteAutogenLLMConfigAsync(AutoGenLLMConfig config);
-
-        // AutoGenTool
-        public Task<List<AutoGenTool>> GetAutoGenToolListAsync();
-
-        public Task<AutoGenTool?> GetAutoGenToolAsync(string name);
-
-        public void UpdateAutoGenToolAsync(AutoGenTool config);
-
-        public void DeleteAutoGenToolAsync(AutoGenTool config);
-
-        // AutoGenAgent
-        public Task<List<AutoGenAgent>> GetAutoGenAgentListAsync();
-
-        public Task<AutoGenAgent> GetAutoGenAgentAsync(string name);
-
-        public void UpdateAutoGenAgentAsync(AutoGenAgent config);
-
-        public void DeleteAutoGenAgentAsync(AutoGenAgent config);
-
-        // AutoGenGroupChat
-        public Task<List<AutoGenGroupChat>> GetAutoGenGroupChatListAsync();
-
-        public Task<AutoGenGroupChat> GetAutoGenGroupChatAsync(string name);
-
-        public void UpdateAutoGenGroupChatAsync(AutoGenGroupChat config);
-
-        public void DeleteAutoGenGroupChatAsync(AutoGenGroupChat config);
-
-
 
         public void UpdateVectorDBItem(VectorDBItem item);
 

@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
-    <ProjectReference Include="..\LibUIAutoGenChat\LibUIAutoGenChat.csproj" />
     <ProjectReference Include="..\LibUIImageChat\LibUIImageChat.csproj" />
     <ProjectReference Include="..\LibUIMergeChat\LibUIMergeChat.csproj" />
     <ProjectReference Include="..\LibUINormalChat\LibUINormalChat.csproj" />

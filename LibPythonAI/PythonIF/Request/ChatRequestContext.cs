@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using LibPythonAI.Common;
-using LibPythonAI.Model.AutoGen;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.VectorDB;
 
@@ -18,10 +17,6 @@ namespace LibPythonAI.PythonIF.Request {
 
         [JsonPropertyName(ChatSettings.VECTOR_SEARCH_REQUESTS_KEY)]
         public List<VectorSearchRequest> VectorSearchRequests { get => ChatSettings.VectorSearchRequests; }
-
-        // AutoGenPropsRequest
-        [JsonPropertyName(ChatSettings.AUTOGEN_PROPS_KEY)]
-        public AutoGenPropsRequest? AutoGenPropsRequest { get => ChatSettings.AutoGenPropsRequest; }
 
         // リクエストを分割するトークン数
         [JsonPropertyName(ChatSettings.SPLIT_TOKEN_COUNT_KEY)]
@@ -71,7 +66,7 @@ namespace LibPythonAI.PythonIF.Request {
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
                 OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, int split_token_count, RAGModeEnum ragModeEnum,
-                ObservableCollection<VectorSearchItem> vectorSearchItems, AutoGenProperties? autoGenProperties, string promptTemplateText
+                ObservableCollection<VectorSearchItem> vectorSearchItems, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             ChatSettings chatSettings = new() {
@@ -81,9 +76,6 @@ namespace LibPythonAI.PythonIF.Request {
                 SplitTokenCount = split_token_count,
                 VectorSearchRequests = vectorSearchItems.Select(x => new VectorSearchRequest(x)).ToList(),
             };
-            if (autoGenProperties != null) {
-                chatSettings.AutoGenPropsRequest = new AutoGenPropsRequest(autoGenProperties);
-            }
 
             ChatRequestContext chatRequestContext = new(chatSettings);
             return chatRequestContext;

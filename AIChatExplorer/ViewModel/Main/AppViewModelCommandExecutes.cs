@@ -12,13 +12,11 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIAutoGenChat.View.Chat;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
+using LibUINormalChat.View;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Chat;
-using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.Item;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.ViewModel.Chat;
@@ -26,8 +24,6 @@ using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
-using LibUINormalChat.View;
-using LibPythonAI.Model.Chat;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class AppViewModelCommandExecutes(Action<bool> updateIndeterminate, Action updateView) : CommonViewModelCommandExecutes(updateIndeterminate, updateView) {
@@ -113,28 +109,6 @@ namespace AIChatExplorer.ViewModel.Main {
             });
 
             MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
-        }
-
-        public static void OpenAutoGenChatWindowCommandExecute(ContentItemViewModel itemViewModel) {
-
-            QAChatStartupPropsBase qAChatStartupProps = new QAChatStartupProps(itemViewModel.ContentItem);
-            AutoGenChatWindow.OpenWindow(qAChatStartupProps);
-        }
-
-        public static void OpenAutoGenChatWindowCommandExecute() {
-            // チャット履歴用のItemの設定
-            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
-            // チャット履歴用のItemの設定
-            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
-                // Idを一時的なIDに設定
-                Id = ApplicationItem.TEMPORARY_ITEM_ID,
-                // タイトルを日付 + 元のタイトルにする
-                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
-            };
-            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
-
-            OpenAutoGenChatWindowCommandExecute(applicationItemViewModel);
-
         }
 
         // Command to open Image Chat

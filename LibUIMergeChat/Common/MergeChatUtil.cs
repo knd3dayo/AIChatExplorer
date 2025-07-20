@@ -72,7 +72,6 @@ namespace LibUIMergeChat.Common {
                         SplitTokenCount = context.SplitTokenCount,
                         RAGMode = context.RAGMode,
                         VectorSearchRequests = context.VectorSearchRequests,
-                        AutoGenPropsRequest = context.AutoGenPropsRequest,
                     };
                     ChatRequestContext preProcessRequestContext = new(chatSettings);
 
@@ -130,7 +129,6 @@ namespace LibUIMergeChat.Common {
                 SplitTokenCount = context.SplitTokenCount,
                 RAGMode = context.RAGMode,
                 VectorSearchRequests = context.VectorSearchRequests,
-                AutoGenPropsRequest = context.AutoGenPropsRequest,
             };
             ChatRequestContext postProcessRequestContext = new(chatSettings);
 

@@ -129,16 +129,6 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />
-                        <!-- RAGソース編集 現在はGitリポジトリの内容を元にベクトル生成する機能のみ提供。機能の要否、メニュー化の要否（フォルダ化でよい？)の検討中
-                        <MenuItem
-                            Margin="0,0,0,0"
-                            Padding="10,0,10,0"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenRAGManagementWindowCommand, Mode=OneTime}"
-                            FontSize="12"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.EditGitRagSource}" />
-                        -->
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"
@@ -147,14 +137,6 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditVectorDB}" />
-                        <MenuItem
-                            Margin="0,0,0,0"
-                            Padding="10,0,10,0"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenListAutoGenItemWindowCommand, Mode=OneTime}"
-                            FontSize="12"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.EditAutoGenDefinition}" />
                     </MenuItem>
                     <!--  View  -->
                     <MenuItem
@@ -215,14 +197,6 @@
                             FontSize="12"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.MergeChat}" />
-                        <MenuItem
-                            Margin="0,0,0,0"
-                            Padding="10,0,10,0"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenAutoGenChatWindow, Mode=OneTime}"
-                            FontSize="12"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.AutoGenChat}" />
                         <MenuItem
                             Margin="0,0,0,0"
                             Padding="10,0,10,0"

@@ -222,7 +222,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], null, PromptText
+                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], PromptText
                 );
             return chatRequestContext;
         }

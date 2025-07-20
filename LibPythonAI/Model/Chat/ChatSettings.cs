@@ -24,9 +24,6 @@ namespace LibPythonAI.Model.Chat {
 
         public List<VectorSearchRequest> VectorSearchRequests { get; set; } = [];
 
-        // AutoGenPropsRequest
-        public AutoGenPropsRequest? AutoGenPropsRequest { get; set; }
-
         // リクエストを分割するトークン数
         public int SplitTokenCount { get; set; } = 8000;
 
@@ -82,9 +79,7 @@ namespace LibPythonAI.Model.Chat {
                 [RELATED_ITEMS_KEY] = RelatedItems.ToDict(),
                 [SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY] = SendRelatedItemsOnlyFirstRequest
             };
-            if (AutoGenPropsRequest != null) {
-                dict[AUTOGEN_PROPS_KEY] = AutoGenPropsRequest.ToDict();
-            }
+
             return dict;
         }
 
@@ -102,9 +97,6 @@ namespace LibPythonAI.Model.Chat {
                 SendRelatedItemsOnlyFirstRequest = dict.GetValueOrDefault(SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY, true)
             };
 
-            if (dict.ContainsKey(AUTOGEN_PROPS_KEY)) {
-                chatSettings.AutoGenPropsRequest = AutoGenPropsRequest.FromDict(dict[AUTOGEN_PROPS_KEY]);
-            }
             return chatSettings;
         }
 

@@ -12,7 +12,6 @@ using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.AutoGen;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -31,7 +30,7 @@ namespace AIChatExplorer.ViewModel.Main {
             InitClipboardController();
 
             // MainPanelDataGridViewControlViewModel,MainPanelTreeViewControlViewModelの初期化
-            (MainPanelDataGridViewControlViewModel,  MainPanelTreeViewControlViewModel)  = InitMainPanelControls();
+            (MainPanelDataGridViewControlViewModel, MainPanelTreeViewControlViewModel) = InitMainPanelControls();
 
             // パネルの初期化
             InitPanel();
@@ -168,22 +167,11 @@ namespace AIChatExplorer.ViewModel.Main {
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
             AppViewModelCommandExecutes.OpenTagWindowCommandExecute();
         });
-        // メニューの「AutoGen定義編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
-            ListAutoGenItemWindow.OpenListAutoGenItemWindow(LibUIPythonAI.ViewModel.Folder.FolderViewModelManagerBase.FolderViewModels);
-        });
+
 
         // バージョン情報画面を開く処理
         public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
             VersionWindow.OpenVersionWindow();
-        });
-
-        // メニューの「AutoGenチャット」をクリックしたときの処理。
-        // チャット履歴フォルダーに新規作成
-        public SimpleDelegateCommand<object> OpenAutoGenChatWindow => new((parameter) => {
-
-            AppViewModelCommandExecutes.OpenAutoGenChatWindowCommandExecute();
-
         });
 
         // OpenImageChatWindow
