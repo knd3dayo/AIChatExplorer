@@ -121,8 +121,8 @@ namespace LibPythonAI.Model.Content {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, async (item) => {
-                    var vectorDBItem = await item.GetMainVectorSearchItem();
+                Parallel.ForEach(items, parallelOptions, (item) => {
+                    var vectorDBItem = item.GetMainVectorSearchItem();
                     string? vectorDBItemName = vectorDBItem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
@@ -144,9 +144,9 @@ namespace LibPythonAI.Model.Content {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, async (item) => {
+                Parallel.ForEach(items, parallelOptions, (item) => {
                     // VectorDBItemを取得
-                    var vectorDBitem = await item.GetMainVectorSearchItem();
+                    var vectorDBitem = item.GetMainVectorSearchItem();
                     string? vectorDBItemName = vectorDBitem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);

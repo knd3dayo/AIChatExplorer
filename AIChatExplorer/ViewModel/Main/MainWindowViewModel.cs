@@ -216,9 +216,9 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new( (parameter) => {
             ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
-            await AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+            AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
 

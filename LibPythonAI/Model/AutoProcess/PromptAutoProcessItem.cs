@@ -31,7 +31,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 };
                 if (clipboardFolder != null) {
                     chatSettings.RAGMode = RAGModeEnum.NormalSearch;
-                    var item = await clipboardFolder.GetMainVectorSearchItem();
+                    var item = clipboardFolder.GetMainVectorSearchItem();
                     chatSettings.VectorSearchRequests = [new VectorSearchRequest(item)];
                 }
                 ChatRequestContext chatRequestContent = new(chatSettings);

@@ -1,7 +1,4 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibPythonAI.Common;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
@@ -98,16 +95,16 @@ namespace LibPythonAI.Model.VectorDB {
             return item;
         }
 
-        public static async Task<List<VectorDBItem>> GetItems() {
+        public static List<VectorDBItem> GetItems() {
             if (!_isInitialized) {
                 // 初期化されていない場合は、非同期でロード
-                await LoadItemsAsync();
+                Task.Run(async () => { await LoadItemsAsync(); }).Wait();
             }
             return _items;
         }
 
-        public static async Task<List<VectorDBItem>> GetVectorDBItems(bool includeDefaultVectorDB) {
-            List<VectorDBItem> items = await GetItems();
+        public static List<VectorDBItem> GetVectorDBItems(bool includeDefaultVectorDB) {
+            List<VectorDBItem> items = GetItems();
             if (includeDefaultVectorDB) {
                 return items;
             }
@@ -117,8 +114,8 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // GetItemById
-        public static async  Task<VectorDBItem?> GetItemById(string? id) {
-            List<VectorDBItem> items = await GetItems();
+        public static VectorDBItem? GetItemById(string? id) {
+            List<VectorDBItem> items = GetItems();
             // IDが一致するアイテムを取得
             VectorDBItem? item = items.FirstOrDefault(i => i.Id == id);
 
@@ -126,8 +123,8 @@ namespace LibPythonAI.Model.VectorDB {
         }
 
         // GetItemByName
-        public static async Task<VectorDBItem?> GetItemByName(string? name) {
-            List<VectorDBItem> items = await GetItems();
+        public static VectorDBItem? GetItemByName(string? name) {
+            List<VectorDBItem> items = GetItems();
             // 名前が一致するアイテムを取得
             VectorDBItem? item = items.FirstOrDefault(i => i.Name == name);
             return item;
@@ -135,16 +132,16 @@ namespace LibPythonAI.Model.VectorDB {
 
 
         // システム共通のベクトルDB
-        public static async Task<VectorDBItem> GetDefaultVectorDB() {
-            var item = await GetItemByName(SystemCommonVectorDBName);
+        public static VectorDBItem GetDefaultVectorDB() {
+            var item = GetItemByName(SystemCommonVectorDBName);
             if (item == null) {
                 throw new Exception(PythonAILibStringResourcesJa.Instance.VectorDBNotFound(SystemCommonVectorDBName));
             }
             return item!;
         }
 
-        public static async Task<List<VectorDBItem>> GetExternalVectorDBItems() {
-            List<VectorDBItem> allItems = await GetItems();
+        public static List<VectorDBItem> GetExternalVectorDBItems() {
+            List<VectorDBItem> allItems = GetItems();
             List<VectorDBItem> result = [];
             // システム共通のベクトルDBは除外する
             result = allItems.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName).ToList();

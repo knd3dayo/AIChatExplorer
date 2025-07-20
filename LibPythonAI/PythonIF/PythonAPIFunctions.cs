@@ -980,27 +980,17 @@ namespace LibPythonAI.PythonIF {
                 List<VectorEmbeddingItem> vectorSearchResults = new();
                 List<string> textResults = new();
                 // documentsがある場合は取得
-                if (resultDict.ContainsKey("documents")) {
-                    var documents = resultDict["documents"];
-                    if (documents == null) {
-                        throw new Exception(StringResources.OpenAIResponseEmpty);
-                    }
+                var documents = resultDict.GetValueOrDefault("documents") as List<dynamic> ?? throw new Exception(StringResources.OpenAIResponseEmpty);
+                if (documents == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
                 foreach (var item in documents) {
-                        EmbeddingResponse? VectorEmbeddingItem = EmbeddingResponse.FromDict(item);
-                        if (VectorEmbeddingItem != null) {
-                            vectorSearchResults.Add(VectorEmbeddingItem.CreateVectorEmbeddingItem());
+                    VectorSearchResponse? VectorEmbeddingItem = VectorSearchResponse.FromDict(item);
+                    if (VectorEmbeddingItem != null) {
+                        vectorSearchResults.Add(VectorEmbeddingItem.CreateVectorEmbeddingItem());
                     }
                 }
-                // textsがある場合は取得
-                var texts = resultDict.GetValueOrDefault("texts") ?? throw new Exception(StringResources.OpenAIResponseEmpty);
-                foreach (var item in texts) {
-                    if (item is string text) {
-                        textResults.Add(text);
-                    } else {
-                        LogWrapper.Warn($"VectorSearchAsync: texts item is not string: {item}");
-                    }
-                }
-                return (textResults, vectorSearchResults);
+                return vectorSearchResults;
             });
 
             return task;

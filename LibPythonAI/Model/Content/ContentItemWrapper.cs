@@ -219,7 +219,7 @@ namespace LibPythonAI.Model.Content {
         private async Task<ObservableCollection<VectorSearchItem>> UpdateVectorDBProperties() {
             ObservableCollection<VectorSearchItem> vectorDBProperties = [];
             if (UseFolderVectorSearchItem) {
-                var items = await GetFolder().GetVectorSearchProperties();
+                var items = GetFolder().GetVectorSearchProperties();
                 vectorDBProperties = [.. items];
             }
             var value = Entity.ExtendedProperties.GetValueOrDefault("VectorDBProperties", null);
@@ -435,7 +435,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         public virtual ContentItemWrapper Copy() {
-            return new ContentItemWrapper() { 
+            return new ContentItemWrapper() {
                 Entity = Entity.Copy(),
                 ChatSettings = ChatSettings
             };
@@ -534,8 +534,8 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual async Task<VectorSearchItem> GetMainVectorSearchItem() {
-            return await GetFolder().GetMainVectorSearchItem();
+        public virtual VectorSearchItem GetMainVectorSearchItem() {
+            return GetFolder().GetMainVectorSearchItem();
         }
 
 
@@ -549,7 +549,7 @@ namespace LibPythonAI.Model.Content {
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
                 Task.Run(async () => {
-                    var item = await GetMainVectorSearchItem();
+                    var item = GetMainVectorSearchItem();
                     string? vectorDBItemName = item.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
@@ -595,7 +595,7 @@ namespace LibPythonAI.Model.Content {
             if (item == null) {
                 return null;
             }
-            T result = new T() { 
+            T result = new T() {
                 Entity = item,
             };
             result.ChatSettings = result.LoadChatSettingsFromExtendedProperties();
@@ -617,7 +617,7 @@ namespace LibPythonAI.Model.Content {
 
                     // ベクトルを更新
                     Task.Run(async () => {
-                        var searchItem = await item.GetMainVectorSearchItem();
+                        var searchItem = item.GetMainVectorSearchItem();
                         string? vectorDBItemName = searchItem.VectorDBItemName;
                         if (string.IsNullOrEmpty(vectorDBItemName)) {
                             LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);

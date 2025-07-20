@@ -20,7 +20,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             if (ContentModified || DescriptionModified) {
                 // ベクトルを更新
                 Task.Run(async () => {
-                    var item = await GetFolder().GetMainVectorSearchItem();
+                    var item = GetFolder().GetMainVectorSearchItem();
                     string? vectorDBItemName = item?.VectorDBItemName;
                     if (vectorDBItemName == null) {
                         return;

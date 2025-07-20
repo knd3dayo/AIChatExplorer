@@ -91,9 +91,9 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // VectorDBItemのロード
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             List<VectorDBItem> items = [];
-            Task.Run(async () => {
+            Task.Run( () => {
                 // VectorDBItemのリストを取得
-                items = await VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB);
+                items = VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB);
             }).ContinueWith((task) => {
                 MainUITask.Run(() => {
                     // VectorDBItemのリストを初期化
@@ -159,7 +159,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         });
 
         // SelectCommand
-        public SimpleDelegateCommand<Window> SelectCommand => new(async (window) => {
+        public SimpleDelegateCommand<Window> SelectCommand => new( (window) => {
             // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
             if (SelectedTabIndex == 0) {
                 var folder = FolderViewModel?.Folder;
@@ -167,7 +167,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
-                VectorSearchItem? item = await folder.GetMainVectorSearchItem();
+                VectorSearchItem? item = folder.GetMainVectorSearchItem();
                 if (item == null) {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;

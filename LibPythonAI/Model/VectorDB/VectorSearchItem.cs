@@ -47,28 +47,25 @@ namespace LibPythonAI.Model.VectorDB {
         public string DisplayText { get; private set; } = "";
 
         private void UpdateDisplayText() {
-            Task.Run(async () => {
-                // DisplayTextを更新する
-                VectorDBItem? item = await VectorDBItem.GetItemByName(VectorDBItemName);
-                if (item == null) {
-                    DisplayText = "";
+            // DisplayTextを更新する
+            VectorDBItem? item = VectorDBItem.GetItemByName(VectorDBItemName);
+            if (item == null) {
+                DisplayText = "";
 
-                } else if (string.IsNullOrEmpty(item.CollectionName)) {
+            } else if (string.IsNullOrEmpty(item.CollectionName)) {
+                DisplayText = item.Name;
+                return;
+            } else if (FolderId == null) {
+                DisplayText = item.Name;
+                return;
+            } else {
+                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
+                if (folder == null) {
                     DisplayText = item.Name;
                     return;
-                } else if (FolderId == null) {
-                    DisplayText = item.Name;
-                    return;
-                } else {
-                    ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
-                    if (folder == null) {
-                        DisplayText = item.Name;
-                        return;
-                    }
-                    DisplayText = $"{item.Name}:{folder.ContentFolderPath}";
                 }
-                
-            });
+                DisplayText = $"{item.Name}:{folder.ContentFolderPath}";
+            }
         }
 
 

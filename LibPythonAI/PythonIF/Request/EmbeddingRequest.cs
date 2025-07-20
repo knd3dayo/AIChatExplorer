@@ -12,9 +12,6 @@ namespace LibPythonAI.PythonIF.Request {
         public const string DESCRIPTION_KEY = "description";
         public const string CONTENT_KEY = "content";
         public const string SOURCE_PATH_KEY = "source_path";
-        public const string DOC_ID_KEY = "doc_id";
-        public const string SCORE_KEY = "score";
-        public const string SUB_DOCS_KEY = "sub_docs";
 
 
         public EmbeddingRequest(string vectorDBName, string model, VectorEmbeddingItem embedding) {
@@ -32,7 +29,6 @@ namespace LibPythonAI.PythonIF.Request {
             Dictionary<string, object> dict = [];
             dict[NAME_KEY] = Name;
             dict[MODEL_KEY] = Model;
-            dict[DOC_ID_KEY] = Embedding.DocId;
 
             // folder_path
             if (Embedding.FolderPath != null) {

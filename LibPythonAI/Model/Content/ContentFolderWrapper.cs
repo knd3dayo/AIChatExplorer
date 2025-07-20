@@ -332,14 +332,14 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        public async Task<VectorSearchItem> GetMainVectorSearchItem() {
-            var item = await VectorDBItem.GetDefaultVectorDB();
+        public VectorSearchItem GetMainVectorSearchItem() {
+            var item = VectorDBItem.GetDefaultVectorDB();
             VectorSearchItem searchProperty = item.CreateVectorSearchItem(Id, ContentFolderPath);
             return searchProperty;
         }
 
-        public async Task<ObservableCollection<VectorSearchItem>> GetVectorSearchProperties() {
-            var item = await GetMainVectorSearchItem();
+        public ObservableCollection<VectorSearchItem> GetVectorSearchProperties() {
+            var item = GetMainVectorSearchItem();
             ObservableCollection<VectorSearchItem> searchProperties =
             [
                 item,

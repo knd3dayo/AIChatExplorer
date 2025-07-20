@@ -31,9 +31,9 @@ namespace LibUIMergeChat.ViewModel {
             if (folder == null) {
                 return;
             }
-            Task.Run(async () => {
+            Task.Run( () => {
                 // ChatRequestContextViewModelを設定
-                var item = await folder.Folder.GetVectorSearchProperties();
+                var item =  folder.Folder.GetVectorSearchProperties();
                 ChatRequestContextViewModel.VectorSearchProperties = [.. item];
             });
 

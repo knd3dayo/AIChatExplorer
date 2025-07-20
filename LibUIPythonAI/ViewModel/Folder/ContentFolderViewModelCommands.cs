@@ -119,9 +119,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            Task.Run(async () => {
+            Task.Run(() => {
                 // MainWindowViewModelのIsIndeterminateをTrueに設定
-                var item = await FolderViewModel.Folder.GetMainVectorSearchItem();
+                var item = FolderViewModel.Folder.GetMainVectorSearchItem();
                 string? vectorDBItemName = item.VectorDBItemName;
                 if (vectorDBItemName == null) {
                     return;

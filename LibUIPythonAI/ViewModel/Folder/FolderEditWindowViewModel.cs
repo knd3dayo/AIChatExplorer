@@ -16,8 +16,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
             FolderViewModel = folderViewModel;
             OnPropertyChanged(nameof(FolderViewModel));
             // VectorDBItemsを非同期でロード
-            Task.Run(async () => {
-                VectorDBItems = await LoadVectorDBItemsAsync();
+            Task.Run(() => {
+                VectorDBItems = LoadVectorDBItemsAsync();
                 OnPropertyChanged(nameof(VectorDBItems));
             });
         }
@@ -40,9 +40,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         public ObservableCollection<VectorDBItem> VectorDBItems { get; private set; } =  [];
 
-        private async Task<ObservableCollection<VectorDBItem>> LoadVectorDBItemsAsync() {
+        private ObservableCollection<VectorDBItem> LoadVectorDBItemsAsync() {
             // VectorDBItemsを非同期でロード
-            var vectorDBItems = await VectorDBItem.GetVectorDBItems(true);
+            var vectorDBItems = VectorDBItem.GetVectorDBItems(true);
             return [.. vectorDBItems];
         }
 

@@ -36,7 +36,7 @@ namespace LibPythonAI.PythonIF.Response {
             if (resultDict.ContainsKey("documents")) {
                 JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                 // List<VectorSearchResult>に変換
-                SourceDocuments = EmbeddingResponse.FromJson(documentsObject.ToString() ?? "[]").Select(x => x.CreateVectorEmbeddingItem()).ToList();
+                SourceDocuments = VectorSearchResponse.FromJson(documentsObject.ToString() ?? "[]").Select(x => x.CreateVectorEmbeddingItem()).ToList();
             }
         }
     }

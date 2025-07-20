@@ -23,14 +23,12 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
             get => _VectorSearchItem;
             set {
-                Task.Run(async () => {
-                    await UpdateVectorSearchItemAsync(value);
-                    await UpdateMultiVectorRetrieverVisibilityAsync();
-                });
+                UpdateVectorSearchItemAsync(value);
+                UpdateMultiVectorRetrieverVisibilityAsync();
             }
         }
-        private async Task UpdateVectorSearchItemAsync(VectorSearchItem? value) {
-            var item = await VectorDBItem.GetItemByName(value?.VectorDBItemName);
+        private void UpdateVectorSearchItemAsync(VectorSearchItem? value) {
+            var item = VectorDBItem.GetItemByName(value?.VectorDBItemName);
             if (item == null) {
                 // VectorDBItemがnullの場合はエラーを表示
                 LogWrapper.Error("VectorDBItem is null.");
@@ -74,9 +72,9 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         // MultiVectorRetrieverの場合のVisibility 
         public Visibility MultiVectorRetrieverVisibility { get; private set; } = Visibility.Collapsed;
 
-        private async Task UpdateMultiVectorRetrieverVisibilityAsync() {
+        private void UpdateMultiVectorRetrieverVisibilityAsync() {
             // VectorDBItemを取得
-            var item = await VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
+            var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
             if (item == null) {
                 MultiVectorRetrieverVisibility = Visibility.Collapsed;
             } else {
@@ -103,7 +101,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
             }
 
             CommonViewModelProperties.UpdateIndeterminate(true);
-            var vectorDBItem = await VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
+            var vectorDBItem = VectorDBItem.GetItemByName(VectorSearchItem.VectorDBItemName);
             if (vectorDBItem == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
