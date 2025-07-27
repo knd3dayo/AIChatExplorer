@@ -1,4 +1,5 @@
 using LibPythonAI.Model.AutoProcess;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Search;
@@ -9,6 +10,15 @@ using LibPythonAI.PythonIF.Response;
 
 namespace LibPythonAI.PythonIF {
     public partial interface IPythonAIFunctions {
+
+        // ContentItem
+        public Task<List<ContentItemWrapper>> GetContentItemsAsync();
+
+        public Task<List<ContentItemWrapper>> GetContentItemsByFolderAsync(string folderId);
+
+        public void UpdateContentItemAsync(List<ContentItemRequest> requests);
+
+        public void DeleteContentItemAsync(List<ContentItemRequest> request);
 
 
         public void UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);

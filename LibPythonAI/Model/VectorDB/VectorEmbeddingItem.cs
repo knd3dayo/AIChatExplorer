@@ -9,7 +9,6 @@ using LibPythonAI.Utils.Common;
 namespace LibPythonAI.Model.VectorDB {
     public class VectorEmbeddingItem {
 
-
         public VectorEmbeddingItem() { }
 
         public VectorEmbeddingItem(string source_id, string folderId) {
@@ -28,27 +27,31 @@ namespace LibPythonAI.Model.VectorDB {
 
         public string SourcePath { get; set; } = "";
 
+        public Dictionary<string, string> Tags { get; set; } = [];
+
         public string DocId { get; set; } = string.Empty;
 
         public double Score { get; set; } = 0.0;
 
         public List<VectorEmbeddingItem> SubDocs { get; set; } = [];
 
-        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path) {
+        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path, Dictionary<string, string> tags) {
             Description = description;
             Content = content;
             SourceType = sourceType;
             SourcePath = source_path;
-
+            Tags = tags;
         }
 
         public void SetMetadata(ContentItemWrapper item) {
             // タイトルとHeaderTextを追加
             string description = item.Description + "\n" + item.HeaderText;
+            // タグを取得
+            Dictionary<string, string> tags = item.Tags.ToDictionary(tag => tag, tag => tag);
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath);
+                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath, tags);
             } else {
-                SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath);
+                SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, tags);
             }
         }
 

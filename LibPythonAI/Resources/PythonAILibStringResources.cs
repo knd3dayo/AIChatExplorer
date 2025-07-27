@@ -250,6 +250,20 @@ namespace LibPythonAI.Resources {
         // Chat history (English)
         public virtual string ChatHistoryEnglish { get; } = "Chat history (English)";
 
+        // GetContentItemsExecute
+        public virtual string GetContentItemsExecute { get; } = "Execute GetContentItems";
+
+        // GetContentItemsByFolderExecute
+        public virtual string GetContentItemsByFolderExecute { get; } = "Execute GetContentItemsByFolder";
+
+        // UpdateContentItemsExecute
+        public virtual string UpdateContentItemsExecute { get; } = "Execute UpdateContentItems";
+
+        // DeleteContentItemsExecute
+        public virtual string DeleteContentItemsExecute { get; } = "Execute DeleteContentItems";
+
+
+
         // UpdateContentFoldersExecute
         public virtual string UpdateContentFoldersExecute { get; } = "Execute UpdateContentFolders";
 

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Chat;
+using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Search;
@@ -55,6 +56,8 @@ namespace LibPythonAI.PythonIF {
             return await response.Content.ReadAsStringAsync();
         }
 
+
+
         // テスト用
         public string HelloWorld() {
             string base_url = $"{this.base_url}/hello_world";
@@ -67,6 +70,123 @@ namespace LibPythonAI.PythonIF {
             using HttpClient client = CreateHttpClient();
             client.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
 
+        }
+
+        public Task<List<ContentItemWrapper>> GetContentItemsAsync() {
+            return Task.Run(async () => {
+                // RequestContainerを作成
+                RequestContainer requestContainer = new();
+                // RequestContainerをJSON文字列に変換
+                string chatRequestContextJson = requestContainer.ToJson();
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+                // PostAsyncを実行する
+                string endpoint = $"{base_url}/get_content_items";
+                string resultString = await PostAsync(endpoint, chatRequestContextJson);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // Errorがある場合は例外をスローする
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    throw new Exception(errorValue);
+                }
+                // content_itemsを取得
+                dynamic? dictList = resultDict.GetValueOrDefault("content_items", "[]");
+                List<ContentItemWrapper> contentItems = [];
+                if (dictList == null) {
+                    return contentItems;
+                }
+                foreach (var item in dictList) {
+                    // ContentItemWrapperを取得
+                    ContentItemResponse contentItemResponse = ContentItemResponse.FromDict(item);
+                    if (contentItemResponse.ContentItem != null) {
+                        contentItems.Add(contentItemResponse.ContentItem);
+                    }
+                }
+                return contentItems;
+            });
+        }
+        public Task<List<ContentItemWrapper>> GetContentItemsByFolderAsync(string folderId) {
+            return Task.Run(async () => {
+                ContentItemWrapper contentItemWrapper = new();
+                contentItemWrapper.FolderId = folderId;
+                ContentItemRequest contentItemRequest = new(contentItemWrapper);
+                // RequestContainerを作成
+                RequestContainer requestContainer = new() {
+                    ContentItemRequestsInstance = [contentItemRequest]
+                };
+                // RequestContainerをJSON文字列に変換
+                string chatRequestContextJson = requestContainer.ToJson();
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentItemsByFolderExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+                // PostAsyncを実行する
+                string endpoint = $"{base_url}/get_content_items_by_folder";
+                string resultString = await PostAsync(endpoint, chatRequestContextJson);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // Errorがある場合は例外をスローする
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    throw new Exception(errorValue);
+                }
+                // content_itemsを取得
+                dynamic dictList = resultDict["content_items"] ?? "[]";
+                List<ContentItemWrapper> contentItems = [];
+                foreach (var item in dictList) {
+                    // ContentItemWrapperを取得
+                    ContentItemResponse contentItemResponse = ContentItemResponse.FromDict(item);
+                    if (contentItemResponse.ContentItem != null) {
+                        contentItems.Add(contentItemResponse.ContentItem);
+                    }
+                }
+                return contentItems;
+            });
+        }
+
+        public void UpdateContentItemAsync(List<ContentItemRequest> requests) {
+            Task.Run(async () => {
+                // RequestContainerを作成
+                RequestContainer requestContainer = new() {
+                    ContentItemRequestsInstance = requests
+                };
+                // RequestContainerをJSON文字列に変換
+                string chatRequestContextJson = requestContainer.ToJson();
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.UpdateContentItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+                // PostAsyncを実行する
+                string endpoint = $"{base_url}/update_content_items";
+                string resultString = await PostAsync(endpoint, chatRequestContextJson);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // Errorがある場合は例外をスローする
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    throw new Exception(errorValue);
+                }
+            });
+        }
+
+        public void DeleteContentItemAsync(List<ContentItemRequest> requests) {
+            Task.Run(async () => {
+                // RequestContainerを作成
+                RequestContainer requestContainer = new() {
+                    ContentItemRequestsInstance = requests
+                };
+                // RequestContainerをJSON文字列に変換
+                string chatRequestContextJson = requestContainer.ToJson();
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeleteContentItemsExecute);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+                // PostAsyncを実行する
+                string endpoint = $"{base_url}/delete_content_items";
+                string resultString = await PostAsync(endpoint, chatRequestContextJson);
+                LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // Errorがある場合は例外をスローする
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    throw new Exception(errorValue);
+                }
+            });
         }
 
         // ContentFolder

@@ -205,6 +205,20 @@ namespace LibPythonAI.Resources {
         // GetTokenCountExecute
         public override string GetTokenCountExecute { get; } = "GetTokenCount実行";
 
+        // GetContentItemsExecute
+        public override string GetContentItemsExecute { get; } = "コンテンツアイテムを取得します";
+
+        // // GetContentItemsByFolderExecute
+        public override string GetContentItemsByFolderExecute { get; } = "フォルダ内のコンテンツアイテムを取得します";
+
+        // UpdateContentItemsExecute
+        public override string UpdateContentItemsExecute { get; } = "コンテンツアイテムを更新します";
+
+        // DeleteContentItemsExecute
+        public override string DeleteContentItemsExecute { get; } = "コンテンツアイテムを削除します";
+
+
+
         // UpdateVectorDBIndex実行
         public override string UpdateEmbeddingExecute { get; } = "Embeddingを更新します";
 

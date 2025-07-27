@@ -12,6 +12,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string DESCRIPTION_KEY = "description";
         public const string CONTENT_KEY = "content";
         public const string SOURCE_PATH_KEY = "source_path";
+        public const string TAGS_KEY = "tags";
 
 
         public EmbeddingRequest(string vectorDBName, string model, VectorEmbeddingItem embedding) {
@@ -40,6 +41,11 @@ namespace LibPythonAI.PythonIF.Request {
             dict[SOURCE_TYPE_KEY] = Embedding.SourceType.ToString();
             dict[DESCRIPTION_KEY] = Embedding.Description;
             dict[CONTENT_KEY] = Embedding.Content;
+
+            // tags
+            if (Embedding.Tags != null && Embedding.Tags.Count > 0) {
+                dict[TAGS_KEY] = Embedding.Tags;
+            }
 
             return dict;
         }

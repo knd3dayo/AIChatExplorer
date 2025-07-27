@@ -6,6 +6,7 @@ namespace LibPythonAI.PythonIF.Request {
     public class RequestContainer {
 
 
+        public const string CONTENT_ITEM_REQUESTS_KEY = "content_item_requests";
         public const string CONTENT_FOLDER_REQUESTS_KEY = "content_folder_requests";
         public const string AUTO_PROCESS_ITEMS_KEY = "auto_process_item_requests";
         public const string AUTO_PROCESS_RULES_KEY = "auto_process_rule_requests";
@@ -34,7 +35,8 @@ namespace LibPythonAI.PythonIF.Request {
 
         public TokenCountRequest? TokenCountRequestInstance { get; set; }
 
-
+        // ContentItemRequests
+        public List<ContentItemRequest> ContentItemRequestsInstance { get; set; } = [];
         // ContentFolderRequests
         public List<ContentFolderRequest> ContentFolderRequestsInstance { get; set; } = [];
 
@@ -71,6 +73,10 @@ namespace LibPythonAI.PythonIF.Request {
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
 
+
+            if (ContentItemRequestsInstance.Count > 0) {
+                dict[CONTENT_ITEM_REQUESTS_KEY] = ContentItemRequest.ToDictList(ContentItemRequestsInstance);
+            }
             if (RequestContextInstance != null) {
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
 

@@ -15,16 +15,16 @@ namespace LibPythonAI.Model.Content {
 
         public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
         public ContentItemWrapper() {
-            Task.Run(async () => {
-                VectorDBProperties = await UpdateVectorDBProperties();
+            Task.Run(() => {
+                VectorDBProperties = UpdateVectorDBProperties();
             });
             ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
             FolderId = folder.Id;
-            Task.Run(async () => {
-                VectorDBProperties = await UpdateVectorDBProperties();
+            Task.Run(() => {
+                VectorDBProperties = UpdateVectorDBProperties();
             });
             ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
@@ -80,6 +80,36 @@ namespace LibPythonAI.Model.Content {
 
         // ピン留め
         public bool IsPinned { get => Entity.IsPinned; set { Entity.IsPinned = value; } }
+
+        // ChatMessagesJson
+        public string ChatMessagesJson {
+            get => Entity.ChatMessagesJson;
+            set {
+                Entity.ChatMessagesJson = value;
+            }
+        }
+        // PromptChatResultJson
+        public string PromptChatResultJson {
+            get => Entity.PromptChatResultJson;
+            set {
+                Entity.PromptChatResultJson = value;
+            }
+        }
+        // ExtendedPropertiesJson
+        public string ExtendedPropertiesJson {
+            get {
+                return Entity.ExtendedPropertiesJson;
+            }
+            set {
+                Entity.ExtendedPropertiesJson = value;
+            }
+        }
+        public string CachedBase64String {
+            get => Entity.CachedBase64String;
+            set {
+                Entity.CachedBase64String = value;
+            }
+        }
 
         // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
         public string Base64Image {
@@ -183,40 +213,34 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
+        private void SetExtendedProperty<T>(string key, T value) {
+            Entity.ExtendedProperties[key] = value;
+        }
+        private T? GetExtendedProperty<T>(string key) {
+            if (Entity.ExtendedProperties.TryGetValue(key, out object? value)) {
+                if (value is T typedValue) {
+                    return typedValue;
+                }
+            }
+            return default;
+        }
 
         // ベクトル化日時の文字列
         public string VectorizedAtString {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("VectorizedAtString", null);
-                if (value is string strValue) {
-                    return strValue;
-                }
-                Entity.ExtendedProperties["VectorizedAtString"] = string.Empty;
-                return string.Empty;
-            }
-            set {
-                Entity.ExtendedProperties["VectorizedAtString"] = value;
-            }
+            get => GetExtendedProperty<string>("VectorizedAtString") ?? string.Empty;
+            set => SetExtendedProperty("VectorizedAtString", value);
         }
         // フォルダに設定されたVerctorDBPropertyを使うかどうか
         public bool UseFolderVectorSearchItem {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("UseFolderVectorSearchItem", null);
-                if (value is bool boolValue) {
-                    return boolValue;
-                }
-                Entity.ExtendedProperties["UseFolderVectorSearchItem"] = true;
-                return true;
-            }
-            set {
-                Entity.ExtendedProperties["UseFolderVectorSearchItem"] = value;
-            }
+            get => GetExtendedProperty<bool>("UseFolderVectorSearchItem");
+            set => SetExtendedProperty("UseFolderVectorSearchItem", value);
         }
+
         // このアイテムに紐付けらされたVectorSearchItem
         // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchItemを使用する
         public ObservableCollection<VectorSearchItem> VectorDBProperties { get; private set; } = [];
 
-        private async Task<ObservableCollection<VectorSearchItem>> UpdateVectorDBProperties() {
+        private ObservableCollection<VectorSearchItem> UpdateVectorDBProperties() {
             ObservableCollection<VectorSearchItem> vectorDBProperties = [];
             if (UseFolderVectorSearchItem) {
                 var items = GetFolder().GetVectorSearchProperties();
@@ -255,35 +279,18 @@ namespace LibPythonAI.Model.Content {
 
         //　貼り付け元のアプリケーション名
         public string? SourceApplicationName {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationName", null);
-                if (value is string strValue) {
-                    return strValue;
-                }
-                Entity.ExtendedProperties["SourceApplicationName"] = string.Empty;
-                return string.Empty;
-            }
-            set {
-                Entity.ExtendedProperties["SourceApplicationName"] = value;
-            }
+            get => GetExtendedProperty<string>("SourceApplicationName") ?? string.Empty;
+            set => SetExtendedProperty("SourceApplicationName", value ?? string.Empty);
         }
         //　貼り付け元のアプリケーションのタイトル
         public string SourceApplicationTitle {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationTitle", null);
-                if (value is string strValue) {
-                    return strValue;
-                }
-                return string.Empty;
-            }
-            set {
-                Entity.ExtendedProperties["SourceApplicationTitle"] = value;
-            }
+            get => GetExtendedProperty<string>("SourceApplicationTitle") ?? string.Empty;
+            set => SetExtendedProperty("SourceApplicationTitle", value ?? string.Empty);
         }
         //　貼り付け元のアプリケーションのID
         public int SourceApplicationID {
             get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationID", null);
+                var value = GetExtendedProperty<object>("SourceApplicationID");
                 if (value is Decimal intValue) {
                     return Decimal.ToInt32(intValue);
                 }
@@ -292,28 +299,24 @@ namespace LibPythonAI.Model.Content {
                 }
                 return 0;
             }
-            set {
-                Entity.ExtendedProperties["SourceApplicationID"] = value;
-            }
+            set => SetExtendedProperty("SourceApplicationID", value);
         }
         //　貼り付け元のアプリケーションのパス
         public string SourceApplicationPath {
             get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceApplicationPath", null);
+                var value = GetExtendedProperty<object>("SourceApplicationPath");
                 if (value is string strValue) {
                     return strValue;
                 }
                 return string.Empty;
             }
-            set {
-                Entity.ExtendedProperties["SourceApplicationPath"] = value;
-            }
+            set => SetExtendedProperty("SourceApplicationPath", value);
         }
 
         // 文書の信頼度(0-100)
         public int DocumentReliability {
             get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("DocumentReliability", null);
+                var value = GetExtendedProperty<object>("DocumentReliability");
                 if (value is Decimal intValue) {
                     return Decimal.ToInt32(intValue);
                 }
@@ -323,57 +326,34 @@ namespace LibPythonAI.Model.Content {
                 return 0;
             }
             set {
-                Entity.ExtendedProperties["DocumentReliability"] = value;
+                if (value < 0 || value > 100) {
+                    throw new ArgumentOutOfRangeException(nameof(value), "DocumentReliability must be between 0 and 100.");
+                }
+                SetExtendedProperty("DocumentReliability", value);
             }
         }
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("DocumentReliabilityReason", null);
-                if (value is string strValue) {
-                    return strValue;
-                }
-                return string.Empty;
-            }
-            set {
-                Entity.ExtendedProperties["DocumentReliabilityReason"] = value;
-            }
+            get => GetExtendedProperty<string>("DocumentReliabilityReason") ?? string.Empty;
+            set => SetExtendedProperty("DocumentReliabilityReason", value ?? string.Empty);
         }
 
         // Path
         public string SourcePath {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourcePath", null);
-                if (value is string strValue) {
-                    return strValue;
-                }
-                return string.Empty;
-            }
-            set {
-                Entity.ExtendedProperties["SourcePath"] = value;
-            }
+            get => GetExtendedProperty<string>("SourcePath") ?? string.Empty;
+            set => SetExtendedProperty("SourcePath", value ?? string.Empty);
         }
 
         // SourceType 
         public string SourceType {
-            get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("SourceType", null);
-                string? sourceTypeString = value?.ToString();
-                if (!string.IsNullOrEmpty(sourceTypeString)) {
-                    return sourceTypeString;
-                }
-                // デフォルト値を設定
-                return ContentSourceType.Application;
-            }
-            set {
-                Entity.ExtendedProperties["SourceType"] = value.ToString();
-            }
+            get => GetExtendedProperty<string>("SourceType") ?? ContentSourceType.Application.ToString();
+            set => SetExtendedProperty("SourceType", value ?? ContentSourceType.Application);
         }
         // ファイルの最終更新日時
 
         public long LastModified {
             get {
-                var value = Entity.ExtendedProperties.GetValueOrDefault("LastModified", null);
+                var value = GetExtendedProperty<object>("LastModified");
                 if (value is long longValue) {
                     return longValue;
                 }
@@ -382,16 +362,14 @@ namespace LibPythonAI.Model.Content {
                 }
                 return 0L;
             }
-            set {
-                Entity.ExtendedProperties["LastModified"] = value;
-            }
+            set => SetExtendedProperty("LastModified", value);
         }
 
         // ChatSettings
         public ChatSettings ChatSettings { get; set; }
 
         private ChatSettings LoadChatSettingsFromExtendedProperties() {
-            var value = Entity.ExtendedProperties.GetValueOrDefault("ChatSettingsJson", null);
+            var value = GetExtendedProperty<object>("ChatSettingsJson");
             ChatSettings chatSettings;
             if (value is string) {
                 chatSettings = ChatSettings.FromJson(value.ToString() ?? "{}");
@@ -401,9 +379,12 @@ namespace LibPythonAI.Model.Content {
         }
 
         private void SaveChatSettingsToExtendedProperties() {
-            Entity.ExtendedProperties["ChatSettingsJson"] = ChatSettings.ToJson();
+            if (ChatSettings == null) {
+                Entity.ExtendedProperties.Remove("ChatSettingsJson");
+            } else {
+                Entity.ExtendedProperties["ChatSettingsJson"] = ChatSettings.ToJson();
+            }
         }
-
 
         // Folder
         public virtual ContentFolderWrapper GetFolder() {
@@ -548,7 +529,7 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run(async () => {
+                Task.Run(() => {
                     var item = GetMainVectorSearchItem();
                     string? vectorDBItemName = item.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
