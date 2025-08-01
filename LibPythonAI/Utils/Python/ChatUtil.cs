@@ -139,16 +139,6 @@ namespace LibPythonAI.Utils.Python {
             return "";
         }
 
-
-        public static void CancelAutoGenChat(string sessionToken) {
-            PythonExecutor.PythonAIFunctions?.CancelAutoGenChat(sessionToken);
-        }
-
-        public static async Task<ChatResponse?> ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
-            ChatResponse? result = await PythonExecutor.PythonAIFunctions.AutoGenGroupChatAsync(chatRequestContext, chat, iteration);
-            return result;
-        }
-
         public static async Task<ChatResponse?> ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
             // Ensure PythonAIFunctions is not null before calling OpenAIChatAsync
             if (PythonExecutor.PythonAIFunctions == null) {
@@ -271,29 +261,8 @@ namespace LibPythonAI.Utils.Python {
                 // 通常のChatを実行する。
                 return await ExecuteChatNormal(chatRequestContext, chatRequest);
             }
-            // AutoGenGroupChatを実行する
-            if (chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
-                // AutoGenGroupChatを実行する
-                return await ExecuteAutoGenGroupChat(chatRequest, chatRequestContext, iterateAction);
-            }
             return null;
         }
-
-        // AutoGenGroupChatを実行する
-        public static async Task<ChatResponse?> ExecuteAutoGenGroupChat(ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // リクエストメッセージを最新化
-            PrepareNormalRequest(chatRequestContext, chatRequest);
-
-            // 結果
-            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
-            chatRequest.ChatHistory.Add(result);
-            // AutoGenGroupChatを実行する
-            return await ExecuteAutoGenGroupChat(chatRequestContext, chatRequest, (message) => {
-                result.Content += message + "\n";
-                iterateAction(message);
-            });
-        }
-
 
     }
 }

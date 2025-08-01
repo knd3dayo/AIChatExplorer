@@ -26,6 +26,13 @@ namespace LibPythonAI.Model.Search {
         public bool ExcludeSourceApplicationName { get; set; } = false;
         public bool ExcludeSourceApplicationTitle { get; set; } = false;
 
+        // target_folder_id
+        public string TargetFolderId { get; set; } = "";
+
+        // ターゲットフォルダ配下のアイテムを検索するかどうか
+        public bool IncludeSubFolders { get; set; } = false;
+
+
         // ToDict()
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
@@ -43,6 +50,8 @@ namespace LibPythonAI.Model.Search {
                 { "exclude_tags", ExcludeTags },
                 { "exclude_source_application_name", ExcludeSourceApplicationName },
                 { "exclude_source_application_title", ExcludeSourceApplicationTitle },
+                { "target_folder_id", TargetFolderId },
+                { "include_sub_folders", IncludeSubFolders }
             };
             return dict;
         }

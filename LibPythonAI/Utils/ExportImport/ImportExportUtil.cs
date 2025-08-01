@@ -54,11 +54,11 @@ namespace LibPythonAI.Utils.ExportImport {
         }
 
         // --- Export/Import
-        public static void ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
+        public static async Task ExportToExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ApplicationItemのリスト要素毎に処理を行う
-            foreach (var applicationItem in fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
+            foreach (var applicationItem in await fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {

@@ -255,6 +255,8 @@ namespace LibPythonAI.Resources {
 
         // GetContentItemsByFolderExecute
         public virtual string GetContentItemsByFolderExecute { get; } = "Execute GetContentItemsByFolder";
+        // GetContentItemExecute
+        public virtual string GetContentItemExecute { get; } = "Execute GetContentItem";
 
         // UpdateContentItemsExecute
         public virtual string UpdateContentItemsExecute { get; } = "Execute UpdateContentItems";
@@ -262,7 +264,8 @@ namespace LibPythonAI.Resources {
         // DeleteContentItemsExecute
         public virtual string DeleteContentItemsExecute { get; } = "Execute DeleteContentItems";
 
-
+        // SearchContentItemsExecute
+        public virtual string SearchContentItemsExecute { get; } = "Execute SearchContentItems";
 
         // UpdateContentFoldersExecute
         public virtual string UpdateContentFoldersExecute { get; } = "Execute UpdateContentFolders";

@@ -26,28 +26,22 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             };
         }
 
-        public override void Save() {
-            if (ContentModified || DescriptionModified) {
-                // ベクトルを更新
-                Task.Run(async () => {
-                    var item = GetFolder().GetMainVectorSearchItem();
-                    string? vectorDBItemName = item?.VectorDBItemName;
-                    if (vectorDBItemName == null) {
-                        return;
-                    }
-                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
-                        Content = Content,
-                        Description = Description,
-                        SourceType = VectorSourceType.Mail,
-                        SourcePath = SourcePath,
-                    };
-                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
-                });
-                ContentModified = false;
-                DescriptionModified = false;
-            }
-
-            ContentItemEntity.SaveItems([Entity]);
+        public override async Task UpdateEmbedding() {
+            // ベクトルを更新
+            await Task.Run(async () => {
+                var item = GetFolder().GetMainVectorSearchItem();
+                string? vectorDBItemName = item?.VectorDBItemName;
+                if (vectorDBItemName == null) {
+                    return;
+                }
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
+                    Content = Content,
+                    Description = Description,
+                    SourceType = VectorSourceType.Mail,
+                    SourcePath = SourcePath,
+                };
+                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+            });
         }
 
         public string EntryID {

@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 
 namespace LibPythonAI.PythonIF.Request {
-    public  class ContentItemRequest {
+    public class ContentItemRequest {
 
         // id
         public const string ID_KEY = "id";
@@ -37,27 +33,35 @@ namespace LibPythonAI.PythonIF.Request {
         // extended_properties_json
         public const string EXTENDED_PROPERTIES_JSON_KEY = "extended_properties_json";
 
-        public ContentItemRequest(ContentItemWrapper contentItem) {
-            ContentItem = contentItem;
+        public ContentItemRequest(ContentItemEntity entity) {
+            Entity = entity;
         }
-        public ContentItemWrapper ContentItem { get; set; }
+        public ContentItemEntity Entity { get; set; }
 
+        public ContentItemWrapper ContentItem {
+            get {
+                ContentItemWrapper item = new() {
+                    Entity = Entity
+                };
+                return item;
+            }
+        }
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict[ID_KEY] = ContentItem.Id;
-            dict[FOLDER_ID_KEY] = ContentItem.FolderId ?? "";
-            dict[CREATED_AT_KEY] = ContentItem.CreatedAt.ToString("o");
-            dict[UPDATED_AT_KEY] = ContentItem.UpdatedAt.ToString("o");
-            dict[VECTORIZED_AT_KEY] = ContentItem.VectorizedAt.ToString("o");
-            dict[CONTENT_KEY] = ContentItem.Content;
-            dict[DESCRIPTION_KEY] = ContentItem.Description;
-            dict[CONTENT_TYPE_KEY] = ContentItem.ContentType.ToString();
-            dict[CHAT_MESSAGES_JSON_KEY] = ContentItem.ChatMessagesJson;
-            dict[PROMPT_CHAT_RESULT_JSON_KEY] = ContentItem.PromptChatResultJson;
-            dict[TAG_STRING_KEY] = string.Join(",", ContentItem.Tags);
-            dict[IS_PINNED_KEY] = ContentItem.IsPinned;
-            dict[CACHED_BASE64_STRING_KEY] = ContentItem.CachedBase64String;
-            dict[EXTENDED_PROPERTIES_JSON_KEY] = ContentItem.ExtendedPropertiesJson;
+            dict[ID_KEY] = Entity.Id;
+            dict[FOLDER_ID_KEY] = Entity.FolderId ?? "";
+            dict[CREATED_AT_KEY] = Entity.CreatedAt.ToString("o");
+            dict[UPDATED_AT_KEY] = Entity.UpdatedAt.ToString("o");
+            dict[VECTORIZED_AT_KEY] = Entity.VectorizedAt.ToString("o");
+            dict[CONTENT_KEY] = Entity.Content;
+            dict[DESCRIPTION_KEY] = Entity.Description;
+            dict[CONTENT_TYPE_KEY] = (int)Entity.ContentType;
+            dict[CHAT_MESSAGES_JSON_KEY] = Entity.ChatMessagesJson;
+            dict[PROMPT_CHAT_RESULT_JSON_KEY] = Entity.PromptChatResultJson;
+            dict[TAG_STRING_KEY] = string.Join(",", Entity.Tags);
+            dict[IS_PINNED_KEY] = Entity.IsPinned;
+            dict[CACHED_BASE64_STRING_KEY] = Entity.CachedBase64String;
+            dict[EXTENDED_PROPERTIES_JSON_KEY] = Entity.ExtendedPropertiesJson;
             return dict;
         }
 

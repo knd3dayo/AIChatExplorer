@@ -211,12 +211,17 @@ namespace LibPythonAI.Resources {
         // // GetContentItemsByFolderExecute
         public override string GetContentItemsByFolderExecute { get; } = "フォルダ内のコンテンツアイテムを取得します";
 
+        // GetContentItemExecute
+        public override string GetContentItemExecute { get; } = "コンテンツアイテムを取得します";
+
         // UpdateContentItemsExecute
         public override string UpdateContentItemsExecute { get; } = "コンテンツアイテムを更新します";
 
         // DeleteContentItemsExecute
         public override string DeleteContentItemsExecute { get; } = "コンテンツアイテムを削除します";
 
+        // SearchContentItemsExecute
+        public override string SearchContentItemsExecute { get; } = "コンテンツアイテムを検索します";
 
 
         // UpdateVectorDBIndex実行

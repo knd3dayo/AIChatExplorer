@@ -12,8 +12,6 @@ namespace LibPythonAI.Data {
 
         public DbSet<ContentFolderRootEntity> ContentFolderRoots { get; set; }
 
-        public DbSet<ContentItemEntity> ContentItems { get; set; }
-
 
         // MainStatisticsEntity
         public DbSet<MainStatisticsEntity> MainStatistics { get; set; }

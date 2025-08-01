@@ -211,15 +211,6 @@ namespace LibUIPythonAI.ViewModel.Chat {
 
         });
 
-
-        // AutoGeChatのキャンセルコマンド
-        public SimpleDelegateCommand<object> CancelAutoGenChatCommand => new((parameter) => {
-            Task.Run(() => {
-                ChatUtil.CancelAutoGenChat(SessionToken);
-            }).ContinueWith((task) => {
-                CommonViewModelProperties.UpdateIndeterminate(false);
-            });
-        });
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistoryViewModel.ChatHistory.Clear();

@@ -63,13 +63,13 @@ namespace LibPythonAI.Model.VectorDB {
 
         // SaveAsync
         public async Task SaveAsync() {
-            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdateVectorDBItem(this));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdateVectorDBItemAsync(this));
         }
 
         // DeleteAsync
         public async Task DeleteAsync() {
 
-            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeleteVectorDBItem(this));
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeleteVectorDBItemAsync(this));
         }
 
         private static bool _isInitialized = false;

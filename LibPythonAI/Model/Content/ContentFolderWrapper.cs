@@ -198,20 +198,21 @@ namespace LibPythonAI.Model.Content {
             // APIを呼び出して、ContentFolderを削除
             ContentFolderRequest request = new(this);
             PythonExecutor.PythonAIFunctions.DeleteContentFoldersForVectorSearch([request]);
-
         }
 
 
-        public List<T> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
+        public async Task<List<T>> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
             if (isSync) {
                 // SyncItems
-                SyncItems();
+                await SyncItems();
             }
-            List<T> items = ContentItemWrapper.GetItems<T>(this);
+            List<T> items = await ContentItemWrapper.GetItems<T>(this);
             return items;
         }
 
-        public virtual void SyncItems() { }
+        public virtual async Task SyncItems() {
+            await Task.Run(() => { });
+        }
 
         public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
             List<T> children = [];

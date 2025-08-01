@@ -60,7 +60,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return child;
         }
 
-        public override void SyncItems() {
+        public override async Task SyncItems() {
             // MAPIFolderが存在しない場合は終了
             if (MAPIFolder == null) {
                 return;
@@ -69,7 +69,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
             // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            foreach (var item in GetItems<OutlookItem>(false)) {
+            foreach (var item in await GetItems<OutlookItem>(false)) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
@@ -118,7 +118,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return mAPIFolder;
         }
 
-        public virtual void SyncFolders() {
+        public virtual async Task SyncFolders() {
 
 
             // Outlook上のフォルダのNameのHashSet
@@ -136,7 +136,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
             // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = base.GetItems<ContentItemWrapper>(false);
+            var items = await base.GetItems<ContentItemWrapper>(false);
             // folder内のFolderNameとContentFolderのDictionary
             Dictionary<string, ContentItemWrapper> folderPathIdDict = [];
             foreach (var item in items) {

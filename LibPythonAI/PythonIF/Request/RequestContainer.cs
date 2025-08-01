@@ -1,4 +1,5 @@
 using System.Text.Json;
+using LibPythonAI.Model.Search;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Utils.Common;
 
@@ -28,6 +29,7 @@ namespace LibPythonAI.PythonIF.Request {
         public const string EXCEL_REQUEST_KEY = "excel_request";
         public const string FILE_REQUEST_KEY = "file_request";
         public const string WEB_REQUEST_KEY = "web_request";
+        public const string SEARCH_REQUEST_KEY = "search_request";
         public string SessionToken { get; set; } = "";
 
         public ChatRequestContext? RequestContextInstance { get; set; }
@@ -69,6 +71,9 @@ namespace LibPythonAI.PythonIF.Request {
 
         // EmbeddingRequest
         public EmbeddingRequest? EmbeddingRequestInstance { get; set; }
+
+        // SearchRequest
+        public SearchCondition? SearchRequestInstance { get; set; }
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
@@ -129,6 +134,9 @@ namespace LibPythonAI.PythonIF.Request {
             }
             if (ContentFolderRequestsInstance.Count > 0) {
                 dict[CONTENT_FOLDER_REQUESTS_KEY] = ContentFolderRequest.ToDictList(ContentFolderRequestsInstance);
+            }
+            if (SearchRequestInstance != null) {
+                dict[SEARCH_REQUEST_KEY] = SearchRequestInstance.ToDict();
             }
             return dict;
         }

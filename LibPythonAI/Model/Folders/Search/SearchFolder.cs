@@ -34,7 +34,7 @@ namespace AIChatExplorer.Model.Folders.Search {
             // フォルダに検索条件が設定されている場合
             SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
             if (searchConditionRule != null) {
-                _items = searchConditionRule.SearchItems().Select(x => (ContentItemWrapper)x).ToList();
+                _items = await searchConditionRule.SearchItems();
 
             }
             return _items;

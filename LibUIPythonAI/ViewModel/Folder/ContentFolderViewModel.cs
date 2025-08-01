@@ -84,8 +84,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
 
         protected void LoadItems<Item>() where Item : ContentItemWrapper {
-            Task.Run(() => {
-                List<Item> _items = Folder.GetItems<Item>().OrderByDescending(x => x.UpdatedAt).ToList();
+            Task.Run(async () => {
+                List<Item> _items = await Folder.GetItems<Item>();
+                _items = _items.OrderByDescending(x => x.UpdatedAt).ToList();
+
                 MainUITask.Run(() => {
                     Items.Clear();
                     foreach (Item item in _items) {

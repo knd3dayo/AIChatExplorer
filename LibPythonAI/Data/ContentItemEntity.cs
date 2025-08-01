@@ -149,32 +149,6 @@ namespace LibPythonAI.Data {
             return newItem;
         }
 
-        // 複数アイテムのSave
-        public static void SaveItems(List<ContentItemEntity> items) {
-            using PythonAILibDBContext context = new();
-            foreach (var item in items) {
-                item.SaveObjectToJson();
-                var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
-                if (ExistingItem == null) {
-                    context.ContentItems.Add(item);
-                } else {
-                    context.Entry(ExistingItem).CurrentValues.SetValues(item);
-                }
-            }
-            context.SaveChanges();
-        }
-
-        // 複数アイテムのDelete
-        public static void DeleteItems(List<ContentItemEntity> items) {
-            using PythonAILibDBContext context = new();
-            foreach (var item in items) {
-                var ExistingItem = context.ContentItems.FirstOrDefault(x => x.Id == item.Id);
-                if (ExistingItem != null) {
-                    context.ContentItems.Remove(ExistingItem);
-                }
-            }
-            context.SaveChanges();
-        }
         // Equals , GetHashCodeのオーバーライド
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {

@@ -16,29 +16,24 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 ChatSettings = ChatSettings
             };
         }
-        public override void Save() {
-            if (ContentModified || DescriptionModified) {
-                // ベクトルを更新
-                Task.Run(async () => {
-                    var item = GetFolder().GetMainVectorSearchItem();
-                    string? vectorDBItemName = item?.VectorDBItemName;
-                    if (vectorDBItemName == null) {
-                        return;
-                    }
-                    VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
-                        Content = Content,
-                        Description = Description,
-                        SourceType = VectorSourceType.Web,
-                        SourcePath = SourcePath,
-                    };
-                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
-                });
-                ContentModified = false;
-                DescriptionModified = false;
 
-            }
+        public override async Task UpdateEmbedding() {
+            // ベクトルを更新
+            await Task.Run(() => {
+                var item = GetFolder().GetMainVectorSearchItem();
+                string? vectorDBItemName = item?.VectorDBItemName;
+                if (vectorDBItemName == null) {
+                    return;
+                }
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
+                    Content = Content,
+                    Description = Description,
+                    SourceType = VectorSourceType.Web,
+                    SourcePath = SourcePath,
+                };
+                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+            });
 
-            ContentItemEntity.SaveItems([Entity]);
         }
 
     }

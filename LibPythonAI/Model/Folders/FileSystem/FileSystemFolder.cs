@@ -115,7 +115,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
 
-        public override void SyncItems() {
+        public override async Task SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
@@ -131,7 +131,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             }
 
             // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = base.GetItems<ContentItemWrapper>(false);
+            var items = await base.GetItems<ContentItemWrapper>(false);
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
@@ -149,8 +149,9 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 deleteItems.Add(contentItem);
             }
             // 削除対象のアイテムを削除
-            if (deleteItems.Count > 0) {
-                ContentItemWrapper.DeleteItems(deleteItems);
+            foreach (var deleteItem in deleteItems) {
+                // アイテムの削除
+                await deleteItem.Delete();
             }
 
             // 追加対象格納用のリスト
@@ -164,7 +165,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 MaxDegreeOfParallelism = 4
             };
 
-            Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {
+            Parallel.ForEach(addFilePaths, parallelOptions, async localFileSystemFilePath => {
 
                 ContentItemWrapper contentItem = new(this.Entity) {
                     Description = Path.GetFileName(localFileSystemFilePath),
@@ -176,7 +177,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
 
                 };
                 addItems.Add(contentItem);
-                contentItem.Save();
+                await contentItem.Save();
                 // 自動処理ルールを適用
                 // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                 // ContentItem result = task.Result;
@@ -188,12 +189,12 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
 
             // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
             Dictionary<string, ContentItemWrapper> oldItemsDict = [];
-            Parallel.ForEach(updateFilePaths, parallelOptions, localFileSystemFilePath => {
+            Parallel.ForEach(updateFilePaths, parallelOptions, async localFileSystemFilePath => {
                 ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    contentItem.Save();
+                    await contentItem.Save();
                 }
             });
 

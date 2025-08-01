@@ -1,12 +1,15 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Model.VectorDB;
+using LibPythonAI.PythonIF;
+using LibPythonAI.PythonIF.Request;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 
@@ -29,7 +32,7 @@ namespace LibPythonAI.Model.Content {
             ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
-        public ContentItemEntity Entity { get; protected set; } = new ContentItemEntity();
+        public ContentItemEntity Entity { get; set; } = new ContentItemEntity();
 
         // ID
         public string Id { get => Entity.Id; set { Entity.Id = value; } }
@@ -403,16 +406,16 @@ namespace LibPythonAI.Model.Content {
 
 
         // 別フォルダに移動
-        public virtual void MoveTo(ContentFolderWrapper folder) {
+        public virtual async Task MoveTo(ContentFolderWrapper folder) {
             Entity.FolderId = folder.Id;
-            Save();
+            await Save();
         }
 
         // 別フォルダにコピー
-        public virtual void CopyToFolder(ContentFolderWrapper folder) {
+        public virtual async Task CopyToFolder(ContentFolderWrapper folder) {
             ContentItemWrapper newItem = Copy();
             newItem.Entity.FolderId = folder.Id;
-            newItem.Save();
+            await newItem.Save();
         }
 
         public virtual ContentItemWrapper Copy() {
@@ -494,9 +497,6 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // Load
-        public virtual void Load(Action beforeAction, Action afterAction) { }
-
         public bool IsImage() {
 
             if (string.IsNullOrEmpty(Base64Image)) {
@@ -519,8 +519,7 @@ namespace LibPythonAI.Model.Content {
             return GetFolder().GetMainVectorSearchItem();
         }
 
-
-        public virtual void Save() {
+        public async Task Save() {
             // IdがTEMPORARY_ITEM_IDの場合は保存しない
             if (Id == TEMPORARY_ITEM_ID) {
                 return;
@@ -529,36 +528,51 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                Task.Run(() => {
-                    var item = GetMainVectorSearchItem();
-                    string? vectorDBItemName = item.VectorDBItemName;
-                    if (string.IsNullOrEmpty(vectorDBItemName)) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
-                        return;
-                    }
-                    VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
-                    vectorDBEntry.SetMetadata(this);
-                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
-                });
+                await UpdateEmbedding();
             }
 
             // ChatSettingsをExtendedPropertiesに保存
             SaveChatSettingsToExtendedProperties();
-            ContentItemEntity.SaveItems([Entity]);
+            ContentItemRequest request = new(Entity);
+            await PythonExecutor.PythonAIFunctions.UpdateContentItemAsync([request]);
             ContentModified = false;
             DescriptionModified = false;
 
         }
 
-        public void Delete() {
-            ContentItemCommands.DeleteEmbeddings([this]);
-            ContentItemEntity.DeleteItems([Entity]);
+        public virtual async Task UpdateEmbedding() {
+            // ベクトルを更新
+            await Task.Run(() => {
+                var item = GetMainVectorSearchItem();
+                string? vectorDBItemName = item.VectorDBItemName;
+                if (string.IsNullOrEmpty(vectorDBItemName)) {
+                    LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                    return;
+                }
+                VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
+                vectorDBEntry.SetMetadata(this);
+                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+            });
         }
 
-        // FolderIdが一致するContentItemWrapperを取得
-        public static List<T> GetItems<T>(ContentFolderWrapper folder) where T : ContentItemWrapper {
-            using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.FolderId == folder.Id);
+
+        public async Task Delete() {
+            ContentItemCommands.DeleteEmbeddings([this]);
+            await PythonExecutor.PythonAIFunctions.DeleteContentItemsAsync([new ContentItemRequest(Entity)]);
+        }
+
+        public static async Task<ContentItemEntity?> LoadEntityAsync(string id) {
+            // APIを使用してアイテムを取得
+            ContentItemEntity? item = await PythonExecutor.PythonAIFunctions.GetContentItemByIdAsync(id);
+            return item;
+    }
+        public static async Task<List<ContentItemEntity>> LoadEntitiesAsync(ContentFolderWrapper folder) {
+            // APIを使用してフォルダ内のアイテムを取得
+            return await PythonExecutor.PythonAIFunctions.GetContentItemsByFolderAsync(folder.Id);
+        }
+
+        public static async Task<List<T>> GetItems<T>(ContentFolderWrapper folder) where T : ContentItemWrapper {
+            List<ContentItemEntity> items = await LoadEntitiesAsync(folder);
             List<T> result = [];
             foreach (var item in items) {
                 if (Activator.CreateInstance(typeof(T)) is T newItem) {
@@ -570,53 +584,18 @@ namespace LibPythonAI.Model.Content {
             return result;
         }
 
-        public static T? GetItem<T>(string id) where T : ContentItemWrapper, new() {
-            using PythonAILibDBContext db = new();
-            var item = db.ContentItems.FirstOrDefault(x => x.Id == id);
+        public static async Task<T?> GetItem<T>(string id) where T : ContentItemWrapper, new() {
+            ContentItemEntity? item = await LoadEntityAsync(id);
             if (item == null) {
                 return null;
             }
-            T result = new T() {
-                Entity = item,
+            T result = new() {
+                Entity = item
             };
             result.ChatSettings = result.LoadChatSettingsFromExtendedProperties();
             return result;
         }
 
-
-        public static void DeleteItems(List<ContentItemWrapper> items) {
-            ContentItemCommands.DeleteEmbeddings(items);
-            ContentItemEntity.DeleteItems(items.Select(item => item.Entity).ToList());
-        }
-
-        public static void SaveItems(List<ContentItemWrapper> items, bool applyAutoProcess = false) {
-
-            foreach (var item in items) {
-                if (item.ContentModified || item.DescriptionModified) {
-                    // 更新日時を設定
-                    item.UpdatedAt = DateTime.Now;
-
-                    // ベクトルを更新
-                    Task.Run(async () => {
-                        var searchItem = item.GetMainVectorSearchItem();
-                        string? vectorDBItemName = searchItem.VectorDBItemName;
-                        if (string.IsNullOrEmpty(vectorDBItemName)) {
-                            LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
-                            return;
-                        }
-                        VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
-                        vectorDBEntry.SetMetadata(item);
-                        VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
-                    });
-                }
-                // ChatSettingsをExtendedPropertiesに保存
-                item.SaveChatSettingsToExtendedProperties();
-            }
-            if (applyAutoProcess) {
-                // 自動処理を適用
-            }
-            ContentItemEntity.SaveItems(items.Select(item => item.Entity).ToList());
-        }
 
         // ApplicationItemをJSON文字列に変換する
         public static string ToJson(ContentItemWrapper item) {
@@ -632,83 +611,45 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public static List<ContentItemWrapper> SearchAll(SearchCondition searchCondition) {
+        public static async Task<List<ContentItemWrapper>> SearchAll(SearchCondition searchCondition) {
             if (searchCondition.IsEmpty()) {
                 return [];
             }
-            using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Select(x => new ContentItemWrapper() { Entity = x });
-            return Search(searchCondition, items).ToList();
+            // APIを使用して検索を実行
+            List<ContentItemEntity> items = await PythonExecutor.PythonAIFunctions.SearchContentItems(searchCondition);
+
+            List<ContentItemWrapper> result = [];
+            foreach (var item in items) {
+                ContentItemWrapper wrapper = new() {
+                    Entity = item,
+                    ChatSettings = new ChatSettings()
+                };
+                wrapper.ChatSettings = wrapper.LoadChatSettingsFromExtendedProperties();
+                result.Add(wrapper);
+            }
+            return result;
         }
 
-        public static List<ContentItemWrapper> Search(SearchCondition searchCondition, ContentFolderWrapper targetFolder, bool isIncludeSubFolders) {
+        public static async Task<List<ContentItemWrapper>> Search(SearchCondition searchCondition, ContentFolderWrapper targetFolder, bool isIncludeSubFolders) {
             if (searchCondition.IsEmpty()) {
                 return [];
             }
+            searchCondition.TargetFolderId = targetFolder.Id;
+            searchCondition.IncludeSubFolders = isIncludeSubFolders;
 
-            List<string> folderIds = [];
-            folderIds.Add(targetFolder.Entity.Id);
-            if (isIncludeSubFolders) {
-                folderIds.AddRange(targetFolder.Entity.GetChildrenAll().Select(x => x.Id));
+            // APIを使用して検索を実行
+            List<ContentItemEntity> items = await PythonExecutor.PythonAIFunctions.SearchContentItems(searchCondition);
+
+            List<ContentItemWrapper> result = [];
+            foreach (var item in items) {
+                ContentItemWrapper wrapper = new() {
+                    Entity = item,
+                    ChatSettings = new ChatSettings()
+                };
+                wrapper.ChatSettings = wrapper.LoadChatSettingsFromExtendedProperties();
+                result.Add(wrapper);
             }
-            using PythonAILibDBContext db = new();
-            var items = db.ContentItems.Where(x => x.FolderId != null && folderIds.Contains(x.FolderId)).Select(x => new ContentItemWrapper() { Entity = x });
-
-            return Search(searchCondition, items).ToList();
-
-
+            return result;
         }
-
-        private static IEnumerable<ContentItemWrapper> Search(SearchCondition searchCondition, IEnumerable<ContentItemWrapper> items) {
-            IEnumerable<ContentItemWrapper> results = items;
-
-            // SearchConditionの内容に従ってフィルタリング
-            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
-                if (searchCondition.ExcludeDescription) {
-                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
-                } else {
-                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
-                if (searchCondition.ExcludeContent) {
-                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
-                } else {
-                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
-                if (searchCondition.ExcludeTags) {
-                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
-                } else {
-                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
-                if (searchCondition.ExcludeSourceApplicationName) {
-                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
-                } else {
-                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
-                }
-            }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
-                if (searchCondition.ExcludeSourceApplicationTitle) {
-                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
-                } else {
-                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
-                }
-            }
-            if (searchCondition.EnableStartTime) {
-                results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
-            }
-            if (searchCondition.EnableEndTime) {
-                results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
-            }
-            results = results.OrderByDescending(x => x.UpdatedAt);
-
-            return results;
-        }
-
-
     }
 }

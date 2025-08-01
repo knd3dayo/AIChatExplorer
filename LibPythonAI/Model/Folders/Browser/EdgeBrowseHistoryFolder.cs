@@ -44,7 +44,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             return []; ;
         }
 
-        public override void SyncItems() {
+        public override async Task SyncItems() {
             // オリジナルのHistoryファイルが存在しない場合は何もしない
             if (!File.Exists(OriginalHistoryFilePath)) {
                 return;
@@ -66,7 +66,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             }
 
             // SyncItemsを呼び出すと無限ループになるため、IsSyncをFalseにする
-            List<ContentItemWrapper> items = GetItems<ContentItemWrapper>(false);
+            List<ContentItemWrapper> items = await GetItems<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];

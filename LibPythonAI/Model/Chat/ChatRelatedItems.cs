@@ -22,12 +22,12 @@ namespace LibPythonAI.Model.Chat {
             return dict;
         }
         // FromDict
-        public static ChatRelatedItems FromDict(Dictionary<string, object> dict) {
+        public static async Task<ChatRelatedItems> FromDict(Dictionary<string, object> dict) {
             var relatedItems = new ChatRelatedItems();
             if (dict.TryGetValue("content_item_ids", out var contentItemIdsObj) && contentItemIdsObj is List<object> contentItemIds) {
                 foreach (var itemId in contentItemIds) {
                     if (itemId is string id) {
-                        ContentItemWrapper? contentItem = ContentItemWrapper.GetItem<ContentItemWrapper>(id);
+                        ContentItemWrapper? contentItem = await ContentItemWrapper.GetItem<ContentItemWrapper>(id);
                         if (contentItem != null) {
                             relatedItems.ContentItems.Add(contentItem);
                         }

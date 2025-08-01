@@ -35,9 +35,9 @@ namespace AIChatExplorer.Model.Folders.Browser {
             return []; ;
         }
 
-        public override void SyncItems() {
+        public override async Task SyncItems() {
             // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = base.GetItems<ContentItemWrapper>(false);
+            var items = await base.GetItems<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemPathDict = [];
