@@ -38,8 +38,8 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<EdgeBrowseHistoryItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<EdgeBrowseHistoryItem>();
         }
 
         // LoadChildren

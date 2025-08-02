@@ -40,15 +40,14 @@ namespace LibUIPythonAI.ViewModel.Folder {
             FolderEditWindow.OpenFolderEditWindow(this, afterUpdate);
         }
 
-        // フォルダを読み込む
-        public virtual void LoadFolderExecute(Action beforeAction, Action afterAction) {
+        // フォルダを読み込む（async/await対応）
+        public virtual async Task LoadFolderExecuteAsync(Action beforeAction, Action afterAction) {
             beforeAction();
-            Task.Run(() => {
+            await Task.Run(() => {
                 LoadChildren(DefaultNextLevel);
-                LoadItems();
-            }).ContinueWith((task) => {
-                afterAction();
             });
+            await LoadItemsAsync();
+            afterAction();
         }
         public virtual void LoadChildren(int nestLevel) {
             LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
@@ -78,22 +77,19 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // LoadItemsAsync
-        public virtual void LoadItems() {
-            LoadItems<ContentItemWrapper>();
+        public virtual async Task LoadItemsAsync() {
+            await LoadItemsAsync<ContentItemWrapper>();
         }
 
+        protected async Task LoadItemsAsync<Item>() where Item : ContentItemWrapper {
+            List<Item> _items = await Folder.GetItems<Item>();
+            _items = _items.OrderByDescending(x => x.UpdatedAt).ToList();
 
-        protected void LoadItems<Item>() where Item : ContentItemWrapper {
-            Task.Run(async () => {
-                List<Item> _items = await Folder.GetItems<Item>();
-                _items = _items.OrderByDescending(x => x.UpdatedAt).ToList();
-
-                MainUITask.Run(() => {
-                    Items.Clear();
-                    foreach (Item item in _items) {
-                        Items.Add(CreateItemViewModel(item));
-                    }
-                });
+            MainUITask.Run(() => {
+                Items.Clear();
+                foreach (Item item in _items) {
+                    Items.Add(CreateItemViewModel(item));
+                }
             });
         }
 

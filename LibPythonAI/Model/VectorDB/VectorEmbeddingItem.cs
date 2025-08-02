@@ -54,6 +54,16 @@ namespace LibPythonAI.Model.VectorDB {
                 SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, tags);
             }
         }
+        public static async Task UpdateEmbeddingsAsync(string vectorDBItemName, VectorEmbeddingItem vectorEmbeddingItem) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            ChatSettings chatSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings);
+            EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbeddingItem);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
+            await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
+        }
 
         public static void UpdateEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance;

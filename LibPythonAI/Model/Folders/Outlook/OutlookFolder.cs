@@ -1,6 +1,7 @@
 using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Utils.Common;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;

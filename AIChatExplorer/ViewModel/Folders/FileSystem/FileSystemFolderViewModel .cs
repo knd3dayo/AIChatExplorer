@@ -31,8 +31,8 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<FileSystemItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<FileSystemItem>();
         }
 
         // LoadChildren

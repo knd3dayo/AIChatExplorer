@@ -1,4 +1,5 @@
 using AIChatExplorer.Model.Folders.Application;
+using LibPythonAI.Model.Folders;
 
 namespace AIChatExplorer.Model.Folders.ScreenShot {
     public class IntegratedMonitorHistoryFolder : ApplicationFolder {

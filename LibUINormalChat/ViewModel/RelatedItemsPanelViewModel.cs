@@ -343,22 +343,23 @@ namespace LibUINormalChat.ViewModel {
         // 選択中のフォルダ
         private ContentFolderViewModel? _selectedFolder;
         public ContentFolderViewModel? SelectedFolder {
-            get {
-
-                return _selectedFolder;
-            }
+            get => _selectedFolder;
             set {
-                if (value == null) {
-                    _selectedFolder = null;
-                } else {
-                    _selectedFolder = value;
-                    // Load
-                    _selectedFolder.LoadFolderExecute(beforeAction: () => { }, afterAction: () => {
-                        SelectFolderAction(_selectedFolder);
-                    });
-                }
+                if (_selectedFolder == value) return;
+                _selectedFolder = value;
                 OnPropertyChanged(nameof(SelectedFolder));
+                if (value != null) {
+                    LoadSelectedFolderAsync(value);
+                }
             }
+        }
+
+        private async void LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel) {
+            await folderViewModel.LoadFolderExecuteAsync(
+                beforeAction: () => { },
+                afterAction: () => {
+                    SelectFolderAction(folderViewModel);
+                });
         }
 
         // フォルダが選択された時の処理

@@ -34,8 +34,8 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<RecentFilesItem>();
+        public override async Task LoadItemsAsync() {
+           await LoadItemsAsync<RecentFilesItem>();
         }
 
         // LoadChildren

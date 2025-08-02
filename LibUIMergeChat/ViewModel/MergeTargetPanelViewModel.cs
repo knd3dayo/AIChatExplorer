@@ -272,32 +272,61 @@ namespace LibUIMergeChat.ViewModel {
         // 選択中のフォルダ
         private ContentFolderViewModel? _selectedFolder;
         public ContentFolderViewModel? SelectedFolder {
-            get {
-
-                return _selectedFolder;
-            }
+            get => _selectedFolder;
             set {
-                if (value == null) {
-                    _selectedFolder = null;
-                } else {
-                    _selectedFolder = value;
-                    // Load
-                    _selectedFolder.LoadFolderExecute(beforeAction: () => { }, afterAction: () => {
-                        SelectFolderAction(_selectedFolder);
-                    });
-                }
+                if (_selectedFolder == value) return;
+                _selectedFolder = value;
                 OnPropertyChanged(nameof(SelectedFolder));
+                if (value != null)
+                {
+                    // 非同期処理の例外を握りつぶさないようTaskでラップ
+                    _ = LoadSelectedFolderAsync(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// フォルダ選択時の非同期処理。例外はログ出力。
+        /// </summary>
+        private async Task LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel)
+        {
+            try
+            {
+                await folderViewModel.LoadFolderExecuteAsync(
+                    beforeAction: () => { },
+                    afterAction: () => {
+                        // UIスレッドで実行が必要な場合はDispatcherを使う
+                        if (System.Windows.Application.Current?.Dispatcher?.CheckAccess() == false)
+                        {
+                            System.Windows.Application.Current.Dispatcher.Invoke(() => SelectFolderAction(folderViewModel));
+                        }
+                        else
+                        {
+                            SelectFolderAction(folderViewModel);
+                        }
+                    });
+            }
+            catch (Exception ex)
+            {
+                // 例外をログ出力（LogWrapper等があればそちらを利用）
+                System.Diagnostics.Debug.WriteLine($"[LoadSelectedFolderAsync] {ex}");
             }
         }
         public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = FolderViewModelManagerBase.FolderViewModels;
 
 
-        // フォルダが選択された時の処理
-        // TreeViewで、SelectedItemChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
-            TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ContentFolderViewModel applicationItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
-            SelectedFolder = applicationItemFolderViewModel;
+        /// <summary>
+        /// TreeViewのSelectedItemChangedイベント用コマンド。型安全にキャストし、nullチェックを追加。
+        /// </summary>
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) =>
+        {
+            if (routedEventArgs?.OriginalSource is TreeView treeView)
+            {
+                if (treeView.SelectedItem is ContentFolderViewModel applicationItemFolderViewModel)
+                {
+                    SelectedFolder = applicationItemFolderViewModel;
+                }
+            }
         });
 
     }

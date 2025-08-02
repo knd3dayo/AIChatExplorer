@@ -9,7 +9,7 @@ using LibUIPythonAI.ViewModel.Chat;
 using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Folders;
+using LibPythonAI.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
     public class IntegratedMonitorHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
@@ -59,8 +59,8 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<ApplicationItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ApplicationItem>();
         }
 
         // LoadChildren

@@ -1,5 +1,6 @@
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Model.Search;
 using LibPythonAI.Resources;
 
@@ -54,8 +55,9 @@ namespace AIChatExplorer.Model.Folders.Search {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
+        public override async Task AddItemAsync(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
             // 何もしない
+            await Task.CompletedTask;
         }
 
         // ApplicationItemを削除

@@ -12,7 +12,7 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
 
-namespace AIChatExplorer.Model.Folders {
+namespace LibPythonAI.Model.Folders {
     public class FolderManager  {
 
         public static readonly string APPLICATION_ROOT_FOLDER_NAME = PythonAILibStringResources.Instance.Application;

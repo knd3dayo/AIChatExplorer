@@ -34,8 +34,4 @@
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Model\Folders\Base\" />
-  </ItemGroup>
-
 </Project>

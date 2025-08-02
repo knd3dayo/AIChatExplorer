@@ -25,13 +25,13 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // アイテム保存コマンド
-        public virtual SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new((item) => {
-            FolderViewModel.Folder.AddItem(item.ContentItem);
+        public virtual SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new(async (item) => {
+            await FolderViewModel.Folder.AddItemAsync(item.ContentItem);
         });
 
         // フォルダー保存コマンド
-        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            FolderViewModel.Folder.Save();
+        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new(async (folderViewModel) => {
+            await Task.Run(() => FolderViewModel.Folder.Save());
         });
 
         // 新規フォルダ作成コマンド
@@ -46,8 +46,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
 
-        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            FolderViewModel.LoadFolderExecute(
+        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new(async (parameter) => {
+            await FolderViewModel.LoadFolderExecuteAsync(
                 () => {
                     CommandExecutes.UpdateIndeterminate(true);
                 },
@@ -71,22 +71,20 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
 
-        public void DeleteDisplayedItemCommandExecute(Action beforeAction, Action afterAction) {
+        public async Task DeleteDisplayedItemCommandExecuteAsync(Action beforeAction, Action afterAction) {
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 beforeAction();
-                ContentItemViewModel.DeleteItems([.. FolderViewModel.Items]).ContinueWith((task) => {
-                    // 全ての削除処理が終了した後、後続処理を実行
-                    // フォルダ内のアイテムを再読み込む
-                    afterAction();
-                });
+                await ContentItemViewModel.DeleteItems([.. FolderViewModel.Items]);
+                // 全ての削除処理が終了した後、後続処理を実行
+                afterAction();
             }
         }
 
         // Ctrl + DeleteAsync が押された時の処理 選択中のフォルダのアイテムを削除する
-        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
-            DeleteDisplayedItemCommandExecute(() => {
+        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new(async (parameter) => {
+            await DeleteDisplayedItemCommandExecuteAsync(() => {
                 CommandExecutes.UpdateIndeterminate(true);
             }, () => {
                 // 全ての削除処理が終了した後、後続処理を実行
@@ -99,8 +97,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         });
 
-        public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
-
+        public SimpleDelegateCommand<object> DeleteFolderCommand => new(async (parameter) => {
             // フォルダ削除するかどうか確認
             if (MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteFolder, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
@@ -108,38 +105,33 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // 親フォルダを取得
             ContentFolderViewModel? parentFolderViewModel = FolderViewModel.ParentFolderViewModel;
 
-            FolderViewModel.Folder.Delete();
+            await Task.Run(() => FolderViewModel.Folder.Delete());
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
-                parentFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
+                await Task.Run(() => parentFolderViewModel.FolderCommands.LoadFolderCommand.Execute());
             }
 
             LogWrapper.Info(CommonStringResources.Instance.FolderDeleted);
         });
         // ベクトルのリフレッシュ
-        public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            Task.Run(async () => {
-                // MainWindowViewModelのIsIndeterminateをTrueに設定
-                var item = FolderViewModel.Folder.GetMainVectorSearchItem();
-                string? vectorDBItemName = item.VectorDBItemName;
-                if (vectorDBItemName == null) {
-                    return;
+        public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new(async (parameter) => {
+            // MainWindowViewModelのIsIndeterminateをTrueに設定
+            var item = FolderViewModel.Folder.GetMainVectorSearchItem();
+            string? vectorDBItemName = item.VectorDBItemName;
+            if (vectorDBItemName == null) {
+                return;
+            }
+            CommandExecutes.UpdateIndeterminate(true);
+            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, FolderViewModel.Folder.ContentFolderPath));
+            var contentItems = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
+            await Task.Run(() => ContentItemCommands.UpdateEmbeddings(contentItems, () => { }, async () => {
+                var items = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
+                foreach (var contentItem in items) {
+                    contentItem.Save();
                 }
-                CommandExecutes.UpdateIndeterminate(true);
-                VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, FolderViewModel.Folder.ContentFolderPath);
-                ContentItemCommands.UpdateEmbeddings(await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false), () => { }, () => {
-                    Task.Run(async () => {
-                        var items = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
-                        foreach (var contentItem in items) {
-                            contentItem.Save();
-                        }
-                        CommandExecutes.UpdateIndeterminate(false);
-                    });
-                });
-
-            });
-
+                CommandExecutes.UpdateIndeterminate(false);
+            }));
         });
         // ExportImportFolderCommand
         public SimpleDelegateCommand<object> ExportImportFolderCommand => new((parameter) => {

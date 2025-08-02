@@ -2,6 +2,7 @@ using System.Text.Json;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;

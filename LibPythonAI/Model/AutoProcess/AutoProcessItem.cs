@@ -96,14 +96,14 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
 
-        public static Action<ContentItemWrapper> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
+        public Action<ContentItemWrapper> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
             if (typeEnum == AutoProcessActionTypeEnum.Ignore) {
                 return (args) => {
                     return;
                 };
             }
             if (typeEnum == AutoProcessActionTypeEnum.CopyToFolder) {
-                return (args) => {
+                return async (args) => {
                     if (destinationFolder == null) {
                         LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
@@ -112,17 +112,17 @@ namespace LibPythonAI.Model.AutoProcess {
                     LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
                     ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
-                    destinationFolder.AddItem(newItem);
+                    await destinationFolder.AddItemAsync(newItem);
                 };
             }
             if (typeEnum == AutoProcessActionTypeEnum.MoveToFolder) {
-                return (args) => {
+                return async (args) => {
                     if (destinationFolder == null) {
                         LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoFolderSelected);
                         return;
                     }
                     // Folderに移動
-                    args.MoveTo(destinationFolder);
+                    await args.MoveTo(destinationFolder);
 
                 };
             }

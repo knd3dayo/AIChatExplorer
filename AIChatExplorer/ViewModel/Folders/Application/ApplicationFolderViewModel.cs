@@ -39,8 +39,8 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<ApplicationItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ApplicationItem>();
         }
 
         // LoadChildren

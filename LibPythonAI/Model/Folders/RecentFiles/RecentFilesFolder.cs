@@ -1,6 +1,7 @@
 using System.IO;
 using AIChatExplorer.Model.Folders.FileSystem;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Utils.FileUtils;
 
 namespace AIChatExplorer.Model.Folders.Browser {

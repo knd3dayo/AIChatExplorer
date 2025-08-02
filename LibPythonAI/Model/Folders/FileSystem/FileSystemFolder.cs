@@ -3,6 +3,7 @@ using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.Browser;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 

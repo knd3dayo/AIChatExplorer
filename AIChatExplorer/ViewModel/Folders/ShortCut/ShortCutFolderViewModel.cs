@@ -33,8 +33,8 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<ShortCutItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ShortCutItem>();
         }
 
         // LoadChildren

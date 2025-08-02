@@ -4,6 +4,7 @@ using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Common;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Utils.Common;
 
 namespace AIChatExplorer.Model.Folders.Browser {

@@ -169,7 +169,7 @@ namespace LibUIMergeChat.ViewModel {
                     };
 
 
-                    OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {
+                    await OutputFolder.Folder.AddItemAsync(contentItemWrapper, true, (item) => {
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         LogWrapper.Info(CommonStringResources.Instance.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行

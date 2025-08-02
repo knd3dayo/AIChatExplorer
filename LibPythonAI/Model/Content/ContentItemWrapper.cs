@@ -542,17 +542,15 @@ namespace LibPythonAI.Model.Content {
 
         public virtual async Task UpdateEmbedding() {
             // ベクトルを更新
-            await Task.Run(() => {
-                var item = GetMainVectorSearchItem();
-                string? vectorDBItemName = item.VectorDBItemName;
-                if (string.IsNullOrEmpty(vectorDBItemName)) {
-                    LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
-                    return;
-                }
-                VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
-                vectorDBEntry.SetMetadata(this);
-                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
-            });
+            var item = GetMainVectorSearchItem();
+            string? vectorDBItemName = item.VectorDBItemName;
+            if (string.IsNullOrEmpty(vectorDBItemName)) {
+                LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                return;
+            }
+            VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
+            vectorDBEntry.SetMetadata(this);
+            await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
         }
 
 

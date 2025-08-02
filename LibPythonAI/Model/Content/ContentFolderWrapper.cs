@@ -308,22 +308,20 @@ namespace LibPythonAI.Model.Content {
 
 
 
-        public virtual void AddItem(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
+        public virtual async Task AddItemAsync(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
             // itemにFolderIdを設定
             item.Entity.FolderId = Id;
 
             if (applyGlobalAutoAction) {
-                Task.Run(() => {
-                    // Apply automatic processing
-                    Task<ContentItemWrapper> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                    if (updatedItemTask.Result != null) {
-                        item = updatedItemTask.Result;
-                    }
-                    item.Save();
-                    afterUpdate?.Invoke(item);
-                    // 通知
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
-                });
+                // Apply automatic processing
+                var updatedItem = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                if (updatedItem != null) {
+                    item = updatedItem;
+                }
+                item.Save();
+                afterUpdate?.Invoke(item);
+                // 通知
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             } else {
                 // 保存
                 item.Save();

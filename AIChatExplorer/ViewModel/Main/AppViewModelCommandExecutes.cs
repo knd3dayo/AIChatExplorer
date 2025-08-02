@@ -350,9 +350,9 @@ namespace AIChatExplorer.ViewModel.Main {
             ClipboardController.ProcessClipboardItem(lastClipboardChangedEventArgs, clipboardFolder,
                 async (applicationItem) => {
                     // Process when a clipboard item is added
-                    await Task.Run(() => {
+                    await Task.Run(async () => {
                         // SaveAsync to folder if saveToFolder is true
-                        clipboardFolder.AddItem(applicationItem);
+                        await clipboardFolder.AddItemAsync(applicationItem);
                         // Process after pasting
                     }).ContinueWith((obj) => {
                         UpdateIndeterminate(false);

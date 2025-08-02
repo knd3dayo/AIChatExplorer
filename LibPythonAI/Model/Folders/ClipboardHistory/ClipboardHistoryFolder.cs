@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AIChatExplorer.Model.Folders.Application;
+using LibPythonAI.Model.Folders;
 
 namespace AIChatExplorer.Model.Folders.ClipboardHistory {
     public  class ClipboardHistoryFolder : ApplicationFolder {

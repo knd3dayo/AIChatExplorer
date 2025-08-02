@@ -47,8 +47,8 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
 
         }
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            Task.Run(async () => {
+        public override async Task LoadItemsAsync() {
+            await Task.Run(async () => {
                 if (Folder is not SearchFolder searchFolder) {
                     throw new InvalidOperationException("Folder is not a SearchFolder.");
                 }

@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using AIChatExplorer.Model.Folders;
 using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.Search;
@@ -10,6 +9,7 @@ using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
+using LibPythonAI.Model.Folders;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
 using LibUIPythonAI.ViewModel.Folder;
@@ -242,14 +242,14 @@ namespace AIChatExplorer.ViewModel.Main {
 
             SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
 
-            AppViewModelCommandExecutes.OpenSearchWindowCommandExecute(searchFolderViewModel, () => {
+            AppViewModelCommandExecutes.OpenSearchWindowCommandExecute(searchFolderViewModel, async () => {
                 // 保存と再読み込み
                 searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel();
                 searchFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
                 MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel().FolderCommands.SaveFolderCommand.Execute(null);
                 // Load
-                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel().LoadFolderExecute(
+                await MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel().LoadFolderExecuteAsync(
                 () => {
                     Commands.UpdateIndeterminate(true);
                 },

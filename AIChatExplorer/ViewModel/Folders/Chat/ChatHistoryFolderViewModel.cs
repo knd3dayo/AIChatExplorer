@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.Model.Folders.Application;
-using AIChatExplorer.Model.Folders;
+using LibPythonAI.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.Chat {
     public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
@@ -60,8 +60,8 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<ApplicationItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ApplicationItem>();
         }
 
         // LoadChildren

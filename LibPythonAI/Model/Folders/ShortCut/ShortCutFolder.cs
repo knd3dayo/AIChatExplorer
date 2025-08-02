@@ -3,6 +3,7 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.Search;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.Utils.Common;
 
 namespace AIChatExplorer.Model.Folders.ShortCut {
