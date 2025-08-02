@@ -208,10 +208,9 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-            // フォルダを作成する
+            // フォルダ作成（コールバックで完了後にリロード）
             SelectedFolder.FolderCommands.CreateFolderCommand.Execute();
         });
-
     }
 
     public class MainPanelDataGridViewControlViewModel(CommonViewModelCommandExecutes commands) : ObservableObject {
@@ -237,12 +236,11 @@ namespace AIChatExplorer.ViewModel.Main {
         public ObservableCollection<ContentItemViewModel> SelectedItems {
             get {
                 return _selectedItems;
-
             }
             set {
                 _selectedItems = value;
-
                 OnPropertyChanged(nameof(SelectedItems));
+                OnPropertyChanged(nameof(SelectedItem)); // SelectedItems変更時にSelectedItemも通知
             }
         }
         public ContentItemViewModel? SelectedItem {
@@ -284,8 +282,9 @@ namespace AIChatExplorer.ViewModel.Main {
                 SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
                 SelectedItem.UpdateView(MyTabControl);
                 OnPropertyChanged(nameof(SelectedItem));
-
             }
+            // SelectedItemsの変更でSelectedItemも変わる可能性があるため、明示的に通知
+            OnPropertyChanged(nameof(SelectedItem));
         }
 
         // アイテムが選択された時の処理
@@ -315,20 +314,29 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
-            foreach (ContentItemViewModel applicationItemViewModel in SelectedItems) {
-                Commands.ChangePinCommand.Execute();
-            }
+            // 非同期でピン切り替え
+            System.Threading.Tasks.Task.Run(() => {
+                foreach (ContentItemViewModel applicationItemViewModel in SelectedItems) {
+                    Commands.ChangePinCommand.Execute();
+                }
+            });
         });
 
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
-            Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
+            // 非同期でファイルを開く
+            System.Threading.Tasks.Task.Run(() => {
+                Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
+            });
         });
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
-            SelectedFolder?.FolderCommands.GenerateVectorCommand.Execute(this.SelectedItems);
+            // 非同期でベクトル生成
+            System.Threading.Tasks.Task.Run(() => {
+                SelectedFolder?.FolderCommands.GenerateVectorCommand.Execute(this.SelectedItems);
+            });
         });
 
 
@@ -338,7 +346,10 @@ namespace AIChatExplorer.ViewModel.Main {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
-             CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
+            // 非同期でベクトル検索ウィンドウを開く
+            System.Threading.Tasks.Task.Run(() => {
+                CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
+            });
         });
 
 

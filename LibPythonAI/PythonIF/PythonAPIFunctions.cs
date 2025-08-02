@@ -195,8 +195,86 @@ namespace LibPythonAI.PythonIF {
             }
             return contentItems;
         }
+
         // ContentFolder
-        public async Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders) {
+        public async Task<List<ContentFolderEntity>> GetRootContentFoldersAsync() {
+            RequestContainer requestContainer = new();
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetRootContentFoldersExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_root_content_folders";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic dictList = resultDict["content_folders"] ?? "[]";
+            List<ContentFolderEntity> contentFolders = [];
+            foreach (var item in dictList) {
+                ContentFolderEntity? contentFolderEntity = ContentFolderEntity.FromDict(item);
+                if (contentFolderEntity != null)
+                    contentFolders.Add(contentFolderEntity);
+            }
+            return contentFolders;
+        }
+        public async Task<List<ContentFolderEntity>> GetContentFoldersAsync() {
+            RequestContainer requestContainer = new();
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentFoldersExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_content_folders";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic dictList = resultDict["content_folders"] ?? "[]";
+            List<ContentFolderEntity> contentFolders = [];
+            foreach (var item in dictList) {
+                ContentFolderEntity? contentFolderEntity = ContentFolderEntity.FromDict(item);
+                if (contentFolderEntity != null)
+                    contentFolders.Add(contentFolderEntity);
+            }
+            return contentFolders;
+        }
+        public async Task<ContentFolderEntity> GetContentFolderByIdAsync(string id) {
+            ContentFolderEntity contentFolderEntity = new() { Id = id };
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = [new ContentFolderRequest(contentFolderEntity)]
+            };
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentFolderByIdExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_content_folder";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic? dict = resultDict.GetValueOrDefault("content_folder", null);
+            if (dict == null)
+                return new ContentFolderEntity();
+            ContentFolderResponse contentFolderResponse = ContentFolderResponse.FromDict(dict);
+            return contentFolderResponse.Entity;
+        }
+        public async Task<ContentFolderEntity> GetContentFolderByPathAsync(string name) {
+            string chatRequestContextJson = "{\"content_folder_path\":\"" + name + "\"}";
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentFolderByPathExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_content_folder_by_path";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic? dict = resultDict.GetValueOrDefault("content_folder", null);
+            if (dict == null)
+                return new ContentFolderEntity();
+            ContentFolderResponse contentFolderResponse = ContentFolderResponse.FromDict(dict);
+            return contentFolderResponse.Entity;
+        }
+
+        public async Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders) {
             RequestContainer requestContainer = new() {
                 ContentFolderRequestsInstance = folders
             };
@@ -211,7 +289,7 @@ namespace LibPythonAI.PythonIF {
                 throw new Exception(errorValue);
         }
 
-        public async Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders) {
+        public async Task DeleteContentFoldersAsync(List<ContentFolderRequest> folders) {
             RequestContainer requestContainer = new() {
                 ContentFolderRequestsInstance = folders
             };

@@ -52,8 +52,14 @@ namespace LibPythonAI.Model.Content {
         public string Content {
             get => Entity.Content;
             set {
+                var oldValue = Entity.Content;
                 Entity.Content = value;
-                ContentModified = true;
+                // 内容が変更された場合のみContentModifiedをtrueにする
+                if (oldValue != value) {
+                    ContentModified = true;
+                } else {
+                    ContentModified = false;
+                }
             }
         }
         public bool DescriptionModified { get; set; } = false;
@@ -62,8 +68,14 @@ namespace LibPythonAI.Model.Content {
         public string Description {
             get => Entity.Description;
             set {
+                var oldValue = Entity.Description;
                 Entity.Description = value;
-                DescriptionModified = true;
+                // 内容が変更された場合のみDescriptionModifiedをtrueにする
+                if (oldValue != value) {
+                    DescriptionModified = true;
+                } else {
+                    DescriptionModified = false;
+                }
             }
         }
 
@@ -82,7 +94,17 @@ namespace LibPythonAI.Model.Content {
         public HashSet<string> Tags { get => Entity.Tags; set { Entity.Tags = value; } }
 
         // ピン留め
-        public bool IsPinned { get => Entity.IsPinned; set { Entity.IsPinned = value; } }
+        public bool IsPinned { 
+            get => Entity.IsPinned; 
+            set {
+                var oldValue = Entity.IsPinned;
+                Entity.IsPinned = value;
+                // ピン留め状態が変更された場合はSaveを呼び出す
+                if (oldValue != value) {
+                    Task.Run(async () => await Save());
+                }
+            }
+        }
 
         // ChatMessagesJson
         public string ChatMessagesJson {

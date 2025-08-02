@@ -249,22 +249,18 @@ namespace LibPythonAI.PythonIF {
             DataReceivedEventHandler dataReceivedEventHandler = new(DataReceivedAction);
 
             ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, envVars, showConsole,
-                (process) => {
+                async (process) => {
                     // 5秒待機した後、processが終了したかどうかを確認する
-                    Task.Run(() => {
-                        // このスレッドを5秒間待機
-                        Task.Delay(5000).Wait();
+                    await Task.Delay(5000);
 
-                        if (process.HasExited) {
-                            LogWrapper.Error($"Process failed: {process.Id}");
-                        } else {
-                            LogWrapper.Info($"Process started: {process.Id}");
-                            afterStart(process);
-                        }
-
-                    });
+                    if (process.HasExited) {
+                        LogWrapper.Error($"Process failed: {process.Id}");
+                    } else {
+                        LogWrapper.Info($"Process started: {process.Id}");
+                        afterStart(process);
+                    }
                 }, OutputDataReceived: dataReceivedEventHandler, ErrorDataReceived: dataReceivedEventHandler
-                );
+            );
 
         }
 

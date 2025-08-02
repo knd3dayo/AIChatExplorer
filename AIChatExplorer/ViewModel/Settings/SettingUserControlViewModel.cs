@@ -664,10 +664,10 @@ namespace AIChatExplorer.ViewModel.Settings {
         public Visibility InternalVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // SaveCommand
-        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
+        public SimpleDelegateCommand<Window> SaveCommand => new(async (window) => {
             if (Save()) {
                 //追加設定.言語を変更
-                FolderManager.ChangeRootFolderNames(PythonAILibStringResources.Instance);
+                await FolderManager.ChangeRootFolderNames(PythonAILibStringResources.Instance);
                 LogWrapper.Info(CommonStringResources.Instance.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(CommonStringResources.Instance.RestartAppToApplyChanges, CommonStringResources.Instance.Information, MessageBoxButton.OK);

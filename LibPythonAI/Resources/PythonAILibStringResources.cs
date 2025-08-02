@@ -149,6 +149,9 @@ namespace LibPythonAI.Resources {
         // PythonAILibManagerIsNotInitialized
         public virtual string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManager is not initialized";
 
+        // PythonAILibManagerInitializationTimeout
+        public virtual string PythonAILibManagerInitializationTimeout { get; } = "PythonAILibManager initialization timed out.";
+
         // PythonAILibManagerInitializationFailed
         public virtual string PythonAILibManagerInitializationFailed { get; } = "PythonAILibManager initialization failed. Please check the Python path and environment settings.";
 
@@ -266,6 +269,18 @@ namespace LibPythonAI.Resources {
 
         // SearchContentItemsExecute
         public virtual string SearchContentItemsExecute { get; } = "Execute SearchContentItems";
+
+        // GetRootContentFoldersExecute
+        public virtual string GetRootContentFoldersExecute { get; } = "Execute GetRootContentFolders";
+
+        // GetContentFoldersExecute
+        public virtual string GetContentFoldersExecute { get; } = "Execute GetContentFolders";
+
+        // GetContentFolderByIdExecute
+        public virtual string GetContentFolderByIdExecute { get; } = "Execute GetContentFolderById";
+
+        // GetContentFolderByPathExecute
+        public virtual string GetContentFolderByPathExecute { get; } = "Execute GetContentFolderByPath";
 
         // UpdateContentFoldersExecute
         public virtual string UpdateContentFoldersExecute { get; } = "Execute UpdateContentFolders";

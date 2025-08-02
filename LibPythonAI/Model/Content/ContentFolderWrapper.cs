@@ -10,6 +10,7 @@ using LibPythonAI.Utils.Common;
 namespace LibPythonAI.Model.Content {
     public class ContentFolderWrapper {
 
+
         public ContentFolderWrapper() { }
 
         public ContentFolderWrapper(ContentFolderWrapper? parent, string folderName) {
@@ -196,8 +197,8 @@ namespace LibPythonAI.Model.Content {
             db.ContentFolders.Remove(Entity);
             db.SaveChanges();
             // APIを呼び出して、ContentFolderを削除
-            ContentFolderRequest request = new(this);
-            PythonExecutor.PythonAIFunctions.DeleteContentFoldersForVectorSearch([request]);
+            ContentFolderRequest request = new(Entity);
+            PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync([request]);
         }
 
 
@@ -225,14 +226,14 @@ namespace LibPythonAI.Model.Content {
             }
             // APIを呼び出して、自分自身とchildrenのContentFolderを更新
             List<ContentFolderRequest> requests = [];
-            ContentFolderRequest request = new(this);
+            ContentFolderRequest request = new(Entity);
             requests.Add(request);
             foreach (var child in children) {
-                ContentFolderRequest childRequest = new(this);
+                ContentFolderRequest childRequest = new(Entity);
                 requests.Add(childRequest);
             }
 
-            PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch(requests);
+            PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync(requests);
 
 
             return children;
@@ -287,8 +288,8 @@ namespace LibPythonAI.Model.Content {
             db.SaveChanges();
 
             // APIを呼び出して、ContentFolderを更新
-            ContentFolderRequest request = new(this);
-            PythonExecutor.PythonAIFunctions.UpdateContentFoldersForVectorSearch([request]);
+            ContentFolderRequest request = new(Entity);
+            PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync([request]);
 
         }
 
@@ -376,6 +377,8 @@ namespace LibPythonAI.Model.Content {
             result.Entity = folder;
             return result;
         }
+
+
 
         // ToDict
         public Dictionary<string, object> ToDict() {

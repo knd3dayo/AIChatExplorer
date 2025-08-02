@@ -75,7 +75,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 if (item != null) {
                     return new ApplicationFolderViewModel(item, Commands);
                 }
-                return new ApplicationFolderViewModel(item, Commands);
             } else if (type == FolderManager.OUTLOOK_ROOT_FOLDER_NAME_EN && OutlookFolder.OutlookApplicationExists()) {
                 OutlookFolder? outlookFolder = ContentFolderWrapper.GetFolderById<OutlookFolder>(folderId);
                 if (outlookFolder != null) {

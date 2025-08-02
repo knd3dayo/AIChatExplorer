@@ -5,16 +5,17 @@ using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
 using LibPythonAI.Data;
+using LibPythonAI.Model.Folders;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
+using LibUIPythonAI.Utils;
 
 namespace AIChatExplorer.AppStartup {
 
     public class StartupWindowViewModel {
-        public static void Startup() {
-
+        public static async Task StartupAsync() {
             AIChatExplorerPythonAILibConfigParams configParams = new();
             // 言語設定
             SetupLanguage();
@@ -25,20 +26,21 @@ namespace AIChatExplorer.AppStartup {
             // Python環境のチェック
             CheckEnvironment(configParams);
 
-            // PythonAILibManagerの初期化
-            PythonAILibManager.Init(configParams);
+            // PythonAILibManagerの初期化（UIスレッドをブロックしないようバックグラウンドで待機）
+            await Task.Run(() => PythonAILibManager.Init(configParams));
 
             // DBの初期化
             PythonAILibDBContext.Init();
 
-            // DataContextにViewModelを設定
-            MainWindowViewModel mainWindowViewModel = new();
-            // MainWindowを表示
-            MainWindow mainWindow = new() {
-                DataContext = mainWindowViewModel
-            };
-            mainWindow.Show();
-
+            MainUITask.Run(() => {
+                // DataContextにViewModelを設定
+                MainWindowViewModel mainWindowViewModel = new();
+                // MainWindowを表示
+                MainWindow mainWindow = new() {
+                    DataContext = mainWindowViewModel
+                };
+                mainWindow.Show();
+            });
         }
 
         private static void SetupLanguage() {

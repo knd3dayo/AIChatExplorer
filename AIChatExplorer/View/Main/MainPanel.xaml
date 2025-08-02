@@ -183,7 +183,7 @@
                         <!--  IsPinned  -->
                         <DataGridCheckBoxColumn
                             Width="100"
-                            Binding="{Binding IsPinned}"
+                            Binding="{Binding IsPinned, UpdateSourceTrigger=PropertyChanged}"
                             Header="{x:Static res:ViewStringResources.Pin}" />
                         <!--  CreatedAt, UpdatedAt  -->
                         <DataGridTextColumn

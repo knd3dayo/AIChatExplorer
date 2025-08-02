@@ -135,8 +135,6 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
             set {
                 ContentItem.IsPinned = value;
-                // 保存
-                ContentItem.Save();
                 OnPropertyChanged(nameof(IsPinned));
             }
         }

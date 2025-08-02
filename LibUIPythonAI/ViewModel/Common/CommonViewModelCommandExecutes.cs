@@ -91,8 +91,8 @@ namespace LibUIPythonAI.ViewModel.Common {
 
 
         // アイテム保存
-        public SimpleDelegateCommand<ContentItemViewModel> SaveApplicationItemCommand => new((itemViewModel) => {
-            itemViewModel.ContentItem.Save();
+        public SimpleDelegateCommand<ContentItemViewModel> SaveApplicationItemCommand => new(async (itemViewModel) => {
+            await itemViewModel.ContentItem.Save();
         });
 
 

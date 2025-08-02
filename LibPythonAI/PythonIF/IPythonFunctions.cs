@@ -19,8 +19,14 @@ namespace LibPythonAI.PythonIF {
         public Task UpdateContentItemAsync(List<ContentItemRequest> requests);
         public Task DeleteContentItemsAsync(List<ContentItemRequest> requests);
         public Task<List<ContentItemEntity>> SearchContentItems(SearchCondition searchCondition);
-        public Task UpdateContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
-        public Task DeleteContentFoldersForVectorSearch(List<ContentFolderRequest> folders);
+
+        public Task<List<ContentFolderEntity>> GetRootContentFoldersAsync();
+        public Task<List<ContentFolderEntity>> GetContentFoldersAsync();
+        public Task<ContentFolderEntity> GetContentFolderByIdAsync(string id);
+        public Task<ContentFolderEntity> GetContentFolderByPathAsync(string name);
+        public Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders);
+        public Task DeleteContentFoldersAsync(List<ContentFolderRequest> folders);
+
         public Task<List<PromptItem>> GetPromptItemsAsync();
         public Task UpdatePromptItemAsync(PromptItemRequest request);
         public Task DeletePromptItemAsync(PromptItemRequest request);

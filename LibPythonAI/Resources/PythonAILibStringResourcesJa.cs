@@ -66,7 +66,8 @@ namespace LibPythonAI.Resources {
 
         // PythonAILibManagerIsNotInitialized
         public override string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManagerが初期化されていません";
-
+        // PythonAILibManagerInitializationTimeout
+        public override string PythonAILibManagerInitializationTimeout { get; } = "PythonAILibManagerの初期化がタイムアウトしました。";
         // PythonAILibManagerInitializationFailed
         public override string PythonAILibManagerInitializationFailed { get; } = "PythonAILibManagerの初期化に失敗しました。Pythonのパスを確認してください。";
 
@@ -223,6 +224,15 @@ namespace LibPythonAI.Resources {
         // SearchContentItemsExecute
         public override string SearchContentItemsExecute { get; } = "コンテンツアイテムを検索します";
 
+        // GetRootContentFoldersExecute
+        public override string GetRootContentFoldersExecute { get; } = "ルートコンテンツフォルダを取得します";
+        // GetContentFoldersExecute
+        public override string GetContentFoldersExecute { get; } = "コンテンツフォルダを取得します";
+        // GetContentFolderByIdExecute
+        public override string GetContentFolderByIdExecute { get; } = "コンテンツフォルダをIDで取得します";
+
+        // GetContentFolderByPathExecute
+        public override string GetContentFolderByPathExecute { get; } = "コンテンツフォルダをパスで取得します";
 
         // UpdateVectorDBIndex実行
         public override string UpdateEmbeddingExecute { get; } = "Embeddingを更新します";
