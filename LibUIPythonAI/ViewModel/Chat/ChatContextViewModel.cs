@@ -106,7 +106,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             set {
                 QAChatStartupPropsInstance.GetContentItem().UseFolderVectorSearchItem = value;
 
-                InitVectorDBProperties();
+                InitVectorDBProperties().Wait();
                 OnPropertyChanged(nameof(UseFolderVectorSearchItem));
                 OnPropertyChanged(nameof(UseItemVectorSearchItem));
                 OnPropertyChanged(nameof(UseFolderVectorSearchItemVisibility));
@@ -120,20 +120,21 @@ namespace LibUIPythonAI.ViewModel.Chat {
             }
         }
 
-        private void InitVectorDBProperties() {
+        private async Task InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (_ragMode != RAGModeEnum.None) {
                 ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
-                    items = QAChatStartupPropsInstance.GetContentItem().GetFolder().GetVectorSearchProperties();
-                    foreach (var item in items) {
-                        VectorSearchProperties.Add(item);
+                    var item = QAChatStartupPropsInstance.GetContentItem();
+                    items = await item.Folder.GetVectorSearchProperties();
+                    foreach (var vectorSearchItem in items) {
+                        VectorSearchProperties.Add(vectorSearchItem);
                     }
                 } else {
                     // ContentItemのベクトルDBを取得
-                    items = QAChatStartupPropsInstance.GetContentItem().VectorDBProperties;
+                    items = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -150,7 +151,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             set {
                 _ragMode = (RAGModeEnum)value;
 
-                InitVectorDBProperties();
+                InitVectorDBProperties().Wait();
                 OnPropertyChanged(nameof(RAGMode));
                 OnPropertyChanged(nameof(VectorDBItemVisibility));
 
@@ -186,7 +187,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
         });
 
         // ベクトルDBをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new(async (parameter) => {
             if (SelectedVectorSearchItem == null) {
                 return;
             }
@@ -194,7 +195,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
             VectorSearchProperties.Remove(SelectedVectorSearchItem);
             // UseFolderVectorSearchItemがFalseの場合、ContentItemからも削除
             if (UseFolderVectorSearchItem == false) {
-                QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Remove(SelectedVectorSearchItem);
+                var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+                verctorDBProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
@@ -203,11 +205,12 @@ namespace LibUIPythonAI.ViewModel.Chat {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
+                FolderViewModelManagerBase.FolderViewModels, async (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                     // UseFolderVectorSearchItemがFalseの場合、ContentItemに追加
                     if (UseFolderVectorSearchItem == false) {
-                        QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Add(vectorDBItemBase);
+                        var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+                        verctorDBProperties.Add(vectorDBItemBase);
                     }
                 });
 

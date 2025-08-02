@@ -17,13 +17,11 @@ namespace LibPythonAI.Model.AutoProcess {
 
         public override void Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
 
-
-            ChatRequest chatRequest = new();
-
-            // PromptItemを取得
-            ContentFolderWrapper? clipboardFolder = applicationItem.GetFolder();
-
             Task.Run(async () => {
+
+                ChatRequest chatRequest = new();
+                // PromptItemを取得
+                ContentFolderWrapper? clipboardFolder = applicationItem.Folder;
 
                 // ChatRequestContentを作成
                 ChatSettings chatSettings = new() {
@@ -31,7 +29,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 };
                 if (clipboardFolder != null) {
                     chatSettings.RAGMode = RAGModeEnum.NormalSearch;
-                    var item = clipboardFolder.GetMainVectorSearchItem();
+                    var item = await clipboardFolder.GetMainVectorSearchItem();
                     chatSettings.VectorSearchRequests = [new VectorSearchRequest(item)];
                 }
                 ChatRequestContext chatRequestContent = new(chatSettings);

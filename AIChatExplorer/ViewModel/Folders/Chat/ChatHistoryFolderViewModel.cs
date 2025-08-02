@@ -65,8 +65,8 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<ChatHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ChatHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
         }
     }
 }

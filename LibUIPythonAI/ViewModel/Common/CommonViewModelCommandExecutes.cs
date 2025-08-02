@@ -22,7 +22,7 @@ namespace LibUIPythonAI.ViewModel.Common {
 
         public abstract ObservableCollection<ContentItemViewModel> GetSelectedItems();
 
-        public abstract void PasteFromClipboardCommandExecute();
+        public abstract Task PasteFromClipboardCommandExecute();
 
         public Action<bool> UpdateIndeterminate { get; set; } = (visible) => { };
 
@@ -67,8 +67,8 @@ namespace LibUIPythonAI.ViewModel.Common {
         });
 
 
-        public SimpleDelegateCommand<ContentItemViewModel> OpenVectorSearchWindowCommand => new((itemViewModel) => {
-            OpenVectorSearchWindowCommandExecute(itemViewModel);
+        public SimpleDelegateCommand<ContentItemViewModel> OpenVectorSearchWindowCommand => new(async (itemViewModel) => {
+            await OpenVectorSearchWindowCommandExecute(itemViewModel);
         });
         // OpenFolderVectorSearchWindowCommand
         public SimpleDelegateCommand<ContentFolderViewModel> OpenFolderVectorSearchWindowCommand => new((folderViewModel) => {
@@ -168,8 +168,8 @@ namespace LibUIPythonAI.ViewModel.Common {
         }
 
         // Command to perform vector search
-        public static void OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
-            VectorSearchItem VectorSearchItem = itemViewModel.ContentItem.GetMainVectorSearchItem();
+        public static async Task OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
+            VectorSearchItem VectorSearchItem = await itemViewModel.ContentItem.GetMainVectorSearchItem();
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
                 // Action when a vector DB item is selected
@@ -180,7 +180,7 @@ namespace LibUIPythonAI.ViewModel.Common {
                 }
             };
             var contentItem = itemViewModel.ContentItem;
-            var vectorSearchItem = contentItem.GetMainVectorSearchItem();
+            var vectorSearchItem = await contentItem.GetMainVectorSearchItem();
             vectorSearchItem.InputText = contentItem.Content;
             vectorSearchWindowViewModel.VectorSearchItem = vectorSearchItem;
 
@@ -191,9 +191,9 @@ namespace LibUIPythonAI.ViewModel.Common {
 
 
         // Command to perform vector search
-        public static void OpenFolderVectorSearchWindowCommandExecute(ContentFolderViewModel folderViewModel) {
+        public static async Task OpenFolderVectorSearchWindowCommandExecute(ContentFolderViewModel folderViewModel) {
             // Open vector search result window
-            VectorSearchItem VectorSearchItem = folderViewModel.Folder.GetMainVectorSearchItem();
+            VectorSearchItem VectorSearchItem = await folderViewModel.Folder.GetMainVectorSearchItem();
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
                 // Action when a vector DB item is selected
                 SelectVectorDBItemAction = (vectorDBItems) => {
@@ -203,7 +203,7 @@ namespace LibUIPythonAI.ViewModel.Common {
                 }
             };
             var folder = folderViewModel.Folder;
-            vectorSearchWindowViewModel.VectorSearchItem = folder.GetMainVectorSearchItem();
+            vectorSearchWindowViewModel.VectorSearchItem = await folder.GetMainVectorSearchItem();
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
 

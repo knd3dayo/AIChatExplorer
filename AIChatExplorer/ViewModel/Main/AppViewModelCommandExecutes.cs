@@ -83,7 +83,11 @@ namespace AIChatExplorer.ViewModel.Main {
             } else {
                 // 統合モニターを開始する
                 MainWindowViewModel model = MainWindowViewModel.Instance;
-                StartIntegratedMonitorCommandExecute(model.RootFolderViewModelContainer.IntegratedMonitorHistoryFolderViewModel);
+                var viewModel = model.RootFolderViewModelContainer.IntegratedMonitorHistoryFolderViewModel;
+                if (viewModel == null) {
+                    return;
+                }
+                StartIntegratedMonitorCommandExecute(viewModel);
             }
         });
 
@@ -314,7 +318,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // プログレスインジケーター表示の処理
 
         // Process when Ctrl + V is pressed
-        public override void PasteFromClipboardCommandExecute() {
+        public override async Task PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
             ContentFolderViewModel? folder = windowViewModel.MainPanelTreeViewControlViewModel?.SelectedFolder;
             if (folder is not ApplicationFolderViewModel SelectedFolder) {
@@ -330,7 +334,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
             // If the source items are from within the app
             if (CopiedItems.Count > 0) {
-                SelectedFolder.PasteApplicationItemCommandExecute(
+                await SelectedFolder.PasteApplicationItemCommandExecute(
                     ClipboardController.Instance.CutFlag,
                     CopiedItems,
                     SelectedFolder

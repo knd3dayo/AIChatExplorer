@@ -278,7 +278,7 @@ namespace LibPythonAI.Model.Prompt {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.For(0, count, parallelOptions, (i) => {
+                Parallel.For(0, count, parallelOptions, async (i) => {
                     lock (lockObject) {
                         start_count++;
                     }
@@ -289,7 +289,7 @@ namespace LibPythonAI.Model.Prompt {
 
                     CreateChatResultAsync(item, promptItem.Name).Wait();
                     // SaveAsync
-                    item.Save();
+                    await item.Save();
                 });
                 // Execute if obj is an Action
                 afterAction();
@@ -330,7 +330,8 @@ namespace LibPythonAI.Model.Prompt {
             }
             // ヘッダー情報とコンテンツ情報を結合
             // ★TODO タグ情報を追加するか否かはPromptItemの設定にする
-            contentText = item.HeaderText + "\n" + contentText;
+            var headerText = await item.GetHeaderTextAsync();
+            contentText = headerText + "\n" + contentText;
 
             // PromptTemplateTextの設定。 UseTagListがTrueの場合は、全タグ情報を追加する
             if (promptItem.UseTagList) {
@@ -340,7 +341,8 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? item.VectorDBProperties : [];
+            var vectorDBItems = await item.GetVectorDBProperties();
+            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? vectorDBItems : [];
 
             // ChatRequestContextを作成
             ChatSettings chatSettings = new() {

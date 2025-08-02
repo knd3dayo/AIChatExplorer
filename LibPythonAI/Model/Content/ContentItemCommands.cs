@@ -89,7 +89,7 @@ namespace LibPythonAI.Model.Content {
                     // 20並列
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.For(0, count, parallelOptions, (i) => {
+                Parallel.For(0, count, parallelOptions, async (i) => {
                     int index = i; // Store the current index in a separate variable to avoid closure issues
                     lock (lockObject) {
                         start_count++;
@@ -104,7 +104,7 @@ namespace LibPythonAI.Model.Content {
                     }
                     ExtractText(item).Wait();
                     // SaveAsync the item
-                    item.Save();
+                    await item.Save();
                 });
                 afterAction();
                 LogWrapper.UpdateInProgress(false);
@@ -121,15 +121,16 @@ namespace LibPythonAI.Model.Content {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, (item) => {
-                    var vectorDBItem = item.GetMainVectorSearchItem();
+                Parallel.ForEach(items, parallelOptions, async (item) => {
+                    var vectorDBItem = await item.GetMainVectorSearchItem();
                     string? vectorDBItemName = vectorDBItem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
                     }
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
-                    vectorDBEntry.SetMetadata(item);
+                    var contentFolderPath = await item.Folder.GetContentFolderPath();
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                    await vectorDBEntry.SetMetadata(item);
 
                     VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
                 });
@@ -144,17 +145,18 @@ namespace LibPythonAI.Model.Content {
                 ParallelOptions parallelOptions = new() {
                     MaxDegreeOfParallelism = 4
                 };
-                Parallel.ForEach(items, parallelOptions, (item) => {
+                Parallel.ForEach(items, parallelOptions, async (item) => {
                     // VectorDBItemを取得
-                    var vectorDBitem = item.GetMainVectorSearchItem();
+                    var vectorDBitem = await item.GetMainVectorSearchItem();
                     string? vectorDBItemName = vectorDBitem.VectorDBItemName;
                     if (string.IsNullOrEmpty(vectorDBItemName)) {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
                     }
                     // IPythonAIFunctions.ClipboardInfoを作成
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), item.GetFolder().ContentFolderPath);
-                    vectorDBEntry.SetMetadata(item);
+                    var contentFolderPath = await item.Folder.GetContentFolderPath();
+                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                    await vectorDBEntry.SetMetadata(item);
 
                     VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
                     // ベクトル化日時を更新
@@ -186,7 +188,7 @@ namespace LibPythonAI.Model.Content {
 
         public static async Task SaveChatHistoryAsync(ContentItemWrapper contentItem, ContentFolderWrapper chatFolder) {
 
-            contentItem.Save();
+            await contentItem.Save();
             // チャット履歴用のItemの設定
             ContentItemWrapper chatHistoryItem = contentItem.Copy();
             chatHistoryItem.Entity.FolderId = chatFolder.Id;
@@ -208,7 +210,7 @@ namespace LibPythonAI.Model.Content {
                 await PromptItem.CreateAutoTitleWithOpenAIAsync(chatHistoryItem);
             }
 
-            chatHistoryItem.Save();
+            await chatHistoryItem.Save();
 
         }
 

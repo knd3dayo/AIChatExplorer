@@ -13,13 +13,13 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // Commands
         public CommonViewModelCommandExecutes Commands { get; set; } = commands;
 
-        public abstract ContentFolderViewModel GetApplicationRootFolderViewModel();
+        public abstract ContentFolderViewModel? GetApplicationRootFolderViewModel();
 
-        public abstract ContentFolderViewModel GetSearchRootFolderViewModel();
+        public abstract ContentFolderViewModel? GetSearchRootFolderViewModel();
 
-        public abstract ContentFolderViewModel? CreateFolderViewModel(string folderId, string type);
+        public abstract Task<ContentFolderViewModel?> CreateFolderViewModel(string folderId, string type);
 
-        public abstract ContentItemViewModel? CreateItemViewModel(ContentItemWrapper item);
+        public abstract Task<ContentItemViewModel?> CreateItemViewModel(ContentItemWrapper item);
 
     }
 }

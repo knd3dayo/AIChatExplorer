@@ -24,15 +24,20 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 throw new Exception("commands is not AppItemViewModelCommands");
             }
             AppCommands = commands;
+            Task.Run(async () => {
+                await InitializeAsync();
+            });
 
+        }
+
+        public async Task InitializeAsync() {
+            // 初期化処理が必要な場合はここに記述
+            // 例えば、メニューアイテムの初期化など
+            ContentItemMenuItems = await CreateBasicItemContextMenuItems(ApplicationItemViewModel);
         }
 
         // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                return CreateBasicItemContextMenuItems(ApplicationItemViewModel).Result;
-            }
-        }
+        public virtual ObservableCollection<MenuItem> ContentItemMenuItems { get; private set; } = new();
         public async Task<MenuItem> CreatePromptMenuItems(ContentItemViewModel itemViewModel) {
 
 

@@ -308,11 +308,10 @@ namespace LibPythonAI.Utils.Common {
 
         public static void OpenApplicationItemContent(ContentItemWrapper item) {
 
-            ProcessUtil.OpenTempTextFile(item.Content, (process) => { },
-            (content) => {
+            ProcessUtil.OpenTempTextFile(item.Content,  (process) => { }, async (content) => {
                 // プロセス終了時にItemに開いた内容を保存
                 item.Content = content;
-                item.Save();
+                await item.Save();
             });
 
         }

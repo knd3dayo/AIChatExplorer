@@ -233,6 +233,11 @@ namespace LibPythonAI.Resources {
 
         // GetContentFolderByPathExecute
         public override string GetContentFolderByPathExecute { get; } = "コンテンツフォルダをパスで取得します";
+        // GetParentContentFolderExecute
+        public override string GetParentContentFolderExecute { get; } = "親コンテンツフォルダを取得します";
+
+        // GetChildContentFoldersExecute
+        public override string GetChildContentFoldersExecute { get; } = "子コンテンツフォルダを取得します";
 
         // UpdateVectorDBIndex実行
         public override string UpdateEmbeddingExecute { get; } = "Embeddingを更新します";

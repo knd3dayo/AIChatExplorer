@@ -19,7 +19,7 @@ namespace LibUINormalChat.ViewModel {
     public class RelatedItemsPanelViewModel : CommonViewModelBase {
 
 
-        public RelatedItemsPanelViewModel(QAChatStartupPropsBase qAChatStartupPropsBase) {
+        public  RelatedItemsPanelViewModel(QAChatStartupPropsBase qAChatStartupPropsBase) {
 
             ChatSettings chatSettings = qAChatStartupPropsBase.GetContentItem().ChatSettings;
 
@@ -109,16 +109,22 @@ namespace LibUINormalChat.ViewModel {
             ChatSettings chatSettings = qAChatStartupProps.GetContentItem().ChatSettings;
             FolderViewModelManagerBase folderViewModelManager = qAChatStartupProps.GetViewModelManager();
 
-            foreach (var item in chatSettings.RelatedItems.ContentItems) {
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(item.FolderId);
-                if (folder == null) {
-                    LogWrapper.Info($"Folder with ID {item.FolderId} not found.");
-                    continue;
+            Task.Run(async () => {
+                foreach (var item in chatSettings.RelatedItems.ContentItems) {
+                    ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(item.FolderId);
+                    if (folder == null) {
+                        LogWrapper.Info($"Folder with ID {item.FolderId} not found.");
+                        continue;
+                    }
+                    ContentItemViewModel? contentItemViewModel = await folderViewModelManager.CreateItemViewModel(item);
+                    if (contentItemViewModel == null) {
+                        LogWrapper.Info($"ContentItem with ID {item.Id} not found in folder {folder.FolderName}.");
+                        continue;
+                    }
+                    contentItemViewModel.PropertyChanged += Item_PropertyChanged;
+                    contentItemViewModel.IsChecked = true;
                 }
-                ContentItemViewModel contentItemViewModel = folderViewModelManager.CreateItemViewModel(item);
-                contentItemViewModel.PropertyChanged += Item_PropertyChanged;
-                contentItemViewModel.IsChecked = true;
-            }
+            });
         }
         // CheckedItems
         public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = [];

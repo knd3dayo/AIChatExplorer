@@ -26,13 +26,15 @@ namespace AIChatExplorer.ViewModel.Main {
                 return;
             }
             Task.Run(async () => {
-                ContentFolderWrapper chatFolder = (ContentFolderWrapper)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
-                await ContentItemCommands.SaveChatHistoryAsync(itemWrapper, chatFolder);
+                ContentFolderWrapper? chatFolder = (ContentFolderWrapper?)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel?.Folder;
+                if (chatFolder != null) {
+                    await ContentItemCommands.SaveChatHistoryAsync(itemWrapper, chatFolder);
+                }
 
             });
         }
         public override void ExportChatCommand(List<ChatMessage> chatHistory) {
-            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folder, finished) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, async (folder, finished) => {
                 if (finished) {
                     ApplicationItem chatHistoryItem = new(folder.Folder.Entity);
                     // タイトルを日付 + 元のタイトルにする
@@ -47,7 +49,7 @@ namespace AIChatExplorer.ViewModel.Main {
                         chatHistoryText += item.ContentWithSources + "\n\n";
                     }
                     chatHistoryItem.Content = chatHistoryText;
-                    chatHistoryItem.Save();
+                    await chatHistoryItem.Save();
                 }
             });
         }

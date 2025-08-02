@@ -27,13 +27,13 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
 
-            TargetFolder = autoProcessRule.TargetFolder;
-            DestinationFolder = autoProcessRule.DestinationFolder;
-
             // RootFolderViewModelを設定
             RootFolderViewModels = rootFolderViewModels;
-
-            LoadConditions();
+            Task.Run(async () => {
+                TargetFolder = await autoProcessRule.GetTargetFolder();
+                DestinationFolder = await autoProcessRule.GetDestinationFolder();
+                await LoadConditions();
+            });
 
         }
 
@@ -410,7 +410,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolder = TargetFolder;
+            TargetAutoProcessRule.TargetFolderId = TargetFolder.Id;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -499,7 +499,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                         LogWrapper.Error(CommonStringResources.Instance.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolder = DestinationFolder;
+                    TargetAutoProcessRule.DestinationFolderId = DestinationFolder.Id;
                 }
                 // 無限ループのチェック処理
                 var checkResult = await AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule);

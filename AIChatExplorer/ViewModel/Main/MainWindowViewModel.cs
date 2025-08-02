@@ -177,16 +177,25 @@ namespace AIChatExplorer.ViewModel.Main {
         // OpenImageChatWindow
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
-            ApplicationItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
+            var viewModel = RootFolderViewModelContainer.ChatRootFolderViewModel;
+            if (viewModel == null) {
+                // チャット履歴フォルダーが存在しない場合は、何もしない
+                return;
+            }
+            ApplicationItem dummyItem = new(viewModel.Folder.Entity);
             AppViewModelCommandExecutes.OpenImageChatWindowCommand(dummyItem, () => {
-                RootFolderViewModelContainer.ChatRootFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
+                viewModel.FolderCommands.LoadFolderCommand.Execute();
             });
         });
 
         // OpenMergeChatWindow
         public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
 
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
             AppViewModelCommandExecutes.OpenMergeChatWindowCommand(folderViewModel, []);
 
         });
@@ -194,7 +203,11 @@ namespace AIChatExplorer.ViewModel.Main {
         // OpenNormalChatWindow
         public SimpleDelegateCommand<object> OpenNormalChatWindow => new((parameter) => {
             // チャット履歴用のItemの設定
-            ApplicationFolderViewModel chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            ApplicationFolderViewModel? chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            if (chatFolderViewModel == null) {
+                // チャット履歴フォルダーが存在しない場合は、何もしない
+                return;
+            }
             // チャット履歴用のItemの設定
             ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
                 // TEMPORARY_ITEM_ID
@@ -208,7 +221,11 @@ namespace AIChatExplorer.ViewModel.Main {
         });
 
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
             ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
             AppViewModelCommandExecutes.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
 
@@ -217,7 +234,11 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new( (parameter) => {
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
             AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
@@ -234,9 +255,10 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // Ctrl + F が押された時の処理
-        public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SearchCommand => new( (parameter) => {
             // 子フォルダを作成
-            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild("New Folder");
+            var parentFolder =  FolderManager.GetSearchRootFolder();
+            SearchFolder folder = parentFolder.CreateChild("New Folder");
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
@@ -247,7 +269,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel();
                 searchFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
-                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel().FolderCommands.SaveFolderCommand.Execute(null);
+                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel()?.FolderCommands.SaveFolderCommand.Execute(null);
                 // Load
                 await MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel().LoadFolderExecuteAsync(
                 () => {

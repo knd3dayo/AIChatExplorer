@@ -86,7 +86,7 @@ namespace LibPythonAI.Utils.ExportImport {
             }
             CommonDataTable dataTable = new(data);
 
-            PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
+            await PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
         public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items, Action<ContentItemWrapper> afterImport) {
 
@@ -133,7 +133,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (sourcePathIndex != -1) {
                     item.SourcePath = row[sourcePathIndex];
                 }
-                item.Save();
+                await item.Save();
                 afterImport(item);
             }
         }
@@ -165,7 +165,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // itemのContentにTextを設定
                     item.Content = text;
 
-                    item.Save();
+                    await item.Save();
                     afterImport(item);
 
                 } catch (Exception ex) {
@@ -204,7 +204,7 @@ namespace LibPythonAI.Utils.ExportImport {
                         Description = url,
                         SourcePath = url
                     };
-                    item.Save();
+                    await item.Save();
                     afterImport(item);
 
                 } catch (Exception ex) {
@@ -229,7 +229,7 @@ namespace LibPythonAI.Utils.ExportImport {
             ImportFromURLList(fromFolder, urls, afterImport);
         }
 
-        public static void ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {
+        public static async Task ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FailedToParseJSONString);
@@ -241,6 +241,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 return;
             }
 
+            var tasks = new List<Task>();
             foreach (JsonObject? jsonValue in jsonArray.Cast<JsonObject?>()) {
                 if (jsonValue == null) {
                     continue;
@@ -253,8 +254,9 @@ namespace LibPythonAI.Utils.ExportImport {
                 }
                 item.Entity.FolderId = toFolder.Id;
                 //保存
-                item.Save();
+                tasks.Add(item.Save());
             }
+            await Task.WhenAll(tasks);
         }
 
     }

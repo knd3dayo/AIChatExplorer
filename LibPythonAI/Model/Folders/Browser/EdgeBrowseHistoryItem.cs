@@ -5,11 +5,7 @@ using LibPythonAI.Model.VectorDB;
 namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryItem : ContentItemWrapper {
 
-        // コンストラクタ
-        public EdgeBrowseHistoryItem() : base() { }
-
-        public EdgeBrowseHistoryItem(ContentFolderEntity folder) : base(folder) { }
-
+        
         public override EdgeBrowseHistoryItem Copy() {
             return new() { 
                 Entity = Entity.Copy(),
@@ -19,13 +15,14 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
         public override async Task UpdateEmbedding() {
             // ベクトルを更新
-            await Task.Run(() => {
-                var item = GetFolder().GetMainVectorSearchItem();
+            await Task.Run(async () => {
+                var item =  await Folder.GetMainVectorSearchItem();
                 string? vectorDBItemName = item?.VectorDBItemName;
                 if (vectorDBItemName == null) {
                     return;
                 }
-                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), GetFolder().ContentFolderPath) {
+                var contentFolderPath = await Folder.GetContentFolderPath();
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
                     Content = Content,
                     Description = Description,
                     SourceType = VectorSourceType.Web,

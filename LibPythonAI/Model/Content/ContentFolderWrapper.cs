@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using LibPythonAI.Data;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.VectorDB;
@@ -73,22 +74,20 @@ namespace LibPythonAI.Model.Content {
         public bool IsAutoProcessEnabled { get; set; } = true;
 
         // アプリケーション内でのフォルダのパス
-        public virtual string ContentFolderPath {
-            get {
-                // 親フォルダを取得
-                var parentFolder = GetParent<ContentFolderWrapper>();
-                if (parentFolder == null) {
-                    return FolderName;
-                }
-                return $"{parentFolder.ContentFolderPath}/{FolderName}";
+        public virtual async Task<string> GetContentFolderPath() {
+            var parentFolder = await GetParent<ContentFolderWrapper>();
+            if (parentFolder == null) {
+                return FolderName;
             }
+            var parentFolderPatn = await parentFolder.GetContentFolderPath();
+            return $"{parentFolderPatn}/{FolderName}";
         }
         // OS上の出力先フォルダのパス
         public virtual string ContentOutputFolderPath {
             get {
                 string osFolderName;
                 // ルートフォルダのIdを取得
-                var rootFolder = Entity.GetRootFolder();
+                var rootFolder = GetRootFolder();
                 // ContentFolderRootEntityを取得
                 var rootFolderEntity = ContentFolderRootEntity.GetFolderRoot(rootFolder.Id);
                 if (rootFolderEntity == null) {
@@ -190,15 +189,13 @@ namespace LibPythonAI.Model.Content {
         }
 
         // 削除
-        public virtual void Delete() {
+        public virtual async Task Delete() {
             // ベクトルを全削除
-            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, ContentFolderPath);
-            using PythonAILibDBContext db = new();
-            db.ContentFolders.Remove(Entity);
-            db.SaveChanges();
+            var contentFolderPath = await GetContentFolderPath();
+            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, contentFolderPath);
             // APIを呼び出して、ContentFolderを削除
             ContentFolderRequest request = new(Entity);
-            PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync([request]);
+            await PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync([request]);
         }
 
 
@@ -215,44 +212,46 @@ namespace LibPythonAI.Model.Content {
             await Task.Run(() => { });
         }
 
-        public virtual List<T> GetChildren<T>() where T : ContentFolderWrapper {
+        public virtual async Task<List<T>> GetChildren<T>() where T : ContentFolderWrapper {
             List<T> children = [];
-            foreach (var child in Entity.GetChildren()) {
+            // APIを呼び出して、子フォルダを取得
+            List<ContentFolderEntity> childFolders = await PythonExecutor.PythonAIFunctions.GetChildFoldersByIdAsync(Entity.Id);
+
+            foreach (var child in childFolders) {
                 T? childFolder = (T?)Activator.CreateInstance(typeof(T));
                 if (childFolder != null) {
                     childFolder.Entity = child;
                     children.Add(childFolder);
                 }
             }
-            // APIを呼び出して、自分自身とchildrenのContentFolderを更新
-            List<ContentFolderRequest> requests = [];
-            ContentFolderRequest request = new(Entity);
-            requests.Add(request);
-            foreach (var child in children) {
-                ContentFolderRequest childRequest = new(Entity);
-                requests.Add(childRequest);
-            }
-
-            PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync(requests);
-
-
             return children;
         }
 
         // 親フォルダ
-        public virtual T? GetParent<T>() where T : ContentFolderWrapper {
-            var folder = ContentFolderEntity.GetFolder(Entity.ParentId);
-            if (folder == null) {
+        public virtual async Task<T?> GetParent<T>() where T : ContentFolderWrapper {
+            if (Entity.ParentId == null) {
                 return null;
             }
-            T? result = (T?)Activator.CreateInstance(typeof(T));
-            if (result == null) {
-                throw new Exception("Failed to create instance of ContentFolderWrapper");
+            // APIを呼び出して、親フォルダを取得
+            ContentFolderEntity? parentFolder = await PythonExecutor.PythonAIFunctions.GetParentFolderByIdAsync(Entity.ParentId);
+            if (parentFolder == null) {
+                return null;
             }
-            result.Entity = folder;
+            T? result = (T?)Activator.CreateInstance(typeof(T)) ?? throw new Exception("Failed to create instance of ContentFolderWrapper");
+            result.Entity = parentFolder;
 
             return result;
 
+        }
+        // ルートフォルダを取得  ParentIdがnullでFolderTypeStringが一致するものを取得
+        public ContentFolderEntity GetRootFolder() {
+            using PythonAILibDBContext context = new();
+            var folder = context.ContentFolders
+                .FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == FolderTypeString);
+            if (folder == null) {
+                throw new Exception("Root folder not found");
+            }
+            return folder;
         }
 
         // フォルダを移動する
@@ -277,16 +276,6 @@ namespace LibPythonAI.Model.Content {
         // 保存
         public virtual void Save() {
             Entity.SaveExtendedPropertiesJson();
-
-            using PythonAILibDBContext db = new();
-            var folder = db.ContentFolders.FirstOrDefault(x => x.Id == Id);
-            if (folder == null) {
-                db.ContentFolders.Add(Entity);
-            } else {
-                db.ContentFolders.Entry(folder).CurrentValues.SetValues(Entity);
-            }
-            db.SaveChanges();
-
             // APIを呼び出して、ContentFolderを更新
             ContentFolderRequest request = new(Entity);
             PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync([request]);
@@ -304,6 +293,7 @@ namespace LibPythonAI.Model.Content {
 
         // ステータス用の文字列
         public virtual async Task<string> GetStatusText() {
+            await Task.CompletedTask;
             return "";
         }
 
@@ -319,27 +309,28 @@ namespace LibPythonAI.Model.Content {
                 if (updatedItem != null) {
                     item = updatedItem;
                 }
-                item.Save();
+                await item.Save();
                 afterUpdate?.Invoke(item);
                 // 通知
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             } else {
                 // 保存
-                item.Save();
+                await item.Save();
                 afterUpdate?.Invoke(item);
                 // 通知
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             }
         }
 
-        public VectorSearchItem GetMainVectorSearchItem() {
+        public async Task<VectorSearchItem> GetMainVectorSearchItem() {
             var item = VectorDBItem.GetDefaultVectorDB();
-            VectorSearchItem searchProperty = item.CreateVectorSearchItem(Id, ContentFolderPath);
+            var contentFolderPath = await GetContentFolderPath();
+            VectorSearchItem searchProperty = item.CreateVectorSearchItem(Id, contentFolderPath);
             return searchProperty;
         }
 
-        public ObservableCollection<VectorSearchItem> GetVectorSearchProperties() {
-            var item = GetMainVectorSearchItem();
+        public async Task<ObservableCollection<VectorSearchItem>> GetVectorSearchProperties() {
+            var item = await GetMainVectorSearchItem();
             ObservableCollection<VectorSearchItem> searchProperties =
             [
                 item,
@@ -361,12 +352,13 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ObjectIdからContentFolderWrapperを取得
-        public static T? GetFolderById<T>(string? id) where T : ContentFolderWrapper {
+        public static async Task<T?> GetFolderById<T>(string? id) where T : ContentFolderWrapper {
             if (string.IsNullOrEmpty(id)) {
                 return null;
             }
+            // APIを呼び出して、ContentFolderEntityを取得
+            ContentFolderEntity? folder = await PythonExecutor.PythonAIFunctions.GetContentFolderByIdAsync(id);
 
-            var folder = ContentFolderEntity.GetFolder(id);
             if (folder == null) {
                 return null;
             }

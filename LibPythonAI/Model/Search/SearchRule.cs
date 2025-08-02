@@ -1,6 +1,4 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using LibPythonAI.Model.Content;
 using LibPythonAI.PythonIF;
 using LibPythonAI.PythonIF.Request;
@@ -49,30 +47,20 @@ namespace LibPythonAI.Model.Search {
         }
 
 
-        public ContentFolderWrapper? TargetFolder {
-            get {
-                if (TargetFolderId == null) {
-                    return null;
-                }
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(TargetFolderId);
-                return folder;
+        public async Task<ContentFolderWrapper?> GetTargetFolder() {
+            if (TargetFolderId == null) {
+                return null;
             }
-            set {
-                TargetFolderId = value?.Id;
-            }
+            ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(TargetFolderId);
+            return folder;
         }
 
-        public ContentFolderWrapper? SearchFolder {
-            get {
-                if (SearchFolderId == null) {
-                    return null;
-                }
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(SearchFolderId);
-                return folder;
+        public async Task<ContentFolderWrapper?> GetSearchFolder() {
+            if (SearchFolderId == null) {
+                return null;
             }
-            set {
-                SearchFolderId = value?.Id;
-            }
+            ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(SearchFolderId);
+            return folder;
         }
 
         public void SaveSearchConditionJson() {
@@ -95,7 +83,7 @@ namespace LibPythonAI.Model.Search {
         // 削除
         public void Delete() {
             // APIを呼び出して削除
-             PythonExecutor.PythonAIFunctions.DeleteSearchRuleAsync(new SearchRuleRequest(this));
+            PythonExecutor.PythonAIFunctions.DeleteSearchRuleAsync(new SearchRuleRequest(this));
         }
 
         public async Task<List<ContentItemWrapper>> SearchItems() {
@@ -104,14 +92,15 @@ namespace LibPythonAI.Model.Search {
             if (IsGlobalSearch) {
                 return await ContentItemWrapper.SearchAll(SearchCondition);
             }
-            if (TargetFolder != null) {
-                return await ContentItemWrapper.Search(SearchCondition, TargetFolder, IsIncludeSubFolder);
+            var targetFolder = await GetTargetFolder();
+            if (targetFolder != null) {
+                return await ContentItemWrapper.Search(SearchCondition, targetFolder, IsIncludeSubFolder);
             }
             return result;
         }
 
         public SearchRule Copy() {
-            SearchRule rule = new () {
+            SearchRule rule = new() {
                 Name = Name,
                 SearchFolderId = SearchFolderId,
                 TargetFolderId = TargetFolderId,
@@ -124,7 +113,7 @@ namespace LibPythonAI.Model.Search {
         }
 
         public static SearchRule FromDict(Dictionary<string, dynamic?> dict) {
-            SearchRule rule = new ();
+            SearchRule rule = new();
             if (dict.Count == 0) {
                 return rule;
             }

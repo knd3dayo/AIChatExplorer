@@ -24,6 +24,12 @@ namespace LibPythonAI.PythonIF {
         public Task<List<ContentFolderEntity>> GetContentFoldersAsync();
         public Task<ContentFolderEntity> GetContentFolderByIdAsync(string id);
         public Task<ContentFolderEntity> GetContentFolderByPathAsync(string name);
+        
+        public Task<ContentFolderEntity?> GetParentFolderByIdAsync(string id);
+
+        public Task<List<ContentFolderEntity>> GetChildFoldersByIdAsync(string id);
+
+
         public Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders);
         public Task DeleteContentFoldersAsync(List<ContentFolderRequest> folders);
 

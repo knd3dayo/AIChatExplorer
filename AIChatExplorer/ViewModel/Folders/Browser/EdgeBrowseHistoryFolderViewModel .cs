@@ -43,8 +43,8 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<EdgeBrowseHistoryFolderViewModel, EdgeBrowseHistoryFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<EdgeBrowseHistoryFolderViewModel, EdgeBrowseHistoryFolder>(nestLevel);
         }
     }
 }

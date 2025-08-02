@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
@@ -182,7 +183,7 @@ namespace LibPythonAI.Utils.Python {
             return result;
         }
 
-        public static List<(ContentItemTypes.ContentItemTypeEnum, string)> CreatePromptTextByRelatedItems(ChatRelatedItems relatedItems) {
+        public static async Task<List<(ContentItemTypes.ContentItemTypeEnum, string)>> CreatePromptTextByRelatedItems(ChatRelatedItems relatedItems) {
             List<ContentItemWrapper> items = relatedItems.ContentItems;
             List<ContentItemDataDefinition> dataDefinitions = relatedItems.DataDefinitions;
             // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、PromptTextを作成する
@@ -194,7 +195,8 @@ namespace LibPythonAI.Utils.Python {
                 bool exportProperties = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.PropertiesName)?.IsChecked ?? false;
                 if (exportProperties) {
                     // Propertiesを追加
-                        data.Add((ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.HeaderText));
+                    var headerText = await applicationItem.GetHeaderTextAsync();
+                    data.Add((ContentItemTypes.ContentItemTypeEnum.Text, headerText));
                 }
                 bool exportTitle = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.TitleName)?.IsChecked ?? false;
                 if (exportTitle) {

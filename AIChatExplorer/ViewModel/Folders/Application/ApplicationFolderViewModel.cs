@@ -44,8 +44,8 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<ApplicationFolderViewModel, ApplicationFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ApplicationFolderViewModel, ApplicationFolder>(nestLevel);
         }
 
         // -- virtual
@@ -79,16 +79,16 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
-        public virtual void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
+        public virtual async Task PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
             IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ApplicationItemViewModel itemViewModel) {
                     ContentItemWrapper applicationItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        applicationItem.MoveTo(toFolder.Folder);
+                        await applicationItem.MoveTo(toFolder.Folder);
                     } else {
-                        applicationItem.CopyToFolder(toFolder.Folder);
+                        await applicationItem.CopyToFolder(toFolder.Folder);
                     }
                 }
                 if (item is ApplicationFolderViewModel folderViewModel) {

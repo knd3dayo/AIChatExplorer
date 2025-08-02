@@ -36,8 +36,8 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<FileSystemFolderViewModel, FileSystemFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<FileSystemFolderViewModel, FileSystemFolder>(nestLevel);
         }
 
     }

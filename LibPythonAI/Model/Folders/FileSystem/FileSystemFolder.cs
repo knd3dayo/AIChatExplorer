@@ -34,10 +34,10 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
+        public override async Task<List<T>> GetChildren<T>() {
             // SyncFolders
             SyncFolders();
-            return base.GetChildren<T>();
+            return await base.GetChildren<T>();
         }
 
 
@@ -179,10 +179,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 };
                 addItems.Add(contentItem);
                 await contentItem.Save();
-                // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                // ContentItem result = task.Result;
-                // result.SaveAsync();
+
             });
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得

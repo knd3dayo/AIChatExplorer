@@ -38,14 +38,14 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
         }
 
         // LoadChildren
-        public override async void LoadChildren(int nestLevel) {
+        public override async Task LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ShortCutFolderViewModel> _children = [];
 
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in Folder.GetChildren<ShortCutFolder>()) {
+                    foreach (var child in await Folder.GetChildren<ShortCutFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -55,14 +55,14 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                foreach (var child in await Folder.GetChildren<FileSystemFolder>()) {
                     if (child == null) {
                         continue;
                     }
                     ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                     // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                     if (nestLevel > 0) {
-                        childViewModel.LoadChildren(nestLevel - 1);
+                        await childViewModel.LoadChildren(nestLevel - 1);
                     }
                     _children.Add(childViewModel);
                 }

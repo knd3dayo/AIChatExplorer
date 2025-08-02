@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
@@ -19,7 +18,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             Task.Run(async () => {
                 ExportItems = await CreateExportItems();
                 OnPropertyChanged(nameof(ExportItems));
-                ImportItems = await CreateImportItems();
+                ImportItems = CreateImportItems();
                 OnPropertyChanged(nameof(ImportItems));
 
             });
@@ -36,7 +35,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // ExportItems
         public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; }
 
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateImportItems() {
+        private ObservableCollection<ContentItemDataDefinition> CreateImportItems() {
             return [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
         }
 
@@ -73,11 +72,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public ContentFolderWrapper? ExportTargetFolder { get; set; }
 
         // 選択したフォルダのパス
-        public string SelectedApplicationFolderPath {
-            get {
-                return ExportTargetFolder?.ContentFolderPath ?? "";
-            }
-        }
+        public string SelectedApplicationFolderPath { get; private set; } = String.Empty;
 
         // 選択したファイル名
         public string SelectedFileName { get; set; } = "";
@@ -95,23 +90,24 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
             CommonViewModelProperties.UpdateIndeterminate(true);
             // 選択されたインデックスによって処理を分岐
-            Task.Run(() => {
+            Task.Run(async () => {
                 // Excelインポート処理 ★TODO 自動処理の実装
                 Action<ContentItemWrapper> afterImport = (item) => { };
                 if (IsAutoProcessEnabled) {
-                    afterImport = (item) => {
-                        AutoProcessRuleController.ApplyGlobalAutoActionAsync(item).Result.Save();
+                    afterImport = async (item) => {
+                        var item1 = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                        await item1.Save();
                     };
                 }
 
                 switch (SelectedIndex) {
                     case 0:
                         // Excelエクスポート処理
-                        ImportExportUtil.ExportToExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
+                        await ImportExportUtil.ExportToExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // Excelインポート処理 ★TODO 自動処理の実装
-                        ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
+                        await ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
                         break;
                     case 2:
                         // URLリストインポート処理
@@ -170,10 +166,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, finished) => {
+        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new( (parameter) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, async (folderViewModel, finished) => {
                 if (finished) {
                     ExportTargetFolder = folderViewModel.Folder;
+                    SelectedApplicationFolderPath = await ExportTargetFolder.GetContentFolderPath() ?? "";
                     OnPropertyChanged(nameof(SelectedApplicationFolderPath));
                 }
             });

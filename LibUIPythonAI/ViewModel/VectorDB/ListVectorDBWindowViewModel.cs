@@ -159,7 +159,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
         });
 
         // SelectCommand
-        public SimpleDelegateCommand<Window> SelectCommand => new( (window) => {
+        public SimpleDelegateCommand<Window> SelectCommand => new(async (window) => {
             // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
             if (SelectedTabIndex == 0) {
                 var folder = FolderViewModel?.Folder;
@@ -167,7 +167,7 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;
                 }
-                VectorSearchItem? item = folder.GetMainVectorSearchItem();
+                VectorSearchItem? item = await folder.GetMainVectorSearchItem();
                 if (item == null) {
                     LogWrapper.Error(CommonStringResources.Instance.SelectVectorDBPlease);
                     return;

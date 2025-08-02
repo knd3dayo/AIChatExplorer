@@ -245,7 +245,7 @@ namespace LibPythonAI.PythonIF {
             string chatRequestContextJson = requestContainer.ToJson();
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetContentFolderByIdExecute);
             LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
-            string endpoint = $"{base_url}/get_content_folder";
+            string endpoint = $"{base_url}/get_content_folder_by_id";
             string resultString = await PostAsync(endpoint, chatRequestContextJson);
             LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
             Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
@@ -273,6 +273,51 @@ namespace LibPythonAI.PythonIF {
             ContentFolderResponse contentFolderResponse = ContentFolderResponse.FromDict(dict);
             return contentFolderResponse.Entity;
         }
+        public async Task<ContentFolderEntity?> GetParentFolderByIdAsync(string id) {
+            ContentFolderEntity contentFolderEntity = new() { Id = id };
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = [new ContentFolderRequest(contentFolderEntity)]
+            };
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetParentContentFolderExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_parent_content_folder_by_id";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic? dict = resultDict.GetValueOrDefault("content_folder", null);
+            if (dict == null)
+                return null;
+            ContentFolderResponse contentFolderResponse = ContentFolderResponse.FromDict(dict);
+            return contentFolderResponse.Entity;
+        }
+
+        public async Task<List<ContentFolderEntity>> GetChildFoldersByIdAsync(string id) {
+            ContentFolderEntity contentFolderEntity = new() { Id = id };
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = [new ContentFolderRequest(contentFolderEntity)]
+            };
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetChildContentFoldersExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+            string endpoint = $"{base_url}/get_child_content_folders_by_id";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic dictList = resultDict["content_folders"] ?? "[]";
+            List<ContentFolderEntity> contentFolders = [];
+            foreach (var item in dictList) {
+                ContentFolderResponse contentFolderResponse = ContentFolderResponse.FromDict(item);
+                if (contentFolderResponse.Entity != null)
+                    contentFolders.Add(contentFolderResponse.Entity);
+            }
+            return contentFolders;
+        }
+
 
         public async Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders) {
             RequestContainer requestContainer = new() {

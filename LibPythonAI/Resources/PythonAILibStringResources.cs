@@ -282,6 +282,12 @@ namespace LibPythonAI.Resources {
         // GetContentFolderByPathExecute
         public virtual string GetContentFolderByPathExecute { get; } = "Execute GetContentFolderByPath";
 
+        // GetParentContentFolderExecute
+        public virtual string GetParentContentFolderExecute { get; } = "Execute GetParentContentFolder";
+
+        // GetChildContentFoldersExecute
+        public virtual string GetChildContentFoldersExecute { get; } = "Execute GetChildContentFolders";
+
         // UpdateContentFoldersExecute
         public virtual string UpdateContentFoldersExecute { get; } = "Execute UpdateContentFolders";
 

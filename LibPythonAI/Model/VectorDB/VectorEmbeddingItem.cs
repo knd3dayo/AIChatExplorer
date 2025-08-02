@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
@@ -43,9 +44,10 @@ namespace LibPythonAI.Model.VectorDB {
             Tags = tags;
         }
 
-        public void SetMetadata(ContentItemWrapper item) {
+        public async Task SetMetadata(ContentItemWrapper item) {
             // タイトルとHeaderTextを追加
-            string description = item.Description + "\n" + item.HeaderText;
+            var hederText = await item.GetHeaderTextAsync();
+            string description = item.Description + "\n" + hederText;
             // タグを取得
             Dictionary<string, string> tags = item.Tags.ToDictionary(tag => tag, tag => tag);
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {

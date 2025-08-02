@@ -27,8 +27,8 @@ namespace LibPythonAI.PythonIF.Request {
             Id = rule.Id;
             Name = rule.Name;
             SearchConditionJson = rule.SearchConditionJson;
-            SearchFolderId = rule.SearchFolder?.Id;
-            TargetFolderId = rule.TargetFolder?.Id;
+            SearchFolderId = rule.SearchFolderId;
+            TargetFolderId = rule.TargetFolderId;
             IsIncludeSubFolder = rule.IsIncludeSubFolder;
             IsGlobalSearch = rule.IsGlobalSearch;
         }

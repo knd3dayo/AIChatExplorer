@@ -117,18 +117,19 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new(async (parameter) => {
             // MainWindowViewModelのIsIndeterminateをTrueに設定
-            var item = FolderViewModel.Folder.GetMainVectorSearchItem();
+            var item = await FolderViewModel.Folder.GetMainVectorSearchItem();
             string? vectorDBItemName = item.VectorDBItemName;
             if (vectorDBItemName == null) {
                 return;
             }
             CommandExecutes.UpdateIndeterminate(true);
-            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, FolderViewModel.Folder.ContentFolderPath));
+            var contentFolderPath = await FolderViewModel.Folder.GetContentFolderPath();
+            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, contentFolderPath));
             var contentItems = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
             await Task.Run(() => ContentItemCommands.UpdateEmbeddings(contentItems, () => { }, async () => {
                 var items = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
                 foreach (var contentItem in items) {
-                    contentItem.Save();
+                    await contentItem.Save();
                 }
                 CommandExecutes.UpdateIndeterminate(false);
             }));

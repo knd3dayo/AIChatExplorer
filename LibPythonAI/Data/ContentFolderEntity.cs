@@ -1,13 +1,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using LibGit2Sharp;
-using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace LibPythonAI.Data {
     public class ContentFolderEntity {
@@ -77,28 +72,6 @@ namespace LibPythonAI.Data {
                 result.AddRange(child.GetChildrenAll());
             }
             return result;
-        }
-
-        // ルートフォルダを取得  ParentIdがnullでFolderTypeStringが一致するものを取得
-        public ContentFolderEntity GetRootFolder() {
-            using PythonAILibDBContext context = new();
-            var folder = context.ContentFolders
-                .FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == FolderTypeString);
-            if (folder == null) {
-                throw new Exception("Root folder not found");
-            }
-            return folder;
-        }
-
-
-        public static ContentFolderEntity? GetFolder(string? id) {
-            if (id == null) {
-                return null;
-            }
-            using PythonAILibDBContext context = new();
-            var folder = context.ContentFolders
-                .FirstOrDefault(x => x.Id == id);
-            return folder;
         }
 
         // Equals , GetHashCodeのオーバーライド

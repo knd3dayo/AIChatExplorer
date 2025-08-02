@@ -41,8 +41,9 @@ namespace AIChatExplorer.Model.Folders.Browser {
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
-            return []; ;
+        public override async Task<List<T>> GetChildren<T>() {
+            await Task.CompletedTask;
+            return [];
         }
 
         public override async Task SyncItems() {
@@ -103,7 +104,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 MaxDegreeOfParallelism = 4
             };
 
-            Parallel.ForEach(addUrls, parallelOptions, url => {
+            Parallel.ForEach(addUrls, parallelOptions, async url => {
                 // urlからTitle, LastVisitTimeを取得
                 (string title, long lastVisitTime) = historyUrlDict[url];
 
@@ -116,17 +117,13 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     CreatedAt = lastVisitTimeDateTime,
 
                 };
-                contentItem.Save();
-                // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                // ContentItem result = task.Result;
-                // result.SaveAsync();
+                await contentItem.Save();
             });
 
             //HistoryのURLとItemのURLの和集合
             var updateUrls = historyUrlDict.Keys.Intersect(itemUrlIdDict.Keys);
 
-            Parallel.ForEach(updateUrls, parallelOptions, url => {
+            Parallel.ForEach(updateUrls, parallelOptions, async url => {
                 // urlからTitle, LastVisitTimeを取得
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
@@ -134,7 +131,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
                 if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;
-                    contentItem.Save();
+                    await contentItem.Save();
                 }
             });
 

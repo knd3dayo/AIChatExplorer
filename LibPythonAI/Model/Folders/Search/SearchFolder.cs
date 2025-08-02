@@ -65,13 +65,11 @@ namespace AIChatExplorer.Model.Folders.Search {
             // 何もしない
         }
 
-        public override void Delete() {
-            Task.Run(async () => {
-                // SearchRuleを削除
-                SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
-                searchConditionRule?.Delete();
-                base.Delete();
-            });
+        public override async Task Delete() {
+            // SearchRuleを削除
+            SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(this);
+            searchConditionRule?.Delete();
+            await base.Delete();
         }
 
 

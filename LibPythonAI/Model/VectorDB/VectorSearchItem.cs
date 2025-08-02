@@ -46,7 +46,7 @@ namespace LibPythonAI.Model.VectorDB {
 
         public string DisplayText { get; private set; } = "";
 
-        private void UpdateDisplayText() {
+        private async Task UpdateDisplayText() {
             // DisplayTextを更新する
             VectorDBItem? item = VectorDBItem.GetItemByName(VectorDBItemName);
             if (item == null) {
@@ -59,12 +59,13 @@ namespace LibPythonAI.Model.VectorDB {
                 DisplayText = item.Name;
                 return;
             } else {
-                ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
+                ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
                 if (folder == null) {
                     DisplayText = item.Name;
                     return;
                 }
-                DisplayText = $"{item.Name}:{folder.ContentFolderPath}";
+                var contentFolderPath = await folder.GetContentFolderPath();
+                DisplayText = $"{item.Name}:{contentFolderPath}";
             }
         }
 

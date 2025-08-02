@@ -21,9 +21,15 @@ namespace LibUIPythonAI.ViewModel.Search {
             _searchFolder = searchFolder;
 
             Name = SearchFolder?.FolderName ?? "";
-
-            SearchFolderPath = SearchFolder?.ContentFolderPath;
-            TargetFolderPath = searchConditionRule.TargetFolder?.ContentFolderPath;
+            Task.Run(async () => {
+                if (SearchFolder != null) {
+                    SearchFolderPath = await SearchFolder.GetContentFolderPath();
+                }
+                var targetFolder = await searchConditionRule.GetTargetFolder();
+                if (targetFolder != null) {
+                    TargetFolderPath = await targetFolder.GetContentFolderPath();
+                }
+            });
             IsGlobalSearch = searchConditionRule.IsGlobalSearch;
 
             OnPropertyChanged(nameof(NameVisibility));
@@ -135,7 +141,7 @@ namespace LibUIPythonAI.ViewModel.Search {
             }
             if (_isSearchFolder) {
                 // SearchConditionRuleのSearchFolderにSearchFolderViewModelのApplicationItemFolderを設定
-                SearchConditionRule.SearchFolder = SearchFolder;
+                SearchConditionRule.SearchFolderId = SearchFolder.Id;
                 // _isSearchFolderがTrueの場合は、フォルダ名を更新
                 SearchFolder.FolderName = SearchConditionRule.Name;
                 // IsGlobalSearch
@@ -156,7 +162,7 @@ namespace LibUIPythonAI.ViewModel.Search {
         public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
-                    SearchConditionRule.TargetFolder = folderViewModel.Folder;
+                    SearchConditionRule.TargetFolderId = folderViewModel.Folder.Id;
                     TargetFolderPath = folderViewModel.FolderPath;
                     OnPropertyChanged(nameof(TargetFolderPath));
                 }

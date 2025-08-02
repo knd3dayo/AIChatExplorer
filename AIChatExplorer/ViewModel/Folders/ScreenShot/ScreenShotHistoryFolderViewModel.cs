@@ -64,8 +64,8 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<ScreenShotHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ScreenShotHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
         }
     }
 }

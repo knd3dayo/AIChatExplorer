@@ -37,8 +37,8 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<OutlookFolderViewModel, OutlookFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<OutlookFolderViewModel, OutlookFolder>(nestLevel);
         }
 
     }

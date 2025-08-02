@@ -54,8 +54,8 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
         // ベクトル検索を実行するコマンド
-        public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
-            CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(itemViewModel);
+        public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new(async (itemViewModel) => {
+            await CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(itemViewModel);
         });
 
         // プロンプトテンプレートを実行

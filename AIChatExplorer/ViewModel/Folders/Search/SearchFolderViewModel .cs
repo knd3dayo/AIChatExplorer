@@ -33,7 +33,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
 
             SearchFolderViewModel searchFolderViewModel = new(clipboardFolder, commands);
             SearchRule? searchConditionRule = new() {
-                SearchFolder = clipboardFolder
+                SearchFolderId = clipboardFolder.Id
             };
 
             SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, () => {
@@ -65,8 +65,8 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<SearchFolderViewModel, SearchFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<SearchFolderViewModel, SearchFolder>(nestLevel);
         }
         public override void EditFolderCommandExecute(Action afterUpdate) {
             if (Folder is not SearchFolder searchFolder) {
@@ -76,7 +76,7 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
                 // SearchRuleを取得
                 SearchRule? searchConditionRule = await SearchRule.GetItemBySearchFolder(searchFolder);
                 searchConditionRule ??= new() {
-                    SearchFolder = searchFolder
+                    SearchFolderId = searchFolder.Id
                 };
                 MainUITask.Run(() => {
                     // 検索ウィンドウを開く
@@ -86,8 +86,9 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
 
         }
 
-        public override void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag, IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
+        public override async Task PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag, IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
+            await Task.CompletedTask;
 
         }
 

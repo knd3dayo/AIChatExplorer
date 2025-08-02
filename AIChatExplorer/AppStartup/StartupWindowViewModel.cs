@@ -32,9 +32,9 @@ namespace AIChatExplorer.AppStartup {
             // DBの初期化
             PythonAILibDBContext.Init();
 
+            // DataContextにViewModelを設定
+            MainWindowViewModel mainWindowViewModel = new();
             MainUITask.Run(() => {
-                // DataContextにViewModelを設定
-                MainWindowViewModel mainWindowViewModel = new();
                 // MainWindowを表示
                 MainWindow mainWindow = new() {
                     DataContext = mainWindowViewModel

@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Chat;
@@ -17,20 +16,16 @@ namespace LibPythonAI.Model.Content {
     public class ContentItemWrapper {
 
         public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
+
         public ContentItemWrapper() {
-            Task.Run(() => {
-                VectorDBProperties = UpdateVectorDBProperties();
-            });
             ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
             FolderId = folder.Id;
-            Task.Run(() => {
-                VectorDBProperties = UpdateVectorDBProperties();
-            });
             ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
+
 
         public ContentItemEntity Entity { get; set; } = new ContentItemEntity();
 
@@ -94,8 +89,8 @@ namespace LibPythonAI.Model.Content {
         public HashSet<string> Tags { get => Entity.Tags; set { Entity.Tags = value; } }
 
         // ピン留め
-        public bool IsPinned { 
-            get => Entity.IsPinned; 
+        public bool IsPinned {
+            get => Entity.IsPinned;
             set {
                 var oldValue = Entity.IsPinned;
                 Entity.IsPinned = value;
@@ -261,14 +256,15 @@ namespace LibPythonAI.Model.Content {
             set => SetExtendedProperty("UseFolderVectorSearchItem", value);
         }
 
-        // このアイテムに紐付けらされたVectorSearchItem
-        // UseFolderVectorSearchropertyがtrueの場合は、フォルダに設定されたVectorSearchItemを使用する
-        public ObservableCollection<VectorSearchItem> VectorDBProperties { get; private set; } = [];
-
-        private ObservableCollection<VectorSearchItem> UpdateVectorDBProperties() {
+        private ObservableCollection<VectorSearchItem>? _vectorDBProperties;
+        public async Task<ObservableCollection<VectorSearchItem>> GetVectorDBProperties() {
+            if (_vectorDBProperties != null) {
+                return _vectorDBProperties;
+            }
             ObservableCollection<VectorSearchItem> vectorDBProperties = [];
             if (UseFolderVectorSearchItem) {
-                var items = GetFolder().GetVectorSearchProperties();
+                var folder = await GetFolder();
+                var items = await folder.GetVectorSearchProperties();
                 vectorDBProperties = [.. items];
             }
             var value = Entity.ExtendedProperties.GetValueOrDefault("VectorDBProperties", null);
@@ -412,8 +408,9 @@ namespace LibPythonAI.Model.Content {
         }
 
         // Folder
-        public virtual ContentFolderWrapper GetFolder() {
-            var folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.FolderId);
+        public ContentFolderWrapper? Folder { get; protected set; }
+        private  async Task<ContentFolderWrapper> GetFolder() {
+            var folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.FolderId);
             if (folder == null) {
                 throw new Exception("Folder not found");
             }
@@ -476,47 +473,32 @@ namespace LibPythonAI.Model.Content {
                 Entity.PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
             }
         }
-        public string HeaderText {
-            get {
+        public async Task<string> GetHeaderTextAsync() {
+            string header1 = "";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.Title}]" + Description + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.CreationDateTime}]" + CreatedAtString + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.UpdateDate}]" + UpdatedAtString + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.VectorizedDate}]" + VectorizedAtString + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.SourceAppName}]" + SourceApplicationName + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.SourceTitle}]" + SourceApplicationTitle + "\n";
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.SourcePath}]" + SourcePath + "\n";
 
-                string header1 = "";
+            if (ContentType == ContentItemTypes.ContentItemTypeEnum.Text)
+                header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Text";
+            else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Files)
+                header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]File";
+            else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Image)
+                header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Image";
+            else
+                header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Unknown";
 
-                // タイトルを追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.Title}]" + Description + "\n";
-                // 作成日時文字列を追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.CreationDateTime}]" + CreatedAtString + "\n";
-                // 更新日時文字列を追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.UpdateDate}]" + UpdatedAtString + "\n";
-                // ベクトル化日時文字列を追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.VectorizedDate}]" + VectorizedAtString + "\n";
-                // 貼り付け元のアプリケーション名を追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.SourceAppName}]" + SourceApplicationName + "\n";
-                // 貼り付け元のアプリケーションのタイトルを追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.SourceTitle}]" + SourceApplicationTitle + "\n";
-                // SourcePathを追加
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.SourcePath}]" + SourcePath + "\n";
+            header1 += $"\n[{PythonAILibStringResourcesJa.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
+            var folder = await GetFolder();
+            if (folder != null && !string.IsNullOrEmpty(folder.Description))
+                header1 += $"[{PythonAILibStringResourcesJa.Instance.DocumentCategorySummary}]" + folder.Description + "\n";
 
-                if (ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                    header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Text";
-                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Files) {
-                    header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]File";
-                } else if (ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
-                    header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Image";
-                } else {
-                    header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Unknown";
-                }
-                // 文書の信頼度
-                header1 += $"\n[{PythonAILibStringResourcesJa.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
-                // ★TODO フォルダーの説明を文章のカテゴリーの説明として追加
-                var Folder = GetFolder();
-                if (Folder != null && !string.IsNullOrEmpty(Folder.Description)) {
-                    header1 += $"[{PythonAILibStringResourcesJa.Instance.DocumentCategorySummary}]" + Folder.Description + "\n";
-                }
-
-                // Tags
-                header1 += $"[{PythonAILibStringResourcesJa.Instance.Tag}]" + TagsString() + "\n";
-                return header1;
-            }
+            header1 += $"[{PythonAILibStringResourcesJa.Instance.Tag}]" + TagsString() + "\n";
+            return header1;
         }
 
         public bool IsImage() {
@@ -537,8 +519,9 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual VectorSearchItem GetMainVectorSearchItem() {
-            return GetFolder().GetMainVectorSearchItem();
+        public virtual async Task<VectorSearchItem> GetMainVectorSearchItem() {
+            var folder = await GetFolder();
+            return await folder.GetMainVectorSearchItem();
         }
 
         public async Task Save() {
@@ -564,14 +547,16 @@ namespace LibPythonAI.Model.Content {
 
         public virtual async Task UpdateEmbedding() {
             // ベクトルを更新
-            var item = GetMainVectorSearchItem();
+            var item = await GetMainVectorSearchItem();
             string? vectorDBItemName = item.VectorDBItemName;
             if (string.IsNullOrEmpty(vectorDBItemName)) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                 return;
             }
-            VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), GetFolder().ContentFolderPath);
-            vectorDBEntry.SetMetadata(this);
+            var folder = await GetFolder();
+            var contentFolderPath = await folder.GetContentFolderPath();
+            VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), contentFolderPath);
+            await vectorDBEntry.SetMetadata(this);
             await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
         }
 
@@ -585,7 +570,7 @@ namespace LibPythonAI.Model.Content {
             // APIを使用してアイテムを取得
             ContentItemEntity? item = await PythonExecutor.PythonAIFunctions.GetContentItemByIdAsync(id);
             return item;
-    }
+        }
         public static async Task<List<ContentItemEntity>> LoadEntitiesAsync(ContentFolderWrapper folder) {
             // APIを使用してフォルダ内のアイテムを取得
             return await PythonExecutor.PythonAIFunctions.GetContentItemsByFolderAsync(folder.Id);

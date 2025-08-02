@@ -109,7 +109,7 @@ namespace LibPythonAI.Model.AutoProcess {
                         return;
                     }
 
-                    LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.ContentFolderPath}");
+                    LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.FolderName}");
                     ContentItemWrapper newItem = args.Copy();
                     // Folderに追加
                     await destinationFolder.AddItemAsync(newItem);

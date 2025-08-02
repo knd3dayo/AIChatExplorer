@@ -56,22 +56,12 @@ namespace LibPythonAI.Model.AutoProcess {
             AutoProcessItemId = autoProcessItem?.Id;
         }
 
-        public ContentFolderWrapper? DestinationFolder {
-            get {
-                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(DestinationFolderId);
-            }
-            set {
-                DestinationFolderId = value?.Id;
-            }
+        public async Task<ContentFolderWrapper?> GetDestinationFolder() {
+            return await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(DestinationFolderId);
         }
 
-        public ContentFolderWrapper? TargetFolder {
-            get {
-                return ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(TargetFolderId);
-            }
-            set {
-                TargetFolderId = value?.Id;
-            }
+        public async Task<ContentFolderWrapper?> GetTargetFolder() {
+            return await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(TargetFolderId);
         }
 
         // Load
@@ -101,7 +91,7 @@ namespace LibPythonAI.Model.AutoProcess {
                     var items = await GetItems();
                     Priority = items.Count + 1;
                 }
-                PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+                await PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
             });
         }
         // DeleteAsync
@@ -145,6 +135,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 LogWrapper.Warn(PythonAILibStringResourcesJa.Instance.NoActionSet);
                 return;
             }
+            var DestinationFolder = await GetDestinationFolder();
             ruleAction.Execute(applicationItem, DestinationFolder);
         }
 
@@ -179,9 +170,10 @@ namespace LibPythonAI.Model.AutoProcess {
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
                 if (ruleAction != null && ruleAction.IsCopyOrMoveAction()) {
 
-
-                    if (DestinationFolder != null) {
-                        result += $"{PythonAILibStringResourcesJa.Instance.Folder}:{DestinationFolder.ContentFolderPath}\n";
+                    var destinationFolder = await GetDestinationFolder();
+                    if (destinationFolder != null) {
+                        var contentFolderPath = await destinationFolder.GetContentFolderPath();
+                        result += $"{PythonAILibStringResourcesJa.Instance.Folder}:{contentFolderPath}\n";
                     } else {
                         result += $"{PythonAILibStringResourcesJa.Instance.FolderNone}\n";
                     }
@@ -218,14 +210,17 @@ namespace LibPythonAI.Model.AutoProcess {
             Dictionary<string, List<string>> fromToDictionary = [];
             foreach (var r in copyToMoveToRules) {
                 // TargetFolderとDestinationFolderが設定されている場合
-                if (r.TargetFolder != null && r.DestinationFolder != null) {
+                var targetFolder = await r.GetTargetFolder();
+                var destinationFolder = await r.GetDestinationFolder();
+                if (targetFolder != null && destinationFolder != null) {
                     // keyが存在しない場合は新しいLinkedListを作成
-                    if (!fromToDictionary.TryGetValue(r.TargetFolder.ContentFolderPath, out List<string>? value)) {
+                    var contentFolderPath = await targetFolder.GetContentFolderPath();
+                    if (!fromToDictionary.TryGetValue(contentFolderPath, out List<string>? value)) {
                         value = [];
-                        fromToDictionary[r.TargetFolder.ContentFolderPath] = value;
+                        fromToDictionary[contentFolderPath] = value;
                     }
 
-                    value.Add(r.TargetFolder.ContentFolderPath);
+                    value.Add(contentFolderPath);
                 }
             }
 

@@ -32,7 +32,8 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
+        public override async Task<List<T>> GetChildren<T>() {
+            await Task.CompletedTask;
             return []; ;
         }
 
@@ -60,7 +61,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
             foreach (var deleteFilePath in deleteFilePaths) {
                 ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
-                contentItem.Delete();
+                await contentItem.Delete();
             }
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
             // Exceptで差集合を取得
@@ -71,7 +72,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 MaxDegreeOfParallelism = 4
             };
 
-            Parallel.ForEach(addFilePaths, parallelOptions, localFileSystemFilePath => {
+            Parallel.ForEach(addFilePaths, parallelOptions, async localFileSystemFilePath => {
 
                 // ファイルが存在しない場合はスキップ
                 if (!File.Exists(localFileSystemFilePath)) {
@@ -87,11 +88,8 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
 
                 };
-                contentItem.Save();
-                // 自動処理ルールを適用
-                // Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                // ContentItem result = task.Result;
-                // result.SaveAsync();
+                await contentItem.Save();
+;
             });
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得
@@ -99,12 +97,12 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
             // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
             Dictionary<string, ContentItemWrapper> oldItemsDict = [];
-            Parallel.ForEach(updateFilePaths, parallelOptions, localFileSystemFilePath => {
+            Parallel.ForEach(updateFilePaths, parallelOptions, async localFileSystemFilePath => {
                 ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    contentItem.Save();
+                    await contentItem.Save();
                 }
             });
         }

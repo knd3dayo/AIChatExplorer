@@ -287,16 +287,17 @@ namespace LibUIPythonAI.ViewModel.Chat {
         });
 
 
-        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
+        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new(async (window) => {
 
             // ChatRequestの内容をContentItemに保存
             QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
             foreach (var item in ChatHistoryViewModel.ChatHistory) {
                 QAChatStartupPropsInstance.GetContentItem().ChatItems.Add(item);
             }
-            QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Clear();
+            var vectorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+            vectorDBProperties.Clear();
             foreach (var item in ChatContextViewModelInstance.VectorSearchProperties) {
-                QAChatStartupPropsInstance.GetContentItem().VectorDBProperties.Add(item);
+                vectorDBProperties.Add(item);
             }
 
             QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.GetContentItem(), ChatExecuted);

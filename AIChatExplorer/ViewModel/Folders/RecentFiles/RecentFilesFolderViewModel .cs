@@ -39,14 +39,14 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
         }
 
         // LoadChildren
-        public override async void LoadChildren(int nestLevel) {
+        public override async Task LoadChildren(int nestLevel) {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<RecentFilesFolderViewModel> _children = [];
 
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in Folder.GetChildren<RecentFilesFolder>()) {
+                    foreach (var child in await Folder.GetChildren<RecentFilesFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -56,7 +56,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                foreach (var child in await Folder.GetChildren<FileSystemFolder>()) {
                     if (child == null) {
                         continue;
                     }

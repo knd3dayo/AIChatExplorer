@@ -213,9 +213,8 @@ namespace AIChatExplorer.ViewModel.Main {
         });
     }
 
-    public class MainPanelDataGridViewControlViewModel(CommonViewModelCommandExecutes commands) : ObservableObject {
+    public class MainPanelDataGridViewControlViewModel(CommonViewModelCommandExecutes Commands) : ObservableObject {
 
-        private CommonViewModelCommandExecutes Commands { get; set; } = commands;
 
         public TabControl? MyTabControl { get; set; }
         public Action<bool> UpdateIndeterminateAction { get; set; } = (isIndeterminate) => { };
@@ -230,7 +229,6 @@ namespace AIChatExplorer.ViewModel.Main {
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }
-
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ContentItemViewModel> _selectedItems = [];
         public ObservableCollection<ContentItemViewModel> SelectedItems {
@@ -341,15 +339,13 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> VectorSearchCommand => new( (parameter) => {
+        public SimpleDelegateCommand<object> VectorSearchCommand => new(async (parameter) => {
             if (SelectedItem == null) {
                 LogWrapper.Error(PythonAILibStringResources.Instance.NoItemSelected);
                 return;
             }
             // 非同期でベクトル検索ウィンドウを開く
-            System.Threading.Tasks.Task.Run(() => {
-                CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
-            });
+            await CommonViewModelCommandExecutes.OpenVectorSearchWindowCommandExecute(SelectedItem);
         });
 
 
@@ -363,13 +359,13 @@ namespace AIChatExplorer.ViewModel.Main {
             ObservableCollection<ContentItemViewModel> items = [.. SelectedItems];
             CommonViewModelCommandExecutes.DeleteItemsCommandExecute(items, () => {
                 // プログレスインジケータを表示
-                commands.UpdateIndeterminate(true);
+                Commands.UpdateIndeterminate(true);
             },
             () => {
                 foreach (var itemViewModel in items) {
                     CommonViewModelCommandExecutes.ReloadFolderCommandExecute(itemViewModel.FolderViewModel, () => { }, () => { });
                 }
-                commands.UpdateIndeterminate(false);
+                Commands.UpdateIndeterminate(false);
             });
         });
 

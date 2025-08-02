@@ -12,7 +12,6 @@ namespace LibUIPythonAI.Resource {
         public CommonViewModelProperties CommonViewModelProperties { get; set; } = CommonViewModelProperties.Instance;
 
 
-
         public virtual void OnLoadedAction() { }
         public virtual void OnActivatedAction() { }
 

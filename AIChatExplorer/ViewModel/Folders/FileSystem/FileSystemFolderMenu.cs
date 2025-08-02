@@ -50,12 +50,12 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
 
 
         // ショートカット登録コマンド
-        public static SimpleDelegateCommand<FileSystemFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
+        public static SimpleDelegateCommand<FileSystemFolderViewModel> CreateShortCutCommand => new( (folderViewModel) => {
 
             FileSystemFolder fileSystemFolder = (FileSystemFolder)folderViewModel.Folder;
             // ショートカット登録
             // ShortCutRootFolderを取得
-            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
+            FileSystemFolder shortCutRootFolder = FolderManager.GetShortcutRootFolder();
             // ショートカットフォルダを作成
             ShortCutFolder contentFolder = new() {
                 FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,

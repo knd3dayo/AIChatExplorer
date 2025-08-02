@@ -122,285 +122,202 @@ namespace LibPythonAI.Model.Folders {
         private static List<ContentFolderEntity> RootFolderEntities = [];
         public static async Task InitAsync() {
             RootFolderEntities = await PythonExecutor.PythonAIFunctions.GetRootContentFoldersAsync();
+            // ApplicationRootFolder
+            var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
+            applicationRootFolder = await ContentFolderWrapper.GetFolderById<ApplicationFolder>(entity?.Id);
+            // SearchFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
+            searchRootFolder = await ContentFolderWrapper.GetFolderById<SearchFolder>(entity?.Id);
+            // FileSystemFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN);
+            // ShortCutFolder
+            shortcutRootFolder = await ContentFolderWrapper.GetFolderById<ShortCutFolder>(entity?.Id);
+            // OutlookFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN);
+            outlookRootFolder = await ContentFolderWrapper.GetFolderById<OutlookFolder>(entity?.Id);
+            // EdgeBrowseHistoryFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
+            edgeBrowseHistoryRootFolder = await ContentFolderWrapper.GetFolderById<EdgeBrowseHistoryFolder>(entity?.Id);
+            // RecentFilesFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN);
+            recentFilesRootFolder = await ContentFolderWrapper.GetFolderById<RecentFilesFolder>(entity?.Id);
+            // ClipboardHistoryFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN);
+            clipboardHistoryRootFolder = await ContentFolderWrapper.GetFolderById<ClipboardHistoryFolder>(entity?.Id);
+            // ContentFolderWrapper
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN);
+            chatRootFolder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(entity?.Id);
+            // ScreenShotHistoryFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN);
+            screenShotHistoryRootFolder = await ContentFolderWrapper.GetFolderById<ScreenShotHistoryFolder>(entity?.Id);
+            // IntegratedMonitorHistoryFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN);
+            integratedMonitorHistoryRootFolder = await ContentFolderWrapper.GetFolderById<IntegratedMonitorHistoryFolder>(entity?.Id);
         }
 
         //--------------------------------------------------------------------------------
         private static ApplicationFolder? applicationRootFolder;
-        public static ApplicationFolder RootFolder {
-            get {
-
-                if (applicationRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
-                    ApplicationFolder? folder = ContentFolderWrapper.GetFolderById<ApplicationFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = APPLICATION_ROOT_FOLDER_NAME,
-                            FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    applicationRootFolder = folder;
-
-                }
-                return applicationRootFolder;
+        public static ApplicationFolder GetApplicationRootFolder() {
+            if (applicationRootFolder == null) {
+                ApplicationFolder folder = new() {
+                    FolderName = APPLICATION_ROOT_FOLDER_NAME,
+                    FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                applicationRootFolder = folder;
             }
+
+            return applicationRootFolder;
         }
         private static SearchFolder? searchRootFolder;
-        public static SearchFolder SearchRootFolder {
-            get {
-                if (searchRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SEARCH_ROOT_FOLDER_NAME_EN);
-                    SearchFolder? folder = ContentFolderWrapper.GetFolderById<SearchFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = SEARCH_ROOT_FOLDER_NAME,
-                            FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    searchRootFolder = folder;
+        public static SearchFolder GetSearchRootFolder() {
+            if (searchRootFolder == null) {
+                SearchFolder folder = new() {
+                    FolderName = SEARCH_ROOT_FOLDER_NAME,
+                    FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                searchRootFolder = folder;
 
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (searchRootFolder.IsRootFolder == false) {
-                    searchRootFolder.IsRootFolder = true;
-                    searchRootFolder.Save();
-                }
-                return searchRootFolder;
             }
+            return searchRootFolder;
         }
 
         // Local File System Root Folder
         private static FileSystemFolder? fileSystemRootFolder;
-        public static FileSystemFolder FileSystemRootFolder {
-            get {
-                if (fileSystemRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN);
-                    FileSystemFolder? folder = ContentFolderWrapper.GetFolderById<FileSystemFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
-                            FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
+        public static FileSystemFolder GetFileSystemRootFolder() {
+            if (fileSystemRootFolder == null) {
+                FileSystemFolder folder = new() {
+                    FolderName = FILESYSTEM_ROOT_FOLDER_NAME,
+                    FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                fileSystemRootFolder = folder;
 
-                    fileSystemRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (fileSystemRootFolder.IsRootFolder == false) {
-                    fileSystemRootFolder.IsRootFolder = true;
-                    fileSystemRootFolder.Save();
-                }
-                return fileSystemRootFolder;
             }
+            return fileSystemRootFolder;
         }
         // Shortcut Root Folder
         private static ShortCutFolder? shortcutRootFolder;
-        public static ShortCutFolder ShortcutRootFolder {
-            get {
-                if (shortcutRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN);
-                    ShortCutFolder? folder = ContentFolderWrapper.GetFolderById<ShortCutFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = SHORTCUT_ROOT_FOLDER_NAME,
-                            FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
+        public static ShortCutFolder GetShortcutRootFolder() {
+            if (shortcutRootFolder == null) {
+                ShortCutFolder folder = new() {
+                    FolderName = SHORTCUT_ROOT_FOLDER_NAME,
+                    FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                shortcutRootFolder = folder;
 
-                    shortcutRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (shortcutRootFolder.IsRootFolder == false) {
-                    shortcutRootFolder.IsRootFolder = true;
-                    shortcutRootFolder.Save();
-                }
-                return shortcutRootFolder;
             }
+            return shortcutRootFolder;
         }
         // Outlook Root Folder
         private static OutlookFolder? outlookRootFolder;
-        public static OutlookFolder OutlookRootFolder {
-            get {
-                if (outlookRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN);
-                    OutlookFolder? folder = ContentFolderWrapper.GetFolderById<OutlookFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = OUTLOOK_ROOT_FOLDER_NAME,
-                            FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
+        public static OutlookFolder GetOutlookRootFolder() {
+            if (outlookRootFolder == null) {
+                OutlookFolder folder = new() {
+                    FolderName = OUTLOOK_ROOT_FOLDER_NAME,
+                    FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                outlookRootFolder = folder;
 
-                    outlookRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (outlookRootFolder.IsRootFolder == false) {
-                    outlookRootFolder.IsRootFolder = true;
-                    outlookRootFolder.Save();
-                }
-                return outlookRootFolder;
             }
+            return outlookRootFolder;
 
         }
         // EdgeBrowseHistory Root Folder
         private static EdgeBrowseHistoryFolder? edgeBrowseHistoryRootFolder;
 
-        public static EdgeBrowseHistoryFolder EdgeBrowseHistoryRootFolder {
-            get {
-                if (edgeBrowseHistoryRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN);
-                    EdgeBrowseHistoryFolder? folder = ContentFolderWrapper.GetFolderById<EdgeBrowseHistoryFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
-                            FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-
-                    edgeBrowseHistoryRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (edgeBrowseHistoryRootFolder.IsRootFolder == false) {
-                    edgeBrowseHistoryRootFolder.IsRootFolder = true;
-                    edgeBrowseHistoryRootFolder.Save();
-                }
-                return edgeBrowseHistoryRootFolder;
+        public static EdgeBrowseHistoryFolder GetEdgeBrowseHistoryRootFolder() {
+            if (edgeBrowseHistoryRootFolder == null) {
+                EdgeBrowseHistoryFolder folder = new() {
+                    FolderName = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME,
+                    FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                edgeBrowseHistoryRootFolder = folder;
             }
+            return edgeBrowseHistoryRootFolder;
         }
 
         // RecentFiles Root Folder
         private static RecentFilesFolder? recentFilesRootFolder;
-        public static RecentFilesFolder RecentFilesRootFolder {
-            get {
-                if (recentFilesRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == RECENT_FILES_ROOT_FOLDER_NAME_EN);
-                    RecentFilesFolder? folder = ContentFolderWrapper.GetFolderById<RecentFilesFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
-                            FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    recentFilesRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (recentFilesRootFolder.IsRootFolder == false) {
-                    recentFilesRootFolder.IsRootFolder = true;
-                    recentFilesRootFolder.Save();
-                }
-
-                return recentFilesRootFolder;
+        public static RecentFilesFolder GetRecentFilesRootFolder() {
+            if (recentFilesRootFolder == null) {
+                RecentFilesFolder folder = new() {
+                    FolderName = RECENT_FILES_ROOT_FOLDER_NAME,
+                    FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                recentFilesRootFolder = folder;
             }
+            return recentFilesRootFolder;
         }
+
         // ClipboardHistory Root Folder
         private static ClipboardHistoryFolder? clipboardHistoryRootFolder;
-        public static ClipboardHistoryFolder ClipboardHistoryRootFolder {
-            get {
-                if (clipboardHistoryRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN);
-                    ClipboardHistoryFolder? folder = ContentFolderWrapper.GetFolderById<ClipboardHistoryFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME,
-                            FolderTypeString = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    clipboardHistoryRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (clipboardHistoryRootFolder.IsRootFolder == false) {
-                    clipboardHistoryRootFolder.IsRootFolder = true;
-                    clipboardHistoryRootFolder.Save();
-                }
-                return clipboardHistoryRootFolder;
+        public static ClipboardHistoryFolder GetClipboardHistoryRootFolder() {
+            if (clipboardHistoryRootFolder == null) {
+                ClipboardHistoryFolder folder = new() {
+                    FolderName = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME,
+                    FolderTypeString = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                clipboardHistoryRootFolder = folder;
             }
-
+            return clipboardHistoryRootFolder;
         }
         //--------------------------------------------------------------------------------
         private static ContentFolderWrapper? chatRootFolder;
 
-        public static ContentFolderWrapper ChatRootFolder {
-            get {
-                if (chatRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == CHAT_ROOT_FOLDER_NAME_EN);
-                    ContentFolderWrapper? folder = ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = CHAT_ROOT_FOLDER_NAME,
-                            FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
-                        };
-                        folder.Save();
-                    }
-                    chatRootFolder = folder;
-                }
-                return chatRootFolder;
+        public static ContentFolderWrapper GetChatRootFolder() {
+            if (chatRootFolder == null) {
+                ContentFolderWrapper folder = new() {
+                    FolderName = CHAT_ROOT_FOLDER_NAME,
+                    FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
+                };
+                folder.Save();
+                chatRootFolder = folder;
             }
+            return chatRootFolder;
         }
 
         // ScreenShotHistory Root Folder
         private static ScreenShotHistoryFolder? screenShotHistoryRootFolder;
-        public static ScreenShotHistoryFolder ScreenShotHistoryRootFolder {
-            get {
-                if (screenShotHistoryRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN);
-                    ScreenShotHistoryFolder? folder = ContentFolderWrapper.GetFolderById<ScreenShotHistoryFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME,
-                            FolderTypeString = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    screenShotHistoryRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (screenShotHistoryRootFolder.IsRootFolder == false) {
-                    screenShotHistoryRootFolder.IsRootFolder = true;
-                    screenShotHistoryRootFolder.Save();
-                }
-                return screenShotHistoryRootFolder;
+        public static ScreenShotHistoryFolder GetScreenShotHistoryRootFolder() {
+            if (screenShotHistoryRootFolder == null) {
+                ScreenShotHistoryFolder folder = new() {
+                    FolderName = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME,
+                    FolderTypeString = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                screenShotHistoryRootFolder = folder;
             }
+            return screenShotHistoryRootFolder;
         }
         // IntegratedMonitorHistory Root Folder
         private static IntegratedMonitorHistoryFolder? integratedMonitorHistoryRootFolder;
-        public static IntegratedMonitorHistoryFolder IntegratedMonitorHistoryRootFolder {
-            get {
-                if (integratedMonitorHistoryRootFolder == null) {
-                    var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN);
-                    IntegratedMonitorHistoryFolder? folder = ContentFolderWrapper.GetFolderById<IntegratedMonitorHistoryFolder>(entity?.Id);
-                    if (folder == null) {
-                        folder = new() {
-                            FolderName = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME,
-                            FolderTypeString = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN,
-                            IsRootFolder = true,
-                        };
-                        folder.Save();
-                    }
-                    integratedMonitorHistoryRootFolder = folder;
-                }
-                //既にルートフォルダがある環境用にIsRootFolderをtrueにする
-                if (integratedMonitorHistoryRootFolder.IsRootFolder == false) {
-                    integratedMonitorHistoryRootFolder.IsRootFolder = true;
-                    integratedMonitorHistoryRootFolder.Save();
-                }
-                return integratedMonitorHistoryRootFolder;
+        public static IntegratedMonitorHistoryFolder GetIntegratedMonitorHistoryRootFolder() {
+            if (integratedMonitorHistoryRootFolder == null) {
+                IntegratedMonitorHistoryFolder folder = new() {
+                    FolderName = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME,
+                    FolderTypeString = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
+                };
+                folder.Save();
+                integratedMonitorHistoryRootFolder = folder;
             }
+            return integratedMonitorHistoryRootFolder;
         }
     }
 }

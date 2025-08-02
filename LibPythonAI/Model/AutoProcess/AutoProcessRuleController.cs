@@ -114,7 +114,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
             ContentItemWrapper? result = item;
             // AutoProcessRulesを取得
-            var AutoProcessRules = await GetAutoProcessRules(item.GetFolder());
+            var AutoProcessRules = await GetAutoProcessRules(item.Folder);
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 await rule.RunActionAsync(result);

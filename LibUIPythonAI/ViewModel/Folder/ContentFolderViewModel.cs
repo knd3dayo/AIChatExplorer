@@ -43,30 +43,30 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // フォルダを読み込む（async/await対応）
         public virtual async Task LoadFolderExecuteAsync(Action beforeAction, Action afterAction) {
             beforeAction();
-            await Task.Run(() => {
-                LoadChildren(DefaultNextLevel);
-            });
+            await LoadChildren(DefaultNextLevel);
             await LoadItemsAsync();
+            FolderPath = await Folder.GetContentFolderPath();
             afterAction();
         }
-        public virtual void LoadChildren(int nestLevel) {
-            LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
+        public virtual async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
         }
 
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        protected void LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
+        protected async Task LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ViewModel> _children = [];
-            foreach (var child in Folder.GetChildren<Model>().OrderBy(x => x.FolderName)) {
+            var folders = await Folder.GetChildren<Model>();
+            foreach (var child in folders.OrderBy(x => x.FolderName)) {
                 if (child == null) {
                     continue;
                 }
                 ViewModel childViewModel = (ViewModel)CreateChildFolderViewModel(child);
                 // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                 if (nestLevel > 0) {
-                    childViewModel.LoadChildren<ViewModel, Model>(nestLevel - 1);
+                    await childViewModel.LoadChildren<ViewModel, Model>(nestLevel - 1);
                 }
                 _children.Add(childViewModel);
             }
@@ -142,11 +142,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 OnPropertyChanged(nameof(FolderName));
             }
         }
-        public string FolderPath {
-            get {
-                return Folder.ContentFolderPath;
-            }
-        }
+        public string FolderPath { get; private set; } = string.Empty;
 
         public virtual void UpdateStatusText() {
             Task.Run(async () => {

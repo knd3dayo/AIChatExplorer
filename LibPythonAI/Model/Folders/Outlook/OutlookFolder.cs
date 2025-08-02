@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
@@ -82,36 +83,37 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // Exceptで差集合を取得
             foreach (var entryId in entryIdIdDict.Keys.Except(entryIdList)) {
                 OutlookItem outlookItem = entryIdIdDict[entryId];
-                outlookItem.Delete();
+                await outlookItem.Delete();
             }
             // Parallel処理
-            Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), outlookItem => {
-                OutlookItem newItem = new(Entity, outlookItem.EntryID) {
-                    Description = outlookItem.Subject,
-                    ContentType = ContentItemTypes.ContentItemTypeEnum.Text,
-                    Content = outlookItem.Body,
-                };
-                newItem.Save();
+            Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), async outlookItem => {
+                OutlookItem newItem = await OutlookItem.Create(Entity, outlookItem.EntryID);
+                newItem.Description = outlookItem.Subject;
+                newItem.ContentType = ContentItemTypes.ContentItemTypeEnum.Text;
+                newItem.Content = outlookItem.Body;
+                await newItem.Save();
             });
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
+        public override async Task<List<T>> GetChildren<T>() {
 
             // ローカルファイルシステムとApplicationFolderのフォルダを同期
-            SyncFolders();
-            return base.GetChildren<T>();
+            await SyncFolders();
+            return await base.GetChildren<T>();
         }
 
-        public MAPIFolder? GetMAPIFolder() {
+        public async Task<MAPIFolder?> GetMAPIFolder() {
             if (IsRootFolder) {
                 return null;
             }
-            if (GetParent<OutlookFolder>()?.IsRootFolder == true) {
+            var parent = await GetParent<OutlookFolder>();
+            if (parent?.IsRootFolder == true) {
                 return InboxFolder;
             }
             // FolderPathを/で分割した要素のリスト
-            List<string> strings = [.. ContentFolderPath.Split('/')];
+            var contentFolderPath = await GetContentFolderPath();
+            List<string> strings = [.. contentFolderPath.Split('/')];
             MAPIFolder? mAPIFolder = InboxFolder;
             for (int i = 2; i < strings.Count; i++) {
                 mAPIFolder = mAPIFolder?.Folders.FirstOrDefault(x => x.Name == strings[i]);
@@ -128,7 +130,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 // ルートフォルダの場合はInboxフォルダを取得
                 outlookFolderNames.Add(InboxFolder.Name);
             } else {
-                MAPIFolder = GetMAPIFolder();
+                MAPIFolder = await GetMAPIFolder();
                 if (MAPIFolder == null) {
                     return;
                 }
@@ -151,7 +153,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
             foreach (var deleteFolderName in deleteFolderNames) {
                 ContentItemWrapper deleteFolder = folderPathIdDict[deleteFolderName];
-                deleteFolder.Delete();
+                await deleteFolder.Delete();
             }
 
             // Outlookに存在するフォルダがDBに存在しない場合は追加

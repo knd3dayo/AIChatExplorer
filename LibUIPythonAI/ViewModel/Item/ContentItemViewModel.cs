@@ -19,7 +19,13 @@ namespace LibUIPythonAI.ViewModel.Item {
         public ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper contentItemBase) {
             ContentItem = contentItemBase;
             FolderViewModel = folderViewModel;
+            Task.Run(async () => {
+                await InitializeAsync();
+            });
+        }
 
+        public async Task InitializeAsync() {
+            HeaderText =  await ContentItem.GetHeaderTextAsync();
         }
 
         public ContentItemWrapper ContentItem { get; set; }
@@ -116,7 +122,7 @@ namespace LibUIPythonAI.ViewModel.Item {
         public string SourceApplicationTitleText { get => ContentItem.SourceApplicationTitle; set { ContentItem.SourceApplicationTitle = value; } }
 
         // 表示用の文字列
-        public string? HeaderText => ContentItem.HeaderText;
+        public string HeaderText { get; private set; } = "";
 
         public string UpdatedAtString => ContentItem.UpdatedAtString;
 
@@ -172,12 +178,12 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         public void UpdateView(TabControl? tabControl) {
             // 選択中のタブを更新する処理
-            MainUITask.Run(() => {
-                UpdateTabItems(tabControl);
+            MainUITask.Run(async () => {
+                await UpdateTabItems(tabControl);
             });
         }
         
-        private void UpdateTabItems(TabControl? tabControl) {
+        private async Task UpdateTabItems(TabControl? tabControl) {
             if (tabControl == null) {
                 return;
             }
@@ -237,7 +243,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
             // PromptResultのタブ
-            UpdatePromptResultTabItems(tabControl);
+            await UpdatePromptResultTabItems(tabControl);
 
             // タブの選択状態を更新
             SelectedTabIndex = LastSelectedTabIndex;
