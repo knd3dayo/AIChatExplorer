@@ -93,6 +93,17 @@ namespace LibUIPythonAI.ViewModel.Common {
                 }
             }
         }
+
+        // UseMaterialDesignDarkTheme
+        public bool MaterialDesignDarkTheme {
+            get {
+                return PythonAILibManager.Instance.ConfigParams.MaterialDesignDarkTheme();
+            }
+            set {
+                PythonAILibManager.Instance.ConfigParams.UpdateMaterialDesignDarkTheme(value);
+                OnPropertyChanged(nameof(MaterialDesignDarkTheme));
+            }
+        }
         // 開発中の機能を有効にするかどうか
         public bool EnableDevFeatures {
             get {

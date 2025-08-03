@@ -5,12 +5,12 @@ using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
 using LibPythonAI.Data;
-using LibPythonAI.Model.Folders;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
+using MaterialDesignThemes.Wpf;
 
 namespace AIChatExplorer.AppStartup {
 
@@ -20,6 +20,8 @@ namespace AIChatExplorer.AppStartup {
             // 言語設定
             SetupLanguage();
 
+            // MaterialDesignのダークテーマ設定
+            AIChatExplorerConfig.Instance.UpdateMaterialDesignDarkTheme();
             // ログ設定
             SetupLog();
 
@@ -42,6 +44,7 @@ namespace AIChatExplorer.AppStartup {
                 mainWindow.Show();
             });
         }
+
 
         private static void SetupLanguage() {
             // 言語設定

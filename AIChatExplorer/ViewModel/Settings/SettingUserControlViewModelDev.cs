@@ -27,21 +27,6 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-
-
-        // UserMaskedDataInOpenAI
-        public bool UserMaskedDataInOpenAI {
-            get {
-                return AIChatExplorerConfig.Instance.UserMaskedDataInOpenAI;
-            }
-            set {
-                AIChatExplorerConfig.Instance.UserMaskedDataInOpenAI = value;
-                OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // IsAutoTagEnabled
         public bool AutoTag {
             get {

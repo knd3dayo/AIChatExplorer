@@ -135,14 +135,8 @@ namespace AIChatExplorer.ViewModel.Main {
         // Process when "Settings" is clicked in the menu
         public static void SettingCommandExecute() {
             // Open UserControl settings window
-            SettingWindow settingsControl = new();
-            Window window = new() {
-                SizeToContent = SizeToContent.Height,
-                Title = CommonStringResources.Instance.SettingWindowTitle,
-                Content = settingsControl
-            };
-            window.ShowDialog();
-        }
+            SettingWindow.OpenSettingsWindow();
+                }
 
         // Process to display the search window
         public static void OpenSearchWindowCommandExecute(SearchFolderViewModel searchFolderViewModel, System.Action action) {

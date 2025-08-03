@@ -3,6 +3,7 @@ using System.Windows;
 using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Utils;
+using MaterialDesignThemes.Wpf;
 
 namespace AIChatExplorer.ViewModel.Settings {
     public class AIChatExplorerConfig {
@@ -314,20 +315,6 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.AutoExtractImageWithOpenAI = value;
             }
         }
-        // UserMaskedDataInOpenAI
-        private bool? _userMaskedDataInOpenAI;
-        public bool UserMaskedDataInOpenAI {
-            get {
-                if (_userMaskedDataInOpenAI == null) {
-                    _userMaskedDataInOpenAI = Properties.Settings.Default.UserMaskedDataInOpenAI;
-                }
-                return _userMaskedDataInOpenAI.Value;
-            }
-            set {
-                _userMaskedDataInOpenAI = value;
-                Properties.Settings.Default.UserMaskedDataInOpenAI = value;
-            }
-        }
 
         // IsAutoFileExtractEnabled
         private bool? _autoFileExtract;
@@ -608,6 +595,37 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.EditorFontSize = value;
             }
         }
+        // MaterialDesignDarkTheme
+        private bool? _materialDesignDarkTheme;
+        public bool MaterialDesignDarkTheme {
+            get {
+                if (_materialDesignDarkTheme == null) {
+                    _materialDesignDarkTheme = Properties.Settings.Default.MaterialDesignDarkTheme;
+                }
+                return _materialDesignDarkTheme.Value;
+            }
+            set {
+                _materialDesignDarkTheme = value;
+                Properties.Settings.Default.MaterialDesignDarkTheme = value;
+                UpdateMaterialDesignDarkTheme();
+            }
+        }
+
+        /// <summary>
+        /// MaterialDesignのThemeをDarkに設定する
+        /// </summary>
+        public void UpdateMaterialDesignDarkTheme() {
+            var paletteHelper = new MaterialDesignThemes.Wpf.PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            if (MaterialDesignDarkTheme) {
+                // ダークテーマを設定
+                theme.SetDarkTheme();
+            } else {
+                // ライトテーマを設定
+                theme.SetLightTheme();
+            }
+            paletteHelper.SetTheme(theme);
+        }
 
 
         public void Save() {
@@ -717,7 +735,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             return toolDir;
         }
 
-        
+
 
         #region IPythonAILibConfigParamsの実装
 

@@ -174,6 +174,16 @@ namespace AIChatExplorer.ViewModel.Main {
             AIChatExplorerConfig.Instance.AutoTextWrapping = value;
             AIChatExplorerConfig.Instance.Save();
         }
+
+        // UseMaterialDesignDarkTheme
+        public bool MaterialDesignDarkTheme() {
+            return AIChatExplorerConfig.Instance.MaterialDesignDarkTheme;
+        }
+        // UpdateUseMaterialDesignDarkTheme
+        public void UpdateMaterialDesignDarkTheme(bool value) {
+            AIChatExplorerConfig.Instance.MaterialDesignDarkTheme = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
         // AutoPredictUserIntent
         public bool IsAutoPredictUserIntentEnabled() {
             return AIChatExplorerConfig.Instance.AutoPredictUserIntent;

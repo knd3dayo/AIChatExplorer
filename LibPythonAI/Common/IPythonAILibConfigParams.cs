@@ -103,6 +103,10 @@ namespace LibPythonAI.Common {
 
         public int GetEditorFontSize();
 
+        public bool MaterialDesignDarkTheme();
+
+        public void UpdateMaterialDesignDarkTheme(bool value);
+
 
     }
 }

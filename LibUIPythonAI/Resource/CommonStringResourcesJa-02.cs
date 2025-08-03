@@ -145,6 +145,12 @@ namespace LibUIPythonAI.Resource {
         // IsAutoPredictUserIntentEnabled
         public override string AutoPredictUserIntent { get; } = "ユーザーの意図を自動予測する";
 
+        // Theme
+        public override string Theme { get; } = "テーマ";
+
+        // UseMaterialDesignDarkTheme
+        public override string UseMaterialDesignDarkTheme { get; } = "Material Designダークテーマを使用する";
+
         // UsePythonNet
         public override string UsePythonNet { get; } = "PythonNetを使用する";
 

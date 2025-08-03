@@ -139,6 +139,11 @@ namespace AIChatExplorer.View.Main {
         // Monitor
         public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;
 
+        // Theme
+        public static string Theme { get; set; } = CommonStringResources.Instance.Theme;
+
+        // UseMaterialDesignTheme
+        public static string UseMaterialDesignDarkTheme { get; set; } = CommonStringResources.Instance.UseMaterialDesignDarkTheme;
 
     }
 }

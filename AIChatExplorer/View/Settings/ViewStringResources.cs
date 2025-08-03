@@ -231,5 +231,12 @@ namespace AIChatExplorer.View.Settings {
 
         // IsAutoPredictUserIntentEnabled
         public static string AutoPredictUserIntent { get; set; } = CommonStringResources.Instance.AutoPredictUserIntent;
+
+        // Theme
+        public static string Theme { get; set; } = CommonStringResources.Instance.Theme;
+
+        // UseMaterialDesignTheme
+        public static string UseMaterialDesignDarkTheme { get; set; } = CommonStringResources.Instance.UseMaterialDesignDarkTheme;
+
     }
 }

@@ -391,6 +391,19 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
+        // MaterialDesignDarkTheme
+        public bool MaterialDesignDarkTheme {
+            get {
+                return AIChatExplorerConfig.Instance.MaterialDesignDarkTheme;
+            }
+            set {
+                AIChatExplorerConfig.Instance.MaterialDesignDarkTheme = value;
+                OnPropertyChanged(nameof(MaterialDesignDarkTheme));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);

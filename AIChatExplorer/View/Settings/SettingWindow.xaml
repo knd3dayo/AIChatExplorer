@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:AIChatExplorer.View.Settings"
     xmlns:viewmodel="clr-namespace:AIChatExplorer.ViewModel.Settings"
-    d:DataContext="d:DdesignInstance Type=viewmodel:SettingWindowViewModel"
+    d:DataContext="{d:DesignInstance Type=viewmodel:SettingUserControlViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
@@ -85,6 +85,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <TextBlock
                                 Grid.Row="0"
@@ -107,38 +108,52 @@
                                 <ComboBoxItem Content="Japanese" />
                                 <ComboBoxItem Content="English" />
                             </ComboBox>
-                            <!--  ProxyURL  -->
+                            <!--  Theme  -->
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.Theme}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Content="{x:Static res:ViewStringResources.UseMaterialDesignDarkTheme}"
+                                IsChecked="{Binding MaterialDesignDarkTheme}" />
+
+                            <!--  ProxyURL  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.ProxyURL}" />
                             <TextBox
-                                Grid.Row="1"
+                                Grid.Row="2"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 Text="{Binding ProxyURL}" />
                             <!--  NoProxyList  -->
                             <TextBlock
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.NoProxyList}" />
                             <TextBox
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 Text="{Binding NoProxyList}" />
 
                             <!--  Backup Generation  -->
                             <TextBlock
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.ApplicationDBBackupGenerations}"
                                 Visibility="Collapsed" />
                             <TextBox
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ApplicationDBBackupGenerationsDescription}"
@@ -348,38 +363,6 @@
                                 Text="{Binding OpenAIBaseURL}" />
                         </Grid>
 
-                        <!--  Spacy設定  -->
-                        <Grid Grid.Row="3" Visibility="{Binding EnableDevFeaturesVisibility}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.PythonSpacySettings}" />
-                        </Grid>
-                        <!--  Python OCR設定  -->
-                        <Grid Grid.Row="4" Visibility="{Binding EnableDevFeaturesVisibility}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="260" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.PythonOCRSettings}" />
-                        </Grid>
                         <!--  その他  -->
                         <Grid Grid.Row="5">
                             <Grid.ColumnDefinitions>
@@ -395,18 +378,6 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.Other}" />
-
-                            <!--  開発中機能を有効にする  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.EnableDevelopmentFeatures}" />
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                Margin="10,10,10,0"
-                                IsChecked="{Binding EnableDevFeatures}" />
                         </Grid>
                     </Grid>
                 </ScrollViewer>

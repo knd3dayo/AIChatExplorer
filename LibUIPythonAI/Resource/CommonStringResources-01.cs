@@ -141,8 +141,14 @@ namespace LibUIPythonAI.Resource {
         // IsAutoPredictUserIntentEnabled
         public virtual string AutoPredictUserIntent { get; } = "Auto Predict User Intent";
 
+        // Theme
+        public virtual string Theme { get; } = "Theme";
+
+        // Use Material Design Dark Theme
+        public virtual string UseMaterialDesignDarkTheme { get; } = "Use Material Design Dark Theme";
+
         public virtual string AppName { get; } = "AIChatExplorer";
-        // File
+         // File
         public virtual string File { get; } = "File";
 
         // File / Image
