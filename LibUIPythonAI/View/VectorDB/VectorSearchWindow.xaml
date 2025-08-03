@@ -15,6 +15,7 @@
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:VectorSearchWindowViewModel}"
+    Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
@@ -89,7 +90,6 @@
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
-                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
@@ -142,7 +142,6 @@
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
-                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"

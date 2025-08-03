@@ -56,9 +56,9 @@ namespace LibUINormalChat.ViewModel {
         // PropertiesVisibility
         public Visibility PropertiesVisibility { get => LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties); }
 
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            List<PromptItem> promptItems =  PromptItem.GetPromptItems();
             promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
@@ -84,9 +84,9 @@ namespace LibUINormalChat.ViewModel {
         }
         private void InitDataDefinitions(ChatSettings chatSettings) {
 
-            Task.Run(async () => {
+            Task.Run( () => {
                 // DataDefinitionsが空の場合は、デフォルトのDataDefinitionsを作成
-                DataDefinitions = await CreateExportItems();
+                DataDefinitions = CreateExportItems();
                 // DataDefinitionsを初期化
                 List<ContentItemDataDefinition> savedDataDefinitions = [.. chatSettings.RelatedItems.DataDefinitions];
                 // DataDefinitionsに保存されているDataDefinitionsの状態を反映

@@ -15,13 +15,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public ExportImportWindowViewModel(ContentFolderViewModel applicationFolderViewModel, Action afterUpdate) {
             ApplicationFolderViewModel = applicationFolderViewModel;
             AfterUpdate = afterUpdate;
-            Task.Run(async () => {
-                ExportItems = await CreateExportItems();
-                OnPropertyChanged(nameof(ExportItems));
-                ImportItems = CreateImportItems();
-                OnPropertyChanged(nameof(ImportItems));
-
-            });
+            ExportItems = CreateExportItems();
+            OnPropertyChanged(nameof(ExportItems));
+            ImportItems = CreateImportItems();
+            OnPropertyChanged(nameof(ImportItems));
         }
         // ApplicationFolderViewModel
         public ContentFolderViewModel ApplicationFolderViewModel { get; set; }
@@ -39,9 +36,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
             return [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
         }
 
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            List<PromptItem> promptItems = PromptItem.GetPromptItems();
             promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [

@@ -135,7 +135,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // Process when "Settings" is clicked in the menu
         public static void SettingCommandExecute() {
             // Open UserControl settings window
-            SettingsUserControl settingsControl = new();
+            SettingWindow settingsControl = new();
             Window window = new() {
                 SizeToContent = SizeToContent.Height,
                 Title = CommonStringResources.Instance.SettingWindowTitle,

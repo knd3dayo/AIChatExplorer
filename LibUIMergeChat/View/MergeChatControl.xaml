@@ -54,7 +54,7 @@
                 Padding="0"
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.Chat}">
-                <Grid Background="White">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="280" />
                         <ColumnDefinition Width="5" />
@@ -114,7 +114,6 @@
                 Height="Auto"
                 Margin="10,0,10,0"
                 Padding="0"
-                Background="White"
                 FontSize="10"
                 Header="{x:Static res:ViewStringResources.MergeTarget}">
                 <TabControl Margin="10,5,10,5" HorizontalContentAlignment="Left">
@@ -125,7 +124,6 @@
                         Height="Auto"
                         Margin="10,0,10,0"
                         Padding="0"
-                        Background="White"
                         FontSize="10"
                         Header="{x:Static res:ViewStringResources.MergeTargetItemSelection}">
                         <local:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
@@ -138,7 +136,7 @@
                         Padding="0"
                         FontSize="10"
                         Header="{x:Static res:ViewStringResources.MergeTargetDataSelection}">
-                        <Grid Background="White">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
@@ -151,7 +149,6 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Top"
                                 AutoGenerateColumns="False"
-                                Background="White"
                                 ItemsSource="{Binding ExportItems}"
                                 SelectionMode="Single">
                                 <DataGrid.Columns>
@@ -174,7 +171,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </TabControl>
-        <Grid Grid.Row="1" Background="White">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

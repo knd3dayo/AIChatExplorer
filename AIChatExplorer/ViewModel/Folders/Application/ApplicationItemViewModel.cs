@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 
@@ -24,18 +23,14 @@ namespace AIChatExplorer.ViewModel.Content {
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(SourceApplicationTitleText));
             OnPropertyChanged(nameof(FileTabVisibility));
-
+            ApplicationItemMenu applicationItemMenu = new(this);
+            ContentItemMenuItems = applicationItemMenu.CreateBasicItemContextMenuItems();
         }
 
-        
+
         // Context Menu
 
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                ApplicationItemMenu applicationItemMenu = new(this);
-                return applicationItemMenu.ContentItemMenuItems;
-            }
-        }
+        public override ObservableCollection<MenuItem> ContentItemMenuItems { get; protected set; } = [];
 
         // Copy
         public virtual ApplicationItemViewModel Copy() {

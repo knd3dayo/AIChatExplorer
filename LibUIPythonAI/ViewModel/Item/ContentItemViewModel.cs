@@ -144,6 +144,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 OnPropertyChanged(nameof(IsPinned));
             }
         }
+        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {  get; protected set; } = [];
 
 
         public Visibility MarkdownVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
@@ -243,7 +244,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
 
             // PromptResultのタブ
-            await UpdatePromptResultTabItems(tabControl);
+             UpdatePromptResultTabItems(tabControl);
 
             // タブの選択状態を更新
             SelectedTabIndex = LastSelectedTabIndex;
@@ -255,7 +256,7 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // PromptItemの結果表示用のタブを作成
         // TabItems 
-        private async Task UpdatePromptResultTabItems(TabControl tabControl) {
+        private void UpdatePromptResultTabItems(TabControl tabControl) {
             // PromptResultのタブ
             foreach (string promptName in ContentItem.PromptChatResult.Results.Keys) {
                 // TitleGenerationの場合は除外
@@ -263,7 +264,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                     continue;
                 }
                 PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
-                PromptItem? item =await PromptItem.GetPromptItemByName(promptName);
+                PromptItem? item = PromptItem.GetPromptItemByName(promptName);
                 if (item == null) {
                     continue;
                 }

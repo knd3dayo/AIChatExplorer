@@ -72,7 +72,7 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <Grid Grid.Row="1" Background="White">
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -128,7 +128,7 @@
                 Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
-        <Grid Grid.Row="2" Background="White">
+        <Grid Grid.Row="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -298,7 +298,7 @@
                 </DockPanel>
             </Grid>
         </Grid>
-        <Grid Grid.Row="3" Background="White">
+        <Grid Grid.Row="3">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
                 <Button
                     Width="100"

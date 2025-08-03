@@ -33,7 +33,7 @@
         <i:EventTrigger EventName="Activated">
             <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
-    </i:Interaction.Triggers>    
+    </i:Interaction.Triggers>
     <Grid>
         <!--  TreeView, ListBox  -->
         <Grid.ColumnDefinitions>
@@ -46,13 +46,11 @@
         <!--  Folder TreeView  -->
         <Grid>
             <!--  Folder TreeView  -->
-            <TreeView
-                Grid.Column="0"
-                Background="White"
-                ItemsSource="{Binding RelatedItemTreeViewControlViewModel.FolderViewModels}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding RelatedItemTreeViewControlViewModel.FolderViewModels}">
                 <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
+                    <Style BasedOn="{StaticResource MaterialDesignTreeViewItem}" TargetType="TreeViewItem">
                         <Setter Property="Margin" Value="3,3,3,3" />
+                        <Setter Property="Padding" Value="3,3,3,3" />
                     </Style>
                 </TreeView.ItemContainerStyle>
                 <TreeView.ItemTemplate>
@@ -69,7 +67,6 @@
                                 Margin="0,3,0,0"
                                 DockPanel.Dock="Left"
                                 FontSize="12"
-                                Foreground="#616161"
                                 Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
                                 Text="{Binding FolderName}" />
                             <DockPanel.ContextMenu>
@@ -91,7 +88,7 @@
             Width="5"
             HorizontalAlignment="Stretch" />
 
-        <Grid Grid.Column="2" Background="White">
+        <Grid Grid.Column="2">
             <!--  DataGrid, GridSplitter, Preview  -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*" />
@@ -103,7 +100,6 @@
                     Grid.Row="0"
                     HorizontalAlignment="Stretch"
                     AutoGenerateColumns="False"
-                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
@@ -138,6 +134,12 @@
                             CommandParameter="{Binding}"
                             Modifiers="Control" />
                     </DataGrid.InputBindings>
+                    <DataGrid.RowStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridRow}" TargetType="DataGridRow">
+                            <Setter Property="ContextMenu" Value="{StaticResource GridRowContextMenu}" />
+                            <Setter Property="Margin" Value="0,5,0,0" />
+                        </Style>
+                    </DataGrid.RowStyle>
                     <DataGrid.Columns>
                         <!--  IsSelected  -->
                         <DataGridCheckBoxColumn
@@ -192,66 +194,59 @@
                 Height="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center" />
-            <materialDesign:Card
-                Grid.Row="2"
-                Margin="3,3,3,3"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                materialDesign:ElevationAssist.Elevation="Dp8">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBox
-                        Name="DescriptionText"
-                        Grid.Row="0"
-                        Margin="10,10,10,10"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        FontSize="10pt"
-                        IsReadOnly="True"
-                        Text="{Binding RelatedItemsDataGridViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
-                    <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
-                    <TabControl
-                        x:Name="MyTabControl"
-                        Grid.Row="1"
-                        Margin="10,3,10,3"
-                        HorizontalContentAlignment="Left"
-                        SelectedIndex="{Binding RelatedItemsDataGridViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
-                    <TextBlock
-                        Name="headerText"
-                        Grid.Row="2"
+            <Grid Grid.Row="2" Margin="3,3,3,3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    Name="DescriptionText"
+                    Grid.Row="0"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    FontSize="10pt"
+                    IsReadOnly="True"
+                    Text="{Binding RelatedItemsDataGridViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
+                <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
+                <TabControl
+                    x:Name="MyTabControl"
+                    Grid.Row="1"
+                    Margin="10,3,10,3"
+                    HorizontalContentAlignment="Left"
+                    SelectedIndex="{Binding RelatedItemsDataGridViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
+                <TextBlock
+                    Name="headerText"
+                    Grid.Row="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Stretch"
+                    FontSize="8pt"
+                    Text="{Binding Path=RelatedItemsDataGridViewModel.SelectedItem.HeaderText}"
+                    TextTrimming="None"
+                    Visibility="{Binding PropertiesVisibility}" />
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox
+                        Grid.Column="0"
                         Margin="10,0,10,10"
-                        HorizontalAlignment="Stretch"
+                        HorizontalAlignment="Left"
+                        Content="{x:Static res:ViewStringResources.MarkdownView}"
                         FontSize="8pt"
-                        Text="{Binding Path=RelatedItemsDataGridViewModel.SelectedItem.HeaderText}"
-                        TextTrimming="None"
-                        Visibility="{Binding PropertiesVisibility}" />
-                    <Grid Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <CheckBox
-                            Grid.Column="0"
-                            Margin="10,0,10,10"
-                            HorizontalAlignment="Left"
-                            Content="{x:Static res:ViewStringResources.MarkdownView}"
-                            FontSize="8pt"
-                            IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
-                        <CheckBox
-                            Grid.Column="1"
-                            Margin="10,0,10,10"
-                            HorizontalAlignment="Left"
-                            Content="{x:Static res:ViewStringResources.ShowProperties}"
-                            FontSize="8pt"
-                            IsChecked="{Binding ShowProperties}" />
-                    </Grid>
+                        IsChecked="{Binding CommonViewModelProperties.MarkdownView, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox
+                        Grid.Column="1"
+                        Margin="10,0,10,10"
+                        HorizontalAlignment="Left"
+                        Content="{x:Static res:ViewStringResources.ShowProperties}"
+                        FontSize="8pt"
+                        IsChecked="{Binding ShowProperties}" />
                 </Grid>
-            </materialDesign:Card>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

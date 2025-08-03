@@ -208,8 +208,8 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // PromptItemを取得
-        public static async Task<PromptItem?> GetPromptItemById(string id) {
-            var items = await GetPromptItems();
+        public static PromptItem? GetPromptItemById(string id) {
+            var items = GetPromptItems();
             var item = items.FirstOrDefault(x => x.Id == id);
             if (item == null) {
                 return null;
@@ -218,9 +218,9 @@ namespace LibPythonAI.Model.Prompt {
 
         }
         // 名前を指定してPromptItemを取得
-        public static async Task<PromptItem?> GetPromptItemByName(string name) {
+        public static PromptItem? GetPromptItemByName(string name) {
             using PythonAILibDBContext db = new();
-            var items = await GetPromptItems();
+            var items = GetPromptItems();
             var item = items.FirstOrDefault(x => x.Name == name);
             if (item == null) {
                 return null;
@@ -229,16 +229,16 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // システム定義のPromptItemを取得
-        public static async Task<List<PromptItem>> GetSystemPromptItems() {
+        public static List<PromptItem> GetSystemPromptItems() {
             using PythonAILibDBContext db = new();
-            var items = await GetPromptItems();
+            var items = GetPromptItems();
             items = items.Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)).ToList();
             return items;
         }
 
         // システム定義以外のPromptItemを取得
-        public static async Task<List<PromptItem>> GetUserDefinedPromptItems() {
-            var items = await GetPromptItems();
+        public static List<PromptItem> GetUserDefinedPromptItems() {
+            var items = GetPromptItems();
             items = items.Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
             return items;
         }
@@ -247,10 +247,7 @@ namespace LibPythonAI.Model.Prompt {
         private static List<PromptItem> _items = [];
 
         // List<PromptItem>を取得
-        public static async Task<List<PromptItem>> GetPromptItems() {
-            if (!isInitialized) {
-                await LoadItemsAsync();
-            }
+        public static List<PromptItem> GetPromptItems() {
             return _items;
         }
 
@@ -302,7 +299,7 @@ namespace LibPythonAI.Model.Prompt {
         public static async Task CreateChatResultAsync(ContentItemWrapper item, string promptName) {
             // システム定義のPromptItemを取得
 
-            PromptItem promptItem = await PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
+            PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
             // CreateChatResultを実行
             await CreateChatResultAsync(item, promptItem);
         }
@@ -430,7 +427,7 @@ namespace LibPythonAI.Model.Prompt {
         public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                var items = await GetPromptItems();
+                var items = GetPromptItems();
                 PromptItem? promptItem = items.FirstOrDefault(x => x.Name == SystemDefinedPromptNames.TitleGeneration.ToString());
                 if (promptItem == null) {
                     LogWrapper.Error("PromptItem not found");

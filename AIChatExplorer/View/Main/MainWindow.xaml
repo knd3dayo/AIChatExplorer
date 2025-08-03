@@ -17,6 +17,7 @@
     d:DataContext="{d:DesignInstance Type=model:MainWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.InputBindings>
         <!--  Exit application  -->
@@ -287,12 +288,12 @@
             Grid.Row="1"
             HorizontalContentAlignment="Left"
             ItemsSource="{Binding MainTabManager.TabItems, FallbackValue={x:Null}}"
-            SelectedIndex="{Binding MainTabManager.SelectedTabIndex, TargetNullValue=-1}">
+            SelectedIndex="{Binding MainTabManager.SelectedTabIndex, TargetNullValue=-1}"
+            Style="{StaticResource MaterialDesignTabControl}">
             <TabControl.ItemContainerStyle>
-                <Style TargetType="{x:Type TabItem}">
+                <Style BasedOn="{StaticResource MaterialDesignTabItem}" TargetType="{x:Type TabItem}">
                     <Setter Property="BorderThickness" Value="10,2,10,2" />
                     <Setter Property="Padding" Value="5" />
-                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
                     <Setter Property="FontWeight" Value="Bold" />
                 </Style>
             </TabControl.ItemContainerStyle>
@@ -305,7 +306,7 @@
                             Text="{Binding TabName}" />
                         <materialDesign:PackIcon
                             Width="25"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Kind="Close"
                             Visibility="{Binding CloseButtonVisibility}">
                             <i:Interaction.Triggers>

@@ -24,21 +24,12 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 throw new Exception("commands is not AppItemViewModelCommands");
             }
             AppCommands = commands;
-            Task.Run(async () => {
-                await InitializeAsync();
-            });
 
         }
 
-        public async Task InitializeAsync() {
-            // 初期化処理が必要な場合はここに記述
-            // 例えば、メニューアイテムの初期化など
-            ContentItemMenuItems = await CreateBasicItemContextMenuItems(ApplicationItemViewModel);
-        }
 
         // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems { get; private set; } = new();
-        public async Task<MenuItem> CreatePromptMenuItems(ContentItemViewModel itemViewModel) {
+        public MenuItem CreatePromptMenuItems() {
 
 
             // プロンプトメニュー
@@ -46,7 +37,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 Header = CommonStringResources.Instance.PromptMenu,
             };
             // システムプロンプト
-            List<PromptItem> systemPromptItems = await PromptItem.GetSystemPromptItems();
+            List<PromptItem> systemPromptItems = PromptItem.GetSystemPromptItems();
             foreach (var promptItem in systemPromptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
@@ -62,7 +53,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             };
 
             // DBからプロンプトテンプレートを取得し、選択させる
-            List<PromptItem> promptItems = await PromptItem.GetUserDefinedPromptItems();
+            List<PromptItem> promptItems =  PromptItem.GetUserDefinedPromptItems();
             var itemViewModels = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems;
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {
@@ -78,7 +69,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             return promptMenuItem;
         }
 
-        public async virtual Task<ObservableCollection<MenuItem>> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
+        public  virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems() {
 
             ObservableCollection<MenuItem> menuItems =
             [
@@ -95,7 +86,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             ];
 
             // プロンプトメニュー
-            MenuItem promptMenuItem = await CreatePromptMenuItems(itemViewModel);
+            MenuItem promptMenuItem = CreatePromptMenuItems();
             menuItems.Add(promptMenuItem);
 
             // ベクトル生成

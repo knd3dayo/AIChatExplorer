@@ -21,17 +21,10 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(SourceApplicationTitleText));
             OnPropertyChanged(nameof(FileTabVisibility));
-
+            EdgeBrowseHistoryItemMenu applicationItemMenu = new(this);
+            ContentItemMenuItems = applicationItemMenu.CreateBasicItemContextMenuItems();
         }
 
-        // Context Menu
-
-        public override ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                EdgeBrowseHistoryItemMenu applicationItemMenu = new(this);
-                return applicationItemMenu.ContentItemMenuItems;
-            }
-        }
 
         // Copy
         public override EdgeBrowseHistoryItemViewModel Copy() {

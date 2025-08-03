@@ -49,10 +49,8 @@ namespace LibUIMergeChat.ViewModel {
             // MergeTargetSummaryDataGridViewModelのItemsを設定
             MergeTargetSummaryDataGridViewModel.Items = mergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItems;
 
-            Task.Run(async () => {
-                ExportItems = await CreateExportItems();
-                OnPropertyChanged(nameof(ExportItems));
-            });
+            ExportItems = CreateExportItems();
+            OnPropertyChanged(nameof(ExportItems));
         }
 
         // ExportItems
@@ -239,9 +237,9 @@ namespace LibUIMergeChat.ViewModel {
         });
 
 
-        private static async Task<ObservableCollection<ContentItemDataDefinition>> CreateExportItems() {
+        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = await PromptItem.GetPromptItems();
+            List<PromptItem> promptItems = PromptItem.GetPromptItems();
             promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];

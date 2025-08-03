@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using EnvDTE;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
@@ -250,6 +251,7 @@ namespace AIChatExplorer.ViewModel.Main {
                 return null;
             }
         }
+
 
         public void UpdateView() {
             // 前回選択していたTabIndexを取得

@@ -13,6 +13,7 @@
     Width="800"
     Height="500"
     d:DataContext="{d:DesignInstance local:ExportImportWindowViewModel}"
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

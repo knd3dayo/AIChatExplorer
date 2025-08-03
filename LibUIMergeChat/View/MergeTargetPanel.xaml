@@ -37,10 +37,7 @@
         <!--  Folder TreeView  -->
         <Grid>
             <!--  Folder TreeView  -->
-            <TreeView
-                Grid.Column="0"
-                Background="White"
-                ItemsSource="{Binding MergeTargetTreeViewControlViewModel.FolderViewModels}">
+            <TreeView Grid.Column="0" ItemsSource="{Binding MergeTargetTreeViewControlViewModel.FolderViewModels}">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem">
                         <Setter Property="Margin" Value="3,3,3,3" />
@@ -82,7 +79,7 @@
             Width="5"
             HorizontalAlignment="Stretch" />
 
-        <Grid Grid.Column="2" Background="White">
+        <Grid Grid.Column="2">
             <!--  DataGrid, GridSplitter, Preview  -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*" />
@@ -94,7 +91,6 @@
                     Grid.Row="0"
                     HorizontalAlignment="Stretch"
                     AutoGenerateColumns="False"
-                    Background="White"
                     BorderThickness="1"
                     CanUserAddRows="True"
                     CanUserDeleteRows="False"
@@ -183,53 +179,46 @@
                 Height="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center" />
-            <materialDesign:Card
-                Grid.Row="2"
-                Margin="3,3,3,3"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                materialDesign:ElevationAssist.Elevation="Dp8">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBox
-                        Name="DescriptionText"
-                        Grid.Row="0"
-                        Margin="10,10,10,10"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        FontSize="10pt"
-                        IsReadOnly="True"
-                        Text="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
-                    <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
-                    <TabControl
-                        Grid.Row="1"
-                        Margin="10,3,10,3"
-                        HorizontalContentAlignment="Left"
-                        ItemsSource="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.TabItems, FallbackValue={x:Null}}"
-                        SelectedIndex="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
-                    <TextBlock
-                        Name="headerText"
-                        Grid.Row="2"
-                        Margin="10,0,10,10"
-                        HorizontalAlignment="Stretch"
-                        FontSize="8pt"
-                        Text="{Binding Path=MergeTargetDataGridViewControlViewModel.SelectedItem.HeaderText}"
-                        TextTrimming="None"
-                        Visibility="{Binding PropertiesVisibility}" />
-                    <CheckBox
-                        Grid.Row="3"
-                        Margin="10,0,10,10"
-                        HorizontalAlignment="Left"
-                        Content="{x:Static res:ViewStringResources.ShowProperties}"
-                        FontSize="8pt"
-                        IsChecked="{Binding ShowProperties}" />
-                </Grid>
-            </materialDesign:Card>
+            <Grid Grid.Row="2" Margin="3,3,3,3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    Name="DescriptionText"
+                    Grid.Row="0"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    FontSize="10pt"
+                    IsReadOnly="True"
+                    Text="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.DescriptionText, Mode=OneWay}" />
+                <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->
+                <TabControl
+                    Grid.Row="1"
+                    Margin="10,3,10,3"
+                    HorizontalContentAlignment="Left"
+                    ItemsSource="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.TabItems, FallbackValue={x:Null}}"
+                    SelectedIndex="{Binding MergeTargetDataGridViewControlViewModel.SelectedItem.SelectedTabIndex, TargetNullValue=-1}" />
+                <TextBlock
+                    Name="headerText"
+                    Grid.Row="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Stretch"
+                    FontSize="8pt"
+                    Text="{Binding Path=MergeTargetDataGridViewControlViewModel.SelectedItem.HeaderText}"
+                    TextTrimming="None"
+                    Visibility="{Binding PropertiesVisibility}" />
+                <CheckBox
+                    Grid.Row="3"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="{x:Static res:ViewStringResources.ShowProperties}"
+                    FontSize="8pt"
+                    IsChecked="{Binding ShowProperties}" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

@@ -14,6 +14,7 @@
     MinHeight="580"
     d:DataContext="{d:DesignInstance Type=local:ListAutoProcessRuleWindowViewModel}"
     SizeToContent="Height"
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

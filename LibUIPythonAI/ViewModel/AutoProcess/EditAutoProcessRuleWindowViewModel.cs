@@ -124,7 +124,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 }
                 IsPromptTemplateChecked = true;
                 // PromptItemを取得
-                var promptItem = await PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemEntity.Id);
+                var promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemEntity.Id);
                 if (promptItem == null) {
                     return;
                 }

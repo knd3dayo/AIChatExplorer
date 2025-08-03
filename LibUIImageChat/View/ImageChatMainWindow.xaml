@@ -13,6 +13,7 @@
     xmlns:res="clr-namespace:LibUIImageChat.View"
     Title="{x:Static res:ViewStringResources.ImageChat}"
     d:DataContext="{d:DesignInstance Type=model:ImageChatWindowViewModel}"
+    Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>

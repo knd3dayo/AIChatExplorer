@@ -31,6 +31,7 @@
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
     <ProjectReference Include="..\LibUIImageChat\LibUIImageChat.csproj" />
@@ -53,7 +54,7 @@
     <Compile Update="View\Main\MainPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Settings\SettingUserControl.xaml.cs">
+    <Compile Update="View\Settings\SettingWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\Settings\TestResultUserControl.xaml.cs">
@@ -70,6 +71,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="View\Settings\SettingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
 </Project>

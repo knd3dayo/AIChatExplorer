@@ -1,5 +1,5 @@
-<UserControl
-    x:Class="AIChatExplorer.View.Settings.SettingsUserControl"
+<Window
+    x:Class="AIChatExplorer.View.Settings.SettingWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:control="clr-namespace:LibUIPythonAI.View.Common;assembly=LibUIPythonAI"
@@ -9,18 +9,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:AIChatExplorer.View.Settings"
     xmlns:viewmodel="clr-namespace:AIChatExplorer.ViewModel.Settings"
+    d:DataContext="d:DdesignInstance Type=viewmodel:SettingWindowViewModel"
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
-    <UserControl.Resources>
+    <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Height" Value="25" />
         </Style>
-    </UserControl.Resources>
-    <UserControl.DataContext>
-        <viewmodel:SettingUserControlViewModel />
-    </UserControl.DataContext>
+    </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
@@ -708,4 +707,4 @@
             Value="0" />
     </Grid>
 
-</UserControl>
+</Window>

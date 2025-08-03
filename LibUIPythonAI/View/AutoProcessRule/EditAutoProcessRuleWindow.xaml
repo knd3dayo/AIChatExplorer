@@ -13,6 +13,7 @@
     Width="700"
     d:DataContext="{d:DesignInstance Type=local:EditAutoProcessRuleWindowViewModel}"
     SizeToContent="Height"
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
