@@ -58,22 +58,6 @@ namespace LibPythonAI.Data {
         }
 
 
-        public List<ContentFolderEntity> GetChildren() {
-            using PythonAILibDBContext context = new();
-            var items = context.ContentFolders
-                .Where(x => x.ParentId == this.Id).ToList();
-            return items;
-        }
-
-        public List<ContentFolderEntity> GetChildrenAll() {
-            List<ContentFolderEntity> result = [];
-            foreach (var child in GetChildren()) {
-                result.Add(child);
-                result.AddRange(child.GetChildrenAll());
-            }
-            return result;
-        }
-
         // Equals , GetHashCodeのオーバーライド
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {
@@ -109,6 +93,7 @@ namespace LibPythonAI.Data {
                 Id = dict[ID_KEY]?.ToString() ?? "",
                 ParentId = dict[PARENT_ID_KEY]?.ToString() ?? null,
                 FolderName = dict[FOLDER_NAME_KEY]?.ToString() ?? "",
+                IsRootFolder = dict[IS_ROOT_FOLDER_KEY] is bool isRoot && isRoot,
                 Description = dict[DESCRIPTION_KEY]?.ToString() ?? "",
                 FolderTypeString = dict[FOLDER_TYPE_STRING_KEY]?.ToString() ?? "",
                 ExtendedPropertiesJson = dict[EXTENDED_PROPERTIES_JSON_KEY].ToString() ?? "{}",

@@ -8,7 +8,7 @@ using LibUIPythonAI.ViewModel.Common;
 using LibUIPythonAI.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -20,7 +20,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             }
         }
         // RootFolderのViewModelを取得する
-        public override ContentFolderViewModel GetRootFolderViewModel() {
+        public override ContentFolderViewModel? GetRootFolderViewModel() {
             return MainWindowViewModel.Instance.RootFolderViewModelContainer.EdgeBrowseHistoryFolderViewModel;
         }
 
@@ -30,7 +30,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override EdgeBrowseHistoryFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var childFolderViewModel = new EdgeBrowseHistoryFolderViewModel(childFolder, commands) {
+            var childFolderViewModel = new EdgeBrowseHistoryFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };

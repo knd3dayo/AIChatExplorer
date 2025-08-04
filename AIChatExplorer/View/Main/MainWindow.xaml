@@ -295,24 +295,55 @@
                 </materialDesign:ColorZone>
             </StackPanel>
             <!--  右端に×ボタンを追加  -->
-            <Grid
-                Grid.Column="1"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top">
-                <Button
-                    Width="32"
-                    Height="18"
-                    Margin="0,0,0,0"
-                    Padding="0"
-                    BorderThickness="0"
-                    Command="{Binding Commands.ExitCommand, Mode=OneTime}"
-                    ToolTip="アプリケーションを終了">
-                    <materialDesign:PackIcon
-                        Width="18"
+            <!-- 右端に最小化・最大化・終了ボタンを横並びで追加  -->
+            <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <!-- 最小化ボタン -->
+                    <Button
+                        Width="32"
                         Height="18"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Kind="Close" />
-                </Button>
+                        Margin="0,0,0,0"
+                        Padding="0"
+                        BorderThickness="0"
+                        ToolTip="最小化"
+                        Click="MinimizeButton_Click">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Kind="WindowMinimize" />
+                    </Button>
+                    <!-- 最大化ボタン -->
+                    <Button
+                        Width="32"
+                        Height="18"
+                        Margin="0,0,0,0"
+                        Padding="0"
+                        BorderThickness="0"
+                        ToolTip="最大化/元に戻す"
+                        Click="MaximizeButton_Click">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Kind="WindowMaximize" />
+                    </Button>
+                    <!-- 終了ボタン -->
+                    <Button
+                        Width="32"
+                        Height="18"
+                        Margin="0,0,0,0"
+                        Padding="0"
+                        BorderThickness="0"
+                        Command="{Binding Commands.ExitCommand, Mode=OneTime}"
+                        ToolTip="アプリケーションを終了">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Kind="Close" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Grid>
         <!--  TabControl タブ削除時にSelectedIndexのタブがNullとなった場合のため、FallbackValueとTargetNullValueを設定  -->

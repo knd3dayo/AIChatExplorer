@@ -128,6 +128,11 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                         return;
                     }
+                    var folder= item.Folder;
+                    if (folder == null) {
+                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FolderNotFound);
+                        return;
+                    }
                     var contentFolderPath = await item.Folder.GetContentFolderPath();
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
                     await vectorDBEntry.SetMetadata(item);

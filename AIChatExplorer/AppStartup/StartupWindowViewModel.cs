@@ -31,9 +31,6 @@ namespace AIChatExplorer.AppStartup {
             // PythonAILibManagerの初期化（UIスレッドをブロックしないようバックグラウンドで待機）
             await Task.Run(() => PythonAILibManager.Init(configParams));
 
-            // DBの初期化
-            PythonAILibDBContext.Init();
-
             // DataContextにViewModelを設定
             MainWindowViewModel mainWindowViewModel = new();
             MainUITask.Run(() => {

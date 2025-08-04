@@ -41,19 +41,6 @@
                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
                     FontSize="12"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                    Text="{x:Static res:ViewStringResources.Statistics}"
-                    TextWrapping="NoWrap"
-                    Visibility="Collapsed">
-                    <TextBlock.InputBindings>
-                        <MouseBinding Command="{Binding OpenStatisticsWindowCommand}" Gesture="LeftClick" />
-                    </TextBlock.InputBindings>
-                </TextBlock>
-                <TextBlock
-                    Width="50"
-                    HorizontalAlignment="Right"
-                    Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                    FontSize="12"
-                    Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                     Text="{x:Static res:ViewStringResources.Log}"
                     TextWrapping="NoWrap">
                     <TextBlock.InputBindings>

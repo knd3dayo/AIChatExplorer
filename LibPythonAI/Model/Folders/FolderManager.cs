@@ -130,7 +130,9 @@ namespace LibPythonAI.Model.Folders {
             searchRootFolder = await ContentFolderWrapper.GetFolderById<SearchFolder>(entity?.Id);
             // FileSystemFolder
             entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == FILESYSTEM_ROOT_FOLDER_NAME_EN);
+            fileSystemRootFolder = await ContentFolderWrapper.GetFolderById<FileSystemFolder>(entity?.Id);
             // ShortCutFolder
+            entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == SHORTCUT_ROOT_FOLDER_NAME_EN);
             shortcutRootFolder = await ContentFolderWrapper.GetFolderById<ShortCutFolder>(entity?.Id);
             // OutlookFolder
             entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == OUTLOOK_ROOT_FOLDER_NAME_EN);
@@ -284,6 +286,7 @@ namespace LibPythonAI.Model.Folders {
                 ContentFolderWrapper folder = new() {
                     FolderName = CHAT_ROOT_FOLDER_NAME,
                     FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
+                    IsRootFolder = true,
                 };
                 folder.Save();
                 chatRootFolder = folder;

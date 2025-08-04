@@ -219,7 +219,6 @@ namespace LibPythonAI.Model.Prompt {
         }
         // 名前を指定してPromptItemを取得
         public static PromptItem? GetPromptItemByName(string name) {
-            using PythonAILibDBContext db = new();
             var items = GetPromptItems();
             var item = items.FirstOrDefault(x => x.Name == name);
             if (item == null) {
@@ -230,7 +229,6 @@ namespace LibPythonAI.Model.Prompt {
 
         // システム定義のPromptItemを取得
         public static List<PromptItem> GetSystemPromptItems() {
-            using PythonAILibDBContext db = new();
             var items = GetPromptItems();
             items = items.Where(x => (x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined || x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)).ToList();
             return items;
@@ -242,7 +240,6 @@ namespace LibPythonAI.Model.Prompt {
             items = items.Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
             return items;
         }
-        private static bool isInitialized = false;
 
         private static List<PromptItem> _items = [];
 
@@ -257,7 +254,6 @@ namespace LibPythonAI.Model.Prompt {
             if (_items == null) {
                 throw new Exception(PythonAILibStringResources.Instance.PromptItemsNotLoaded);
             }
-            isInitialized = true;
         }
 
 

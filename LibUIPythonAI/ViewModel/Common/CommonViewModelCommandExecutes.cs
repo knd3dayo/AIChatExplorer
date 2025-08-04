@@ -71,8 +71,8 @@ namespace LibUIPythonAI.ViewModel.Common {
             await OpenVectorSearchWindowCommandExecute(itemViewModel);
         });
         // OpenFolderVectorSearchWindowCommand
-        public SimpleDelegateCommand<ContentFolderViewModel> OpenFolderVectorSearchWindowCommand => new((folderViewModel) => {
-            OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+        public SimpleDelegateCommand<ContentFolderViewModel> OpenFolderVectorSearchWindowCommand => new(async (folderViewModel) => {
+            await OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
         public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {

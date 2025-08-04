@@ -249,12 +249,14 @@ namespace AIChatExplorer.ViewModel.Main {
             ScreenShotController.Instance.Start(
                 (ApplicationFolder)targetFolderViewModel.Folder,
                 ScreenMonitoringInterval,
-                async (applicationItem) => {
-                    // Process when a clipboard item is added
+                (applicationItem) => {
+                    var appViewModel = model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+                    if (appViewModel == null) {
+                        LogWrapper.Error(CommonStringResources.Instance.RootFolderNotFound);
+                        return;
+                    }
                     // フォルダのルートフォルダに追加
-                    await Task.Run(() => {
-                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel(), applicationItem));
-                    });
+                    targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(appViewModel, applicationItem));
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
                         targetFolderViewModel.FolderCommands.LoadFolderCommand.Execute();

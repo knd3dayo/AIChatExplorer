@@ -6,7 +6,7 @@ using LibPythonAI.Model.Content;
 using LibUIPythonAI.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -23,7 +23,7 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
             if (childFolder is not FileSystemFolder) {
                 throw new System.Exception("childFolder is not FileSystemFolder");
             }
-            var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder, commands) {
+            var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };

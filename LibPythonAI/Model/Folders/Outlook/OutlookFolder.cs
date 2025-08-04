@@ -96,10 +96,11 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>() {
-
-            // ローカルファイルシステムとApplicationFolderのフォルダを同期
-            await SyncFolders();
+        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+            if (isSync) {
+                // SyncFolders
+                await SyncFolders();
+            }
             return await base.GetChildren<T>();
         }
 

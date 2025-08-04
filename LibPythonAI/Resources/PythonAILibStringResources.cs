@@ -449,6 +449,10 @@ namespace LibPythonAI.Resources {
         public virtual string SpecifiedDirectoryDoesNotExist { get; } = "Specified directory does not exist";
         public virtual string SpecifiedDirectoryIsNotAGitRepository { get; } = "Specified directory is not a Git repository";
         public virtual string NoVectorDBSet { get; } = "No vector DB set";
+
+        // FolderNotFound
+        public virtual string FolderNotFound { get; } = "Folder not found";
+
         public virtual string UnsupportedFileType { get; } = "Unsupported File Type";
         public virtual string SaveEmbedding { get; } = "Save Embedding";
         public virtual string SavedEmbedding { get; } = "Saved Embedding";

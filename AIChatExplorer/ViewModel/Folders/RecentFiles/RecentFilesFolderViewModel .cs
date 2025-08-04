@@ -63,7 +63,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
                     RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                     // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
                     if (nestLevel > 0) {
-                        childViewModel.LoadChildren(nestLevel - 1);
+                        await childViewModel.LoadChildren(nestLevel - 1);
                     }
                     _children.Add(childViewModel);
                 }

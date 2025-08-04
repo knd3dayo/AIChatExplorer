@@ -105,6 +105,10 @@ namespace LibUIPythonAI.Resource {
         public virtual string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList
         public virtual string NoProxyList { get; } = "Proxy Exclusion List";
+
+        // RootFolderNotFound
+        public virtual string RootFolderNotFound { get; } = "Root folder not found. Please check the configuration.";
+
         #endregion
 
     }

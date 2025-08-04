@@ -14,13 +14,14 @@ using LibUIPythonAI.ViewModel.Item;
 
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
-    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ContentFolderViewModel(applicationItemFolder, commands) {
+    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ContentFolderViewModel(applicationItemFolder, Commands) {
         public override ApplicationItemViewModel CreateItemViewModel(ContentItemWrapper item) {
             return new ApplicationItemViewModel(this, item);
         }
 
         // RootFolderのViewModelを取得する
-        public override ContentFolderViewModel GetRootFolderViewModel() {
+        public override ContentFolderViewModel? GetRootFolderViewModel() {
+
             return MainWindowViewModel.Instance.RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
         }
 
@@ -31,7 +32,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var childFolderViewModel = new ApplicationFolderViewModel(childFolder, commands) {
+            var childFolderViewModel = new ApplicationFolderViewModel(childFolder, Commands) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };

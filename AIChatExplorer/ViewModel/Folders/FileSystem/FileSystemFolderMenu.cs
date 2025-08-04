@@ -61,7 +61,7 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
                 FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
                 Description = folderViewModel.FolderName,
                 FolderName = folderViewModel.FolderName,
-                Parent = shortCutRootFolder,
+                ParentId = shortCutRootFolder.Id,
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
             contentFolder.Save();

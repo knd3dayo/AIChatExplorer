@@ -261,41 +261,40 @@ namespace LibPythonAI.Model.Content {
             if (_vectorDBProperties != null) {
                 return _vectorDBProperties;
             }
-            ObservableCollection<VectorSearchItem> vectorDBProperties = [];
             if (UseFolderVectorSearchItem) {
                 var folder = await GetFolder();
                 var items = await folder.GetVectorSearchProperties();
-                vectorDBProperties = [.. items];
+                _vectorDBProperties = [.. items];
             }
             var value = Entity.ExtendedProperties.GetValueOrDefault("VectorDBProperties", null);
             if (value is string strValue) {
-                vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
+                _vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
             } else if (value is List<VectorSearchItem> list) {
-                vectorDBProperties = [.. list];
+                _vectorDBProperties = [.. list];
             } else {
-                vectorDBProperties = [];
+                _vectorDBProperties = [];
             }
 
             // Addイベント発生時の処理
-            vectorDBProperties.CollectionChanged += (sender, e) => {
+            _vectorDBProperties.CollectionChanged += (sender, e) => {
                 if (e.NewItems != null) {
                     // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
                 }
             };
             // Removeイベント発生時の処理
-            vectorDBProperties.CollectionChanged += (sender, e) => {
+            _vectorDBProperties.CollectionChanged += (sender, e) => {
                 if (e.OldItems != null) {
                     // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
                 }
             };
             // Clearイベント発生時の処理
-            vectorDBProperties.CollectionChanged += (sender, e) => {
+            _vectorDBProperties.CollectionChanged += (sender, e) => {
                 // Entityを更新
-                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(vectorDBProperties);
+                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
             };
-            return vectorDBProperties;
+            return _vectorDBProperties;
         }
 
         //　貼り付け元のアプリケーション名

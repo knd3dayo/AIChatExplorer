@@ -34,9 +34,11 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>() {
-            // SyncFolders
-            SyncFolders();
+        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+            if (isSync) {
+                // SyncFolders
+                await SyncFolders();
+            }
             return await base.GetChildren<T>();
         }
 
@@ -64,9 +66,10 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
-        protected virtual Dictionary<string, ContentFolderWrapper> GetFolderPathIdDict() {
-            // GetChildrenを実行すると無限ループになるため、Entity.GetChildren()を使用
-            var folders = Entity.GetChildren().Select(x => new FileSystemFolder() { Entity = x}).ToList();
+        protected virtual async Task<Dictionary<string, ContentFolderWrapper>> GetFolderPathIdDict() {
+            // GetChildren()を実行すると無限ループになるため、GetChildren(false)を使用
+            var folders = await GetChildren<FileSystemFolder>(false);
+            folders = folders.Select(x => new FileSystemFolder() { Entity = x.Entity}).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
             foreach (var folder in folders) {
@@ -78,10 +81,10 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             return folderPathIdDict;
         }
 
-        public virtual void SyncFolders() {
+        public virtual async Task SyncFolders() {
 
             // Folders内のFileSystemFolderPathとIDのDictionary
-            Dictionary<string, ContentFolderWrapper> folderPathIdDict = GetFolderPathIdDict();
+            Dictionary<string, ContentFolderWrapper> folderPathIdDict = await GetFolderPathIdDict();
             // ファイルシステム上のフォルダのフルパス一覧のHashSet
             HashSet<string> fileSystemFolderPaths = GetFileSystemFolderPaths();
 
@@ -90,7 +93,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             var deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths);
             foreach (var deleteFolderPath in deleteFolderPaths) {
                 ContentFolderWrapper contentFolder = folderPathIdDict[deleteFolderPath];
-                contentFolder.Delete();
+                await contentFolder.Delete();
             }
             // folders内に、FileSystemFolderPathがない場合は追加
             // Exceptで差集合を取得

@@ -13,12 +13,12 @@ using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.Chat {
-    public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
-            var chatFolderViewModel = new ChatHistoryFolderViewModel(childFolder, commands) {
-                // チャットフォルダの親フォルダにこのフォルダを追加
+            // 外側の型の状態（Commands）は基底コンストラクターに渡される
+            var chatFolderViewModel = new ChatHistoryFolderViewModel(childFolder, Commands) {
                 ParentFolderViewModel = this
             };
             return chatFolderViewModel;
@@ -44,7 +44,7 @@ namespace AIChatExplorer.ViewModel.Folders.Chat {
             // 自身が画像チェックの場合は、画像チェックを作成
             ContentFolderWrapper childFolder = Folder.CreateChild("");
             childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
-            ChatHistoryFolderViewModel childFolderViewModel = new(childFolder, commands);
+            ChatHistoryFolderViewModel childFolderViewModel = new(childFolder, Commands);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

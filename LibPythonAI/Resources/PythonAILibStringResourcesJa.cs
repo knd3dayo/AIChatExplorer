@@ -445,6 +445,9 @@ namespace LibPythonAI.Resources {
 
         // "ベクトルDBが設定されていません"
         public override string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
+
+        // FolderNotFound
+        public override string FolderNotFound { get; } = "フォルダが見つかりません";
         // サポートされていないファイル形式です
         public override string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
 

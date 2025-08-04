@@ -29,6 +29,15 @@ namespace LibPythonAI.Model.Content {
                 Entity.Id = value;
             }
         }
+        public string ParentId {
+            get {
+                return Entity.ParentId ?? "";
+            }
+            set {
+                Entity.ParentId = value;
+            }
+        }
+
         public bool IsRootFolder {
             get {
                 return Entity.IsRootFolder;
@@ -47,20 +56,7 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        // Parent
-        public ContentFolderWrapper? Parent {
-            get {
-                using PythonAILibDBContext db = new();
-                var parentFolder = db.ContentFolders.FirstOrDefault(x => x.Id == Entity.ParentId);
-                if (parentFolder == null) {
-                    return null;
-                }
-                return new ContentFolderWrapper() { Entity = parentFolder };
-            }
-            set {
-                Entity.ParentId = value?.Entity.Id;
-            }
-        }
+ 
 
         // フォルダの種類の文字列
         public string FolderTypeString {
@@ -82,32 +78,7 @@ namespace LibPythonAI.Model.Content {
             var parentFolderPatn = await parentFolder.GetContentFolderPath();
             return $"{parentFolderPatn}/{FolderName}";
         }
-        // OS上の出力先フォルダのパス
-        public virtual string ContentOutputFolderPath {
-            get {
-                string osFolderName;
-                // ルートフォルダのIdを取得
-                var rootFolder = GetRootFolder();
-                // ContentFolderRootEntityを取得
-                var rootFolderEntity = ContentFolderRootEntity.GetFolderRoot(rootFolder.Id);
-                if (rootFolderEntity == null) {
-                    throw new Exception("Root folder not found");
-                }
-                if (IsRootFolder) {
-                    return rootFolderEntity.ContentOutputFolderPrefix;
-                } else {
-                    // FolderNameに:、\、/が含まれている場合は文字を削除
-                    string modifiedFolderName = FolderName;
-                    if (FolderName.Contains(':') || FolderName.Contains('\\') || FolderName.Contains('/')) {
-                        modifiedFolderName = FolderName.Replace(":", "").Replace("\\", "").Replace("/", "");
-                    }
-                    osFolderName = $"{Parent?.ContentOutputFolderPath}{System.IO.Path.DirectorySeparatorChar}{modifiedFolderName}";
-                }
-
-                return osFolderName;
-            }
-        }
-
+ 
 
         public const string VectorDBPropertiesName = "VectorDBProperties";
         public ObservableCollection<VectorSearchItem> ReferenceVectorSearchProperties {
@@ -212,7 +183,11 @@ namespace LibPythonAI.Model.Content {
             await Task.Run(() => { });
         }
 
-        public virtual async Task<List<T>> GetChildren<T>() where T : ContentFolderWrapper {
+        public virtual async Task<List<T>> GetChildren<T>(bool isSync = true) where T : ContentFolderWrapper {
+            if (isSync) {
+                // SyncFolders
+                await SyncFolders();
+            }
             List<T> children = [];
             // APIを呼び出して、子フォルダを取得
             List<ContentFolderEntity> childFolders = await PythonExecutor.PythonAIFunctions.GetChildFoldersByIdAsync(Entity.Id);
@@ -225,6 +200,10 @@ namespace LibPythonAI.Model.Content {
                 }
             }
             return children;
+        }
+
+        public virtual async Task SyncFolders() {
+            await Task.CompletedTask;
         }
 
         // 親フォルダ
@@ -243,24 +222,12 @@ namespace LibPythonAI.Model.Content {
             return result;
 
         }
-        // ルートフォルダを取得  ParentIdがnullでFolderTypeStringが一致するものを取得
-        public ContentFolderEntity GetRootFolder() {
-            using PythonAILibDBContext context = new();
-            var folder = context.ContentFolders
-                .FirstOrDefault(x => x.ParentId == null && x.FolderTypeString == FolderTypeString);
-            if (folder == null) {
-                throw new Exception("Root folder not found");
-            }
-            return folder;
-        }
+
 
         // フォルダを移動する
         public void MoveTo(ContentFolderWrapper toFolder) {
             // 自分自身を移動
             if (toFolder.Id == Id) {
-                return;
-            }
-            if (Parent == null) {
                 return;
             }
             Entity.ParentId = toFolder.Id;
@@ -369,50 +336,6 @@ namespace LibPythonAI.Model.Content {
             result.Entity = folder;
             return result;
         }
-
-
-
-        // ToDict
-        public Dictionary<string, object> ToDict() {
-            // ExtendedPropertiesをJsonに変換
-            Entity.SaveExtendedPropertiesJson();
-            Dictionary<string, object> dict = new() {
-                { "Id", Id },
-                { "FolderName", FolderName },
-                { "Description", Description },
-                { "IsRootFolder", IsRootFolder },
-                { "FolderTypeString", FolderTypeString },
-                { "ExtendedPropertiesJson", Entity.ExtendedPropertiesJson },
-            };
-            if (Parent != null) {
-                dict["Parent"] = Parent.ToDict();
-            }
-
-            return dict;
-        }
-        // ToDictList
-        public static List<Dictionary<string, object>> ToDictList(IEnumerable<ContentFolderWrapper> items) {
-            return items.Select(item => item.ToDict()).ToList();
-        }
-
-        // FromDict
-        public static ContentFolderWrapper FromDict(Dictionary<string, object> dict) {
-            ContentFolderEntity folderEntity = new() {
-                Id = dict["Id"]?.ToString() ?? "",
-                ParentId = dict["ParentId"]?.ToString() ?? null,
-                FolderName = dict["FolderName"]?.ToString() ?? "",
-                Description = dict["Description"]?.ToString() ?? "",
-                FolderTypeString = dict["FolderTypeString"]?.ToString() ?? "",
-                ExtendedPropertiesJson = dict["ExtendedPropertiesJson"].ToString() ?? "{}",
-            };
-            ContentFolderWrapper folder = new() { Entity = folderEntity };
-            return folder;
-
-        }
-
-        // FromDictList
-        public static List<ContentFolderWrapper> FromDictList(IEnumerable<Dictionary<string, object>> dicts) {
-            return dicts.Select(dict => FromDict(dict)).ToList();
-        }
+  
     }
 }

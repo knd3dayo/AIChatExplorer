@@ -113,6 +113,9 @@ namespace LibUIPythonAI.Resource {
         // NoProxyList
         public override string NoProxyList { get; } = "Proxy除外リスト";
 
+        // RootFolderNotFound
+        public override string RootFolderNotFound { get; } = "ルートフォルダが見つかりません。アプリケーションを再起動してください。";
+
         // その他
         public override string Other { get; } = "その他";
 

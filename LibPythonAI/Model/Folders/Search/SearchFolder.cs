@@ -13,14 +13,6 @@ namespace AIChatExplorer.Model.Folders.Search {
             FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
         }
 
-        protected SearchFolder(SearchFolder? parent, string folderName) : base(parent, folderName) {
-
-            FolderTypeString = FolderManager.SEARCH_ROOT_FOLDER_NAME_EN;
-            Parent = parent;
-            FolderName = folderName;
-            IsAutoProcessEnabled = false;
-
-        }
 
         public async Task<SearchRule?> GetSearchRule() {
             return await SearchRule.GetItemBySearchFolder(this);

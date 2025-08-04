@@ -11,9 +11,8 @@ namespace LibPythonAI.Model.AutoProcess {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
-        public static async Task<ObservableCollection<AutoProcessRule>> GetAutoProcessRules(ContentFolderWrapper targetFolder) {
+        public static async Task<ObservableCollection<AutoProcessRule>> GetAutoProcessRules(ContentFolderWrapper? targetFolder) {
             ObservableCollection<AutoProcessRule> rules = [];
-            using var db = new PythonAILibDBContext();
             var items = await AutoProcessRule.GetItemByTargetFolder(targetFolder);
             return [.. items];
 

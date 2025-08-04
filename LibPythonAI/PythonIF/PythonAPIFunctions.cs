@@ -7,7 +7,6 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.File;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Model.Search;
-using LibPythonAI.Model.Statistics;
 using LibPythonAI.Model.Tag;
 using LibPythonAI.Model.VectorDB;
 using LibPythonAI.PythonIF.Request;
@@ -670,8 +669,6 @@ namespace LibPythonAI.PythonIF {
             if (!string.IsNullOrEmpty(chatResult.Error)) {
                 throw new Exception(chatResult.Error);
             }
-            // StatisticManagerにトークン数を追加
-            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, chatRequest.Model);
             return chatResult;
         }
         public async Task<string> ExtractFileToTextAsync(string path) {

@@ -76,7 +76,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
-        public SimpleDelegateCommand<object> EditAutoProcessRuleCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> EditAutoProcessRuleCommand => new((parameter) => {
             // AutoProcessRuleが更新された後の処理
             void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // AutoProcessRulesを更新

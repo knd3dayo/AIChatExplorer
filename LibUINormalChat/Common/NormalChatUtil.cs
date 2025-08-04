@@ -11,7 +11,7 @@ namespace LibUINormalChat.Common {
             ChatRequestContext chatRequestContext,
             ChatRelatedItems relatedItems, Action<string> afterUpdate) {
 
-            chatRequest.ApplyReletedItems(relatedItems);
+            await chatRequest.ApplyReletedItems(relatedItems);
 
             return await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, afterUpdate);
 

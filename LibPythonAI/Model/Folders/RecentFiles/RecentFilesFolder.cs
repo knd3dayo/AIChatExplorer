@@ -32,7 +32,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>() {
+        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
             await Task.CompletedTask;
             return []; ;
         }

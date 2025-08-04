@@ -17,8 +17,9 @@ namespace LibPythonAI.Model.VectorDB {
             Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel;
             TopK = vectorDBItem.DefaultSearchResultLimit;
             ScoreThreshold = vectorDBItem.DefaultScoreThreshold;
-
-            UpdateDisplayText();
+            Task.Run(async () => {
+                await UpdateDisplayText();
+            });
         }
 
 

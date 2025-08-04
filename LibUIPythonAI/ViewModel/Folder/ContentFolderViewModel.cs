@@ -26,7 +26,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public abstract ObservableCollection<ContentItemViewModel> GetSelectedItems();
 
         // RootFolderのViewModelを取得する
-        public abstract ContentFolderViewModel GetRootFolderViewModel();
+        public abstract ContentFolderViewModel? GetRootFolderViewModel();
 
         public abstract ContentFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder);
 
