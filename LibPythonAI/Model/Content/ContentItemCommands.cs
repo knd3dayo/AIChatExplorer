@@ -102,7 +102,7 @@ namespace LibPythonAI.Model.Content {
                         LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
                         return;
                     }
-                    ExtractText(item).Wait();
+                    await ExtractText(item);
                     // SaveAsync the item
                     await item.Save();
                 });
@@ -130,10 +130,9 @@ namespace LibPythonAI.Model.Content {
                     }
                     var folder= item.Folder;
                     if (folder == null) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FolderNotFound);
                         return;
                     }
-                    var contentFolderPath = await item.Folder.GetContentFolderPath();
+                    var contentFolderPath = await folder.GetContentFolderPath();
                     VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
                     await vectorDBEntry.SetMetadata(item);
 

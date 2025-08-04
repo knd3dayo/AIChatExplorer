@@ -18,12 +18,10 @@ namespace LibPythonAI.Model.Content {
         public static readonly string TEMPORARY_ITEM_ID = "TemporaryItemId";
 
         public ContentItemWrapper() {
-            ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
         public ContentItemWrapper(ContentFolderEntity folder) {
             FolderId = folder.Id;
-            ChatSettings = LoadChatSettingsFromExtendedProperties();
         }
 
 
@@ -386,17 +384,11 @@ namespace LibPythonAI.Model.Content {
         }
 
         // ChatSettings
-        public ChatSettings ChatSettings { get; set; }
-
-        private ChatSettings LoadChatSettingsFromExtendedProperties() {
-            var value = GetExtendedProperty<object>("ChatSettingsJson");
-            ChatSettings chatSettings;
-            if (value is string) {
-                chatSettings = ChatSettings.FromJson(value.ToString() ?? "{}");
-                return chatSettings;
-            }
-            return new ChatSettings();
+        public ChatSettings ChatSettings {
+            get => GetExtendedProperty<ChatSettings>("ChatSettings") ?? new ChatSettings();
+            set => SetExtendedProperty("ChatSettings", value);
         }
+
 
         private void SaveChatSettingsToExtendedProperties() {
             if (ChatSettings == null) {
@@ -581,7 +573,6 @@ namespace LibPythonAI.Model.Content {
             foreach (var item in items) {
                 if (Activator.CreateInstance(typeof(T)) is T newItem) {
                     newItem.Entity = item;
-                    newItem.ChatSettings = newItem.LoadChatSettingsFromExtendedProperties();
                     result.Add(newItem);
                 }
             }
@@ -596,7 +587,6 @@ namespace LibPythonAI.Model.Content {
             T result = new() {
                 Entity = item
             };
-            result.ChatSettings = result.LoadChatSettingsFromExtendedProperties();
             return result;
         }
 
@@ -626,9 +616,7 @@ namespace LibPythonAI.Model.Content {
             foreach (var item in items) {
                 ContentItemWrapper wrapper = new() {
                     Entity = item,
-                    ChatSettings = new ChatSettings()
                 };
-                wrapper.ChatSettings = wrapper.LoadChatSettingsFromExtendedProperties();
                 result.Add(wrapper);
             }
             return result;
@@ -648,9 +636,7 @@ namespace LibPythonAI.Model.Content {
             foreach (var item in items) {
                 ContentItemWrapper wrapper = new() {
                     Entity = item,
-                    ChatSettings = new ChatSettings()
                 };
-                wrapper.ChatSettings = wrapper.LoadChatSettingsFromExtendedProperties();
                 result.Add(wrapper);
             }
             return result;

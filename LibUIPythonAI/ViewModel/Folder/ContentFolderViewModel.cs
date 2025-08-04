@@ -45,7 +45,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
             beforeAction();
             await LoadChildren(DefaultNextLevel);
             await LoadItemsAsync();
-            FolderPath = await Folder.GetContentFolderPath();
             afterAction();
         }
         public virtual async Task LoadChildren(int nestLevel) {
@@ -58,7 +57,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         protected async Task LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ViewModel> _children = [];
-            var folders = await Folder.GetChildren<Model>();
+            var folders = await Folder.GetChildren<Model>(true);
             foreach (var child in folders.OrderBy(x => x.FolderName)) {
                 if (child == null) {
                     continue;
@@ -90,6 +89,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 foreach (Item item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
+                OnPropertyChanged(nameof(Items));
             });
         }
 
@@ -142,8 +142,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 OnPropertyChanged(nameof(FolderName));
             }
         }
-        public string FolderPath { get; private set; } = string.Empty;
-
+ 
         public virtual void UpdateStatusText() {
             Task.Run(async () => {
                 string message = await Folder.GetStatusText();

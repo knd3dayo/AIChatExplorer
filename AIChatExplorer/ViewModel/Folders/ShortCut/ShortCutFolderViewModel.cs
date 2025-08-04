@@ -45,7 +45,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
             await Task.Run(async () => {
                 // RootFolderの場合は、ShortCutFolderを取得
                 if (Folder.IsRootFolder) {
-                    foreach (var child in await Folder.GetChildren<ShortCutFolder>()) {
+                    foreach (var child in await Folder.GetChildren<ShortCutFolder>(true)) {
                         if (child == null) {
                             continue;
                         }
@@ -55,7 +55,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
                     return;
                 }
                 // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in await Folder.GetChildren<FileSystemFolder>()) {
+                foreach (var child in await Folder.GetChildren<FileSystemFolder>(true)) {
                     if (child == null) {
                         continue;
                     }

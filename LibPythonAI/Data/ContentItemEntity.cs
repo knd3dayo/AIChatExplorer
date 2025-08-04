@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
-using LibGit2Sharp;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 
 namespace LibPythonAI.Data {
@@ -196,6 +193,7 @@ namespace LibPythonAI.Data {
         }
 
         public Dictionary<string, object> ToDict() {
+            SaveObjectToJson();
             Dictionary<string, object> dict = new Dictionary<string, object>();
             dict[ID_KEY] = Id;
             dict[FOLDER_ID_KEY] = FolderId ?? "";
@@ -230,7 +228,7 @@ namespace LibPythonAI.Data {
 
             entity.ChatMessagesJson = dict.GetValueOrDefault(CHAT_MESSAGES_JSON_KEY)?.ToString() ?? "";
             entity.PromptChatResultJson = dict.GetValueOrDefault(PROMPT_CHAT_RESULT_JSON_KEY)?.ToString() ?? "";
-            entity.IsPinned = dict.GetValueOrDefault(IS_PINNED_KEY)?.ToString()  == "1" ;
+            entity.IsPinned = dict.GetValueOrDefault(IS_PINNED_KEY)?.ToString() == "1";
             entity.CachedBase64String = dict.GetValueOrDefault(CACHED_BASE64_STRING_KEY)?.ToString() ?? "";
             entity.ExtendedPropertiesJson = dict.GetValueOrDefault(EXTENDED_PROPERTIES_JSON_KEY)?.ToString() ?? "";
 

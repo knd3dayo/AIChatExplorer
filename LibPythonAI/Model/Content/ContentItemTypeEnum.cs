@@ -39,6 +39,9 @@ namespace LibPythonAI.Model.Content {
 
         }
         public static (bool, ImageType) IsImageFile(string path) {
+            if (!System.IO.File.Exists(path)) {
+                return (false, ImageType.unknown);
+            }
             // ファイルの先頭8バイトを取得
             byte[] buffer = new byte[12];
             using (FileStream fs = new(path, FileMode.Open, FileAccess.Read)) {

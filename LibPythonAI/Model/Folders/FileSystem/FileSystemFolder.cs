@@ -34,12 +34,12 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+        public override async Task<List<T>> GetChildren<T>(bool isSync) {
             if (isSync) {
                 // SyncFolders
                 await SyncFolders();
             }
-            return await base.GetChildren<T>();
+            return await base.GetChildren<T>(isSync);
         }
 
 
@@ -81,7 +81,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             return folderPathIdDict;
         }
 
-        public virtual async Task SyncFolders() {
+        public override async Task SyncFolders() {
 
             // Folders内のFileSystemFolderPathとIDのDictionary
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = await GetFolderPathIdDict();

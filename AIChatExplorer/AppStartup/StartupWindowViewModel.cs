@@ -4,13 +4,11 @@ using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
-using LibPythonAI.Data;
 using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.Utils;
-using MaterialDesignThemes.Wpf;
 
 namespace AIChatExplorer.AppStartup {
 
@@ -97,6 +95,8 @@ namespace AIChatExplorer.AppStartup {
                     // Venvを作成しない場合は、作成手順を表示
                     string message = PythonAILibStringResources.Instance.PythonVenvMaualCreateMessage(configParams);
                     MessageBox.Show(message);
+                    // アプリケーションを終了
+                    Application.Current.Shutdown();
                 }
 
             }

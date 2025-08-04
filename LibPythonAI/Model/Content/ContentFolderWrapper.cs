@@ -183,7 +183,7 @@ namespace LibPythonAI.Model.Content {
             await Task.Run(() => { });
         }
 
-        public virtual async Task<List<T>> GetChildren<T>(bool isSync = true) where T : ContentFolderWrapper {
+        public virtual async Task<List<T>> GetChildren<T>(bool isSync) where T : ContentFolderWrapper {
             if (isSync) {
                 // SyncFolders
                 await SyncFolders();

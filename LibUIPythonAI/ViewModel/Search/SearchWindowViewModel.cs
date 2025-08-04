@@ -160,10 +160,10 @@ namespace LibUIPythonAI.ViewModel.Search {
 
         // OpenApplicationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, finished) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, async  (folderViewModel, finished) => {
                 if (finished) {
                     SearchConditionRule.TargetFolderId = folderViewModel.Folder.Id;
-                    TargetFolderPath = folderViewModel.FolderPath;
+                    TargetFolderPath = await folderViewModel.Folder.GetContentFolderPath();
                     OnPropertyChanged(nameof(TargetFolderPath));
                 }
             });

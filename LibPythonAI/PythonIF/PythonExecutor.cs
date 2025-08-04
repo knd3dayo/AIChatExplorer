@@ -105,7 +105,8 @@ namespace LibPythonAI.PythonIF {
                 $"call powershell -command \"Expand-Archive  ai_chat_lib.zip\"",
                 $"call {pathToVirtualEnv}\\Scripts\\Activate",
                 $"pip install ai_chat_lib\\ai_chat_lib-main",
-                $"pause"
+                $"pause",
+                $"exit %ERRORLEVEL%"
                 ],
                 configPrams.GetAppDataPath(),
                 waitForExit: true,

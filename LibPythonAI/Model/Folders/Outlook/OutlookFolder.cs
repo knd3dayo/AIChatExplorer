@@ -101,7 +101,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 // SyncFolders
                 await SyncFolders();
             }
-            return await base.GetChildren<T>();
+            return await base.GetChildren<T>(isSync);
         }
 
         public async Task<MAPIFolder?> GetMAPIFolder() {
@@ -122,7 +122,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return mAPIFolder;
         }
 
-        public virtual async Task SyncFolders() {
+        public override async Task SyncFolders() {
 
 
             // Outlook上のフォルダのNameのHashSet
