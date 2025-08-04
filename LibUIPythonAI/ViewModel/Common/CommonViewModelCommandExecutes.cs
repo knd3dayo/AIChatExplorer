@@ -240,18 +240,18 @@ namespace LibUIPythonAI.ViewModel.Common {
             });
         }
 
-        public static void ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+        public static async Task ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
 
-            ContentItemCommands.ExtractTexts(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+            await ContentItemCommands.ExtractTextsAsync(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
         }
 
         // Command to generate vectors
-        public static void GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
-            ContentItemCommands.UpdateEmbeddings(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+        public static async Task GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+            await ContentItemCommands.UpdateEmbeddingsAsync(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
         }
 
-        public void GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
-            GenerateVectorCommandExecute(itemViewModels,
+        public async Task GenerateVectorCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
+            await GenerateVectorCommandExecute(itemViewModels,
             () => {
                 // Display ProgressIndicator
                 UpdateIndeterminate(true);

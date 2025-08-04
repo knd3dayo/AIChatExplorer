@@ -19,20 +19,25 @@ namespace LibUINormalChat.ViewModel {
     public class RelatedItemsPanelViewModel : CommonViewModelBase {
 
 
-        public  RelatedItemsPanelViewModel(QAChatStartupPropsBase qAChatStartupPropsBase) {
+        public RelatedItemsPanelViewModel(QAChatStartupPropsBase qAChatStartupPropsBase) {
 
             ChatSettings chatSettings = qAChatStartupPropsBase.GetContentItem().ChatSettings;
 
             RelatedItemsDataGridViewModel = new(qAChatStartupPropsBase);
-
             RelatedItemTreeViewControlViewModel = new(CreateSelectFolderAction());
 
-            InitDataDefinitions(chatSettings);
+            // DataDefinitionsの初期化はUIスレッドで行う
+            // 非同期初期化はTaskで呼び出し
+            InitDataDefinitionsAsync(chatSettings);
         }
 
         public override void OnLoadedAction() {
             base.OnLoadedAction();
-            RelatedItemsDataGridViewModel.MyTabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+            // FindNameのnullチェック
+            var tabControl = ThisUserControl?.FindName("MyTabControl") as TabControl;
+            if (tabControl != null) {
+                RelatedItemsDataGridViewModel.MyTabControl = tabControl;
+            }
         }
         public RelatedItemDataGridViewModel RelatedItemsDataGridViewModel { get; set; }
 
@@ -50,15 +55,15 @@ namespace LibUINormalChat.ViewModel {
             }
         }
 
-        // DataDefinitions
-        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
+        // C# 11未満の環境でも安全な初期化
+        public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = new ObservableCollection<ContentItemDataDefinition>();
 
         // PropertiesVisibility
         public Visibility PropertiesVisibility { get => LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties); }
 
         private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems =  PromptItem.GetPromptItems();
+            List<PromptItem> promptItems = PromptItem.GetPromptItems();
             promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ContentItemDataDefinition> items = [.. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
@@ -83,21 +88,28 @@ namespace LibUINormalChat.ViewModel {
             };
         }
         private void InitDataDefinitions(ChatSettings chatSettings) {
+            // 非同期でDataDefinitionsを初期化し、UIスレッドでプロパティ変更通知
+        }
 
-            Task.Run( () => {
-                // DataDefinitionsが空の場合は、デフォルトのDataDefinitionsを作成
-                DataDefinitions = CreateExportItems();
-                // DataDefinitionsを初期化
-                List<ContentItemDataDefinition> savedDataDefinitions = [.. chatSettings.RelatedItems.DataDefinitions];
-                // DataDefinitionsに保存されているDataDefinitionsの状態を反映
-                foreach (ContentItemDataDefinition dataDefinition in DataDefinitions) {
-                    ContentItemDataDefinition? savedDataDefinition = savedDataDefinitions.FirstOrDefault(x => x.Name == dataDefinition.Name);
-                    if (savedDataDefinition != null) {
-                        // 保存されているDataDefinitionの状態を反映
-                        dataDefinition.IsChecked = savedDataDefinition.IsChecked;
-                    }
+        private async void InitDataDefinitionsAsync(ChatSettings chatSettings) {
+            // 非同期処理はTaskで返す
+            await InitDataDefinitionsAsyncInternal(chatSettings);
+        }
+
+        private async Task InitDataDefinitionsAsyncInternal(ChatSettings chatSettings) {
+            // DataDefinitionsが空の場合は、デフォルトのDataDefinitionsを作成
+            var exportItems = await Task.Run(() => CreateExportItems());
+            // DataDefinitionsを初期化
+            var savedDataDefinitions = chatSettings.RelatedItems.DataDefinitions.ToList();
+            foreach (var dataDefinition in exportItems) {
+                var savedDataDefinition = savedDataDefinitions.FirstOrDefault(x => x.Name == dataDefinition.Name);
+                if (savedDataDefinition != null) {
+                    dataDefinition.IsChecked = savedDataDefinition.IsChecked;
                 }
-                // DataDefinitionsの変更を通知
+            }
+            // UIスレッドで反映
+            await Application.Current.Dispatcher.InvokeAsync(() => {
+                DataDefinitions = exportItems;
                 OnPropertyChanged(nameof(DataDefinitions));
             });
         }
@@ -108,28 +120,38 @@ namespace LibUINormalChat.ViewModel {
         public RelatedItemDataGridViewModel(QAChatStartupPropsBase qAChatStartupProps) {
             ChatSettings chatSettings = qAChatStartupProps.GetContentItem().ChatSettings;
             FolderViewModelManagerBase folderViewModelManager = qAChatStartupProps.GetViewModelManager();
+            // 非同期初期化はTaskで呼び出し
+            InitCheckedItemsAsync(chatSettings, folderViewModelManager);
+        }
 
-            Task.Run(async () => {
-                foreach (var item in chatSettings.RelatedItems.ContentItems) {
-                    ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(item.FolderId);
-                    if (folder == null) {
-                        LogWrapper.Info($"Folder with ID {item.FolderId} not found.");
-                        continue;
-                    }
-                    ContentItemViewModel? contentItemViewModel = await folderViewModelManager.CreateItemViewModel(item);
-                    if (contentItemViewModel == null) {
-                        LogWrapper.Info($"ContentItem with ID {item.Id} not found in folder {folder.FolderName}.");
-                        continue;
-                    }
+        private async void InitCheckedItemsAsync(ChatSettings chatSettings, FolderViewModelManagerBase folderViewModelManager) {
+            await InitCheckedItemsAsyncInternal(chatSettings, folderViewModelManager);
+        }
+
+        private async Task InitCheckedItemsAsyncInternal(ChatSettings chatSettings, FolderViewModelManagerBase folderViewModelManager) {
+            foreach (var item in chatSettings.RelatedItems.ContentItems) {
+                var folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(item.FolderId);
+                if (folder == null) {
+                    LogWrapper.Info($"Folder with ID {item.FolderId} not found.");
+                    continue;
+                }
+                var contentItemViewModel = await folderViewModelManager.CreateItemViewModel(item);
+                if (contentItemViewModel == null) {
+                    LogWrapper.Info($"ContentItem with ID {item.Id} not found in folder {folder.FolderName}.");
+                    continue;
+                }
+                // UIスレッドで反映
+                await Application.Current.Dispatcher.InvokeAsync(() => {
                     contentItemViewModel.PropertyChanged += Item_PropertyChanged;
                     contentItemViewModel.IsChecked = true;
-                }
-            });
+                });
+            }
         }
         // CheckedItems
-        public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = [];
+        // C# 11未満の環境でも安全な初期化
+        public ObservableCollection<ContentItemViewModel> CheckedItems { get; set; } = new ObservableCollection<ContentItemViewModel>();
 
-        private ObservableCollection<ContentItemViewModel> _items = [];
+        private ObservableCollection<ContentItemViewModel> _items = new ObservableCollection<ContentItemViewModel>();
 
         // フォルダ内のアイテム一覧
         public ObservableCollection<ContentItemViewModel> Items {
@@ -150,7 +172,7 @@ namespace LibUINormalChat.ViewModel {
             }
         }
         // 選択中のアイテム(複数選択)
-        private ObservableCollection<ContentItemViewModel> _selectedItems = [];
+        private ObservableCollection<ContentItemViewModel> _selectedItems = new ObservableCollection<ContentItemViewModel>();
         public ObservableCollection<ContentItemViewModel> SelectedItems {
             get {
                 return _selectedItems;
@@ -180,7 +202,7 @@ namespace LibUINormalChat.ViewModel {
 
         public ObservableCollection<ContentItemViewModel> CheckedItemsInRelatedItemDataSelectionDataGrid {
             get {
-                ObservableCollection<ContentItemViewModel> checkedItems = [];
+                var checkedItems = new ObservableCollection<ContentItemViewModel>();
                 if (RelatedItemDataSelectionDataGrid == null) {
                     return checkedItems;
                 }
@@ -269,19 +291,24 @@ namespace LibUINormalChat.ViewModel {
             // SelectedTabIndexを更新する処理
             if (SelectedItem != null) {
                 if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
-                    ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
-                        MainUITask.Run(() => {
-                            SelectedItem.UpdateView(MyTabControl);
-                            OnPropertyChanged(nameof(SelectedItem));
-                        });
-                    });
+                    // 非同期処理はasync/awaitで
+                    _ = UpdateViewAsync();
                 }
                 // 選択中のアイテムのSelectedTabIndexを更新する
                 SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
                 SelectedItem.UpdateView(MyTabControl);
                 OnPropertyChanged(nameof(SelectedItem));
-
             }
+
+        }
+
+        private async Task UpdateViewAsync() {
+            await ContentItemCommands.ExtractTextsAsync([SelectedItem?.ContentItem], () => { }, async () => {
+                await Application.Current.Dispatcher.InvokeAsync(() => {
+                    SelectedItem?.UpdateView(MyTabControl);
+                    OnPropertyChanged(nameof(SelectedItem));
+                });
+            });
         }
 
         // Itemsコレクションの変更に対応
@@ -305,8 +332,10 @@ namespace LibUINormalChat.ViewModel {
             }
         }
         private void UnsubscribeFromItemsPinnedChanged() {
-            foreach (var item in Items) {
-                item.PropertyChanged -= Item_PropertyChanged;
+            if (Items != null) {
+                foreach (var item in Items) {
+                    item.PropertyChanged -= Item_PropertyChanged;
+                }
             }
         }
 

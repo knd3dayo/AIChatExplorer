@@ -553,7 +553,7 @@ namespace LibPythonAI.Model.Content {
 
 
         public async Task Delete() {
-            ContentItemCommands.DeleteEmbeddings([this]);
+            await ContentItemCommands.DeleteEmbeddingsAsync([this]);
             await PythonExecutor.PythonAIFunctions.DeleteContentItemsAsync([new ContentItemRequest(Entity)]);
         }
 

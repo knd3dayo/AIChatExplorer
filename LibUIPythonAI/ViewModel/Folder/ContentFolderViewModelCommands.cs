@@ -128,7 +128,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             var contentFolderPath = await FolderViewModel.Folder.GetContentFolderPath();
             await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, contentFolderPath));
             var contentItems = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
-            await Task.Run(() => ContentItemCommands.UpdateEmbeddings(contentItems, () => { }, async () => {
+            await Task.Run(() => ContentItemCommands.UpdateEmbeddingsAsync(contentItems, () => { }, async () => {
                 var items = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
                 foreach (var contentItem in items) {
                     await contentItem.Save();

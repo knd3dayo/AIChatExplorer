@@ -26,17 +26,20 @@ namespace LibPythonAI.Model.Content {
 
             // Open the folder with Process.Start
             string? folderPath = contentItem.FolderName;
-            if (folderPath != null) {
-                var p = new Process {
-                    StartInfo = new ProcessStartInfo(folderPath) {
-                        UseShellExecute = true
-                    }
-                };
-                p.Start();
+            try {
+                if (folderPath != null) {
+                    var p = new Process {
+                        StartInfo = new ProcessStartInfo(folderPath) {
+                            UseShellExecute = true
+                        }
+                    };
+                    p.Start();
+                }
+                message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
+                LogWrapper.Info(message);
+            } catch (Exception ex) {
+                LogWrapper.Error($"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolderFailed} {ex.Message}");
             }
-            message = $"{PythonAILibStringResourcesJa.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
-            LogWrapper.Info(message);
-
         }
 
 
@@ -74,7 +77,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public static void ExtractTexts(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+        public static async Task ExtractTextsAsync(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
             int count = items.Count;
             if (count == 0) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoItemSelected);
@@ -82,95 +85,71 @@ namespace LibPythonAI.Model.Content {
             }
             beforeAction();
 
-            Task.Run(() => {
-                object lockObject = new();
-                int start_count = 0;
-                ParallelOptions parallelOptions = new() {
-                    // 20並列
-                    MaxDegreeOfParallelism = 4
-                };
-                Parallel.For(0, count, parallelOptions, async (i) => {
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    string message = $"{PythonAILibStringResourcesJa.Instance.TextExtractionInProgress} ({start_count}/{count})";
-                    LogWrapper.UpdateInProgress(true, message);
-                    var item = items[index];
-
-                    if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                        LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
-                        return;
-                    }
-                    await ExtractText(item);
-                    // SaveAsync the item
-                    await item.Save();
-                });
-                afterAction();
-                LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.TextExtracted}");
+            int start_count = 0;
+            object lockObject = new();
+            var tasks = items.Select(async item => {
+                lock (lockObject) {
+                    start_count++;
+                }
+                string message = $"{PythonAILibStringResourcesJa.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                LogWrapper.UpdateInProgress(true, message);
+                if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
+                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
+                    return;
+                }
+                await ExtractText(item);
+                await item.Save();
             });
+            await Task.WhenAll(tasks);
+            afterAction();
+            LogWrapper.UpdateInProgress(false);
+            LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.TextExtracted}");
         }
 
 
         // ベクトルを更新する
-        public static void DeleteEmbeddings(List<ContentItemWrapper> items) {
-
-            Task.Run( () => {
-                // Parallelによる並列処理。4並列
-                ParallelOptions parallelOptions = new() {
-                    MaxDegreeOfParallelism = 4
-                };
-                Parallel.ForEach(items, parallelOptions, async (item) => {
-                    var vectorDBItem = await item.GetMainVectorSearchItem();
-                    string? vectorDBItemName = vectorDBItem.VectorDBItemName;
-                    if (string.IsNullOrEmpty(vectorDBItemName)) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
-                        return;
-                    }
-                    var folder= item.Folder;
-                    if (folder == null) {
-                        return;
-                    }
-                    var contentFolderPath = await folder.GetContentFolderPath();
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
-                    await vectorDBEntry.SetMetadata(item);
-
-                    VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
-                });
+        public static async Task DeleteEmbeddingsAsync(List<ContentItemWrapper> items) {
+            var tasks = items.Select(async item => {
+                var vectorDBItem = await item.GetMainVectorSearchItem();
+                string? vectorDBItemName = vectorDBItem.VectorDBItemName;
+                if (string.IsNullOrEmpty(vectorDBItemName)) {
+                    LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                    return;
+                }
+                var folder = item.Folder;
+                if (folder == null) {
+                    return;
+                }
+                var contentFolderPath = await folder.GetContentFolderPath();
+                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                await vectorDBEntry.SetMetadata(item);
+                VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
             });
+            await Task.WhenAll(tasks);
         }
 
         // Embeddingを更新する
-        public static void UpdateEmbeddings(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+        public static async Task UpdateEmbeddingsAsync(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
             beforeAction();
-            Task.Run(() => {
-                // Parallelによる並列処理。4並列
-                ParallelOptions parallelOptions = new() {
-                    MaxDegreeOfParallelism = 4
-                };
-                Parallel.ForEach(items, parallelOptions, async (item) => {
-                    // VectorDBItemを取得
-                    var vectorDBitem = await item.GetMainVectorSearchItem();
-                    string? vectorDBItemName = vectorDBitem.VectorDBItemName;
-                    if (string.IsNullOrEmpty(vectorDBItemName)) {
-                        LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
-                        return;
-                    }
-                    // IPythonAIFunctions.ClipboardInfoを作成
-                    var contentFolderPath = await item.Folder.GetContentFolderPath();
-                    VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
-                    await vectorDBEntry.SetMetadata(item);
-
-                    VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
-                    // ベクトル化日時を更新
-                    item.VectorizedAt = DateTime.Now;
-                });
-                // Execute if obj is an Action
-                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GenerateVectorCompleted);
-                afterAction();
+            var tasks = items.Select(async item => {
+                // VectorDBItemを取得
+                var vectorDBitem = await item.GetMainVectorSearchItem();
+                string? vectorDBItemName = vectorDBitem.VectorDBItemName;
+                if (string.IsNullOrEmpty(vectorDBItemName)) {
+                    LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
+                    return;
+                }
+                // IPythonAIFunctions.ClipboardInfoを作成
+                var contentFolderPath = await item.Folder.GetContentFolderPath();
+                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                await vectorDBEntry.SetMetadata(item);
+                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                // ベクトル化日時を更新
+                item.VectorizedAt = DateTime.Now;
             });
-
+            await Task.WhenAll(tasks);
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GenerateVectorCompleted);
+            afterAction();
         }
 
         public static void CreateAutoTitle(ContentItemWrapper item) {

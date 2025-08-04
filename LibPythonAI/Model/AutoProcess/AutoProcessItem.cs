@@ -127,9 +127,9 @@ namespace LibPythonAI.Model.AutoProcess {
                 };
             }
             if (typeEnum == AutoProcessActionTypeEnum.ExtractText) {
-                return (args) => {
+                return async (args) => {
                     List<ContentItemWrapper> contentItemWrappers = [args];
-                    ContentItemCommands.ExtractTexts(contentItemWrappers, () => { }, () => { });
+                    await ContentItemCommands.ExtractTextsAsync(contentItemWrappers, () => { }, () => { });
                 };
             }
 

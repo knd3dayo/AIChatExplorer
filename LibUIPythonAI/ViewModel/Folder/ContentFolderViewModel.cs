@@ -33,6 +33,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // フォルダ作成コマンドの実装
         public virtual void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
 
+            // folderViewModel 引数は未使用です。必要なら活用してください。
             FolderEditWindow.OpenFolderEditWindow(CreateChildFolderViewModel(Folder.CreateChild("")), afterUpdate);
         }
 
@@ -42,13 +43,22 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         // フォルダを読み込む（async/await対応）
         public virtual async Task LoadFolderExecuteAsync(Action beforeAction, Action afterAction) {
-            beforeAction();
-            await LoadChildren(DefaultNextLevel);
-            await LoadItemsAsync();
-            afterAction();
+            try {
+                beforeAction();
+                await LoadChildren(DefaultNextLevel);
+                await LoadItemsAsync();
+                afterAction();
+            } catch (Exception ex) {
+                // エラー通知やログ出力を追加
+                System.Diagnostics.Debug.WriteLine($"LoadFolderExecuteAsync Error: {ex.Message}");
+            }
         }
         public virtual async Task LoadChildren(int nestLevel) {
-            await LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
+            try {
+                await LoadChildren<ContentFolderViewModel, ContentFolderWrapper>(nestLevel);
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"LoadChildren Error: {ex.Message}");
+            }
         }
 
         // LoadChildren
@@ -56,23 +66,27 @@ namespace LibUIPythonAI.ViewModel.Folder {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         protected async Task LoadChildren<ViewModel, Model>(int nestLevel) where ViewModel : ContentFolderViewModel where Model : ContentFolderWrapper {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-            List<ViewModel> _children = [];
-            var folders = await Folder.GetChildren<Model>(true);
-            foreach (var child in folders.OrderBy(x => x.FolderName)) {
-                if (child == null) {
-                    continue;
+            var _children = new List<ViewModel>(); // 互換性のため明示的に初期化
+            try {
+                var folders = await Folder.GetChildren<Model>(true);
+                foreach (var child in folders.OrderBy(x => x.FolderName)) {
+                    if (child == null) {
+                        continue;
+                    }
+                    ViewModel childViewModel = (ViewModel)CreateChildFolderViewModel(child);
+                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                    if (nestLevel > 0) {
+                        await childViewModel.LoadChildren<ViewModel, Model>(nestLevel - 1);
+                    }
+                    _children.Add(childViewModel);
                 }
-                ViewModel childViewModel = (ViewModel)CreateChildFolderViewModel(child);
-                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                if (nestLevel > 0) {
-                    await childViewModel.LoadChildren<ViewModel, Model>(nestLevel - 1);
-                }
-                _children.Add(childViewModel);
+                MainUITask.Run(() => {
+                    Children = new ObservableCollection<ContentFolderViewModel>(_children.Cast<ContentFolderViewModel>());
+                    OnPropertyChanged(nameof(Children));
+                });
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"LoadChildren<T> Error: {ex.Message}");
             }
-            MainUITask.Run(() => {
-                Children = [.. _children];
-                OnPropertyChanged(nameof(Children));
-            });
         }
 
         // LoadItemsAsync
@@ -93,13 +107,11 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         }
 
-
         // GetItems
         public ObservableCollection<ContentItemViewModel> Items { get; } = [];
 
         // 子フォルダ
         public ObservableCollection<ContentFolderViewModel> Children { get; set; } = [];
-
 
         public bool IsNameEditable {
             get {

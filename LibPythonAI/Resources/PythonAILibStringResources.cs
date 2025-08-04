@@ -562,6 +562,9 @@ namespace LibPythonAI.Resources {
         // ExecuteOpenedFolderSuccess
         public virtual string ExecuteOpenFolderSuccess { get; } = "Execute opened folder success";
 
+        // ExecuteOpenFolderFailed
+        public virtual string ExecuteOpenFolderFailed { get; } = "Execute open folder failed";
+
         // Execute the prompt template [promptName].
         public virtual string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
 

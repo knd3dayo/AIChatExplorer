@@ -21,9 +21,9 @@ namespace AIChatExplorer.ViewModel.Main {
             Commands = commands;
             MainPanelTreeViewControlViewModel = new MainPanelTreeViewControlViewModel(Commands);
             MainPanelDataGridViewControlViewModel = new MainPanelDataGridViewControlViewModel(Commands);
-            CommonViewModelProperties.PropertyChanged += (s, e) => {
+            CommonViewModelProperties.PropertyChanged += async (s, e) => {
                 if (e.PropertyName == nameof(CommonViewModelProperties.MarkdownView)) {
-                    MainPanelDataGridViewControlViewModel.UpdateView();
+                    await MainPanelDataGridViewControlViewModel.UpdateViewAsync();
                 }
             };
         }
@@ -253,43 +253,43 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
 
-        public void UpdateView() {
-            // 前回選択していたTabIndexを取得
+        /// <summary>
+        /// 選択アイテムのViewを更新する（非同期対応・例外処理追加）
+        /// </summary>
+        public async Task UpdateViewAsync() {
             int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
-            // SelectedTabIndexを更新する処理
             if (SelectedItem != null) {
-                /**
-                 * Task.Run(() => {
-                    SelectedChatItem.ContentItem.Load(() => { }, () => {
-                        MainUITask.Run(() => {
-                            OnPropertyChanged(nameof(SelectedChatItem));
-                        });
-                    });
-                });
-                OnPropertyChanged(nameof(SelectedChatItem));
-                **/
-                // SourceがFileの場合は、ファイルの内容を読み込む
-                if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
-                    ContentItemCommands.ExtractTexts([SelectedItem.ContentItem], () => { }, () => {
-                        MainUITask.Run(() => {
-                            SelectedItem.UpdateView(MyTabControl);
-                            OnPropertyChanged(nameof(SelectedItem));
-                        });
-                    });
+                try {
+                    // SourceがFileの場合は、ファイルの内容を読み込む
+                    if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                        await ContentItemCommands.ExtractTextsAsync(
+                            [SelectedItem.ContentItem ],
+                            () => { },
+                            () => {
+                                MainUITask.Run(() => {
+                                    SelectedItem.UpdateView(MyTabControl);
+                                    OnPropertyChanged(nameof(SelectedItem));
+                                });
+                            }
+                        );
+                    }
+                    // 選択中のアイテムのSelectedTabIndexを更新する
+                    SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
+                    SelectedItem.UpdateView(MyTabControl);
+                    OnPropertyChanged(nameof(SelectedItem));
+                } catch (Exception ex) {
+                    LogWrapper.Error($"UpdateViewAsync Error: {ex.Message}");
                 }
-                // 選択中のアイテムのSelectedTabIndexを更新する
-                SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
-                SelectedItem.UpdateView(MyTabControl);
+            } else {
+                // 選択アイテムがない場合も通知
                 OnPropertyChanged(nameof(SelectedItem));
             }
-            // SelectedItemsの変更でSelectedItemも変わる可能性があるため、明示的に通知
-            OnPropertyChanged(nameof(SelectedItem));
         }
 
         // アイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ApplicationItemSelectionChangedCommand => new(async (routedEventArgs) => {
 
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid dataGrid) {
@@ -300,7 +300,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     foreach (ContentItemViewModel item in dataGrid.SelectedItems) {
                         SelectedItems.Add(item);
                     }
-                    UpdateView();
+                    await UpdateViewAsync();
                 }
             }
 

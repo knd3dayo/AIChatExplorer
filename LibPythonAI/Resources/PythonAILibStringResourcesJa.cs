@@ -628,6 +628,9 @@ namespace LibPythonAI.Resources {
         // フォルダを開きました
         public override string ExecuteOpenFolderSuccess { get; } = "フォルダを開きました";
 
+        // ExecuteOpenFolderFailed
+        public override string ExecuteOpenFolderFailed { get; } = "フォルダを開くことができませんでした";
+
         // プロンプトテンプレート[promptName]を実行します.
         public override string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
 
