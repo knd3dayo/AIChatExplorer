@@ -563,7 +563,7 @@
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{x:Static res:ViewStringResources.GenerateBackgroundInformation}"
-                                IsChecked="{Binding AutoSummary}" />
+                                IsChecked="{Binding AutoBackgroundInfo}" />
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="0"
