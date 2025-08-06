@@ -27,7 +27,7 @@ namespace LibPythonAI.Model.Chat {
             if (dict.TryGetValue("content_item_ids", out var contentItemIdsObj) && contentItemIdsObj is List<object> contentItemIds) {
                 foreach (var itemId in contentItemIds) {
                     if (itemId is string id) {
-                        ContentItemWrapper? contentItem = await ContentItemWrapper.GetItem<ContentItemWrapper>(id);
+                        ContentItemWrapper? contentItem = await ContentItemWrapper.GetItemAsync<ContentItemWrapper>(id);
                         if (contentItem != null) {
                             relatedItems.ContentItems.Add(contentItem);
                         }

@@ -24,7 +24,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             };
         }
 
-        public override async Task UpdateEmbedding() {
+        public override async Task UpdateEmbeddingAsync() {
             // ベクトルを更新
             await Task.Run(async () => {
                 var item = await Folder.GetMainVectorSearchItem();

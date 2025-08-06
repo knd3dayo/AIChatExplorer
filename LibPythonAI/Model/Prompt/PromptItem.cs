@@ -257,39 +257,35 @@ namespace LibPythonAI.Model.Prompt {
         }
 
 
-        public static void ExecutePromptTemplate(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction) {
 
+        public static async Task ExecutePromptTemplateAsync(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction)
+        {
             // promptNameからDescriptionを取得
             string description = promptItem.Description;
-
             LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecute(description));
+            beforeAction();
+
             int count = items.Count;
-            Task.Run(() => {
-                beforeAction();
-                object lockObject = new();
-                int start_count = 0;
-                ParallelOptions parallelOptions = new() {
-                    MaxDegreeOfParallelism = 4
-                };
-                Parallel.For(0, count, parallelOptions, async (i) => {
-                    lock (lockObject) {
-                        start_count++;
-                    }
-                    int index = i; // Store the current index in a separate variable to avoid closure issues
+            int start_count = 0;
+            object lockObject = new();
+
+            var tasks = items.Select(async item =>
+            {
+                lock (lockObject)
+                {
+                    start_count++;
                     string message = $"{PythonAILibStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
                     LogWrapper.UpdateInProgress(true, message);
-                    ContentItemWrapper item = items[index];
+                }
+                await CreateChatResultAsync(item, promptItem.Name);
+                await item.SaveAsync();
+            }).ToList();
 
-                    CreateChatResultAsync(item, promptItem.Name).Wait();
-                    // SaveAsync
-                    await item.Save();
-                });
-                // Execute if obj is an Action
-                afterAction();
-                LogWrapper.UpdateInProgress(false);
-                LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
-            });
+            await Task.WhenAll(tasks);
 
+            afterAction();
+            LogWrapper.UpdateInProgress(false);
+            LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
         }
         // ExecuteSystemDefinedPromptを実行する
         public static async Task CreateChatResultAsync(ContentItemWrapper item, string promptName) {
@@ -334,7 +330,7 @@ namespace LibPythonAI.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            var vectorDBItems = await item.GetVectorDBProperties();
+            var vectorDBItems = await item.GetVectorDBPropertiesAsync();
             ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? vectorDBItems : [];
 
             // ChatRequestContextを作成

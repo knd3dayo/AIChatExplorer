@@ -68,7 +68,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             var _children = new List<ViewModel>(); // 互換性のため明示的に初期化
             try {
-                var folders = await Folder.GetChildren<Model>(true);
+                var folders = await Folder.GetChildrenAsync<Model>(true);
                 foreach (var child in folders.OrderBy(x => x.FolderName)) {
                     if (child == null) {
                         continue;
@@ -95,7 +95,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         protected async Task LoadItemsAsync<Item>() where Item : ContentItemWrapper {
-            List<Item> _items = await Folder.GetItems<Item>();
+            List<Item> _items = await Folder.GetItemsAsync<Item>();
             _items = _items.OrderByDescending(x => x.UpdatedAt).ToList();
 
             MainUITask.Run(() => {
@@ -107,7 +107,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             });
         }
 
-        // GetItems
+        // GetItemsAsync
         public ObservableCollection<ContentItemViewModel> Items { get; } = [];
 
         // 子フォルダ

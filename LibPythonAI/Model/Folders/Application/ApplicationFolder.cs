@@ -48,7 +48,7 @@ namespace AIChatExplorer.Model.Folders.Application {
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string fileName) {
-            string jsonString = JsonSerializer.Serialize(GetItems<ApplicationItem>(isSync: false), JsonUtil.JsonSerializerOptions);
+            string jsonString = JsonSerializer.Serialize(GetItemsAsync<ApplicationItem>(isSync: false), JsonUtil.JsonSerializerOptions);
             System.IO.File.WriteAllText(fileName, jsonString);
 
         }

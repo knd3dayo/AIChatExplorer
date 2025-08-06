@@ -294,7 +294,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             foreach (var item in ChatHistoryViewModel.ChatHistory) {
                 QAChatStartupPropsInstance.GetContentItem().ChatItems.Add(item);
             }
-            var vectorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+            var vectorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
             vectorDBProperties.Clear();
             foreach (var item in ChatContextViewModelInstance.VectorSearchProperties) {
                 vectorDBProperties.Add(item);

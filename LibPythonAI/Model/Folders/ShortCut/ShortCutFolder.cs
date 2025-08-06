@@ -23,13 +23,13 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
             return child;
         }
 
-        public override async Task SyncFolders() {
+        public override async Task SyncFoldersAsync() {
             // SyncFoldersを実行
             if (IsRootFolder) {
                 return;
             }
             // SyncFoldersを実行
-            await base.SyncFolders();
+            await base.SyncFoldersAsync();
         }
 
         // ファイルシステム上のフォルダのフルパス一覧のHashSetを取得する。
@@ -51,8 +51,8 @@ namespace AIChatExplorer.Model.Folders.ShortCut {
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected override async Task<Dictionary<string, ContentFolderWrapper>> GetFolderPathIdDict() {
-            // GetChildren()を実行すると無限ループになるため、GetChildren(false)を使用
-            var folders = await GetChildren<ShortCutFolder>(false);
+            // GetChildrenAsync()を実行すると無限ループになるため、GetChildrenAsync(false)を使用
+            var folders = await GetChildrenAsync<ShortCutFolder>(false);
             folders = folders.Select(x => new ShortCutFolder() { Entity =x.Entity }).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];

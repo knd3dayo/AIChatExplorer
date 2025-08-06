@@ -296,12 +296,12 @@ namespace LibUIPythonAI.ViewModel.Item {
             }
 
         }
-        // DeleteItems
+        // DeleteItemsAsync
         public static Task DeleteItems(List<ContentItemViewModel> items) {
             return Task.Run(async () => {
                 var contentItems = items.Select(item => item.ContentItem).ToList();
                 foreach (var item in contentItems) {
-                    await item.Delete();
+                    await item.DeleteAsync();
                 }
             });
         }

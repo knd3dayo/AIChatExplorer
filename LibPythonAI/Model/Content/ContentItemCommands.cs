@@ -98,7 +98,7 @@ namespace LibPythonAI.Model.Content {
                     return;
                 }
                 await ExtractText(item);
-                await item.Save();
+                await item.SaveAsync();
             });
             await Task.WhenAll(tasks);
             afterAction();
@@ -110,7 +110,7 @@ namespace LibPythonAI.Model.Content {
         // ベクトルを更新する
         public static async Task DeleteEmbeddingsAsync(List<ContentItemWrapper> items) {
             var tasks = items.Select(async item => {
-                var vectorDBItem = await item.GetMainVectorSearchItem();
+                var vectorDBItem = await item.GetMainVectorSearchItemAsync();
                 string? vectorDBItemName = vectorDBItem.VectorDBItemName;
                 if (string.IsNullOrEmpty(vectorDBItemName)) {
                     LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
@@ -123,7 +123,7 @@ namespace LibPythonAI.Model.Content {
                 var contentFolderPath = await folder.GetContentFolderPath();
                 VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
                 await vectorDBEntry.SetMetadata(item);
-                VectorEmbeddingItem.DeleteEmbeddings(vectorDBItemName, vectorDBEntry);
+                await VectorEmbeddingItem.DeleteEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
             });
             await Task.WhenAll(tasks);
         }
@@ -133,7 +133,7 @@ namespace LibPythonAI.Model.Content {
             beforeAction();
             var tasks = items.Select(async item => {
                 // VectorDBItemを取得
-                var vectorDBitem = await item.GetMainVectorSearchItem();
+                var vectorDBitem = await item.GetMainVectorSearchItemAsync();
                 string? vectorDBItemName = vectorDBitem.VectorDBItemName;
                 if (string.IsNullOrEmpty(vectorDBItemName)) {
                     LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
@@ -171,7 +171,7 @@ namespace LibPythonAI.Model.Content {
 
         public static async Task SaveChatHistoryAsync(ContentItemWrapper contentItem, ContentFolderWrapper chatFolder) {
 
-            await contentItem.Save();
+            await contentItem.SaveAsync();
             // チャット履歴用のItemの設定
             ContentItemWrapper chatHistoryItem = contentItem.Copy();
             chatHistoryItem.Entity.FolderId = chatFolder.Id;
@@ -193,7 +193,7 @@ namespace LibPythonAI.Model.Content {
                 await PromptItem.CreateAutoTitleWithOpenAIAsync(chatHistoryItem);
             }
 
-            await chatHistoryItem.Save();
+            await chatHistoryItem.SaveAsync();
 
         }
 

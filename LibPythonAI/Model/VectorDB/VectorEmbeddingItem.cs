@@ -83,32 +83,31 @@ namespace LibPythonAI.Model.VectorDB {
 
         }
 
-        public static void DeleteEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
+
+        public static async Task DeleteEmbeddingsAsync(string vectorDBItemName, VectorEmbeddingItem vectorEmbeddingItem)
+        {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatSettings chatSettings = new();
             ChatRequestContext chatRequestContext = new(chatSettings);
-
-            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
-
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbeddingItem);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
-            PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
+            await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
         }
 
+
         // DeleteEmbeddingsByFolderAsync
-        public static void DeleteEmbeddingsByFolder(string vectorDBItemName, string folderPath) {
-            Task.Run(() => {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-                ChatSettings chatSettings = new();
-                ChatRequestContext chatRequestContext = new(chatSettings);
-                VectorEmbeddingItem VectorEmbeddingItem = new() {
-                    FolderPath = folderPath,
-                };
-                EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
-                PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);
-            });
+        public static async Task DeleteEmbeddingsByFolderAsync(string vectorDBItemName, string folderPath)
+        {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            ChatSettings chatSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorEmbeddingItem vectorEmbeddingItem = new() {
+                FolderPath = folderPath,
+            };
+            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbeddingItem);
+            await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);
         }
 
     }

@@ -45,7 +45,7 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
                 OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
                 CommonViewModelProperties.Instance.UpdateIndeterminate(true);
                 await Task.Run(async () => {
-                    await folder.SyncItems();
+                    await folder.SyncItemsAsync();
                     await folderViewModel.LoadItemsAsync();
                 });
             } finally {

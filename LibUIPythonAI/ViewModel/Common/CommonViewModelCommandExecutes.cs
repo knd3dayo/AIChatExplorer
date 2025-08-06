@@ -92,7 +92,7 @@ namespace LibUIPythonAI.ViewModel.Common {
 
         // アイテム保存
         public SimpleDelegateCommand<ContentItemViewModel> SaveApplicationItemCommand => new(async (itemViewModel) => {
-            await itemViewModel.ContentItem.Save();
+            await itemViewModel.ContentItem.SaveAsync();
         });
 
 
@@ -141,17 +141,17 @@ namespace LibUIPythonAI.ViewModel.Common {
         }
 
         // Command to execute a prompt template (複数選択可能)
-        public static void ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem, Action beforeAction, Action afterAction) {
-            PromptItem.ExecutePromptTemplate(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
+        public static async Task ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem, Action beforeAction, Action afterAction) {
+            await PromptItem.ExecutePromptTemplateAsync(itemViewModels.Select(x => x.ContentItem).ToList(), promptItem, beforeAction, afterAction);
         }
 
-        public void ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem) {
-            ExecutePromptTemplateCommandExecute(itemViewModels, promptItem,
+        public async Task ExecutePromptTemplateCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, PromptItem promptItem) {
+            await ExecutePromptTemplateCommandExecute(itemViewModels, promptItem,
                  () => {
                      // プログレスインジケータを表示
                      UpdateIndeterminate(true);
                  },
-                 () => {
+                  () => {
                      // フォルダ内のアイテムを再読み込み
                      MainUITask.Run(() => {
                          var folders = itemViewModels.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -169,7 +169,7 @@ namespace LibUIPythonAI.ViewModel.Common {
 
         // Command to perform vector search
         public static async Task OpenVectorSearchWindowCommandExecute(ContentItemViewModel itemViewModel) {
-            VectorSearchItem VectorSearchItem = await itemViewModel.ContentItem.GetMainVectorSearchItem();
+            VectorSearchItem VectorSearchItem = await itemViewModel.ContentItem.GetMainVectorSearchItemAsync();
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new(VectorSearchItem) {
                 // Action when a vector DB item is selected
@@ -180,7 +180,7 @@ namespace LibUIPythonAI.ViewModel.Common {
                 }
             };
             var contentItem = itemViewModel.ContentItem;
-            var vectorSearchItem = await contentItem.GetMainVectorSearchItem();
+            var vectorSearchItem = await contentItem.GetMainVectorSearchItemAsync();
             vectorSearchItem.InputText = contentItem.Content;
             vectorSearchWindowViewModel.VectorSearchItem = vectorSearchItem;
 

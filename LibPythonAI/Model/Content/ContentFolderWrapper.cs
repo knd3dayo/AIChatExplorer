@@ -71,7 +71,7 @@ namespace LibPythonAI.Model.Content {
 
         // アプリケーション内でのフォルダのパス
         public virtual async Task<string> GetContentFolderPath() {
-            var parentFolder = await GetParent<ContentFolderWrapper>();
+            var parentFolder = await GetParentAsync<ContentFolderWrapper>();
             if (parentFolder == null) {
                 return FolderName;
             }
@@ -160,33 +160,46 @@ namespace LibPythonAI.Model.Content {
         }
 
         // 削除
-        public virtual async Task Delete() {
+        public virtual async Task DeleteAsync() {
             // ベクトルを全削除
             var contentFolderPath = await GetContentFolderPath();
-            VectorEmbeddingItem.DeleteEmbeddingsByFolder(VectorDBPropertiesName, contentFolderPath);
+            await VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(VectorDBPropertiesName, contentFolderPath);
             // APIを呼び出して、ContentFolderを削除
             ContentFolderRequest request = new(Entity);
             await PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync([request]);
         }
-
-
-        public async Task<List<T>> GetItems<T>(bool isSync = true) where T : ContentItemWrapper {
-            if (isSync) {
-                // SyncItems
-                await SyncItems();
+        public static async Task DeleteFoldersAsync(List<ContentFolderWrapper> folders) {
+            if (folders.Count == 0) {
+                return;
             }
-            List<T> items = await ContentItemWrapper.GetItems<T>(this);
+            // ベクトルを全削除
+            foreach (var folder in folders) {
+                var contentFolderPath = await folder.GetContentFolderPath();
+                await VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(VectorDBPropertiesName, contentFolderPath);
+            }
+            // APIを呼び出して、ContentFolderを削除
+            List<ContentFolderRequest> requests = folders.Select(folder => new ContentFolderRequest(folder.Entity)).ToList();
+            await PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync(requests);
+        }
+
+
+        public async Task<List<T>> GetItemsAsync<T>(bool isSync = true) where T : ContentItemWrapper {
+            if (isSync) {
+                // SyncItemsAsync
+                await SyncItemsAsync();
+            }
+            List<T> items = await ContentItemWrapper.GetItemsAsync<T>(this);
             return items;
         }
 
-        public virtual async Task SyncItems() {
+        public virtual async Task SyncItemsAsync() {
             await Task.Run(() => { });
         }
 
-        public virtual async Task<List<T>> GetChildren<T>(bool isSync) where T : ContentFolderWrapper {
+        public virtual async Task<List<T>> GetChildrenAsync<T>(bool isSync) where T : ContentFolderWrapper {
             if (isSync) {
-                // SyncFolders
-                await SyncFolders();
+                // SyncFoldersAsync
+                await SyncFoldersAsync();
             }
             List<T> children = [];
             // APIを呼び出して、子フォルダを取得
@@ -202,12 +215,12 @@ namespace LibPythonAI.Model.Content {
             return children;
         }
 
-        public virtual async Task SyncFolders() {
+        public virtual async Task SyncFoldersAsync() {
             await Task.CompletedTask;
         }
 
         // 親フォルダ
-        public virtual async Task<T?> GetParent<T>() where T : ContentFolderWrapper {
+        public virtual async Task<T?> GetParentAsync<T>() where T : ContentFolderWrapper {
             if (Entity.ParentId == null) {
                 return null;
             }
@@ -225,28 +238,37 @@ namespace LibPythonAI.Model.Content {
 
 
         // フォルダを移動する
-        public void MoveTo(ContentFolderWrapper toFolder) {
+        public async Task MoveToAsync(ContentFolderWrapper toFolder) {
             // 自分自身を移動
             if (toFolder.Id == Id) {
                 return;
             }
             Entity.ParentId = toFolder.Id;
-            Save();
+            await SaveAsync();
         }
 
         // 名前を変更
-        public void Rename(string newName) {
+        public async Task RenameAsync(string newName) {
             FolderName = newName;
-            Save();
+            await SaveAsync();
         }
 
         // 保存
-        public virtual void Save() {
+        public async Task SaveAsync() {
             Entity.SaveExtendedPropertiesJson();
             // APIを呼び出して、ContentFolderを更新
             ContentFolderRequest request = new(Entity);
-            PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync([request]);
+            await PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync([request]);
 
+        }
+
+        public static async Task SaveFoldersAsync(List<ContentFolderWrapper> folders) {
+            if (folders.Count == 0) {
+                return;
+            }
+            // APIを呼び出して、ContentFolderを更新
+            List<ContentFolderRequest> requests = folders.Select(folder => new ContentFolderRequest(folder.Entity)).ToList();
+            await PythonExecutor.PythonAIFunctions.UpdateContentFoldersAsync(requests);
         }
 
         public virtual ContentFolderWrapper CreateChild(string folderName) {
@@ -276,13 +298,13 @@ namespace LibPythonAI.Model.Content {
                 if (updatedItem != null) {
                     item = updatedItem;
                 }
-                await item.Save();
+                await item.SaveAsync();
                 afterUpdate?.Invoke(item);
                 // 通知
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);
             } else {
                 // 保存
-                await item.Save();
+                await item.SaveAsync();
                 afterUpdate?.Invoke(item);
                 // 通知
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AddedItems);

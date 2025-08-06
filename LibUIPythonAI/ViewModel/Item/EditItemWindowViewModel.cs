@@ -152,7 +152,7 @@ namespace LibUIPythonAI.ViewModel.Item {
                 // ApplicationItemを更新
                 if (item != null) {
                     // 保存
-                    await item.Save();
+                    await item.SaveAsync();
                     MainUITask.Run(() => {
                         // 更新後の処理を実行
                         _afterUpdate.Invoke();

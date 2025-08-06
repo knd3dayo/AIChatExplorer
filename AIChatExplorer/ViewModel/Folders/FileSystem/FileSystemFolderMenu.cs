@@ -64,7 +64,7 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
                 ParentId = shortCutRootFolder.Id,
                 FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
             };
-            contentFolder.Save();
+            contentFolder.SaveAsync();
 
         });
 

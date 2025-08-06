@@ -34,12 +34,12 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>(bool isSync) {
+        public override async Task<List<T>> GetChildrenAsync<T>(bool isSync) {
             if (isSync) {
-                // SyncFolders
-                await SyncFolders();
+                // SyncFoldersAsync
+                await SyncFoldersAsync();
             }
-            return await base.GetChildren<T>(isSync);
+            return await base.GetChildrenAsync<T>(isSync);
         }
 
 
@@ -67,8 +67,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
 
         // Folders内のFileSystemFolderPathとContentFolderのDictionary
         protected virtual async Task<Dictionary<string, ContentFolderWrapper>> GetFolderPathIdDict() {
-            // GetChildren()を実行すると無限ループになるため、GetChildren(false)を使用
-            var folders = await GetChildren<FileSystemFolder>(false);
+            // GetChildrenAsync()を実行すると無限ループになるため、GetChildrenAsync(false)を使用
+            var folders = await GetChildrenAsync<FileSystemFolder>(false);
             folders = folders.Select(x => new FileSystemFolder() { Entity = x.Entity}).ToList();
 
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = [];
@@ -81,7 +81,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             return folderPathIdDict;
         }
 
-        public override async Task SyncFolders() {
+        public override async Task SyncFoldersAsync() {
 
             // Folders内のFileSystemFolderPathとIDのDictionary
             Dictionary<string, ContentFolderWrapper> folderPathIdDict = await GetFolderPathIdDict();
@@ -89,37 +89,37 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             HashSet<string> fileSystemFolderPaths = GetFileSystemFolderPaths();
 
             // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
-            // Exceptで差集合を取得
             var deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths);
             foreach (var deleteFolderPath in deleteFolderPaths) {
                 ContentFolderWrapper contentFolder = folderPathIdDict[deleteFolderPath];
-                await contentFolder.Delete();
+                try {
+                    await contentFolder.DeleteAsync();
+                } catch (Exception ex) {
+                    LogWrapper.Error($"Delete failed: {deleteFolderPath} {ex.Message}");
+                }
             }
+
             // folders内に、FileSystemFolderPathがない場合は追加
-            // Exceptで差集合を取得
             var fileSystemFolderPathsSet = new HashSet<string>(fileSystemFolderPaths);
             var addFolderPaths = fileSystemFolderPathsSet.Except(folderPathIdDict.Keys);
 
-            // Parallel処理
-            Parallel.ForEach(addFolderPaths, localFileSystemFolder => {
-
-                if (IsRootFolder) {
-                    var child = CreateChild(localFileSystemFolder);
-                    child.Save();
-                } else {
-                    // localFileSystemFolder からフォルダ名を取得
-                    string folderName = Path.GetFileName(localFileSystemFolder);
+            var addTasks = addFolderPaths.Select(async localFileSystemFolder => {
+                try {
+                    string folderName = IsRootFolder ? localFileSystemFolder : Path.GetFileName(localFileSystemFolder);
                     var child = CreateChild(folderName);
-                    child.Save();
+                    await child.SaveAsync();
+                } catch (Exception ex) {
+                    LogWrapper.Error($"Add failed: {localFileSystemFolder} {ex.Message}");
                 }
-            }
-            );
+            });
+            await Task.WhenAll(addTasks);
+
             // 自分自身を保存
-            Save();
+            await SaveAsync();
         }
 
 
-        public override async Task SyncItems() {
+        public override async Task SyncItemsAsync() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
@@ -134,8 +134,8 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 LogWrapper.Info($"IOException:{FileSystemFolderPath} {e.Message}");
             }
 
-            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = await base.GetItems<ContentItemWrapper>(false);
+            // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
+            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
 
             // Items内のFilePathとContentItemのDictionary
             Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
@@ -152,25 +152,18 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
                 deleteItems.Add(contentItem);
             }
-            // 削除対象のアイテムを削除
-            foreach (var deleteItem in deleteItems) {
-                // アイテムの削除
-                await deleteItem.Delete();
+            // 一括削除
+            if (deleteItems.Count > 0) {
+                await ContentItemWrapper.DeleteItemsAsync(deleteItems);
             }
+
 
             // 追加対象格納用のリスト
             List<ContentItemWrapper> addItems = [];
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
-            // Exceptで差集合を取得
             var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
 
-            // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
-
-            Parallel.ForEach(addFilePaths, parallelOptions, async localFileSystemFilePath => {
-
+            foreach (var localFileSystemFilePath in addFilePaths) {
                 ContentItemWrapper contentItem = new(this.Entity) {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
@@ -178,26 +171,30 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                     ContentType = LibPythonAI.Model.Content.ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
-
                 };
                 addItems.Add(contentItem);
-                await contentItem.Save();
-
-            });
+            }
+            // 一括保存
+            if (addItems.Count > 0) {
+                await ContentItemWrapper.SaveItemsAsync(addItems);
+            }
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得
             var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathIdDict.Keys);
 
-            // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
-            Dictionary<string, ContentItemWrapper> oldItemsDict = [];
-            Parallel.ForEach(updateFilePaths, parallelOptions, async localFileSystemFilePath => {
-                ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
+            // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新（非同期一括処理）
+            List<ContentItemWrapper> updateItems = [];
+            foreach (var localFileSystemFilePath in updateFilePaths) {
+                var contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    await contentItem.Save();
+                    updateItems.Add(contentItem);
                 }
-            });
+            }
+            if (updateItems.Count > 0) {
+                await ContentItemWrapper.SaveItemsAsync(updateItems);
+            }
 
         }
 

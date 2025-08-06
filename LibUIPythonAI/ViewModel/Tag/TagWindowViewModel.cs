@@ -127,7 +127,7 @@ namespace LibUIPythonAI.ViewModel.Tag {
             if (ContentItem != null) {
                 ContentItem.Tags.Clear();
                 ContentItem.Tags.UnionWith(tags);
-                ContentItem.Save();
+                ContentItem.SaveAsync();
             }
 
             // 更新後の処理を実行

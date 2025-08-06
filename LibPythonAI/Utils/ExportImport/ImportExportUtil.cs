@@ -58,7 +58,7 @@ namespace LibPythonAI.Utils.ExportImport {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ApplicationItemのリスト要素毎に処理を行う
-            foreach (var applicationItem in await fromFolder.GetItems<ContentItemWrapper>(isSync: false)) {
+            foreach (var applicationItem in await fromFolder.GetItemsAsync<ContentItemWrapper>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
@@ -133,7 +133,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 if (sourcePathIndex != -1) {
                     item.SourcePath = row[sourcePathIndex];
                 }
-                await item.Save();
+                await item.SaveAsync();
                 afterImport(item);
             }
         }
@@ -165,7 +165,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     // itemのContentにTextを設定
                     item.Content = text;
 
-                    await item.Save();
+                    await item.SaveAsync();
                     afterImport(item);
 
                 } catch (Exception ex) {
@@ -204,7 +204,7 @@ namespace LibPythonAI.Utils.ExportImport {
                         Description = url,
                         SourcePath = url
                     };
-                    await item.Save();
+                    await item.SaveAsync();
                     afterImport(item);
 
                 } catch (Exception ex) {
@@ -254,7 +254,7 @@ namespace LibPythonAI.Utils.ExportImport {
                 }
                 item.Entity.FolderId = toFolder.Id;
                 //保存
-                tasks.Add(item.Save());
+                tasks.Add(item.SaveAsync());
             }
             await Task.WhenAll(tasks);
         }

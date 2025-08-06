@@ -7,6 +7,7 @@ using LibPythonAI.Utils.FileUtils;
 namespace AIChatExplorer.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
 
+        private const int MaxParallelism = 4;
         // コンストラクタ
         public RecentFilesFolder() : base() {
             IsAutoProcessEnabled = false;
@@ -32,79 +33,61 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+        public override async Task<List<T>> GetChildrenAsync<T>(bool isSync = true) {
             await Task.CompletedTask;
             return []; ;
         }
 
-        public override async Task SyncItems() {
-            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = await base.GetItems<ContentItemWrapper>(false);
+        public override async Task SyncItemsAsync() {
+            // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
+            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
 
             // Items内のSourcePathとContentItemのDictionary
-            Dictionary<string, ContentItemWrapper> itemPathDict = [];
+            Dictionary<string, ContentItemWrapper> itemFilePathDict = [];
             foreach (var item in items) {
-                itemPathDict[item.SourcePath] = item;
+                itemFilePathDict[item.SourcePath] = item;
             }
             // 最近使用したファイルのリストを取得
-            // ファイルシステム上のファイルパス一覧
             HashSet<string> fileSystemFilePathSet = ExplorerUtil.GetRecentFilePaths().ToHashSet();
 
-            // Items内のFilePathとContentItemのDictionary
-            Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
-            foreach (var item in items) {
-                itemFilePathIdDict[item.SourcePath] = item;
-            }
-
             // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
-            // Exceptで差集合を取得
-            var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
+            var deleteFilePaths = itemFilePathDict.Keys.Except(fileSystemFilePathSet).ToList();
             foreach (var deleteFilePath in deleteFilePaths) {
-                ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
-                await contentItem.Delete();
+                ContentItemWrapper contentItem = itemFilePathDict[deleteFilePath];
+                await contentItem.DeleteAsync();
             }
+
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
-            // Exceptで差集合を取得
-            var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
-
-            // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
-
-            Parallel.ForEach(addFilePaths, parallelOptions, async localFileSystemFilePath => {
-
-                // ファイルが存在しない場合はスキップ
+            var addFilePaths = fileSystemFilePathSet.Except(itemFilePathDict.Keys).ToList();
+            var addTasks = addFilePaths.Select(async localFileSystemFilePath => {
                 if (!File.Exists(localFileSystemFilePath)) {
                     return;
                 }
-
-                ContentItemWrapper contentItem = new(this.Entity) {
+                ContentItemWrapper contentItem = new(this.Entity)
+                {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
                     ContentType = ContentItemTypes.ContentItemTypeEnum.Files,
                     UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath),
                     CreatedAt = File.GetCreationTime(localFileSystemFilePath),
-
                 };
-                await contentItem.Save();
-;
+                await contentItem.SaveAsync();
             });
+            await Task.WhenAll(addTasks);
 
-            // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得
-            var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathIdDict.Keys);
-
-            // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新
-            Dictionary<string, ContentItemWrapper> oldItemsDict = [];
-            Parallel.ForEach(updateFilePaths, parallelOptions, async localFileSystemFilePath => {
-                ContentItemWrapper contentItem = itemFilePathIdDict[localFileSystemFilePath];
-                if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
+            // itemFilePathDictの中から、fileSystemFilePathsにあるItemのみを取得
+            var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathDict.Keys).ToList();
+            var updateTasks = updateFilePaths.Select(async localFileSystemFilePath => {
+                ContentItemWrapper contentItem = itemFilePathDict[localFileSystemFilePath];
+                if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks)
+                {
                     contentItem.Content = "";
                     contentItem.UpdatedAt = File.GetLastWriteTime(localFileSystemFilePath);
-                    await contentItem.Save();
+                    await contentItem.SaveAsync();
                 }
             });
+            await Task.WhenAll(updateTasks);
         }
     }
 }

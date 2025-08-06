@@ -31,7 +31,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         // フォルダー保存コマンド
         public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new(async (folderViewModel) => {
-            await Task.Run(() => FolderViewModel.Folder.Save());
+            await Task.Run(() => FolderViewModel.Folder.SaveAsync());
         });
 
         // 新規フォルダ作成コマンド
@@ -39,7 +39,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
             FolderViewModel.CreateFolderCommandExecute(FolderViewModel, () => {
                 // 親フォルダを保存
-                FolderViewModel.Folder.Save();
+                FolderViewModel.Folder.SaveAsync();
                 FolderViewModel.FolderCommands.LoadFolderCommand.Execute();
 
             });
@@ -66,7 +66,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
             FolderViewModel.EditFolderCommandExecute(() => {
                 //　フォルダを保存
-                FolderViewModel.Folder.Save();
+                FolderViewModel.Folder.SaveAsync();
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.FolderEdited);
             });
@@ -107,7 +107,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // 親フォルダを取得
             ContentFolderViewModel? parentFolderViewModel = FolderViewModel.ParentFolderViewModel;
 
-            await Task.Run(() => FolderViewModel.Folder.Delete());
+            await Task.Run(() => FolderViewModel.Folder.DeleteAsync());
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
@@ -126,12 +126,12 @@ namespace LibUIPythonAI.ViewModel.Folder {
             }
             CommandExecutes.UpdateIndeterminate(true);
             var contentFolderPath = await FolderViewModel.Folder.GetContentFolderPath();
-            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolder(vectorDBItemName, contentFolderPath));
-            var contentItems = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
+            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(vectorDBItemName, contentFolderPath));
+            var contentItems = await FolderViewModel.Folder.GetItemsAsync<ContentItemWrapper>(isSync: false);
             await Task.Run(() => ContentItemCommands.UpdateEmbeddingsAsync(contentItems, () => { }, async () => {
-                var items = await FolderViewModel.Folder.GetItems<ContentItemWrapper>(isSync: false);
+                var items = await FolderViewModel.Folder.GetItemsAsync<ContentItemWrapper>(isSync: false);
                 foreach (var contentItem in items) {
-                    await contentItem.Save();
+                    await contentItem.SaveAsync();
                 }
                 CommandExecutes.UpdateIndeterminate(false);
             }));

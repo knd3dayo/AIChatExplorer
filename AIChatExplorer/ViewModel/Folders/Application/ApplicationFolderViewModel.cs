@@ -87,16 +87,16 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                     ContentItemWrapper applicationItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        await applicationItem.MoveTo(toFolder.Folder);
+                        await applicationItem.MoveToAsync(toFolder.Folder);
                     } else {
-                        await applicationItem.CopyToFolder(toFolder.Folder);
+                        await applicationItem.CopyToFolderAsync(toFolder.Folder);
                     }
                 }
                 if (item is ApplicationFolderViewModel folderViewModel) {
                     ContentFolderWrapper folder = folderViewModel.Folder;
                     if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
-                        folder.MoveTo(toFolder.Folder);
+                        folder.MoveToAsync(toFolder.Folder);
                         // 元のフォルダの親フォルダを再読み込み
                         folderViewModel.ParentFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
                     }

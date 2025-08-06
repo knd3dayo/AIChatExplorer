@@ -62,7 +62,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return child;
         }
 
-        public override async Task SyncItems() {
+        public override async Task SyncItemsAsync() {
             // MAPIFolderが存在しない場合は終了
             if (MAPIFolder == null) {
                 return;
@@ -70,8 +70,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
 
             // OutlookItemのEntryIDとIDのDictionary
             Dictionary<string, OutlookItem> entryIdIdDict = [];
-            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            foreach (var item in await GetItems<OutlookItem>(false)) {
+            // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
+            foreach (var item in await GetItemsAsync<OutlookItem>(false)) {
                 if (item is OutlookItem outlookItem) {
                     entryIdIdDict[outlookItem.EntryID] = outlookItem;
                 }
@@ -83,7 +83,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // Exceptで差集合を取得
             foreach (var entryId in entryIdIdDict.Keys.Except(entryIdList)) {
                 OutlookItem outlookItem = entryIdIdDict[entryId];
-                await outlookItem.Delete();
+                await outlookItem.DeleteAsync();
             }
             // Parallel処理
             Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), async outlookItem => {
@@ -91,24 +91,24 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 newItem.Description = outlookItem.Subject;
                 newItem.ContentType = ContentItemTypes.ContentItemTypeEnum.Text;
                 newItem.Content = outlookItem.Body;
-                await newItem.Save();
+                await newItem.SaveAsync();
             });
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+        public override async Task<List<T>> GetChildrenAsync<T>(bool isSync = true) {
             if (isSync) {
-                // SyncFolders
-                await SyncFolders();
+                // SyncFoldersAsync
+                await SyncFoldersAsync();
             }
-            return await base.GetChildren<T>(isSync);
+            return await base.GetChildrenAsync<T>(isSync);
         }
 
         public async Task<MAPIFolder?> GetMAPIFolder() {
             if (IsRootFolder) {
                 return null;
             }
-            var parent = await GetParent<OutlookFolder>();
+            var parent = await GetParentAsync<OutlookFolder>();
             if (parent?.IsRootFolder == true) {
                 return InboxFolder;
             }
@@ -122,7 +122,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             return mAPIFolder;
         }
 
-        public override async Task SyncFolders() {
+        public override async Task SyncFoldersAsync() {
 
 
             // Outlook上のフォルダのNameのHashSet
@@ -139,8 +139,8 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             }
             LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
-            // GetItems(true)を実行すると無限ループになるため、GetItems(false)を使用
-            var items = await base.GetItems<ContentItemWrapper>(false);
+            // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
+            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
             // folder内のFolderNameとContentFolderのDictionary
             Dictionary<string, ContentItemWrapper> folderPathIdDict = [];
             foreach (var item in items) {
@@ -154,7 +154,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
             foreach (var deleteFolderName in deleteFolderNames) {
                 ContentItemWrapper deleteFolder = folderPathIdDict[deleteFolderName];
-                await deleteFolder.Delete();
+                await deleteFolder.DeleteAsync();
             }
 
             // Outlookに存在するフォルダがDBに存在しない場合は追加
@@ -164,11 +164,11 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // Parallel処理
             Parallel.ForEach(addFolderNames, outlookFolderName => {
                 var child = CreateChild(outlookFolderName);
-                child.Save();
+                child.SaveAsync();
             });
 
             // 自分自身を保存
-            Save();
+            SaveAsync();
         }
 
     }

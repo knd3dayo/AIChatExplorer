@@ -93,7 +93,7 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 if (IsAutoProcessEnabled) {
                     afterImport = async (item) => {
                         var item1 = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                        await item1.Save();
+                        await item1.SaveAsync();
                     };
                 }
 

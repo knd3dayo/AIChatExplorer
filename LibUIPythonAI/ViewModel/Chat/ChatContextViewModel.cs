@@ -134,7 +134,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                     }
                 } else {
                     // ContentItemのベクトルDBを取得
-                    items = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+                    items = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
                     foreach (var item in items) {
                         VectorSearchProperties.Add(item);
                     }
@@ -195,7 +195,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
             VectorSearchProperties.Remove(SelectedVectorSearchItem);
             // UseFolderVectorSearchItemがFalseの場合、ContentItemからも削除
             if (UseFolderVectorSearchItem == false) {
-                var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+                var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
                 verctorDBProperties.Remove(SelectedVectorSearchItem);
             }
             OnPropertyChanged(nameof(VectorSearchProperties));
@@ -209,7 +209,7 @@ namespace LibUIPythonAI.ViewModel.Chat {
                     VectorSearchProperties.Add(vectorDBItemBase);
                     // UseFolderVectorSearchItemがFalseの場合、ContentItemに追加
                     if (UseFolderVectorSearchItem == false) {
-                        var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBProperties();
+                        var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
                         verctorDBProperties.Add(vectorDBItemBase);
                     }
                 });

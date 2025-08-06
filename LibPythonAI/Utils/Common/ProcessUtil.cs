@@ -311,7 +311,7 @@ namespace LibPythonAI.Utils.Common {
             ProcessUtil.OpenTempTextFile(item.Content,  (process) => { }, async (content) => {
                 // プロセス終了時にItemに開いた内容を保存
                 item.Content = content;
-                await item.Save();
+                await item.SaveAsync();
             });
 
         }

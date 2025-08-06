@@ -94,7 +94,7 @@ namespace LibPythonAI.Model.Content {
                 Entity.IsPinned = value;
                 // ピン留め状態が変更された場合はSaveを呼び出す
                 if (oldValue != value) {
-                    Task.Run(async () => await Save());
+                    Task.Run(async () => await SaveAsync());
                 }
             }
         }
@@ -255,12 +255,12 @@ namespace LibPythonAI.Model.Content {
         }
 
         private ObservableCollection<VectorSearchItem>? _vectorDBProperties;
-        public async Task<ObservableCollection<VectorSearchItem>> GetVectorDBProperties() {
+        public async Task<ObservableCollection<VectorSearchItem>> GetVectorDBPropertiesAsync() {
             if (_vectorDBProperties != null) {
                 return _vectorDBProperties;
             }
             if (UseFolderVectorSearchItem) {
-                var folder = await GetFolder();
+                var folder = await GetFolderAsync();
                 var items = await folder.GetVectorSearchProperties();
                 _vectorDBProperties = [.. items];
             }
@@ -400,7 +400,7 @@ namespace LibPythonAI.Model.Content {
 
         // Folder
         public ContentFolderWrapper? Folder { get; protected set; }
-        private  async Task<ContentFolderWrapper> GetFolder() {
+        private  async Task<ContentFolderWrapper> GetFolderAsync() {
             var folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.FolderId);
             if (folder == null) {
                 throw new Exception("Folder not found");
@@ -416,16 +416,16 @@ namespace LibPythonAI.Model.Content {
 
 
         // 別フォルダに移動
-        public virtual async Task MoveTo(ContentFolderWrapper folder) {
+        public virtual async Task MoveToAsync(ContentFolderWrapper folder) {
             Entity.FolderId = folder.Id;
-            await Save();
+            await SaveAsync();
         }
 
         // 別フォルダにコピー
-        public virtual async Task CopyToFolder(ContentFolderWrapper folder) {
+        public virtual async Task CopyToFolderAsync(ContentFolderWrapper folder) {
             ContentItemWrapper newItem = Copy();
             newItem.Entity.FolderId = folder.Id;
-            await newItem.Save();
+            await newItem.SaveAsync();
         }
 
         public virtual ContentItemWrapper Copy() {
@@ -484,7 +484,7 @@ namespace LibPythonAI.Model.Content {
                 header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Unknown";
 
             header1 += $"\n[{PythonAILibStringResourcesJa.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
-            var folder = await GetFolder();
+            var folder = await GetFolderAsync();
             if (folder != null && !string.IsNullOrEmpty(folder.Description))
                 header1 += $"[{PythonAILibStringResourcesJa.Instance.DocumentCategorySummary}]" + folder.Description + "\n";
 
@@ -510,12 +510,12 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public virtual async Task<VectorSearchItem> GetMainVectorSearchItem() {
-            var folder = await GetFolder();
+        public virtual async Task<VectorSearchItem> GetMainVectorSearchItemAsync() {
+            var folder = await GetFolderAsync();
             return await folder.GetMainVectorSearchItem();
         }
 
-        public async Task Save() {
+        public async Task SaveAsync() {
             // IdがTEMPORARY_ITEM_IDの場合は保存しない
             if (Id == TEMPORARY_ITEM_ID) {
                 return;
@@ -524,7 +524,7 @@ namespace LibPythonAI.Model.Content {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
                 // ベクトルを更新
-                await UpdateEmbedding();
+                await UpdateEmbeddingAsync();
             }
 
             // ChatSettingsをExtendedPropertiesに保存
@@ -535,16 +535,25 @@ namespace LibPythonAI.Model.Content {
             DescriptionModified = false;
 
         }
+        public static async Task SaveItemsAsync(List<ContentItemWrapper> items) {
+            if (items.Count == 0) {
+                return;
+            }
+            // ContentItemRequestのリストを作成
+            List<ContentItemRequest> requests = items.Select(item => new ContentItemRequest(item.Entity)).ToList();
+            // APIを使用して更新
+            await PythonExecutor.PythonAIFunctions.UpdateContentItemAsync(requests);
+        }
 
-        public virtual async Task UpdateEmbedding() {
+        public virtual async Task UpdateEmbeddingAsync() {
             // ベクトルを更新
-            var item = await GetMainVectorSearchItem();
+            var item = await GetMainVectorSearchItemAsync();
             string? vectorDBItemName = item.VectorDBItemName;
             if (string.IsNullOrEmpty(vectorDBItemName)) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                 return;
             }
-            var folder = await GetFolder();
+            var folder = await GetFolderAsync();
             var contentFolderPath = await folder.GetContentFolderPath();
             VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), contentFolderPath);
             await vectorDBEntry.SetMetadata(this);
@@ -552,9 +561,19 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public async Task Delete() {
+        public async Task DeleteAsync() {
             await ContentItemCommands.DeleteEmbeddingsAsync([this]);
             await PythonExecutor.PythonAIFunctions.DeleteContentItemsAsync([new ContentItemRequest(Entity)]);
+        }
+
+        public static async Task DeleteItemsAsync(List<ContentItemWrapper> items) {
+            if (items.Count == 0) {
+                return;
+            }
+            // ContentItemRequestのリストを作成
+            List<ContentItemRequest> requests = items.Select(item => new ContentItemRequest(item.Entity)).ToList();
+            // APIを使用して削除
+            await PythonExecutor.PythonAIFunctions.DeleteContentItemsAsync(requests);
         }
 
         public static async Task<ContentItemEntity?> LoadEntityAsync(string id) {
@@ -567,7 +586,7 @@ namespace LibPythonAI.Model.Content {
             return await PythonExecutor.PythonAIFunctions.GetContentItemsByFolderAsync(folder.Id);
         }
 
-        public static async Task<List<T>> GetItems<T>(ContentFolderWrapper folder) where T : ContentItemWrapper {
+        public static async Task<List<T>> GetItemsAsync<T>(ContentFolderWrapper folder) where T : ContentItemWrapper {
             List<ContentItemEntity> items = await LoadEntitiesAsync(folder);
             List<T> result = [];
             foreach (var item in items) {
@@ -579,7 +598,7 @@ namespace LibPythonAI.Model.Content {
             return result;
         }
 
-        public static async Task<T?> GetItem<T>(string id) where T : ContentItemWrapper, new() {
+        public static async Task<T?> GetItemAsync<T>(string id) where T : ContentItemWrapper, new() {
             ContentItemEntity? item = await LoadEntityAsync(id);
             if (item == null) {
                 return null;

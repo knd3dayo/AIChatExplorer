@@ -49,7 +49,7 @@ namespace AIChatExplorer.ViewModel.Main {
                         chatHistoryText += item.ContentWithSources + "\n\n";
                     }
                     chatHistoryItem.Content = chatHistoryText;
-                    await chatHistoryItem.Save();
+                    await chatHistoryItem.SaveAsync();
                 }
             });
         }

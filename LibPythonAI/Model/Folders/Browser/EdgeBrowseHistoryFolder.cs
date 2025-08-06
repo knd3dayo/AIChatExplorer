@@ -11,7 +11,9 @@ namespace AIChatExplorer.Model.Folders.Browser {
     public class EdgeBrowseHistoryFolder : ApplicationFolder {
 
         public static string OriginalHistoryFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "Edge", "User Data", "Default", "History");
-        public static string CopiedHistoryFilePath = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetAppDataPath(), "edge");
+        public static string CopiedHistoryDirectoryPath = Path.Combine(PythonAILibManager.Instance.ConfigParams.GetAppDataPath(), "edge");
+        private const int FileCopyRetryCount = 3;
+        private const int FileCopyRetryDelayMs = 1000;
         // コンストラクタ
         public EdgeBrowseHistoryFolder() : base() {
             IsAutoProcessEnabled = false;
@@ -41,51 +43,58 @@ namespace AIChatExplorer.Model.Folders.Browser {
         }
 
         // 子フォルダ
-        public override async Task<List<T>> GetChildren<T>(bool isSync = true) {
+        public override async Task<List<T>> GetChildrenAsync<T>(bool isSync = true) {
             await Task.CompletedTask;
             return [];
         }
 
-        public override async Task SyncItems() {
-            // オリジナルのHistoryファイルが存在しない場合は何もしない
+        public override async Task SyncItemsAsync() {
+            // 1. EdgeのHistoryファイルが存在しない場合は何もしない
             if (!File.Exists(OriginalHistoryFilePath)) {
                 return;
             }
-            // オリジナルのHistoryファイルをコピー先ディレクトリにコピーする
-            if (!Directory.Exists(CopiedHistoryFilePath)) {
-                Directory.CreateDirectory(CopiedHistoryFilePath);
+
+            // 2. コピー先ディレクトリが存在しない場合は作成
+            if (!Directory.Exists(CopiedHistoryDirectoryPath)) {
+                Directory.CreateDirectory(CopiedHistoryDirectoryPath);
             }
-            string copiedHistoryFilePath = Path.Combine(CopiedHistoryFilePath, "History");
-            // System.IO.IOException時のリトライ処理
-            for (int i = 0; i < 3; i++) {
+
+            // 3. Historyファイルをコピー（リトライ処理あり）
+            string copiedHistoryFilePath = Path.Combine(CopiedHistoryDirectoryPath, "History");
+            for (int i = 0; i < FileCopyRetryCount; i++) {
                 try {
                     File.Copy(OriginalHistoryFilePath, copiedHistoryFilePath, true);
                     break;
                 } catch (IOException e) {
                     LogWrapper.Info($"IOException:{e.Message}");
-                    Thread.Sleep(1000);
+                    await Task.Delay(FileCopyRetryDelayMs);
+                } catch (UnauthorizedAccessException e) {
+                    LogWrapper.Error($"UnauthorizedAccessException:{e.Message}");
+                    return;
+                } catch (Exception e) {
+                    LogWrapper.Error($"Exception:{e.Message}");
+                    return;
                 }
             }
 
-            // SyncItemsを呼び出すと無限ループになるため、IsSyncをFalseにする
-            List<ContentItemWrapper> items = await GetItems<ContentItemWrapper>(false);
+            // 4. DBから既存アイテムを取得（IsSync=falseで無限ループ防止）
+            List<ContentItemWrapper> items = await GetItemsAsync<ContentItemWrapper>(false);
 
-            // Items内のSourcePathとContentItemのDictionary
+            // 5. 既存アイテムをURLでDictionary化
             Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];
             foreach (var item in items) {
                 itemUrlIdDict[item.SourcePath] = item;
             }
-            // HistoryのURLと(title, last_visit_time)のDictionary
-            Dictionary<string, (string title, long lastVisitTime)> historyUrlDict = [];
 
+            // 6. EdgeのHistoryファイルから履歴情報を取得
+            Dictionary<string, (string title, long lastVisitTime)> historyUrlDict = [];
             using (var connection = new SQLiteConnection($"Data Source={copiedHistoryFilePath};Version=3;New=False;Compress=True;")) {
                 connection.Open();
                 string query = "SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time ASC";
-
                 using (var command = new SQLiteCommand(query, connection))
                 using (var reader = command.ExecuteReader()) {
                     while (reader.Read()) {
-                        // Dictionaryに追加
+                        // 履歴情報をDictionaryに追加
                         string url = reader.GetString(0);
                         string title = reader.GetString(1);
                         long lastVisitTime = reader.GetInt64(2);
@@ -94,46 +103,43 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 }
             }
 
+            // 7. 新規追加分と更新分のURLリストを作成
+            var addUrls = historyUrlDict.Keys.Except(itemUrlIdDict.Keys).ToList(); // DBに存在しない履歴
+            var updateUrls = historyUrlDict.Keys.Intersect(itemUrlIdDict.Keys).ToList(); // DBに存在する履歴
 
-            //Historyに、ItemにないURLがある場合は追加
-            // Exceptで差集合を取得
-            var addUrls = historyUrlDict.Keys.Except(itemUrlIdDict.Keys);
-
-
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
-
-            Parallel.ForEach(addUrls, parallelOptions, async url => {
-                // urlからTitle, LastVisitTimeを取得
+            // 8. 新規追加分のContentItemWrapperリストを作成
+            var addContentItems = addUrls.Select(url => {
                 (string title, long lastVisitTime) = historyUrlDict[url];
-
                 DateTime lastVisitTimeDateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                ContentItemWrapper contentItem = new(this.Entity) {
+                return new ContentItemWrapper(this.Entity)
+                {
                     Description = title,
                     SourcePath = url,
                     SourceType = ContentSourceType.Url,
                     UpdatedAt = lastVisitTimeDateTime,
                     CreatedAt = lastVisitTimeDateTime,
-
                 };
-                await contentItem.Save();
-            });
+            }).ToList();
+            // 9. 新規追加分を一括保存
+            await ContentItemWrapper.SaveItemsAsync(addContentItems);
 
-            //HistoryのURLとItemのURLの和集合
-            var updateUrls = historyUrlDict.Keys.Intersect(itemUrlIdDict.Keys);
-
-            Parallel.ForEach(updateUrls, parallelOptions, async url => {
-                // urlからTitle, LastVisitTimeを取得
+            // 10. 更新が必要なContentItemWrapperリストを作成
+            var updateContentItems = updateUrls.Select(url => {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
                 ContentItemWrapper contentItem = itemUrlIdDict[url];
-
-                if (contentItem.UpdatedAt < dateTime) {
+                if (contentItem.UpdatedAt < dateTime)
+                {
                     contentItem.UpdatedAt = dateTime;
-                    await contentItem.Save();
+                    return contentItem;
                 }
-            });
+                return null;
+            }).Where(x => x != null).ToList();
+            // 11. 更新分を一括保存
+            if (updateContentItems.Count > 0)
+            {
+                await ContentItemWrapper.SaveItemsAsync(updateContentItems);
+            }
 
         }
 
