@@ -128,7 +128,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得
                     var item = QAChatStartupPropsInstance.GetContentItem();
-                    items = await item.Folder.GetVectorSearchProperties();
+                    var folder = await item.GetFolderAsync();
+                    items = await folder.GetVectorSearchProperties();
                     foreach (var vectorSearchItem in items) {
                         VectorSearchProperties.Add(vectorSearchItem);
                     }

@@ -182,6 +182,12 @@ namespace LibPythonAI.Resources {
         // OpenAIKeyNotSet
         public virtual string OpenAIKeyNotSet { get; } = "OpenAI key not set. Please set OpenAIKey from the settings screen.";
 
+        // AppDataPathNotSet
+        public virtual string AppDataPathNotSet { get; } = "AppData path not set. Please set AppDataPath from the settings screen.";
+
+        // // Python venv path not set. Please set PythonVenvPath from the settings screen.
+        public virtual string PythonVenvPathNotSet { get; } = "Python venv path not set. Please set PythonVenvPath from the settings screen.";
+
         // // Python関連の初期化処理が行われていません
         public virtual string PythonNotInitialized { get; } = "Python related initialization process has not been performed";
 

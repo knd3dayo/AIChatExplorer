@@ -118,6 +118,12 @@ namespace LibPythonAI.Resources {
         // OpenAIKeyNotSet
         public override string OpenAIKeyNotSet { get; } = "OpenAIのAPIキーが設定されていません。設定画面からOpenAI_API_KEYを設定してください。";
 
+        // AppDataPathNotSet
+        public override string AppDataPathNotSet { get; } = "AppDataのパスが設定されていません。設定画面からAppDataのパスを設定してください。";
+
+        // PythonVenvPathNotSet
+        public override string PythonVenvPathNotSet { get; } = "Python venvのパスが設定されていません。設定画面からPython venvのパスを設定してください。";
+
         // Python関連の初期化処理が行われていません
         public override string PythonNotInitialized { get; } = "Python関連の初期化処理が行われていません";
 

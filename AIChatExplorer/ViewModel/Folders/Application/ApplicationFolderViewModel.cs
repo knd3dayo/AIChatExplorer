@@ -96,7 +96,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                     ContentFolderWrapper folder = folderViewModel.Folder;
                     if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
-                        folder.MoveToAsync(toFolder.Folder);
+                        await folder.MoveToAsync(toFolder.Folder);
                         // 元のフォルダの親フォルダを再読み込み
                         folderViewModel.ParentFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
                     }

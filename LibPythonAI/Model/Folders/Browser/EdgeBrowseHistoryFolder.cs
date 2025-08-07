@@ -111,8 +111,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             var addContentItems = addUrls.Select(url => {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime lastVisitTimeDateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                return new ContentItemWrapper(this.Entity)
-                {
+                return new ContentItemWrapper(this.Entity) {
                     Description = title,
                     SourcePath = url,
                     SourceType = ContentSourceType.Url,
@@ -128,16 +127,14 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
                 ContentItemWrapper contentItem = itemUrlIdDict[url];
-                if (contentItem.UpdatedAt < dateTime)
-                {
+                if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;
                     return contentItem;
                 }
                 return null;
             }).Where(x => x != null).ToList();
             // 11. 更新分を一括保存
-            if (updateContentItems.Count > 0)
-            {
+            if (updateContentItems.Count > 0) {
                 await ContentItemWrapper.SaveItemsAsync(updateContentItems);
             }
 

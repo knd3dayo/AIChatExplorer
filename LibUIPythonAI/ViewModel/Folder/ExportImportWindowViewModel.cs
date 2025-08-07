@@ -53,15 +53,22 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
 
-        private int _selectedIndex = 0;
-        public int SelectedIndex {
-            get {
-                return _selectedIndex;
-            }
+        public enum ImportExportMode {
+            ExportExcel = 0,
+            ImportExcel = 1,
+            ImportUrlList = 2,
+        }
+
+        private ImportExportMode _selectedIndex = ImportExportMode.ExportExcel;
+        public ImportExportMode SelectedIndex {
+            get => _selectedIndex;
             set {
-                _selectedIndex = value;
-                OnPropertyChanged(nameof(FileSelectionButtonVisibility));
-                OnPropertyChanged(nameof(ApplicationFolderSelectionButtonVisibility));
+                if (_selectedIndex != value) {
+                    _selectedIndex = value;
+                    OnPropertyChanged(nameof(FileSelectionButtonVisibility));
+                    OnPropertyChanged(nameof(ApplicationFolderSelectionButtonVisibility));
+                    OnPropertyChanged(nameof(CanExecuteOK));
+                }
             }
         }
 
@@ -72,22 +79,37 @@ namespace LibUIPythonAI.ViewModel.Folder {
         public string SelectedApplicationFolderPath { get; private set; } = String.Empty;
 
         // 選択したファイル名
-        public string SelectedFileName { get; set; } = "";
+        private string _selectedFileName = "";
+        public string SelectedFileName {
+            get => _selectedFileName;
+            set {
+                if (_selectedFileName != value) {
+                    _selectedFileName = value;
+                    OnPropertyChanged(nameof(SelectedFileName));
+                    OnPropertyChanged(nameof(CanExecuteOK));
+                }
+            }
+        }
 
         // インポート時に自動処理を実行
         public bool IsAutoProcessEnabled { get; set; } = false;
 
         // FileSelectionButtonVisibility
-        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 1 || SelectedIndex == 2);
+
+        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(
+            SelectedIndex == ImportExportMode.ExportExcel ||
+            SelectedIndex == ImportExportMode.ImportExcel ||
+            SelectedIndex == ImportExportMode.ImportUrlList);
 
         // ApplicationFolderSelectionButtonVisibility
-        public Visibility ApplicationFolderSelectionButtonVisibility => Tools.BoolToVisibility(false);
+        public Visibility ApplicationFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == ImportExportMode.ExportExcel);
 
-        public SimpleDelegateCommand<Window> OKCommand => new((window) => {
+        // OKボタンの有効/無効判定
+        public bool CanExecuteOK => !string.IsNullOrWhiteSpace(SelectedFileName);
 
+        public SimpleDelegateCommand<Window> OKCommand => new(async (window) => {
             CommonViewModelProperties.UpdateIndeterminate(true);
-            // 選択されたインデックスによって処理を分岐
-            Task.Run(async () => {
+            try {
                 // Excelインポート処理 ★TODO 自動処理の実装
                 Action<ContentItemWrapper> afterImport = (item) => { };
                 if (IsAutoProcessEnabled) {
@@ -98,72 +120,68 @@ namespace LibUIPythonAI.ViewModel.Folder {
                 }
 
                 switch (SelectedIndex) {
-                    case 0:
+                    case ImportExportMode.ExportExcel:
                         // Excelエクスポート処理
                         await ImportExportUtil.ExportToExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ExportItems]);
                         break;
-                    case 1:
-                        // Excelインポート処理 ★TODO 自動処理の実装
+                    case ImportExportMode.ImportExcel:
+                        // Excelインポート処理
                         await ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
                         break;
-                    case 2:
+                    case ImportExportMode.ImportUrlList:
                         // URLリストインポート処理
                         ImportExportUtil.ImportFromURLList(ApplicationFolderViewModel.Folder, SelectedFileName, afterImport);
                         break;
                     default:
                         break;
                 }
-            }).ContinueWith((task) => {
+            } catch (Exception ex) {
+                // エラー通知やログ出力をここで行う
+                MessageBox.Show($"エラーが発生しました: {ex.Message}", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+            } finally {
                 CommonViewModelProperties.UpdateIndeterminate(false);
                 AfterUpdate();
                 MainUITask.Run(() => {
                     window.Close();
                 });
-            });
+            }
         });
 
-        public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
-            // SelectedFileNameが空の場合はデフォルトのファイル名を設定
-            if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ApplicationFolderViewModel.Folder.Id.ToString() + ".xlsx";
-                OnPropertyChanged(nameof(SelectedFileName));
-            }
 
-            //ファイルダイアログを表示
-
-
+        // ファイル選択ダイアログの共通化
+        private bool TrySelectFile(out string fileName, string title, string defaultExt = ".xlsx", string? defaultFileName = null) {
             using var dialog = new CommonOpenFileDialog() {
-                Title = CommonStringResources.Instance.SelectFilePlease,
-                DefaultFileName = SelectedFileName,
+                Title = title,
                 InitialDirectory = @".",
+                DefaultExtension = defaultExt,
+                DefaultFileName = defaultFileName ?? SelectedFileName,
             };
             var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
-                return;
-            } else {
-                SelectedFileName = dialog.FileName;
-                OnPropertyChanged(nameof(SelectedFileName));
+            if (dialog.ShowDialog(window) == CommonFileDialogResult.Ok) {
+                fileName = dialog.FileName;
+                return true;
+            }
+            fileName = "";
+            return false;
+        }
+
+        public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
+            if (string.IsNullOrEmpty(SelectedFileName)) {
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ApplicationFolderViewModel.Folder.Id.ToString() + ".xlsx";
+            }
+            if (TrySelectFile(out var fileName, CommonStringResources.Instance.SelectFilePlease, ".xlsx", SelectedFileName)) {
+                SelectedFileName = fileName;
             }
         });
 
         public SimpleDelegateCommand<object> SelectImportFileCommand => new((obj) => {
-            //ファイルダイアログを表示
-            using var dialog = new CommonOpenFileDialog() {
-                Title = CommonStringResources.Instance.SelectFilePlease,
-                InitialDirectory = @".",
-                DefaultExtension = ".xlsx",
-            };
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
-                return;
-            } else {
-                SelectedFileName = dialog.FileName;
-                OnPropertyChanged(nameof(SelectedFileName));
+            if (TrySelectFile(out var fileName, CommonStringResources.Instance.SelectFilePlease, ".xlsx")) {
+                SelectedFileName = fileName;
             }
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new( (parameter) => {
+        public SimpleDelegateCommand<object> OpenApplicationFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, async (folderViewModel, finished) => {
                 if (finished) {
                     ExportTargetFolder = folderViewModel.Folder;

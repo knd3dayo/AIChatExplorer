@@ -31,42 +31,46 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         // フォルダー保存コマンド
         public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new(async (folderViewModel) => {
-            await Task.Run(() => FolderViewModel.Folder.SaveAsync());
+            try {
+                await FolderViewModel.Folder.SaveAsync();
+            } catch (Exception ex) {
+                LogWrapper.Error($"SaveFolderCommand failed: {ex.Message}");
+            }
         });
 
         // 新規フォルダ作成コマンド
         public SimpleDelegateCommand<object> CreateFolderCommand => new((parameter) => {
-
-            FolderViewModel.CreateFolderCommandExecute(FolderViewModel, () => {
-                // 親フォルダを保存
-                FolderViewModel.Folder.SaveAsync();
+            FolderViewModel.CreateFolderCommandExecute(FolderViewModel, async () => {
+                try {
+                    await FolderViewModel.Folder.SaveAsync();
+                } catch (Exception ex) {
+                    LogWrapper.Error($"CreateFolderCommand failed: {ex.Message}");
+                }
                 FolderViewModel.FolderCommands.LoadFolderCommand.Execute();
-
             });
         });
 
-
-        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new( (parameter) => {
-            Task.Run(async () => {
-                await FolderViewModel.LoadFolderExecuteAsync(
-                    () => {
-                        CommandExecutes.UpdateIndeterminate(true);
-                    },
-                    () => {
-                        MainUITask.Run(() => {
-                            CommandExecutes.UpdateIndeterminate(false);
-                            FolderViewModel.UpdateStatusText();
-                        });
+        public virtual SimpleDelegateCommand<object> LoadFolderCommand => new(async (parameter) => {
+            await FolderViewModel.LoadFolderExecuteAsync(
+                () => {
+                    CommandExecutes.UpdateIndeterminate(true);
+                },
+                () => {
+                    MainUITask.Run(() => {
+                        CommandExecutes.UpdateIndeterminate(false);
+                        FolderViewModel.UpdateStatusText();
                     });
-            });
+                });
         });
 
         // フォルダ編集コマンド
         public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {
-
-            FolderViewModel.EditFolderCommandExecute(() => {
-                //　フォルダを保存
-                FolderViewModel.Folder.SaveAsync();
+            FolderViewModel.EditFolderCommandExecute(async () => {
+                try {
+                    await FolderViewModel.Folder.SaveAsync();
+                } catch (Exception ex) {
+                    LogWrapper.Error($"EditFolderCommand failed: {ex.Message}");
+                }
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.FolderEdited);
             });
@@ -107,11 +111,15 @@ namespace LibUIPythonAI.ViewModel.Folder {
             // 親フォルダを取得
             ContentFolderViewModel? parentFolderViewModel = FolderViewModel.ParentFolderViewModel;
 
-            await Task.Run(() => FolderViewModel.Folder.DeleteAsync());
+            try {
+                await FolderViewModel.Folder.DeleteAsync();
+            } catch (Exception ex) {
+                LogWrapper.Error($"DeleteFolderCommand failed: {ex.Message}");
+            }
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
-                await Task.Run(() => parentFolderViewModel.FolderCommands.LoadFolderCommand.Execute());
+                parentFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
             }
 
             LogWrapper.Info(CommonStringResources.Instance.FolderDeleted);
@@ -161,8 +169,8 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
 
         // ベクトルを生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new((itemViewModels) => {
-            CommandExecutes.GenerateVectorCommandExecute(itemViewModels);
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new(async (itemViewModels) => {
+            await CommandExecutes.GenerateVectorCommandExecute(itemViewModels);
         });
 
     }

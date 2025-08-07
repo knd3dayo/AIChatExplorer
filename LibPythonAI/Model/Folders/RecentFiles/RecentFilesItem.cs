@@ -16,12 +16,13 @@ namespace AIChatExplorer.Model.Folders.Browser {
         public override async Task UpdateEmbeddingAsync() {
             // ベクトルを更新
             await Task.Run(async () => {
-                var item = await Folder.GetMainVectorSearchItem();
+                var folder = await GetFolderAsync();
+                var item = await folder.GetMainVectorSearchItem();
                 string? vectorDBItemName = item?.VectorDBItemName;
                 if (vectorDBItemName == null) {
                     return;
                 }
-                var contentFolderPath = await Folder.GetContentFolderPath();
+                var contentFolderPath = await folder.GetContentFolderPath();
                 VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
                     Content = Content,
                     Description = Description,

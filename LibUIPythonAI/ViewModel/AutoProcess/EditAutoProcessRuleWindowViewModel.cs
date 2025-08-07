@@ -220,71 +220,51 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
         }
         // アイテムがテキストの場合にルールを適用するかどうか
         public bool IsTextItemApplied { get; set; } = true;
-
-        // テキストアイテムで、ルール適用対象となる最小テキスト行数
+        // テキストアイテムで、ルール適用対象となる最小・最大テキスト行数
         private int _MinTextLineCount = -1;
-        public string MinTextLineCount {
-            get {
-                // -1の場合は空を返す
-                if (_MinTextLineCount == -1) {
-                    return "";
-                }
-                return _MinTextLineCount.ToString();
-            }
-            set {
-                // valueが空の場合は-1を設定
-                if (string.IsNullOrEmpty(value)) {
-                    _MinTextLineCount = -1;
-                    OnPropertyChanged(nameof(MinTextLineCount));
-                    return;
-                }
-                // valueが数値でない場合はエラー
-                if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
-                    return;
-                }
-                _MinTextLineCount = intValue;
-                OnPropertyChanged(nameof(MinTextLineCount));
-            }
-        }
-        public int MinTextLineCountInt {
-            get {
-                return _MinTextLineCount;
-            }
-        }
-
-        // テキストアイテムで、ルール適用対象となる最大テキスト行数 - 1
         private int _MaxTextLineCount = -1;
-        public string MaxTextLineCount {
-            get {
-                // -1の場合は空を返す
-                if (_MaxTextLineCount == -1) {
-                    return "";
-                }
-                return _MaxTextLineCount.ToString();
-            }
-            set {
-                // valueが空の場合は-1を設定
-                if (string.IsNullOrEmpty(value)) {
-                    _MaxTextLineCount = -1;
-                    OnPropertyChanged(nameof(MaxTextLineCount));
-                    return;
-                }
-                // valueが数値でない場合はエラー
-                if (!int.TryParse(value.ToString(), out int intValue)) {
-                    LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
-                    return;
-                }
 
-                _MaxTextLineCount = intValue;
-                OnPropertyChanged(nameof(MaxTextLineCount));
-            }
+        public string MinTextLineCount {
+            get => IntToString(_MinTextLineCount);
+            set => SetLineCount(ref _MinTextLineCount, value, nameof(MinTextLineCount));
         }
-        public int MaxTextLineCountInt {
-            get {
-                return _MaxTextLineCount;
-            }
+        public int MinTextLineCountInt => _MinTextLineCount;
+
+        public string MaxTextLineCount {
+            get => IntToString(_MaxTextLineCount);
+            set => SetLineCount(ref _MaxTextLineCount, value, nameof(MaxTextLineCount));
         }
+        public int MaxTextLineCountInt => _MaxTextLineCount;
+
+        // 共通化メソッド
+        private string IntToString(int value)
+        {
+            return value == -1 ? "" : value.ToString();
+        }
+
+        private void SetLineCount(ref int backingField, string value, string propertyName)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                if (backingField != -1)
+                {
+                    backingField = -1;
+                    OnPropertyChanged(propertyName);
+                }
+                return;
+            }
+            if (!int.TryParse(value, out int intValue))
+            {
+                LogWrapper.Error(CommonStringResources.Instance.EnterANumber);
+                return;
+            }
+            if (backingField != intValue)
+            {
+                backingField = intValue;
+                OnPropertyChanged(propertyName);
+            }
+            }
+
 
         // アイテムが画像の場合にルールを適用するかどうか
         public bool IsImageItemApplied { get; set; } = true;

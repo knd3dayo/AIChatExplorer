@@ -54,7 +54,7 @@ namespace LibUIMergeChat.ViewModel {
         }
 
         // ExportItems
-        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; }
+        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; } = [];
 
 
 

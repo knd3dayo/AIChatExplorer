@@ -51,9 +51,10 @@ namespace LibPythonAI.PythonIF {
             Success,
             PythonNotFound,
             UvNotFound,
-            PythonVenvPathNotFound,
+            PythonVenvPathNotSet,
             PythonVenvNotFound,
-            OpenAIKeyNotSet
+            OpenAIKeyNotSet,
+            AppDataPathNotSet,
         }
 
         public static PythonEnvironmentCheckResult CheckPythonEnvironment(IPythonAILibConfigParams configPrams) {
@@ -68,16 +69,21 @@ namespace LibPythonAI.PythonIF {
                 return PythonEnvironmentCheckResult.UvNotFound;
             }
 
-            // Check if the Python virtual environment exists
+            // Check if the API server is set to use an external API
+            if (configPrams.IsUseExternalAPI()) {
+                return PythonEnvironmentCheckResult.Success;
+            }
+            // Check if the API server is set to use an internal API
+
+            // Check if the Python virtual environment variable is set
             string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
             if (string.IsNullOrEmpty(pathToVirtualEnv)) {
-                return PythonEnvironmentCheckResult.PythonVenvPathNotFound;
+                return PythonEnvironmentCheckResult.PythonVenvPathNotSet;
             }
-            // Check if the Python virtual environment is set up correctly
-            string pythonVenvPath = Path.Combine(pathToVirtualEnv, "Scripts", "python.exe");
-
-            if (!File.Exists(pythonVenvPath)) {
-                return PythonEnvironmentCheckResult.PythonVenvNotFound;
+            // Check if the APP_DATA_DIR is set
+            string appDataPath = configPrams.GetAppDataPath();
+            if (string.IsNullOrEmpty(appDataPath)) {
+                return PythonEnvironmentCheckResult.AppDataPathNotSet;
             }
             // Check if OpenAI API key is set
             OpenAIProperties openAIProps = configPrams.GetOpenAIProperties();
@@ -85,6 +91,12 @@ namespace LibPythonAI.PythonIF {
                 return PythonEnvironmentCheckResult.OpenAIKeyNotSet;
             }
 
+            // Check if the Python virtual environment is set up correctly
+            string pythonVenvPath = Path.Combine(pathToVirtualEnv, "Scripts", "python.exe");
+
+            if (!File.Exists(pythonVenvPath)) {
+                return PythonEnvironmentCheckResult.PythonVenvNotFound;
+            }
             return PythonEnvironmentCheckResult.Success;
         }
 

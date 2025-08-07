@@ -399,8 +399,8 @@ namespace LibPythonAI.Model.Content {
         }
 
         // Folder
-        public ContentFolderWrapper? Folder { get; protected set; }
-        private  async Task<ContentFolderWrapper> GetFolderAsync() {
+        // public ContentFolderWrapper? Folder { get; protected set; }
+        public  async Task<ContentFolderWrapper> GetFolderAsync() {
             var folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(Entity.FolderId);
             if (folder == null) {
                 throw new Exception("Folder not found");

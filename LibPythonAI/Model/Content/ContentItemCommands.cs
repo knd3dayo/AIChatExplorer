@@ -116,7 +116,7 @@ namespace LibPythonAI.Model.Content {
                     LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoVectorDBSet);
                     return;
                 }
-                var folder = item.Folder;
+                var folder = await item.GetFolderAsync();
                 if (folder == null) {
                     return;
                 }
@@ -140,7 +140,8 @@ namespace LibPythonAI.Model.Content {
                     return;
                 }
                 // IPythonAIFunctions.ClipboardInfoを作成
-                var contentFolderPath = await item.Folder.GetContentFolderPath();
+                var folder = await item.GetFolderAsync();
+                var contentFolderPath = await folder.GetContentFolderPath();
                 VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
                 await vectorDBEntry.SetMetadata(item);
                 VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);

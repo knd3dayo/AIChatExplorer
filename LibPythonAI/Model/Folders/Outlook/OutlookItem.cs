@@ -9,9 +9,9 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         // EntryIDの名前
         public const string EntryIDName = "EntryID";
 
-        public static async Task<OutlookItem> Create(ContentFolderEntity folder, string entryID){
+        public static OutlookItem Create(ContentFolderEntity folder, string entryID){
             OutlookItem item = new ();
-            item.Folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(folder.Id);
+            item.FolderId = folder.Id;
             item.EntryID = entryID;
 
             return item;
@@ -27,12 +27,13 @@ namespace AIChatExplorer.Model.Folders.Outlook {
         public override async Task UpdateEmbeddingAsync() {
             // ベクトルを更新
             await Task.Run(async () => {
-                var item = await Folder.GetMainVectorSearchItem();
+                var folder = await GetFolderAsync();
+                var item = await folder.GetMainVectorSearchItem();
                 string? vectorDBItemName = item?.VectorDBItemName;
                 if (vectorDBItemName == null) {
                     return;
                 }
-                var contentFolderPath = await Folder.GetContentFolderPath();
+                var contentFolderPath = await folder.GetContentFolderPath();
                 VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
                     Content = Content,
                     Description = Description,

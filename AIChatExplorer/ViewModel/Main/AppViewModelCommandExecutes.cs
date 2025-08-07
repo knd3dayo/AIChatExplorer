@@ -58,8 +58,13 @@ namespace AIChatExplorer.ViewModel.Main {
             } else {
                 // クリップボード監視を開始する
                 MainWindowViewModel model = MainWindowViewModel.Instance;
+                var rootFolderViewModel = model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel;
+                if (rootFolderViewModel == null) {
+                    LogWrapper.Error(CommonStringResources.Instance.RootFolderNotFound);
+                    return;
+                }
                 // クリップボード履歴のルートフォルダを取得
-                StartClipboardMonitorCommandExecute(model.RootFolderViewModelContainer.ClipboardHistoryFolderViewModel);
+                StartClipboardMonitorCommandExecute(rootFolderViewModel);
             }
         });
 
@@ -71,7 +76,10 @@ namespace AIChatExplorer.ViewModel.Main {
                 StopScreenMonitorCommandExecute();
             } else {
                 MainWindowViewModel model = MainWindowViewModel.Instance;
-                StartScreenMonitorCommandExecute(model.RootFolderViewModelContainer.ScreenShotHistoryFolderViewModel);
+                var screenShotHistoryFolderViewModel = model.RootFolderViewModelContainer.ScreenShotHistoryFolderViewModel;
+                if (screenShotHistoryFolderViewModel != null) {
+                    StartScreenMonitorCommandExecute(screenShotHistoryFolderViewModel);
+                }
             }
         });
 
@@ -209,6 +217,11 @@ namespace AIChatExplorer.ViewModel.Main {
         // Command to start/stop clipboard monitoring
         public static void StartClipboardMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
             MainWindowViewModel model = MainWindowViewModel.Instance;
+            var rootFolderViewModel = model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (rootFolderViewModel == null) {
+                LogWrapper.Error(CommonStringResources.Instance.RootFolderNotFound);
+                return;
+            }
             model.IsClipboardMonitoringActive = true;
             ClipboardController.Instance.Start(
                 (ApplicationFolder)targetFolderViewModel.Folder,
@@ -216,7 +229,7 @@ namespace AIChatExplorer.ViewModel.Main {
                     // Process when a clipboard item is added
                     // フォルダのルートフォルダに追加
                     await Task.Run(() => {
-                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(model.RootFolderViewModelContainer.GetApplicationRootFolderViewModel(), applicationItem));
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(rootFolderViewModel, applicationItem));
                     });
                     // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {

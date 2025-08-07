@@ -863,26 +863,4 @@ namespace AIChatExplorer.ViewModel.Settings {
         #endregion
     }
 
-    public class MiscConfig {
-
-        private static DateTime? _windowsNotificationLastCheckedTime;
-
-        public static DateTime WindowsNotificationLastCheckedTime {
-            get {
-                if (_windowsNotificationLastCheckedTime == null) {
-                    _windowsNotificationLastCheckedTime = Properties.Misc.Default.WindowsNotificationLastCheckedTime;
-                }
-                return _windowsNotificationLastCheckedTime == null ? DateTime.MinValue.ToUniversalTime() : _windowsNotificationLastCheckedTime.Value;
-            }
-            set {
-                _windowsNotificationLastCheckedTime = value;
-                Properties.Misc.Default.WindowsNotificationLastCheckedTime = value;
-            }
-        }
-        public static void Save() {
-            Properties.Misc.Default.Save();
-        }
-
-
-    }
 }

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using AIChatExplorer.View.Main;
+using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
@@ -8,7 +9,6 @@ using LibPythonAI.PythonIF;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
 
 namespace AIChatExplorer.AppStartup {
 
@@ -23,21 +23,26 @@ namespace AIChatExplorer.AppStartup {
             // ログ設定
             SetupLog();
 
-            // Python環境のチェック
-            CheckEnvironment(configParams);
+            // Python環境のチェック ( Python.exe, uvの存在確認 )
+            CheckEnvironment1(configParams);
+
+            // Python仮想環境のチェック ( OpenAIのAPIキー、Venvのパス設定、AppDataパスの設定 )
+            CheckEnvironment2(configParams);
+
+            // Python仮想環境のチェック ( Venvの存在確認、Venvの作成 )
+            CheckEnvironment3(configParams);
+
 
             // PythonAILibManagerの初期化（UIスレッドをブロックしないようバックグラウンドで待機）
             await Task.Run(() => PythonAILibManager.Init(configParams));
 
             // DataContextにViewModelを設定
             MainWindowViewModel mainWindowViewModel = new();
-            MainUITask.Run(() => {
-                // MainWindowを表示
-                MainWindow mainWindow = new() {
-                    DataContext = mainWindowViewModel
-                };
-                mainWindow.Show();
-            });
+            // MainWindowを表示
+            MainWindow mainWindow = new() {
+                DataContext = mainWindowViewModel
+            };
+            mainWindow.Show();
         }
 
 
@@ -65,7 +70,7 @@ namespace AIChatExplorer.AppStartup {
         }
 
 
-        private static void CheckEnvironment(IPythonAILibConfigParams configParams) {
+        private static void CheckEnvironment1(IPythonAILibConfigParams configParams) {
 
             PythonExecutor.PythonEnvironmentCheckResult result = PythonExecutor.CheckPythonEnvironment(configParams);
             if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonNotFound) {
@@ -77,11 +82,39 @@ namespace AIChatExplorer.AppStartup {
                 // uvが見つからない場合、エラーメッセージを表示
                 string errorMessage = PythonAILibStringResources.Instance.UvNotFound;
                 MessageBox.Show(errorMessage);
+            }
+        }
+        private static void CheckEnvironment2(IPythonAILibConfigParams configParams) {
+            string errorMessage = string.Empty;
+            PythonExecutor.PythonEnvironmentCheckResult result = PythonExecutor.CheckPythonEnvironment(configParams);
 
-            } else if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvPathNotFound) {
+            if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvPathNotSet) {
                 // Python仮想環境が見つからない場合、エラーメッセージを表示
+                errorMessage = PythonAILibStringResources.Instance.PythonVenvPathNotSet;
+            } else if (result == PythonExecutor.PythonEnvironmentCheckResult.OpenAIKeyNotSet) {
+                // OpenAIのAPIキーが設定されていない場合、エラーメッセージを表示
+                errorMessage = PythonAILibStringResources.Instance.OpenAIKeyNotSet;
+            } else if (result == PythonExecutor.PythonEnvironmentCheckResult.AppDataPathNotSet) {
+                // AppDataパスが設定されていない場合、エラーメッセージを表示
+                errorMessage = PythonAILibStringResources.Instance.AppDataPathNotSet;
+            }
+            if (!string.IsNullOrEmpty(errorMessage)) {
+                // エラーメッセージを表示
+                MessageBox.Show(errorMessage);
+                // 設置画面を表示
+                SettingUserControlViewModel settingViewModel = new();
+                SettingWindow settingWindow = new() {
+                    DataContext = settingViewModel
+                };
+                settingWindow.ShowDialog();
+            }
+        }
 
-            } else if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvNotFound) {
+        private static void CheckEnvironment3(IPythonAILibConfigParams configParams) {
+
+            PythonExecutor.PythonEnvironmentCheckResult result = PythonExecutor.CheckPythonEnvironment(configParams);
+
+            if (result == PythonExecutor.PythonEnvironmentCheckResult.PythonVenvNotFound) {
                 // Python仮想環境が見つからない場合はVenvを作成するか確認
                 string confirmMessage = PythonAILibStringResources.Instance.ConfirmPythonVenvCreate;
                 MessageBoxResult resultMessageBox = MessageBox.Show(confirmMessage, CommonStringResources.Instance.CreateItem, MessageBoxButton.YesNo);
@@ -98,17 +131,13 @@ namespace AIChatExplorer.AppStartup {
                     // アプリケーションを終了
                     Application.Current.Shutdown();
                 }
-
             }
-            // 再チェック
-            result = PythonExecutor.CheckPythonEnvironment(configParams);
 
             if (result == PythonExecutor.PythonEnvironmentCheckResult.OpenAIKeyNotSet) {
                 // OpenAIのAPIキーが設定されていない場合、エラーメッセージを表示
                 string errorMessage = PythonAILibStringResources.Instance.OpenAIKeyNotSet;
                 MessageBox.Show(errorMessage);
             }
-
         }
 
     }

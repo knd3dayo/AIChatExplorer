@@ -38,11 +38,11 @@ namespace LibUIPythonAI.ViewModel.Item {
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
         // 処理中はプログレスインジケータを表示
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> ExtractTextCommand => new((items) => {
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> ExtractTextCommand => new(async (items) => {
             if (items == null || items.Count == 0) {
                 return;
             }
-            CommonViewModelCommandExecutes.ExtractTextCommandExecute(items, () => {
+            await CommonViewModelCommandExecutes.ExtractTextCommandExecute(items, () => {
                 CommandExecutes.UpdateIndeterminate(true);
             }, () => {
                 LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
@@ -59,10 +59,10 @@ namespace LibUIPythonAI.ViewModel.Item {
         });
 
         // プロンプトテンプレートを実行
-        public SimpleDelegateCommand<ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
+        public SimpleDelegateCommand<ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>> ExecutePromptTemplateCommand => new(async (tuple) => {
             ObservableCollection<ContentItemViewModel> itemViewModels = tuple.Item1;
             PromptItem promptItem = tuple.Item2;
-            CommandExecutes.ExecutePromptTemplateCommandExecute(itemViewModels, promptItem);
+            await CommandExecutes.ExecutePromptTemplateCommandExecute(itemViewModels, promptItem);
         });
 
         // Webページをダウンロードする
@@ -70,8 +70,8 @@ namespace LibUIPythonAI.ViewModel.Item {
             CommandExecutes.DownloadWebPageCommandExecute(itemViewModels);
         });
         // ベクトルを生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new((itemViewModels) => {
-            CommandExecutes.GenerateVectorCommandExecute(itemViewModels);
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new(async (itemViewModels) => {
+            await CommandExecutes.GenerateVectorCommandExecute(itemViewModels);
         });
         // フォルダを開くコマンド
         public SimpleDelegateCommand<ContentItemViewModel> OpenFolderInExplorerCommand => new((itemViewModel) => {

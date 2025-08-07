@@ -122,6 +122,10 @@ namespace LibPythonAI.Model.Folders {
         private static List<ContentFolderEntity> RootFolderEntities = [];
         public static async Task InitAsync() {
             RootFolderEntities = await PythonExecutor.PythonAIFunctions.GetRootContentFoldersAsync();
+
+            //追加設定.言語の設定
+            await FolderManager.ChangeRootFolderNames(PythonAILibStringResources.Instance);
+
             // ApplicationRootFolder
             var entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == APPLICATION_ROOT_FOLDER_NAME_EN);
             applicationRootFolder = await ContentFolderWrapper.GetFolderById<ApplicationFolder>(entity?.Id);
@@ -155,6 +159,8 @@ namespace LibPythonAI.Model.Folders {
             // IntegratedMonitorHistoryFolder
             entity = RootFolderEntities.FirstOrDefault(x => x.FolderTypeString == INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN);
             integratedMonitorHistoryRootFolder = await ContentFolderWrapper.GetFolderById<IntegratedMonitorHistoryFolder>(entity?.Id);
+
+
         }
 
         //--------------------------------------------------------------------------------
@@ -166,7 +172,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = APPLICATION_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 applicationRootFolder = folder;
             }
 
@@ -180,7 +186,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = SEARCH_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run (async () => { await folder.SaveAsync(); });
                 searchRootFolder = folder;
 
             }
@@ -196,7 +202,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = FILESYSTEM_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 fileSystemRootFolder = folder;
 
             }
@@ -211,7 +217,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = SHORTCUT_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 shortcutRootFolder = folder;
 
             }
@@ -226,7 +232,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = OUTLOOK_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 outlookRootFolder = folder;
 
             }
@@ -243,7 +249,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = EDGE_BROWSE_HISTORY_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 edgeBrowseHistoryRootFolder = folder;
             }
             return edgeBrowseHistoryRootFolder;
@@ -258,7 +264,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = RECENT_FILES_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 recentFilesRootFolder = folder;
             }
             return recentFilesRootFolder;
@@ -273,7 +279,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = CLIPBOARD_HISTORY_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 clipboardHistoryRootFolder = folder;
             }
             return clipboardHistoryRootFolder;
@@ -288,7 +294,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = CHAT_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 chatRootFolder = folder;
             }
             return chatRootFolder;
@@ -303,7 +309,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = SCREEN_SHOT_HISTORY_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 screenShotHistoryRootFolder = folder;
             }
             return screenShotHistoryRootFolder;
@@ -317,7 +323,7 @@ namespace LibPythonAI.Model.Folders {
                     FolderTypeString = INTEGRATED_MONITOR_HISTORY_ROOT_FOLDER_NAME_EN,
                     IsRootFolder = true,
                 };
-                folder.SaveAsync();
+                Task.Run(async () => { await folder.SaveAsync(); });
                 integratedMonitorHistoryRootFolder = folder;
             }
             return integratedMonitorHistoryRootFolder;

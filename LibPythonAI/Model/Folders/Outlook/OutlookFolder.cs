@@ -85,14 +85,20 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                 OutlookItem outlookItem = entryIdIdDict[entryId];
                 await outlookItem.DeleteAsync();
             }
-            // Parallel処理
-            Parallel.ForEach(MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>(), async outlookItem => {
-                OutlookItem newItem = await OutlookItem.Create(Entity, outlookItem.EntryID);
-                newItem.Description = outlookItem.Subject;
-                newItem.ContentType = ContentItemTypes.ContentItemTypeEnum.Text;
-                newItem.Content = outlookItem.Body;
-                await newItem.SaveAsync();
-            });
+
+            // 非同期でOutlookアイテムを保存
+            var mailItems = MAPIFolder.Items.Cast<NetOfficeOutlook.MailItem>();
+            var tasks = new List<Task>();
+            foreach (var outlookItem in mailItems) {
+                tasks.Add(Task.Run(async () => {
+                    OutlookItem newItem = OutlookItem.Create(Entity, outlookItem.EntryID);
+                    newItem.Description = outlookItem.Subject;
+                    newItem.ContentType = ContentItemTypes.ContentItemTypeEnum.Text;
+                    newItem.Content = outlookItem.Body;
+                    await newItem.SaveAsync();
+                }));
+            }
+            await Task.WhenAll(tasks);
         }
 
         // 子フォルダ
@@ -161,14 +167,18 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // Exceptで差集合を取得
             var addFolderNames = outlookFolderNames.Except(folderPathIdDict.Keys);
 
-            // Parallel処理
-            Parallel.ForEach(addFolderNames, outlookFolderName => {
-                var child = CreateChild(outlookFolderName);
-                child.SaveAsync();
-            });
+            // 非同期で子フォルダを保存
+            var tasks = new List<Task>();
+            foreach (var outlookFolderName in addFolderNames) {
+                tasks.Add(Task.Run(async () => {
+                    var child = CreateChild(outlookFolderName);
+                    await child.SaveAsync();
+                }));
+            }
+            await Task.WhenAll(tasks);
 
             // 自分自身を保存
-            SaveAsync();
+            await SaveAsync();
         }
 
     }

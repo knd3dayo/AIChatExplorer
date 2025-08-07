@@ -90,12 +90,16 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
 
             // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
             var deleteFolderPaths = folderPathIdDict.Keys.Except(fileSystemFolderPaths);
+            List<ContentFolderWrapper> deleteFolders = [];
             foreach (var deleteFolderPath in deleteFolderPaths) {
                 ContentFolderWrapper contentFolder = folderPathIdDict[deleteFolderPath];
+                deleteFolders.Add(contentFolder);
+            }
+            if (deleteFolders.Count > 0) {
                 try {
-                    await contentFolder.DeleteAsync();
+                    await ContentFolderWrapper.DeleteFoldersAsync(deleteFolders);
                 } catch (Exception ex) {
-                    LogWrapper.Error($"Delete failed: {deleteFolderPath} {ex.Message}");
+                    LogWrapper.Error($"DeleteFoldersAsync failed: {ex.Message}");
                 }
             }
 
@@ -103,16 +107,20 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             var fileSystemFolderPathsSet = new HashSet<string>(fileSystemFolderPaths);
             var addFolderPaths = fileSystemFolderPathsSet.Except(folderPathIdDict.Keys);
 
-            var addTasks = addFolderPaths.Select(async localFileSystemFolder => {
+
+            List<ContentFolderWrapper> addChildren = [];
+            foreach (var localFileSystemFolder in addFolderPaths) {
                 try {
                     string folderName = IsRootFolder ? localFileSystemFolder : Path.GetFileName(localFileSystemFolder);
                     var child = CreateChild(folderName);
-                    await child.SaveAsync();
+                    addChildren.Add(child);
                 } catch (Exception ex) {
                     LogWrapper.Error($"Add failed: {localFileSystemFolder} {ex.Message}");
                 }
-            });
-            await Task.WhenAll(addTasks);
+            }
+            if (addChildren.Count > 0) {
+                await ContentFolderWrapper.SaveFoldersAsync(addChildren);
+            }
 
             // 自分自身を保存
             await SaveAsync();
