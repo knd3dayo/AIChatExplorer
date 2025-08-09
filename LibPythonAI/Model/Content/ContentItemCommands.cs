@@ -45,13 +45,13 @@ namespace LibPythonAI.Model.Content {
 
         // OpenAIを使用してイメージからテキスト抽出する。
         public static async Task ExtractImageWithOpenAIAsync(ContentItemWrapper item) {
-            await ExtractText(item);
+            await ExtractTextAsync(item);
         }
 
 
 
         // テキストを抽出する
-        public static async Task ExtractText(ContentItemWrapper item) {
+        public static async Task ExtractTextAsync(ContentItemWrapper item) {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
@@ -77,13 +77,12 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public static async Task ExtractTextsAsync(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+        public static async Task ExtractTextsAsync(List<ContentItemWrapper> items) {
             int count = items.Count;
             if (count == 0) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoItemSelected);
                 return;
             }
-            beforeAction();
 
             int start_count = 0;
             object lockObject = new();
@@ -97,11 +96,11 @@ namespace LibPythonAI.Model.Content {
                     LogWrapper.Info(PythonAILibStringResourcesJa.Instance.CannotExtractTextForNonFileContent);
                     return;
                 }
-                await ExtractText(item);
+                await ExtractTextAsync(item);
                 await item.SaveAsync();
             });
             await Task.WhenAll(tasks);
-            afterAction();
+
             LogWrapper.UpdateInProgress(false);
             LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.TextExtracted}");
         }

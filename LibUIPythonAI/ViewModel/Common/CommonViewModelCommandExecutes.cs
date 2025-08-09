@@ -240,9 +240,9 @@ namespace LibUIPythonAI.ViewModel.Common {
             });
         }
 
-        public static async Task ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels, Action beforeAction, Action afterAction) {
+        public static async Task ExtractTextCommandExecute(ObservableCollection<ContentItemViewModel> itemViewModels) {
 
-            await ContentItemCommands.ExtractTextsAsync(itemViewModels.Select(x => x.ContentItem).ToList(), beforeAction, afterAction);
+            await ContentItemCommands.ExtractTextsAsync(itemViewModels.Select(x => x.ContentItem).ToList());
         }
 
         // Command to generate vectors

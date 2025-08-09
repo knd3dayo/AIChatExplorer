@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using EnvDTE;
 using LibPythonAI.Common;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
@@ -259,31 +258,22 @@ namespace AIChatExplorer.ViewModel.Main {
         public async Task UpdateViewAsync() {
             int lastSelectedTabIndex = SelectedItem?.SelectedTabIndex ?? 0;
 
-            if (SelectedItem != null) {
-                try {
-                    // SourceがFileの場合は、ファイルの内容を読み込む
-                    if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
-                        await ContentItemCommands.ExtractTextsAsync(
-                            [SelectedItem.ContentItem ],
-                            () => { },
-                            () => {
-                                MainUITask.Run(() => {
-                                    SelectedItem.UpdateView(MyTabControl);
-                                    OnPropertyChanged(nameof(SelectedItem));
-                                });
-                            }
-                        );
-                    }
-                    // 選択中のアイテムのSelectedTabIndexを更新する
-                    SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
-                    SelectedItem.UpdateView(MyTabControl);
-                    OnPropertyChanged(nameof(SelectedItem));
-                } catch (Exception ex) {
-                    LogWrapper.Error($"UpdateViewAsync Error: {ex.Message}");
-                }
-            } else {
+            if (SelectedItem == null) {
                 // 選択アイテムがない場合も通知
                 OnPropertyChanged(nameof(SelectedItem));
+                return;
+            }
+            try {
+                // SourceがFileの場合は、ファイルの内容を読み込む
+                if (SelectedItem.ContentItem.SourceType == ContentSourceType.File) {
+                    await ContentItemCommands.ExtractTextsAsync([SelectedItem.ContentItem]);
+                }
+                // 選択中のアイテムのSelectedTabIndexを更新する
+                SelectedItem.LastSelectedTabIndex = lastSelectedTabIndex;
+                SelectedItem.UpdateView(MyTabControl);
+                OnPropertyChanged(nameof(SelectedItem));
+            } catch (Exception ex) {
+                LogWrapper.Error($"UpdateViewAsync Error: {ex.Message}");
             }
         }
 

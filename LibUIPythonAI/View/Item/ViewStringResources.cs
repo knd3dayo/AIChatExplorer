@@ -62,7 +62,7 @@ namespace LibUIPythonAI.View.Item {
         // OpenAsNewFile
         public static string OpenAsNewFile { get; set; } = CommonStringResources.Instance.OpenAsNewFile;
 
-        // ExtractText
+        // ExtractTextAsync
         public static string ExtractText { get; set; } = CommonStringResources.Instance.ExtractText;
 
         // MaskData

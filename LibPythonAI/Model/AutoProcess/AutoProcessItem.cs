@@ -129,7 +129,7 @@ namespace LibPythonAI.Model.AutoProcess {
             if (typeEnum == AutoProcessActionTypeEnum.ExtractText) {
                 return async (args) => {
                     List<ContentItemWrapper> contentItemWrappers = [args];
-                    await ContentItemCommands.ExtractTextsAsync(contentItemWrappers, () => { }, () => { });
+                    await ContentItemCommands.ExtractTextsAsync(contentItemWrappers);
                 };
             }
 

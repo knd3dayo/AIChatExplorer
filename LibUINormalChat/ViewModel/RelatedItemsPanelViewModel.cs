@@ -303,12 +303,9 @@ namespace LibUINormalChat.ViewModel {
         }
 
         private async Task UpdateViewAsync() {
-            await ContentItemCommands.ExtractTextsAsync([SelectedItem?.ContentItem], () => { }, async () => {
-                await Application.Current.Dispatcher.InvokeAsync(() => {
-                    SelectedItem?.UpdateView(MyTabControl);
-                    OnPropertyChanged(nameof(SelectedItem));
-                });
-            });
+            await ContentItemCommands.ExtractTextsAsync([SelectedItem?.ContentItem]);
+            SelectedItem?.UpdateView(MyTabControl);
+            OnPropertyChanged(nameof(SelectedItem));
         }
 
         // Itemsコレクションの変更に対応

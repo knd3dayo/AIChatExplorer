@@ -42,14 +42,12 @@ namespace LibUIPythonAI.ViewModel.Item {
             if (items == null || items.Count == 0) {
                 return;
             }
-            await CommonViewModelCommandExecutes.ExtractTextCommandExecute(items, () => {
-                CommandExecutes.UpdateIndeterminate(true);
-            }, () => {
-                LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
-                CommandExecutes.UpdateIndeterminate(false);
-                StatusText.Instance.UpdateInProgress(false);
-                CommandExecutes.UpdateView();
-            });
+            CommandExecutes.UpdateIndeterminate(true);
+            await CommonViewModelCommandExecutes.ExtractTextCommandExecute(items);
+            LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
+            CommandExecutes.UpdateIndeterminate(false);
+            StatusText.Instance.UpdateInProgress(false);
+            CommandExecutes.UpdateView();
         });
 
 
