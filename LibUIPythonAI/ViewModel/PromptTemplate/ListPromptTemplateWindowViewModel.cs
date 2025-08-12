@@ -176,12 +176,8 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
 
         // Excelへエクスポートする処理
 
-        public SimpleDelegateCommand<object> ExportToExcelCommand => new((obj) => {
-            string SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-PromptTemplate"   + ".xlsx";
-
-            //ファイルダイアログを表示
-
-
+        public SimpleDelegateCommand<object> ExportToExcelCommand => new(async (obj) => {
+            string SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-PromptTemplate" + ".xlsx";
             using var dialog = new CommonOpenFileDialog() {
                 Title = CommonStringResources.Instance.SelectFilePlease,
                 DefaultFileName = SelectedFileName,
@@ -192,16 +188,24 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 return;
             } else {
                 SelectedFileName = dialog.FileName;
-
-                Task.Run(() => {
-                    ImportExportUtil.ExportPromptItemsToExcel(SelectedFileName, PromptItems.Select( x => x.PromptItem).ToList());
-                });
+                try {
+                    await Task.Run(() => {
+                        ImportExportUtil.ExportPromptItemsToExcel(SelectedFileName, PromptItems.Select(x => x.PromptItem).ToList());
+                    });
+                    MainUITask.Run(() => {
+                        MessageBox.Show(CommonStringResources.Instance.ExportCompleted, CommonStringResources.Instance.Information, MessageBoxButton.OK, MessageBoxImage.Information);
+                    });
+                } catch (Exception ex) {
+                    MainUITask.Run(() => {
+                        MessageBox.Show(ex.ToString(), CommonStringResources.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                    });
+                    LogWrapper.Error(ex.ToString());
+                }
             }
         });
 
-        public SimpleDelegateCommand<object> ImportFromExcelCommand => new((obj) => {
+        public SimpleDelegateCommand<object> ImportFromExcelCommand => new(async (obj) => {
             string SelectedFileName = "";
-            //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
                 Title = CommonStringResources.Instance.SelectFilePlease,
                 InitialDirectory = @".",
@@ -212,12 +216,14 @@ namespace LibUIPythonAI.ViewModel.PromptTemplate {
                 return;
             } else {
                 SelectedFileName = dialog.FileName;
-                Task.Run(() => {
-                    ImportExportUtil.ImportPromptItemsFromExcel(SelectedFileName);
-                    MainUITask.Run(() => {
-                        ReloadCommand.Execute();
+                try {
+                    await Task.Run(() => {
+                        ImportExportUtil.ImportPromptItemsFromExcel(SelectedFileName);
                     });
-                });
+                    ReloadCommand.Execute();
+                } catch (Exception ex) {
+                    LogWrapper.Error(ex.Message);
+                }
             }
         });
     }

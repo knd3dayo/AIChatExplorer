@@ -736,6 +736,9 @@ namespace LibUIPythonAI.Resource {
         // "タグが既に存在します"
         public override string TagAlreadyExists { get; } = "タグが既に存在します";
 
+        // ExportCompleted
+        public override string ExportCompleted { get; } = "エクスポートが完了しました";
+
         // バージョン情報
         public override string VersionInformation { get; } = "バージョン情報";
 
@@ -755,6 +758,9 @@ namespace LibUIPythonAI.Resource {
 
         // 情報
         public override string Information { get; } = "情報";
+
+        // Error
+        public override string Error { get; } = "エラー";
 
         // "終了しますか?"
         public override string ConfirmExit { get; } = "終了しますか?";

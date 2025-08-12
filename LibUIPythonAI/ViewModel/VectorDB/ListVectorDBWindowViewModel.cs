@@ -89,21 +89,19 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
 
         // VectorDBItemのロード
-        public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
-            List<VectorDBItem> items = [];
-            Task.Run( () => {
-                // VectorDBItemのリストを取得
-                items = VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB);
-            }).ContinueWith((task) => {
+        public SimpleDelegateCommand<object> LoadVectorItemsCommand => new(async (parameter) => {
+            try {
+                var items = await Task.Run(() => VectorDBItem.GetVectorDBItems(IsShowSystemCommonVectorDB));
                 MainUITask.Run(() => {
-                    // VectorDBItemのリストを初期化
                     VectorDBItems.Clear();
                     foreach (var item in items) {
                         VectorDBItems.Add(new VectorDBItemViewModel(item));
                     }
                     OnPropertyChanged(nameof(VectorDBItems));
                 });
-            });
+            } catch (Exception ex) {
+                LogWrapper.Error(ex.Message);
+            }
         });
 
         // VectorDBList Sourceの追加

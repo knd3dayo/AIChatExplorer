@@ -44,11 +44,14 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
             try {
                 OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
                 CommonViewModelProperties.Instance.UpdateIndeterminate(true);
-                await Task.Run(async () => {
-                    await folder.SyncItemsAsync();
-                    await folderViewModel.LoadItemsAsync();
-                });
-            } finally {
+                await folder.SyncItemsAsync();
+                await folderViewModel.LoadItemsAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: 必要に応じてユーザー通知やログ出力を追加
+            }
+            finally {
                 CommonViewModelProperties.Instance.UpdateIndeterminate(false);
             }
 

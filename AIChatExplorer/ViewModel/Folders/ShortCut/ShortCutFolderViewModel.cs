@@ -42,19 +42,15 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ShortCutFolderViewModel> _children = [];
 
-            await Task.Run(async () => {
-                // RootFolderの場合は、ShortCutFolderを取得
-                if (Folder.IsRootFolder) {
-                    foreach (var child in await Folder.GetChildrenAsync<ShortCutFolder>(true)) {
-                        if (child == null) {
-                            continue;
-                        }
-                        ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                        _children.Add(childViewModel);
+            if (Folder.IsRootFolder) {
+                foreach (var child in await Folder.GetChildrenAsync<ShortCutFolder>(true)) {
+                    if (child == null) {
+                        continue;
                     }
-                    return;
+                    ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                    _children.Add(childViewModel);
                 }
-                // RootFolder以外の場合は、FileSystemFolderを取得 
+            } else {
                 foreach (var child in await Folder.GetChildrenAsync<FileSystemFolder>(true)) {
                     if (child == null) {
                         continue;
@@ -66,7 +62,7 @@ namespace AIChatExplorer.ViewModel.Folders.ShortCut {
                     }
                     _children.Add(childViewModel);
                 }
-            });
+            }
             Children = new ObservableCollection<ContentFolderViewModel>(_children);
             OnPropertyChanged(nameof(Children));
         }

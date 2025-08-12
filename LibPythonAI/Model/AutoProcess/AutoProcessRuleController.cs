@@ -54,56 +54,53 @@ namespace LibPythonAI.Model.AutoProcess {
                 }
             }
 
-            // ★TODO Implement processing based on automatic processing rules.
-            var task1 = Task.Run(() => {
-                // If AUTO_TAG is set, automatically set the tags
-                if (configParams.IsAutoTagEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTag);
-                    // ApplicationItem.CreateAutoTags(item);
-                }
-            });
-            var task2 = Task.Run( async () => {
-                // If AUTO_DESCRIPTION is set, automatically set the DisplayText
-                if (configParams.IsAutoTitleEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
-                    ContentItemCommands.CreateAutoTitle(item);
 
-                } else if (configParams.IsAutoTitleWithOpenAIEnabled()) {
+            var tasks = new List<Task>();
 
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
-                    await PromptItem.CreateAutoTitleWithOpenAIAsync(item);
-                }
-            });
-            var task3 = Task.Run(async () => {
-                // 背景情報
-                if (configParams.IsAutoBackgroundInfoEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
-                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-                }
-            });
-            var task4 = Task.Run(async () => {
-                // サマリー
-                if (configParams.IsAutoSummaryEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateSummary);
-                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
-                }
-            });
-            var task5 = Task.Run(async () => {
-                // Tasks
-                if (configParams.IsAutoGenerateTasksEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateTaskList);
-                    await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.TasksGeneration.ToString());
-                }
-            });
-            var task6 = Task.Run(async () => {
-                // Tasks
-                if (configParams.IsAutoDocumentReliabilityCheckEnabled()) {
-                    LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCheckDocumentReliability);
-                    await PromptItem.CheckDocumentReliability(item);
-                }
-            });
+            // If AUTO_TAG is set, automatically set the tags (CPUバウンド想定ならTask.Run、そうでなければ直接呼び出し)
+            if (configParams.IsAutoTagEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTag);
+                // ApplicationItem.CreateAutoTags(item); // CPUバウンドならTask.Runでラップ
+                // tasks.Add(Task.Run(() => ApplicationItem.CreateAutoTags(item)));
+            }
 
-            await Task.WhenAll(task1, task2, task3, task4, task5, task6);
+            // If AUTO_DESCRIPTION is set, automatically set the DisplayText
+            if (configParams.IsAutoTitleEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                ContentItemCommands.CreateAutoTitle(item);
+            } else if (configParams.IsAutoTitleWithOpenAIEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetTitle);
+                tasks.Add(PromptItem.CreateAutoTitleWithOpenAIAsync(item));
+            }
+
+            // 背景情報
+            if (configParams.IsAutoBackgroundInfoEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
+                tasks.Add(PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()));
+            }
+
+            // サマリー
+            if (configParams.IsAutoSummaryEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateSummary);
+                tasks.Add(PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.SummaryGeneration.ToString()));
+            }
+
+            // Tasks
+            if (configParams.IsAutoGenerateTasksEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCreateTaskList);
+                tasks.Add(PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.TasksGeneration.ToString()));
+            }
+
+            // Document Reliability Check
+            if (configParams.IsAutoDocumentReliabilityCheckEnabled()) {
+                LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoCheckDocumentReliability);
+                tasks.Add(PromptItem.CheckDocumentReliability(item));
+            }
+
+            if (tasks.Count > 0)
+            {
+                await Task.WhenAll(tasks);
+            }
 
             return item;
         }

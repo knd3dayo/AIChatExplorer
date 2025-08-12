@@ -43,31 +43,24 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<RecentFilesFolderViewModel> _children = [];
 
-            await Task.Run(async () => {
-                // RootFolderの場合は、ShortCutFolderを取得
-                if (Folder.IsRootFolder) {
-                    foreach (var child in await Folder.GetChildrenAsync<RecentFilesFolder>(true)) {
-                        if (child == null) {
-                            continue;
-                        }
-                        RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                        _children.Add(childViewModel);
-                    }
-                    return;
-                }
-                // RootFolder以外の場合は、FileSystemFolderを取得 
-                foreach (var child in await Folder.GetChildrenAsync<FileSystemFolder>(true)) {
-                    if (child == null) {
-                        continue;
-                    }
+            if (Folder.IsRootFolder) {
+                var childFolders = await Folder.GetChildrenAsync<RecentFilesFolder>(true);
+                foreach (var child in childFolders) {
+                    if (child == null) continue;
                     RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                    _children.Add(childViewModel);
+                }
+            } else {
+                var childFolders = await Folder.GetChildrenAsync<FileSystemFolder>(true);
+                foreach (var child in childFolders) {
+                    if (child == null) continue;
+                    RecentFilesFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                     if (nestLevel > 0) {
                         await childViewModel.LoadChildren(nestLevel - 1);
                     }
                     _children.Add(childViewModel);
                 }
-            });
+            }
             Children = new ObservableCollection<ContentFolderViewModel>(_children);
             OnPropertyChanged(nameof(Children));
         }

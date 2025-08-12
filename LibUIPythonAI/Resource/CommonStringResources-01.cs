@@ -748,8 +748,15 @@ namespace LibUIPythonAI.Resource {
         public virtual string TagIsEmpty { get; } = "Tag is empty";
         public virtual string TagAlreadyExists { get; } = "Tag already exists";
 
+        // ExportCompleted
+        public virtual string ExportCompleted { get; } = "Export completed";
+
         // **********************************************************************************
         public virtual string Information { get; } = "Information";
+
+        // Error
+        public virtual string Error { get; } = "Error";
+
         public virtual string ConfirmExit { get; } = "Confirm exit";
 
 

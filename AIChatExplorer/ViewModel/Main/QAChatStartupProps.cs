@@ -25,13 +25,23 @@ namespace AIChatExplorer.ViewModel.Main {
             if (!saveChatHistory) {
                 return;
             }
-            Task.Run(async () => {
+            _ = SaveChatHistoryAsync(itemWrapper, ActiveInstance);
+        }
+
+        private async Task SaveChatHistoryAsync(ContentItemWrapper itemWrapper, MainWindowViewModel ActiveInstance)
+        {
+            try
+            {
                 ContentFolderWrapper? chatFolder = (ContentFolderWrapper?)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel?.Folder;
-                if (chatFolder != null) {
+                if (chatFolder != null)
+                {
                     await ContentItemCommands.SaveChatHistoryAsync(itemWrapper, chatFolder);
                 }
-
-            });
+            }
+            catch (Exception ex)
+            {
+                // TODO: ログ出力やユーザー通知
+            }
         }
         public override void ExportChatCommand(List<ChatMessage> chatHistory) {
             FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, async (folder, finished) => {

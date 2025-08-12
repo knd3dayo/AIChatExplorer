@@ -305,28 +305,22 @@ namespace AIChatExplorer.ViewModel.Main {
                 return;
             }
             // 非同期でピン切り替え
-            System.Threading.Tasks.Task.Run(() => {
-                foreach (ContentItemViewModel applicationItemViewModel in SelectedItems) {
-                    Commands.ChangePinCommand.Execute();
-                }
-            });
+            foreach (ContentItemViewModel applicationItemViewModel in SelectedItems) {
+                Commands.ChangePinCommand.Execute();
+            }
         });
 
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
             // 非同期でファイルを開く
-            System.Threading.Tasks.Task.Run(() => {
-                Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
-            });
+            Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
         });
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
             // 非同期でベクトル生成
-            System.Threading.Tasks.Task.Run(() => {
-                SelectedFolder?.FolderCommands.GenerateVectorCommand.Execute(this.SelectedItems);
-            });
+            SelectedFolder?.FolderCommands.GenerateVectorCommand.Execute(this.SelectedItems);
         });
 
 

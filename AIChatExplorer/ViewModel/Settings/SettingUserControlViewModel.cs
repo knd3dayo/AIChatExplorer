@@ -534,10 +534,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             try {
                 CommonViewModelProperties.UpdateIndeterminate(true);
                 LogWrapper.Info($"{CommonStringResources.Instance.CheckingSettings}...");
-                string resultString = "";
-                await Task.Run(async () => {
-                    resultString = await CheckSetting();
-                });
+                string resultString = await CheckSetting();
                 CommonViewModelProperties.UpdateIndeterminate(false);
                 StatusText.Instance.Init();
                 // 結果をTestResultWindowで表示

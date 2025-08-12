@@ -74,28 +74,18 @@ namespace LibUIPythonAI.ViewModel.VectorDB {
 
         }
         // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
-            // TitleとContentの更新を反映
+        public SimpleDelegateCommand<Window> OKButtonCommand => new(async (window) => {
             if (ItemViewModel == null) {
                 return;
             }
-            Task.Run(async () => {
-                await ItemViewModel.Item.SaveAsync(); // Saveメソッドを非同期に変更
-                                                      // VectorDBの初期化
-                await LibPythonAI.Model.VectorDB.VectorDBItem.LoadItemsAsync(); // awaitを追加
-
-            }).ContinueWith((task) => {
-                if (task.IsFaulted) {
-                    LogWrapper.Error(task.Exception?.Message ?? "An error occurred.");
-                    return;
-                }
-                // 更新されたアイテムを返す
+            try {
+                await ItemViewModel.Item.SaveAsync();
+                await LibPythonAI.Model.VectorDB.VectorDBItem.LoadItemsAsync();
                 AfterUpdate(ItemViewModel);
-            });
-
-
-            // ウィンドウを閉じる
-            window.Close();
+                window.Close();
+            } catch (Exception ex) {
+                LogWrapper.Error(ex.Message);
+            }
         });
 
         // VectorDBTypeSelectionChangedCommand

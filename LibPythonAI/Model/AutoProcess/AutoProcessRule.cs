@@ -69,8 +69,8 @@ namespace LibPythonAI.Model.AutoProcess {
 
         private static List<AutoProcessRule> _items = [];
         public static async Task LoadItemsAsync() {
-            // 修正: 非同期メソッドで 'await' を使用
-            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetAutoProcessRulesAsync());
+            // PythonExecutor.PythonAIFunctions.GetAutoProcessRulesAsync() が非同期メソッドであれば直接awaitする
+            _items = await PythonExecutor.PythonAIFunctions.GetAutoProcessRulesAsync();
             if (_items != null) {
                 _isInitialized = true;
             }
@@ -82,21 +82,19 @@ namespace LibPythonAI.Model.AutoProcess {
             return _items;
         }
         //SaveAsync
-        public void SaveAsync() {
-            Task.Run(async () => {
-                // ConditionsJsonを更新
-                ConditionsJson = JsonSerializer.Serialize(Conditions, JsonUtil.JsonSerializerOptions);
-                // 優先順位が-1の場合は、最大の優先順位を取得して設定
-                if (Priority == -1) {
-                    var items = await GetItems();
-                    Priority = items.Count + 1;
-                }
-                await PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
-            });
+        public async Task SaveAsync() {
+            // ConditionsJsonを更新
+            ConditionsJson = JsonSerializer.Serialize(Conditions, JsonUtil.JsonSerializerOptions);
+            // 優先順位が-1の場合は、最大の優先順位を取得して設定
+            if (Priority == -1) {
+                var items = await GetItems();
+                Priority = items.Count + 1;
+            }
+            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
         // DeleteAsync
-        public void DeleteAsync() {
-            PythonExecutor.PythonAIFunctions.DeleteAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
+        public async Task DeleteAsync() {
+            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessRuleAsync(new AutoProcessRuleRequest(this));
         }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
@@ -136,7 +134,7 @@ namespace LibPythonAI.Model.AutoProcess {
                 return;
             }
             var DestinationFolder = await GetDestinationFolder();
-            ruleAction.Execute(applicationItem, DestinationFolder);
+            await ruleAction.ExecuteAsync(applicationItem, DestinationFolder);
         }
 
         public async Task<string> GetDescriptionString() {
@@ -282,7 +280,7 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                autoProcessRules[i].SaveAsync();
+                await autoProcessRules[i].SaveAsync();
             }
 
         }
@@ -304,7 +302,7 @@ namespace LibPythonAI.Model.AutoProcess {
             for (int i = 0; i < autoProcessRules.Count; i++) {
                 autoProcessRules[i].Priority = i + 1;
                 // 保存
-                autoProcessRules[i].SaveAsync();
+                await autoProcessRules[i].SaveAsync();
             }
         }
         // GetItemsByRuleName

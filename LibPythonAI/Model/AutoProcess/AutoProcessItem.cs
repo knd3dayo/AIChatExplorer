@@ -34,8 +34,8 @@ namespace LibPythonAI.Model.AutoProcess {
 
         private static List<AutoProcessItem> _items = [];
         public static async Task LoadItemsAsync() {
-            // 修正: 非同期メソッドで 'await' を使用
-            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetAutoProcessItemsAsync());
+            // PythonExecutor.PythonAIFunctions.GetAutoProcessItemsAsync() が非同期メソッドであれば直接awaitする
+            _items = await PythonExecutor.PythonAIFunctions.GetAutoProcessItemsAsync();
             if (_items != null) {
                 _isInitialized = true;
             }
@@ -59,12 +59,12 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // SaveAsync
-        public void SaveAsync() {
-             PythonExecutor.PythonAIFunctions.UpdateAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        public async Task SaveAsync() {
+            await PythonExecutor.PythonAIFunctions.UpdateAutoProcessItemAsync(new AutoProcessItemRequest(this));
         }
         // DeleteAsync
-        public void DeleteAsync() {
-             PythonExecutor.PythonAIFunctions.DeleteAutoProcessItemAsync(new AutoProcessItemRequest(this));
+        public async Task DeleteAsync() {
+            await PythonExecutor.PythonAIFunctions.DeleteAutoProcessItemAsync(new AutoProcessItemRequest(this));
         }
 
         // ToDict
@@ -96,11 +96,9 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
 
-        public Action<ContentItemWrapper> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
+        public Func<ContentItemWrapper, Task> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
             if (typeEnum == AutoProcessActionTypeEnum.Ignore) {
-                return (args) => {
-                    return;
-                };
+                return (args) => Task.CompletedTask;
             }
             if (typeEnum == AutoProcessActionTypeEnum.CopyToFolder) {
                 return async (args) => {
@@ -133,20 +131,17 @@ namespace LibPythonAI.Model.AutoProcess {
                 };
             }
 
-            return (args) => {
-                return;
-            };
+            return (args) => Task.CompletedTask;
         }
 
         public bool IsCopyOrMoveAction() {
             return TypeName == AutoProcessActionTypeEnum.CopyToFolder || TypeName == AutoProcessActionTypeEnum.MoveToFolder;
         }
 
-        public virtual void Execute(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
-
-            Action<ContentItemWrapper> action = GetAction(TypeName, destinationFolder);
-            action(applicationItem);
-
+        public virtual async Task ExecuteAsync(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder)
+        {
+            var action = GetAction(TypeName, destinationFolder);
+            await action(applicationItem);
         }
 
 

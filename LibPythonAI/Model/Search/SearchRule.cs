@@ -75,8 +75,14 @@ namespace LibPythonAI.Model.Search {
             // APIを呼び出して保存
             PythonExecutor.PythonAIFunctions.UpdateSearchRuleAsync(new SearchRuleRequest(this));
 
-            // Load
-            Task.Run(async () => { await LoadItemsAsync(); });
+            // Load（fire-and-forgetで例外もcatchしてログ出力）
+            _ = LoadItemsAsync().ContinueWith(t => {
+                if (t.Exception != null)
+                {
+                    // 必要に応じてログ出力
+                    System.Diagnostics.Debug.WriteLine($"LoadItemsAsync error: {t.Exception}");
+                }
+            }, System.Threading.CancellationToken.None, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted, System.Threading.Tasks.TaskScheduler.Default);
 
         }
 
