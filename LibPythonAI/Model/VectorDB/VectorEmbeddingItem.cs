@@ -71,7 +71,7 @@ namespace LibPythonAI.Model.VectorDB {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
-            // Parallelによる並列処理。4並列
+    
             ChatSettings chatSettings = new();
             ChatRequestContext chatRequestContext = new(chatSettings);
 

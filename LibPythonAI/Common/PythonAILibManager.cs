@@ -44,7 +44,7 @@ namespace LibPythonAI.Common {
             }
             try {
                 Instance = new PythonAILibManager(parmas);
-                // PythonExecutor initialization (background & parallel)
+                // PythonExecutor initialization 
                 Instance._initTask = Task.Run(() => Instance.InitPythonExecutor(parmas));
 
                 // Wait for initialization to complete. If not initialized in 3 minutes, throw exception

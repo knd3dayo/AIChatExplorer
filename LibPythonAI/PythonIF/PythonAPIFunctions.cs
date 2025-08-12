@@ -20,17 +20,14 @@ namespace LibPythonAI.PythonIF {
 
         private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
-        private static HttpClient CreateHttpClient() {
-            HttpClient client = new(new HttpClientHandler() {
-                UseProxy = false,
-                // 最大接続数を設定
-                MaxConnectionsPerServer = 2,
-            });
-            // タイムアウトを設定
-            client.Timeout = TimeSpan.FromMinutes(5);
 
-            return client;
-        }
+        // HttpClientはstaticで使い回す
+        private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler() {
+            UseProxy = false,
+            MaxConnectionsPerServer = 2,
+        }) {
+            Timeout = TimeSpan.FromMinutes(5)
+        };
 
         private string base_url;
         public PythonAPIFunctions(string base_url) {
@@ -44,8 +41,7 @@ namespace LibPythonAI.PythonIF {
             if (string.IsNullOrEmpty(requestJson))
                 throw new ArgumentNullException(nameof(requestJson));
             var data = new StringContent(requestJson, Encoding.UTF8, mediaType: "application/json");
-            using HttpClient client = CreateHttpClient();
-            var response = await client.PostAsync(endpoint, data).ConfigureAwait(false);
+            var response = await httpClient.PostAsync(endpoint, data).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
@@ -61,9 +57,7 @@ namespace LibPythonAI.PythonIF {
         // テスト用
         public static void ShutdownServer(string url) {
             // ClientでPOSTを実行
-            using HttpClient client = CreateHttpClient();
-            client.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
-
+            httpClient.PostAsync(url, new StringContent("{}", Encoding.UTF8, mediaType: "application/json"));
         }
 
         // ContentItem

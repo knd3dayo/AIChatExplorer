@@ -88,12 +88,14 @@ namespace LibPythonAI.Utils.ExportImport {
 
             await PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
-        public static async Task ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items, Action<ContentItemWrapper> afterImport) {
+        public static async Task<List<ContentItemWrapper>> ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
+
+            List<ContentItemWrapper> resultItems = [];
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
-                return;
+                return resultItems;
             }
             List<string> targetNames = [];
 
@@ -134,99 +136,72 @@ namespace LibPythonAI.Utils.ExportImport {
                     item.SourcePath = row[sourcePathIndex];
                 }
                 await item.SaveAsync();
-                afterImport(item);
+                resultItems.Add(item);
             }
+            return resultItems;
         }
 
-        public static void ImportFromURLList(List<ContentItemWrapper> items, Action<ContentItemWrapper> afterImport) {
-            // Parallel処理
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
-
-            Parallel.ForEach(items, parallelOptions, async item => {
-                // SourceTypeがUrl出ない場合は何もしない
-                if (item.SourceType != ContentSourceType.Url) {
-                    return;
-                }
-                // URLを取得
-                string url = item.SourcePath;
-                string tempFilePath = Path.GetTempFileName();
-                try {
-                    string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
-                    // 一時ファイルのパスを取得します
-
-                    // データを一時ファイルに書き込みます
-                    await System.IO.File.WriteAllTextAsync(tempFilePath, data);
-                    // 成功メッセージを表示します
-                    Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
-                    // 一時ファイルからテキスト抽出
-                    string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
-                    // itemのContentにTextを設定
-                    item.Content = text;
-
-                    await item.SaveAsync();
-                    afterImport(item);
-
-                } catch (Exception ex) {
-                    LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
-                } finally {
-                    // 一時ファイルを削除します
-                    System.IO.File.Delete(tempFilePath);
-                }
-            });
+        public static async Task ImportFromURLListAsync(List<ContentItemWrapper> items, Action<ContentItemWrapper> afterImport) {
+            var tasks = items
+                .Where(item => item.SourceType == ContentSourceType.Url)
+                .Select(async item => {
+                    string url = item.SourcePath;
+                    string tempFilePath = Path.GetTempFileName();
+                    try {
+                        string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
+                        await System.IO.File.WriteAllTextAsync(tempFilePath, data);
+                        Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
+                        string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
+                        item.Content = text;
+                        await item.SaveAsync();
+                        afterImport(item);
+                    } catch (Exception ex) {
+                        LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
+                    } finally {
+                        System.IO.File.Delete(tempFilePath);
+                    }
+                });
+            await Task.WhenAll(tasks);
         }
 
 
-        public static void ImportFromURLList(ContentFolderWrapper fromFolder, List<string> urls, Action<ContentItemWrapper> afterImport) {
-
-            // Parallel処理
-            ParallelOptions parallelOptions = new() {
-                MaxDegreeOfParallelism = 4
-            };
-            Parallel.ForEach(urls, parallelOptions, async url => {
-
+        public static async Task<List<ContentItemWrapper>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, List<string> urls) {
+            List<ContentItemWrapper> resultItems = [];
+            var tasks = urls.Select(async url => {
                 string tempFilePath = Path.GetTempFileName();
                 try {
                     string data = await PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
-                    // 一時ファイルのパスを取得します
-
-                    // データを一時ファイルに書き込みます
                     await System.IO.File.WriteAllTextAsync(tempFilePath, data);
-                    // 成功メッセージを表示します
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
-                    // 一時ファイルからテキスト抽出
                     string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
-
-                    // アイテムの作成
                     ContentItemWrapper item = new(fromFolder.Entity) {
                         Content = text,
                         Description = url,
                         SourcePath = url
                     };
                     await item.SaveAsync();
-                    afterImport(item);
-
+                    resultItems.Add(item);
                 } catch (Exception ex) {
                     LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
                 } finally {
-                    // 一時ファイルを削除します
                     System.IO.File.Delete(tempFilePath);
                 }
             });
+            await Task.WhenAll(tasks);
+            return resultItems;
         }
 
-        public static void ImportFromURLList(ContentFolderWrapper fromFolder, string filePath, Action<ContentItemWrapper> afterImport) {
-
+        public static async Task<List<ContentItemWrapper>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, string filePath) {
+            List<ContentItemWrapper> resultItems = [];
             // filePathのファイルが存在しない場合は何もしない
             if (System.IO.File.Exists(filePath) == false) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FileNotFound);
-                return;
+                return resultItems;
             }
             // ファイルからすべての行を読み込んでリストに格納します
             List<string> urls = new(System.IO.File.ReadAllLines(filePath));
-
-            ImportFromURLList(fromFolder, urls, afterImport);
+            resultItems = await ImportFromURLListAsync(fromFolder, urls);
+            return resultItems;
         }
 
         public static async Task ImportItemsFromJson(ContentFolderWrapper toFolder, string json) {

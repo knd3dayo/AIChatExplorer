@@ -115,17 +115,15 @@ namespace LibUIPythonAI.ViewModel.Common {
 
 
 
-        public void DownloadWebPageCommandExecute(ObservableCollection<ContentItemViewModel>? itemViewModels) {
+        public async Task DownloadWebPageCommandExecute(ObservableCollection<ContentItemViewModel>? itemViewModels) {
             if (itemViewModels == null || itemViewModels.Count == 0) {
                 return;
             }
             UpdateIndeterminate(true);
-            Task.Run(() => {
-                ImportExportUtil.ImportFromURLList(itemViewModels.Select(x => x.ContentItem).ToList(), (item) => {
-                    UpdateIndeterminate(false);
-                    StatusText.Instance.UpdateInProgress(false);
-                    UpdateView();
-                });
+            await ImportExportUtil.ImportFromURLListAsync(itemViewModels.Select(x => x.ContentItem).ToList(), (item) => {
+                UpdateIndeterminate(false);
+                StatusText.Instance.UpdateInProgress(false);
+                UpdateView();
             });
         }
 

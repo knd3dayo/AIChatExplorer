@@ -41,7 +41,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="18" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <!--  メニューバー  -->
@@ -172,15 +172,38 @@
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2" VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <DockPanel
+                Grid.Row="0"
                 Grid.Column="0"
                 Margin="10,0,0,10"
-                HorizontalAlignment="Left"
-                Visibility="{Binding FileSelectionButtonVisibility}">
+                HorizontalAlignment="Left">
+                <Button
+                    Width="100"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding OpenApplicationFolderWindowCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.SelectApplicationFolder}" />
+                <TextBox
+                    Width="300"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedApplicationFolderPath, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </DockPanel>
+            <DockPanel
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Left">
                 <Button
                     Width="100"
                     Margin="10,0,0,0"
@@ -196,25 +219,7 @@
                     TextWrapping="Wrap" />
             </DockPanel>
             <DockPanel
-                Grid.Column="0"
-                Margin="10,0,0,10"
-                HorizontalAlignment="Left"
-                Visibility="{Binding ApplicationFolderSelectionButtonVisibility}">
-                <Button
-                    Width="180"
-                    Margin="10,0,0,0"
-                    HorizontalAlignment="Left"
-                    Command="{Binding OpenApplicationFolderWindowCommand, Mode=OneTime}"
-                    Content="{x:Static res:ViewStringResources.SelectApplicationFolder}" />
-                <TextBox
-                    Width="300"
-                    Margin="10,0,0,0"
-                    HorizontalAlignment="Left"
-                    IsReadOnly="True"
-                    Text="{Binding SelectedApplicationFolderPath, Mode=OneWay}"
-                    TextWrapping="Wrap" />
-            </DockPanel>
-            <DockPanel
+                Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,0,0,10"
                 HorizontalAlignment="Right">

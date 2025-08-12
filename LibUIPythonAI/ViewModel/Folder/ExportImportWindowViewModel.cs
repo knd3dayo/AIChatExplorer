@@ -19,6 +19,9 @@ namespace LibUIPythonAI.ViewModel.Folder {
             OnPropertyChanged(nameof(ExportItems));
             ImportItems = CreateImportItems();
             OnPropertyChanged(nameof(ImportItems));
+            Task.Run(async() => {
+                SelectedApplicationFolderPath = await ApplicationFolderViewModel.Folder.GetContentFolderPath();
+            });
         }
         // ApplicationFolderViewModel
         public ContentFolderViewModel ApplicationFolderViewModel { get; set; }
@@ -65,8 +68,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
             set {
                 if (_selectedIndex != value) {
                     _selectedIndex = value;
-                    OnPropertyChanged(nameof(FileSelectionButtonVisibility));
-                    OnPropertyChanged(nameof(ApplicationFolderSelectionButtonVisibility));
                     OnPropertyChanged(nameof(CanExecuteOK));
                 }
             }
@@ -96,14 +97,6 @@ namespace LibUIPythonAI.ViewModel.Folder {
 
         // FileSelectionButtonVisibility
 
-        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(
-            SelectedIndex == ImportExportMode.ExportExcel ||
-            SelectedIndex == ImportExportMode.ImportExcel ||
-            SelectedIndex == ImportExportMode.ImportUrlList);
-
-        // ApplicationFolderSelectionButtonVisibility
-        public Visibility ApplicationFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == ImportExportMode.ExportExcel);
-
         // OKボタンの有効/無効判定
         public bool CanExecuteOK => !string.IsNullOrWhiteSpace(SelectedFileName);
 
@@ -126,11 +119,24 @@ namespace LibUIPythonAI.ViewModel.Folder {
                         break;
                     case ImportExportMode.ImportExcel:
                         // Excelインポート処理
-                        await ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems], afterImport);
+                        List<ContentItemWrapper> resultItems = await ImportExportUtil.ImportFromExcel(ApplicationFolderViewModel.Folder, SelectedFileName, [.. ImportItems]);
+                        foreach (var item in resultItems) {
+                            if (IsAutoProcessEnabled) {
+                                var item1 = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                                await item1.SaveAsync();
+                            }
+                        }
+
                         break;
                     case ImportExportMode.ImportUrlList:
                         // URLリストインポート処理
-                        ImportExportUtil.ImportFromURLList(ApplicationFolderViewModel.Folder, SelectedFileName, afterImport);
+                        resultItems = await ImportExportUtil.ImportFromURLListAsync(ApplicationFolderViewModel.Folder, SelectedFileName);
+                        foreach (var item in resultItems) {
+                            if (IsAutoProcessEnabled) {
+                                var item1 = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                                await item1.SaveAsync();
+                            }
+                        }
                         break;
                     default:
                         break;

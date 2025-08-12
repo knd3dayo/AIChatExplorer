@@ -7,7 +7,6 @@ using LibPythonAI.Utils.FileUtils;
 namespace AIChatExplorer.Model.Folders.Browser {
     public class RecentFilesFolder : FileSystemFolder {
 
-        private const int MaxParallelism = 4;
         // コンストラクタ
         public RecentFilesFolder() : base() {
             IsAutoProcessEnabled = false;
