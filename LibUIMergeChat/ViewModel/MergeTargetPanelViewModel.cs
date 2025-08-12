@@ -277,8 +277,7 @@ namespace LibUIMergeChat.ViewModel {
                 if (_selectedFolder == value) return;
                 _selectedFolder = value;
                 OnPropertyChanged(nameof(SelectedFolder));
-                if (value != null)
-                {
+                if (value != null) {
                     // 非同期処理の例外を握りつぶさないようTaskでラップ
                     _ = LoadSelectedFolderAsync(value);
                 }
@@ -288,26 +287,16 @@ namespace LibUIMergeChat.ViewModel {
         /// <summary>
         /// フォルダ選択時の非同期処理。例外はログ出力。
         /// </summary>
-        private async Task LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel)
-        {
-            try
-            {
-                await folderViewModel.LoadFolderExecuteAsync(
-                    beforeAction: () => { },
-                    afterAction: () => {
-                        // UIスレッドで実行が必要な場合はDispatcherを使う
-                        if (System.Windows.Application.Current?.Dispatcher?.CheckAccess() == false)
-                        {
-                            System.Windows.Application.Current.Dispatcher.Invoke(() => SelectFolderAction(folderViewModel));
-                        }
-                        else
-                        {
-                            SelectFolderAction(folderViewModel);
-                        }
-                    });
-            }
-            catch (Exception ex)
-            {
+        private async Task LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel) {
+            try {
+                await folderViewModel.LoadFolderExecuteAsync();
+                // UIスレッドで実行が必要な場合はDispatcherを使う
+                if (System.Windows.Application.Current?.Dispatcher?.CheckAccess() == false) {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => SelectFolderAction(folderViewModel));
+                } else {
+                    SelectFolderAction(folderViewModel);
+                }
+            } catch (Exception ex) {
                 // 例外をログ出力（LogWrapper等があればそちらを利用）
                 System.Diagnostics.Debug.WriteLine($"[LoadSelectedFolderAsync] {ex}");
             }
@@ -318,12 +307,9 @@ namespace LibUIMergeChat.ViewModel {
         /// <summary>
         /// TreeViewのSelectedItemChangedイベント用コマンド。型安全にキャストし、nullチェックを追加。
         /// </summary>
-        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) =>
-        {
-            if (routedEventArgs?.OriginalSource is TreeView treeView)
-            {
-                if (treeView.SelectedItem is ContentFolderViewModel applicationItemFolderViewModel)
-                {
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs?.OriginalSource is TreeView treeView) {
+                if (treeView.SelectedItem is ContentFolderViewModel applicationItemFolderViewModel) {
                     SelectedFolder = applicationItemFolderViewModel;
                 }
             }

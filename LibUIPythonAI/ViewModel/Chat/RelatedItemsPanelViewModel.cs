@@ -244,11 +244,8 @@ namespace LibUIPythonAI.ViewModel.Chat {
         }
 
         private async void LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel) {
-            await folderViewModel.LoadFolderExecuteAsync(
-                beforeAction: () => { },
-                afterAction: () => {
-                    SelectFolderAction(folderViewModel);
-                });
+            await folderViewModel.LoadFolderExecuteAsync();
+            SelectFolderAction(folderViewModel);
         }
         public ObservableCollection<ContentFolderViewModel> FolderViewModels { get; set; } = FolderViewModelManagerBase.FolderViewModels;
 

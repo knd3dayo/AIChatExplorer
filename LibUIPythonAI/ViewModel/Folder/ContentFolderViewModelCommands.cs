@@ -51,17 +51,14 @@ namespace LibUIPythonAI.ViewModel.Folder {
         });
 
         public virtual SimpleDelegateCommand<object> LoadFolderCommand => new(async (parameter) => {
-            await FolderViewModel.LoadFolderExecuteAsync(
-                () => {
-                    CommandExecutes.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        CommandExecutes.UpdateIndeterminate(false);
-                        FolderViewModel.UpdateStatusText();
-                    });
-                });
+            CommandExecutes.UpdateIndeterminate(true);
+            await FolderViewModel.LoadFolderExecuteAsync();
+            MainUITask.Run(() => {
+                CommandExecutes.UpdateIndeterminate(false);
+                FolderViewModel.UpdateStatusText();
+            });
         });
+
 
         // フォルダ編集コマンド
         public SimpleDelegateCommand<object> EditFolderCommand => new((parameter) => {

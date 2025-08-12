@@ -42,12 +42,10 @@ namespace LibUIPythonAI.ViewModel.Folder {
         }
 
         // フォルダを読み込む（async/await対応）
-        public virtual async Task LoadFolderExecuteAsync(Action beforeAction, Action afterAction) {
+        public virtual async Task LoadFolderExecuteAsync() {
             try {
-                beforeAction();
                 await LoadChildren(DefaultNextLevel);
                 await LoadItemsAsync();
-                afterAction();
             } catch (Exception ex) {
                 // エラー通知やログ出力を追加
                 System.Diagnostics.Debug.WriteLine($"LoadFolderExecuteAsync Error: {ex.Message}");

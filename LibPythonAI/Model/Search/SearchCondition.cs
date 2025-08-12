@@ -41,8 +41,8 @@ namespace LibPythonAI.Model.Search {
                 { "tags", Tags },
                 { "source_application_name", SourceApplicationName },
                 { "source_application_title", SourceApplicationTitle },
-                { "start_time", StartTime },
-                { "end_time", EndTime },
+                { "start_time_str", StartTime.ToString("o") },
+                { "end_time_str", EndTime.ToString("o") },
                 { "enable_start_time", EnableStartTime },
                 { "enable_end_time", EnableEndTime },
                 { "exclude_description", ExcludeDescription },
@@ -66,12 +66,12 @@ namespace LibPythonAI.Model.Search {
             if (dict.TryGetValue("tags", out dynamic? tags)) { searchCondition.Tags = tags ?? ""; }
             if (dict.TryGetValue("source_application_name", out dynamic? sourceApplicationName)) { searchCondition.SourceApplicationName = sourceApplicationName ?? ""; }
             if (dict.TryGetValue("source_application_title", out dynamic? sourceApplicationTitle)) { searchCondition.SourceApplicationTitle = sourceApplicationTitle ?? ""; }
-            if (dict.TryGetValue("start_time", out dynamic? startTime)) {
+            if (dict.TryGetValue("start_time_str", out dynamic? startTime)) {
                 // UTC文字列をDateTimeに変換
                 DateTime utcDateTime = DateTime.Parse(startTime, null, System.Globalization.DateTimeStyles.RoundtripKind); 
                 searchCondition.StartTime = utcDateTime; 
             }
-            if (dict.TryGetValue("end_time", out dynamic? endTime)) {
+            if (dict.TryGetValue("end_time_str", out dynamic? endTime)) {
                 // UTC文字列をDateTimeに変換
                 DateTime utcDateTime = DateTime.Parse(endTime, null, System.Globalization.DateTimeStyles.RoundtripKind);
                 searchCondition.EndTime = utcDateTime;

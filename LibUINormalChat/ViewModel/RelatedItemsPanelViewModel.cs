@@ -387,11 +387,8 @@ namespace LibUINormalChat.ViewModel {
         }
 
         private async void LoadSelectedFolderAsync(ContentFolderViewModel folderViewModel) {
-            await folderViewModel.LoadFolderExecuteAsync(
-                beforeAction: () => { },
-                afterAction: () => {
-                    SelectFolderAction(folderViewModel);
-                });
+            await folderViewModel.LoadFolderExecuteAsync();
+            SelectFolderAction(folderViewModel);
         }
 
         // フォルダが選択された時の処理

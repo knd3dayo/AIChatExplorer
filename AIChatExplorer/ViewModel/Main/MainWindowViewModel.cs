@@ -275,18 +275,14 @@ namespace AIChatExplorer.ViewModel.Main {
                 // 親フォルダを保存
                 rootFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // Load
-                await rootFolderViewModel.LoadFolderExecuteAsync(
-                () => {
-                    Commands.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        Commands.UpdateIndeterminate(false);
+                Commands.UpdateIndeterminate(true);
+                await rootFolderViewModel.LoadFolderExecuteAsync();
+                MainUITask.Run(() => {
+                    Commands.UpdateIndeterminate(false);
 
-                        MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
-                        // SelectedFolder に　SearchFolderViewModelを設定
-                        MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
-                    });
+                    MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
+                    // SelectedFolder に　SearchFolderViewModelを設定
+                    MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
                 });
 
             });
