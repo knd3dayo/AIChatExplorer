@@ -63,5 +63,7 @@ namespace LibUIImageChat.View {
 
         // Title
         public static string Title => CommonStringResources.Title;
+        // SplitRequestByImage
+        public static string SplitRequestByImage => CommonStringResources.SplitRequestByImage;
     }
 }

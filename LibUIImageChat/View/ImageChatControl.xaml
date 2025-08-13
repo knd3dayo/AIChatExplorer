@@ -182,26 +182,43 @@
             VerticalAlignment="Stretch"
             BorderBrush="Gray"
             BorderThickness="1" />
-        <StackPanel
-            Grid.Row="3"
-            Margin="0,0,0,0"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <Button
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.Column="0"
                 Margin="10,10,10,10"
-                Command="{Binding SendChatCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Send}" />
-            <Button
-                Margin="10,10,10,10"
-                Command="{Binding ClearChatCommand}"
-                Content="{x:Static res:ViewStringResources.Clear}" />
-            <Button
-                Margin="10,10,10,10"
-                Command="{Binding CloseCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Close}" />
-        </StackPanel>
+                HorizontalAlignment="Left"
+                Orientation="Horizontal">
+                <CheckBox
+                    Margin="0,0,10,0"
+                    Content="{x:Static res:ViewStringResources.SplitRequestByImage}"
+                    IsChecked="{Binding SplitRequestByImage}" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding SendChatCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Send}" />
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding ClearChatCommand}"
+                    Content="{x:Static res:ViewStringResources.Clear}" />
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Close}" />
+            </StackPanel>
+
+        </Grid>
         <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
         <ProgressBar
             Grid.Row="1"

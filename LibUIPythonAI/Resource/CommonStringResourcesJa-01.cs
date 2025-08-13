@@ -543,6 +543,8 @@ namespace LibUIPythonAI.Resource {
 
 
         // -- ImageCheck.MainWindow --
+        // SplitRequestByImage
+        public override string SplitRequestByImage { get; } = "画像ごとにリクエストを分割";
         // 画像ファイル選択
         public override string SelectImageFile { get; } = "画像ファイル選択";
 

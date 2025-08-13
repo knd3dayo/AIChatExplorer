@@ -648,6 +648,8 @@ namespace LibUIPythonAI.Resource {
         public virtual string Paste { get; } = "Paste";
 
         // -- ImageCheck.MainWindow --
+        // SplitRequestByImage
+        public virtual string SplitRequestByImage { get; } = "Split request by image";
         public virtual string SelectImageFile { get; } = "Select image file";
         public virtual string EditImageEvidenceCheckItem { get; } = "Edit image evidence check item";
         public virtual string Open { get; } = "Open";
