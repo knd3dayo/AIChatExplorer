@@ -3,13 +3,13 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIMain.View.Folder;
 using LibUIMain.ViewModel.Chat;
 using LibUIMain.ViewModel.Common;
 using LibUIMain.ViewModel.Folder;
 using AIChatExplorer.Model.Folders.Application;
-using LibPythonAI.Model.Folders;
+using LibMain.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
     public class IntegratedMonitorHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {

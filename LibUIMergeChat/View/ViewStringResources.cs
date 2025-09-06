@@ -1,6 +1,6 @@
 using LibUIMain.Resource;
 using LibUIMergeChat.Resources;
-using LibPythonAI.Resources;
+using LibMain.Resources;
 
 namespace LibUIMergeChat.View {
     public class ViewStringResources {

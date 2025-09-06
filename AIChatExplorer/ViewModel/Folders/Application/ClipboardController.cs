@@ -1,14 +1,14 @@
 using System.Reflection;
 using AIChatExplorer.Model.Folders.Application;
-using LibPythonAI.Common;
-using LibPythonAI.Model.AutoProcess;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Resources;
+using LibMain.Common;
+using LibMain.Model.AutoProcess;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.Resources;
 using LibUIMain.Resource;
 using LibUIMain.ViewModel.Common;
 using LibUIMain.Utils;
-using LibPythonAI.Utils.Common;
+using LibMain.Utils.Common;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 

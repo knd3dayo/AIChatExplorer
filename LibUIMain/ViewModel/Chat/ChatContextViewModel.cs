@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
+using LibMain.Model.Chat;
+using LibMain.PythonIF.Request;
 using LibUIMain.Utils;
 using LibUIMain.View.VectorDB;
 using LibUIMain.ViewModel.Folder;
@@ -75,8 +75,8 @@ namespace LibUIMain.ViewModel.Chat {
         // ScoreThreshold
         public float ScoreThreshold { get; set; } = 0.5f;
 
-        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
-        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
+        private ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -86,8 +86,8 @@ namespace LibUIMain.ViewModel.Chat {
             }
         }
 
-        private LibPythonAI.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
-        public LibPythonAI.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
+        private LibMain.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
+        public LibMain.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
             get {
                 return _selectedVectorSearchItem;
             }
@@ -123,7 +123,7 @@ namespace LibUIMain.ViewModel.Chat {
         private async Task InitVectorDBProperties() {
             VectorSearchProperties.Clear();
             if (_ragMode != RAGModeEnum.None) {
-                ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
+                ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> items = [];
                 // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
                 if (UseFolderVectorSearchItem) {
                     // フォルダのベクトルDBを取得

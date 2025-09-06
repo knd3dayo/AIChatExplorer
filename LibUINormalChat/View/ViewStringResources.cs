@@ -1,6 +1,6 @@
 using LibUIMain.Resource;
 using LibUINormalChat.Resources;
-using LibPythonAI.Resources;
+using LibMain.Resources;
 
 namespace LibUINormalChat.View {
     public class ViewStringResources {

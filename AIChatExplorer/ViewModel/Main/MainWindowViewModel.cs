@@ -9,7 +9,7 @@ using AIChatExplorer.View.Main;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
-using LibPythonAI.Model.Folders;
+using LibMain.Model.Folders;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.ViewModel.Folder;

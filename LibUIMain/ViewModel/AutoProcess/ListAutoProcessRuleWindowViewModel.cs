@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Model.AutoProcess;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.AutoProcess;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.AutoProcessRule;

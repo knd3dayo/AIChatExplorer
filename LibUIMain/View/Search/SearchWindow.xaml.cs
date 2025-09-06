@@ -1,7 +1,7 @@
 using System.Windows;
 using LibUIMain.ViewModel.Search;
-using LibPythonAI.Model.Search;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Search;
+using LibMain.Model.Content;
 
 namespace LibUIMain.View.Search {
     /// <summary>

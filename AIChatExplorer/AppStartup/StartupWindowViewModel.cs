@@ -4,10 +4,10 @@ using AIChatExplorer.View.Main;
 using AIChatExplorer.View.Settings;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
-using LibPythonAI.Common;
-using LibPythonAI.PythonIF;
-using LibPythonAI.Resources;
-using LibPythonAI.Utils.Common;
+using LibMain.Common;
+using LibMain.PythonIF;
+using LibMain.Resources;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 
 namespace AIChatExplorer.AppStartup {

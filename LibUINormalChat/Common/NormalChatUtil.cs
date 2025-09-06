@@ -1,7 +1,7 @@
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Utils.Python;
+using LibMain.Model.Chat;
+using LibMain.PythonIF.Request;
+using LibMain.PythonIF.Response;
+using LibMain.Utils.Python;
 
 namespace LibUINormalChat.Common {
     public class NormalChatUtil {

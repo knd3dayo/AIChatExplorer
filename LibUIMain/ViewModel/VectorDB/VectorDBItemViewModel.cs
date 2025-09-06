@@ -1,5 +1,5 @@
 using System.Windows;
-using LibPythonAI.Model.VectorDB;
+using LibMain.Model.VectorDB;
 using LibUIMain.Resource;
 
 namespace LibUIMain.ViewModel.VectorDB {

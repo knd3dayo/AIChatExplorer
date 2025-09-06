@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Resources;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.ExportImport;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.Model.VectorDB;
+using LibMain.Resources;
+using LibMain.Utils.Common;
+using LibMain.Utils.ExportImport;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.AutoProcessRule;

@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Tag;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.Content;
+using LibMain.Model.Tag;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Tag;

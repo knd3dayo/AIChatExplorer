@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibPythonAI.Model.Image;
+using LibMain.Model.Image;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.ViewModel;

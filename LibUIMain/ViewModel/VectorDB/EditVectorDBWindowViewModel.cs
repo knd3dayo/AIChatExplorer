@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.VectorDB;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 
@@ -80,7 +80,7 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
             try {
                 await ItemViewModel.Item.SaveAsync();
-                await LibPythonAI.Model.VectorDB.VectorDBItem.LoadItemsAsync();
+                await LibMain.Model.VectorDB.VectorDBItem.LoadItemsAsync();
                 AfterUpdate(ItemViewModel);
                 window.Close();
             } catch (Exception ex) {

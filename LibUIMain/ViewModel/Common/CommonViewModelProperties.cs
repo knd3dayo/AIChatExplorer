@@ -1,6 +1,6 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Common;
+using LibMain.Common;
 using LibUIMain.Control.Editor;
 
 namespace LibUIMain.ViewModel.Common {

@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Resources;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.Chat;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.Resources;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Item;

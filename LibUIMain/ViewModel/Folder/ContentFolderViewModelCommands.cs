@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.Content;
+using LibMain.Model.VectorDB;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Folder;

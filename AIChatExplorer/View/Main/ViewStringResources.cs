@@ -1,4 +1,4 @@
-using LibPythonAI.Resources;
+using LibMain.Resources;
 using LibUIMain.Resource;
 
 namespace AIChatExplorer.View.Main {

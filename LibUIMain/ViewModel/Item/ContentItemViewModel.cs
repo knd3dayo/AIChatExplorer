@@ -5,8 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Item;
@@ -151,9 +151,9 @@ namespace LibUIMain.ViewModel.Item {
 
         public Visibility TextVisibility => Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
 
-        public FlowDocument? MarkdownContent => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.Content) : null;
+        public FlowDocument? MarkdownContent => CommonViewModelProperties.MarkdownView ? LibMain.Utils.Common.Tools.CreateFlowDocument(ContentItem.Content) : null;
 
-        public FlowDocument? MarkdownChatItemsText => CommonViewModelProperties.MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ContentItem.ChatItemsText) : null;
+        public FlowDocument? MarkdownChatItemsText => CommonViewModelProperties.MarkdownView ? LibMain.Utils.Common.Tools.CreateFlowDocument(ContentItem.ChatItemsText) : null;
 
         // ContentType
         public ContentItemTypes.ContentItemTypeEnum ContentType => ContentItem.ContentType;

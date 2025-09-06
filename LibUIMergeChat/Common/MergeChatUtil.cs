@@ -1,9 +1,9 @@
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Content;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.Python;
+using LibMain.Model.Chat;
+using LibMain.Model.Content;
+using LibMain.PythonIF.Request;
+using LibMain.PythonIF.Response;
+using LibMain.Utils.Common;
+using LibMain.Utils.Python;
 using LibUIMain.Resource;
 using LibUIMain.ViewModel.Common;
 

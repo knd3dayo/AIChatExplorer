@@ -5,7 +5,7 @@ using LibUIMain.Resource;
 using LibUIMain.Utils;
 using AIChatExplorer.Model.Folders.ShortCut;
 using AIChatExplorer.Model.Folders.FileSystem;
-using LibPythonAI.Model.Folders;
+using LibMain.Model.Folders;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
     public class FileSystemFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : ApplicationFolderMenu(applicationFolderViewModel) {

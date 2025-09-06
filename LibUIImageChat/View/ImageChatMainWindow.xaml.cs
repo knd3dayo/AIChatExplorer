@@ -1,5 +1,5 @@
 using System.Windows;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIImageChat.ViewModel;
 
 namespace LibUIImageChat.View {

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.VectorDB;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.VectorDB;

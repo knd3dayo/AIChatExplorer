@@ -1,4 +1,4 @@
-using LibPythonAI.Resources;
+using LibMain.Resources;
 using LibUIMain.Resource;
 
 namespace LibUIMain.View.Chat {

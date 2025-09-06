@@ -2,9 +2,9 @@ using System.Windows;
 using LibUIMain.View.Folder;
 using LibUIMain.ViewModel.Folder;
 using LibUIMain.Utils;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Search;
-using LibPythonAI.Model.Content;
+using LibMain.Utils.Common;
+using LibMain.Model.Search;
+using LibMain.Model.Content;
 using LibUIMain.Resource;
 
 namespace LibUIMain.ViewModel.Search {

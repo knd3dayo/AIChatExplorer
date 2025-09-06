@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
     public class ShortCutFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : FileSystemFolderMenu(applicationFolderViewModel) {

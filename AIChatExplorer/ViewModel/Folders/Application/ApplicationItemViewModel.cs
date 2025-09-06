@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Settings;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIMain.ViewModel.Folder;
 using LibUIMain.ViewModel.Item;
 

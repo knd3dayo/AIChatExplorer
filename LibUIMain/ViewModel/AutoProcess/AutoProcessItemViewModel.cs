@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using LibPythonAI.Model.AutoProcess;
+using LibMain.Model.AutoProcess;
 using LibUIMain.Resource;
 
 namespace LibUIMain.ViewModel.AutoProcess {

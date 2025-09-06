@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
+    <ProjectReference Include="..\LibMain\LibMain.csproj" />
     <ProjectReference Include="..\LibUIMain\LibUIMain.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Windows;
-using LibPythonAI.Common;
-using LibPythonAI.Utils.Common;
+using LibMain.Common;
+using LibMain.Utils.Common;
 using LibUIMain.Utils;
 using MaterialDesignThemes.Wpf;
 

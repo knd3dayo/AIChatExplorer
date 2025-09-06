@@ -4,7 +4,7 @@ using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIMain.ViewModel.Common;
 using LibUIMain.ViewModel.Folder;
 

@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {

@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Data;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.ExportImport;
+using LibMain.Data;
+using LibMain.Model.Chat;
+using LibMain.Model.Prompt;
+using LibMain.Utils.Common;
+using LibMain.Utils.ExportImport;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.PromptTemplate;

@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
+using LibMain.Model.Chat;
+using LibMain.PythonIF.Request;
 using LibUIMain.Utils;
 using System.Windows.Controls;
 using LibUIMain.View.VectorDB;
@@ -83,8 +83,8 @@ namespace LibUIMain.ViewModel.Chat {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
 
-        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
-        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
+        private ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
+        public ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
             get {
                 return _vectorSearchProperties;
             }
@@ -118,8 +118,8 @@ namespace LibUIMain.ViewModel.Chat {
 
         public static ChatMessage? SelectedItem { get; set; }
 
-        private LibPythonAI.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
-        public LibPythonAI.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
+        private LibMain.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
+        public LibMain.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
             get {
                 return _selectedVectorSearchItem;
             }

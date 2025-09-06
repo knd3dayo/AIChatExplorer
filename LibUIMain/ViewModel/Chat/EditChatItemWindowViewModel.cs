@@ -3,7 +3,7 @@ using LibUIMain.Utils;
 using System.Windows;
 using System.ComponentModel;
 using LibUIMain.Resource;
-using LibPythonAI.Model.Chat;
+using LibMain.Model.Chat;
 
 namespace LibUIMain.ViewModel.Chat {
     public class EditChatItemWindowViewModel : CommonViewModelBase {
@@ -36,9 +36,9 @@ namespace LibUIMain.ViewModel.Chat {
         public double EditorFontSize => CommonViewModelProperties.EditorFontSize;
 
         // FlowDocument
-        public FlowDocument ContentFlowDocument => LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ChatItem.Content);
+        public FlowDocument ContentFlowDocument => LibMain.Utils.Common.Tools.CreateFlowDocument(ChatItem.Content);
 
-        public FlowDocument SourcesFlowDocument => LibPythonAI.Utils.Common.Tools.CreateFlowDocument(ChatItem.SourcesString);
+        public FlowDocument SourcesFlowDocument => LibMain.Utils.Common.Tools.CreateFlowDocument(ChatItem.SourcesString);
 
         // CloseButtonを押した時の処理
         public override SimpleDelegateCommand<object> CloseCommand => new((parameter) => {

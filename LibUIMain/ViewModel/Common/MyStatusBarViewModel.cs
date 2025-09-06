@@ -1,7 +1,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Common;
-using LibPythonAI.Utils.Common;
+using LibMain.Common;
+using LibMain.Utils.Common;
 using LibUIMain.Utils;
 
 namespace LibUIMain.ViewModel.Common {

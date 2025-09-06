@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.Prompt;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.ViewModel.Common;

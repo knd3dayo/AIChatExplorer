@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.VectorDB;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.Utils.Common;
+using LibMain.Model.Chat;
+using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Request;
+using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.ViewModel.Common;
@@ -19,8 +19,8 @@ namespace LibUIMain.ViewModel.VectorDB {
         }
 
         // VectorSearchItem
-        private LibPythonAI.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
-        public LibPythonAI.Model.VectorDB.VectorSearchItem? VectorSearchItem {
+        private LibMain.Model.VectorDB.VectorSearchItem? _VectorSearchItem;
+        public LibMain.Model.VectorDB.VectorSearchItem? VectorSearchItem {
             get => _VectorSearchItem;
             set {
                 UpdateVectorSearchItemAsync(value);
@@ -57,7 +57,7 @@ namespace LibUIMain.ViewModel.VectorDB {
         public ObservableCollection<VectorEmbeddingItem> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<LibPythonAI.Model.VectorDB.VectorSearchItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<LibMain.Model.VectorDB.VectorSearchItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
         private int _selectedTabIndex = MultiVectorRetrieverTabIndex;
@@ -167,7 +167,7 @@ namespace LibUIMain.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [];
+            List<LibMain.Model.VectorDB.VectorSearchItem> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {

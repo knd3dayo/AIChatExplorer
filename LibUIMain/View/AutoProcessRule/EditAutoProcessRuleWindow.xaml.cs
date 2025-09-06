@@ -12,7 +12,7 @@ namespace LibUIMain.View.AutoProcessRule {
             InitializeComponent();
         }
         public static void OpenEditAutoProcessRuleWindow(
-            LibPythonAI.Model.AutoProcess.AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModel, Action<LibPythonAI.Model.AutoProcess.AutoProcessRule> afterUpdate) {
+            LibMain.Model.AutoProcess.AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModel, Action<LibMain.Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
                 DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, rootFolderViewModel, afterUpdate)
             };

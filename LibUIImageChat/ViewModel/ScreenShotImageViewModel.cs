@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Image;
+using LibMain.Model.Image;
 using LibUIMain.Utils;
 
 namespace LibUIImageChat.ViewModel {

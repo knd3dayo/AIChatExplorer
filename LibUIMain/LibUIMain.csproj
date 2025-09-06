@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
+    <ProjectReference Include="..\LibMain\LibMain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

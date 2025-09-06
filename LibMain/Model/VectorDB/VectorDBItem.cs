@@ -1,0 +1,154 @@
+using System.Text.Json.Serialization;
+using LibMain.Common;
+using LibMain.PythonIF;
+using LibMain.Resources;
+
+namespace LibMain.Model.VectorDB {
+    /// <summary>
+    /// VectorDBのアイテム
+    /// </summary>
+    public class VectorDBItem {
+
+
+        // システム共通のベクトルDBの名前
+        public readonly static string SystemCommonVectorDBName = "default";
+        // デフォルトのコレクション名 
+        public readonly static string DefaultCollectionName = "ai_app_default_collection";
+        // フォルダーカタログのコレクション名 
+        public readonly static string FolderCatalogCollectionName = "ai_app_folder_catalog_collection";
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        // 名前
+        public string Name { get; set; } = "";
+        // 説明
+        public string Description { get; set; } = "";
+
+        // ベクトルDBのURL
+        public string VectorDBURL { get; set; } = "";
+
+        // マルチベクトルリトリーバを使うかどうか
+        public bool IsUseMultiVectorRetriever { get; set; } = false;
+
+        // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
+        public string DocStoreURL { get; set; } = "";
+
+        // ベクトルDBの種類を表す列挙型
+        [JsonIgnore]
+        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
+
+        // ベクトルDBの種類を表す文字列
+        public string VectorDBTypeString { get => Type.ToString(); }
+
+        // コレクション名
+        public string CollectionName { get; set; } = DefaultCollectionName;
+
+        // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
+        public int ChunkSize { get; set; } = 1024;
+
+        // ベクトル検索時の検索結果上限
+        public int DefaultSearchResultLimit { get; set; } = 10;
+
+        // スコアの閾値
+        public float DefaultScoreThreshold { get; set; } = 0.5f;
+
+        // 有効かどうか
+        [JsonIgnore]
+        public bool IsEnabled { get; set; } = false;
+
+        // システム用のフラグ
+        [JsonIgnore]
+        public bool IsSystem { get; set; } = false;
+
+
+        // SaveAsync
+        public async Task SaveAsync() {
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.UpdateVectorDBItemAsync(this));
+        }
+
+        // DeleteAsync
+        public async Task DeleteAsync() {
+
+            await Task.Run(() => PythonExecutor.PythonAIFunctions.DeleteVectorDBItemAsync(this));
+        }
+
+        private static bool _isInitialized = false;
+
+        private static List<VectorDBItem> _items = []; // 修正: 空のリストを初期化
+        public static async Task LoadItemsAsync() {
+            // 修正: 非同期メソッドで 'await' を使用
+            _items = await Task.Run(() => PythonExecutor.PythonAIFunctions.GetVectorDBItemsAsync());
+            if (_items != null) {
+                _isInitialized = true;
+            }
+        }
+
+        public VectorSearchItem CreateVectorSearchItem(string? folderId = null, string? folderPath = null) {
+            VectorSearchItem item = new(this) {
+                VectorDBItemName = this.Name,
+                Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
+                FolderId = folderId,
+                FolderPath = folderPath,
+                ScoreThreshold = this.DefaultScoreThreshold,
+                TopK = this.DefaultSearchResultLimit,
+            };
+            return item;
+        }
+
+        public static List<VectorDBItem> GetItems() {
+            if (!_isInitialized) {
+                // 初期化されていない場合は、非同期でロード
+                Task.Run(async () => { await LoadItemsAsync(); }).Wait();
+            }
+            return _items;
+        }
+
+        public static List<VectorDBItem> GetVectorDBItems(bool includeDefaultVectorDB) {
+            List<VectorDBItem> items = GetItems();
+            if (includeDefaultVectorDB) {
+                return items;
+            }
+            // システム共通のベクトルDBは除外する
+            return items.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName).ToList();
+
+        }
+
+        // GetItemById
+        public static VectorDBItem? GetItemById(string? id) {
+            List<VectorDBItem> items = GetItems();
+            // IDが一致するアイテムを取得
+            VectorDBItem? item = items.FirstOrDefault(i => i.Id == id);
+
+            return item;
+        }
+
+        // GetItemByName
+        public static VectorDBItem? GetItemByName(string? name) {
+            List<VectorDBItem> items = GetItems();
+            // 名前が一致するアイテムを取得
+            VectorDBItem? item = items.FirstOrDefault(i => i.Name == name);
+            return item;
+        }
+
+
+        // システム共通のベクトルDB
+        public static VectorDBItem GetDefaultVectorDB() {
+            var item = GetItemByName(SystemCommonVectorDBName);
+            if (item == null) {
+                throw new Exception(PythonAILibStringResourcesJa.Instance.VectorDBNotFound(SystemCommonVectorDBName));
+            }
+            return item!;
+        }
+
+        public static List<VectorDBItem> GetExternalVectorDBItems() {
+            List<VectorDBItem> allItems = GetItems();
+            List<VectorDBItem> result = [];
+            // システム共通のベクトルDBは除外する
+            result = allItems.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName).ToList();
+            return result;
+
+        }
+
+
+    }
+}

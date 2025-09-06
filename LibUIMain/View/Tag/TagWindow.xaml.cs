@@ -1,6 +1,6 @@
 using System.Windows;
 using LibUIMain.ViewModel.Tag;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 
 namespace LibUIMain.View.Tag
 {

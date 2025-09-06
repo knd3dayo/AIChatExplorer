@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Prompt;
+using LibMain.Model.Prompt;
 
 namespace LibUIMain.ViewModel.PromptTemplate {
     public class PromptItemViewModel : ObservableObject {

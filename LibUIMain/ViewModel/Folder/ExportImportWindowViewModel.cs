@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibPythonAI.Model.AutoProcess;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Utils.ExportImport;
+using LibMain.Model.AutoProcess;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.Utils.ExportImport;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Folder;

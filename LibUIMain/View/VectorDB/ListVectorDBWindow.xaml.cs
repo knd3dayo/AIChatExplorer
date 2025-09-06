@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIMain.ViewModel.Folder;
 using LibUIMain.ViewModel.VectorDB;
-using LibPythonAI.Model.VectorDB;
+using LibMain.Model.VectorDB;
 
 namespace LibUIMain.View.VectorDB
 {

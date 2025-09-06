@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF.Request;
+using LibMain.Model.Chat;
+using LibMain.PythonIF.Request;
 
 namespace LibUIMain.ViewModel.Chat {
     public class ChatHistoryViewModel : ObservableObject {

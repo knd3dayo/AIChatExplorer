@@ -1,4 +1,4 @@
-using LibPythonAI.Model.Tag;
+using LibMain.Model.Tag;
 using LibUIMain.Resource;
 
 namespace LibUIMain.ViewModel.Tag {

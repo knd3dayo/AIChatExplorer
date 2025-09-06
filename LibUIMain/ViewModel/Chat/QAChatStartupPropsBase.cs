@@ -1,5 +1,5 @@
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Chat;
+using LibMain.Model.Content;
 using LibUIMain.ViewModel.Folder;
 
 namespace LibUIMain.ViewModel.Chat {

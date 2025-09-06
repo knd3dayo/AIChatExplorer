@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibPythonAI.Common;
-using LibPythonAI.Model.Prompt;
+using LibMain.Common;
+using LibMain.Model.Prompt;
 using LibUIMain.Utils;
 
 namespace LibUIMain.ViewModel.Item {
@@ -29,7 +29,7 @@ namespace LibUIMain.ViewModel.Item {
             }
         }
 
-        public FlowDocument? MarkdownTextContent => MarkdownView ? LibPythonAI.Utils.Common.Tools.CreateFlowDocument(TextContent) : null;
+        public FlowDocument? MarkdownTextContent => MarkdownView ? LibMain.Utils.Common.Tools.CreateFlowDocument(TextContent) : null;
 
         public DataTable TableContent { get; set; }
 
