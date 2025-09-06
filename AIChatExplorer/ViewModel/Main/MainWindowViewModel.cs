@@ -10,10 +10,10 @@ using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
 using LibPythonAI.Model.Folders;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
     public partial class MainWindowViewModel : CommonViewModelBase {

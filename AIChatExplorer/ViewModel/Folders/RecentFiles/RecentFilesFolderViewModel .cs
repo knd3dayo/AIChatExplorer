@@ -5,8 +5,8 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class RecentFilesFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {

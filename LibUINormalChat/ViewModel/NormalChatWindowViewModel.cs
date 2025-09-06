@@ -1,7 +1,7 @@
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Chat;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Chat;
 
 namespace LibUINormalChat.ViewModel {
     public class NormalChatWindowViewModel : CommonViewModelBase {

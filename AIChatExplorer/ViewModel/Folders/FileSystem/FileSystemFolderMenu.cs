@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
 using AIChatExplorer.Model.Folders.ShortCut;
 using AIChatExplorer.Model.Folders.FileSystem;
 using LibPythonAI.Model.Folders;

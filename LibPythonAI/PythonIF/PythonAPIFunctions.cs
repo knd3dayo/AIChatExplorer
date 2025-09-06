@@ -84,7 +84,7 @@ namespace LibPythonAI.PythonIF {
             dynamic? dict = resultDict.GetValueOrDefault("content_item", null);
             if (dict == null)
                 return new ContentItemEntity();
-            // ContentItemWrapperを取得
+            // ContentItemを取得
             ContentItemResponse contentItemResponse = ContentItemResponse.FromDict(dict);
             return contentItemResponse.Entity;
         }
@@ -112,8 +112,8 @@ namespace LibPythonAI.PythonIF {
             return contentItems;
         }
         public async Task<List<ContentItemEntity>> GetContentItemsByFolderAsync(string folderId) {
-            ContentItemWrapper contentItemWrapper = new() { FolderId = folderId };
-            ContentItemRequest contentItemRequest = new(contentItemWrapper.Entity);
+            ContentItem contentItem = new() { FolderId = folderId };
+            ContentItemRequest contentItemRequest = new(contentItem.Entity);
             RequestContainer requestContainer = new() {
                 ContentItemRequestsInstance = [contentItemRequest]
             };

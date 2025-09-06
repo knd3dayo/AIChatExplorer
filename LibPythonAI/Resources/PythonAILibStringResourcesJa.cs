@@ -3,7 +3,7 @@ using LibPythonAI.Common;
 namespace LibPythonAI.Resources {
     public class PythonAILibStringResourcesJa: PythonAILibStringResources {
 
-        #region LibUIPythonAIからコピー
+        #region LibUIMainからコピー
         // クリップボード
         public override string Application { get; } = "アプリケーション";
 

@@ -4,13 +4,13 @@ using LibPythonAI.PythonIF.Request;
 using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.Resource;
+using LibUIMain.ViewModel.Common;
 
 namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
         public static async Task<ChatResponse> MergeChat(
-            ChatRequestContext context, List<ContentItemWrapper> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList = null)
+            ChatRequestContext context, List<ContentItem> items, string preProcessPrompt, string postProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList = null)
         {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
             List<ChatResponse> preProcessResults = await PreProcess(items, context, preProcessPrompt, sessionToken, targetDataList);
@@ -21,7 +21,7 @@ namespace LibUIMergeChat.Common {
             return postProcessResult ?? new ChatResponse();
         }
         // ContentItemとExportImportItemを受け取り、対象データを取得する
-        private static async Task<string> GetTargetData(ContentItemWrapper contentItem, List<ContentItemDataDefinition>? targetDataList)
+        private static async Task<string> GetTargetData(ContentItem contentItem, List<ContentItemDataDefinition>? targetDataList)
         {
             if (targetDataList == null)
             {
@@ -53,7 +53,7 @@ namespace LibUIMergeChat.Common {
             return sb.ToString();
         }
 
-        private static async Task<List<ChatResponse>> PreProcess(List<ContentItemWrapper> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList)
+        private static async Task<List<ChatResponse>> PreProcess(List<ContentItem> items, ChatRequestContext context, string preProcessPrompt, string sessionToken, List<ContentItemDataDefinition>? targetDataList)
         {
             var preProcessResults = new List<ChatResponse>();
 

@@ -7,11 +7,11 @@ using LibPythonAI.Common;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class MainPanelViewModel : CommonViewModelBase {
@@ -57,10 +57,10 @@ namespace AIChatExplorer.ViewModel.Main {
 
 
         // PropertiesVisibility
-        public Visibility PropertiesVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties);
+        public Visibility PropertiesVisibility => LibUIMain.Utils.Tools.BoolToVisibility(ShowProperties);
 
         // MarkdownViewVisibility
-        public Visibility MarkdownViewVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+        public Visibility MarkdownViewVisibility => LibUIMain.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
 
     }
 

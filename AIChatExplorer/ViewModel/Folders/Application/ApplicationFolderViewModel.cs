@@ -6,16 +6,16 @@ using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.Item;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.View.Item;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
     public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ContentFolderViewModel(applicationItemFolder, Commands) {
-        public override ApplicationItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+        public override ApplicationItemViewModel CreateItemViewModel(ContentItem item) {
             return new ApplicationItemViewModel(this, item);
         }
 
@@ -84,7 +84,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ApplicationItemViewModel itemViewModel) {
-                    ContentItemWrapper applicationItem = itemViewModel.ContentItem;
+                    ContentItem applicationItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
                         await applicationItem.MoveToAsync(toFolder.Folder);

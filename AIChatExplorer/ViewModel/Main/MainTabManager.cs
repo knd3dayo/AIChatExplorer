@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
 
 namespace AIChatExplorer.ViewModel.Main {
 

@@ -5,9 +5,9 @@ using LibPythonAI.Model.AutoProcess;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.Utils;
+using LibUIMain.Resource;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.Utils;
 using LibPythonAI.Utils.Common;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
@@ -59,13 +59,13 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
         // Application monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard _clipboard;
-        private Action<ContentItemWrapper> _afterClipboardChanged = (parameter) => { };
+        private Action<ContentItem> _afterClipboardChanged = (parameter) => { };
 
         /// <summary>
         /// Start clipboard monitoring
         /// </summary>
         /// <param name="afterClipboardChanged"></param>
-        public void Start(ApplicationFolder contentFolder, Action<ContentItemWrapper> afterClipboardChanged) {
+        public void Start(ApplicationFolder contentFolder, Action<ContentItem> afterClipboardChanged) {
             // Set the folder to save clipboard history
             Folder = contentFolder;
             _afterClipboardChanged = afterClipboardChanged;
@@ -83,7 +83,7 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
         /// Copy the content of ContentItem to the clipboard
         /// </summary>
         /// <param name="item"></param>
-        public void SetDataObject(ContentItemWrapper item) {
+        public void SetDataObject(ContentItem item) {
             // System.Windows.MessageBox.Show(item.Path);
 
             IsClipboardMonitorEnabled = false;
@@ -214,7 +214,7 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
             return result;
         }
 
-        public static void ProcessClipboardItem(ClipboardChangedEventArgs e, ApplicationFolder folder, Action<ContentItemWrapper> _afterClipboardChanged) {
+        public static void ProcessClipboardItem(ClipboardChangedEventArgs e, ApplicationFolder folder, Action<ContentItem> _afterClipboardChanged) {
 
             // Get the cut/copied text.
             List<ApplicationItem> items = CreateApplicationItem(folder, e);
@@ -251,7 +251,7 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="_afterClipboardChanged"></param>
-        public static void ProcessApplicationItem(ContentItemWrapper item, Action<ContentItemWrapper> _afterClipboardChanged) {
+        public static void ProcessApplicationItem(ContentItem item, Action<ContentItem> _afterClipboardChanged) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
             // Execute in a separate thread
@@ -262,7 +262,7 @@ namespace AIChatExplorer.Model.Folders.ClipboardHistory {
                 });
                 try {
                     // Apply automatic processing
-                    ContentItemWrapper updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                    ContentItem updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                     if (updatedItemTask == null) {
                         // If the item is ignored, return
                         return;

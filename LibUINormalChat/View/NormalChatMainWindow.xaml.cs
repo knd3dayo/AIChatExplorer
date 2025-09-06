@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
+using LibUIMain.ViewModel.Folder;
 using LibUINormalChat.ViewModel;
-using LibUIPythonAI.ViewModel.Chat;
+using LibUIMain.ViewModel.Chat;
 
 namespace LibUINormalChat.View {
     /// <summary>

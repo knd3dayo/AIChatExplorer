@@ -2,13 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryItemViewModel : ApplicationItemViewModel {
 
         // コンストラクタ
-        public EdgeBrowseHistoryItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
+        public EdgeBrowseHistoryItemViewModel(ContentFolderViewModel folderViewModel, ContentItem applicationItem) : base(folderViewModel, applicationItem) {
 
             ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
@@ -28,7 +28,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
 
         // Copy
         public override EdgeBrowseHistoryItemViewModel Copy() {
-            ContentItemWrapper newItem = ContentItem.Copy();
+            ContentItem newItem = ContentItem.Copy();
             return new EdgeBrowseHistoryItemViewModel(FolderViewModel, newItem);
         }
 

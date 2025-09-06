@@ -15,7 +15,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // Command to open a folder
-        public static void OpenFolderInExplorer(ContentItemWrapper contentItem) {
+        public static void OpenFolderInExplorer(ContentItem contentItem) {
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentItemTypes.ContentItemTypeEnum.Files) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.CannotOpenFolderForNonFileContent);
@@ -44,14 +44,14 @@ namespace LibPythonAI.Model.Content {
 
 
         // OpenAIを使用してイメージからテキスト抽出する。
-        public static async Task ExtractImageWithOpenAIAsync(ContentItemWrapper item) {
+        public static async Task ExtractImageWithOpenAIAsync(ContentItem item) {
             await ExtractTextAsync(item);
         }
 
 
 
         // テキストを抽出する
-        public static async Task ExtractTextAsync(ContentItemWrapper item) {
+        public static async Task ExtractTextAsync(ContentItem item) {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
@@ -77,7 +77,7 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public static async Task ExtractTextsAsync(List<ContentItemWrapper> items) {
+        public static async Task ExtractTextsAsync(List<ContentItem> items) {
             int count = items.Count;
             if (count == 0) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.NoItemSelected);
@@ -107,7 +107,7 @@ namespace LibPythonAI.Model.Content {
 
 
         // ベクトルを更新する
-        public static async Task DeleteEmbeddingsAsync(List<ContentItemWrapper> items) {
+        public static async Task DeleteEmbeddingsAsync(List<ContentItem> items) {
             var tasks = items.Select(async item => {
                 var vectorDBItem = await item.GetMainVectorSearchItemAsync();
                 string? vectorDBItemName = vectorDBItem.VectorDBItemName;
@@ -128,7 +128,7 @@ namespace LibPythonAI.Model.Content {
         }
 
         // Embeddingを更新する
-        public static async Task UpdateEmbeddingsAsync(List<ContentItemWrapper> items, Action beforeAction, Action afterAction) {
+        public static async Task UpdateEmbeddingsAsync(List<ContentItem> items, Action beforeAction, Action afterAction) {
             beforeAction();
             var tasks = items.Select(async item => {
                 // VectorDBItemを取得
@@ -152,7 +152,7 @@ namespace LibPythonAI.Model.Content {
             afterAction();
         }
 
-        public static void CreateAutoTitle(ContentItemWrapper item) {
+        public static void CreateAutoTitle(ContentItem item) {
             // TextとImageの場合
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text || item.ContentType == ContentItemTypes.ContentItemTypeEnum.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";
@@ -169,11 +169,11 @@ namespace LibPythonAI.Model.Content {
             }
         }
 
-        public static async Task SaveChatHistoryAsync(ContentItemWrapper contentItem, ContentFolderWrapper chatFolder) {
+        public static async Task SaveChatHistoryAsync(ContentItem contentItem, ContentFolderWrapper chatFolder) {
 
             await contentItem.SaveAsync();
             // チャット履歴用のItemの設定
-            ContentItemWrapper chatHistoryItem = contentItem.Copy();
+            ContentItem chatHistoryItem = contentItem.Copy();
             chatHistoryItem.Entity.FolderId = chatFolder.Id;
             // 更新日時を更新
             chatHistoryItem.Entity.UpdatedAt = DateTime.Now;

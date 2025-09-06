@@ -3,10 +3,10 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.View.Folder;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Model.Folders;
@@ -32,7 +32,7 @@ namespace AIChatExplorer.ViewModel.Folders.ScreenShot {
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
-            ContentItemWrapper applicationItem = new(Folder.Entity);
+            ContentItem applicationItem = new(Folder.Entity);
             ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
             QAChatStartupPropsBase props = new QAChatStartupProps(applicationItemViewModel.ContentItem);
             LibUINormalChat.View.NormalChatWindow.OpenWindow(props);

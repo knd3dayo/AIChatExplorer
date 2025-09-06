@@ -3,10 +3,10 @@ using AIChatExplorer.Model.Folders.Search;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Search;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Search;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.Utils;
+using LibUIMain.View.Search;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Search {
     public class SearchFolderViewModel(SearchFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
@@ -66,11 +66,11 @@ namespace AIChatExplorer.ViewModel.Folders.Search {
                 throw new InvalidOperationException("LoadItemsAsync: Folder の型が SearchFolder ではありません。");
             }
             var items = await searchFolder.GetItems();
-            List<ContentItemWrapper> sortedItems = items.OrderByDescending(x => x.UpdatedAt).ToList();
+            List<ContentItem> sortedItems = items.OrderByDescending(x => x.UpdatedAt).ToList();
             MainUITask.Run(() =>
             {
                 Items.Clear();
-                foreach (ContentItemWrapper item in sortedItems)
+                foreach (ContentItem item in sortedItems)
                 {
                     Items.Add(CreateItemViewModel(item));
                 }

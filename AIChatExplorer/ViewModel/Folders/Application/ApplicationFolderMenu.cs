@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
     public class ApplicationFolderMenu : ObservableObject {

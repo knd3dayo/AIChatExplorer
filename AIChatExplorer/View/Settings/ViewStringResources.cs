@@ -1,4 +1,4 @@
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.View.Settings {
     public class ViewStringResources {

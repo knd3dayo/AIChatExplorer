@@ -3,7 +3,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
 
 namespace AIChatExplorer.Model.Folders.Browser {
-    public class RecentFilesItem : ContentItemWrapper {
+    public class RecentFilesItem : ContentItem {
 
         
         public override RecentFilesItem Copy() {

@@ -13,9 +13,9 @@ using AIChatExplorer.ViewModel.Folders.Search;
 using AIChatExplorer.ViewModel.Folders.ShortCut;
 using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Folders;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class FolderViewModelManager : FolderViewModelManagerBase {
@@ -89,7 +89,7 @@ namespace AIChatExplorer.ViewModel.Main {
             return null;
         }
 
-        public override async Task<ContentItemViewModel?> CreateItemViewModel(ContentItemWrapper item) {
+        public override async Task<ContentItemViewModel?> CreateItemViewModel(ContentItem item) {
             // ConentFolderWrapperを取得
             ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ApplicationFolder>(item.FolderId);
             if (folder == null) {

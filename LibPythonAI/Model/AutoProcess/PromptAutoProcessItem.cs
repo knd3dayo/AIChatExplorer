@@ -15,7 +15,7 @@ namespace LibPythonAI.Model.AutoProcess {
         public PromptItem PromptItemEntity { get; set; }
 
 
-        public override async Task ExecuteAsync(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder) {
+        public override async Task ExecuteAsync(ContentItem applicationItem, ContentFolderWrapper? destinationFolder) {
             ChatRequest chatRequest = new();
             // PromptItemを取得
             var folder = await applicationItem.GetFolderAsync();

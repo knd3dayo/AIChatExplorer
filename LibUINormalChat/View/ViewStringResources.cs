@@ -1,4 +1,4 @@
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 using LibUINormalChat.Resources;
 using LibPythonAI.Resources;
 

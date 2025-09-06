@@ -11,16 +11,16 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIImageChat.View;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.ViewModel.PromptTemplate;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.PromptTemplate;
+using LibUIMain.ViewModel.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatWindowViewModel : CommonViewModelBase {
         // コンストラクタ
-        public ImageChatWindowViewModel(ContentItemWrapper applicationItem, Action afterUpdate) {
+        public ImageChatWindowViewModel(ContentItem applicationItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             ApplicationItem = applicationItem;
             OnPropertyChanged(nameof(Description));
@@ -31,7 +31,7 @@ namespace LibUIImageChat.ViewModel {
         public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
 
         // データ保存用のApplicationItem
-        public ContentItemWrapper ApplicationItem { get; set; }
+        public ContentItem ApplicationItem { get; set; }
 
         // 更新後の処理
         public Action AfterUpdate { get; set; } = () => { };

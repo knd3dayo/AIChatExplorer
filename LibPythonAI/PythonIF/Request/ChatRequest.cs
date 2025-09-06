@@ -59,7 +59,7 @@ namespace LibPythonAI.PythonIF.Request {
             if (relatedItems.SendRelatedItemsOnlyFirstRequest && ChatHistory.Count > 1) {
                 return;
             }
-            // ContentItemWrapperのリストとContentItemDataDefinitionのリストを受け取り、ChatHistoryに追加する
+            // ContentItemのリストとContentItemDataDefinitionのリストを受け取り、ChatHistoryに追加する
             List<(ContentItemTypes.ContentItemTypeEnum, string)> values = await ChatUtil.CreatePromptTextByRelatedItems(relatedItems);
             StringBuilder sb = new();
             foreach (var value in values) {

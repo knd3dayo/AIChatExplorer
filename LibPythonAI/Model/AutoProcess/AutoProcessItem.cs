@@ -96,7 +96,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
 
-        public Func<ContentItemWrapper, Task> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
+        public Func<ContentItem, Task> GetAction(AutoProcessActionTypeEnum typeEnum, ContentFolderWrapper? destinationFolder) {
             if (typeEnum == AutoProcessActionTypeEnum.Ignore) {
                 return (args) => Task.CompletedTask;
             }
@@ -108,7 +108,7 @@ namespace LibPythonAI.Model.AutoProcess {
                     }
 
                     LogWrapper.Info($"{PythonAILibStringResourcesJa.Instance.CopyToFolderDescription}:{destinationFolder.FolderName}");
-                    ContentItemWrapper newItem = args.Copy();
+                    ContentItem newItem = args.Copy();
                     // Folderに追加
                     await destinationFolder.AddItemAsync(newItem);
                 };
@@ -126,8 +126,8 @@ namespace LibPythonAI.Model.AutoProcess {
             }
             if (typeEnum == AutoProcessActionTypeEnum.ExtractText) {
                 return async (args) => {
-                    List<ContentItemWrapper> contentItemWrappers = [args];
-                    await ContentItemCommands.ExtractTextsAsync(contentItemWrappers);
+                    List<ContentItem> contentItem = [args];
+                    await ContentItemCommands.ExtractTextsAsync(contentItem);
                 };
             }
 
@@ -138,7 +138,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return TypeName == AutoProcessActionTypeEnum.CopyToFolder || TypeName == AutoProcessActionTypeEnum.MoveToFolder;
         }
 
-        public virtual async Task ExecuteAsync(ContentItemWrapper applicationItem, ContentFolderWrapper? destinationFolder)
+        public virtual async Task ExecuteAsync(ContentItem applicationItem, ContentFolderWrapper? destinationFolder)
         {
             var action = GetAction(TypeName, destinationFolder);
             await action(applicationItem);

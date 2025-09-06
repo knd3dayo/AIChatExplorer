@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
     public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {

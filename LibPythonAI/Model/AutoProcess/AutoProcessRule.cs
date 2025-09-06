@@ -98,7 +98,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
-        public bool IsMatch(ContentItemWrapper applicationItem) {
+        public bool IsMatch(ContentItem applicationItem) {
             if (Conditions.Count == 0) {
                 return false;
             }
@@ -116,7 +116,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public async Task RunActionAsync(ContentItemWrapper applicationItem) {
+        public async Task RunActionAsync(ContentItem applicationItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(PythonAILibStringResourcesJa.Instance.RuleNameIsInvalid(RuleName));

@@ -4,7 +4,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
-    public class FileSystemItem : ContentItemWrapper {
+    public class FileSystemItem : ContentItem {
 
         public static List<string> TargetMimeTypes { get; set; } = [
             "text/",

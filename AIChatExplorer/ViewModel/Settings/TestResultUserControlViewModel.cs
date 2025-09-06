@@ -1,8 +1,8 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
 
 namespace AIChatExplorer.ViewModel.Settings {
     internal class TestResultUserControlViewModel : ObservableObject {

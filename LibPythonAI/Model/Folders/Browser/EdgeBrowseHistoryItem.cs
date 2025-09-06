@@ -3,7 +3,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
 
 namespace AIChatExplorer.Model.Folders.Browser {
-    public class EdgeBrowseHistoryItem : ContentItemWrapper {
+    public class EdgeBrowseHistoryItem : ContentItem {
 
         
         public override EdgeBrowseHistoryItem Copy() {

@@ -58,7 +58,7 @@ namespace LibPythonAI.Utils.ExportImport {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ApplicationItemのリスト要素毎に処理を行う
-            foreach (var applicationItem in await fromFolder.GetItemsAsync<ContentItemWrapper>(isSync: false)) {
+            foreach (var applicationItem in await fromFolder.GetItemsAsync<ContentItem>(isSync: false)) {
                 List<string> row = [];
                 bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
@@ -88,9 +88,9 @@ namespace LibPythonAI.Utils.ExportImport {
 
             await PythonExecutor.PythonAIFunctions.ExportToExcelAsync(fileName, dataTable);
         }
-        public static async Task<List<ContentItemWrapper>> ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
+        public static async Task<List<ContentItem>> ImportFromExcel(ContentFolderWrapper fromFolder, string fileName, List<ContentItemDataDefinition> items) {
 
-            List<ContentItemWrapper> resultItems = [];
+            List<ContentItem> resultItems = [];
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = await PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
@@ -119,7 +119,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     continue;
                 }
 
-                ContentItemWrapper item = new(fromFolder.Entity);
+                ContentItem item = new(fromFolder.Entity);
                 // TitleのIndexが-1以外の場合は、row[TitleのIndex]をTitleに設定。Row.Countが足りない場合は空文字を設定
                 int titleIndex = targetNames.IndexOf("Title");
                 if (titleIndex != -1) {
@@ -141,7 +141,7 @@ namespace LibPythonAI.Utils.ExportImport {
             return resultItems;
         }
 
-        public static async Task ImportFromURLListAsync(List<ContentItemWrapper> items, Action<ContentItemWrapper> afterImport) {
+        public static async Task ImportFromURLListAsync(List<ContentItem> items, Action<ContentItem> afterImport) {
             var tasks = items
                 .Where(item => item.SourceType == ContentSourceType.Url)
                 .Select(async item => {
@@ -165,8 +165,8 @@ namespace LibPythonAI.Utils.ExportImport {
         }
 
 
-        public static async Task<List<ContentItemWrapper>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, List<string> urls) {
-            List<ContentItemWrapper> resultItems = [];
+        public static async Task<List<ContentItem>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, List<string> urls) {
+            List<ContentItem> resultItems = [];
             var tasks = urls.Select(async url => {
                 string tempFilePath = Path.GetTempFileName();
                 try {
@@ -174,7 +174,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     await System.IO.File.WriteAllTextAsync(tempFilePath, data);
                     Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
                     string text = await PythonExecutor.PythonAIFunctions.ExtractFileToTextAsync(tempFilePath);
-                    ContentItemWrapper item = new(fromFolder.Entity) {
+                    ContentItem item = new(fromFolder.Entity) {
                         Content = text,
                         Description = url,
                         SourcePath = url
@@ -191,8 +191,8 @@ namespace LibPythonAI.Utils.ExportImport {
             return resultItems;
         }
 
-        public static async Task<List<ContentItemWrapper>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, string filePath) {
-            List<ContentItemWrapper> resultItems = [];
+        public static async Task<List<ContentItem>> ImportFromURLListAsync(ContentFolderWrapper fromFolder, string filePath) {
+            List<ContentItem> resultItems = [];
             // filePathのファイルが存在しない場合は何もしない
             if (System.IO.File.Exists(filePath) == false) {
                 LogWrapper.Error(PythonAILibStringResourcesJa.Instance.FileNotFound);
@@ -222,7 +222,7 @@ namespace LibPythonAI.Utils.ExportImport {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ContentItemWrapper? item = ContentItemWrapper.FromJson(jsonString);
+                ContentItem? item = ContentItem.FromJson(jsonString);
 
                 if (item == null) {
                     continue;

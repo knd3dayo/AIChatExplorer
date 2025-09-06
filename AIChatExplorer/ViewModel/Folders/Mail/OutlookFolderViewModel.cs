@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Outlook;
 using AIChatExplorer.ViewModel.Folders.Application;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {
     public class OutlookFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {

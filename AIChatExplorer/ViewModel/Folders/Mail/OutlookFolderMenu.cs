@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
 using AIChatExplorer.Model.Folders.Outlook;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {
     public class OutlookFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : ApplicationFolderMenu(applicationFolderViewModel) {

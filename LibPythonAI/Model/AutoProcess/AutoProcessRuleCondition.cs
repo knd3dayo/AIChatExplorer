@@ -105,7 +105,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         //ApplicationItemのDescriptionが指定したキーワードを含むかどうか
-        public bool IsDescriptionContains(ContentItemWrapper applicationItem, string keyword) {
+        public bool IsDescriptionContains(ContentItem applicationItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
             if (applicationItem.Description == null) {
                 return false;
@@ -118,7 +118,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         }
         //ApplicationItemのContentが指定したキーワードを含むかどうか
-        public bool IsContentContains(ContentItemWrapper applicationItem, string keyword) {
+        public bool IsContentContains(ContentItem applicationItem, string keyword) {
             // ContentがNullの場合はFalseを返す
             if (applicationItem.Content == null) {
                 return false;
@@ -126,7 +126,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return applicationItem.Content.Contains(keyword);
         }
         // ApplicationItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationNameContains(ContentItemWrapper applicationItem, string keyword) {
+        public bool IsSourceApplicationNameContains(ContentItem applicationItem, string keyword) {
             // SourceApplicationNameがnullの場合は、falseを返す
             if (applicationItem.SourceApplicationName == null) {
                 return false;
@@ -134,7 +134,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return applicationItem.SourceApplicationName.Contains(keyword);
         }
         // ApplicationItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationTitleContains(ContentItemWrapper applicationItem, string keyword) {
+        public bool IsSourceApplicationTitleContains(ContentItem applicationItem, string keyword) {
             // SourceApplicationTitleがnullの場合は、falseを返す
             if (applicationItem.SourceApplicationTitle == null) {
                 return false;
@@ -142,7 +142,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return applicationItem.SourceApplicationTitle.Contains(keyword);
         }
         // ApplicationItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationPathContains(ContentItemWrapper applicationItem, string keyword) {
+        public bool IsSourceApplicationPathContains(ContentItem applicationItem, string keyword) {
             // SourceApplicationPathがnullの場合は、falseを返す
             if (applicationItem.SourceApplicationPath == null) {
                 return false;
@@ -151,7 +151,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // ApplicationItemのContentの行数が指定した行数以上かどうか
-        public bool IsContentLineCountOver(ContentItemWrapper applicationItem) {
+        public bool IsContentLineCountOver(ContentItem applicationItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
@@ -163,7 +163,7 @@ namespace LibPythonAI.Model.AutoProcess {
             return applicationItem.Content.Split('\n').Length >= MinLineCount;
         }
         // ApplicationItemのContentの行数が指定した行数以下かどうか
-        public bool IsContentLineCountUnder(ContentItemWrapper applicationItem) {
+        public bool IsContentLineCountUnder(ContentItem applicationItem) {
             // MaxLineCountが-1の場合はTrueを返す
             if (MaxLineCount == -1) {
                 return true;
@@ -177,7 +177,7 @@ namespace LibPythonAI.Model.AutoProcess {
 
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
-        public bool CheckCondition(ContentItemWrapper applicationItem) {
+        public bool CheckCondition(ContentItem applicationItem) {
             return Type switch {
                 ConditionTypeEnum.DescriptionContains => IsDescriptionContains(applicationItem, Keyword),
                 ConditionTypeEnum.ContentContains => IsContentContains(applicationItem, Keyword),
@@ -190,7 +190,7 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // ContentTypeIsの条件にマッチするかどうか
-        public bool CheckContentTypeIs(ContentItemWrapper applicationItem) {
+        public bool CheckContentTypeIs(ContentItem applicationItem) {
             if (ContentTypes.Contains(applicationItem.ContentType) == false) {
                 return false;
             }

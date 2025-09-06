@@ -3,7 +3,7 @@ using System.Windows;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Utils;
+using LibUIMain.Utils;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class AIChatExplorerPythonAILibConfigParams : IPythonAILibConfigParams {

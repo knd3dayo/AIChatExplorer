@@ -258,7 +258,7 @@ namespace LibPythonAI.Model.Prompt {
 
 
 
-        public static async Task ExecutePromptTemplateAsync(List<ContentItemWrapper> items, PromptItem promptItem, Action beforeAction, Action afterAction)
+        public static async Task ExecutePromptTemplateAsync(List<ContentItem> items, PromptItem promptItem, Action beforeAction, Action afterAction)
         {
             // promptNameからDescriptionを取得
             string description = promptItem.Description;
@@ -288,7 +288,7 @@ namespace LibPythonAI.Model.Prompt {
             LogWrapper.Info(PythonAILibStringResources.Instance.PromptTemplateExecuted(description));
         }
         // ExecuteSystemDefinedPromptを実行する
-        public static async Task CreateChatResultAsync(ContentItemWrapper item, string promptName) {
+        public static async Task CreateChatResultAsync(ContentItem item, string promptName) {
             // システム定義のPromptItemを取得
 
             PromptItem promptItem = PromptItem.GetPromptItemByName(promptName) ?? throw new Exception("PromptItem not found");
@@ -297,7 +297,7 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
-        public static async Task CreateChatResultAsync(ContentItemWrapper item, PromptItem promptItem) {
+        public static async Task CreateChatResultAsync(ContentItem item, PromptItem promptItem) {
 
             // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
             string contentText;
@@ -416,7 +416,7 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // OpenAIを使用してタイトルを生成する
-        public static async Task CreateAutoTitleWithOpenAIAsync(ContentItemWrapper item) {
+        public static async Task CreateAutoTitleWithOpenAIAsync(ContentItem item) {
             // ContentTypeがTextの場合
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
                 var items = GetPromptItems();
@@ -439,7 +439,7 @@ namespace LibPythonAI.Model.Prompt {
         }
 
         // 文章の信頼度を判定する
-        public async static Task CheckDocumentReliability(ContentItemWrapper item) {
+        public async static Task CheckDocumentReliability(ContentItem item) {
 
             await CreateChatResultAsync(item, SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得

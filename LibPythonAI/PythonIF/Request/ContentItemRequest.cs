@@ -5,9 +5,9 @@ namespace LibPythonAI.PythonIF.Request {
     public class ContentItemRequest(ContentItemEntity entity) {
         public ContentItemEntity Entity { get; set; } = entity;
 
-        public ContentItemWrapper ContentItem {
+        public ContentItem ContentItem {
             get {
-                ContentItemWrapper item = new() {
+                ContentItem item = new() {
                     Entity = Entity
                 };
                 return item;

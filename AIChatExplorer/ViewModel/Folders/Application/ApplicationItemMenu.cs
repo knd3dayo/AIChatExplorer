@@ -4,10 +4,10 @@ using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
     public class ApplicationItemMenu : CommonViewModelBase {

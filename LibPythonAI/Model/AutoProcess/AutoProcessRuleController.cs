@@ -28,7 +28,7 @@ namespace LibPythonAI.Model.AutoProcess {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        public static async Task<ContentItemWrapper> ApplyGlobalAutoActionAsync(ContentItemWrapper item) {
+        public static async Task<ContentItem> ApplyGlobalAutoActionAsync(ContentItem item) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
@@ -106,9 +106,9 @@ namespace LibPythonAI.Model.AutoProcess {
         }
 
         // 自動処理を適用する処理
-        public static async Task<ContentItemWrapper?> ApplyFolderAutoAction(ContentItemWrapper item) {
+        public static async Task<ContentItem?> ApplyFolderAutoAction(ContentItem item) {
 
-            ContentItemWrapper? result = item;
+            ContentItem? result = item;
             // AutoProcessRulesを取得
             var folder = await item.GetFolderAsync();
             var AutoProcessRules = await GetAutoProcessRules(folder);

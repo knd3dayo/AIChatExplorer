@@ -78,10 +78,10 @@ namespace AIChatExplorer.Model.Folders.Browser {
             }
 
             // 4. DBから既存アイテムを取得（IsSync=falseで無限ループ防止）
-            List<ContentItemWrapper> items = await GetItemsAsync<ContentItemWrapper>(false);
+            List<ContentItem> items = await GetItemsAsync<ContentItem>(false);
 
             // 5. 既存アイテムをURLでDictionary化
-            Dictionary<string, ContentItemWrapper> itemUrlIdDict = [];
+            Dictionary<string, ContentItem> itemUrlIdDict = [];
             foreach (var item in items) {
                 itemUrlIdDict[item.SourcePath] = item;
             }
@@ -107,11 +107,11 @@ namespace AIChatExplorer.Model.Folders.Browser {
             var addUrls = historyUrlDict.Keys.Except(itemUrlIdDict.Keys).ToList(); // DBに存在しない履歴
             var updateUrls = historyUrlDict.Keys.Intersect(itemUrlIdDict.Keys).ToList(); // DBに存在する履歴
 
-            // 8. 新規追加分のContentItemWrapperリストを作成
+            // 8. 新規追加分のContentItemリストを作成
             var addContentItems = addUrls.Select(url => {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime lastVisitTimeDateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                return new ContentItemWrapper(this.Entity) {
+                return new ContentItem(this.Entity) {
                     Description = title,
                     SourcePath = url,
                     SourceType = ContentSourceType.Url,
@@ -120,13 +120,13 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 };
             }).ToList();
             // 9. 新規追加分を一括保存
-            await ContentItemWrapper.SaveItemsAsync(addContentItems);
+            await ContentItem.SaveItemsAsync(addContentItems);
 
-            // 10. 更新が必要なContentItemWrapperリストを作成
-            var updateContentItems = updateUrls.Select(url => {
+            // 10. 更新が必要なContentItemリストを作成
+            List<ContentItem?> updateContentItems = updateUrls.Select(url => {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
-                ContentItemWrapper contentItem = itemUrlIdDict[url];
+                ContentItem contentItem = itemUrlIdDict[url];
                 if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;
                     return contentItem;
@@ -135,7 +135,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             }).Where(x => x != null).ToList();
             // 11. 更新分を一括保存
             if (updateContentItems.Count > 0) {
-                await ContentItemWrapper.SaveItemsAsync(updateContentItems);
+                await ContentItem.SaveItemsAsync(updateContentItems);
             }
 
         }

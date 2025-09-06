@@ -8,12 +8,12 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUINormalChat.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Chat;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.PromptTemplate;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Chat;
+using LibUIMain.View.PromptTemplate;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.PromptTemplate;
 using NLog;
 
 namespace LibUINormalChat.ViewModel {
@@ -106,8 +106,8 @@ namespace LibUINormalChat.ViewModel {
         }
 
         // SelectedContextItem
-        private ContentItemWrapper? _SelectedContextItem = null;
-        public ContentItemWrapper? SelectedContextItem {
+        private ContentItem? _SelectedContextItem = null;
+        public ContentItem? SelectedContextItem {
             get {
                 return _SelectedContextItem;
             }
@@ -143,10 +143,10 @@ namespace LibUINormalChat.ViewModel {
         }
 
 
-        public Visibility MarkdownVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
-        public Visibility TextVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
+        public Visibility MarkdownVisibility => LibUIMain.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
+        public Visibility TextVisibility => LibUIMain.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
         // DebugCommandVisibility
-        public Visibility DebugCommandVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
+        public Visibility DebugCommandVisibility => LibUIMain.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
 
 
 
@@ -236,7 +236,7 @@ namespace LibUINormalChat.ViewModel {
         public SimpleDelegateCommand<Window> SaveAndCloseCommand => new((window) => {
 
             // ChatRequestの内容をContentItemに保存
-            ContentItemWrapper contentItem = QAChatStartupPropsInstance.GetContentItem();
+            ContentItem contentItem = QAChatStartupPropsInstance.GetContentItem();
             contentItem.ChatItems.Clear();
             foreach (var item in ChatHistoryViewModel.ChatHistory) {
                 contentItem.ChatItems.Add(item);
@@ -324,7 +324,7 @@ namespace LibUINormalChat.ViewModel {
         }
         private ChatRelatedItems CreateChateRelatedItems() {
             // 参照アイテム情報を設定
-            List<ContentItemWrapper> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
+            List<ContentItem> items = RelatedItemSummaryDataGridViewModel.Items.Select(x => x.ContentItem).ToList();
             List<ContentItemDataDefinition> dataDefinitions = RelatedItemsPanelViewModel.DataDefinitions.Where(x => x.IsChecked).ToList();
             bool sendRelatedItemsOnlyFirstRequest = ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequest == 0;
 

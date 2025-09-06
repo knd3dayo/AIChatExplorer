@@ -1,16 +1,16 @@
 using AIChatExplorer.Model.Folders.Application;
 using LibPythonAI.Model.Chat;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.View.Folder;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Folder;
 
 
 namespace AIChatExplorer.ViewModel.Main {
 
-    public class QAChatStartupProps(ContentItemWrapper applicationItem) : QAChatStartupPropsBase {
+    public class QAChatStartupProps(ContentItem applicationItem) : QAChatStartupPropsBase {
 
-        public override ContentItemWrapper GetContentItem() {
+        public override ContentItem GetContentItem() {
             return applicationItem;
         }
 
@@ -19,7 +19,7 @@ namespace AIChatExplorer.ViewModel.Main {
             return MainWindowViewModel.Instance.RootFolderViewModelContainer;
         }
 
-        public override void SaveCommand(ContentItemWrapper itemWrapper, bool saveChatHistory) {
+        public override void SaveCommand(ContentItem itemWrapper, bool saveChatHistory) {
             // SaveCommand is set in the constructor
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             if (!saveChatHistory) {
@@ -28,7 +28,7 @@ namespace AIChatExplorer.ViewModel.Main {
             _ = SaveChatHistoryAsync(itemWrapper, ActiveInstance);
         }
 
-        private async Task SaveChatHistoryAsync(ContentItemWrapper itemWrapper, MainWindowViewModel ActiveInstance)
+        private async Task SaveChatHistoryAsync(ContentItem itemWrapper, MainWindowViewModel ActiveInstance)
         {
             try
             {

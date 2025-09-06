@@ -92,15 +92,15 @@ namespace LibPythonAI.Model.Search {
             PythonExecutor.PythonAIFunctions.DeleteSearchRuleAsync(new SearchRuleRequest(this));
         }
 
-        public async Task<List<ContentItemWrapper>> SearchItems() {
-            List<ContentItemWrapper> result = [];
+        public async Task<List<ContentItem>> SearchItems() {
+            List<ContentItem> result = [];
             // GlobalSearchの場合は全フォルダを検索
             if (IsGlobalSearch) {
-                return await ContentItemWrapper.SearchAll(SearchCondition);
+                return await ContentItem.SearchAll(SearchCondition);
             }
             var targetFolder = await GetTargetFolder();
             if (targetFolder != null) {
-                return await ContentItemWrapper.Search(SearchCondition, targetFolder, IsIncludeSubFolder);
+                return await ContentItem.Search(SearchCondition, targetFolder, IsIncludeSubFolder);
             }
             return result;
         }

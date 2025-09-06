@@ -4,7 +4,7 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.VectorDB;
 
 namespace AIChatExplorer.Model.Folders.Outlook {
-    public class OutlookItem : ContentItemWrapper {
+    public class OutlookItem : ContentItem {
 
         // EntryIDの名前
         public const string EntryIDName = "EntryID";

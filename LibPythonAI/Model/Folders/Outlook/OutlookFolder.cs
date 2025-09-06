@@ -146,11 +146,11 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
             // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
-            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
+            var items = await base.GetItemsAsync<ContentItem>(false);
             // folder内のFolderNameとContentFolderのDictionary
-            Dictionary<string, ContentItemWrapper> folderPathIdDict = [];
+            Dictionary<string, ContentItem> folderPathIdDict = [];
             foreach (var item in items) {
-                if (item is ContentItemWrapper outlookFolder) {
+                if (item is ContentItem outlookFolder) {
                     folderPathIdDict[outlookFolder.FolderName] = outlookFolder;
                 }
             }
@@ -159,7 +159,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
             // Exceptで差集合を取得
             var deleteFolderNames = folderPathIdDict.Keys.Except(outlookFolderNames);
             foreach (var deleteFolderName in deleteFolderNames) {
-                ContentItemWrapper deleteFolder = folderPathIdDict[deleteFolderName];
+                ContentItem deleteFolder = folderPathIdDict[deleteFolderName];
                 await deleteFolder.DeleteAsync();
             }
 

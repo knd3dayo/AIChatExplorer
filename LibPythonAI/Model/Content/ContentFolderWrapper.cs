@@ -183,12 +183,12 @@ namespace LibPythonAI.Model.Content {
         }
 
 
-        public async Task<List<T>> GetItemsAsync<T>(bool isSync = true) where T : ContentItemWrapper {
+        public async Task<List<T>> GetItemsAsync<T>(bool isSync = true) where T : ContentItem {
             if (isSync) {
                 // SyncItemsAsync
                 await SyncItemsAsync();
             }
-            List<T> items = await ContentItemWrapper.GetItemsAsync<T>(this);
+            List<T> items = await ContentItem.GetItemsAsync<T>(this);
             return items;
         }
 
@@ -288,7 +288,7 @@ namespace LibPythonAI.Model.Content {
 
 
 
-        public virtual async Task AddItemAsync(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
+        public virtual async Task AddItemAsync(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
             // itemにFolderIdを設定
             item.Entity.FolderId = Id;
 

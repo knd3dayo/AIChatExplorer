@@ -306,7 +306,7 @@ namespace LibPythonAI.Utils.Common {
         }
 
 
-        public static void OpenApplicationItemContent(ContentItemWrapper item) {
+        public static void OpenApplicationItemContent(ContentItem item) {
 
             ProcessUtil.OpenTempTextFile(item.Content,  (process) => { }, async (content) => {
                 // プロセス終了時にItemに開いた内容を保存
@@ -316,7 +316,7 @@ namespace LibPythonAI.Utils.Common {
 
         }
 
-        public static void OpenApplicationItemFile(ContentItemWrapper item, bool openAsNew = false) {
+        public static void OpenApplicationItemFile(ContentItem item, bool openAsNew = false) {
             // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
             if (string.IsNullOrEmpty(item.SourcePath)) {
                 // BitmapImageがNullでない場合はファイルを開く

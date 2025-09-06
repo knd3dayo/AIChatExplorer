@@ -5,7 +5,7 @@ namespace LibPythonAI.Model.Chat {
 
 
         // 関連アイテム情報を設定
-        public List<ContentItemWrapper> ContentItems { get; set; } = [];
+        public List<ContentItem> ContentItems { get; set; } = [];
         public List<ContentItemDataDefinition> DataDefinitions { get; set; } = [];
 
         //　初回のリクエスト時のみ関連アイテムを送信するかどうか
@@ -27,7 +27,7 @@ namespace LibPythonAI.Model.Chat {
             if (dict.TryGetValue("content_item_ids", out var contentItemIdsObj) && contentItemIdsObj is List<object> contentItemIds) {
                 foreach (var itemId in contentItemIds) {
                     if (itemId is string id) {
-                        ContentItemWrapper? contentItem = await ContentItemWrapper.GetItemAsync<ContentItemWrapper>(id);
+                        ContentItem? contentItem = await ContentItem.GetItemAsync<ContentItem>(id);
                         if (contentItem != null) {
                             relatedItems.ContentItems.Add(contentItem);
                         }

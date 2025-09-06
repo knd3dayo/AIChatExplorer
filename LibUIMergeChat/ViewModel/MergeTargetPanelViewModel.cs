@@ -4,11 +4,11 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Item;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Item;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 
 namespace LibUIMergeChat.ViewModel {
@@ -49,7 +49,7 @@ namespace LibUIMergeChat.ViewModel {
         // PropertiesVisibility
         public Visibility PropertiesVisibility {
             get {
-                return LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties);
+                return LibUIMain.Utils.Tools.BoolToVisibility(ShowProperties);
             }
         }
 

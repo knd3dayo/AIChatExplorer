@@ -2,7 +2,7 @@ using System.IO;
 using System.Windows;
 using LibPythonAI.Common;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Utils;
+using LibUIMain.Utils;
 using MaterialDesignThemes.Wpf;
 
 namespace AIChatExplorer.ViewModel.Settings {

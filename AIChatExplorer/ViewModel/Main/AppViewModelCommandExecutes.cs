@@ -15,14 +15,14 @@ using LibPythonAI.Utils.Common;
 using LibUIImageChat.View;
 using LibUIMergeChat.View;
 using LibUINormalChat.View;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Item;
-using LibUIPythonAI.View.Search;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Item;
+using LibUIMain.View.Search;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace AIChatExplorer.ViewModel.Main {
@@ -124,7 +124,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Command to open Image Chat
-        public static void OpenImageChatWindowCommand(ContentItemWrapper item, System.Action action) {
+        public static void OpenImageChatWindowCommand(ContentItem item, System.Action action) {
             ImageChatWindow.OpenMainWindow(item, action);
         }
 

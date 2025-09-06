@@ -7,9 +7,9 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.Model.Folders.ScreenShot {
     /// <summary>
@@ -32,12 +32,12 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
 
         public bool IsScreenMonitorEnabled { get; set; } = false;
 
-        public Action<ContentItemWrapper> AfterTakeScreenShot { get; set; } = (parameter) => { };
+        public Action<ContentItem> AfterTakeScreenShot { get; set; } = (parameter) => { };
 
         public ApplicationFolder? Folder { get; set; }
 
         public int Interval { get; set; } = 10; // Interval in seconds for taking screenshots
-        public void Start(ApplicationFolder folder, int interval, Action<ContentItemWrapper> afterClipboardChanged) {
+        public void Start(ApplicationFolder folder, int interval, Action<ContentItem> afterClipboardChanged) {
             AfterTakeScreenShot = afterClipboardChanged;
             // Enable clipboard monitoring
             IsScreenMonitorEnabled = true;
@@ -118,7 +118,7 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
                         // Create a new ApplicationItem
                         ApplicationItem item = CreateApplicationItem(Folder, image);
                         // Apply automatic processing
-                        ContentItemWrapper updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                        ContentItem updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
                         if (updatedItemTask == null) {
                             // If the item is ignored, return
                             return;

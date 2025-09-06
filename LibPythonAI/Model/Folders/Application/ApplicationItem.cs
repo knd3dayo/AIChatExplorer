@@ -2,7 +2,7 @@ using LibPythonAI.Data;
 using LibPythonAI.Model.Content;
 
 namespace AIChatExplorer.Model.Folders.Application {
-    public partial class ApplicationItem : ContentItemWrapper {
+    public partial class ApplicationItem : ContentItem {
         // コンストラクタ
         public ApplicationItem() : base() {
         }

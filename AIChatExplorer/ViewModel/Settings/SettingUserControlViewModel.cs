@@ -11,9 +11,9 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Common;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>
@@ -662,16 +662,16 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
 
         // UseInternalAPIVisibility
-        public Visibility UseInternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility UseInternalAPIVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // UseExternalAPIVisibility
-        public Visibility UseExternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI);
+        public Visibility UseExternalAPIVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseExternalAPI);
 
         // APIServerVisibility
-        public Visibility APIServerVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
+        public Visibility APIServerVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
 
         // InternalVisibility
-        public Visibility InternalVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility InternalVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new( (window) => {

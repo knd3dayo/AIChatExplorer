@@ -1,5 +1,5 @@
 using LibPythonAI.Resources;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace LibUIImageChat.View {
     public class ViewStringResources {

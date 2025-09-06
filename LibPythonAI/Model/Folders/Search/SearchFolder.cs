@@ -20,8 +20,8 @@ namespace AIChatExplorer.Model.Folders.Search {
 
 
         // アイテム LiteDBには保存しない。
-        public async Task<List<ContentItemWrapper>> GetItems(bool isSync = true) {
-            List<ContentItemWrapper> _items = [];
+        public async Task<List<ContentItem>> GetItems(bool isSync = true) {
+            List<ContentItem> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             // フォルダに検索条件が設定されている場合
@@ -47,13 +47,13 @@ namespace AIChatExplorer.Model.Folders.Search {
         }
 
         // アイテムを追加する処理
-        public override async Task AddItemAsync(ContentItemWrapper item, bool applyGlobalAutoAction = false, Action<ContentItemWrapper>? afterUpdate = null) {
+        public override async Task AddItemAsync(ContentItem item, bool applyGlobalAutoAction = false, Action<ContentItem>? afterUpdate = null) {
             // 何もしない
             await Task.CompletedTask;
         }
 
         // ApplicationItemを削除
-        public virtual void DeleteItem(ContentItemWrapper item) {
+        public virtual void DeleteItem(ContentItem item) {
             // 何もしない
         }
 

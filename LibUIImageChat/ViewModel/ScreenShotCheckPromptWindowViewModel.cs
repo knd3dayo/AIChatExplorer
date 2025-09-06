@@ -2,9 +2,9 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibPythonAI.Model.Image;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel;
 
 namespace LibUIImageChat.ViewModel {
 

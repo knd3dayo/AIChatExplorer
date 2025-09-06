@@ -39,10 +39,10 @@ namespace AIChatExplorer.Model.Folders.Browser {
 
         public override async Task SyncItemsAsync() {
             // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
-            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
+            var items = await base.GetItemsAsync<ContentItem>(false);
 
             // Items内のSourcePathとContentItemのDictionary
-            Dictionary<string, ContentItemWrapper> itemFilePathDict = [];
+            Dictionary<string, ContentItem> itemFilePathDict = [];
             foreach (var item in items) {
                 itemFilePathDict[item.SourcePath] = item;
             }
@@ -52,7 +52,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
             var deleteFilePaths = itemFilePathDict.Keys.Except(fileSystemFilePathSet).ToList();
             foreach (var deleteFilePath in deleteFilePaths) {
-                ContentItemWrapper contentItem = itemFilePathDict[deleteFilePath];
+                ContentItem contentItem = itemFilePathDict[deleteFilePath];
                 await contentItem.DeleteAsync();
             }
 
@@ -62,7 +62,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                 if (!File.Exists(localFileSystemFilePath)) {
                     return;
                 }
-                ContentItemWrapper contentItem = new(this.Entity)
+                ContentItem contentItem = new(this.Entity)
                 {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
@@ -78,7 +78,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
             // itemFilePathDictの中から、fileSystemFilePathsにあるItemのみを取得
             var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathDict.Keys).ToList();
             var updateTasks = updateFilePaths.Select(async localFileSystemFilePath => {
-                ContentItemWrapper contentItem = itemFilePathDict[localFileSystemFilePath];
+                ContentItem contentItem = itemFilePathDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks)
                 {
                     contentItem.Content = "";

@@ -143,36 +143,36 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             }
 
             // GetItemsAsync(true)を実行すると無限ループになるため、GetItemsAsync(false)を使用
-            var items = await base.GetItemsAsync<ContentItemWrapper>(false);
+            var items = await base.GetItemsAsync<ContentItem>(false);
 
             // Items内のFilePathとContentItemのDictionary
-            Dictionary<string, ContentItemWrapper> itemFilePathIdDict = [];
+            Dictionary<string, ContentItem> itemFilePathIdDict = [];
             foreach (var item in items) {
                 itemFilePathIdDict[item.SourcePath] = item;
             }
 
             // 削除対象格納用のリスト
-            List<ContentItemWrapper> deleteItems = [];
+            List<ContentItem> deleteItems = [];
             // ファイルシステム上のファイルパス一覧に、items内にないファイルがある場合は削除
             // Exceptで差集合を取得
             var deleteFilePaths = itemFilePathIdDict.Keys.Except(fileSystemFilePathSet);
             foreach (var deleteFilePath in deleteFilePaths) {
-                ContentItemWrapper contentItem = itemFilePathIdDict[deleteFilePath];
+                ContentItem contentItem = itemFilePathIdDict[deleteFilePath];
                 deleteItems.Add(contentItem);
             }
             // 一括削除
             if (deleteItems.Count > 0) {
-                await ContentItemWrapper.DeleteItemsAsync(deleteItems);
+                await ContentItem.DeleteItemsAsync(deleteItems);
             }
 
 
             // 追加対象格納用のリスト
-            List<ContentItemWrapper> addItems = [];
+            List<ContentItem> addItems = [];
             // Items内のファイルパス一覧に、fileSystemFilePathsにないファイルがある場合は追加
             var addFilePaths = fileSystemFilePathSet.Except(itemFilePathIdDict.Keys);
 
             foreach (var localFileSystemFilePath in addFilePaths) {
-                ContentItemWrapper contentItem = new(this.Entity) {
+                ContentItem contentItem = new(this.Entity) {
                     Description = Path.GetFileName(localFileSystemFilePath),
                     SourcePath = localFileSystemFilePath,
                     SourceType = ContentSourceType.File,
@@ -184,14 +184,14 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
             }
             // 一括保存
             if (addItems.Count > 0) {
-                await ContentItemWrapper.SaveItemsAsync(addItems);
+                await ContentItem.SaveItemsAsync(addItems);
             }
 
             // itemFilePathIdDictの中から、fileSystemFilePathsにあるItemのみを取得
             var updateFilePaths = fileSystemFilePathSet.Intersect(itemFilePathIdDict.Keys);
 
             // ItemのUpdatedAtよりもファイルの最終更新日時が新しい場合は更新（非同期一括処理）
-            List<ContentItemWrapper> updateItems = [];
+            List<ContentItem> updateItems = [];
             foreach (var localFileSystemFilePath in updateFilePaths) {
                 var contentItem = itemFilePathIdDict[localFileSystemFilePath];
                 if (contentItem.UpdatedAt.Ticks < File.GetLastWriteTime(localFileSystemFilePath).Ticks) {
@@ -201,7 +201,7 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                 }
             }
             if (updateItems.Count > 0) {
-                await ContentItemWrapper.SaveItemsAsync(updateItems);
+                await ContentItem.SaveItemsAsync(updateItems);
             }
 
         }

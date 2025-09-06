@@ -4,8 +4,8 @@ using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
@@ -24,7 +24,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             return MainWindowViewModel.Instance.RootFolderViewModelContainer.EdgeBrowseHistoryFolderViewModel;
         }
 
-        public override EdgeBrowseHistoryItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+        public override EdgeBrowseHistoryItemViewModel CreateItemViewModel(ContentItem item) {
             return new EdgeBrowseHistoryItemViewModel(this, item);
         }
 

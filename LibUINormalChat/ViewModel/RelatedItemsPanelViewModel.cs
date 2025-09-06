@@ -6,13 +6,13 @@ using LibPythonAI.Model.Content;
 using LibPythonAI.Model.Prompt;
 using LibPythonAI.Resources;
 using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Item;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Item;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 
 namespace LibUINormalChat.ViewModel {
@@ -59,7 +59,7 @@ namespace LibUINormalChat.ViewModel {
         public ObservableCollection<ContentItemDataDefinition> DataDefinitions { get; set; } = new ObservableCollection<ContentItemDataDefinition>();
 
         // PropertiesVisibility
-        public Visibility PropertiesVisibility { get => LibUIPythonAI.Utils.Tools.BoolToVisibility(ShowProperties); }
+        public Visibility PropertiesVisibility { get => LibUIMain.Utils.Tools.BoolToVisibility(ShowProperties); }
 
         private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得

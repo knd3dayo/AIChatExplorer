@@ -10,14 +10,14 @@ using LibPythonAI.PythonIF.Response;
 using LibPythonAI.Utils.Common;
 using LibPythonAI.Utils.Python;
 using LibUIMergeChat.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.ViewModel.Chat;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.PromptTemplate;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Folder;
+using LibUIMain.View.PromptTemplate;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
+using LibUIMain.ViewModel.PromptTemplate;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {
@@ -139,7 +139,7 @@ namespace LibUIMergeChat.ViewModel {
 
                 ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel?.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid ?? [];
                 // itemViewModelsからContentItemをSelect
-                List<ContentItemWrapper> items = itemViewModels?.Select(x => x.ContentItem).ToList() ?? [];
+                List<ContentItem> items = itemViewModels?.Select(x => x.ContentItem).ToList() ?? [];
                 // チャット内容を更新
                 await Task.Run(async () => {
                     ChatRequestContext context = ChatRequestContextViewModel.GetChatRequestContext();
@@ -161,13 +161,13 @@ namespace LibUIMergeChat.ViewModel {
                 }
                 // チャット結果をOutputFolderに保存
                 if (OutputFolder != null) {
-                    ContentItemWrapper contentItemWrapper = new() {
+                    ContentItem contentItem = new() {
                         Content = result.Output,
                         SourceType = ContentSourceType.Application
                     };
 
 
-                    await OutputFolder.Folder.AddItemAsync(contentItemWrapper, true, (item) => {
+                    await OutputFolder.Folder.AddItemAsync(contentItem, true, (item) => {
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         LogWrapper.Info(CommonStringResources.Instance.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行

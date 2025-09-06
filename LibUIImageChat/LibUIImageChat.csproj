@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
-    <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
+    <ProjectReference Include="..\LibUIMain\LibUIMain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

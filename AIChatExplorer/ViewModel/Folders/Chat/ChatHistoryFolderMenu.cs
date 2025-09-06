@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.ViewModel.Folders.Chat {
     public class ChatHistoryFolderMenu : ApplicationFolderMenu {

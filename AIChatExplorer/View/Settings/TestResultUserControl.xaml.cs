@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Settings;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.Settings {
     /// <summary>

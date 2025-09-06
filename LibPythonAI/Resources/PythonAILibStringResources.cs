@@ -36,7 +36,7 @@ namespace LibPythonAI.Resources {
         }
 
 
-        #region LibUIPythonAIから移動
+        #region LibUIMainから移動
         public virtual string Application { get; } = "Application";
         public virtual string ChatHistory { get; } = "Chat History";
         public virtual string SearchFolder { get; } = "Search folder";

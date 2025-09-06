@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Utils;
+using LibUIMain.Utils;
 
 namespace AIChatExplorer.ViewModel.Main {
     public class MainTabContent : ObservableObject {

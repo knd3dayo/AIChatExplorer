@@ -44,7 +44,7 @@ namespace LibPythonAI.Model.VectorDB {
             Tags = tags;
         }
 
-        public async Task SetMetadata(ContentItemWrapper item) {
+        public async Task SetMetadata(ContentItem item) {
             // タイトルとHeaderTextを追加
             var hederText = await item.GetHeaderTextAsync();
             string description = item.Description + "\n" + hederText;

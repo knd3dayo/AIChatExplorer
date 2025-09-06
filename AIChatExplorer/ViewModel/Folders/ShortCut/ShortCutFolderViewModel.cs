@@ -4,8 +4,8 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using AIChatExplorer.Model.Folders.ShortCut;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.ShortCut {
     public class ShortCutFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes commands) : FileSystemFolderViewModel(applicationItemFolder, commands) {

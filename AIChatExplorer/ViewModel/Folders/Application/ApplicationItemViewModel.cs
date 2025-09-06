@@ -4,14 +4,14 @@ using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Settings;
 using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Content {
     public partial class ApplicationItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
-        public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
+        public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItem applicationItem) : base(folderViewModel, applicationItem) {
             ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
@@ -34,7 +34,7 @@ namespace AIChatExplorer.ViewModel.Content {
 
         // Copy
         public virtual ApplicationItemViewModel Copy() {
-            ContentItemWrapper newItem = ContentItem.Copy();
+            ContentItem newItem = ContentItem.Copy();
             return new ApplicationItemViewModel(FolderViewModel, newItem);
         }
 
