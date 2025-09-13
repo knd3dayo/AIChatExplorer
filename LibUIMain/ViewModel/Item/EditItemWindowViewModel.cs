@@ -164,6 +164,9 @@ namespace LibUIMain.ViewModel.Item {
 
             });
         });
+
+
+
         // OKボタンのコマンド
         public SimpleDelegateCommand<object> OKButtonCommand => new((parameter) => {
             // SaveCommandを実行

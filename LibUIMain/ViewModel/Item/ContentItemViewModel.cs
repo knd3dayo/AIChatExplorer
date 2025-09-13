@@ -322,6 +322,13 @@ namespace LibUIMain.ViewModel.Item {
         // ImageVisibility
         public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 
+        // CopyImageCommand
+        public SimpleDelegateCommand<object> CopyImageCommand => new((obj) => {
+            var image = ContentItem.BitmapImage;
 
+            if (image != null) {
+                Clipboard.SetImage(image);
+            }
+        });
     }
 }

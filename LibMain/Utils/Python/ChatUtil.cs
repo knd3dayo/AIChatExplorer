@@ -257,7 +257,6 @@ namespace LibMain.Utils.Python {
         public static async Task<ChatResponse?> ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // 通常のOpenAI Chatを実行する
             if (chatMode == OpenAIExecutionModeEnum.Normal) {
-
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, chatRequest);
                 // 通常のChatを実行する。

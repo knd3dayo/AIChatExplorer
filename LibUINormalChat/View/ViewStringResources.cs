@@ -93,6 +93,9 @@ namespace LibUINormalChat.View {
         // SplitTokenCount
         public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
+        // ImagesPerRequest
+        public static string MaxImagesPerRequest => CommonStringResources.Instance.MaxImagesPerRequest;
+
         // RAGMode_None
         public static string RAGMode_None => CommonStringResources.Instance.RAGMode_None;
 

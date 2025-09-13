@@ -320,6 +320,9 @@ namespace LibUIMain.Resource {
         // SplitTokenCount
         public virtual string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 
+        // MaxImagesPerRequest
+        public virtual string MaxImagesPerRequest { get; } = "Max Images per request";
+
         // DataGridIsNotFound
         public virtual string DataGridIsNotFound { get; } = "DataGrid is not found";
 

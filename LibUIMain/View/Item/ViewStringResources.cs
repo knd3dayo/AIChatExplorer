@@ -4,7 +4,8 @@ namespace LibUIMain.View.Item {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
-
+        // Copy
+        public static string Copy { get; set; } = CommonStringResources.Instance.Copy;
 
         // Name
         public static string Name { get; set; } = CommonStringResources.Instance.Name;

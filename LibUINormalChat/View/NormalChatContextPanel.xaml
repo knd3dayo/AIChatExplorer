@@ -37,6 +37,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -118,9 +119,31 @@
                     VerticalAlignment="Center"
                     Text="{Binding ChatRequestContextViewModel.SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
-            <Separator Grid.Row="6" />
+            <Grid
+                Grid.Row="6"
+                Margin="10,20,0,10"
+                HorizontalAlignment="Left"
+                Visibility="{Binding ChatRequestContextViewModel.SplitMOdeVisibility}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:ViewStringResources.MaxImagesPerRequest}" />
+                <!--  書式は整数  -->
+                <TextBox
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding ChatRequestContextViewModel.MaxImagesPerRequest, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+
+
+            <Separator Grid.Row="7" />
             <ComboBox
-                Grid.Row="7"
+                Grid.Row="8"
                 Margin="10,30,0,10"
                 SelectedIndex="{Binding ChatRequestContextViewModel.SendRelatedItemsOnlyFirstRequest}">
                 <ComboBoxItem Content="{x:Static local:ViewStringResources.SendRelatedItemsOnlyFirstRequest_True}" />
@@ -132,7 +155,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
-            <Separator Grid.Row="8" />
+            <Separator Grid.Row="9" />
         </Grid>
 
         <ComboBox

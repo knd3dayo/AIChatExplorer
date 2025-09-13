@@ -6,19 +6,22 @@ using LibMain.Utils.Common;
 
 namespace LibMain.Model.Chat {
     public class ChatSettings {
-        public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
+        public const string SPLIT_MODE_KEY = "split_mode";
+        public const string SPLIT_TOKEN_COUNT_KEY = "split_token_count";
+        public const string MAX_IMAGES_PER_REQUEST_KEY = "max_images_per_request";
+        public const string PROMPT_TEMPLATE_TEXT_KEY = "prompt_template_text";
+        public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
+
         public const string VECTOR_SEARCH_REQUESTS_JSON_KEY = "vector_search_requests_json";
-        public const string TEMPERATURE_KEY = "temperature";
+
         public const string RELATED_ITEMS_KEY = "related_items";
         public const string SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY = "send_related_items_only_first_request";
-        public const string AUTOGEN_PROPS_KEY = "autogen_props";
-        public const string SPLIT_TOKEN_COUNT_KEY = "split_token_count";
-        public const string PROMPT_TEMPLATE_TEXT_KEY = "prompt_template_text";
-        public const string SPLIT_MODE_KEY = "split_mode";
-        public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
         public const string RELATED_INFORMATION_PROMPT_TEXT_KEY = "related_information_prompt_text";
+
         public const string RAG_MODE_KEY = "rag_mode";
         public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
+
+        public const string TEMPERATURE_KEY = "temperature";
 
         // ベクトル検索
 
@@ -26,6 +29,9 @@ namespace LibMain.Model.Chat {
 
         // リクエストを分割するトークン数
         public int SplitTokenCount { get; set; } = 8000;
+
+        // MaxImagesPerRequest
+        public int MaxImagesPerRequest { get; set; } = 4;
 
         // PromptTemplateText
         public string PromptTemplateText { get; set; } = "";
@@ -68,12 +74,13 @@ namespace LibMain.Model.Chat {
         // ToDict
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                [VECTOR_SEARCH_REQUESTS_JSON_KEY] = VectorSearchRequest.ToListJson(VectorSearchRequests),
+                [SPLIT_MODE_KEY] = SplitMode.ToString(),
                 [SPLIT_TOKEN_COUNT_KEY] = SplitTokenCount,
+                [MAX_IMAGES_PER_REQUEST_KEY] = MaxImagesPerRequest,
                 [PROMPT_TEMPLATE_TEXT_KEY] = PromptTemplateText,
                 [RAG_MODE_KEY] = RAGMode.ToString(),
+                [VECTOR_SEARCH_REQUESTS_JSON_KEY] = VectorSearchRequest.ToListJson(VectorSearchRequests),
                 [RAG_MODE_PROMPT_TEXT_KEY] = RagModePromptText,
-                [SPLIT_MODE_KEY] = SplitMode.ToString(),
                 [SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText,
                 [TEMPERATURE_KEY] = Temperature,
                 [RELATED_ITEMS_KEY] = RelatedItems.ToDict(),
@@ -87,6 +94,7 @@ namespace LibMain.Model.Chat {
             ChatSettings chatSettings = new() {
                 VectorSearchRequests = VectorSearchRequest.FromListJson(dict.GetValueOrDefault(VECTOR_SEARCH_REQUESTS_JSON_KEY, "[]")) ?? "[]",
                 SplitTokenCount = Convert.ToInt32(dict.GetValueOrDefault(SPLIT_TOKEN_COUNT_KEY, 8000)),
+                MaxImagesPerRequest = Convert.ToInt32(dict.GetValueOrDefault(MAX_IMAGES_PER_REQUEST_KEY, 4)),
                 PromptTemplateText = dict.GetValueOrDefault(PROMPT_TEMPLATE_TEXT_KEY, "") ?? "",
                 RAGMode = Enum.Parse<RAGModeEnum>(dict.GetValueOrDefault(RAG_MODE_KEY, RAGModeEnum.None)),
                 RagModePromptText = dict.GetValueOrDefault(RAG_MODE_PROMPT_TEXT_KEY, null) ?? "",

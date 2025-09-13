@@ -60,6 +60,18 @@ namespace LibUIMain.ViewModel.Chat {
                 OnPropertyChanged(nameof(SplitTokenCount));
             }
         }
+
+        // MaxImagesPerRequest
+        public int MaxImagesPerRequest {
+            get {
+                return ChatSettings.MaxImagesPerRequest;
+            }
+            set {
+                ChatSettings.MaxImagesPerRequest = value;
+                OnPropertyChanged(nameof(MaxImagesPerRequest));
+            }
+        }
+
         public string PromptTemplateText {
             get {
                 return ChatSettings.PromptTemplateText;

@@ -164,6 +164,9 @@ namespace LibUIMain.Resource {
         // リクエストを分割するトークン数
         public override string NumberOfTokensToSplitRequest { get; } = "リクエストを分割するトークン数";
 
+        // MaxImagesPerRequest
+        public override string MaxImagesPerRequest { get; } = "1回のリクエストあたりの最大画像数";
+
         // DataGridIsNotFound
         public override string DataGridIsNotFound { get; } = "DataGridが見つかりません";
 

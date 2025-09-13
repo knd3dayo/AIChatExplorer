@@ -109,7 +109,13 @@
                     Margin="10,3,10,3"
                     Source="{Binding ContentItem.BitmapImage, Mode=OneWay}"
                     Stretch="Uniform"
-                    Visibility="{Binding ImageVisibility}" />
+                    Visibility="{Binding ImageVisibility}">
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding CopyImageCommand}" Header="{x:Static res:ViewStringResources.Copy}" />
+                        </ContextMenu>
+                    </Image.ContextMenu>
+                </Image>
             </Grid>
         </ScrollViewer>
     </Grid>
