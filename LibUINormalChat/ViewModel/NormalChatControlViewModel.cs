@@ -7,14 +7,13 @@ using LibMain.PythonIF.Request;
 using LibMain.PythonIF.Response;
 using LibMain.Utils.Common;
 using LibMain.Utils.Python;
-using LibUINormalChat.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
 using LibUIMain.View.Chat;
 using LibUIMain.View.PromptTemplate;
 using LibUIMain.ViewModel.Chat;
 using LibUIMain.ViewModel.PromptTemplate;
-using NLog;
+using LibUINormalChat.Common;
 
 namespace LibUINormalChat.ViewModel {
     public class NormalChatControlViewModel : CommonViewModelBase {
@@ -45,7 +44,7 @@ namespace LibUINormalChat.ViewModel {
             }
             Task.Run(async () => {
                 // ChatRequestContextViewModelを設定
-                var item =  await folder.Folder.GetVectorSearchProperties();
+                var item = await folder.Folder.GetVectorSearchProperties();
                 ChatRequestContextViewModel.VectorSearchProperties = [.. item];
             });
 
@@ -287,7 +286,7 @@ namespace LibUINormalChat.ViewModel {
         private bool IsSplitModePreconditionMet() {
             // SplitModeが有効な場合、PromptTemplateTextが空でないことを確認
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-            if (chatRequestContext.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PromptTemplateText)) {
+            if (chatRequestContext.ChatSettings.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PromptTemplateText)) {
                 LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                 return false;
             }

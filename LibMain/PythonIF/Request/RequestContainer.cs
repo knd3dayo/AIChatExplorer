@@ -85,8 +85,8 @@ namespace LibMain.PythonIF.Request {
             if (RequestContextInstance != null) {
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
 
-                if (RequestContextInstance.VectorSearchRequests.Count > 0) {
-                    dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ToDictVectorDBRequestDict();
+                if (RequestContextInstance.ChatSettings.VectorSearchRequests.Count > 0) {
+                    dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.ChatSettings.ToDictVectorDBRequestDict();
                 }
             }
 

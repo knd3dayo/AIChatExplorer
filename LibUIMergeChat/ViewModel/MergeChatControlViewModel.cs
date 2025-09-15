@@ -145,7 +145,7 @@ namespace LibUIMergeChat.ViewModel {
                     ChatRequestContext context = ChatRequestContextViewModel.GetChatRequestContext();
 
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    if (context.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
+                    if (context.ChatSettings.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         return;

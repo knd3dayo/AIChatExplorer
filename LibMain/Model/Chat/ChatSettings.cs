@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using LibMain.Common;
 using LibMain.PythonIF.Request;
 using LibMain.Resources;
 using LibMain.Utils.Common;
@@ -13,6 +14,7 @@ namespace LibMain.Model.Chat {
         public const string SUMMARIZE_PROMPT_TEXT_KEY = "summarize_prompt_text";
 
         public const string VECTOR_SEARCH_REQUESTS_JSON_KEY = "vector_search_requests_json";
+        public const string VECTOR_SEARCH_REQUESTS_KEY = "vector_search_requests";
 
         public const string RELATED_ITEMS_KEY = "related_items";
         public const string SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY = "send_related_items_only_first_request";
@@ -22,6 +24,27 @@ namespace LibMain.Model.Chat {
         public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
 
         public const string TEMPERATURE_KEY = "temperature";
+
+        public ChatSettings() {
+            var props = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties();
+            Model = props.OpenAICompletionModel;
+        }
+
+        public string Model { get; private set; }
+
+        protected int MaxTokens { get; set; } = 0;
+
+        public double Temperature { get; set; } = 0.5;
+
+        public string ContentText { get; set; } = "";
+
+        // ImageのURLのリスト. data:image/{formatText};base64,{base64String}という形式の文字列のリスト
+        public List<string> ImageURLs { get; set; } = [];
+        public bool JsonMode { get; set; } = false;
+
+
+        public List<ChatMessage> ChatHistory { get; set; } = [];
+
 
         // ベクトル検索
 
@@ -47,9 +70,7 @@ namespace LibMain.Model.Chat {
 
         public string SummarizePromptText = PromptStringResourceJa.Instance.SummarizePromptText;
 
-        // Temperature
-        public double Temperature { get; set; } = 0.5;
-
+        
         // RelatedItems
         public ChatRelatedItems RelatedItems { 
             get; 
@@ -58,6 +79,12 @@ namespace LibMain.Model.Chat {
 
         // SendRelatedItemsOnlyFirstRequest
         public bool SendRelatedItemsOnlyFirstRequest { get; set; } = true;
+
+
+        // CreateEntriesDictList
+        public List<Dictionary<string, object>> ToDictVectorDBRequestDict() {
+            return RAGMode != RAGModeEnum.None ? VectorSearchRequest.ToDictList(VectorSearchRequests) : [];
+        }
 
         // ToJson
         public string ToJson() {
@@ -84,7 +111,7 @@ namespace LibMain.Model.Chat {
                 [SUMMARIZE_PROMPT_TEXT_KEY] = SummarizePromptText,
                 [TEMPERATURE_KEY] = Temperature,
                 [RELATED_ITEMS_KEY] = RelatedItems.ToDict(),
-                [SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY] = SendRelatedItemsOnlyFirstRequest
+                [SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY] = SendRelatedItemsOnlyFirstRequest,
             };
 
             return dict;
@@ -102,7 +129,8 @@ namespace LibMain.Model.Chat {
                 SummarizePromptText = dict.GetValueOrDefault(SUMMARIZE_PROMPT_TEXT_KEY, null) ?? PromptStringResourceJa.Instance.SummarizePromptText,
                 Temperature = Convert.ToDouble(dict.GetValueOrDefault(TEMPERATURE_KEY, 0.5)),
                 RelatedItems = ChatRelatedItems.FromDict(dict.GetValueOrDefault(RELATED_ITEMS_KEY, new Dictionary<string, dynamic?>())),
-                SendRelatedItemsOnlyFirstRequest = dict.GetValueOrDefault(SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY, true)
+                SendRelatedItemsOnlyFirstRequest = dict.GetValueOrDefault(SEND_RELATED_ITEMS_ONLY_FIRST_REQUEST_KEY, true),
+
             };
 
             return chatSettings;
