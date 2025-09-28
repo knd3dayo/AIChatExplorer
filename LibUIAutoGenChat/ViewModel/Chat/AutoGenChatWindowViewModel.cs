@@ -7,7 +7,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
     public class AutoGenChatWindowViewModel : CommonViewModelBase {
 
         //初期化
-        public AutoGenChatWindowViewModel(QAChatStartupProps props) {
+        public AutoGenChatWindowViewModel(QAChatStartupPropsBase props) {
             // PythonAILibのLogWrapperのログ出力設定
             LogWrapper.SetActions(new LogWrapperAction());
             // ChatControlViewModelを生成

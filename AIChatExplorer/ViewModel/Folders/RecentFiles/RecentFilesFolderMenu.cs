@@ -4,7 +4,7 @@ using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.FileSystem;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class RecentFilesFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : FileSystemFolderMenu(clipboardFolderViewModel) {
+    public class RecentFilesFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : FileSystemFolderMenu(applicationFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {

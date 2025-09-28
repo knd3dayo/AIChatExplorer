@@ -1,19 +1,19 @@
 using System.IO;
 using System.Text;
 using System.Windows;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.Settings;
-using LibPythonAI.Common;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.PythonIF;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Resources;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.Python;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using WpfAppCommon.Model;
+using LibMain.Common;
+using LibMain.Model.Chat;
+using LibMain.Model.Folders;
+using LibMain.PythonIF;
+using LibMain.PythonIF.Request;
+using LibMain.PythonIF.Response;
+using LibMain.Resources;
+using LibMain.Utils.Common;
+using LibMain.Utils.Python;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Settings {
     /// <summary>
@@ -196,7 +196,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // AutoBackgroundInfo
+        // IsAutoBackgroundInfoEnabled
         public bool AutoBackgroundInfo {
             get {
                 return AIChatExplorerConfig.Instance.AutoBackgroundInfo;
@@ -209,7 +209,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoSummary
+        // IsAutoSummaryEnabled
         public bool AutoSummary {
             get {
                 return AIChatExplorerConfig.Instance.AutoSummary;
@@ -268,7 +268,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        //　AutoExtractImageWithOpenAI
+        //　IsAutoExtractImageWithOpenAIEnabled
         public bool AutoExtractImageWithOpenAI {
             get {
                 return AIChatExplorerConfig.Instance.AutoExtractImageWithOpenAI;
@@ -281,7 +281,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoGenerateTasks
+        // IsAutoGenerateTasksEnabled
         public bool AutoGenerateTasks {
             get {
                 return AIChatExplorerConfig.Instance.AutoGenerateTasks;
@@ -360,6 +360,45 @@ namespace AIChatExplorer.ViewModel.Settings {
                 AIChatExplorerConfig.Instance.NoProxyList = value;
                 OnPropertyChanged(nameof(NoProxyList));
 
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+        // ScreenMonitoringInterval
+        public int ScreenMonitoringInterval {
+            get {
+                return AIChatExplorerConfig.Instance.ScreenMonitoringInterval;
+            }
+            set {
+                AIChatExplorerConfig.Instance.ScreenMonitoringInterval = value;
+                OnPropertyChanged(nameof(ScreenMonitoringInterval));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+        // IsAutoPredictUserIntentEnabled
+        public bool AutoPredictUserIntent {
+            get {
+                return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
+            }
+            set {
+                AIChatExplorerConfig.Instance.AutoPredictUserIntent = value;
+                OnPropertyChanged(nameof(AutoPredictUserIntent));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+        // MaterialDesignDarkTheme
+        public bool MaterialDesignDarkTheme {
+            get {
+                return AIChatExplorerConfig.Instance.MaterialDesignDarkTheme;
+            }
+            set {
+                AIChatExplorerConfig.Instance.MaterialDesignDarkTheme = value;
+                OnPropertyChanged(nameof(MaterialDesignDarkTheme));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
             }
@@ -464,7 +503,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                 chatRequest.ChatHistory = chatItems;
 
                 // ChatRequestContextを作成
-                ChatRequestContext chatRequestContext = new();
+                ChatSettings chatSettings = new();
+                ChatRequestContext chatRequestContext = new(chatSettings);
 
                 ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
                 string resultString = result?.Output ?? "";
@@ -494,10 +534,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             try {
                 CommonViewModelProperties.UpdateIndeterminate(true);
                 LogWrapper.Info($"{CommonStringResources.Instance.CheckingSettings}...");
-                string resultString = "";
-                await Task.Run(async () => {
-                    resultString = await CheckSetting();
-                });
+                string resultString = await CheckSetting();
                 CommonViewModelProperties.UpdateIndeterminate(false);
                 StatusText.Instance.Init();
                 // 結果をTestResultWindowで表示
@@ -563,7 +600,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 OnPropertyChanged(nameof(IgnoreLineCountText));
             }
         }
-        // AutoDocumentReliabilityCheck
+        // IsAutoDocumentReliabilityCheckEnabled
         public bool AutoDocumentReliabilityCheck {
             get {
                 return AIChatExplorerConfig.Instance.AutoDocumentReliabilityCheck;
@@ -588,7 +625,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // UseInternalAPI
+        // IsUseInternalAPI
         public bool UseInternalAPI {
             get {
                 return AIChatExplorerConfig.Instance.UseInternalAPI;
@@ -606,7 +643,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // UseExternalAPI
+        // IsUseExternalAPI
         public bool UseExternalAPI {
             get {
                 return AIChatExplorerConfig.Instance.UseExternalAPI;
@@ -625,22 +662,20 @@ namespace AIChatExplorer.ViewModel.Settings {
         }
 
         // UseInternalAPIVisibility
-        public Visibility UseInternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility UseInternalAPIVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // UseExternalAPIVisibility
-        public Visibility UseExternalAPIVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI);
+        public Visibility UseExternalAPIVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseExternalAPI);
 
         // APIServerVisibility
-        public Visibility APIServerVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
+        public Visibility APIServerVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseExternalAPI || UseInternalAPI);
 
         // InternalVisibility
-        public Visibility InternalVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(UseInternalAPI);
+        public Visibility InternalVisibility => LibUIMain.Utils.Tools.BoolToVisibility(UseInternalAPI);
 
         // SaveCommand
-        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
+        public SimpleDelegateCommand<Window> SaveCommand => new( (window) => {
             if (Save()) {
-                //追加設定.言語を変更
-                FolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
                 LogWrapper.Info(CommonStringResources.Instance.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(CommonStringResources.Instance.RestartAppToApplyChanges, CommonStringResources.Instance.Information, MessageBoxButton.OK);

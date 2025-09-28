@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
-using LibPythonAI.Utils.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Utils.Common;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatWindowViewModel : CommonViewModelBase {

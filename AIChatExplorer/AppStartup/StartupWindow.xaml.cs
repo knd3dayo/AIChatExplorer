@@ -7,9 +7,11 @@ namespace AIChatExplorer.AppStartup {
     public partial class StartupWindow : Window {
         public StartupWindow() {
             InitializeComponent();
+            this.Loaded += StartupWindow_Loaded;
+        }
 
-            StartupWindowViewModel.Startup();
-
+        private async void StartupWindow_Loaded(object sender, RoutedEventArgs e) {
+            await StartupWindowViewModel.StartupAsync();
             this.Close();
         }
     }

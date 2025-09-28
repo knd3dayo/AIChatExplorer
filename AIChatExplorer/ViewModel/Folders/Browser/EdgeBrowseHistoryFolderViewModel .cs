@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.Browser;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
-using LibPythonAI.Model.Content;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Model.Content;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
-    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class EdgeBrowseHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -20,11 +20,11 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             }
         }
         // RootFolderのViewModelを取得する
-        public override ContentFolderViewModel GetRootFolderViewModel() {
+        public override ContentFolderViewModel? GetRootFolderViewModel() {
             return MainWindowViewModel.Instance.RootFolderViewModelContainer.EdgeBrowseHistoryFolderViewModel;
         }
 
-        public override EdgeBrowseHistoryItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+        public override EdgeBrowseHistoryItemViewModel CreateItemViewModel(ContentItem item) {
             return new EdgeBrowseHistoryItemViewModel(this, item);
         }
 
@@ -38,13 +38,13 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<EdgeBrowseHistoryItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<EdgeBrowseHistoryItem>();
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<EdgeBrowseHistoryFolderViewModel, EdgeBrowseHistoryFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<EdgeBrowseHistoryFolderViewModel, EdgeBrowseHistoryFolder>(nestLevel);
         }
     }
 }

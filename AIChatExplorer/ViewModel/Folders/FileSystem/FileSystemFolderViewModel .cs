@@ -1,15 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.Model.Folders.FileSystem;
-using AIChatExplorer.Model.Folders.ShortCut;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibPythonAI.Model.Content;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Model.Content;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.FileSystem {
-    public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, ContentItemViewModelCommands commands) : ApplicationFolderViewModel(applicationItemFolder, commands) {
+    public class FileSystemFolderViewModel(FileSystemFolder applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 1;
 
@@ -34,33 +31,14 @@ namespace AIChatExplorer.ViewModel.Folders.FileSystem {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<FileSystemItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<FileSystemItem>();
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<FileSystemFolderViewModel, FileSystemFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<FileSystemFolderViewModel, FileSystemFolder>(nestLevel);
         }
-
-        // ショートカット登録コマンド
-        public static SimpleDelegateCommand<FileSystemFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
-
-            FileSystemFolder fileSystemFolder = (FileSystemFolder)folderViewModel.Folder;
-            // ショートカット登録
-            // ShortCutRootFolderを取得
-            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
-            // ショートカットフォルダを作成
-            ShortCutFolder contentFolder = new() {
-                FolderTypeString = FolderManager.SHORTCUT_ROOT_FOLDER_NAME_EN,
-                Description = folderViewModel.FolderName,
-                FolderName = folderViewModel.FolderName,
-                Parent = shortCutRootFolder,
-                FileSystemFolderPath = fileSystemFolder.FileSystemFolderPath,
-            };
-            contentFolder.Save();
-
-        });
 
     }
 }

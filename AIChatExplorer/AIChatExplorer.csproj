@@ -10,13 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Model\AutoProcess\**" />
     <Compile Remove="ViewModel\VectorDB\**" />
-    <EmbeddedResource Remove="Model\AutoProcess\**" />
     <EmbeddedResource Remove="ViewModel\VectorDB\**" />
-    <None Remove="Model\AutoProcess\**" />
     <None Remove="ViewModel\VectorDB\**" />
-    <Page Remove="Model\AutoProcess\**" />
     <Page Remove="ViewModel\VectorDB\**" />
   </ItemGroup>
 
@@ -35,18 +31,16 @@
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
 
+
   <ItemGroup>
-    <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
-    <ProjectReference Include="..\LibUIAutoGenChat\LibUIAutoGenChat.csproj" />
+    <ProjectReference Include="..\LibMain\LibMain.csproj" />
     <ProjectReference Include="..\LibUIImageChat\LibUIImageChat.csproj" />
+    <ProjectReference Include="..\LibUIMain\LibUIMain.csproj" />
     <ProjectReference Include="..\LibUIMergeChat\LibUIMergeChat.csproj" />
-    <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
+    <ProjectReference Include="..\LibUINormalChat\LibUINormalChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\Main\MainPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Properties\Misc.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -57,7 +51,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="View\Settings\SettingUserControl.xaml.cs">
+    <Compile Update="View\Main\MainPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Settings\SettingWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\Settings\TestResultUserControl.xaml.cs">
@@ -74,6 +71,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="View\Settings\SettingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using LibPythonAI.Resources;
 using LibUIPythonAI.Resource;
 
 namespace LibUIAutoGenChat.View.Chat {
@@ -35,7 +36,7 @@ namespace LibUIAutoGenChat.View.Chat {
         public static string EnterYourQuestionHere => CommonStringResources.Instance.EnterYourQuestionHere;
 
         // ImageChat
-        public static string ImageChat => CommonStringResources.Instance.ImageChat;
+        public static string ImageChat => PythonAILibStringResources.Instance.ImageChat;
 
         // File
         public static string File => CommonStringResources.Instance.File;
@@ -152,7 +153,7 @@ namespace LibUIAutoGenChat.View.Chat {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // RAGMode
+        // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // ExcludeFromList

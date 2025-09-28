@@ -1,5 +1,6 @@
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 using LibUIMergeChat.Resources;
+using LibMain.Resources;
 
 namespace LibUIMergeChat.View {
     public class ViewStringResources {
@@ -34,7 +35,7 @@ namespace LibUIMergeChat.View {
         public static string EnterYourQuestionHere => CommonStringResources.Instance.EnterYourQuestionHere;
 
         // ImageChat
-        public static string ImageChat => CommonStringResources.Instance.ImageChat;
+        public static string ImageChat => PythonAILibStringResources.Instance.ImageChat;
 
         // File
         public static string File => CommonStringResources.Instance.File;
@@ -152,7 +153,7 @@ namespace LibUIMergeChat.View {
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
 
-        // RAGMode
+        // RAGModeValue
         public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
 
         // MergeTarget
@@ -196,5 +197,9 @@ namespace LibUIMergeChat.View {
 
         // Chat
         public static string Chat => CommonStringResources.Instance.Chat;
+
+        // ExcludeFromList
+        public static string ExcludeFromList => MergeChatStringResources.Instance.ExcludeFromList;
+
     }
 }

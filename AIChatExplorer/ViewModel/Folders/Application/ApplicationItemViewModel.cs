@@ -1,23 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Item;
 using AIChatExplorer.ViewModel.Folders.Application;
-using AIChatExplorer.ViewModel.Main;
 using AIChatExplorer.ViewModel.Settings;
-using LibPythonAI.Model.Content;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Model.Content;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Content {
     public partial class ApplicationItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
-        public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItemWrapper applicationItem) : base(folderViewModel, applicationItem) {
-            if (folderViewModel.Commands == null) {
-                throw new Exception("folderViewModel.Commands is null");
-            }
+        public ApplicationItemViewModel(ContentFolderViewModel folderViewModel, ContentItem applicationItem) : base(folderViewModel, applicationItem) {
             ContentItem = applicationItem;
             FolderViewModel = folderViewModel;
             Content = ContentItem.Content;
@@ -29,21 +23,18 @@ namespace AIChatExplorer.ViewModel.Content {
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(SourceApplicationTitleText));
             OnPropertyChanged(nameof(FileTabVisibility));
-
+            ApplicationItemMenu applicationItemMenu = new(this);
+            ContentItemMenuItems = applicationItemMenu.CreateBasicItemContextMenuItems();
         }
+
 
         // Context Menu
 
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                ApplicationItemMenu applicationItemMenu = new(this);
-                return applicationItemMenu.ContentItemMenuItems;
-            }
-        }
+        public override ObservableCollection<MenuItem> ContentItemMenuItems { get; protected set; } = [];
 
         // Copy
         public virtual ApplicationItemViewModel Copy() {
-            ContentItemWrapper newItem = ContentItem.Copy();
+            ContentItem newItem = ContentItem.Copy();
             return new ApplicationItemViewModel(FolderViewModel, newItem);
         }
 

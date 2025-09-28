@@ -1,26 +1,23 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibPythonAI.Common;
-using LibPythonAI.Model.AutoGen;
-using LibPythonAI.Model.Chat;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Model.Folder;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Utils.Python;
+using LibMain.Common;
+using LibMain.Model.Chat;
+using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.PythonIF.Request;
+using LibMain.PythonIF.Response;
+using LibMain.Utils.Common;
+using LibMain.Utils.Python;
 using LibUIMergeChat.Common;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.View.VectorDB;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.PromptTemplate;
-using LibUIPythonAI.ViewModel.VectorDB;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.Folder;
+using LibUIMain.View.PromptTemplate;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
+using LibUIMain.ViewModel.PromptTemplate;
 
 namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : CommonViewModelBase {
@@ -34,7 +31,11 @@ namespace LibUIMergeChat.ViewModel {
             if (folder == null) {
                 return;
             }
-            VectorSearchProperties = [.. folder.Folder.GetVectorSearchProperties()];
+            Task.Run(async () => {
+                // ChatRequestContextViewModelを設定
+                var item =  await folder.Folder.GetVectorSearchProperties();
+                ChatRequestContextViewModel.VectorSearchProperties = [.. item];
+            });
 
             // MergeTargetPanelViewModelを設定
             MergeTargetPanelViewModel = mergeTargetPanelViewModel;
@@ -42,12 +43,30 @@ namespace LibUIMergeChat.ViewModel {
             // OutputFolderPath
             OutputFolder = mergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
 
+            // MergeTargetSummaryDataGridViewModel
+            MergeTargetSummaryDataGridViewModel =  new((flag) => { });
+
+            // MergeTargetSummaryDataGridViewModelのItemsを設定
+            MergeTargetSummaryDataGridViewModel.Items = mergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItems;
+
+            ExportItems = CreateExportItems();
+            OnPropertyChanged(nameof(ExportItems));
         }
+
+        // ExportItems
+        public ObservableCollection<ContentItemDataDefinition> ExportItems { get; set; } = [];
+
+
 
         // SessionToken
         public string SessionToken { get; set; } = Guid.NewGuid().ToString();
 
-        public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; }
+        public MergeTargetDataGridViewControlViewModel MergeTargetSummaryDataGridViewModel { get; set; } = null!; // 初期化時に設定されるため、null許容型ではない
+
+        public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; } = null!; // 初期化時に設定されるため、null許容型ではない
+
+        public ChatRequestContextViewModel ChatRequestContextViewModel { get; set; } = new();
+
 
         private void PreProcessPromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -107,135 +126,6 @@ namespace LibUIMergeChat.ViewModel {
             }
         }
 
-        private OpenAIExecutionModeEnum _chatMode = OpenAIExecutionModeEnum.Normal;
-        public int ChatMode {
-            get {
-                return (int)_chatMode;
-            }
-            set {
-                _chatMode = (OpenAIExecutionModeEnum)value;
-                OnPropertyChanged(nameof(ChatMode));
-            }
-        }
-        private SplitModeEnum _splitMode = SplitModeEnum.None;
-        public int SplitMode {
-            get {
-                return (int)_splitMode;
-            }
-            set {
-                _splitMode = (SplitModeEnum)value;
-                OnPropertyChanged(nameof(SplitMode));
-            }
-        }
-
-        // SplitTokenCount
-        private int _SplitTokenCount = 8000;
-        public string SplitTokenCount {
-            get {
-                return _SplitTokenCount.ToString();
-            }
-            set {
-                try {
-                    int count = int.Parse(value);
-                    _SplitTokenCount = count;
-                } catch (Exception) {
-                    return;
-                }
-                OnPropertyChanged(nameof(SplitTokenCount));
-            }
-        }
-
-        // VectorDBSearchResultMax
-        public int VectorDBSearchResultMax { get; set; } = 10;
-
-        public static ChatMessage? SelectedItem { get; set; }
-
-
-        private ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
-        public ObservableCollection<LibPythonAI.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
-            get {
-                return _vectorSearchProperties;
-            }
-            set {
-                _vectorSearchProperties = value;
-                OnPropertyChanged(nameof(VectorSearchProperties));
-            }
-        }
-
-        private LibPythonAI.Model.VectorDB.VectorSearchItem? _selectedVectorSearchItem = null;
-        public LibPythonAI.Model.VectorDB.VectorSearchItem? SelectedVectorSearchItem {
-            get {
-                return _selectedVectorSearchItem;
-            }
-            set {
-                _selectedVectorSearchItem = value;
-                OnPropertyChanged(nameof(SelectedVectorSearchItem));
-            }
-        }
-
-        private AutoGenProperties _autoGenProperties;
-        public AutoGenProperties AutoGenProperties {
-            get {
-                return _autoGenProperties;
-            }
-            set {
-                _autoGenProperties = value;
-                OnPropertyChanged(nameof(AutoGenProperties));
-            }
-        }
-
-        // RAGMode
-        private RAGModeEnum _ragMode = RAGModeEnum.None;
-        public int RAGMode {
-            get {
-                return (int)_ragMode;
-            }
-            set {
-                _ragMode = (RAGModeEnum)value;
-
-                OnPropertyChanged(nameof(RAGMode));
-                UpdateVectorDBProperties();
-
-            }
-        }
-        
-        private void UpdateVectorDBProperties() {
-            if (_ragMode != RAGModeEnum.None) {
-                var folder = MergeTargetPanelViewModel.MergeTargetTreeViewControlViewModel.SelectedFolder;
-                if (folder == null) {
-                    return;
-                }
-                List<LibPythonAI.Model.VectorDB.VectorSearchItem> items = [.. folder.Folder.GetVectorSearchProperties()];
-                foreach (var item in items) {
-                    VectorSearchProperties.Add(item);
-                }
-            } else {
-                VectorSearchProperties.Clear();
-            }
-            OnPropertyChanged(nameof(VectorDBItemVisibility));
-        }
-
-
-        private ChatRequestContext CreateChatRequestContext() {
-            int splitTokenCount = int.Parse(SplitTokenCount);
-            // ベクトルDB検索結果最大値をVectorSearchItemに設定
-            foreach (var item in VectorSearchProperties) {
-                item.TopK = VectorDBSearchResultMax;
-            }
-            ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], AutoGenProperties, PreProcessPromptText
-                );
-            return chatRequestContext;
-        }
-
-        //
-
-
-        public Visibility VectorDBItemVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_ragMode != RAGModeEnum.None);
-
-        public Visibility SplitMOdeVisibility => LibUIPythonAI.Utils.Tools.BoolToVisibility(_splitMode != SplitModeEnum.None);
-
-
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
@@ -247,20 +137,21 @@ namespace LibUIMergeChat.ViewModel {
                 // プログレスバーを表示
                 CommonViewModelProperties.UpdateIndeterminate(true);
 
-                ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid;
+                ObservableCollection<ContentItemViewModel> itemViewModels = MergeTargetPanelViewModel?.MergeTargetDataGridViewControlViewModel.CheckedItemsInMergeTargetSelectedDataGrid ?? [];
                 // itemViewModelsからContentItemをSelect
-                List<ContentItemWrapper> items = itemViewModels.Select(x => x.ContentItem).ToList();
+                List<ContentItem> items = itemViewModels?.Select(x => x.ContentItem).ToList() ?? [];
                 // チャット内容を更新
                 await Task.Run(async () => {
-                    ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                    ChatRequestContext context = ChatRequestContextViewModel.GetChatRequestContext();
+
                     // SplitModeが有効な場合で、PromptTextが空の場合はエラー
-                    if (_splitMode != SplitModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
+                    if (context.ChatSettings.SplitMode != SplitModeEnum.None && string.IsNullOrEmpty(PreProcessPromptText)) {
                         LogWrapper.Error(CommonStringResources.Instance.PromptTextIsNeededWhenSplitModeIsEnabled);
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         return;
                     }
                     // MergeChatUtil.MergeChatを実行
-                    result = await MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, SessionToken, [.. ExportItems]);
+                    result = await MergeChatUtil.MergeChat(context, items, PreProcessPromptText, PostProcessPromptText, SessionToken, [.. ExportItems]);
                 });
 
                 if (result == null) {
@@ -270,17 +161,17 @@ namespace LibUIMergeChat.ViewModel {
                 }
                 // チャット結果をOutputFolderに保存
                 if (OutputFolder != null) {
-                    ContentItemWrapper contentItemWrapper = new() {
+                    ContentItem contentItem = new() {
                         Content = result.Output,
                         SourceType = ContentSourceType.Application
                     };
 
 
-                    OutputFolder.Folder.AddItem(contentItemWrapper, true, (item) => {
+                    await OutputFolder.Folder.AddItemAsync(contentItem, true, (item) => {
                         CommonViewModelProperties.UpdateIndeterminate(false);
                         LogWrapper.Info(CommonStringResources.Instance.SavedChatResult);
                         // OutputFolderを再読み込みした後、Closeを実行
-                        OutputFolder.LoadFolderCommand.Execute();
+                        OutputFolder.FolderCommands.LoadFolderCommand.Execute();
                         // Close
                         MainUITask.Run(() => {
                             CloseCommand.Execute();
@@ -295,23 +186,6 @@ namespace LibUIMergeChat.ViewModel {
 
         });
 
-        // Splitモードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> SplitModeSelectionChangedCommand => new((routedEventArgs) => {
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            SplitMode = comboBox.SelectedIndex;
-            // SplitMOdeVisibility
-            OnPropertyChanged(nameof(SplitMOdeVisibility));
-
-        });
-        // RAGモードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            RAGMode = comboBox.SelectedIndex;
-            // VectorDBItemVisibility
-            OnPropertyChanged(nameof(VectorDBItemVisibility));
-        });
 
         private int _SelectedTabIndex = 0;
         public int SelectedTabIndex {
@@ -328,10 +202,8 @@ namespace LibUIMergeChat.ViewModel {
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
-                // タブが変更されたときの処理
-                MergeTargetPanelViewModel.UpdateCheckedItems();
                 // リクエストのメッセージをアップデート
-                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
                 ChatRequest request = new() {
                     // request.Temperature;
                     Temperature = Temperature
@@ -339,6 +211,8 @@ namespace LibUIMergeChat.ViewModel {
                 ChatUtil.PrepareNormalRequest(chatRequestContext, request);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
+
+                // OnPropertyChanged(nameof(MergeTargetSummaryDataGridViewModel.ContentItems));
             }
         });
 
@@ -355,46 +229,23 @@ namespace LibUIMergeChat.ViewModel {
         // 出力先フォルダを選択するコマンド
         public SimpleDelegateCommand<object> SelectOutputFolderCommand => new((parameter) => {
             // フォルダを選択
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, isSelect) => {
+            FolderSelectWindow.OpenFolderSelectWindow(FolderViewModelManagerBase.FolderViewModels, (folderViewModel, isSelect) => {
                 if (isSelect) {
                     OutputFolder = folderViewModel;
                 }
             });
         });
 
-        // ベクトルDBをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchItem != null) {
-                // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchItem);
-            }
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
 
-        // ベクトルDBを追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
-            // フォルダを選択
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    VectorSearchProperties.Add(vectorDBItemBase);
-                });
-
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-        // ExportItems
-        public ObservableCollection<ExportImportItem> ExportItems { get; set; } = CreateExportItems();
-
-        private static ObservableCollection<ExportImportItem> CreateExportItems() {
+        private static ObservableCollection<ContentItemDataDefinition> CreateExportItems() {
             // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+            List<PromptItem> promptItems = PromptItem.GetPromptItems();
+            promptItems = promptItems.Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
-            ObservableCollection<ExportImportItem> items = [
-                new ExportImportItem("Properties", CommonStringResources.Instance.Properties, true, false),
-                new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
-            ];
+            ObservableCollection<ContentItemDataDefinition> items = [ .. ContentItemDataDefinition.CreateDefaultDataDefinitions()];
+
             foreach (PromptItem promptItem in promptItems) {
-                items.Add(new ExportImportItem(promptItem.Name, promptItem.Description, false, true));
+                items.Add(new ContentItemDataDefinition(promptItem.Name, promptItem.Description, false, true));
             }
             return items;
         }

@@ -1,32 +1,34 @@
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
-using AIChatExplorer.Model.Folders.Clipboard;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
+using AIChatExplorer.Model.Folders.Application;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.Item;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
+using LibMain.Utils.Common;
+using LibUIMain.Resource;
+using LibUIMain.View.Item;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
-    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, ContentItemViewModelCommands commands) : ContentFolderViewModel(applicationItemFolder, commands) {
-        public override ApplicationItemViewModel CreateItemViewModel(ContentItemWrapper item) {
+    public class ApplicationFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ContentFolderViewModel(applicationItemFolder, Commands) {
+        public override ApplicationItemViewModel CreateItemViewModel(ContentItem item) {
             return new ApplicationItemViewModel(this, item);
         }
 
         // RootFolderのViewModelを取得する
-        public override ContentFolderViewModel GetRootFolderViewModel() {
-            return MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel;
+        public override ContentFolderViewModel? GetRootFolderViewModel() {
+
+            return MainWindowViewModel.Instance.RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
         }
 
+        public override ObservableCollection<ContentItemViewModel> GetSelectedItems() {
+            // MainWindowViewModelのSelectedItemsを取得
+            return MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems ?? new ObservableCollection<ContentItemViewModel>();
+        }
 
         // 子フォルダのApplicationFolderViewModelを作成するメソッド
         public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
@@ -38,13 +40,13 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
         }
 
         // LoadLLMConfigListAsync
-        public override void LoadItems() {
-            LoadItems<ApplicationItem>();
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ApplicationItem>();
         }
 
         // LoadChildren
-        public override void LoadChildren(int nestLevel) {
-            LoadChildren<ApplicationFolderViewModel, ApplicationFolder>(nestLevel);
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ApplicationFolderViewModel, ApplicationFolder>(nestLevel);
         }
 
         // -- virtual
@@ -55,25 +57,6 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             }
         }
 
-        // フォルダ作成コマンドの実装
-        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            // 子フォルダを作成する
-            ApplicationFolder childFolder = (ApplicationFolder)Folder.CreateChild("");
-            ApplicationFolderViewModel childFolderViewModel = new(childFolder, Commands);
-
-            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
-
-        }
-
-        /// <summary>
-        ///  フォルダ編集コマンド
-        ///  フォルダ編集ウィンドウを表示する処理
-        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
-        /// </summary>
-        /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
-        }
 
         public override void CreateItemCommandExecute() {
             ApplicationItem applicationItem = new(Folder.Entity);
@@ -84,62 +67,46 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             EditItemControl editItemControl = EditItemControl.CreateEditItemControl(this, ItemViewModel,
                 () => {
                     // フォルダ内のアイテムを再読み込み
-                    LoadFolderCommand.Execute();
+                    FolderCommands.LoadFolderCommand.Execute();
                     LogWrapper.Info(CommonStringResources.Instance.Edited);
                 });
 
             MainTabContent container = new("New Item", editItemControl);
 
             // UserControlをクローズする場合の処理を設定
-            editItemControl.SetCloseUserControl(() => { 
+            editItemControl.SetCloseUserControl(() => {
                 MainWindowViewModel.Instance.MainTabManager.RemoveTabItem(container);
             });
-           MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
+            MainWindowViewModel.Instance.MainTabManager.AddTabItem(container);
         }
 
-        public virtual void PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
+        public virtual async Task PasteApplicationItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
             IEnumerable<object> items, ApplicationFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ApplicationItemViewModel itemViewModel) {
-                    ContentItemWrapper applicationItem = itemViewModel.ContentItem;
+                    ContentItem applicationItem = itemViewModel.ContentItem;
                     if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        applicationItem.MoveTo(toFolder.Folder);
+                        await applicationItem.MoveToAsync(toFolder.Folder);
                     } else {
-                        applicationItem.CopyToFolder(toFolder.Folder);
+                        await applicationItem.CopyToFolderAsync(toFolder.Folder);
                     }
                 }
                 if (item is ApplicationFolderViewModel folderViewModel) {
                     ContentFolderWrapper folder = folderViewModel.Folder;
                     if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
-                        folder.MoveTo(toFolder.Folder);
+                        await folder.MoveToAsync(toFolder.Folder);
                         // 元のフォルダの親フォルダを再読み込み
-                        folderViewModel.ParentFolderViewModel?.LoadFolderCommand.Execute();
+                        folderViewModel.ParentFolderViewModel?.FolderCommands.LoadFolderCommand.Execute();
                     }
                 }
 
             }
-            toFolder.LoadFolderCommand.Execute();
+            toFolder.FolderCommands.LoadFolderCommand.Execute();
 
             LogWrapper.Info(CommonStringResources.Instance.Pasted);
         }
 
-        // -----------------------------------------------------------------------------------
-        #region プログレスインジケーター表示の処理
-
-
-        // ExtractTextCommand
-        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            // ContentTypes.Files, ContentTypes.Imageのアイテムを取得
-            var itemViewModels = Items.Where(x => x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files || x.ContentItem.ContentType == ContentItemTypes.ContentItemTypeEnum.Files);
-            Commands.ExtractTextCommand.Execute(MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems);
-
-        });
-
-
-        #endregion
-
-        //
     }
 }

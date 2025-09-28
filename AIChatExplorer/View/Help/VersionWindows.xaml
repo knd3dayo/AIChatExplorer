@@ -7,18 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="450"
     Height="300"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.DataContext>
         <local:VersionWindowViewModel />
     </Window.DataContext>
-    <Window.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="25" />
-        </Style>
-    </Window.Resources>
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"

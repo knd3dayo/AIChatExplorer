@@ -1,86 +1,98 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using AIChatExplorer.Model.Folders.Application;
+using AIChatExplorer.Model.Folders.ClipboardHistory;
 using AIChatExplorer.Model.Folders.Search;
-using AIChatExplorer.Model.Item;
-using AIChatExplorer.Model.Main;
 using AIChatExplorer.View.Help;
 using AIChatExplorer.View.Main;
+using AIChatExplorer.ViewModel.Content;
+using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Folders.Search;
-using LibPythonAI.Common;
-using LibPythonAI.Data;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.AutoGen;
-using LibUIPythonAI.ViewModel.Folder;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Model.Folders;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Main {
     public partial class MainWindowViewModel : CommonViewModelBase {
         public MainWindowViewModel() {
-
-
             Instance = this;
 
             // Commandの初期化
-            Commands = new(UpdateIndeterminate, () => {
-                // 現在選択中のフォルダをReload
-                MainUITask.Run(() => {
-                    MainPanelTreeViewControlViewModel?.SelectedFolder?.LoadFolderCommand.Execute();
-                });
-            });
+            Commands = InitCommands();
 
             // フォルダの初期化
             RootFolderViewModelContainer = new(Commands);
 
             // ClipboardControllerのOnClipboardChangedに処理をセット
+            InitClipboardController();
+
+            // MainPanelDataGridViewControlViewModel,MainPanelTreeViewControlViewModelの初期化
+            (MainPanelDataGridViewControlViewModel, MainPanelTreeViewControlViewModel) = InitMainPanelControls();
+
+            // パネルの初期化
+            InitPanel();
+        }
+
+        // Commandsの初期化
+        private AppViewModelCommandExecutes InitCommands() {
+            AppViewModelCommandExecutes commands = new(UpdateIndeterminate, () => {
+                // 現在選択中のフォルダをReload
+                MainUITask.Run(() => {
+                    MainPanelTreeViewControlViewModel?.SelectedFolder?.FolderCommands.LoadFolderCommand.Execute();
+                });
+            });
+            return commands;
+        }
+        // ClipboardControllerの初期化
+        private void InitClipboardController() {
+            // ClipboardControllerの初期化
             ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア
                 ClipboardController.Instance.CopiedObjects.Clear();
             };
-
-
+        }
+        private (MainPanelDataGridViewControlViewModel, MainPanelTreeViewControlViewModel) InitMainPanelControls() {
             // MainPanelDataGridViewControlViewModelの初期化
-            MainPanelDataGridViewControlViewModel = new(Commands) {
+            MainPanelDataGridViewControlViewModel dataGridViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
-
             };
-
             // MainPanelTreeViewControlViewModelの初期化
-            MainPanelTreeViewControlViewModel = new(Commands) {
+            MainPanelTreeViewControlViewModel treeViewModel = new(Commands) {
                 UpdateIndeterminateAction = UpdateIndeterminate,
                 RootFolderViewModelContainer = RootFolderViewModelContainer,
                 SelectedFolderChangedAction = ((selectedFolder) => {
                     MainPanelDataGridViewControlViewModel.SelectedFolder = selectedFolder;
                 })
             };
-
+            return (dataGridViewModel, treeViewModel);
+        }
+        private void InitPanel() {
             MainPanelViewModel mainPanelViewModel = new(Commands) {
                 MainPanelTreeViewControlViewModel = MainPanelTreeViewControlViewModel,
                 MainPanelDataGridViewControlViewModel = MainPanelDataGridViewControlViewModel
             };
 
-            // TabItemsの初期化
             MainPanel mainPanel = new() {
                 DataContext = mainPanelViewModel
             };
 
+            // TabItemsの初期化
             MainTabContent container = new("main", mainPanel) {
                 CloseButtonVisibility = Visibility.Collapsed
             };
             MainTabManager.TabItems.Add(container);
-
         }
 
-        public AppViewModelCommands Commands { get; set; }
+        public AppViewModelCommandExecutes Commands { get; set; }
+
         public MainPanelTreeViewControlViewModel MainPanelTreeViewControlViewModel { get; set; }
 
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; }
 
-
-
         // Null許容型
-        [AllowNull]
         public FolderViewModelManager RootFolderViewModelContainer { get; set; }
 
         [AllowNull]
@@ -91,10 +103,29 @@ namespace AIChatExplorer.ViewModel.Main {
         // クリップボード監視が実行中であるかどうか
         public bool IsClipboardMonitoringActive { get; set; } = false;
 
+
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
                 return IsClipboardMonitoringActive ? CommonStringResources.Instance.StopClipboardWatch : CommonStringResources.Instance.StartClipboardWatch;
+            }
+        }
+
+        // 画面監視が実行中であるかどうか
+        public bool IsScreenMonitoringActive { get; set; } = false;
+
+        // 画面監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string ScreenMonitorButtonText {
+            get {
+                return IsScreenMonitoringActive ? CommonStringResources.Instance.StopScreenWatch : CommonStringResources.Instance.StartScreenWatch;
+            }
+        }
+        // IsIntegratedMonitorActive
+        public bool IsIntegratedMonitorActive { get; set; } = false;
+        // 監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string IntegratedMonitorButtonText {
+            get {
+                return IsIntegratedMonitorActive ? CommonStringResources.Instance.StopIntegratedMonitorWatch : CommonStringResources.Instance.StartIntegratedMonitorWatch;
             }
         }
 
@@ -115,7 +146,6 @@ namespace AIChatExplorer.ViewModel.Main {
             }
         }
 
-
         // アイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
@@ -126,114 +156,133 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
-            AppViewModelCommands.OpenListPromptTemplateWindowCommandExecute();
+            AppViewModelCommandExecutes.OpenListPromptTemplateWindowCommandExecute();
         });
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
-            AppViewModelCommands.OpenListAutoProcessRuleWindowCommandExecute();
+            AppViewModelCommandExecutes.OpenListAutoProcessRuleWindowCommandExecute();
         });
 
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
-            AppViewModelCommands.OpenTagWindowCommandExecute();
+            AppViewModelCommandExecutes.OpenTagWindowCommandExecute();
         });
-        // メニューの「AutoGen定義編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
-            ListAutoGenItemWindow.OpenListAutoGenItemWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
-        });
+
 
         // バージョン情報画面を開く処理
         public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
             VersionWindow.OpenVersionWindow();
         });
 
-        // メニューの「OpenAIチャット」をクリックしたときの処理。
-        // チャット履歴フォルダーに新規作成
-        public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-
-            AppViewModelCommands.OpenOpenAIChatWindowCommandExecute();
-
-        });
-
-        // メニューの「AutoGenチャット」をクリックしたときの処理。
-        // チャット履歴フォルダーに新規作成
-        public SimpleDelegateCommand<object> OpenAutoGenChatWindow => new((parameter) => {
-
-            AppViewModelCommands.OpenAutoGenChatWindowCommandExecute();
-
-        });
-
         // OpenImageChatWindow
         public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
-            ApplicationItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Entity);
-            AppViewModelCommands.OpenImageChatWindowCommand(dummyItem, () => {
-                RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
+            var viewModel = RootFolderViewModelContainer.ChatRootFolderViewModel;
+            if (viewModel == null) {
+                // チャット履歴フォルダーが存在しない場合は、何もしない
+                return;
+            }
+            ApplicationItem dummyItem = new(viewModel.Folder.Entity);
+            AppViewModelCommandExecutes.OpenImageChatWindowCommand(dummyItem, () => {
+                viewModel.FolderCommands.LoadFolderCommand.Execute();
             });
         });
 
         // OpenMergeChatWindow
         public SimpleDelegateCommand<object> OpenFolderMergeChatWindow => new((parameter) => {
 
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            AppViewModelCommands.OpenMergeChatWindowCommand(folderViewModel, []);
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
+            AppViewModelCommandExecutes.OpenMergeChatWindowCommand(folderViewModel, []);
 
         });
 
+        // OpenNormalChatWindow
+        public SimpleDelegateCommand<object> OpenNormalChatWindow => new((parameter) => {
+            // チャット履歴用のItemの設定
+            ApplicationFolderViewModel? chatFolderViewModel = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel;
+            if (chatFolderViewModel == null) {
+                // チャット履歴フォルダーが存在しない場合は、何もしない
+                return;
+            }
+            // チャット履歴用のItemの設定
+            ApplicationItem item = new(chatFolderViewModel.Folder.Entity) {
+                // TEMPORARY_ITEM_ID
+                Id = ApplicationItem.TEMPORARY_ITEM_ID,
+                // タイトルを日付 + 元のタイトルにする
+                Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + CommonStringResources.Instance.ChatHeader + CommonStringResources.Instance.NoTitle
+            };
+            ApplicationItemViewModel applicationItemViewModel = new(chatFolderViewModel, item);
+
+            AppViewModelCommandExecutes.OpenNormalChatWindowCommandExecute(applicationItemViewModel);
+        });
+
         public SimpleDelegateCommand<object> OpenSelectedItemsMergeChatWindow => new((parameter) => {
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
             ObservableCollection<ContentItemViewModel> selectedItems = [.. MainPanelDataGridViewControlViewModel.SelectedItems];
-            AppViewModelCommands.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
+            AppViewModelCommandExecutes.OpenMergeChatWindowCommand(folderViewModel, selectedItems);
 
         });
 
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
-            ContentFolderViewModel folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            AppViewModelCommands.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
+        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new(async (parameter) => {
+            ContentFolderViewModel? folderViewModel = MainPanelTreeViewControlViewModel.SelectedFolder ?? RootFolderViewModelContainer.GetApplicationRootFolderViewModel();
+            if (folderViewModel == null) {
+                // フォルダーが選択されていない場合は、何もしない
+                return;
+            }
+            await AppViewModelCommandExecutes.OpenFolderVectorSearchWindowCommandExecute(folderViewModel);
         });
 
 
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
-            AppViewModelCommands.OpenVectorDBManagementWindowCommand();
+            AppViewModelCommandExecutes.OpenVectorDBManagementWindowCommand();
         });
 
         // メニューの「設定」をクリックしたときの処理
         public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            AppViewModelCommands.SettingCommandExecute();
+            AppViewModelCommandExecutes.SettingCommandExecute();
         });
 
 
         // Ctrl + F が押された時の処理
-        public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SearchCommand => new( (parameter) => {
             // 子フォルダを作成
-            SearchFolder folder = FolderManager.SearchRootFolder.CreateChild("New Folder");
+            var parentFolder =  FolderManager.GetSearchRootFolder();
+            SearchFolder folder = parentFolder.CreateChild("New Folder");
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
             SearchFolderViewModel searchFolderViewModel = new(folder, Commands);
 
-            AppViewModelCommands.OpenSearchWindowCommandExecute(searchFolderViewModel, () => {
+            AppViewModelCommandExecutes.OpenSearchWindowCommandExecute(searchFolderViewModel, async () => {
                 // 保存と再読み込み
-                searchFolderViewModel.ParentFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel;
-                searchFolderViewModel.SaveFolderCommand.Execute(null);
+                var rootFolderViewModel = MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.GetSearchRootFolderViewModel();
+                if (rootFolderViewModel == null) {
+                    return;
+                }
+                searchFolderViewModel.ParentFolderViewModel = rootFolderViewModel;
+                searchFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
-                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.SaveFolderCommand.Execute(null);
+                rootFolderViewModel.FolderCommands.SaveFolderCommand.Execute(null);
                 // Load
-                MainPanelTreeViewControlViewModel.RootFolderViewModelContainer.SearchRootFolderViewModel.LoadFolderExecute(
-                () => {
-                    Commands.UpdateIndeterminate(true);
-                },
-                () => {
-                    MainUITask.Run(() => {
-                        Commands.UpdateIndeterminate(false);
+                Commands.UpdateIndeterminate(true);
+                await rootFolderViewModel.LoadFolderExecuteAsync();
+                MainUITask.Run(() => {
+                    Commands.UpdateIndeterminate(false);
 
-                        MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
-                        // SelectedFolder に　SearchFolderViewModelを設定
-                        MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
-                    });
+                    MainPanelTreeViewControlViewModel.SelectedTreeViewItemChangeCommandExecute(searchFolderViewModel);
+                    // SelectedFolder に　SearchFolderViewModelを設定
+                    MainPanelTreeViewControlViewModel.SelectedFolder = searchFolderViewModel;
                 });
 
             });

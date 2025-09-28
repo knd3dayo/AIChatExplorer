@@ -73,30 +73,6 @@ namespace AIChatExplorer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ja_core_news_sm")]
-        public string SpacyModel {
-            get {
-                return ((string)(this["SpacyModel"]));
-            }
-            set {
-                this["SpacyModel"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Python311\\python311.dll")]
-        public string PythonDllPath {
-            get {
-                return ((string)(this["PythonDllPath"]));
-            }
-            set {
-                this["PythonDllPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7")]
         public int BackupGeneration {
             get {
@@ -128,18 +104,6 @@ namespace AIChatExplorer.Properties {
             }
             set {
                 this["AutoTag"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UserMaskedDataInOpenAI {
-            get {
-                return ((bool)(this["UserMaskedDataInOpenAI"]));
-            }
-            set {
-                this["UserMaskedDataInOpenAI"] = value;
             }
         }
         
@@ -188,30 +152,6 @@ namespace AIChatExplorer.Properties {
             }
             set {
                 this["AzureOpenAIEndpoint"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseSpacy {
-            get {
-                return ((bool)(this["UseSpacy"]));
-            }
-            set {
-                this["UseSpacy"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Tesseract-OCR\\tesseract.exe")]
-        public string TesseractExePath {
-            get {
-                return ((string)(this["TesseractExePath"]));
-            }
-            set {
-                this["TesseractExePath"] = value;
             }
         }
         
@@ -361,18 +301,6 @@ namespace AIChatExplorer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoGenerateTasks {
-            get {
-                return ((bool)(this["AutoGenerateTasks"]));
-            }
-            set {
-                this["AutoGenerateTasks"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public string PythonExecution {
             get {
@@ -380,30 +308,6 @@ namespace AIChatExplorer.Properties {
             }
             set {
                 this["PythonExecution"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public string UseOCR {
-            get {
-                return ((string)(this["UseOCR"]));
-            }
-            set {
-                this["UseOCR"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string VectorDBURL {
-            get {
-                return ((string)(this["VectorDBURL"]));
-            }
-            set {
-                this["VectorDBURL"] = value;
             }
         }
         
@@ -530,18 +434,6 @@ namespace AIChatExplorer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UsePythonNet {
-            get {
-                return ((bool)(this["UsePythonNet"]));
-            }
-            set {
-                this["UsePythonNet"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool MarkdownView {
             get {
                 return ((bool)(this["MarkdownView"]));
@@ -560,6 +452,66 @@ namespace AIChatExplorer.Properties {
             }
             set {
                 this["AppDataPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ScreenMonitoringInterval {
+            get {
+                return ((int)(this["ScreenMonitoringInterval"]));
+            }
+            set {
+                this["ScreenMonitoringInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoPredictUserIntent {
+            get {
+                return ((bool)(this["AutoPredictUserIntent"]));
+            }
+            set {
+                this["AutoPredictUserIntent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public int EditorFontSize {
+            get {
+                return ((int)(this["EditorFontSize"]));
+            }
+            set {
+                this["EditorFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MaterialDesignDarkTheme {
+            get {
+                return ((bool)(this["MaterialDesignDarkTheme"]));
+            }
+            set {
+                this["MaterialDesignDarkTheme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoGenerateTasks {
+            get {
+                return ((bool)(this["AutoGenerateTasks"]));
+            }
+            set {
+                this["AutoGenerateTasks"] = value;
             }
         }
     }

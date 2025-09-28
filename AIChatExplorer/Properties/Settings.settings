@@ -14,12 +14,6 @@
     <Setting Name="OpenAICompletionModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">gpt-4o</Value>
     </Setting>
-    <Setting Name="SpacyModel" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ja_core_news_sm</Value>
-    </Setting>
-    <Setting Name="PythonDllPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files\Python311\python311.dll</Value>
-    </Setting>
     <Setting Name="BackupGeneration" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
     </Setting>
@@ -27,9 +21,6 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AutoTag" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="UserMaskedDataInOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
@@ -43,12 +34,6 @@
     </Setting>
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="UseSpacy" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="TesseractExePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files\Tesseract-OCR\tesseract.exe</Value>
     </Setting>
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -86,17 +71,8 @@
     <Setting Name="Lang" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="AutoGenerateTasks" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="PythonExecution" Type="System.String" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="UseOCR" Type="System.String" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="VectorDBURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SourceDocumentURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -128,14 +104,26 @@
     <Setting Name="UseExternalAPI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UsePythonNet" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="MarkdownView" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AppDataPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ScreenMonitoringInterval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="AutoPredictUserIntent" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="EditorFontSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">12</Value>
+    </Setting>
+    <Setting Name="MaterialDesignDarkTheme" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoGenerateTasks" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

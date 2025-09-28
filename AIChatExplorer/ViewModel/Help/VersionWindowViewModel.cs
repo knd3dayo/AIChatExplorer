@@ -1,5 +1,5 @@
 using AIChatExplorer.ViewModel.Main;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.ViewModel.Help {
     public class VersionWindowViewModel : CommonViewModelBase {

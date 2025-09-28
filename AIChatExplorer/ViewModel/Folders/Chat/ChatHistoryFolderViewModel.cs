@@ -1,0 +1,73 @@
+using AIChatExplorer.ViewModel.Content;
+using AIChatExplorer.ViewModel.Folders.Application;
+using LibMain.Model.Content;
+using LibUIMain.View.Folder;
+using LibUIMain.ViewModel.Chat;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.Common;
+using AIChatExplorer.ViewModel.Folders.FileSystem;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using AIChatExplorer.ViewModel.Main;
+using AIChatExplorer.Model.Folders.Application;
+using LibMain.Model.Folders;
+
+namespace AIChatExplorer.ViewModel.Folders.Chat {
+    public class ChatHistoryFolderViewModel(ContentFolderWrapper applicationItemFolder, CommonViewModelCommandExecutes Commands) : ApplicationFolderViewModel(applicationItemFolder, Commands) {
+
+        // 子フォルダのApplicationFolderViewModelを作成するメソッド
+        public override ApplicationFolderViewModel CreateChildFolderViewModel(ContentFolderWrapper childFolder) {
+            // 外側の型の状態（Commands）は基底コンストラクターに渡される
+            var chatFolderViewModel = new ChatHistoryFolderViewModel(childFolder, Commands) {
+                ParentFolderViewModel = this
+            };
+            return chatFolderViewModel;
+        }
+
+        public override ObservableCollection<MenuItem> FolderMenuItems {
+            get {
+                ChatHistoryFolderMenu menu = new(this);
+                return menu.MenuItems;
+            }
+        }
+
+        // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
+        public override void CreateItemCommandExecute() {
+            ContentItem applicationItem = new(Folder.Entity);
+            ApplicationItemViewModel applicationItemViewModel = new(this, applicationItem);
+            QAChatStartupPropsBase props = new QAChatStartupProps(applicationItemViewModel.ContentItem);
+            LibUINormalChat.View.NormalChatWindow.OpenWindow(props);
+        }
+
+        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+            // 子フォルダを作成する
+            // 自身が画像チェックの場合は、画像チェックを作成
+            ContentFolderWrapper childFolder = Folder.CreateChild("");
+            childFolder.Entity.FolderTypeString = FolderManager.CHAT_ROOT_FOLDER_NAME_EN;
+            ChatHistoryFolderViewModel childFolderViewModel = new(childFolder, Commands);
+            // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
+            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
+
+        }
+        /// <summary>
+        ///  フォルダ編集コマンド
+        ///  フォルダ編集ウィンドウを表示する処理
+        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
+        /// </summary>
+        /// <param name="parameter"></param>
+        public override void EditFolderCommandExecute( Action afterUpdate) {
+            FolderEditWindow.OpenFolderEditWindow(this, afterUpdate);
+        }
+
+        // LoadLLMConfigListAsync
+        public override async Task LoadItemsAsync() {
+            await LoadItemsAsync<ApplicationItem>();
+        }
+
+        // LoadChildren
+        public override async Task LoadChildren(int nestLevel) {
+            await LoadChildren<ChatHistoryFolderViewModel, ContentFolderWrapper>(nestLevel);
+        }
+    }
+}
+

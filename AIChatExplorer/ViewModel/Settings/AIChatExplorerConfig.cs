@@ -1,5 +1,9 @@
 using System.IO;
-using LibPythonAI.Common;
+using System.Windows;
+using LibMain.Common;
+using LibMain.Utils.Common;
+using LibUIMain.Utils;
+using MaterialDesignThemes.Wpf;
 
 namespace AIChatExplorer.ViewModel.Settings {
     public class AIChatExplorerConfig {
@@ -254,7 +258,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // AutoBackgroundInfo
+        // IsAutoBackgroundInfoEnabled
         private bool? _autoBackgroundInfo;
         public bool AutoBackgroundInfo {
             get {
@@ -268,7 +272,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.AutoBackgroundInfo = value;
             }
         }
-        // AutoSummary
+        // IsAutoSummaryEnabled
         private bool? _autoSummary;
         public bool AutoSummary {
             get {
@@ -297,7 +301,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
             }
         }
-        // AutoExtractImageWithOpenAI
+        // IsAutoExtractImageWithOpenAIEnabled
         private bool? _autoExtractImageWithOpenAI;
         public bool AutoExtractImageWithOpenAI {
             get {
@@ -311,22 +315,8 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.AutoExtractImageWithOpenAI = value;
             }
         }
-        // UserMaskedDataInOpenAI
-        private bool? _userMaskedDataInOpenAI;
-        public bool UserMaskedDataInOpenAI {
-            get {
-                if (_userMaskedDataInOpenAI == null) {
-                    _userMaskedDataInOpenAI = Properties.Settings.Default.UserMaskedDataInOpenAI;
-                }
-                return _userMaskedDataInOpenAI.Value;
-            }
-            set {
-                _userMaskedDataInOpenAI = value;
-                Properties.Settings.Default.UserMaskedDataInOpenAI = value;
-            }
-        }
 
-        // AutoFileExtract
+        // IsAutoFileExtractEnabled
         private bool? _autoFileExtract;
         public bool AutoFileExtract {
             get {
@@ -355,7 +345,20 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-
+        // ScreenMonitoringInterval
+        private int _ScreenMonitoringInterval = -1;
+        public int ScreenMonitoringInterval {
+            get {
+                if (_ScreenMonitoringInterval == -1) {
+                    _ScreenMonitoringInterval = Properties.Settings.Default.ScreenMonitoringInterval;
+                }
+                return _ScreenMonitoringInterval;
+            }
+            set {
+                _ScreenMonitoringInterval = value;
+                Properties.Settings.Default.ScreenMonitoringInterval = value;
+            }
+        }
 
         // TextWrapping
         private bool _textWrapping = false;
@@ -388,7 +391,7 @@ namespace AIChatExplorer.ViewModel.Settings {
             }
         }
 
-        // IgnoreLineCount
+        // GetIgnoreLineCount
         private int _ignoreLineCount = -1;
         public int IgnoreLineCount {
             get {
@@ -402,51 +405,9 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.IgnoreLineCount = value;
             }
         }
-        #region 開発中機能関連の設定
-        // UseSpacy
-        private bool? _useSpacy;
-        public bool UseSpacy {
-            get {
-                if (_useSpacy == null) {
-                    _useSpacy = Properties.Settings.Default.UseSpacy;
-                }
-                return _useSpacy.Value;
-            }
-            set {
-                _useSpacy = value;
-                Properties.Settings.Default.UseSpacy = value;
-            }
-        }
-        // SpacyModel
-        private string? _spacyModel;
-        public string SpacyModel {
-            get {
-                if (_spacyModel == null) {
-                    _spacyModel = Properties.Settings.Default.SpacyModel;
-                }
-                return _spacyModel;
-            }
-            set {
-                _spacyModel = value;
-                Properties.Settings.Default.SpacyModel = value;
-            }
-        }
-        // TesseractExePath
-        private string? _tesseractExePath;
-        public string TesseractExePath {
-            get {
-                if (_tesseractExePath == null) {
-                    _tesseractExePath = Properties.Settings.Default.TesseractExePath;
-                }
-                return _tesseractExePath;
-            }
-            set {
-                _tesseractExePath = value;
-                Properties.Settings.Default.TesseractExePath = value;
-            }
-        }
 
-        // AutoTag
+
+        // IsAutoTagEnabled
         private bool? _autoTag;
         public bool AutoTag {
             get {
@@ -519,7 +480,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.NoProxyList = value;
             }
         }
-        // AutoDocumentReliabilityCheck
+        // IsAutoDocumentReliabilityCheckEnabled
         private bool? _autoDocumentReliabilityCheck;
         public bool AutoDocumentReliabilityCheck {
             get {
@@ -577,7 +538,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.APIServerURL = value;
             }
         }
-        // UseInternalAPI
+        // IsUseInternalAPI
         private bool? _useInternalAPI;
         public bool UseInternalAPI {
             get {
@@ -605,8 +566,66 @@ namespace AIChatExplorer.ViewModel.Settings {
                 Properties.Settings.Default.UseExternalAPI = value;
             }
         }
+        // IsAutoPredictUserIntentEnabled
+        private bool? _autoPredictUserIntent;
+        public bool AutoPredictUserIntent {
+            get {
+                if (_autoPredictUserIntent == null) {
+                    _autoPredictUserIntent = Properties.Settings.Default.AutoPredictUserIntent;
+                }
+                return _autoPredictUserIntent.Value;
+            }
+            set {
+                _autoPredictUserIntent = value;
+                Properties.Settings.Default.AutoPredictUserIntent = value;
+            }
+        }
 
-        #endregion
+        // EditorFontSize
+        private int _editorFontSize = -1;
+        public int EditorFontSize {
+            get {
+                if (_editorFontSize == -1) {
+                    _editorFontSize = Properties.Settings.Default.EditorFontSize;
+                }
+                return _editorFontSize;
+            }
+            set {
+                _editorFontSize = value;
+                Properties.Settings.Default.EditorFontSize = value;
+            }
+        }
+        // MaterialDesignDarkTheme
+        private bool? _materialDesignDarkTheme;
+        public bool MaterialDesignDarkTheme {
+            get {
+                if (_materialDesignDarkTheme == null) {
+                    _materialDesignDarkTheme = Properties.Settings.Default.MaterialDesignDarkTheme;
+                }
+                return _materialDesignDarkTheme.Value;
+            }
+            set {
+                _materialDesignDarkTheme = value;
+                Properties.Settings.Default.MaterialDesignDarkTheme = value;
+                UpdateMaterialDesignDarkTheme();
+            }
+        }
+
+        /// <summary>
+        /// MaterialDesignのThemeをDarkに設定する
+        /// </summary>
+        public void UpdateMaterialDesignDarkTheme() {
+            var paletteHelper = new MaterialDesignThemes.Wpf.PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            if (MaterialDesignDarkTheme) {
+                // ダークテーマを設定
+                theme.SetDarkTheme();
+            } else {
+                // ライトテーマを設定
+                theme.SetLightTheme();
+            }
+            paletteHelper.SetTheme(theme);
+        }
 
 
         public void Save() {
@@ -638,28 +657,210 @@ namespace AIChatExplorer.ViewModel.Settings {
             return openAIProperties;
         }
 
-    }
 
-    public class MiscConfig {
 
-        private static DateTime? _windowsNotificationLastCheckedTime;
-
-        public static DateTime WindowsNotificationLastCheckedTime {
-            get {
-                if (_windowsNotificationLastCheckedTime == null) {
-                    _windowsNotificationLastCheckedTime = Properties.Misc.Default.WindowsNotificationLastCheckedTime;
-                }
-                return _windowsNotificationLastCheckedTime == null ? DateTime.MinValue.ToUniversalTime() : _windowsNotificationLastCheckedTime.Value;
-            }
-            set {
-                _windowsNotificationLastCheckedTime = value;
-                Properties.Misc.Default.WindowsNotificationLastCheckedTime = value;
-            }
+        public string GetHttpsProxy() {
+            return AIChatExplorerConfig.Instance.ProxyURL;
         }
-        public static void Save() {
-            Properties.Misc.Default.Save();
+        public string GetNoProxy() {
+            return AIChatExplorerConfig.Instance.NoProxyList;
+        }
+
+        public string GetLang() {
+            return AIChatExplorerConfig.Instance.ActualLang;
         }
 
 
+        public string GetPathToVirtualEnv() {
+            return AIChatExplorerConfig.Instance.PythonVenvPath;
+        }
+        public string GetAppDataPath() {
+            return AIChatExplorerConfig.Instance.AppDataPath;
+        }
+        public string GetContentOutputPath() {
+            return Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "content_output");
+        }
+
+        public OpenAIProperties GetOpenAIProperties() {
+            return AIChatExplorerConfig.Instance.CreateOpenAIProperties();
+        }
+
+
+        public ILogWrapperAction GetLogWrapperAction() {
+            return new LogWrapperAction();
+        }
+
+        public TextWrapping GetTextWrapping() {
+            return AIChatExplorerConfig.Instance.TextWrapping;
+        }
+
+
+        public string GetMainDBPath() {
+            /// Get AppData folder path
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
+            // Create database file path
+            string dbPath = Path.Combine(appDataPath, "client", "main_db");
+            if (!Directory.Exists(dbPath)) {
+                Directory.CreateDirectory(dbPath);
+            }
+            dbPath = Path.Combine(dbPath, "client_main.db");
+            return dbPath;
+        }
+        public string GetPythonLibPath() {
+            /// Get AppData folder path
+            string appDataPath = AIChatExplorerConfig.Instance.AppDataPath;
+            // Create database file path
+            string path = Path.Combine(appDataPath, "python_lib");
+            return path;
+
+        }
+
+
+        // AutoGenWorkDir
+        public string GetAutoGenWorkDir() {
+            string workDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "work");
+            // Create directory if it does not exist
+            if (!Directory.Exists(workDir)) {
+                Directory.CreateDirectory(workDir);
+            }
+            return workDir;
+        }
+        // AutoGenToolDir
+        public string GetAutoGenToolDir() {
+            string toolDir = Path.Combine(AIChatExplorerConfig.Instance.AppDataPath, "autogen", "tools");
+            // Create directory if it does not exist
+            if (!Directory.Exists(toolDir)) {
+                Directory.CreateDirectory(toolDir);
+            }
+            return toolDir;
+        }
+
+
+
+        #region IPythonAILibConfigParamsの実装
+
+
+
+        public bool IsAutoTagEnabled() {
+            return AIChatExplorerConfig.Instance.AutoTag;
+        }
+
+        // IsAutoTitleEnabled
+        public bool IsAutoTitleEnabled() {
+            return AIChatExplorerConfig.Instance.AutoDescription;
+        }
+        // IsAutoTitleWithOpenAIEnabled
+        public bool IsAutoTitleWithOpenAIEnabled() {
+            return AIChatExplorerConfig.Instance.AutoDescriptionWithOpenAI;
+        }
+
+        // IsAutoBackgroundInfoEnabled
+        public bool IsAutoBackgroundInfoEnabled() {
+            return AIChatExplorerConfig.Instance.AutoBackgroundInfo;
+        }
+
+        // IsAutoSummaryEnabled
+        public bool IsAutoSummaryElabled() {
+            return AIChatExplorerConfig.Instance.AutoSummary;
+        }
+
+        // IsAutoGenerateTasksEnabled
+        public bool IsAutoGenerateTasksEnabled() {
+            return AIChatExplorerConfig.Instance.AutoGenerateTasks;
+        }
+
+        // IsAutoDocumentReliabilityCheckEnabled
+        public bool IsAutoDocumentReliabilityCheckEnabled() {
+            return AIChatExplorerConfig.Instance.AutoDocumentReliabilityCheck;
+        }
+
+        // IsAutoFileExtractEnabled
+        public bool IsAutoFileExtractEnabled() {
+            return AIChatExplorerConfig.Instance.AutoFileExtract;
+        }
+
+
+        // IsAutoExtractImageWithOpenAIEnabled
+        public bool IsAutoExtractImageWithOpenAIEnabled() {
+            return AIChatExplorerConfig.Instance.AutoExtractImageWithOpenAI;
+        }
+        // GetIgnoreLineCount
+        public int GetIgnoreLineCount() {
+            return AIChatExplorerConfig.Instance.IgnoreLineCount;
+        }
+
+        // public bool IsDevFeaturesEnabled();
+        public bool IsDevFeaturesEnabled() {
+            return AIChatExplorerConfig.Instance.EnableDevFeatures;
+        }
+
+        public void UpdateDevFeaturesEnabled(bool value) {
+            AIChatExplorerConfig.Instance.EnableDevFeatures = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // APIServerURL
+        public string GetAPIServerURL() {
+            return AIChatExplorerConfig.Instance.APIServerURL;
+        }
+
+        // IsUseInternalAPI
+        public bool IsUseInternalAPI() {
+            return AIChatExplorerConfig.Instance.UseInternalAPI;
+        }
+        // UseAPI
+        public bool IsUseExternalAPI() {
+            return AIChatExplorerConfig.Instance.UseExternalAPI;
+        }
+
+        // IsAutoPredictUserIntentEnabled
+        public bool IsAutoPredictUserIntentEnabled() {
+            return AIChatExplorerConfig.Instance.AutoPredictUserIntent;
+        }
+
+        // MarkdownView
+        public bool IsMarkdownView() {
+            return AIChatExplorerConfig.Instance.MarkdownView;
+        }
+
+        public void UpdateMarkdownView(bool value) {
+            AIChatExplorerConfig.Instance.MarkdownView = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // TextWrapping
+        public bool IsTextWrapping() {
+            return AIChatExplorerConfig.Instance.TextWrapping == TextWrapping.Wrap;
+        }
+        public void UpdateTextWrapping(TextWrapping value) {
+            AIChatExplorerConfig.Instance.TextWrapping = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // AutoTextWrapping
+        public bool IsAutoTextWrapping() {
+            return AIChatExplorerConfig.Instance.AutoTextWrapping;
+        }
+
+        public void UpdateAutoTextWrapping(bool value) {
+            AIChatExplorerConfig.Instance.AutoTextWrapping = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // ShowProperties
+        public bool IsShowProperties() {
+            return AIChatExplorerConfig.Instance.ShowProperties;
+        }
+        public void UpdateShowProperties(bool value) {
+            AIChatExplorerConfig.Instance.ShowProperties = value;
+            AIChatExplorerConfig.Instance.Save();
+        }
+
+        // ClipboardMonitoring 
+        public string GetMonitorTargetAppNames() {
+            return AIChatExplorerConfig.Instance.MonitorTargetAppNames;
+        }
+        #endregion
     }
+
 }

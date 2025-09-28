@@ -2,9 +2,9 @@
     x:Class="LibUIMergeChat.View.MergeChatControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource;assembly=LibUIPythonAI"
+    xmlns:commonModel="clr-namespace:LibUIMain.Resource;assembly=LibUIMain"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editorControl="clr-namespace:LibUIPythonAI.Control.Editor;assembly=LibUIPythonAI"
+    xmlns:editorControl="clr-namespace:LibUIMain.Control.Editor;assembly=LibUIMain"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:LibUIMergeChat.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -43,7 +43,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
         <TabControl
             Grid.Row="0"
             Margin="10,5,10,5"
@@ -69,7 +68,7 @@
                             <RowDefinition Height="5" />
                             <RowDefinition Height="300" />
                         </Grid.RowDefinitions>
-                        <local:MergeTargetSelectedDataGridViewControl Grid.Row="0" DataContext="{Binding MergeTargetPanelViewModel.MergeTargetDataGridViewControlViewModel}" />
+                        <local:MergeTargetSelectedDataGridViewControl Grid.Row="0" DataContext="{Binding MergeTargetSummaryDataGridViewModel}" />
                         <GridSplitter
                             Grid.Row="1"
                             Height="5"
@@ -109,50 +108,62 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <!--  マージ対象アイテム  -->
+            <!--  マージ対象  -->
             <TabItem
                 Width="Auto"
                 Height="Auto"
                 Margin="10,0,10,0"
                 Padding="0"
                 FontSize="10"
-                Header="{x:Static res:ViewStringResources.MergeTargetItemSelection}">
-                <local:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
-            </TabItem>
-            <!--  マージ対象データ  -->
-            <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,0,10,0"
-                Padding="0"
-                FontSize="10"
-                Header="{x:Static res:ViewStringResources.MergeTargetDataSelection}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <!--  エクスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
-                    <DataGrid
-                        Grid.Row="0"
-                        Margin="10,10,10,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        AutoGenerateColumns="False"
-                        ItemsSource="{Binding ExportItems}"
-                        SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.MergeTarget}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                Header="{x:Static res:ViewStringResources.MergeTarget}">
+                <TabControl Margin="10,5,10,5" HorizontalContentAlignment="Left">
+
+                    <!--  マージ対象アイテム  -->
+                    <TabItem
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="10,0,10,0"
+                        Padding="0"
+                        FontSize="10"
+                        Header="{x:Static res:ViewStringResources.MergeTargetItemSelection}">
+                        <local:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
+                    </TabItem>
+                    <!--  マージ対象データ  -->
+                    <TabItem
+                        Width="Auto"
+                        Height="Auto"
+                        Margin="10,0,10,0"
+                        Padding="0"
+                        FontSize="10"
+                        Header="{x:Static res:ViewStringResources.MergeTargetDataSelection}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <!--  エクスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
+                            <DataGrid
+                                Grid.Row="0"
+                                Margin="10,10,10,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                AutoGenerateColumns="False"
+                                ItemsSource="{Binding ExportItems}"
+                                SelectionMode="Single">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.MergeTarget}">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
             </TabItem>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">

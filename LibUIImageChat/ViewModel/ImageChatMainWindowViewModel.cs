@@ -2,41 +2,36 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using LibMain.Common;
+using LibMain.Model.Chat;
+using LibMain.Model.Content;
+using LibMain.Model.Image;
+using LibMain.PythonIF.Request;
+using LibMain.PythonIF.Response;
+using LibMain.Utils.Common;
+using LibMain.Utils.Python;
 using LibUIImageChat.View;
-using LibUIPythonAI.Utils;
-using LibUIPythonAI.View.PromptTemplate;
-using LibUIPythonAI.ViewModel;
-using LibUIPythonAI.ViewModel.PromptTemplate;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.View.PromptTemplate;
+using LibUIMain.ViewModel.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using LibPythonAI.Utils.Common;
-using LibPythonAI.Model.Image;
-using LibPythonAI.Model.Content;
-using LibPythonAI.Utils.Python;
-using LibUIPythonAI.Resource;
-using LibPythonAI.PythonIF.Request;
-using LibPythonAI.PythonIF.Response;
-using LibPythonAI.Common;
-using LibPythonAI.Model.Chat;
 
 namespace LibUIImageChat.ViewModel {
     public class ImageChatWindowViewModel : CommonViewModelBase {
         // コンストラクタ
-        public ImageChatWindowViewModel(ContentItemWrapper applicationItem, Action afterUpdate) {
+        public ImageChatWindowViewModel(ContentItem applicationItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             ApplicationItem = applicationItem;
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(InputText));
             OnPropertyChanged(nameof(ResultText));
             OnPropertyChanged(nameof(ImageFiles));
-            ChatRequest = new();
         }
         public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
 
         // データ保存用のApplicationItem
-        public ContentItemWrapper ApplicationItem { get; set; }
-
-        // Chat
-        public ChatRequest ChatRequest { get; set; }
+        public ContentItem ApplicationItem { get; set; }
 
         // 更新後の処理
         public Action AfterUpdate { get; set; } = () => { };
@@ -99,6 +94,16 @@ namespace LibUIImageChat.ViewModel {
             }
         }
 
+        // リクエストを画像ごとに分割するかどうか
+        private bool splitRequestByImage = false;
+        public bool SplitRequestByImage {
+            get => splitRequestByImage;
+            set {
+                splitRequestByImage = value;
+                OnPropertyChanged(nameof(SplitRequestByImage));
+            }
+        }
+
         // 最後に選択された画像ファイルがあるフォルダ
         private string lastSelectedImageFolder = ".";
 
@@ -122,55 +127,64 @@ namespace LibUIImageChat.ViewModel {
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
-            PythonAILibManager? libManager = PythonAILibManager.Instance;
-            // ChatRequestContextを生成
-            ChatRequestContext chatRequestContext = new() {
-                PromptTemplateText = PromptText,
-            };
-
-            // 画像イメージファイル名がない場合はエラー
-            if (ImageFiles.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoImageFileSelected);
-                return;
-            }
-            // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                // プログレスバーを表示
-                CommonViewModelProperties.UpdateIndeterminate( true);
+                CommonViewModelProperties.UpdateIndeterminate(true);
+                if (SplitRequestByImage) {
+                    List<string> results = [];
+                    foreach (ScreenShotImageViewModel image in ImageFiles) {
+                        // 画像ごとにリクエストを送信
+                        string result = await SendChatByImagesAsync(InputText, PromptText, new ObservableCollection<ScreenShotImageViewModel> { image });
+                        if (!string.IsNullOrEmpty(result)) {
+                            results.Add(result);
+                        }
+                    }
+                    // 結果を結合してResultTextに設定
+                    ResultText = string.Join("\n", results);
 
-                // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
-                // モードがNormalの場合はOpenAIChatでチャットを送信
-                ChatResponse? result = null;
-                await Task.Run(async () => {
-
-                    // ScreenShotImageのリストからファイル名のリストを取得
-                    List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
-                    ImagePath).ToList();
-                    // Base64に変換
-                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatUtil.CreateImageURLFromFilePath(imageFileName)).ToList();
-
-                    ChatRequest.ImageURLs = imageBase64Strings;
-                    ChatRequest.ContentText = InputText;
-
-                    // ChatRequestを送信してChatResultを受信
-                    result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, ChatRequest, chatRequestContext, (message) => { });
-
-                });
-                // 結果を表示
-                if (result == null) {
-                    LogWrapper.Error(CommonStringResources.Instance.ErrorOccurred);
-                    return;
+                } else {
+                    ResultText = await SendChatByImagesAsync(InputText, PromptText, ImageFiles);
                 }
-                ResultText = result.Output;
-
-
             } catch (Exception e) {
                 LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
             } finally {
                 CommonViewModelProperties.UpdateIndeterminate(false);
             }
-
         });
+        // リクエストを送信するメソッド
+        private static async Task<string> SendChatByImagesAsync(string InputText, string promptText, ObservableCollection<ScreenShotImageViewModel> images) {
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
+            ChatSettings chatSettings = new() {
+                PromptTemplateText = promptText,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings);
+            if (images.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoImageFileSelected);
+                return "";
+            }
+            try {
+                // 画像ファイル名リスト取得
+                List<string> imageFileNames = images.Select(image => image.ScreenShotImage.ImagePath).ToList();
+                // Base64変換（I/Oが重い場合はTask.Runでオフロード）
+                List<string> imageBase64Strings = await Task.Run(() =>
+                    imageFileNames.Select(imageFileName => ChatUtil.CreateImageURLFromFilePath(imageFileName)).ToList()
+                );
+                ChatRequest chatRequest = new();
+                chatRequest.ImageURLs = imageBase64Strings;
+                chatRequest.ContentText = InputText;
+
+                // ChatRequest送信
+                ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+                if (result == null) {
+                    LogWrapper.Error(CommonStringResources.Instance.ErrorOccurred);
+                    return "";
+                }
+                return result.Output;
+
+            } catch (Exception e) {
+                LogWrapper.Error($"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}");
+            } 
+            return "";
+        }
 
         // 画像選択コマンド SelectImageFileCommand
         public SimpleDelegateCommand<Window> SelectImageFileCommand => new((window) => {
@@ -213,8 +227,7 @@ namespace LibUIImageChat.ViewModel {
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
             ImageFiles = [];
-            ChatRequest = new();
-
+            ResultText = "";
         });
 
         // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド

@@ -1,15 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using AIChatExplorer.Model.Folders.Outlook;
+using LibUIMain.ViewModel.Common;
 
 namespace AIChatExplorer.ViewModel.Folders.Mail {
-    public class OutlookFolderMenu(ApplicationFolderViewModel clipboardFolderViewModel) : ApplicationFolderMenu(clipboardFolderViewModel) {
+    public class OutlookFolderMenu(ApplicationFolderViewModel applicationFolderViewModel) : ApplicationFolderMenu(applicationFolderViewModel) {
 
         // -- virtual
         public override ObservableCollection<MenuItem> MenuItems {
             get {
-                #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
 
@@ -25,8 +27,6 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
                 menuItems.Add(ExportImportMenuItem);
 
                 return menuItems;
-
-                #endregion
             }
         }
         // 同期
@@ -34,11 +34,28 @@ namespace AIChatExplorer.ViewModel.Folders.Mail {
             get {
                 MenuItem syncMenuItem = new() {
                     Header = CommonStringResources.Instance.Sync,
-                    Command = OutlookFolderViewModel.SyncItemCommand,
+                    Command = SyncItemCommand,
                     CommandParameter = ApplicationFolderViewModel
                 };
                 return syncMenuItem;
             }
         }
+        public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
+            try {
+                OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
+                CommonViewModelProperties.Instance.UpdateIndeterminate(true);
+                await folder.SyncItemsAsync();
+                await folderViewModel.LoadItemsAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: 必要に応じてユーザー通知やログ出力を追加
+            }
+            finally {
+                CommonViewModelProperties.Instance.UpdateIndeterminate(false);
+            }
+
+        });
+
     }
 }

@@ -8,20 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
-    <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
+    <ProjectReference Include="..\LibMain\LibMain.csproj" />
+    <ProjectReference Include="..\LibUIMain\LibUIMain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\MergeTargetSelectedDataGridViewControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\MergeTargetDataGridViewControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\MergeChatTreeViewControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="View\MergeTargetPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

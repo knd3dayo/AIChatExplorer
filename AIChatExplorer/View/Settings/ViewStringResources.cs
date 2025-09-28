@@ -1,4 +1,4 @@
-using LibUIPythonAI.Resource;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.View.Settings {
     public class ViewStringResources {
@@ -225,6 +225,18 @@ namespace AIChatExplorer.View.Settings {
 
         // InternalAPIServerSettings
         public static string InternalAPIServerSettings { get; set; } = CommonStringResources.Instance.InternalAPIServerSettings;
+
+        // ScreenMonitoringInterval
+        public static string ScreenMonitoringInterval { get; set; } = CommonStringResources.Instance.ScreenMonitoringInterval;
+
+        // IsAutoPredictUserIntentEnabled
+        public static string AutoPredictUserIntent { get; set; } = CommonStringResources.Instance.AutoPredictUserIntent;
+
+        // Theme
+        public static string Theme { get; set; } = CommonStringResources.Instance.Theme;
+
+        // UseMaterialDesignTheme
+        public static string UseMaterialDesignDarkTheme { get; set; } = CommonStringResources.Instance.UseMaterialDesignDarkTheme;
 
     }
 }

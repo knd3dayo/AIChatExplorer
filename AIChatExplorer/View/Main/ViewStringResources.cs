@@ -1,55 +1,21 @@
-using LibUIPythonAI.Resource;
+using LibMain.Resources;
+using LibUIMain.Resource;
 
 namespace AIChatExplorer.View.Main {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
 
-
-        // Name
-        public static string Name { get; set; } = CommonStringResources.Instance.Name;
-        // DisplayText
-        public static string Description { get; set; } = CommonStringResources.Instance.Description;
-
-        // Add
-        public static string Add { get; set; } = CommonStringResources.Instance.Add;
-
-        // OK
-        public static string OK { get; set; } = CommonStringResources.Instance.OK;
-
-        // Cancel
-        public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
-
-        // DeleteAsync
-        public static string Delete { get; set; } = CommonStringResources.Instance.Delete;
-
-        public static string Save { get; set; } = CommonStringResources.Instance.Save;
-
-        // Close
-        public static string Close { get; set; } = CommonStringResources.Instance.Close;
-
-        // Select
-        public static string Select { get; set; } = CommonStringResources.Instance.Select;
-
         // Edit
         public static string Edit { get; set; } = CommonStringResources.Instance.Edit;
-
-
         // Title
         public static string Title { get; set; } = CommonStringResources.Instance.Title;
-
-        // Text
-        public static string Text { get; set; } = CommonStringResources.Instance.Text;
-
         // Pin
         public static string Pin { get; set; } = CommonStringResources.Instance.Pin;
-
         // UpdateDate
         public static string UpdateDate { get; set; } = CommonStringResources.Instance.UpdateDate;
-
         // UpdateDate
         public static string CreateDate { get; set; } = CommonStringResources.Instance.CreateDate;
-
         // VectorizedDate
         public static string VectorizedDate { get; set; } = CommonStringResources.Instance.VectorizedDate;
 
@@ -69,9 +35,9 @@ namespace AIChatExplorer.View.Main {
         public static string Mode { get; set; } = CommonStringResources.Instance.ChatMode;
 
         // ImageChat
-        public static string ImageChat { get; set; } = CommonStringResources.Instance.ImageChat;
+        public static string ImageChat { get; set; } = PythonAILibStringResources.Instance.ImageChat;
 
-        // MergeChat
+        // NormalChat
         public static string MergeChat { get; set; } = CommonStringResources.Instance.MergeChat;
 
         // Help
@@ -132,6 +98,14 @@ namespace AIChatExplorer.View.Main {
         // ToggleClipboardWatchToolTop
         public static string ToggleClipboardWatchToolTop { get; set; } = CommonStringResources.Instance.ToggleClipboardWatchToolTop;
 
+        // ToggleScreenWatchToolTop
+        public static string ToggleScreenWatchToolTop { get; set; } = CommonStringResources.Instance.ToggleScreenWatchToolTop;
+
+        // ToggleIntegratedMonitorToolTop
+        public static string ToggleIntegratedMonitorToolTop { get; set; } = CommonStringResources.Instance.ToggleIntegratedMonitorToolTop;
+
+
+
         // View
         public static string View { get; set; } = CommonStringResources.Instance.View;
 
@@ -157,10 +131,19 @@ namespace AIChatExplorer.View.Main {
         public static string MarkdownView { get; set; } = CommonStringResources.Instance.MarkdownView;
 
         // AutoGenChat
-        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChat;
+        public static string AutoGenChat { get; set; } = CommonStringResources.Instance.AutoGenChatInDevelopment;
+
+        // NormalChat
+        public static string NormalChat { get; set; } = CommonStringResources.Instance.NormalChatInDevelopment;
 
         // Monitor
         public static string Monitor { get; set; } = CommonStringResources.Instance.Monitor;
+
+        // Theme
+        public static string Theme { get; set; } = CommonStringResources.Instance.Theme;
+
+        // UseMaterialDesignTheme
+        public static string UseMaterialDesignDarkTheme { get; set; } = CommonStringResources.Instance.UseMaterialDesignDarkTheme;
 
     }
 }

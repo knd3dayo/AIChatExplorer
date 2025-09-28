@@ -1,5 +1,5 @@
 using System.Windows;
-using LibPythonAI.Model.Content;
+using LibMain.Model.Content;
 using LibUIImageChat.ViewModel;
 
 namespace LibUIImageChat.View {
@@ -10,7 +10,7 @@ namespace LibUIImageChat.View {
         public ImageChatWindow() {
             InitializeComponent();
         }
-        public static void OpenMainWindow(ContentItemWrapper applicationItem, Action afterUpdate) {
+        public static void OpenMainWindow(ContentItem applicationItem, Action afterUpdate) {
             ImageChatWindow imageEvidenceCheckerWindow = new();
             imageEvidenceCheckerWindow.DataContext = new ImageChatWindowViewModel(applicationItem, afterUpdate);
             imageEvidenceCheckerWindow.Show();

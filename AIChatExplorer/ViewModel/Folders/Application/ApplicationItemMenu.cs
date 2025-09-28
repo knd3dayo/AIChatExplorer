@@ -1,36 +1,35 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using AIChatExplorer.ViewModel.Content;
 using AIChatExplorer.ViewModel.Main;
-using LibPythonAI.Model.Prompt;
-using LibPythonAI.Resources;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.ViewModel.Item;
+using LibMain.Model.Prompt;
+using LibMain.Resources;
+using LibUIMain.Resource;
+using LibUIMain.Utils;
+using LibUIMain.ViewModel.Common;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Application {
     public class ApplicationItemMenu : CommonViewModelBase {
 
         public ContentItemViewModel ApplicationItemViewModel { get; private set; }
 
-        protected AppViewModelCommands AppCommands { get; set; }
+        protected AppViewModelCommandExecutes AppCommands { get; set; }
 
         public ApplicationItemMenu(ContentItemViewModel applicationItemViewModel) {
             ApplicationItemViewModel = applicationItemViewModel;
-            ContentItemViewModelCommands contentCommands = applicationItemViewModel.Commands;
+            CommonViewModelCommandExecutes contentCommands = applicationItemViewModel.ItemCommands.CommandExecutes;
 
-            if (contentCommands is not AppViewModelCommands commands) {
+            if (contentCommands is not AppViewModelCommandExecutes commands) {
                 throw new Exception("commands is not AppItemViewModelCommands");
             }
             AppCommands = commands;
+
         }
+
 
         // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                return CreateBasicItemContextMenuItems(ApplicationItemViewModel);
-            }
-        }
-
-        public MenuItem CreatePromptMenuItems(ContentItemViewModel itemViewModel) {
+        public MenuItem CreatePromptMenuItems() {
 
 
             // プロンプトメニュー
@@ -42,7 +41,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             foreach (var promptItem in systemPromptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
-                    Command = AppCommands.ExecutePromptTemplateCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.ExecutePromptTemplateCommand,
                     CommandParameter = new ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>([.. MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems], promptItem)
                 };
                 promptMenuItem.Items.Add(promptItemMenuItem);
@@ -54,12 +53,12 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             };
 
             // DBからプロンプトテンプレートを取得し、選択させる
-            List<PromptItem> promptItems = PromptItem.GetUserDefinedPromptItems();
+            List<PromptItem> promptItems =  PromptItem.GetUserDefinedPromptItems();
             var itemViewModels = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems;
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
-                    Command = AppCommands.ExecutePromptTemplateCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.ExecutePromptTemplateCommand,
                     CommandParameter = new ValueTuple<ObservableCollection<ContentItemViewModel>, PromptItem>([.. itemViewModels], promptItem)
                 };
                 otherPromptMenuItem.Items.Add(promptItemMenuItem);
@@ -70,7 +69,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             return promptMenuItem;
         }
 
-        public virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
+        public  virtual ObservableCollection<MenuItem> CreateBasicItemContextMenuItems() {
 
             ObservableCollection<MenuItem> menuItems =
             [
@@ -87,7 +86,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             ];
 
             // プロンプトメニュー
-            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
+            MenuItem promptMenuItem = CreatePromptMenuItems();
             menuItems.Add(promptMenuItem);
 
             // ベクトル生成
@@ -123,7 +122,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             get {
                 MenuItem openMenuItem = new() {
                     Header = CommonStringResources.Instance.Open,
-                    Command = AppCommands.OpenItemCommand,
+                    Command = OpenItemCommand,
                     CommandParameter = ApplicationItemViewModel,
                     InputGestureText = "Ctrl+O"
                 };
@@ -162,7 +161,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 MenuItem deleteMnuItem = new() {
                     Header = CommonStringResources.Instance.Delete,
                     // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                    Command = AppCommands.DeleteItemsCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.DeleteItemsCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
                     InputGestureText = "Delete"
                 };
@@ -175,7 +174,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 MenuItem generateVectorMenuItem = new() {
                     Header = CommonStringResources.Instance.GenerateVector,
                     // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                    Command = AppCommands.GenerateVectorCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.GenerateVectorCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
                 };
                 return generateVectorMenuItem;
@@ -188,7 +187,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 MenuItem vectorSearchMenuItem = new() {
                     Header = CommonStringResources.Instance.VectorSearch,
                     // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
-                    Command = AppCommands.VectorSearchCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.VectorSearchCommand,
                     CommandParameter = ApplicationItemViewModel
                 };
                 return vectorSearchMenuItem;
@@ -199,7 +198,7 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
             get {
                 MenuItem extractTextMenuItem = new() {
                     Header = CommonStringResources.Instance.ExtractText,
-                    Command = AppCommands.ExtractTextCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.ExtractTextCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel?.SelectedItems
                 };
                 return extractTextMenuItem;
@@ -216,5 +215,10 @@ namespace AIChatExplorer.ViewModel.Folders.Application {
                 return mergeChatMenuItem;
             }
         }
+
+        // OpenContentItemCommand
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+           AppViewModelCommandExecutes.OpenItemCommandExecute(itemViewModel);
+        });
     }
 }

@@ -20,15 +20,15 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
     public class AutoGenChatControlViewModel : CommonViewModelBase {
 
         //初期化
-        public AutoGenChatControlViewModel(QAChatStartupProps props) {
+        public AutoGenChatControlViewModel(QAChatStartupPropsBase props) {
 
             QAChatStartupPropsInstance = props;
 
             // InputTextを設定
-            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.GetContentItem().Content;
             // ApplicationItemがある場合は、ChatItemsを設定
-            if (QAChatStartupPropsInstance.ContentItem != null) {
-                ChatHistory = [.. QAChatStartupPropsInstance.ContentItem.ChatItems];
+            if (QAChatStartupPropsInstance.GetContentItem() != null) {
+                ChatHistory = [.. QAChatStartupPropsInstance.GetContentItem().ChatItems];
             }
             // ChatContextPanelViewModelを設定
             ChatContextViewModelInstance = new AutoGenChatContextViewModel(QAChatStartupPropsInstance);
@@ -47,7 +47,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         // ChatContextPanelViewModel
         public AutoGenChatContextViewModel ChatContextViewModelInstance { get; set; }
 
-        public QAChatStartupProps QAChatStartupPropsInstance { get; set; }
+        public QAChatStartupPropsBase QAChatStartupPropsInstance { get; set; }
 
         // ChatRequest
         public ChatRequest ChatRequest { get; set; } = new();
@@ -138,8 +138,8 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
             // ApplicationItemがある場合はApplicationItemのChatItemsを更新
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
-            QAChatStartupPropsInstance.ContentItem.ChatItems.AddRange([.. ChatHistory]);
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.AddRange([.. ChatHistory]);
             OnPropertyChanged(nameof(ChatHistory));
 
             // ListBoxの一番最後のアイテムに移動
@@ -244,13 +244,13 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
             // ApplicationItemがある場合は、ChatItemsをクリア
-            QAChatStartupPropsInstance.ContentItem.ChatItems.Clear();
+            QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
             OnPropertyChanged(nameof(ChatHistory));
         });
 
         // 本文を再読み込みコマンド
         public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
-            InputText = QAChatStartupPropsInstance.ContentItem?.Content ?? "";
+            InputText = QAChatStartupPropsInstance.GetContentItem()?.Content ?? "";
             OnPropertyChanged(nameof(InputText));
         });
 
@@ -320,7 +320,7 @@ namespace LibUIAutoGenChat.ViewModel.Chat {
             // Chatを実行した場合は 、ContentItemを更新
             CommonViewModelProperties.PropertyChanged -= OnPropertyChanged;
 
-            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.ContentItem, ChatExecuted);
+            QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.GetContentItem(), ChatExecuted);
             window.Close();
         });
 

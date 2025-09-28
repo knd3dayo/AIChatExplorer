@@ -22,6 +22,24 @@ namespace AIChatExplorer.View.Main {
 
             App.Current.Shutdown();
         }
+        // 最小化ボタン
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        // 最大化ボタン
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+        }
     }
 
 

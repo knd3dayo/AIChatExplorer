@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using AIChatExplorer.ViewModel.Folders.Application;
 using AIChatExplorer.ViewModel.Main;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.ViewModel.Item;
+using LibUIMain.Resource;
+using LibUIMain.ViewModel.Item;
 
 namespace AIChatExplorer.ViewModel.Folders.Browser {
     public class EdgeBrowseHistoryItemMenu(ContentItemViewModel applicationItemViewModel) : ApplicationItemMenu(applicationItemViewModel) {
-        public override ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ContentItemViewModel itemViewModel) {
+        public override ObservableCollection<MenuItem> CreateBasicItemContextMenuItems() {
 
             ObservableCollection<MenuItem> menuItems =
             [
@@ -24,7 +24,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             ];
 
             // プロンプトメニュー
-            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
+            MenuItem promptMenuItem =  CreatePromptMenuItems();
             menuItems.Add(promptMenuItem);
 
             // ベクトル生成
@@ -46,7 +46,7 @@ namespace AIChatExplorer.ViewModel.Folders.Browser {
             get {
                 MenuItem downloadWebPageCommandMenuItem = new() {
                     Header = CommonStringResources.Instance.DownloadWebPage,
-                    Command = AppCommands.DownloadWebPageCommand,
+                    Command = ApplicationItemViewModel.ItemCommands.DownloadWebPageCommand,
                     CommandParameter = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.SelectedItems,
                 };
                 return downloadWebPageCommandMenuItem;

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.Folder;
+using LibUIMain.ViewModel.Item;
+using LibUIMain.ViewModel.Folder;
 using LibUIMergeChat.ViewModel;
 
 namespace LibUIMergeChat.View {
