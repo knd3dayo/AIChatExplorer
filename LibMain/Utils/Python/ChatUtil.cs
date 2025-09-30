@@ -231,34 +231,10 @@ namespace LibMain.Utils.Python {
             return data;
         }
 
-
-        public static void PrepareNormalRequest(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
-            // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
-            ChatMessage lastUserRoleMessage;
-            if (chatRequest.ChatHistory.Count == 0 || chatRequest.ChatHistory.Last().Role == ChatMessage.AssistantRole) {
-                lastUserRoleMessage = new ChatMessage(ChatMessage.UserRole, "");
-                chatRequest.ChatHistory.Add(lastUserRoleMessage);
-            } else {
-                lastUserRoleMessage = chatRequest.ChatHistory.Last();
-            }
-
-            // PromptTextを作成
-            string promptText = $"{chatRequestContext.ChatSettings.PromptTemplateText}\n\n{chatRequest.ContentText}";
-
-            // 最後のユーザー発言のContentにPromptTextを追加
-            lastUserRoleMessage.Content = promptText;
-            // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加
-            if (chatRequest.ImageURLs.Count > 0) {
-                lastUserRoleMessage.ImageURLs = chatRequest.ImageURLs;
-            }
-        }
-
         // Chatを実行する
         public static async Task<ChatResponse?> ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // 通常のOpenAI Chatを実行する
             if (chatMode == OpenAIExecutionModeEnum.Normal) {
-                // リクエストメッセージを最新化
-                PrepareNormalRequest(chatRequestContext, chatRequest);
                 // 通常のChatを実行する。
                 return await ExecuteChatNormal(chatRequestContext, chatRequest);
             }

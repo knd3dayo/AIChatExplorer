@@ -18,7 +18,9 @@ namespace LibMain.PythonIF.Request {
             Dictionary<string, object> requestContext = new() {
                 { ChatSettings.SPLIT_MODE_KEY, ChatSettings.SplitMode.ToString() },
                 { ChatSettings.RAG_MODE_KEY, ChatSettings.RAGMode.ToString() },
+                { ChatSettings.PROMPT_TEMPLATE_TEXT_KEY, ChatSettings.PromptTemplateText }
             };
+            
             if (ChatSettings.RAGMode != RAGModeEnum.None) {
                 requestContext[ChatSettings.RAG_MODE_PROMPT_TEXT_KEY] = ChatSettings.RagModePromptText;
             }

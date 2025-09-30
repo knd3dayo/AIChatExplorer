@@ -208,7 +208,7 @@ namespace LibUIMergeChat.ViewModel {
                     // request.Temperature;
                     Temperature = Temperature
                 };
-                ChatUtil.PrepareNormalRequest(chatRequestContext, request);
+                // ChatUtil.PrepareNormalRequest(chatRequestContext, request);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
 

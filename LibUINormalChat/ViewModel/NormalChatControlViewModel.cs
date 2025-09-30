@@ -24,13 +24,8 @@ namespace LibUINormalChat.ViewModel {
             QAChatStartupPropsInstance = qAChatStartupPropsInstance;
 
             // ChatRequestを初期化
-            ChatRequest = new() {
-                // ApplicationItemがある場合は、ChatItemsを設定
-                ChatHistory = [.. QAChatStartupPropsInstance.GetContentItem().ChatItems],
-                // InputTextを設定
-                ContentText = QAChatStartupPropsInstance.GetContentItem().Content
-
-            };
+            ChatRequest = new();
+            ChatRequest.SetContentItem(QAChatStartupPropsInstance.GetContentItem());
 
             ChatHistoryViewModel = new(ChatRequest);
 
@@ -130,13 +125,12 @@ namespace LibUINormalChat.ViewModel {
 
 
         public string PreviewJson {
-            get => CreateChatRequestJson();
+            get => Task.Run( async () => { return await CreateChatRequestJson(); }).Result;
         }
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
                 ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine(OpenAIExecutionModeEnum.Normal, chatRequestContext, ChatRequest));
             }
         }
@@ -204,7 +198,6 @@ namespace LibUINormalChat.ViewModel {
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
-            ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(OpenAIExecutionModeEnum.Normal, chatRequestContext, ChatRequest));
         });
 
@@ -270,15 +263,14 @@ namespace LibUINormalChat.ViewModel {
 
 
 
-        private string CreateChatRequestJson() {
+        private async Task<string> CreateChatRequestJson() {
             ChatRequestContext chatRequestContext = ChatRequestContextViewModel.GetChatRequestContext();
             // ChatRequestのコピーを作成
             ChatRequest chatRequest = ChatRequest.Copy();
             chatRequest.Temperature = ChatRequestContextViewModel.Temperature;
 
             // 関連アイテムを適用
-            chatRequest.ApplyReletedItems(CreateChateRelatedItems());
-            ChatUtil.PrepareNormalRequest(chatRequestContext, chatRequest);
+            await chatRequest.ApplyReletedItems(CreateChateRelatedItems());
             return DebugUtil.CreateParameterJson(OpenAIExecutionModeEnum.Normal, chatRequestContext, chatRequest);
         }
 

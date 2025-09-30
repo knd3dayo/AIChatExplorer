@@ -26,6 +26,18 @@ namespace LibMain.PythonIF.Request {
             Model = props.OpenAICompletionModel;
         }
 
+        public void SetContentItem(ContentItem item) {
+            // itemのChatItemsをChatHistoryに設定する
+            ChatHistory = item.ChatItems.Select(x => x.Copy()).ToList();
+            // itemのContentをContentTextに設定する
+            ContentText = item.Content ?? "";
+            // itemのBase64ImageをImageURLsに設定する
+            if (string.IsNullOrEmpty(item.Base64Image) == false) {
+                string imageURL = ChatUtil.CreateImageURL(item.Base64Image);
+                ImageURLs.Add(imageURL);
+            }
+        }
+
         public string Model { get; private set; }
 
         public double Temperature { get; set; } = 0.5;
@@ -41,18 +53,6 @@ namespace LibMain.PythonIF.Request {
 
         public bool JsonMode { get; set; } = false;
 
-
-        public ChatMessage? GetLastSendItem() {
-            // ChatItemsのうち、ユーザー発言の最後のものを取得
-            var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatMessage.UserRole);
-            return lastUserChatItem;
-        }
-
-        public ChatMessage? GetLastResponseItem() {
-            // ChatItemsのうち、アシスタント発言の最後のものを取得
-            var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatMessage.AssistantRole);
-            return lastAssistantChatItem;
-        }
 
         public async Task ApplyReletedItems(ChatRelatedItems relatedItems) {
             // relaedItemsのSendRelatedItemsOnlyFirstRequestがtrueの場合かつChatHistoryが1より大きい場合は、関連アイテムを送信しない
@@ -85,9 +85,15 @@ namespace LibMain.PythonIF.Request {
 
 
             // model, messages, temperature, response_format, max_tokensを設定する.
+            List<Dictionary<string, Object>> messages = ChatMessage.ToDictList(ChatHistory);
+            ChatMessage currentMessage = new(ChatMessage.UserRole, ContentText) {
+                ImageURLs = ImageURLs
+            };
+            messages.Add(currentMessage.ToDict());
+
             var dc = new Dictionary<string, object> {
                 [MODEL_KEY] = Model,
-                [MESSAGES_KEY] = ChatMessage.ToDictList(ChatHistory),
+                [MESSAGES_KEY] = messages,
             };
             // modelがo*以外の場合は、temperatureを設定する
             if (Model.StartsWith("o") == false) {

@@ -489,7 +489,8 @@ namespace AIChatExplorer.ViewModel.Settings {
             public bool Result { get; set; } = false;
             public string Message { get; set; } = "";
         }
-        private async Task<TestResult> TestOpenAI() {
+
+        private static async Task<TestResult> TestOpenAI() {
             TestResult testResult = new();
             PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams, afterStartProcess: (process) => { });
 

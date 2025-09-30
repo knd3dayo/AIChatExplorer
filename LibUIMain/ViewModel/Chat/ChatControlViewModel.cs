@@ -22,14 +22,8 @@ namespace LibUIMain.ViewModel.Chat {
             QAChatStartupPropsInstance = props;
 
             ChatRequest = new();
+            ChatRequest.SetContentItem(QAChatStartupPropsInstance.GetContentItem());
 
-            // InputTextを設定
-            InputText = QAChatStartupPropsInstance.GetContentItem()?.Content ?? "";
-
-            // ApplicationItemがある場合は、ChatItemsを設定
-            if (QAChatStartupPropsInstance.GetContentItem() != null) {
-                ChatRequest.ChatHistory = [.. QAChatStartupPropsInstance.GetContentItem().ChatItems];
-            }
             // ChatHistoryViewModelを設定
             ChatHistoryViewModel = new(ChatRequest);
 
@@ -138,7 +132,6 @@ namespace LibUIMain.ViewModel.Chat {
         public string PreviewJson {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
-                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateParameterJson((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest);
             }
         }
@@ -146,7 +139,6 @@ namespace LibUIMain.ViewModel.Chat {
         public string GeneratedDebugCommand {
             get {
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
-                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return string.Join("\n\n", DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
             }
         }
@@ -154,7 +146,6 @@ namespace LibUIMain.ViewModel.Chat {
         // DebugCommand
         public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
             ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
-            ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
             DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine((OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode, chatRequestContext, ChatRequest));
         });
 
@@ -241,7 +232,7 @@ namespace LibUIMain.ViewModel.Chat {
                 // リクエストのメッセージをアップデート
                 ChatRequestContext chatRequestContext = ChatContextViewModelInstance.CreateChatRequestContext(PromptText, SessionToken);
                 ChatRequest.Temperature = ChatContextViewModelInstance.Temperature;
-                ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                // ChatUtil.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
                 // タブが変更されたときの処理

@@ -17,6 +17,7 @@ namespace LibMain.Model.AutoProcess {
 
         public override async Task ExecuteAsync(ContentItem applicationItem, ContentFolderWrapper? destinationFolder) {
             ChatRequest chatRequest = new();
+            chatRequest.SetContentItem(applicationItem);
             // PromptItemを取得
             var folder = await applicationItem.GetFolderAsync();
             ContentFolderWrapper? clipboardFolder = folder;
