@@ -96,7 +96,7 @@ namespace LibMain.PythonIF.Request {
 
 
             if (ChatRequestInstance != null) {
-                dict[CHAT_REQUEST_KEY] = ChatRequestInstance.ToDict();
+                dict[CHAT_REQUEST_KEY] = ChatRequestInstance.ToDict(true);
             }
             if (TokenCountRequestInstance != null) {
                 dict[TOKEN_COUNT_REQUEST_KEY] = TokenCountRequestInstance.ToDict();

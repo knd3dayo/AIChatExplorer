@@ -79,17 +79,22 @@ namespace LibMain.PythonIF.Request {
             }
 
         }
-
-        public Dictionary<string, object> ToDict() {
+        public ChatMessage CreateCurretContentMessage() {
+            ChatMessage currentMessage = new(ChatMessage.UserRole, ContentText) {
+                ImageURLs = ImageURLs
+            };
+            return currentMessage;
+        }
+        public Dictionary<string, object> ToDict(bool includeCurrentMessage) {
             // OpenAIのAPIに送信するJSONを作成
 
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             List<Dictionary<string, Object>> messages = ChatMessage.ToDictList(ChatHistory);
-            ChatMessage currentMessage = new(ChatMessage.UserRole, ContentText) {
-                ImageURLs = ImageURLs
-            };
-            messages.Add(currentMessage.ToDict());
+            if (includeCurrentMessage) {
+                ChatMessage currentMessage = CreateCurretContentMessage();
+                messages.Add(currentMessage.ToDict());
+            }
 
             var dc = new Dictionary<string, object> {
                 [MODEL_KEY] = Model,

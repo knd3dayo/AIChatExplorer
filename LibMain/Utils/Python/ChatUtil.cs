@@ -150,8 +150,9 @@ namespace LibMain.Utils.Python {
             if (result == null) {
                 return null;
             }
-
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            // リクエストをChatHistoryに追加
+            chat.ChatHistory.Add(chat.CreateCurretContentMessage());
+            // レスポンスをChatHistoryに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
             chat.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.SourceDocuments));
             return result;
         }
