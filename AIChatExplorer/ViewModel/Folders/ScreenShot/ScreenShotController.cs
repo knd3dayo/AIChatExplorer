@@ -37,13 +37,14 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
         public ApplicationFolder? Folder { get; set; }
 
         public int Interval { get; set; } = 10; // Interval in seconds for taking screenshots
-        public void Start(ApplicationFolder folder, int interval, Action<ContentItem> afterClipboardChanged) {
+        public async Task Start(ApplicationFolder folder, int interval, Action<ContentItem> afterClipboardChanged) {
             AfterTakeScreenShot = afterClipboardChanged;
             // Enable clipboard monitoring
             IsScreenMonitorEnabled = true;
             Folder = folder;
             Interval = interval;
-            ProcessApplicationItem();
+
+            await ProcessApplicationItem();
 
         }
 
@@ -95,56 +96,54 @@ namespace AIChatExplorer.Model.Folders.ScreenShot {
             return image;
         }
 
-        public void ProcessApplicationItem() {
+        public async Task ProcessApplicationItem() {
             if (Folder == null) {
                 LogWrapper.Error($"{CommonStringResources.Instance.Folder} is null.");
                 return;
             }
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
             // Execute in a separate thread
-            Task.Run(async () => {
-                while (Instance.IsScreenMonitorEnabled) {
-                    StatusText statusText = StatusText.Instance;
-                    MainUITask.Run(() => {
-                        statusText.UpdateInProgress(true, CommonStringResources.Instance.AutoProcessing);
-                    });
-                    try {
-                        // Take a screenshot
-                        System.Drawing.Image? image = TakeScreenShot();
-                        if (image == null) {
-                            // If the image is null, return
-                            continue;
-                        }
-                        // Create a new ApplicationItem
-                        ApplicationItem item = CreateApplicationItem(Folder, image);
-                        // Apply automatic processing
-                        ContentItem updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
-                        if (updatedItemTask == null) {
-                            // If the item is ignored, return
-                            return;
-                        }
-                        // アイテムの内容からユーザーの意図を推測する。
-                        if (configParams.IsAutoPredictUserIntentEnabled()) {
-                            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
-                            await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromImage.ToString());
-                        }
-
-                        // Notify the completion of processing
-                        AfterTakeScreenShot(updatedItemTask);
-
-                    } catch (System.Exception ex) {
-                        LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
-
-                    } finally {
-                        MainUITask.Run(() => {
-                            statusText.UpdateInProgress(false);
-                        });
+            while (Instance.IsScreenMonitorEnabled) {
+                StatusText statusText = StatusText.Instance;
+                MainUITask.Run(() => {
+                    statusText.UpdateInProgress(true, CommonStringResources.Instance.AutoProcessing);
+                });
+                try {
+                    // Take a screenshot
+                    System.Drawing.Image? image = TakeScreenShot();
+                    if (image == null) {
+                        // If the image is null, return
+                        continue;
+                    }
+                    // Create a new ApplicationItem
+                    ApplicationItem item = CreateApplicationItem(Folder, image);
+                    // Apply automatic processing
+                    ContentItem updatedItemTask = await AutoProcessRuleController.ApplyGlobalAutoActionAsync(item);
+                    if (updatedItemTask == null) {
+                        // If the item is ignored, return
+                        return;
+                    }
+                    // アイテムの内容からユーザーの意図を推測する。
+                    if (configParams.IsAutoPredictUserIntentEnabled()) {
+                        LogWrapper.Info(PythonAILibStringResourcesJa.Instance.AutoSetBackgroundInfo);
+                        await PromptItem.CreateChatResultAsync(item, SystemDefinedPromptNames.PredictUserIntentFromImage.ToString());
                     }
 
-                    // Wait for Next Screenshot // interval seconds * 1000 milliseconds
-                    Thread.Sleep(Interval * 1000);
+                    // Notify the completion of processing
+                    AfterTakeScreenShot(updatedItemTask);
+
+                } catch (System.Exception ex) {
+                    LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
+
+                } finally {
+                    MainUITask.Run(() => {
+                        statusText.UpdateInProgress(false);
+                    });
                 }
-            });
+
+                // Wait for Next Screenshot // interval seconds * 1000 milliseconds
+                Thread.Sleep(Interval * 1000);
+            }
         }
 
     }

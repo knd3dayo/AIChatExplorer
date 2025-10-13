@@ -101,9 +101,6 @@ namespace AIChatExplorer.View.Main {
         // ToggleScreenWatchToolTop
         public static string ToggleScreenWatchToolTop { get; set; } = CommonStringResources.Instance.ToggleScreenWatchToolTop;
 
-        // ToggleIntegratedMonitorToolTop
-        public static string ToggleIntegratedMonitorToolTop { get; set; } = CommonStringResources.Instance.ToggleIntegratedMonitorToolTop;
-
 
 
         // View

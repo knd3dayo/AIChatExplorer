@@ -70,7 +70,7 @@ namespace AIChatExplorer.ViewModel.Main {
 
         // 画面監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleScreenMonitor => new((parameter) => {
+        public SimpleDelegateCommand<object> ToggleScreenMonitor => new(async (parameter) => {
             bool currentState = MainWindowViewModel.Instance.IsScreenMonitoringActive;
             if (currentState) {
                 StopScreenMonitorCommandExecute();
@@ -78,24 +78,8 @@ namespace AIChatExplorer.ViewModel.Main {
                 MainWindowViewModel model = MainWindowViewModel.Instance;
                 var screenShotHistoryFolderViewModel = model.RootFolderViewModelContainer.ScreenShotHistoryFolderViewModel;
                 if (screenShotHistoryFolderViewModel != null) {
-                    StartScreenMonitorCommandExecute(screenShotHistoryFolderViewModel);
+                    await StartScreenMonitorCommandExecute(screenShotHistoryFolderViewModel);
                 }
-            }
-        });
-
-        // 統合モニター開始終了フラグを反転させる
-        public SimpleDelegateCommand<object> ToggleIntegratedMonitor => new((parameter) => {
-            bool currentState = MainWindowViewModel.Instance.IsIntegratedMonitorActive;
-            if (currentState) {
-                StopIntegratedMonitorCommandExecute();
-            } else {
-                // 統合モニターを開始する
-                MainWindowViewModel model = MainWindowViewModel.Instance;
-                var viewModel = model.RootFolderViewModelContainer.IntegratedMonitorHistoryFolderViewModel;
-                if (viewModel == null) {
-                    return;
-                }
-                StartIntegratedMonitorCommandExecute(viewModel);
             }
         });
 
@@ -254,12 +238,12 @@ namespace AIChatExplorer.ViewModel.Main {
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
         }
         // Command to start/stop screen monitoring
-        public static void StartScreenMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
+        public static async Task StartScreenMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsScreenMonitoringActive = true;
             // ScreenMonitoringInterval
             int ScreenMonitoringInterval = AIChatExplorerConfig.Instance.ScreenMonitoringInterval; // Default 10 seconds interval
-            ScreenShotController.Instance.Start(
+            await ScreenShotController.Instance.Start(
                 (ApplicationFolder)targetFolderViewModel.Folder,
                 ScreenMonitoringInterval,
                 (applicationItem) => {
@@ -269,9 +253,8 @@ namespace AIChatExplorer.ViewModel.Main {
                         return;
                     }
                     // フォルダのルートフォルダに追加
-                    targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(appViewModel, applicationItem));
-                    // フォルダのルートフォルダを更新
                     MainUITask.Run(() => {
+                        targetFolderViewModel.FolderCommands.AddItemCommand.Execute(new ApplicationItemViewModel(appViewModel, applicationItem));
                         targetFolderViewModel.FolderCommands.LoadFolderCommand.Execute();
                     });
                 });
@@ -294,7 +277,7 @@ namespace AIChatExplorer.ViewModel.Main {
         }
 
         // Command to start/stop integrated monitoring
-        public static void StartIntegratedMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
+        public static async Task StartIntegratedMonitorCommandExecute(ApplicationFolderViewModel targetFolderViewModel) {
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsIntegratedMonitorActive = true;
             // いったんクリップボード監視を停止
@@ -303,7 +286,7 @@ namespace AIChatExplorer.ViewModel.Main {
             StopScreenMonitorCommandExecute();
 
             StartClipboardMonitorCommandExecute(targetFolderViewModel);
-            StartScreenMonitorCommandExecute(targetFolderViewModel);
+            await StartScreenMonitorCommandExecute(targetFolderViewModel);
             LogWrapper.Info(CommonStringResources.Instance.StartIntegratedMonitorMessage);
             // Notification
             model.NotifyPropertyChanged(nameof(model.IsIntegratedMonitorActive));

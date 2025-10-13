@@ -26,9 +26,7 @@ namespace LibUIMain.Resource {
         // Start: Start Screen Watch. Stop: Stop Screen Watch.
         public virtual string ToggleScreenWatchToolTop { get; } = "Start: Start Screen monitoring. Stop: Stop Screen monitoring.";
 
-        // Start: Start Integrated Monitor Watch. Stop: Stop Integrated Monitor Watch.
-        public virtual string ToggleIntegratedMonitorToolTop { get; } = "Start: Start Integrated monitoring (Clipboard and Screen). Stop: Stop Integrated monitoring.";
-
+        
         #endregion
         #region  MainWindow
 

@@ -158,9 +158,7 @@ namespace AIChatExplorer.ViewModel.Main {
         // ScreenShotHistoryフォルダのViewModel
         public ScreenShotHistoryFolderViewModel? ScreenShotHistoryFolderViewModel { get; private set; }
 
-        // IntegratedMonitorHistoryフォルダのViewModel
-        public IntegratedMonitorHistoryFolderViewModel? IntegratedMonitorHistoryFolderViewModel { get; private set; }
-
+        
         // コンストラクタ
         public FolderViewModelManager(CommonViewModelCommandExecutes commands) : base(commands) {
             var applicationRootFolder = FolderManager.GetApplicationRootFolder();
@@ -184,7 +182,6 @@ namespace AIChatExplorer.ViewModel.Main {
             EdgeBrowseHistoryFolderViewModel = new EdgeBrowseHistoryFolderViewModel(edgeBrowseHistoryRootFolder, commands);
             ClipboardHistoryFolderViewModel = new ApplicationFolderViewModel(clipboardHistoryRootFolder, commands);
             ScreenShotHistoryFolderViewModel = new ScreenShotHistoryFolderViewModel(screenShotHistoryRootFolder, commands);
-            IntegratedMonitorHistoryFolderViewModel = new IntegratedMonitorHistoryFolderViewModel(integratedMonitorHistoryRootFolder, commands);
             if (OutlookFolder.OutlookApplicationExists()) {
                 OutlookFolderViewModel = new OutlookFolderViewModel(outlookRootFolder, MainWindowViewModel.Instance.Commands);
             }
@@ -202,7 +199,6 @@ namespace AIChatExplorer.ViewModel.Main {
             FolderViewModels.Add(ChatRootFolderViewModel);
             FolderViewModels.Add(ClipboardHistoryFolderViewModel);
             FolderViewModels.Add(ScreenShotHistoryFolderViewModel);
-            FolderViewModels.Add(IntegratedMonitorHistoryFolderViewModel);
 
             OnPropertyChanged(nameof(FolderViewModels));
 
