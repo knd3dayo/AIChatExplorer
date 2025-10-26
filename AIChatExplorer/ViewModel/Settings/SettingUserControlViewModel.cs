@@ -505,7 +505,8 @@ namespace AIChatExplorer.ViewModel.Settings {
 
                 // ChatRequestContextを作成
                 ChatSettings chatSettings = new();
-                ChatRequestContext chatRequestContext = new(chatSettings);
+                VectorSearchSettings vectorSearchSettings = new();
+                ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
                 ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
                 string resultString = result?.Output ?? "";

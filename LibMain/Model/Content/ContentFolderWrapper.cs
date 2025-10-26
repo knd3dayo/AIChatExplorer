@@ -318,16 +318,6 @@ namespace LibMain.Model.Content {
             return searchProperty;
         }
 
-        public async Task<ObservableCollection<VectorSearchItem>> GetVectorSearchProperties() {
-            var item = await GetMainVectorSearchItem();
-            ObservableCollection<VectorSearchItem> searchProperties =
-            [
-                item,
-                // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
-                .. ReferenceVectorSearchProperties,
-            ];
-            return searchProperties;
-        }
         // Equals
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {

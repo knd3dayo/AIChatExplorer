@@ -330,15 +330,17 @@ namespace LibMain.Model.Prompt {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            var vectorDBItems = await item.GetVectorDBPropertiesAsync();
-            ObservableCollection<VectorSearchItem> vectorSearchProperties = promptItem.RAGMode != RAGModeEnum.None ? vectorDBItems : [];
+            var vectorDBItem = await item.GetMainVectorSearchItemAsync();
+            VectorSearchItem? vectorSearchProperty = promptItem.RAGMode != RAGModeEnum.None ? vectorDBItem : null;
 
             // ChatRequestContextを作成
             ChatSettings chatSettings = new() {
-                VectorSearchRequests = vectorSearchProperties.Select(x => new VectorSearchRequest(x) { Query = contentText }).ToList(),
-                RAGMode = promptItem.RAGMode,
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
+            };
+            VectorSearchSettings vectorSearchSettings = new() {
+                VectorSearchRequest = vectorSearchProperty != null ? new VectorSearchRequest(vectorSearchProperty) : null,
+                RAGMode = promptItem.RAGMode,
             };
 
 
@@ -452,9 +454,12 @@ namespace LibMain.Model.Prompt {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
+            VectorSearchSettings vectorSearchSettings = new() {
+                VectorSearchRequest = new VectorSearchRequest(await item.GetMainVectorSearchItemAsync()),
+                RAGMode = RAGModeEnum.None
+            };
             // ChatRequestContextを作成
             ChatSettings chatSettings = new() {
-                RAGMode = RAGModeEnum.None,
             };
 
             Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatSettings, new PromptItem() {
@@ -463,22 +468,6 @@ namespace LibMain.Model.Prompt {
                 RAGMode = RAGModeEnum.NormalSearch,
                 Prompt = PromptStringResourceJa.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
-            // responseからキー：reliabilityを取得
-            if (response.ContainsKey("reliability") == false) {
-                return;
-            }
-            dynamic? reliability = response["reliability"];
-
-            int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
-
-            // DocumentReliabilityにReliabilityを設定
-            item.DocumentReliability = reliabilityValue;
-            // responseからキー：reasonを取得
-            if (response.ContainsKey("reason")) {
-                dynamic? reason = response["reason"];
-                // DocumentReliabilityReasonにreasonを設定
-                item.DocumentReliabilityReason = reason?.ToString() ?? "";
-            }
         }
 
     }

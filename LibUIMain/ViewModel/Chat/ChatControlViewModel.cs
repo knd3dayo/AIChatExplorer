@@ -29,10 +29,7 @@ namespace LibUIMain.ViewModel.Chat {
 
             // ChatContextPanelViewModelを設定
             ChatContextViewModelInstance = new ChatContextViewModel(QAChatStartupPropsInstance);
-
-
         }
-
 
         // ChatContextPanelViewModel
         public ChatContextViewModel ChatContextViewModelInstance { get; set; }
@@ -88,18 +85,12 @@ namespace LibUIMain.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedContextItem));
             }
         }
-
-
         public Visibility MarkdownVisibility => LibUIMain.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView);
 
         public Visibility TextVisibility => LibUIMain.Utils.Tools.BoolToVisibility(CommonViewModelProperties.MarkdownView == false);
 
-
-
-
         // DebugCommandVisibility
         public Visibility DebugCommandVisibility => LibUIMain.Utils.Tools.BoolToVisibility(SelectedTabIndex == 2);
-
 
         private int _SelectedTabIndex = 0;
         public int SelectedTabIndex {
@@ -111,8 +102,6 @@ namespace LibUIMain.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
-
-
 
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryPosition() {
@@ -278,17 +267,12 @@ namespace LibUIMain.ViewModel.Chat {
         });
 
 
-        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new(async (window) => {
+        public SimpleDelegateCommand<Window> SaveAndCloseCommand => new( (window) => {
 
             // ChatRequestの内容をContentItemに保存
             QAChatStartupPropsInstance.GetContentItem().ChatItems.Clear();
             foreach (var item in ChatHistoryViewModel.ChatHistory) {
                 QAChatStartupPropsInstance.GetContentItem().ChatItems.Add(item);
-            }
-            var vectorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
-            vectorDBProperties.Clear();
-            foreach (var item in ChatContextViewModelInstance.VectorSearchProperties) {
-                vectorDBProperties.Add(item);
             }
 
             QAChatStartupPropsInstance.SaveCommand(QAChatStartupPropsInstance.GetContentItem(), ChatExecuted);

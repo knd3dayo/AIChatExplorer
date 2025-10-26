@@ -22,16 +22,20 @@ namespace LibMain.Model.AutoProcess {
             var folder = await applicationItem.GetFolderAsync();
             ContentFolderWrapper? clipboardFolder = folder;
 
+
             // ChatRequestContentを作成
             ChatSettings chatSettings = new() {
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
+            // VectorSearchSettingsを設定
+            VectorSearchSettings vectorSearchSettings = new();
             if (clipboardFolder != null) {
-                chatSettings.RAGMode = RAGModeEnum.NormalSearch;
+                vectorSearchSettings.RAGMode = RAGModeEnum.NormalSearch;
                 var item = await clipboardFolder.GetMainVectorSearchItem();
-                chatSettings.VectorSearchRequests = [new VectorSearchRequest(item)];
+                vectorSearchSettings.VectorSearchRequest =new VectorSearchRequest(item);
             }
-            ChatRequestContext chatRequestContent = new(chatSettings);
+
+            ChatRequestContext chatRequestContent = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
             if (result == null) {

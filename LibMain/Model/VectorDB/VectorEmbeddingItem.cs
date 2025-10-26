@@ -60,27 +60,12 @@ namespace LibMain.Model.VectorDB {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatSettings chatSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
             EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbeddingItem);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
             await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-        }
-
-        public static void UpdateEmbeddings(string vectorDBItemName, VectorEmbeddingItem VectorEmbeddingItem) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-
-    
-            ChatSettings chatSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
-
-            EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, VectorEmbeddingItem);
-
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-
         }
 
 
@@ -89,7 +74,8 @@ namespace LibMain.Model.VectorDB {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatSettings chatSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
             EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, openAIProperties.OpenAIEmbeddingModel, vectorEmbeddingItem);
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
             await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
@@ -102,7 +88,8 @@ namespace LibMain.Model.VectorDB {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatSettings chatSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
             VectorEmbeddingItem vectorEmbeddingItem = new() {
                 FolderPath = folderPath,
             };

@@ -156,7 +156,8 @@ namespace LibUIImageChat.ViewModel {
             ChatSettings chatSettings = new() {
                 PromptTemplateText = promptText,
             };
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new();
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
             if (images.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoImageFileSelected);
                 return "";

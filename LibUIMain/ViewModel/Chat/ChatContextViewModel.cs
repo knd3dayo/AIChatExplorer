@@ -75,14 +75,14 @@ namespace LibUIMain.ViewModel.Chat {
         // ScoreThreshold
         public float ScoreThreshold { get; set; } = 0.5f;
 
-        private ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
-        public ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
+        private LibMain.Model.VectorDB.VectorSearchItem? _vectorSearchProperty;
+        public LibMain.Model.VectorDB.VectorSearchItem? VectorSearchProperty {
             get {
-                return _vectorSearchProperties;
+                return _vectorSearchProperty;
             }
             set {
-                _vectorSearchProperties = value;
-                OnPropertyChanged(nameof(VectorSearchProperties));
+                _vectorSearchProperty = value;
+                OnPropertyChanged(nameof(VectorSearchProperty));
             }
         }
 
@@ -121,26 +121,10 @@ namespace LibUIMain.ViewModel.Chat {
         }
 
         private async Task InitVectorDBProperties() {
-            VectorSearchProperties.Clear();
-            if (_ragMode != RAGModeEnum.None) {
-                ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> items = [];
-                // QAChatStartupPropsInstance.ContentItem.UseFolderVectorSearchItem == Trueの場合
-                if (UseFolderVectorSearchItem) {
-                    // フォルダのベクトルDBを取得
-                    var item = QAChatStartupPropsInstance.GetContentItem();
-                    var folder = await item.GetFolderAsync();
-                    items = await folder.GetVectorSearchProperties();
-                    foreach (var vectorSearchItem in items) {
-                        VectorSearchProperties.Add(vectorSearchItem);
-                    }
-                } else {
-                    // ContentItemのベクトルDBを取得
-                    items = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
-                    foreach (var item in items) {
-                        VectorSearchProperties.Add(item);
-                    }
-                }
-            }
+            // フォルダのベクトルDBを取得
+            var item = QAChatStartupPropsInstance.GetContentItem();
+            var folder = await item.GetFolderAsync();
+            VectorSearchProperty = await folder.GetMainVectorSearchItem();
         }
 
         // RAGModeValue
@@ -187,47 +171,11 @@ namespace LibUIMain.ViewModel.Chat {
             OnPropertyChanged(nameof(VectorDBItemVisibility));
         });
 
-        // ベクトルDBをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new(async (parameter) => {
-            if (SelectedVectorSearchItem == null) {
-                return;
-            }
-            // VectorDBItemsから削除
-            VectorSearchProperties.Remove(SelectedVectorSearchItem);
-            // UseFolderVectorSearchItemがFalseの場合、ContentItemからも削除
-            if (UseFolderVectorSearchItem == false) {
-                var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
-                verctorDBProperties.Remove(SelectedVectorSearchItem);
-            }
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-        // ベクトルDBを追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
-            // フォルダを選択
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                FolderViewModelManagerBase.FolderViewModels, async (vectorDBItemBase) => {
-                    VectorSearchProperties.Add(vectorDBItemBase);
-                    // UseFolderVectorSearchItemがFalseの場合、ContentItemに追加
-                    if (UseFolderVectorSearchItem == false) {
-                        var verctorDBProperties = await QAChatStartupPropsInstance.GetContentItem().GetVectorDBPropertiesAsync();
-                        verctorDBProperties.Add(vectorDBItemBase);
-                    }
-                });
-
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
         public ChatRequestContext CreateChatRequestContext(string PromptText, string sessionToken) {
-            // ベクトルDB検索結果最大値をVectorSearchItemに設定
-            foreach (var item in VectorSearchProperties) {
-                item.TopK = VectorDBSearchResultMax;
-                item.ScoreThreshold = ScoreThreshold;
-            }
             int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, _ragMode, [.. VectorSearchProperties], PromptText
-                );
+                _chatMode, _splitMode, splitTokenCount,
+                (RAGModeEnum)RAGMode, VectorSearchProperty , PromptText);
             return chatRequestContext;
         }
 

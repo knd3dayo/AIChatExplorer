@@ -29,7 +29,7 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     SourceType = VectorSourceType.Web,
                     SourcePath = SourcePath,
                 };
-                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
             });
 
         }

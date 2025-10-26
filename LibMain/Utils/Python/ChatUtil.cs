@@ -29,7 +29,10 @@ namespace LibMain.Utils.Python {
 
             chatSettings.PromptTemplateText = promptText.Prompt;
             chatSettings.SplitMode = promptText.SplitMode;
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = promptText.RAGMode,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {
@@ -47,7 +50,10 @@ namespace LibMain.Utils.Python {
                 };
 
                 chatSettings.PromptTemplateText = prompt;
-                ChatRequestContext chatRequestContext = new(chatSettings);
+                VectorSearchSettings vectorSearchSettings = new() {
+                    RAGMode = RAGModeEnum.None,
+                };
+                ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
 
                 ChatResponse? result = await ExecuteChat(chatMode, chatRequest, chatRequestContext, (message) => { });
@@ -69,7 +75,10 @@ namespace LibMain.Utils.Python {
             };
             chatSettings.PromptTemplateText = promptText;
             chatSettings.SplitMode = promptItem.SplitMode;
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = promptItem.RAGMode,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -91,7 +100,10 @@ namespace LibMain.Utils.Python {
 
             chatSettings.PromptTemplateText = promptItem.Prompt;
             chatSettings.SplitMode = promptItem.SplitMode;
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = promptItem.RAGMode,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -110,7 +122,10 @@ namespace LibMain.Utils.Python {
             };
             chatSettings.PromptTemplateText = promptItem.Prompt;
             chatSettings.SplitMode = promptItem.SplitMode;
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = promptItem.RAGMode,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -131,7 +146,10 @@ namespace LibMain.Utils.Python {
                 return "";
             }
             chatSettings.PromptTemplateText = PromptStringResourceJa.Instance.ExtractTextRequest;
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = RAGModeEnum.None,
+            };
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatResponse? result = await ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
             if (result != null) {

@@ -160,8 +160,8 @@ namespace LibUIMain.ViewModel.Folder {
         });
 
         // Webページをダウンロードする
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> DownloadWebPageCommand => new((itemViewModels) => {
-            CommandExecutes.DownloadWebPageCommandExecute(itemViewModels);
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> DownloadWebPageCommand => new(async (itemViewModels) => {
+            await CommandExecutes.DownloadWebPageCommandExecute(itemViewModels);
         });
 
 

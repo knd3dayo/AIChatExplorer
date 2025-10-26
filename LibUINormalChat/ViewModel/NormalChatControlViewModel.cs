@@ -39,8 +39,8 @@ namespace LibUINormalChat.ViewModel {
             }
             Task.Run(async () => {
                 // ChatRequestContextViewModelを設定
-                var item = await folder.Folder.GetVectorSearchProperties();
-                ChatRequestContextViewModel.VectorSearchProperties = [.. item];
+                var item = await folder.Folder.GetMainVectorSearchItem();
+                ChatRequestContextViewModel.VectorSearchProperty = item;
             });
 
 

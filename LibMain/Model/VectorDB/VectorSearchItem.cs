@@ -1,7 +1,5 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using LibMain.Common;
 using LibMain.Model.Chat;
 using LibMain.Model.Content;
@@ -91,11 +89,12 @@ namespace LibMain.Model.VectorDB {
                 return [];
             }
             // ChatRequestContextを作成
-            ChatSettings chatSettings = new() {
-                VectorSearchRequests = [new VectorSearchRequest(this)],
+            ChatSettings chatSettings = new() { };
+            VectorSearchSettings vectorSearchSettings = new() {
                 RAGMode = RAGModeEnum.NormalSearch,
+                VectorSearchRequest = new VectorSearchRequest(this),
             };
-            ChatRequestContext chatRequestContext = new(chatSettings);
+            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
             // ベクトル検索を実行
             List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, InputText);

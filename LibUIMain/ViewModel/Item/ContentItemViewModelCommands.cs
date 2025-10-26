@@ -64,8 +64,8 @@ namespace LibUIMain.ViewModel.Item {
         });
 
         // Webページをダウンロードする
-        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> DownloadWebPageCommand => new((itemViewModels) => {
-            CommandExecutes.DownloadWebPageCommandExecute(itemViewModels);
+        public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>?> DownloadWebPageCommand => new(async (itemViewModels) => {
+            await CommandExecutes.DownloadWebPageCommandExecute(itemViewModels);
         });
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<ObservableCollection<ContentItemViewModel>> GenerateVectorCommand => new(async (itemViewModels) => {

@@ -109,21 +109,13 @@ namespace LibMain.PythonIF.Request {
             return dict;
         }
 
-        // CreateEntriesDictList
-        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorSearchRequest> items) {
-            return items.Select(item => item.ToDict()).ToList();
+        public string ToJson() {
+            return JsonSerializer.Serialize(this, JsonUtil.JsonSerializerOptions);
         }
 
+        public static VectorSearchRequest? FromJson(string json) {
 
-        public static List<VectorSearchRequest> FromListJson(string json) {
-
-            return JsonSerializer.Deserialize<List<VectorSearchRequest>>(json, JsonUtil.JsonSerializerOptions) ?? [];
-        }
-
-        // ToListJson
-        public static string ToListJson(IEnumerable<VectorSearchRequest> items) {
-
-            return JsonSerializer.Serialize(items, JsonUtil.JsonSerializerOptions);
+            return JsonSerializer.Deserialize<VectorSearchRequest>(json, JsonUtil.JsonSerializerOptions);
         }
 
 

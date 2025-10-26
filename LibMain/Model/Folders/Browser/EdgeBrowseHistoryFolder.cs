@@ -123,16 +123,17 @@ namespace AIChatExplorer.Model.Folders.Browser {
             await ContentItem.SaveItemsAsync(addContentItems);
 
             // 10. 更新が必要なContentItemリストを作成
-            List<ContentItem?> updateContentItems = updateUrls.Select(url => {
+            List<ContentItem> updateContentItems = [];
+            
+            foreach (var url in updateUrls) {
                 (string title, long lastVisitTime) = historyUrlDict[url];
                 DateTime dateTime = ConvertLastVisitTimeToDateTime(lastVisitTime);
                 ContentItem contentItem = itemUrlIdDict[url];
                 if (contentItem.UpdatedAt < dateTime) {
                     contentItem.UpdatedAt = dateTime;
-                    return contentItem;
+                    updateContentItems.Add(contentItem);
                 }
-                return null;
-            }).Where(x => x != null).ToList();
+            }
             // 11. 更新分を一括保存
             if (updateContentItems.Count > 0) {
                 await ContentItem.SaveItemsAsync(updateContentItems);

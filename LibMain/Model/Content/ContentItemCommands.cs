@@ -143,7 +143,7 @@ namespace LibMain.Model.Content {
                 var contentFolderPath = await folder.GetContentFolderPath();
                 VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
                 await vectorDBEntry.SetMetadata(item);
-                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, vectorDBEntry);
+                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
                 // ベクトル化日時を更新
                 item.VectorizedAt = DateTime.Now;
             });

@@ -28,18 +28,13 @@ namespace AIChatExplorer.ViewModel.Main {
             _ = SaveChatHistoryAsync(itemWrapper, ActiveInstance);
         }
 
-        private async Task SaveChatHistoryAsync(ContentItem itemWrapper, MainWindowViewModel ActiveInstance)
-        {
-            try
-            {
+        private async Task SaveChatHistoryAsync(ContentItem itemWrapper, MainWindowViewModel ActiveInstance) {
+            try {
                 ContentFolderWrapper? chatFolder = (ContentFolderWrapper?)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel?.Folder;
-                if (chatFolder != null)
-                {
+                if (chatFolder != null) {
                     await ContentItemCommands.SaveChatHistoryAsync(itemWrapper, chatFolder);
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 // TODO: ログ出力やユーザー通知
             }
         }

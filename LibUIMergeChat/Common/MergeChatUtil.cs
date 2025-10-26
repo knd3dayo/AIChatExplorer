@@ -61,10 +61,13 @@ namespace LibUIMergeChat.Common {
                         PromptTemplateText = preProcessPrompt,
                         SplitMode = context.ChatSettings.SplitMode,
                         SplitTokenCount = context.ChatSettings.SplitTokenCount,
-                        RAGMode = context.ChatSettings.RAGMode,
-                        VectorSearchRequests = context.ChatSettings.VectorSearchRequests,
+                     };
+                    VectorSearchSettings vectorSearchSettings = new VectorSearchSettings {
+                        RAGMode = context.VectorSearchSettings.RAGMode,
+                        VectorSearchRequest = context.VectorSearchSettings.VectorSearchRequest,
                     };
-                    var preProcessRequestContext = new ChatRequestContext(chatSettings);
+
+                    var preProcessRequestContext = new ChatRequestContext(chatSettings, vectorSearchSettings);
 
                     var preProcessRequest = new ChatRequest { ContentText = contentText };
                     var preProcessResult = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, preProcessRequest, preProcessRequestContext, _ => { });
@@ -104,10 +107,12 @@ namespace LibUIMergeChat.Common {
                 PromptTemplateText = postProcessPrompt,
                 SplitMode = context.ChatSettings.SplitMode,
                 SplitTokenCount = context.ChatSettings.SplitTokenCount,
-                RAGMode = context.ChatSettings.RAGMode,
-                VectorSearchRequests = context.ChatSettings.VectorSearchRequests,
             };
-            ChatRequestContext postProcessRequestContext = new(chatSettings);
+            VectorSearchSettings vectorSearchSettings = new() {
+                RAGMode = context.VectorSearchSettings.RAGMode,
+                VectorSearchRequest = context.VectorSearchSettings.VectorSearchRequest,
+            };
+            ChatRequestContext postProcessRequestContext = new(chatSettings, vectorSearchSettings);
 
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,

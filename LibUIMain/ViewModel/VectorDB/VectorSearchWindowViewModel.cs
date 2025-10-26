@@ -149,10 +149,13 @@ namespace LibUIMain.ViewModel.VectorDB {
                     return "";
                 }
                 // ChatRequestContextを作成
-                ChatSettings chatSettings = new() {
-                    VectorSearchRequests = [new VectorSearchRequest(VectorSearchItem)],
+                ChatSettings chatSettings = new() { };
+                VectorSearchSettings vectorSearchSettings = new() {
+                    RAGMode = RAGModeEnum.NormalSearch,
+                    VectorSearchRequest = new VectorSearchRequest(VectorSearchItem),
                 };
-                ChatRequestContext chatRequestContext = new(chatSettings);
+
+                ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
                 RequestContainer requestContainer = new() {
                     RequestContextInstance = chatRequestContext,

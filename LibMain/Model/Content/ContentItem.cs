@@ -254,46 +254,6 @@ namespace LibMain.Model.Content {
             set => SetExtendedProperty("UseFolderVectorSearchItem", value);
         }
 
-        private ObservableCollection<VectorSearchItem>? _vectorDBProperties;
-        public async Task<ObservableCollection<VectorSearchItem>> GetVectorDBPropertiesAsync() {
-            if (_vectorDBProperties != null) {
-                return _vectorDBProperties;
-            }
-            if (UseFolderVectorSearchItem) {
-                var folder = await GetFolderAsync();
-                var items = await folder.GetVectorSearchProperties();
-                _vectorDBProperties = [.. items];
-            }
-            var value = Entity.ExtendedProperties.GetValueOrDefault("VectorDBProperties", null);
-            if (value is string strValue) {
-                _vectorDBProperties = [.. VectorSearchItem.FromListJson(strValue)];
-            } else if (value is List<VectorSearchItem> list) {
-                _vectorDBProperties = [.. list];
-            } else {
-                _vectorDBProperties = [];
-            }
-
-            // Addイベント発生時の処理
-            _vectorDBProperties.CollectionChanged += (sender, e) => {
-                if (e.NewItems != null) {
-                    // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
-                }
-            };
-            // Removeイベント発生時の処理
-            _vectorDBProperties.CollectionChanged += (sender, e) => {
-                if (e.OldItems != null) {
-                    // Entityを更新
-                    Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
-                }
-            };
-            // Clearイベント発生時の処理
-            _vectorDBProperties.CollectionChanged += (sender, e) => {
-                // Entityを更新
-                Entity.ExtendedProperties["VectorDBProperties"] = VectorSearchItem.ToListJson(_vectorDBProperties);
-            };
-            return _vectorDBProperties;
-        }
 
         //　貼り付け元のアプリケーション名
         public string? SourceApplicationName {
@@ -329,31 +289,6 @@ namespace LibMain.Model.Content {
                 return string.Empty;
             }
             set => SetExtendedProperty("SourceApplicationPath", value);
-        }
-
-        // 文書の信頼度(0-100)
-        public int DocumentReliability {
-            get {
-                var value = GetExtendedProperty<object>("DocumentReliability");
-                if (value is Decimal intValue) {
-                    return Decimal.ToInt32(intValue);
-                }
-                if (value is int intValue2) {
-                    return intValue2;
-                }
-                return 0;
-            }
-            set {
-                if (value < 0 || value > 100) {
-                    throw new ArgumentOutOfRangeException(nameof(value), "DocumentReliability must be between 0 and 100.");
-                }
-                SetExtendedProperty("DocumentReliability", value);
-            }
-        }
-        // 文書の信頼度の判定理由
-        public string DocumentReliabilityReason {
-            get => GetExtendedProperty<string>("DocumentReliabilityReason") ?? string.Empty;
-            set => SetExtendedProperty("DocumentReliabilityReason", value ?? string.Empty);
         }
 
         // Path
@@ -483,7 +418,6 @@ namespace LibMain.Model.Content {
             else
                 header1 += $"[{PythonAILibStringResourcesJa.Instance.Type}]Unknown";
 
-            header1 += $"\n[{PythonAILibStringResourcesJa.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
             var folder = await GetFolderAsync();
             if (folder != null && !string.IsNullOrEmpty(folder.Description))
                 header1 += $"[{PythonAILibStringResourcesJa.Instance.DocumentCategorySummary}]" + folder.Description + "\n";

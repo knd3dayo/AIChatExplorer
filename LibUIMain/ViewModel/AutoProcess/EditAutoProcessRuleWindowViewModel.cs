@@ -504,7 +504,7 @@ namespace LibUIMain.ViewModel.AutoProcess {
             }
 
             // LiteDBに保存
-            TargetAutoProcessRule.SaveAsync();
+            await TargetAutoProcessRule.SaveAsync();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

@@ -1,13 +1,9 @@
-using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibMain.Model.Chat;
 using LibMain.PythonIF.Request;
 using LibUIMain.Utils;
-using System.Windows.Controls;
-using LibUIMain.View.VectorDB;
-using LibUIMain.ViewModel.Folder;
-using LibUIMain.ViewModel.VectorDB;
 
 namespace LibUIMain.ViewModel.Chat {
     public class ChatRequestContextViewModel : ObservableObject {
@@ -16,7 +12,9 @@ namespace LibUIMain.ViewModel.Chat {
             // コンストラクタ
         }
 
-        public ChatSettings ChatSettings { get; set; } = new ();
+        public ChatSettings ChatSettings { get; set; } = new();
+
+        public VectorSearchSettings VectorSearchSettings { get; set; } = new();
 
         // SendRelatedItemsOnlyFirstRequest
         public int SendRelatedItemsOnlyFirstRequest {
@@ -84,10 +82,10 @@ namespace LibUIMain.ViewModel.Chat {
 
         public int RAGModeValue {
             get {
-                return (int)ChatSettings.RAGMode;
+                return (int)VectorSearchSettings.RAGMode;
             }
             set {
-                ChatSettings.RAGMode = (RAGModeEnum)value;
+                VectorSearchSettings.RAGMode = (RAGModeEnum)value;
                 OnPropertyChanged(nameof(RAGModeValue));
             }
         }
@@ -95,28 +93,29 @@ namespace LibUIMain.ViewModel.Chat {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
 
-        private ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> _vectorSearchProperties = [];
-        public ObservableCollection<LibMain.Model.VectorDB.VectorSearchItem> VectorSearchProperties {
+        private LibMain.Model.VectorDB.VectorSearchItem? _vectorSearchProperty;
+        public LibMain.Model.VectorDB.VectorSearchItem? VectorSearchProperty {
             get {
-                return _vectorSearchProperties;
+                return _vectorSearchProperty;
             }
             set {
-                _vectorSearchProperties = value;
-                OnPropertyChanged(nameof(VectorSearchProperties));
+                _vectorSearchProperty = value;
+                OnPropertyChanged(nameof(VectorSearchProperty));
             }
         }
 
         // _vectorSearchPropertiesをChatRequestContext.VectorSearchRequestsに適用
-        public ChatRequestContext  GetChatRequestContext() {
-            ChatSettings.VectorSearchRequests.Clear();
-            foreach (var item in VectorSearchProperties) {
-                ChatSettings.VectorSearchRequests.Add(new VectorSearchRequest(item) {
+        public ChatRequestContext GetChatRequestContext() {
+
+            // VectorSearchSettingsに設定
+            if (VectorSearchProperty != null) {
+                VectorSearchSettings.VectorSearchRequest = new VectorSearchRequest(VectorSearchProperty) {
                     TopK = VectorDBSearchResultMax
-                });
+                };
             }
             // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new(ChatSettings);
-            return new ChatRequestContext(ChatSettings);
+            ChatRequestContext chatRequestContext = new(ChatSettings, VectorSearchSettings);
+            return chatRequestContext;
         }
 
         // Splitモードが変更されたときの処理
@@ -141,26 +140,6 @@ namespace LibUIMain.ViewModel.Chat {
             }
         }
 
-        // ベクトルDBをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorSearchItem != null) {
-                // VectorDBItemsから削除
-                VectorSearchProperties.Remove(SelectedVectorSearchItem);
-            }
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-        // ベクトルDBを追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
-            // フォルダを選択
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
-                    VectorSearchProperties.Add(vectorDBItemBase);
-                });
-
-            OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
         // RAGモードが変更されたときの処理
         public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
@@ -178,9 +157,7 @@ namespace LibUIMain.ViewModel.Chat {
             OnPropertyChanged(nameof(SendRelatedItemsOnlyFirstRequest));
         });
 
-
-
-        public Visibility VectorDBItemVisibility => LibUIMain.Utils.Tools.BoolToVisibility(ChatSettings.RAGMode != RAGModeEnum.None);
+        public Visibility VectorDBItemVisibility => LibUIMain.Utils.Tools.BoolToVisibility(VectorSearchSettings.RAGMode != RAGModeEnum.None);
 
         public Visibility SplitMOdeVisibility => LibUIMain.Utils.Tools.BoolToVisibility(ChatSettings.SplitMode != SplitModeEnum.None);
 

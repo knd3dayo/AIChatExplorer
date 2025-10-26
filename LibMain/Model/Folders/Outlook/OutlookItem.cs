@@ -40,7 +40,7 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                     SourceType = VectorSourceType.Mail,
                     SourcePath = SourcePath,
                 };
-                VectorEmbeddingItem.UpdateEmbeddings(vectorDBItemName, VectorEmbeddingItem);
+                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
             });
         }
 
