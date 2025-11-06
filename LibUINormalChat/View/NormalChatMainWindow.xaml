@@ -36,7 +36,7 @@
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand, Mode=OneTime}"
+            Command="{Binding NormalChatControlViewModel.SaveAndCloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>

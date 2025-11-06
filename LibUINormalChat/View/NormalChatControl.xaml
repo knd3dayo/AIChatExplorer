@@ -17,7 +17,10 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="NormalChatButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignFlatLightBgButton}">
+        <Style
+            x:Key="NormalChatButtonStyle"
+            BasedOn="{StaticResource MaterialDesignFlatLightBgButton}"
+            TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
@@ -92,7 +95,7 @@
                                                 Grid.Row="0"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
-                                                FontSize="{Binding EditorFontSize}"
+                                                FontSize="{Binding DataContext.EditorFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding Role, Mode=OneWay}" />
                                             <!--  コンテンツ  -->
                                             <TextBlock
@@ -100,7 +103,7 @@
                                                 MinHeight="30"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
-                                                FontSize="{Binding EditorFontSize}"
+                                                FontSize="{Binding DataContext.EditorFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding ContentWithSources, Mode=OneWay}"
                                                 TextTrimming="WordEllipsis"
@@ -110,7 +113,7 @@
                                                 Margin="10,10,10,10"
                                                 VerticalContentAlignment="Top"
                                                 Document="{Binding MarkdownContentWithSources, Mode=OneWay}"
-                                                FontSize="{Binding EditorFontSize}"
+                                                FontSize="{Binding DataContext.EditorFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 HorizontalScrollBarVisibility="Auto"
                                                 IsReadOnly="True"
                                                 VerticalScrollBarVisibility="Auto"

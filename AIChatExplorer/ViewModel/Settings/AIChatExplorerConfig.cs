@@ -114,7 +114,7 @@ namespace AIChatExplorer.ViewModel.Settings {
                     _pythonVenvPath = Properties.Settings.Default.PythonVenvPath;
                     if (string.IsNullOrEmpty(_pythonVenvPath)) {
                         // デフォルトのPython仮想環境パスを設定
-                        _pythonVenvPath = Path.Combine(AppDataPath, "venv");
+                        _pythonVenvPath = Path.Combine(AppDataPath, ".venv");
                         Properties.Settings.Default.PythonVenvPath = _pythonVenvPath;
                     }
                 }
