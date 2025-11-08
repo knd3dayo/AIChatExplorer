@@ -843,17 +843,16 @@ namespace LibMain.PythonIF {
             return vectorDBItem;
         }
 
-        public async Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query) {
+        public async Task<List<VectorEmbeddingItem>> VectorSearchAsync(VectorSearchRequest vectorSearchRequest) {
             // RequestContainerを作成
             RequestContainer requestContainer = new() {
-                RequestContextInstance = chatRequestContext,
+                VectorSearchRequestInstance = vectorSearchRequest,
             };
             // RequestContainerをJSON文字列に変換
             string chatRequestContextJson = requestContainer.ToJson();
 
             LogWrapper.Info(PythonAILibStringResourcesJa.Instance.VectorSearchExecute);
             LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
-            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.VectorSearchRequest}:{query}");
 
             // vector_search
 

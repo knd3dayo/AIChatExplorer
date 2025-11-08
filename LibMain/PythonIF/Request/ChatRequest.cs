@@ -2,6 +2,8 @@ using System.Text;
 using LibMain.Common;
 using LibMain.Model.Chat;
 using LibMain.Model.Content;
+using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Response;
 using LibMain.Resources;
 using LibMain.Utils.Python;
 
@@ -53,6 +55,20 @@ namespace LibMain.PythonIF.Request {
 
         public bool JsonMode { get; set; } = false;
 
+        // ベクトル検索の結果をContentTextに追加する
+
+        public async Task ApplyVectorSearchResults(VectorSearchItem item) {
+            // ベクトル検索を実行
+            List<VectorEmbeddingItem> searchResults = await item.VectorSearchAsync();
+            string vectorSearchResultText = "";
+            foreach (var result in searchResults) {
+                vectorSearchResultText += $"{result.Content}\n";
+            }
+            // ContentTextに +\n---参考情報 ベクトル検索結果---+\n 
+            if (string.IsNullOrEmpty(vectorSearchResultText) == false) {
+                ContentText += $"\n---{PythonAILibStringResources.Instance.ReferenceInformation} {PythonAILibStringResources.Instance.VectorSearchResults}---\n" + vectorSearchResultText;
+            }
+        }
 
         public async Task ApplyReletedItems(ChatRelatedItems relatedItems) {
             // relaedItemsのSendRelatedItemsOnlyFirstRequestがtrueの場合かつChatHistoryが1より大きい場合は、関連アイテムを送信しない
@@ -85,6 +101,35 @@ namespace LibMain.PythonIF.Request {
             };
             return currentMessage;
         }
+
+        // Chatを実行する
+        public async Task<ChatResponse?> ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
+            // 通常のOpenAI Chatを実行する
+            if (chatMode == OpenAIExecutionModeEnum.Normal) {
+                // 通常のChatを実行する。
+                return await ExecuteChatNormal(chatRequestContext);
+            }
+            return null;
+        }
+
+        public async Task<ChatResponse?> ExecuteChatNormal(ChatRequestContext chatRequestContext) {
+            // Ensure PythonAIFunctions is not null before calling OpenAIChatAsync
+            if (PythonExecutor.PythonAIFunctions == null) {
+                return null;
+            }
+            ChatRequest chat = this;
+
+            ChatResponse? result = await PythonExecutor.PythonAIFunctions.OpenAIChatAsync(chatRequestContext, chat);
+            if (result == null) {
+                return null;
+            }
+            // リクエストをChatHistoryに追加
+            chat.ChatHistory.Add(chat.CreateCurretContentMessage());
+            // レスポンスをChatHistoryに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            chat.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.SourceDocuments));
+            return result;
+        }
+
         public Dictionary<string, object> ToDict(bool includeCurrentMessage) {
             // OpenAIのAPIに送信するJSONを作成
 

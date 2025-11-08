@@ -72,6 +72,9 @@ namespace LibMain.PythonIF.Request {
         // EmbeddingRequest
         public EmbeddingRequest? EmbeddingRequestInstance { get; set; }
 
+        // VectorSearchRequest
+        public VectorSearchRequest? VectorSearchRequestInstance { get; set; }
+
         // SearchRequest
         public SearchCondition? SearchRequestInstance { get; set; }
 
@@ -84,10 +87,10 @@ namespace LibMain.PythonIF.Request {
             }
             if (RequestContextInstance != null) {
                 dict[CHAT_REQUEST_CONTEXT_KEY] = RequestContextInstance.ToChatRequestContextDict();
+            }
 
-                if (RequestContextInstance.VectorSearchSettings.VectorSearchRequest != null) {
-                    dict[VECTOR_SEARCH_REQUESTS_KEY] = RequestContextInstance.VectorSearchSettings.ToDictVectorDBRequestDict();
-                }
+            if (VectorSearchRequestInstance != null) {
+                dict[VECTOR_SEARCH_REQUESTS_KEY] = VectorSearchRequestInstance.ToDict();
             }
 
             if (EmbeddingRequestInstance != null) {

@@ -6,7 +6,7 @@ namespace AIChatExplorer.View.Settings {
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
 
 
-        // Name
+        // VectorDBName
         public static string Name { get; set; } = CommonStringResources.Instance.Name;
         // DisplayText
         public static string Description { get; set; } = CommonStringResources.Instance.Description;

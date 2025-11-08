@@ -4,6 +4,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibMain.Model.Chat;
 using LibMain.PythonIF.Request;
 using LibUIMain.Utils;
+using LibUIMain.View.VectorDB;
+using LibUIMain.ViewModel.Folder;
+using LibUIMain.ViewModel.VectorDB;
 
 namespace LibUIMain.ViewModel.Chat {
     public class ChatRequestContextViewModel : ObservableObject {
@@ -107,14 +110,8 @@ namespace LibUIMain.ViewModel.Chat {
         // _vectorSearchPropertiesをChatRequestContext.VectorSearchRequestsに適用
         public ChatRequestContext GetChatRequestContext() {
 
-            // VectorSearchSettingsに設定
-            if (VectorSearchProperty != null) {
-                VectorSearchSettings.VectorSearchRequest = new VectorSearchRequest(VectorSearchProperty) {
-                    TopK = VectorDBSearchResultMax
-                };
-            }
             // ChatRequestContextを作成
-            ChatRequestContext chatRequestContext = new(ChatSettings, VectorSearchSettings);
+            ChatRequestContext chatRequestContext = new(ChatSettings);
             return chatRequestContext;
         }
 
@@ -139,6 +136,17 @@ namespace LibUIMain.ViewModel.Chat {
                 OnPropertyChanged(nameof(SelectedVectorSearchItem));
             }
         }
+
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
+            // フォルダを選択
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
+                FolderViewModelManagerBase.FolderViewModels, (vectorDBItemBase) => {
+                    VectorSearchProperty = vectorDBItemBase;
+                });
+
+            OnPropertyChanged(nameof(VectorSearchProperty));
+        });
 
         // RAGモードが変更されたときの処理
         public SimpleDelegateCommand<RoutedEventArgs> RAGModeSelectionChangedCommand => new((routedEventArgs) => {

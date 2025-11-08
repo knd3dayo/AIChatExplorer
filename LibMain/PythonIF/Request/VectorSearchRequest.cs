@@ -7,7 +7,7 @@ using LibMain.Utils.Common;
 namespace LibMain.PythonIF.Request {
     public class VectorSearchRequest {
 
-        public const string NAME_KEY = "name";
+        public const string VECTOR_DB_NAME_KEY = "vector_db_name";
         public const string MODEL_KEY = "model";
         public const string FOLDER_ID_KEY = "folder_id";
         public const string FOLDER_PATH_KEY = "folder_path";
@@ -20,8 +20,7 @@ namespace LibMain.PythonIF.Request {
 
 
         public VectorSearchRequest(VectorSearchItem vectorSearchItem) {
-            Name = vectorSearchItem.VectorDBItemName;
-            Model = vectorSearchItem.Model;
+            VectorDBName = vectorSearchItem.VectorDBItemName;
             Query = vectorSearchItem.InputText;
             TopK = vectorSearchItem.TopK;
             FolderPath = vectorSearchItem.FolderPath;
@@ -30,8 +29,7 @@ namespace LibMain.PythonIF.Request {
 
         [JsonConstructor]
         public VectorSearchRequest(string? name, string? model, string? query, int topK, float scoreThreshold, string? folderPath, string contentType) {
-            Name = name;
-            Model = model;
+            VectorDBName = name;
             Query = query;
             TopK = topK;
             ScoreThreshold = scoreThreshold;
@@ -39,11 +37,8 @@ namespace LibMain.PythonIF.Request {
             ContentType = contentType;
         }
 
-        [JsonPropertyName(NAME_KEY)]
-        public string? Name { init; get; } = null;
-
-        [JsonPropertyName(MODEL_KEY)]
-        public string? Model { get; set; } = null;
+        [JsonPropertyName(VECTOR_DB_NAME_KEY)]
+        public string? VectorDBName { init; get; } = null;
 
         [JsonPropertyName(QUERY_KEY)]
         public string? Query { get; set; } = null;
@@ -89,16 +84,12 @@ namespace LibMain.PythonIF.Request {
         }
 
         public Dictionary<string, object> ToDict() {
-            if (string.IsNullOrEmpty(Name)) {
-                throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(NAME_KEY));
-            }
-            if (string.IsNullOrEmpty(Model)) {
-                throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(MODEL_KEY));
+            if (string.IsNullOrEmpty(VectorDBName)) {
+                throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(VECTOR_DB_NAME_KEY));
             }
 
             Dictionary<string, object> dict = [];
-            dict[NAME_KEY] = Name;
-            dict[MODEL_KEY] = Model;
+            dict[VECTOR_DB_NAME_KEY] = VectorDBName;
             var search_kwargs = GetSearchKwargs();
             if (search_kwargs.Count > 0) {
                 dict[SEARCH_KWARGS_KEY] = search_kwargs;

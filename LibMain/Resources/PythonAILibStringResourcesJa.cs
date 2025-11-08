@@ -142,6 +142,10 @@ namespace LibMain.Resources {
         // --- ChatItem.cs ---
         // Reference Information
         public override string ReferenceInformation { get; } = "参照情報";
+
+        // VectorSearchResults
+        public override string VectorSearchResults { get; } = "ベクトル検索結果";
+
         // <参照元ドキュメントルート>
         public override string ReferenceDocument { get; } = "<参考ドキュメント>";
 

@@ -94,7 +94,7 @@ namespace LibUIMain.Resource {
         // Python Spacy Settings
         public virtual string PythonSpacySettings { get; } = "Python Spacy Settings";
 
-        // Spacy Model Name
+        // Spacy Model VectorDBName
         public virtual string SpacyModelName { get; } = "Spacy Model Name";
 
         // Set installed Spacy model name. Example: ja_core_news_sm, ja_core_news_lg, etc.

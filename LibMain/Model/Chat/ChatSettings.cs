@@ -1,5 +1,5 @@
 using LibMain.Common;
-using LibMain.PythonIF.Request;
+using LibMain.Model.VectorDB;
 using LibMain.Resources;
 using LibMain.Utils.Common;
 
@@ -8,53 +8,14 @@ namespace LibMain.Model.Chat {
     public class VectorSearchSettings {
 
         public const string RAG_MODE_KEY = "rag_mode";
-        public const string RAG_MODE_PROMPT_TEXT_KEY = "rag_mode_prompt_text";
-
-
-        public const string VECTOR_SEARCH_REQUEST_JSON_KEY = "vector_search_request_json";
-        public const string VECTOR_SEARCH_REQUEST_KEY = "vector_search_request";
 
 
         // RAGを使用するかどうか
         public RAGModeEnum RAGMode { get; set; } = RAGModeEnum.None;
 
-        // RAGを使用する場合のプロンプト
-        public string RagModePromptText { get; set; } = "";
-
         // ベクトル検索
-        public VectorSearchRequest? VectorSearchRequest { get; set; }
+        public VectorSearchItem? VectorSearchItem { get; set; }
 
-        // CreateEntriesDictList
-        public Dictionary<string, object> ToDictVectorDBRequestDict() {
-            if (VectorSearchRequest == null || RAGMode == RAGModeEnum.None) {
-                return [];
-            }
-            return VectorSearchRequest.ToDict();
-        }
-
-
-        // ToDict
-        public Dictionary<string, object> ToDict() {
-            Dictionary<string, object> dict = new() {
-                [RAG_MODE_KEY] = RAGMode.ToString(),
-                [RAG_MODE_PROMPT_TEXT_KEY] = RagModePromptText,
-            };
-            if (VectorSearchRequest != null) {
-                dict[VECTOR_SEARCH_REQUEST_JSON_KEY] = VectorSearchRequest.ToJson();
-            }
-
-            return dict;
-        }
-
-        public static VectorSearchSettings FromDict(Dictionary<string, dynamic?> dict) {
-            VectorSearchSettings chatSettings = new() {
-                VectorSearchRequest = VectorSearchRequest.FromJson(dict.GetValueOrDefault(VECTOR_SEARCH_REQUEST_JSON_KEY)),
-                RAGMode = Enum.Parse<RAGModeEnum>(dict.GetValueOrDefault(RAG_MODE_KEY, RAGModeEnum.None)),
-                RagModePromptText = dict.GetValueOrDefault(RAG_MODE_PROMPT_TEXT_KEY, null) ?? "",
-            };
-
-            return chatSettings;
-        }
 
     }
     public class ChatSettings {

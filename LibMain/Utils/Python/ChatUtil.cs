@@ -1,12 +1,9 @@
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using LibMain.Model.Chat;
 using LibMain.Model.Content;
-using LibMain.Model.File;
 using LibMain.Model.Prompt;
 using LibMain.Model.VectorDB;
-using LibMain.PythonIF;
 using LibMain.PythonIF.Request;
 using LibMain.PythonIF.Response;
 using LibMain.Resources;
@@ -27,42 +24,25 @@ namespace LibMain.Utils.Python {
                 ContentText = content,
             };
 
+            if (promptText.RAGMode != RAGModeEnum.None) {
+                await chatRequest.ApplyVectorSearchResults(new VectorSearchItem(new VectorDBItem()) {
+                    InputText = content,
+                    TopK = 3,
+                    ScoreThreshold = 0.0f,
+                });
+            }
+
             chatSettings.PromptTemplateText = promptText.Prompt;
             chatSettings.SplitMode = promptText.SplitMode;
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = promptText.RAGMode,
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
-            ChatResponse? result = await ExecuteChat(promptText.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            ChatResponse? result = await chatRequest.ExecuteChat(promptText.ChatMode, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
             return "";
         }
 
-        // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static async Task<string> CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitModeEnum splitMode, ChatSettings chatSettings, List<VectorSearchItem> vectorDBProperties, List<string> promptList, string content) {
-            string resultString = content;
-            foreach (string prompt in promptList) {
-                ChatRequest chatRequest = new() {
-                    ContentText = resultString,
-                };
-
-                chatSettings.PromptTemplateText = prompt;
-                VectorSearchSettings vectorSearchSettings = new() {
-                    RAGMode = RAGModeEnum.None,
-                };
-                ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
-
-
-                ChatResponse? result = await ExecuteChat(chatMode, chatRequest, chatRequestContext, (message) => { });
-                if (result != null) {
-                    resultString = result.Output;
-                }
-            }
-            return resultString;
-        }
 
         // Chatを実行してリストの結果を取得する
         public static async Task<List<string>> CreateListChatResult(ChatSettings chatSettings, PromptItem promptItem, string content) {
@@ -73,14 +53,21 @@ namespace LibMain.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
+
+            if (promptItem.RAGMode != RAGModeEnum.None) {
+                await chatRequest.ApplyVectorSearchResults(new VectorSearchItem(new VectorDBItem()) {
+                    InputText = content,
+                    TopK = 3,
+                    ScoreThreshold = 0.0f,
+                });
+            }
+
             chatSettings.PromptTemplateText = promptText;
             chatSettings.SplitMode = promptItem.SplitMode;
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = promptItem.RAGMode,
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
-            ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            ChatRequestContext chatRequestContext = new(chatSettings);
+
+            ChatResponse? result = await chatRequest.ExecuteChat(promptItem.ChatMode, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
@@ -100,12 +87,17 @@ namespace LibMain.Utils.Python {
 
             chatSettings.PromptTemplateText = promptItem.Prompt;
             chatSettings.SplitMode = promptItem.SplitMode;
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = promptItem.RAGMode,
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
+            ChatRequestContext chatRequestContext = new(chatSettings);
 
-            ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            if (promptItem.RAGMode != RAGModeEnum.None) {
+                await chatRequest.ApplyVectorSearchResults(new VectorSearchItem(new VectorDBItem()) {
+                    InputText = content,
+                    TopK = 3,
+                    ScoreThreshold = 0.0f,
+                });
+            }
+
+            ChatResponse? result = await chatRequest.ExecuteChat(promptItem.ChatMode, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 return JsonUtil.ParseJson(result.Output);
             }
@@ -122,12 +114,18 @@ namespace LibMain.Utils.Python {
             };
             chatSettings.PromptTemplateText = promptItem.Prompt;
             chatSettings.SplitMode = promptItem.SplitMode;
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = promptItem.RAGMode,
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
-            ChatResponse? result = await ExecuteChat(promptItem.ChatMode, chatRequest, chatRequestContext, (message) => { });
+            ChatRequestContext chatRequestContext = new(chatSettings);
+
+            if (promptItem.RAGMode != RAGModeEnum.None) {
+                await chatRequest.ApplyVectorSearchResults(new VectorSearchItem(new VectorDBItem()) {
+                    InputText = content,
+                    TopK = 3,
+                    ScoreThreshold = 0.0f,
+                });
+            }
+
+            ChatResponse? result = await chatRequest.ExecuteChat(promptItem.ChatMode, chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
                 return JsonUtil.ParseJson(result.Output);
@@ -145,35 +143,16 @@ namespace LibMain.Utils.Python {
             if (chatRequest.ImageURLs.Count == 0) {
                 return "";
             }
-            chatSettings.PromptTemplateText = PromptStringResourceJa.Instance.ExtractTextRequest;
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = RAGModeEnum.None,
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
 
-            ChatResponse? result = await ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+            ChatRequestContext chatRequestContext = new(chatSettings);
+
+            ChatResponse? result = await chatRequest.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequestContext, (message) => { });
             if (result != null) {
                 return result.Output;
             }
             return "";
         }
 
-        public static async Task<ChatResponse?> ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
-            // Ensure PythonAIFunctions is not null before calling OpenAIChatAsync
-            if (PythonExecutor.PythonAIFunctions == null) {
-                return null;
-            }
-
-            ChatResponse? result = await PythonExecutor.PythonAIFunctions.OpenAIChatAsync(chatRequestContext, chat);
-            if (result == null) {
-                return null;
-            }
-            // リクエストをChatHistoryに追加
-            chat.ChatHistory.Add(chat.CreateCurretContentMessage());
-            // レスポンスをChatHistoryに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            chat.ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.SourceDocuments));
-            return result;
-        }
 
         public static string CreateImageURLFromFilePath(string filePath) {
             // filePathから画像のBase64文字列を作成
@@ -219,7 +198,7 @@ namespace LibMain.Utils.Python {
                 }
                 bool exportTitle = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.TitleName)?.IsChecked ?? false;
                 if (exportTitle) {
-                    data.Add(( ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.Description));
+                    data.Add((ContentItemTypes.ContentItemTypeEnum.Text, applicationItem.Description));
                 }
                 // Path
                 bool exportSourcePath = dataDefinitions.FirstOrDefault(x => x.Name == ContentItemDataDefinition.SourcePathName)?.IsChecked ?? false;
@@ -248,16 +227,6 @@ namespace LibMain.Utils.Python {
 
             }
             return data;
-        }
-
-        // Chatを実行する
-        public static async Task<ChatResponse?> ExecuteChat(OpenAIExecutionModeEnum chatMode, ChatRequest chatRequest, ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // 通常のOpenAI Chatを実行する
-            if (chatMode == OpenAIExecutionModeEnum.Normal) {
-                // 通常のChatを実行する。
-                return await ExecuteChatNormal(chatRequestContext, chatRequest);
-            }
-            return null;
         }
 
     }

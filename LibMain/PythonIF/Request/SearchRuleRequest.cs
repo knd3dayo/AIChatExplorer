@@ -10,7 +10,7 @@ namespace LibMain.PythonIF.Request {
 
 
         public const string ID_KEY = "id";
-        // Name
+        // VectorDBName
         public const string NAME_KEY = "name";
         // SearchConditionJson
         public const string SEARCH_CONDITION_JSON_KEY = "search_condition_json";
@@ -35,7 +35,7 @@ namespace LibMain.PythonIF.Request {
 
         // Id
         public string Id { get; set; }
-        // Name
+        // VectorDBName
         public string Name { get; set; } = string.Empty;
         // SearchConditionJson
         public string SearchConditionJson { get; set; }

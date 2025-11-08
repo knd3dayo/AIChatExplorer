@@ -57,7 +57,7 @@ namespace LibUIMain.View.Folder {
         public static string OK { get; set; } = CommonStringResources.Instance.OK;
 
 
-        // Name
+        // VectorDBName
         public static string Name { get; set; } = CommonStringResources.Instance.Name;
         // DisplayText
         public static string Description { get; set; } = CommonStringResources.Instance.Description;

@@ -86,9 +86,7 @@ namespace LibMain.Model.VectorDB {
         public VectorSearchItem CreateVectorSearchItem(string? folderId = null, string? folderPath = null) {
             VectorSearchItem item = new(this) {
                 VectorDBItemName = this.Name,
-                Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel,
-                FolderId = folderId,
-                FolderPath = folderPath,
+                FolderPath = folderId,
                 ScoreThreshold = this.DefaultScoreThreshold,
                 TopK = this.DefaultSearchResultLimit,
             };

@@ -10,7 +10,6 @@ namespace LibMain.PythonIF.Response {
 
 
         public const string FOLDER_ID_KEY = EmbeddingRequest.FOLDER_ID_KEY;
-        public const string FOLDER_PATH_KEY = EmbeddingRequest.FOLDER_PATH_KEY;
         public const string SOURCE_ID_KEY = EmbeddingRequest.SOURCE_ID_KEY;
         public const string SOURCE_TYPE_KEY = EmbeddingRequest.SOURCE_TYPE_KEY;
         public const string DESCRIPTION_KEY = EmbeddingRequest.DESCRIPTION_KEY;
@@ -36,8 +35,6 @@ namespace LibMain.PythonIF.Response {
                 foreach (var kvp in metadataDict) {
                     if (kvp.Key == FOLDER_ID_KEY) {
                         response.FolderId = kvp.Value.ToString() ?? "";
-                    } else if (kvp.Key == FOLDER_PATH_KEY) {
-                        response.FolderPath = kvp.Value.ToString() ?? "";
                     } else if (kvp.Key == SOURCE_ID_KEY) {
                         response.SourceId = kvp.Value.ToString() ?? "";
                     } else if (kvp.Key == SOURCE_TYPE_KEY) {

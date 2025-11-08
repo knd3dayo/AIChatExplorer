@@ -25,7 +25,7 @@ namespace LibMain.PythonIF.Request {
         // Id
         public string Id { get; set; }
 
-        // Name
+        // VectorDBName
         public string Name { get; set; }
 
         // Description

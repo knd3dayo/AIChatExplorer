@@ -60,7 +60,7 @@ namespace LibMain.PythonIF {
         public Task<List<VectorDBItem>> GetVectorDBItemsAsync();
         public Task<VectorDBItem?> GetVectorDBItemById(string id);
         public Task<VectorDBItem?> GetVectorDBItemByName(string name);
-        public Task<List<VectorEmbeddingItem>> VectorSearchAsync(ChatRequestContext chatRequestContext, string query);
+        public Task<List<VectorEmbeddingItem>> VectorSearchAsync(VectorSearchRequest vectorSearchRequest);
         // delete_embeddings_by_folder
         public Task DeleteEmbeddingsByFolderAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);
         public Task DeleteEmbeddingsAsync(ChatRequestContext chatRequestContext, EmbeddingRequest embeddingRequest);

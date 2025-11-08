@@ -13,7 +13,7 @@ namespace LibUINormalChat.Common {
 
             await chatRequest.ApplyReletedItems(relatedItems);
 
-            return await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, afterUpdate);
+            return await chatRequest.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequestContext, afterUpdate);
 
         }
 

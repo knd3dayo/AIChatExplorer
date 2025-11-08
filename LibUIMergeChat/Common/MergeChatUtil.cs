@@ -62,15 +62,11 @@ namespace LibUIMergeChat.Common {
                         SplitMode = context.ChatSettings.SplitMode,
                         SplitTokenCount = context.ChatSettings.SplitTokenCount,
                      };
-                    VectorSearchSettings vectorSearchSettings = new VectorSearchSettings {
-                        RAGMode = context.VectorSearchSettings.RAGMode,
-                        VectorSearchRequest = context.VectorSearchSettings.VectorSearchRequest,
-                    };
-
-                    var preProcessRequestContext = new ChatRequestContext(chatSettings, vectorSearchSettings);
+                    
+                    var preProcessRequestContext = new ChatRequestContext(chatSettings);
 
                     var preProcessRequest = new ChatRequest { ContentText = contentText };
-                    var preProcessResult = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, preProcessRequest, preProcessRequestContext, _ => { });
+                    var preProcessResult = await preProcessRequest.ExecuteChat(OpenAIExecutionModeEnum.Normal, preProcessRequestContext, _ => { });
                     return preProcessResult;
                 });
 
@@ -108,16 +104,13 @@ namespace LibUIMergeChat.Common {
                 SplitMode = context.ChatSettings.SplitMode,
                 SplitTokenCount = context.ChatSettings.SplitTokenCount,
             };
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = context.VectorSearchSettings.RAGMode,
-                VectorSearchRequest = context.VectorSearchSettings.VectorSearchRequest,
-            };
-            ChatRequestContext postProcessRequestContext = new(chatSettings, vectorSearchSettings);
+
+            ChatRequestContext postProcessRequestContext = new(chatSettings);
 
             ChatRequest postProcessRequest = new() {
                 ContentText = preProcessResultText,
             };
-            ChatResponse? postProcessResult = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, postProcessRequest, postProcessRequestContext, _ => { });
+            ChatResponse? postProcessResult = await postProcessRequest.ExecuteChat(OpenAIExecutionModeEnum.Normal, postProcessRequestContext, _ => { });
             return postProcessResult;
         }
 

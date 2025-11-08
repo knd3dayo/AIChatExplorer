@@ -2,7 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using LibMain.Common;
 using LibMain.Model.Chat;
-using LibMain.Model.Content;
 using LibMain.PythonIF;
 using LibMain.PythonIF.Request;
 using LibMain.Utils.Common;
@@ -12,20 +11,14 @@ namespace LibMain.Model.VectorDB {
 
         public VectorSearchItem(VectorDBItem vectorDBItem) {
             VectorDBItemName = vectorDBItem.Name;
-            Model = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties().OpenAIEmbeddingModel;
             TopK = vectorDBItem.DefaultSearchResultLimit;
             ScoreThreshold = vectorDBItem.DefaultScoreThreshold;
-            Task.Run(async () => {
-                await UpdateDisplayText();
-            });
+            UpdateDisplayText();
         }
 
 
-        [JsonPropertyName("name")]
+        [JsonPropertyName("vector_db_name")]
         public string? VectorDBItemName { init; get; } = null;
-
-        [JsonPropertyName("model")]
-        public string? Model { get; set; } = null;
 
         // InputText
         [JsonPropertyName("query")]
@@ -37,15 +30,12 @@ namespace LibMain.Model.VectorDB {
         // score_threshold
         public float ScoreThreshold { get; set; } = 0.5f;
 
-        // FolderId
-        public string? FolderId { get; set; } = null;
-
         // FolderPath
         public string? FolderPath { get; set; } = null;
 
         public string DisplayText { get; private set; } = "";
 
-        private async Task UpdateDisplayText() {
+        private void UpdateDisplayText() {
             // DisplayTextを更新する
             VectorDBItem? item = VectorDBItem.GetItemByName(VectorDBItemName);
             if (item == null) {
@@ -54,19 +44,14 @@ namespace LibMain.Model.VectorDB {
             } else if (string.IsNullOrEmpty(item.CollectionName)) {
                 DisplayText = item.Name;
                 return;
-            } else if (FolderId == null) {
+            } else if (FolderPath == null) {
                 DisplayText = item.Name;
                 return;
             } else {
-                ContentFolderWrapper? folder = await ContentFolderWrapper.GetFolderById<ContentFolderWrapper>(FolderId);
-                if (folder == null) {
-                    DisplayText = item.Name;
-                    return;
-                }
-                var contentFolderPath = await folder.GetContentFolderPath();
-                DisplayText = $"{item.Name}:{contentFolderPath}";
+                DisplayText = $"{item.Name}:{FolderPath}";
             }
         }
+
 
 
         public static List<VectorSearchItem> FromListJson(string json) {
@@ -88,16 +73,11 @@ namespace LibMain.Model.VectorDB {
                 LogWrapper.Warn("InputText is null or empty.");
                 return [];
             }
-            // ChatRequestContextを作成
-            ChatSettings chatSettings = new() { };
-            VectorSearchSettings vectorSearchSettings = new() {
-                RAGMode = RAGModeEnum.NormalSearch,
-                VectorSearchRequest = new VectorSearchRequest(this),
-            };
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
+            
+            VectorSearchRequest vectorSearchRequest = new(this);
 
             // ベクトル検索を実行
-            List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(chatRequestContext, InputText);
+            List<VectorEmbeddingItem> results = await PythonExecutor.PythonAIFunctions.VectorSearchAsync(vectorSearchRequest);
             return results;
         }
 

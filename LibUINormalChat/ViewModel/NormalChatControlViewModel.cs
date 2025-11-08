@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using LibMain.Common;
 using LibMain.Model.Chat;
 using LibMain.Model.Content;
+using LibMain.Model.Prompt;
+using LibMain.Model.VectorDB;
 using LibMain.PythonIF.Request;
 using LibMain.PythonIF.Response;
 using LibMain.Utils.Common;
@@ -333,6 +335,17 @@ namespace LibUINormalChat.ViewModel {
 
             // 参照アイテム情報を設定
             ChatRelatedItems chatRelatedItems = CreateChateRelatedItems();
+
+
+            // ベクトル検索
+            if (ChatRequestContextViewModel.VectorSearchSettings.RAGMode != RAGModeEnum.None) {
+                await ChatRequest.ApplyVectorSearchResults(new VectorSearchItem(new VectorDBItem()) {
+                    InputText = ChatRequest.ContentText,
+                    TopK = 3,
+                    ScoreThreshold = 0.0f,
+                });
+            }
+
             // OpenAIChatAsync or LangChainChatを実行
             ChatResponse? result = await NormalChatUtil.ExecuteChat(ChatRequest, chatRequestContext, chatRelatedItems, (message) => { });
 

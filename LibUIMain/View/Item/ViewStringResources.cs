@@ -7,7 +7,7 @@ namespace LibUIMain.View.Item {
         // Copy
         public static string Copy { get; set; } = CommonStringResources.Instance.Copy;
 
-        // Name
+        // VectorDBName
         public static string Name { get; set; } = CommonStringResources.Instance.Name;
         // DisplayText
         public static string Description { get; set; } = CommonStringResources.Instance.Description;

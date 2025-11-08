@@ -329,20 +329,12 @@ namespace LibMain.Model.Prompt {
             }
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            var vectorDBItem = await item.GetMainVectorSearchItemAsync();
-            VectorSearchItem? vectorSearchProperty = promptItem.RAGMode != RAGModeEnum.None ? vectorDBItem : null;
 
             // ChatRequestContextを作成
             ChatSettings chatSettings = new() {
                 PromptTemplateText = promptItem.Prompt,
                 SplitMode = promptItem.SplitMode,
             };
-            VectorSearchSettings vectorSearchSettings = new() {
-                VectorSearchRequest = vectorSearchProperty != null ? new VectorSearchRequest(vectorSearchProperty) : null,
-                RAGMode = promptItem.RAGMode,
-            };
-
 
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
@@ -452,15 +444,9 @@ namespace LibMain.Model.Prompt {
             }
             // ChatUtl.CreateDictionaryChatResultを実行
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
-            VectorSearchSettings vectorSearchSettings = new() {
-                VectorSearchRequest = new VectorSearchRequest(await item.GetMainVectorSearchItemAsync()),
-                RAGMode = RAGModeEnum.None
-            };
             // ChatRequestContextを作成
-            ChatSettings chatSettings = new() {
-            };
+            ChatSettings chatSettings = new();
 
             Dictionary<string, dynamic?> response = await ChatUtil.CreateDictionaryChatResult(chatSettings, new PromptItem() {
                 ChatMode = OpenAIExecutionModeEnum.Normal,

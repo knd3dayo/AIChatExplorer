@@ -201,6 +201,9 @@ namespace LibMain.Resources {
         // Reference Information
         public virtual string ReferenceInformation { get; } = "Reference Information";
 
+        // VectorSearchResults
+        public virtual string VectorSearchResults { get; } = "Vector Search Results";
+
         public virtual string ReferenceDocument { get; } = "Reference Document";
 
         // Property information

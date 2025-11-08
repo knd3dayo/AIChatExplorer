@@ -32,12 +32,13 @@ namespace LibMain.Model.AutoProcess {
             if (clipboardFolder != null) {
                 vectorSearchSettings.RAGMode = RAGModeEnum.NormalSearch;
                 var item = await clipboardFolder.GetMainVectorSearchItem();
-                vectorSearchSettings.VectorSearchRequest =new VectorSearchRequest(item);
+                vectorSearchSettings.VectorSearchItem = item;
+                await chatRequest.ApplyVectorSearchResults(item);
             }
 
-            ChatRequestContext chatRequestContent = new(chatSettings, vectorSearchSettings);
+            ChatRequestContext chatRequestContent = new(chatSettings);
 
-            ChatResponse? result = await ChatUtil.ExecuteChat(Mode, chatRequest, chatRequestContent, (message) => { });
+            ChatResponse? result = await chatRequest.ExecuteChat(Mode, chatRequestContent, (message) => { });
             if (result == null) {
                 return;
             }

@@ -16,7 +16,7 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
         }
 
-        // Name
+        // VectorDBName
         public string Name {
             get => Item.Name;
             set {

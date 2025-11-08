@@ -156,8 +156,7 @@ namespace LibUIImageChat.ViewModel {
             ChatSettings chatSettings = new() {
                 PromptTemplateText = promptText,
             };
-            VectorSearchSettings vectorSearchSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings, vectorSearchSettings);
+            ChatRequestContext chatRequestContext = new(chatSettings);
             if (images.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoImageFileSelected);
                 return "";
@@ -174,7 +173,7 @@ namespace LibUIImageChat.ViewModel {
                 chatRequest.ContentText = InputText;
 
                 // ChatRequest送信
-                ChatResponse? result = await ChatUtil.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequest, chatRequestContext, (message) => { });
+                ChatResponse? result = await chatRequest.ExecuteChat(OpenAIExecutionModeEnum.Normal, chatRequestContext, (message) => { });
                 if (result == null) {
                     LogWrapper.Error(CommonStringResources.Instance.ErrorOccurred);
                     return "";

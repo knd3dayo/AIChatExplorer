@@ -163,7 +163,7 @@ namespace LibUIMain.ViewModel.Chat {
                     }
                     OpenAIExecutionModeEnum openAIExecutionModeEnum = (OpenAIExecutionModeEnum)ChatContextViewModelInstance.ChatMode;
                     // OpenAIChatAsync or LangChainChatを実行
-                    result = await ChatUtil.ExecuteChat(openAIExecutionModeEnum, ChatRequest, chatRequestContext, (message) => {
+                    result = await ChatRequest.ExecuteChat(openAIExecutionModeEnum, chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryPosition();

@@ -3,49 +3,47 @@ using LibMain.Model.VectorDB;
 namespace LibMain.PythonIF.Request {
     public class EmbeddingRequest {
 
-        public const string NAME_KEY = "name";
-        public const string MODEL_KEY = "model";
-        public const string FOLDER_ID_KEY = "folder_id";
-        public const string FOLDER_PATH_KEY = "folder_path";
+        public const string VECTOR_DB_NAME_KEY = "vector_db_name";
         public const string SOURCE_ID_KEY = "source_id";
+        public const string CONTENT_KEY = "content";
+
+        // metadata keys
+        public const string METADATA_KEY = "metadata";
+        public const string FOLDER_ID_KEY = "folder_id";
         public const string SOURCE_TYPE_KEY = "source_type";
         public const string DESCRIPTION_KEY = "description";
-        public const string CONTENT_KEY = "content";
         public const string SOURCE_PATH_KEY = "source_path";
         public const string TAGS_KEY = "tags";
 
 
-        public EmbeddingRequest(string vectorDBName, string model, VectorEmbeddingItem embedding) {
-            Name = vectorDBName;
-            Model = model;
+        public EmbeddingRequest(string vectorDBName, VectorEmbeddingItem embedding) {
+            VectorDBName = vectorDBName;
             Embedding = embedding;
         }
 
-        public string Name { get; set; } = "";
-        public string Model { get; set; } = "text-embedding-3-small";
+        public string VectorDBName { get; set; } = "";
 
         public VectorEmbeddingItem Embedding { get; set; }
 
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = [];
-            dict[NAME_KEY] = Name;
-            dict[MODEL_KEY] = Model;
-
-            // folder_path
-            if (Embedding.FolderPath != null) {
-                dict[FOLDER_PATH_KEY] = Embedding.FolderPath;
-            }
+            dict[VECTOR_DB_NAME_KEY] = VectorDBName;
             // source_id
             dict[SOURCE_ID_KEY] = Embedding.SourceId;
-            dict[SOURCE_PATH_KEY] = Embedding.SourcePath;
-            dict[SOURCE_TYPE_KEY] = Embedding.SourceType.ToString();
-            dict[DESCRIPTION_KEY] = Embedding.Description;
             dict[CONTENT_KEY] = Embedding.Content;
+
+            // metadata
+            Dictionary<string, object> medatada = [];
+
+            medatada[SOURCE_PATH_KEY] = Embedding.SourcePath;
+            medatada[SOURCE_TYPE_KEY] = Embedding.SourceType.ToString();
+            medatada[DESCRIPTION_KEY] = Embedding.Description;
 
             // tags
             if (Embedding.Tags != null && Embedding.Tags.Count > 0) {
-                dict[TAGS_KEY] = Embedding.Tags;
+                medatada[TAGS_KEY] = Embedding.Tags;
             }
+            dict[METADATA_KEY] = medatada;
 
             return dict;
         }

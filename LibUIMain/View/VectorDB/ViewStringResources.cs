@@ -26,7 +26,7 @@ namespace LibUIMain.View.VectorDB {
         // Enable
         public static string Enable { get; set; } = CommonStringResources.Instance.Enable;
 
-        // Name
+        // VectorDBName
         public static string Name { get; set; } = CommonStringResources.Instance.Name;
 
         // VectorDBLocation

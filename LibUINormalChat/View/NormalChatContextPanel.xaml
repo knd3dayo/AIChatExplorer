@@ -199,7 +199,21 @@
                             VerticalAlignment="Center"
                             FontWeight="Bold"
                             Text="{x:Static res:ViewStringResources.VectorDB}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="10"
+                            Text="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}">
+                            <TextBlock.InputBindings>
+                                <MouseBinding Command="{Binding ChatRequestContextViewModel.SelectVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                            </TextBlock.InputBindings>
+                        </TextBlock>
                     </Grid>
+                    <TextBlock
+                        Grid.Row="1"
+                        Margin="0,10,0,10"
+                        Text="{Binding ChatRequestContextViewModel.VectorSearchProperty.FolderPath}" />
                 </Grid>
             </StackPanel>
             <Separator Grid.Row="3" />
