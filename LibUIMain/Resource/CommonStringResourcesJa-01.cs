@@ -895,14 +895,6 @@ namespace LibUIMain.Resource {
         // ベクトルのスコア(コサイン類似度)の閾値
         public override string DefaultScoreThreshold { get; } = "ベクトルのスコア(コサイン類似度)の閾値";
 
-        // MultiVectorRetrieverを使用
-        public override string UseMultiVectorRetriever { get; } = "MultiVectorRetrieverを使用";
-
-        // DocStore用のSQLite3の場所
-        public override string SQLite3LocationForDocStore { get; } = "DocStore用のSQLite3の場所";
-
-        // 例：sqlite:///C:\Users\Username\sqlite3.db
-        public override string ExampleSQLite3Location { get; } = "例：sqlite:///C:\\Users\\Username\\sqlite3.db";
 
         // 例：C:\Users\Username\vector.db
         public override string ExampleVectorDBLocationChroma { get; } = "例：C:\\Users\\Username\\vector.db";

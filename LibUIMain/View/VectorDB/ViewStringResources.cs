@@ -68,15 +68,6 @@ namespace LibUIMain.View.VectorDB {
         // DefaultScoreThreshold
         public static string DefaultScoreThreshold { get; set; } = CommonStringResources.Instance.DefaultScoreThreshold;
 
-        // UseMultiVectorRetriever
-        public static string UseMultiVectorRetriever { get; set; } = CommonStringResources.Instance.UseMultiVectorRetriever;
-
-        // SQLite3LocationForDocStore
-        public static string SQLite3LocationForDocStore { get; set; } = CommonStringResources.Instance.SQLite3LocationForDocStore;
-
-        // ExampleSQLite3Location
-        public static string ExampleSQLite3Location { get; set; } = CommonStringResources.Instance.ExampleSQLite3Location;
-
         // OK
         public static string OK { get; set; } = CommonStringResources.Instance.OK;
 
@@ -89,9 +80,6 @@ namespace LibUIMain.View.VectorDB {
         // VectorDBSearchScoreThreashold
         public static string VectorDBSearchScoreThreashold { get; set; } = CommonStringResources.Instance.VectorDBSearchScoreThreashold;
 
-
-        // マルチベクターリトリーバーの最終的な検索結果
-        public static string MultiVectorRetrieverFinalSearchResult { get; set; } = CommonStringResources.Instance.MultiVectorRetrieverFinalSearchResult;
 
         // EnterYourQuestionHere
         public static string EnterYourQuestionHere { get; set; } = CommonStringResources.Instance.EnterYourQuestionHere;

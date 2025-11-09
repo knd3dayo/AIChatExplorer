@@ -49,15 +49,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
         }
 
-        // DocStoreURL
-        public string DocStoreURL {
-            get => Item.DocStoreURL;
-            set {
-                Item.DocStoreURL = value;
-                OnPropertyChanged(nameof(DocStoreURL));
-            }
-        }
-
         // IsEnabled
         public bool IsEnabled {
             get => Item.IsEnabled;
@@ -90,15 +81,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
         }
 
-        // IsUseMultiVectorRetriever
-        public bool IsUseMultiVectorRetriever {
-            get => Item.IsUseMultiVectorRetriever;
-            set {
-                Item.IsUseMultiVectorRetriever = value;
-                OnPropertyChanged(nameof(IsUseMultiVectorRetriever));
-                OnPropertyChanged(nameof(DocStoreURLVisibility));
-            }
-        }
         // ChunkSize
         public int ChunkSize {
             get => Item.ChunkSize;
@@ -122,17 +104,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             set {
                 Item.DefaultScoreThreshold = value;
                 OnPropertyChanged(nameof(DefaultScoreThreshold));
-            }
-        }
-
-
-        // DocStoreURLを表示するか否かのVisibility
-        public Visibility DocStoreURLVisibility {
-            get {
-                if (IsUseMultiVectorRetriever) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
             }
         }
 

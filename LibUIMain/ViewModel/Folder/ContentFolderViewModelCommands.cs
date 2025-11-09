@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibMain.Model.Content;
 using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Request;
 using LibMain.Utils.Common;
 using LibUIMain.Resource;
 using LibUIMain.Utils;
@@ -130,8 +131,10 @@ namespace LibUIMain.ViewModel.Folder {
                 return;
             }
             CommandExecutes.UpdateIndeterminate(true);
-            var contentFolderPath = await FolderViewModel.Folder.GetContentFolderPath();
-            await Task.Run(() => VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(vectorDBItemName, contentFolderPath));
+            string folderPath = await FolderViewModel.Folder.GetContentFolderPath();
+            VectorEmbeddingItem vectorEmbeddingItem = new("", folderPath, vectorDBItemName);
+
+            await Task.Run(() => EmbeddingRequest.DeleteEmbeddingsByFolderAsync(vectorEmbeddingItem));
             var contentItems = await FolderViewModel.Folder.GetItemsAsync<ContentItem>(isSync: false);
             await Task.Run(() => ContentItemCommands.UpdateEmbeddingsAsync(contentItems, () => { }, async () => {
                 var items = await FolderViewModel.Folder.GetItemsAsync<ContentItem>(isSync: false);

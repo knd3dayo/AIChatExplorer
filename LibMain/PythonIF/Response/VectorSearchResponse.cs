@@ -9,7 +9,7 @@ namespace LibMain.PythonIF.Response {
     public class VectorSearchResponse {
 
 
-        public const string FOLDER_ID_KEY = EmbeddingRequest.FOLDER_ID_KEY;
+        public const string FOLDER_PATH_KEY = EmbeddingRequest.FOLDER_PATH_KEY;
         public const string SOURCE_ID_KEY = EmbeddingRequest.SOURCE_ID_KEY;
         public const string SOURCE_TYPE_KEY = EmbeddingRequest.SOURCE_TYPE_KEY;
         public const string DESCRIPTION_KEY = EmbeddingRequest.DESCRIPTION_KEY;
@@ -33,8 +33,8 @@ namespace LibMain.PythonIF.Response {
             var metadata = dict.GetValueOrDefault(METADATA_KEY, new Dictionary<string, dynamic>());
             if (metadata is Dictionary<string, dynamic> metadataDict) {
                 foreach (var kvp in metadataDict) {
-                    if (kvp.Key == FOLDER_ID_KEY) {
-                        response.FolderId = kvp.Value.ToString() ?? "";
+                    if (kvp.Key == FOLDER_PATH_KEY) {
+                        response.FolderPath = kvp.Value.ToString() ?? "";
                     } else if (kvp.Key == SOURCE_ID_KEY) {
                         response.SourceId = kvp.Value.ToString() ?? "";
                     } else if (kvp.Key == SOURCE_TYPE_KEY) {
@@ -81,12 +81,11 @@ namespace LibMain.PythonIF.Response {
         public List<VectorSearchResponse> SubDocs { get; set; } = [];
 
         public VectorEmbeddingItem CreateVectorEmbeddingItem() {
-            VectorEmbeddingItem embedding = new(SourceId, FolderPath);
+            VectorEmbeddingItem embedding = new(SourceId, FolderPath, "default");
             embedding.SourceType = SourceType;
             embedding.Description = Description;
             embedding.Content = Content;
             embedding.SourcePath = SourcePath;
-            embedding.FolderPath = FolderPath;
             embedding.DocId = DocId;
             embedding.Score = Score;
             if (SubDocs.Count > 0) {

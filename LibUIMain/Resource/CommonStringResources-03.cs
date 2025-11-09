@@ -151,9 +151,6 @@ namespace LibUIMain.Resource {
         // VectorDBList
         public virtual string VectorDBList { get; } = "Vector DB List";
 
-        // MultiVectorRetrieverFinalSearchResult
-        public virtual string MultiVectorRetrieverFinalSearchResult { get; } = "Multi Vector Retriever Final Search Result";
-
         #endregion
         // PromptTemplateNotFound
         public virtual string PromptTemplateNotFound { get; } = "Prompt Template Not Found";

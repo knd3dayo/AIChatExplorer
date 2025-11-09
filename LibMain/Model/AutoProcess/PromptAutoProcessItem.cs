@@ -27,14 +27,6 @@ namespace LibMain.Model.AutoProcess {
             ChatSettings chatSettings = new() {
                 PromptTemplateText = PromptItemEntity.Prompt,
             };
-            // VectorSearchSettingsを設定
-            VectorSearchSettings vectorSearchSettings = new();
-            if (clipboardFolder != null) {
-                vectorSearchSettings.RAGMode = RAGModeEnum.NormalSearch;
-                var item = await clipboardFolder.GetMainVectorSearchItem();
-                vectorSearchSettings.VectorSearchItem = item;
-                await chatRequest.ApplyVectorSearchResults(item);
-            }
 
             ChatRequestContext chatRequestContent = new(chatSettings);
 

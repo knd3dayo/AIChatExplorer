@@ -489,9 +489,9 @@ namespace LibMain.Model.Content {
             }
             var folder = await GetFolderAsync();
             var contentFolderPath = await folder.GetContentFolderPath();
-            VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), contentFolderPath);
+            VectorEmbeddingItem vectorDBEntry = new(Id.ToString(), contentFolderPath, vectorDBItemName);
             await vectorDBEntry.SetMetadata(this);
-            await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
+            await EmbeddingRequest.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
         }
 
 

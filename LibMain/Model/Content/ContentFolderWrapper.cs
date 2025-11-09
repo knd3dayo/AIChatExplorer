@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using LibMain.Common;
 using LibMain.Data;
 using LibMain.Model.AutoProcess;
 using LibMain.Model.VectorDB;
@@ -71,12 +72,11 @@ namespace LibMain.Model.Content {
 
         // アプリケーション内でのフォルダのパス
         public virtual async Task<string> GetContentFolderPath() {
-            var parentFolder = await GetParentAsync<ContentFolderWrapper>();
-            if (parentFolder == null) {
+            string  contentPath = await PythonExecutor.PythonAIFunctions.GetContentFolderPathByIdAsync(Id);
+            if (string.IsNullOrEmpty(contentPath)) {
                 return FolderName;
             }
-            var parentFolderPatn = await parentFolder.GetContentFolderPath();
-            return $"{parentFolderPatn}/{FolderName}";
+            return contentPath;
         }
  
 
@@ -161,21 +161,24 @@ namespace LibMain.Model.Content {
 
         // 削除
         public virtual async Task DeleteAsync() {
+            string folderPath = await GetContentFolderPath();
             // ベクトルを全削除
-            var contentFolderPath = await GetContentFolderPath();
-            await VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(VectorDBPropertiesName, contentFolderPath);
+            VectorEmbeddingItem vectorEmbeddingItem = new("", folderPath, VectorDBPropertiesName);
+            await EmbeddingRequest.DeleteEmbeddingsByFolderAsync(vectorEmbeddingItem);
             // APIを呼び出して、ContentFolderを削除
             ContentFolderRequest request = new(Entity);
             await PythonExecutor.PythonAIFunctions.DeleteContentFoldersAsync([request]);
         }
+
         public static async Task DeleteFoldersAsync(List<ContentFolderWrapper> folders) {
             if (folders.Count == 0) {
                 return;
             }
             // ベクトルを全削除
             foreach (var folder in folders) {
-                var contentFolderPath = await folder.GetContentFolderPath();
-                await VectorEmbeddingItem.DeleteEmbeddingsByFolderAsync(VectorDBPropertiesName, contentFolderPath);
+                string folderPath = await folder.GetContentFolderPath();
+                VectorEmbeddingItem vectorEmbeddingItem = new("", folderPath, VectorDBPropertiesName);
+                await EmbeddingRequest.DeleteEmbeddingsByFolderAsync(vectorEmbeddingItem);
             }
             // APIを呼び出して、ContentFolderを削除
             List<ContentFolderRequest> requests = folders.Select(folder => new ContentFolderRequest(folder.Entity)).ToList();
@@ -225,7 +228,7 @@ namespace LibMain.Model.Content {
                 return null;
             }
             // APIを呼び出して、親フォルダを取得
-            ContentFolderEntity? parentFolder = await PythonExecutor.PythonAIFunctions.GetParentFolderByIdAsync(Entity.ParentId);
+            ContentFolderEntity? parentFolder = await PythonExecutor.PythonAIFunctions.GetParentFolderByIdAsync(Entity.Id);
             if (parentFolder == null) {
                 return null;
             }
@@ -314,7 +317,7 @@ namespace LibMain.Model.Content {
         public async Task<VectorSearchItem> GetMainVectorSearchItem() {
             var item = VectorDBItem.GetDefaultVectorDB();
             var contentFolderPath = await GetContentFolderPath();
-            VectorSearchItem searchProperty = item.CreateVectorSearchItem(Id, contentFolderPath);
+            VectorSearchItem searchProperty = item.CreateVectorSearchItem(contentFolderPath);
             return searchProperty;
         }
 

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using LibMain.Common;
 using LibMain.Model.Chat;
 using LibMain.Model.Content;
@@ -12,21 +11,26 @@ namespace LibMain.Model.VectorDB {
 
         public VectorEmbeddingItem() { }
 
-        public VectorEmbeddingItem(string source_id, string folderId) {
+        public VectorEmbeddingItem(string source_id, string folderPath, string vectorDBName) {
             SourceId = source_id;
-            FolderPath = folderId;
+            FolderPath = folderPath;
+            VectorDBName = vectorDBName;
         }
 
-        public string? FolderPath { get; set; } = null;
-
+        public string VectorDBName { get; set; } = "";
+        public string Content { get; set; } = "";
         public string SourceId { get; set; } = "";
+
+        // metadata
+
+        public string? FolderPath { get; set; } = null;
 
         public VectorSourceType SourceType { get; set; } = VectorSourceType.None;
 
         public string Description { get; set; } = "";
-        public string Content { get; set; } = "";
-
         public string SourcePath { get; set; } = "";
+
+        public string ImageUrl { get; set; } = "";
 
         public Dictionary<string, string> Tags { get; set; } = [];
 
@@ -36,65 +40,28 @@ namespace LibMain.Model.VectorDB {
 
         public List<VectorEmbeddingItem> SubDocs { get; set; } = [];
 
-        public void SetMetadata(string description, string content, VectorSourceType sourceType, string source_path, Dictionary<string, string> tags) {
+        public void SetMetadata(string folder_path, string description, string content, VectorSourceType sourceType, string source_path, Dictionary<string, string> tags) {
             Description = description;
             Content = content;
+            FolderPath = folder_path;
             SourceType = sourceType;
             SourcePath = source_path;
             Tags = tags;
         }
 
         public async Task SetMetadata(ContentItem item) {
+            ContentFolderWrapper folder = await item.GetFolderAsync();
+            var contentFolderPath = await folder.GetContentFolderPath();
             // タイトルとHeaderTextを追加
             var hederText = await item.GetHeaderTextAsync();
             string description = item.Description + "\n" + hederText;
             // タグを取得
             Dictionary<string, string> tags = item.Tags.ToDictionary(tag => tag, tag => tag);
             if (item.ContentType == ContentItemTypes.ContentItemTypeEnum.Text) {
-                SetMetadata(description, item.Content, VectorSourceType.Clipboard, item.SourcePath, tags);
+                SetMetadata(contentFolderPath, description, item.Content, VectorSourceType.Clipboard, item.SourcePath, tags);
             } else {
-                SetMetadata(description, item.Content, VectorSourceType.File, item.SourcePath, tags);
+                SetMetadata(contentFolderPath, description, item.Content, VectorSourceType.File, item.SourcePath, tags);
             }
-        }
-        public static async Task UpdateEmbeddingsAsync(string vectorDBItemName, VectorEmbeddingItem vectorEmbeddingItem) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatSettings chatSettings = new();
-            VectorSearchSettings vectorSearchSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
-            EmbeddingRequest embeddingRequestContext = new(vectorDBItemName, vectorEmbeddingItem);
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-            await PythonExecutor.PythonAIFunctions.UpdateEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.SavedEmbedding);
-        }
-
-
-        public static async Task DeleteEmbeddingsAsync(string vectorDBItemName, VectorEmbeddingItem vectorEmbeddingItem)
-        {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatSettings chatSettings = new();
-            VectorSearchSettings vectorSearchSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
-            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, vectorEmbeddingItem);
-            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.DeletedEmbedding);
-            await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsAsync(chatRequestContext, embeddingRequestContext);
-        }
-
-
-        // DeleteEmbeddingsByFolderAsync
-        public static async Task DeleteEmbeddingsByFolderAsync(string vectorDBItemName, string folderPath)
-        {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatSettings chatSettings = new();
-            VectorSearchSettings vectorSearchSettings = new();
-            ChatRequestContext chatRequestContext = new(chatSettings);
-            VectorEmbeddingItem vectorEmbeddingItem = new() {
-                FolderPath = folderPath,
-            };
-            EmbeddingRequest embeddingRequestContext = new EmbeddingRequest(vectorDBItemName, vectorEmbeddingItem);
-            await PythonExecutor.PythonAIFunctions.DeleteEmbeddingsByFolderAsync(chatRequestContext, embeddingRequestContext);
         }
 
     }

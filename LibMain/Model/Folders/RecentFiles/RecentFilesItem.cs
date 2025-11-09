@@ -1,6 +1,7 @@
 using LibMain.Data;
 using LibMain.Model.Content;
 using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Request;
 
 namespace AIChatExplorer.Model.Folders.Browser {
     public class RecentFilesItem : ContentItem {
@@ -23,13 +24,13 @@ namespace AIChatExplorer.Model.Folders.Browser {
                     return;
                 }
                 var contentFolderPath = await folder.GetContentFolderPath();
-                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath, vectorDBItemName) {
                     Content = Content,
                     Description = Description,
                     SourceType = VectorSourceType.File,
                     SourcePath = SourcePath,
                 };
-                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
+                await EmbeddingRequest.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
             });
         }
     }

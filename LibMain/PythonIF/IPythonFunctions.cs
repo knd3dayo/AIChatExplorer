@@ -29,6 +29,7 @@ namespace LibMain.PythonIF {
 
         public Task<List<ContentFolderEntity>> GetChildFoldersByIdAsync(string id);
 
+        public Task<string> GetContentFolderPathByIdAsync(string id);
 
         public Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders);
         public Task DeleteContentFoldersAsync(List<ContentFolderRequest> folders);

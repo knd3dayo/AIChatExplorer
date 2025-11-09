@@ -168,9 +168,6 @@ namespace LibUIMain.Resource {
         // ベクトルDB一覧
         public override string VectorDBList { get; } = "ベクトルDB一覧";
 
-        // マルチベクターリトリーバーの最終的な検索結果
-        public override string MultiVectorRetrieverFinalSearchResult { get; } = "マルチベクターリトリーバーの最終的な検索結果";
-
         #endregion
 
         // プロンプトテンプレートが存在しません。

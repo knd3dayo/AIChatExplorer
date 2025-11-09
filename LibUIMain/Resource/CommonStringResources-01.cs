@@ -869,9 +869,6 @@ namespace LibUIMain.Resource {
 
         // ベクトルのスコア(コサイン類似度)の閾値
         public virtual string DefaultScoreThreshold { get; } = "Default Score Threshold";
-        public virtual string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";
-        public virtual string SQLite3LocationForDocStore { get; } = "SQLite3 Location for DocStore";
-        public virtual string ExampleSQLite3Location { get; } = "Example: sqlite:///C:\\Users\\Username\\sqlite3.db";
         public virtual string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public virtual string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
         public virtual string ClearChatContents { get; } = "Clear Chat Contents";

@@ -2,6 +2,7 @@ using System.IO;
 using LibMain.Data;
 using LibMain.Model.Content;
 using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Request;
 
 namespace AIChatExplorer.Model.Folders.FileSystem {
     public class FileSystemItem : ContentItem {
@@ -30,13 +31,13 @@ namespace AIChatExplorer.Model.Folders.FileSystem {
                     return;
                 }
                 var contentFolderPath = await folder.GetContentFolderPath();
-                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath, vectorDBItemName) {
                     Content = Content,
                     Description = Description,
                     SourceType = VectorSourceType.File,
                     SourcePath = SourcePath,
                 };
-                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
+                await EmbeddingRequest.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
             });
         }
 

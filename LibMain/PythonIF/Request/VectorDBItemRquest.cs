@@ -11,8 +11,6 @@ namespace LibMain.PythonIF.Request {
         public const string NAME_KEY = "name";
         public const string DESCRIPTION_KEY = "description";
         public const string VECTOR_DB_URL_KEY = "vector_db_url";
-        public const string IS_USE_MULTI_VECTOR_RETRIEVER_KEY = "is_use_multi_vector_retriever";
-        public const string DOC_STORE_URL_KEY = "doc_store_url";
         public const string CHUNK_SIZE_KEY = "chunk_size";
         public const string COLLECTION_NAME_KEY = "collection_name";
         public const string IS_ENABLED_KEY = "is_enabled";
@@ -28,8 +26,6 @@ namespace LibMain.PythonIF.Request {
             Name = item.Name;
             Description = item.Description;
             VectorDBURL = item.VectorDBURL;
-            IsUseMultiVectorRetriever = item.IsUseMultiVectorRetriever;
-            DocStoreURL = item.DocStoreURL;
             ChunkSize = item.ChunkSize;
             CollectionName = item.CollectionName ?? "";
             IsEnabled = item.IsEnabled;
@@ -48,12 +44,6 @@ namespace LibMain.PythonIF.Request {
 
         // ベクトルDBのURL
         public string VectorDBURL { get; set; }
-
-        // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever { get; set; }
-
-        // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        public string DocStoreURL { get; set; }
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
@@ -85,8 +75,6 @@ namespace LibMain.PythonIF.Request {
                 { NAME_KEY, Name },
                 { DESCRIPTION_KEY, Description },
                 { VECTOR_DB_URL_KEY, VectorDBURL },
-                { IS_USE_MULTI_VECTOR_RETRIEVER_KEY, IsUseMultiVectorRetriever },
-                { DOC_STORE_URL_KEY, DocStoreURL },
                 { CHUNK_SIZE_KEY, ChunkSize },
                 { COLLECTION_NAME_KEY, CollectionName },
                 { IS_ENABLED_KEY, IsEnabled },

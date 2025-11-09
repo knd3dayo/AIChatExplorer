@@ -120,9 +120,9 @@ namespace LibMain.Model.Content {
                     return;
                 }
                 var contentFolderPath = await folder.GetContentFolderPath();
-                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath, vectorDBItemName);
                 await vectorDBEntry.SetMetadata(item);
-                await VectorEmbeddingItem.DeleteEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
+                await EmbeddingRequest.DeleteEmbeddingsAsync(vectorDBEntry);
             });
             await Task.WhenAll(tasks);
         }
@@ -141,9 +141,9 @@ namespace LibMain.Model.Content {
                 // IPythonAIFunctions.ClipboardInfoを作成
                 var folder = await item.GetFolderAsync();
                 var contentFolderPath = await folder.GetContentFolderPath();
-                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath);
+                VectorEmbeddingItem vectorDBEntry = new(item.Id.ToString(), contentFolderPath, vectorDBItemName);
                 await vectorDBEntry.SetMetadata(item);
-                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
+                await EmbeddingRequest.UpdateEmbeddingsAsync(vectorDBItemName, vectorDBEntry);
                 // ベクトル化日時を更新
                 item.VectorizedAt = DateTime.Now;
             });

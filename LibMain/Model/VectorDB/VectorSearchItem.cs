@@ -1,7 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using LibMain.Common;
-using LibMain.Model.Chat;
 using LibMain.PythonIF;
 using LibMain.PythonIF.Request;
 using LibMain.Utils.Common;
@@ -73,7 +71,7 @@ namespace LibMain.Model.VectorDB {
                 LogWrapper.Warn("InputText is null or empty.");
                 return [];
             }
-            
+
             VectorSearchRequest vectorSearchRequest = new(this);
 
             // ベクトル検索を実行

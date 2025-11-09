@@ -12,8 +12,6 @@ namespace LibMain.PythonIF.Request {
         public const string NAME_KEY = "name";
         public const string DESCRIPTION_KEY = "description";
         public const string VECTOR_DB_URL_KEY = "vector_db_url";
-        public const string IS_USE_MULTI_VECTOR_RETRIEVER_KEY = "is_use_multi_vector_retriever";
-        public const string DOC_STORE_URL_KEY = "doc_store_url";
         public const string CHUNK_SIZE_KEY = "chunk_size";
         public const string COLLECTION_NAME_KEY = "collection_name";
         public const string IS_ENABLED_KEY = "is_enabled";
@@ -29,8 +27,6 @@ namespace LibMain.PythonIF.Request {
                 Name = dict[NAME_KEY]?.ToString() ?? "",
                 Description = dict[DESCRIPTION_KEY]?.ToString() ?? "",
                 VectorDBURL = dict[VECTOR_DB_URL_KEY]?.ToString() ?? "",
-                IsUseMultiVectorRetriever = Convert.ToBoolean(dict[IS_USE_MULTI_VECTOR_RETRIEVER_KEY]),
-                DocStoreURL = dict[DOC_STORE_URL_KEY]?.ToString() ?? "",
                 ChunkSize = Convert.ToInt32(dict[CHUNK_SIZE_KEY]),
                 CollectionName = dict[COLLECTION_NAME_KEY]?.ToString() ?? "",
                 IsEnabled = Convert.ToBoolean(dict[IS_ENABLED_KEY]),
@@ -49,12 +45,6 @@ namespace LibMain.PythonIF.Request {
 
         // ベクトルDBのURL
         public string VectorDBURL { get; set; } = string.Empty;
-
-        // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever { get; set; } = false;
-
-        // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        public string DocStoreURL { get; set; } = string.Empty;
 
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
@@ -85,8 +75,6 @@ namespace LibMain.PythonIF.Request {
                 Name = Name,
                 Description = Description,
                 VectorDBURL = VectorDBURL,
-                IsUseMultiVectorRetriever = IsUseMultiVectorRetriever,
-                DocStoreURL = DocStoreURL,
                 ChunkSize = ChunkSize,
                 CollectionName = CollectionName,
                 IsEnabled = IsEnabled,

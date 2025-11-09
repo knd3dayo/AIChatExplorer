@@ -83,59 +83,6 @@
             <TabItem
                 Width="Auto"
                 Height="Auto"
-                Margin="10,10,10,10"
-                HorizontalAlignment="Left"
-                Header="{x:Static res:ViewStringResources.MultiVectorRetrieverFinalSearchResult}"
-                Visibility="{Binding MultiVectorRetrieverVisibility}">
-                <DataGrid
-                    Margin="10,10,10,10"
-                    AutoGenerateColumns="False"
-                    BorderThickness="1"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    CanUserReorderColumns="False"
-                    CanUserResizeColumns="True"
-                    CanUserResizeRows="False"
-                    CanUserSortColumns="True"
-                    ItemsSource="{Binding MultiVectorSearchResults}"
-                    VerticalScrollBarVisibility="Auto"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    VirtualizingStackPanel.IsVirtualizing="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="150"
-                            Binding="{Binding DocId}"
-                            Header="DocId" />
-                        <DataGridTextColumn
-                            Width="200"
-                            Binding="{Binding FolderPath}"
-                            Header="FolderPath" />
-                        <DataGridTextColumn
-                            Width="150"
-                            Binding="{Binding SourceId}"
-                            Header="SourceId" />
-                        <DataGridTextColumn
-                            Width="250"
-                            Binding="{Binding SourcePath}"
-                            Header="SourcePath" />
-                        <DataGridTemplateColumn Width="*" Header="Content">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <editorControl:MyTextBox
-                                        Height="200"
-                                        ScrollViewer.CanContentScroll="True"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                        Text="{Binding Content}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
-            <TabItem
-                Width="Auto"
-                Height="Auto"
                 Margin="10,10,0,10"
                 HorizontalAlignment="Left"
                 Header="{x:Static res:ViewStringResources.VectorSearchResult}">

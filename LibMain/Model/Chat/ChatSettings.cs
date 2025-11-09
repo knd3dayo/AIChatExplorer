@@ -7,14 +7,8 @@ namespace LibMain.Model.Chat {
 
     public class VectorSearchSettings {
 
-        public const string RAG_MODE_KEY = "rag_mode";
-
-
         // RAGを使用するかどうか
         public RAGModeEnum RAGMode { get; set; } = RAGModeEnum.None;
-
-        // ベクトル検索
-        public VectorSearchItem? VectorSearchItem { get; set; }
 
 
     }

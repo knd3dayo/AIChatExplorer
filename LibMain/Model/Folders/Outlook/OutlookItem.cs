@@ -2,6 +2,7 @@ using AIChatExplorer.Model.Folders.FileSystem;
 using LibMain.Data;
 using LibMain.Model.Content;
 using LibMain.Model.VectorDB;
+using LibMain.PythonIF.Request;
 
 namespace AIChatExplorer.Model.Folders.Outlook {
     public class OutlookItem : ContentItem {
@@ -34,13 +35,13 @@ namespace AIChatExplorer.Model.Folders.Outlook {
                     return;
                 }
                 var contentFolderPath = await folder.GetContentFolderPath();
-                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath) {
+                VectorEmbeddingItem VectorEmbeddingItem = new(Id.ToString(), contentFolderPath, vectorDBItemName) {
                     Content = Content,
                     Description = Description,
                     SourceType = VectorSourceType.Mail,
                     SourcePath = SourcePath,
                 };
-                await VectorEmbeddingItem.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
+                await EmbeddingRequest.UpdateEmbeddingsAsync(vectorDBItemName, VectorEmbeddingItem);
             });
         }
 

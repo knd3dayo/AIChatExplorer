@@ -27,12 +27,6 @@ namespace LibMain.Model.VectorDB {
         // ベクトルDBのURL
         public string VectorDBURL { get; set; } = "";
 
-        // マルチベクトルリトリーバを使うかどうか
-        public bool IsUseMultiVectorRetriever { get; set; } = false;
-
-        // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        public string DocStoreURL { get; set; } = "";
-
         // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
         public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
@@ -83,13 +77,16 @@ namespace LibMain.Model.VectorDB {
             }
         }
 
-        public VectorSearchItem CreateVectorSearchItem(string? folderId = null, string? folderPath = null) {
+        public VectorSearchItem CreateVectorSearchItem(string? folderPath = null) {
             VectorSearchItem item = new(this) {
                 VectorDBItemName = this.Name,
-                FolderPath = folderId,
                 ScoreThreshold = this.DefaultScoreThreshold,
                 TopK = this.DefaultSearchResultLimit,
             };
+            if (!string.IsNullOrEmpty(folderPath)) {
+                item.FolderPath = folderPath;
+            }
+
             return item;
         }
 

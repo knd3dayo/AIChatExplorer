@@ -19,35 +19,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
         }
 
-        // MultiVectorRetrieverを使用するか否か
-        public bool IsUseMultiVectorRetriever {
-            get {
-                if (ItemViewModel == null) {
-                    return false;
-                }
-                return ItemViewModel.IsUseMultiVectorRetriever;
-            }
-            set {
-                if (ItemViewModel == null) {
-                    return;
-                }
-                ItemViewModel.IsUseMultiVectorRetriever = value;
-                OnPropertyChanged(nameof(IsUseMultiVectorRetriever));
-                OnPropertyChanged(nameof(DocStoreURLVisibility));
-            }
-        }
-        // DocStoreURLを表示するか否かのVisibility
-        public Visibility DocStoreURLVisibility {
-            get {
-                if (ItemViewModel == null) {
-                    return Visibility.Collapsed;
-                }
-                if (ItemViewModel.IsUseMultiVectorRetriever) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
         // VectorDBURLのヒントテキスト
         public string VectorDBURLHintText {
             get {

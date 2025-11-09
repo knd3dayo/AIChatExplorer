@@ -8,14 +8,15 @@ namespace LibMain.PythonIF.Request {
     public class VectorSearchRequest {
 
         public const string VECTOR_DB_NAME_KEY = "vector_db_name";
-        public const string MODEL_KEY = "model";
+        public const string QUERY_KEY = "query";
+
+        public const string TOP_K_KEY = "k";
+        public const string FILTER_KEY = "filter";
+
         public const string FOLDER_ID_KEY = "folder_id";
         public const string FOLDER_PATH_KEY = "folder_path";
         public const string CONTENT_TYPE_KEY = "content_type";
-        public const string QUERY_KEY = "query";
-        public const string SEARCH_KWARGS_KEY = "search_kwargs";
-        public const string FILTER_KEY = "filter";
-        public const string TOP_K_KEY = "k";
+
         public const string SCORE_THRESHOLD_KEY = "score_threshold";
 
 
@@ -58,31 +59,6 @@ namespace LibMain.PythonIF.Request {
         [JsonPropertyName(CONTENT_TYPE_KEY)]
         public string ContentType { init; get; } = string.Empty;
 
-        // SearchKWargs
-        private Dictionary<string, object> GetSearchKwargs() {
-            Dictionary<string, object> dict = new() {
-                [TOP_K_KEY] = TopK,
-                [SCORE_THRESHOLD_KEY] = ScoreThreshold,
-            };
-            // filter 
-            Dictionary<string, object> filter = new();
-
-            // folder_pathが指定されている場合
-            if (FolderPath != null) {
-                filter[FOLDER_PATH_KEY] = FolderPath;
-            }
-            // content_typeが指定されている場合
-            if (ContentType != string.Empty) {
-                filter[CONTENT_TYPE_KEY] = ContentType;
-            }
-            // filterが指定されている場合
-            if (filter.Count > 0) {
-                dict[FILTER_KEY] = filter;
-            }
-
-            return dict;
-        }
-
         public Dictionary<string, object> ToDict() {
             if (string.IsNullOrEmpty(VectorDBName)) {
                 throw new Exception(PythonAILibStringResourcesJa.Instance.PropertyNotSet(VECTOR_DB_NAME_KEY));
@@ -90,13 +66,16 @@ namespace LibMain.PythonIF.Request {
 
             Dictionary<string, object> dict = [];
             dict[VECTOR_DB_NAME_KEY] = VectorDBName;
-            var search_kwargs = GetSearchKwargs();
-            if (search_kwargs.Count > 0) {
-                dict[SEARCH_KWARGS_KEY] = search_kwargs;
-            }
             if (!string.IsNullOrEmpty(Query)) {
                 dict[QUERY_KEY] = Query;
             }
+            dict[TOP_K_KEY] = TopK;
+            Dictionary<string, object> filter = [];
+            if (FolderPath != null) {
+                filter[FOLDER_PATH_KEY] = FolderPath;
+            }
+            dict[FILTER_KEY] = filter;
+
             return dict;
         }
 

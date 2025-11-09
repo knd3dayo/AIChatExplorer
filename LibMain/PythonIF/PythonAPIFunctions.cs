@@ -311,6 +311,28 @@ namespace LibMain.PythonIF {
             return contentFolders;
         }
 
+        public async Task<string> GetContentFolderPathByIdAsync(string id) {
+            ContentFolderEntity contentFolderEntity = new() { Id = id };
+            RequestContainer requestContainer = new() {
+                ContentFolderRequestsInstance = [new ContentFolderRequest(contentFolderEntity)]
+            };
+            string chatRequestContextJson = requestContainer.ToJson();
+            LogWrapper.Info(PythonAILibStringResourcesJa.Instance.GetParentContentFolderExecute);
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.RequestInfo} {chatRequestContextJson}");
+
+            string endpoint = $"{base_url}/get_content_folder_path_by_id";
+            string resultString = await PostAsync(endpoint, chatRequestContextJson);
+
+            LogWrapper.Debug($"{PythonAILibStringResourcesJa.Instance.Response}:{resultString}");
+            Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+            if (resultDict.TryGetValue("error", out dynamic? errorValue))
+                throw new Exception(errorValue);
+            dynamic? contentPath = resultDict.GetValueOrDefault("content_folder_path", null);
+            if (contentPath == null)
+                return "";
+            return contentPath;
+
+        }
 
         public async Task UpdateContentFoldersAsync(List<ContentFolderRequest> folders) {
             RequestContainer requestContainer = new() {

@@ -11,8 +11,7 @@ using LibUIMain.ViewModel.Common;
 namespace LibUIMain.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : CommonViewModelBase {
 
-        public static readonly int MultiVectorRetrieverTabIndex = 0; // MultiVectorRetrieverのタブインデックス
-        public static readonly int VectorRetrieverTabIndex = 1; // VectorRetrieverのタブインデックス
+        public static readonly int VectorRetrieverTabIndex = 0; // VectorRetrieverのタブインデックス
 
         public VectorSearchWindowViewModel(VectorSearchItem vectorSearchItem) {
             VectorSearchItem = vectorSearchItem;
@@ -24,7 +23,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             get => _VectorSearchItem;
             set {
                 UpdateVectorSearchItemAsync(value);
-                UpdateMultiVectorRetrieverVisibilityAsync();
             }
         }
         private void UpdateVectorSearchItemAsync(VectorSearchItem? value) {
@@ -36,22 +34,14 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
             _VectorSearchItem = value;
 
-            // IsUseMultiVectorRetrieverがfalseの場合は、SelectedTabIndexを1にする
-            if (item.IsUseMultiVectorRetriever) {
-                SelectedTabIndex = MultiVectorRetrieverTabIndex;
-            } else {
-                SelectedTabIndex = VectorRetrieverTabIndex;
-            }
+            SelectedTabIndex = VectorRetrieverTabIndex;
 
             // StatusTextを更新
             UpdateStatusText();
 
             OnPropertyChanged(nameof(VectorSearchItem));
-            OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
             OnPropertyChanged(nameof(VectorSearchResults));
         }
-
-        public ObservableCollection<VectorEmbeddingItem> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
         public ObservableCollection<VectorEmbeddingItem> VectorSearchResults { get; set; } = [];
@@ -60,7 +50,7 @@ namespace LibUIMain.ViewModel.VectorDB {
         public Action<List<LibMain.Model.VectorDB.VectorSearchItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // SelectedIndex
-        private int _selectedTabIndex = MultiVectorRetrieverTabIndex;
+        private int _selectedTabIndex = VectorRetrieverTabIndex;
         public int SelectedTabIndex {
             get => _selectedTabIndex;
             set {
@@ -69,27 +59,12 @@ namespace LibUIMain.ViewModel.VectorDB {
                 OnPropertyChanged(nameof(PreviewJson));
             }
         }
-        // MultiVectorRetrieverの場合のVisibility 
-        public Visibility MultiVectorRetrieverVisibility { get; private set; } = Visibility.Collapsed;
-
-        private void UpdateMultiVectorRetrieverVisibilityAsync() {
-            // VectorDBItemを取得
-            var item = VectorDBItem.GetItemByName(VectorSearchItem?.VectorDBItemName);
-            if (item == null) {
-                MultiVectorRetrieverVisibility = Visibility.Collapsed;
-            } else {
-                MultiVectorRetrieverVisibility = item.IsUseMultiVectorRetriever ? Visibility.Visible : Visibility.Collapsed;
-            }
-            OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
-        }
-
-
-
+        
         // クリアボタンのコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             // VectorSearchResultsをクリア
-            MultiVectorSearchResults.Clear();
-            OnPropertyChanged(nameof(MultiVectorSearchResults));
+            VectorSearchResults.Clear();
+            OnPropertyChanged(nameof(VectorSearchResults));
         });
 
         // SendCommand
@@ -117,26 +92,11 @@ namespace LibUIMain.ViewModel.VectorDB {
             }
             MainUITask.Run(() => {
                 // VectorSearchResultsを更新
-                MultiVectorSearchResults.Clear();
                 VectorSearchResults.Clear();
-
-                if (vectorDBItem.IsUseMultiVectorRetriever) {
-                    foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
-                        MultiVectorSearchResults.Add(vectorSearchResult);
-                        // sub_docsを追加
-                        foreach (VectorEmbeddingItem subDoc in vectorSearchResult.SubDocs) {
-                            VectorSearchResults.Add(subDoc);
-                        }
-                    }
-                } else {
-                    // VectorSearchResultsを更新
-                    VectorSearchResults.Clear();
-                    foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
-                        VectorSearchResults.Add(vectorSearchResult);
-                    }
+                foreach (VectorEmbeddingItem vectorSearchResult in vectorSearchResults) {
+                    VectorSearchResults.Add(vectorSearchResult);
                 }
 
-                OnPropertyChanged(nameof(MultiVectorSearchResults));
                 OnPropertyChanged(nameof(VectorSearchResults));
 
             });
@@ -171,8 +131,6 @@ namespace LibUIMain.ViewModel.VectorDB {
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {
                 VectorSearchItem = items[0];
-                // MultiVectorRetrieverの場合のVisibilityを更新
-                OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
 
                 // StatusTextを更新
                 UpdateStatusText();
