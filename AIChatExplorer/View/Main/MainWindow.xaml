@@ -131,6 +131,7 @@
                                 FontSize="12"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />
+                            <!--
                             <MenuItem
                                 Margin="0,0,0,0"
                                 Padding="10,0,10,0"
@@ -139,6 +140,7 @@
                                 FontSize="12"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{x:Static res:ViewStringResources.EditVectorDB}" />
+                            -->
                         </MenuItem>
                         <!--  View  -->
                         <MenuItem
